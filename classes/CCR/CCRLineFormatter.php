@@ -20,17 +20,16 @@ class CCRLineFormatter extends LineFormatter
     /**
      * This function was extracted from the class `\Log\Log_xdconsole` so that we can keep our log output the same.
      *
-     * @param mixed $record
      *
      * @return string
      */
-    protected function extractMessage($record)
+    protected function extractMessage(mixed $record)
     {
         $json = json_decode($record['message'], true);
 
         if ($json !== null)
         {
-            $parts = array();
+            $parts = [];
 
             if (isset($json['message'])) {
                 $parts[] = $json['message'];
@@ -38,7 +37,7 @@ class CCRLineFormatter extends LineFormatter
             }
 
             if (count($json) > 0) {
-                $nonMessageParts = array();
+                $nonMessageParts = [];
 
                 foreach ($json as $key => $value) {
                     $nonMessageParts[] = "$key: $value";
@@ -59,6 +58,6 @@ class CCRLineFormatter extends LineFormatter
      */
     protected function replaceNewlines($str)
     {
-        return str_replace(array('\r', '\n'), array("\r", "\n"), $str);
+        return str_replace(['\r', '\n'], ["\r", "\n"], $str);
     }
 }

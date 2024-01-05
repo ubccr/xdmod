@@ -5,7 +5,7 @@ namespace IntegrationTests\Database;
 use IntegrationTests\BaseTest;
 use CCR\DB;
 use CCR\Json;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 use Configuration\XdmodConfiguration;
 
 /**
@@ -15,12 +15,12 @@ class ResourceNamesTest extends BaseTest
 {
     private $db;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->db = DB::factory('datawarehouse');
     }
 
-    public function testResourcesNamesValues()
+    public function testResourcesNamesValues(): void
     {
         $actual = $this->db->query('SELECT code, name FROM modw.resourcefact ORDER BY code');
 
@@ -40,7 +40,7 @@ class ResourceNamesTest extends BaseTest
                 INNER JOIN modw.resourcetype ON modw.resourcefact.resourcetype_id=modw.resourcetype.id;');
                 $resource_types = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR);
 
-                $usedTypes = array();
+                $usedTypes = [];
                 foreach($resource_types['resource_types'] as $id => $items) {
                     foreach($items['realms'] as $rlm) {
                         if ($rlm == ucfirst($realm)) {
@@ -49,7 +49,7 @@ class ResourceNamesTest extends BaseTest
                     }
                 }
 
-                $usedCodes = array();
+                $usedCodes = [];
                 foreach($usedTypes as $type) {
                     foreach($resourceConversions as $resource) {
                         if ($resource['abbrev'] == $type) {
@@ -58,7 +58,7 @@ class ResourceNamesTest extends BaseTest
                     }
                 }
 
-                $newFile = array();
+                $newFile = [];
                 foreach($usedCodes as $code) {
                     foreach($actual as $item) {
                         if ($code == $item['code']){

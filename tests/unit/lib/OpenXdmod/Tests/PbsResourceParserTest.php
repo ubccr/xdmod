@@ -10,16 +10,16 @@ use Xdmod\PbsResourceParser;
  *
  * @coversDefaultClass PbsResourceParser
  */
-class PbsResourceParserTest extends \PHPUnit_Framework_TestCase
+class PbsResourceParserTest extends \PHPUnit\Framework\TestCase
 {
     /** Tests base directory relative to __DIR__ */
-    const TESTS_BASE_REL_DIR = '/../../../..';
+    public const TESTS_BASE_REL_DIR = '/../../../..';
 
-    const TEST_GROUP = 'unit/pbs-resource-parser';
+    public const TEST_GROUP = 'unit/pbs-resource-parser';
 
     private $parser;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->parser = new PbsResourceParser();
     }
@@ -29,7 +29,7 @@ class PbsResourceParserTest extends \PHPUnit_Framework_TestCase
      * @covers ::parseResourceListNodes
      * @covers ::getGpuCountFromResourceListNodes
      */
-    public function testGpuCountParsing($resourceListNodes, $gpuCount)
+    public function testGpuCountParsing($resourceListNodes, $gpuCount): void
     {
         $nodesData = $this->parser->parseResourceListNodes($resourceListNodes);
         $this->assertEquals(

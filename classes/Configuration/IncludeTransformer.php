@@ -10,7 +10,7 @@ use stdClass;
 
 class IncludeTransformer extends aUrlTransformer implements iConfigFileKeyTransformer
 {
-    const REFERENCE_KEY = '$include';
+    public const REFERENCE_KEY = '$include';
 
     /** -----------------------------------------------------------------------------------------
      * @see iConfigFileKeyTransformer::keyMatches()

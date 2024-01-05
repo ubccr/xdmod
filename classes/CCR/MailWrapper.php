@@ -2,6 +2,7 @@
 
 namespace CCR;
 
+use PHPMailer;
 use Xdmod\EmailTemplate;
 
 class MailWrapper
@@ -24,7 +25,7 @@ class MailWrapper
                     $prefix = $prefix . ': ';
                 }
             }
-            catch(\Exception $e){
+            catch(\Exception){
                 // Do nothing, the configuration option
                 // does not exist;
             }
@@ -71,7 +72,7 @@ class MailWrapper
      *
      * Throws Exception if send() returns false
      */
-    public static function sendMail($properties) {
+    public static function sendMail($properties): void {
         $mail = MailWrapper::initPHPMailer($properties);
         if(!$mail->send()){
             throw new \Exception($mail->ErrorInfo);
@@ -92,7 +93,7 @@ class MailWrapper
             if (!empty($configSignature)) {
                 $signature = $configSignature;
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
         return $signature;
     }
@@ -112,7 +113,7 @@ class MailWrapper
             if (\xd_utilities\getConfiguration('features', 'xsede') == 'on') {
                 $name = 'XDMoD';
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
         return $name;
     }
@@ -122,7 +123,7 @@ class MailWrapper
      *
      * Checks first to see if debug mode is on
      */
-    public static function addAddresses($mail, $properties)
+    public static function addAddresses(PHPMailer $mail, $properties): void
     {
         if(\xd_utilities\getConfiguration('general', 'debug_mode') == 'on') {
             $mail->addAddress(\xd_utilities\getConfiguration('general', 'debug_recipient'));
@@ -152,7 +153,7 @@ class MailWrapper
         }
     }
 
-    public static function sendTemplate($templateType, $properties)
+    public static function sendTemplate($templateType, $properties): void
     {
         $template = new EmailTemplate($templateType);
         $template->apply($properties);

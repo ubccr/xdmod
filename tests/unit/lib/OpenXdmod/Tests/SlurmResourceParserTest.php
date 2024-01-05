@@ -10,16 +10,16 @@ use Xdmod\SlurmResourceParser;
  *
  * @coversDefaultClass SlurmResourceParser
  */
-class SlurmResourceParserTest extends \PHPUnit_Framework_TestCase
+class SlurmResourceParserTest extends \PHPUnit\Framework\TestCase
 {
     /** Tests base directory relative to __DIR__ */
-    const TESTS_BASE_REL_DIR = '/../../../..';
+    public const TESTS_BASE_REL_DIR = '/../../../..';
 
-    const TEST_GROUP = 'unit/slurm-resource-parser';
+    public const TEST_GROUP = 'unit/slurm-resource-parser';
 
     private $parser;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->parser = new SlurmResourceParser();
     }
@@ -29,7 +29,7 @@ class SlurmResourceParserTest extends \PHPUnit_Framework_TestCase
      * @covers ::parseTres
      * @covers ::getGpuCountFromTres
      */
-    public function testAllocTresGpuCountParsing($allocTres, $gpuCount)
+    public function testAllocTresGpuCountParsing($allocTres, $gpuCount): void
     {
         $tresData = $this->parser->parseTres($allocTres);
         $this->assertEquals(

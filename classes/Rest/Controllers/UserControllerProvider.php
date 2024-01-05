@@ -27,12 +27,7 @@ class UserControllerProvider extends BaseControllerProvider
      *
      * @var array
      */
-    private static $userSettableProperties = array(
-        'first_name',
-        'last_name',
-        'email_address',
-        'password',
-    );
+    private static $userSettableProperties = ['first_name', 'last_name', 'email_address', 'password'];
 
     /**
      * A mapping of user properties that can come in with a request to
@@ -40,25 +35,12 @@ class UserControllerProvider extends BaseControllerProvider
      *
      * @var array
      */
-    private static $propertySettingOptions = array(
-        'first_name' => array(
-            'setter' => 'setFirstName',
-        ),
-        'last_name' => array(
-            'setter' => 'setLastName',
-        ),
-        'email_address' => array(
-            'setter' => 'setEmailAddress',
-        ),
-        'password' => array(
-            'setter' => 'setPassword',
-        ),
-    );
+    private static $propertySettingOptions = ['first_name' => ['setter' => 'setFirstName'], 'last_name' => ['setter' => 'setLastName'], 'email_address' => ['setter' => 'setEmailAddress'], 'password' => ['setter' => 'setPassword']];
 
     /**
      * @see BaseControllerProvider::setupRoutes
      */
-    public function setupRoutes(Application $app, \Silex\ControllerCollection $controller)
+    public function setupRoutes(Application $app, \Silex\ControllerCollection $controller): void
     {
         $root = $this->prefix;
 
@@ -85,10 +67,7 @@ class UserControllerProvider extends BaseControllerProvider
         $this->authorize($request);
 
         // Extract and return the information for the user.
-        return $app->json(array(
-            'success' => true,
-            'results' => $this->extractUserData($this->getUserFromRequest($request)),
-        ));
+        return $app->json(['success' => true, 'results' => $this->extractUserData($this->getUserFromRequest($request))]);
     }
 
     /**
@@ -115,10 +94,7 @@ class UserControllerProvider extends BaseControllerProvider
         // for first-time XSEDE users and return a success message.
         $_SESSION['suppress_profile_autoload'] = true;
 
-        return $app->json(array(
-            'success' => true,
-            'message' => 'User profile updated successfully',
-        ));
+        return $app->json(['success' => true, 'message' => 'User profile updated successfully']);
     }
 
     /**
@@ -128,8 +104,6 @@ class UserControllerProvider extends BaseControllerProvider
      *   - They just have authenticated to XDMoD via one of the supported methods.
      *   - THey must have an active API Token.
      *
-     * @param Request $request
-     * @param Application $app
      * @return mixed
      * @throws \Exception
      */
@@ -143,10 +117,7 @@ class UserControllerProvider extends BaseControllerProvider
 
         $tokenData = $this->getCurrentAPITokenMetaData($user);
 
-        return $app->json(array(
-                'success' => true,
-                'data' => $tokenData
-            )
+        return $app->json(['success' => true, 'data' => $tokenData]
         );
     }
 
@@ -156,8 +127,6 @@ class UserControllerProvider extends BaseControllerProvider
      *   - They just have authenticated to XDMoD via one of the supported methods.
      *   - They must not have an existing API Token.
      *
-     * @param Request $request
-     * @param Application $app
      * @return Response
      * @throws \Exception if there is a problem retrieving a database connection.
      */
@@ -169,10 +138,7 @@ class UserControllerProvider extends BaseControllerProvider
             throw new ConflictHttpException('Token already exists.');
         }
 
-        return $app->json(array(
-            'success' => true,
-            'data' => $this->createToken($user)
-        ));
+        return $app->json(['success' => true, 'data' => $this->createToken($user)]);
     }
 
 
@@ -182,8 +148,6 @@ class UserControllerProvider extends BaseControllerProvider
      *   - They must have authenticated to XDMoD via one of the supported methods.
      *   - They must have an active API Token
      *
-     * @param Request $request
-     * @param Application $app
      * @return Response
      * @throws \Exception
      */
@@ -198,10 +162,7 @@ class UserControllerProvider extends BaseControllerProvider
 
         // Attempt to revoke the requesting users token.
         if ($this->revokeToken($user)) {
-            return $app->json(array(
-                'success' => true,
-                'message' => 'Token successfully revoked.'
-            ));
+            return $app->json(['success' => true, 'message' => 'Token successfully revoked.']);
         }
 
         // If the `revokeToken` failed for some reason then we let the user know.
@@ -230,25 +191,11 @@ class UserControllerProvider extends BaseControllerProvider
         }
         $rawRealmConfig = \DataWarehouse\Access\RawData::getRawDataRealms($user);
         $rawDataRealms = array_map(
-            function ($item) {
-                return $item['name'];
-            },
+            fn($item) => $item['name'],
             $rawRealmConfig
         );
 
-        return array(
-            'first_name' => $user->getFirstName(),
-            'last_name' => $user->getLastName(),
-            'email_address' => $emailAddress,
-            'is_sso_user' => $user->isSSOUser(),
-            'first_time_login' => $user->getCreationTimestamp() == $user->getLastLoginTimestamp(),
-            'autoload_suppression' => isset($_SESSION['suppress_profile_autoload']),
-            'field_of_science' => $user->getFieldOfScience(),
-            'active_role' => $mostPrivilegedFormalName,
-            'most_privileged_role' => $mostPrivilegedFormalName,
-            'person_id' => $user->getPersonID(true),
-            'raw_data_allowed_realms' => $rawDataRealms
-        );
+        return ['first_name' => $user->getFirstName(), 'last_name' => $user->getLastName(), 'email_address' => $emailAddress, 'is_sso_user' => $user->isSSOUser(), 'first_time_login' => $user->getCreationTimestamp() == $user->getLastLoginTimestamp(), 'autoload_suppression' => isset($_SESSION['suppress_profile_autoload']), 'field_of_science' => $user->getFieldOfScience(), 'active_role' => $mostPrivilegedFormalName, 'most_privileged_role' => $mostPrivilegedFormalName, 'person_id' => $user->getPersonID(true), 'raw_data_allowed_realms' => $rawDataRealms];
     }
 
     /**
@@ -260,7 +207,7 @@ class UserControllerProvider extends BaseControllerProvider
      */
     private function extractUserSettableProperties(Request $request)
     {
-        $requestProperties = array();
+        $requestProperties = [];
         foreach (self::$userSettableProperties as $propertyName) {
             $propertyValue = $this->getStringParam($request, $propertyName);
 
@@ -281,7 +228,7 @@ class UserControllerProvider extends BaseControllerProvider
      *
      * @throws Exception The new property values failed to save.
      */
-    private function updateUser(XDUser $user, array $updatedProperties)
+    private function updateUser(XDUser $user, array $updatedProperties): void
     {
         // For each property that can be set, check if it is included in the
         // given set of properties. If so, invoke that property's setter on the
@@ -305,7 +252,6 @@ class UserControllerProvider extends BaseControllerProvider
      * This function will determine whether or not the provided $user should be allowed to create a new API token. A
      * user will only be allowed to create a new API token if they do not currently have an active API token.
      *
-     * @param XDUser $user
      * @return bool true if the user does not already have a valid API token.
      * @throws \Exception if there is a problem retrieving a database connection.
      */
@@ -323,7 +269,7 @@ WHERE    u.id = :user_id
      AND u.account_is_active = 1
 SQL;
 
-        $rows = $db->query($query, array(':user_id' => $user->getUserID()));
+        $rows = $db->query($query, [':user_id' => $user->getUserID()]);
 
         return empty($rows);
     }
@@ -346,23 +292,19 @@ SELECT created_on,
 FROM moddb.user_tokens as at
 WHERE at.user_id = :user_id;
 SQL;
-        $rows = $db->query($query, array(':user_id' => $user->getUserID()));
+        $rows = $db->query($query, [':user_id' => $user->getUserID()]);
 
         if (count($rows) !== 1) {
             throw new \Exception('Invalid token data returned.');
         }
 
-        return array(
-            'created_on' => $rows[0]['created_on'],
-            'expiration_date' => $rows[0]['expires_on']
-        );
+        return ['created_on' => $rows[0]['created_on'], 'expiration_date' => $rows[0]['expires_on']];
     }
 
     /**
      * Creates a new API token for the provided $user. Note, the results of a successful creation is the only time that
      * the token will be visible to the user. No other function will return this value.
      *
-     * @param XDUser $user
      *
      * @return array in the format ('token' => newToken, 'expiration_date' => tokenExpirationDate)
      *
@@ -383,7 +325,7 @@ SQL;
         // will need to occur when attempting to validate the token, but it alleviates the problem of having to attempt
         // to match every token in the db to find which user it's meant to authenticate.
         $password = bin2hex(random_bytes(32));
-        $hash = password_hash($password, PASSWORD_DEFAULT, array('cost' => 12));
+        $hash = password_hash($password, PASSWORD_DEFAULT, ['cost' => 12]);
 
         $createdOn = date_create()->format('Y-m-d H:m:s');
         $expirationInterval = \xd_utilities\getConfiguration('api_token', 'expiration_interval');
@@ -395,22 +337,14 @@ SQL;
 
         $result = $db->execute(
             $query,
-            array(
-                ':user_id'    => $user->getUserID(),
-                ':token'      => $hash,
-                ':created_on' => $createdOn,
-                ':expires_on' => $expirationDate
-            )
+            [':user_id'    => $user->getUserID(), ':token'      => $hash, ':created_on' => $createdOn, ':expires_on' => $expirationDate]
         );
 
         if ($result != 1) {
             throw new \Exception('Unable to create a new API token.');
         }
 
-        return array(
-            'token'           => sprintf('%s.%s', $user->getUserID(), $password),
-            'expiration_date' => $expirationDate,
-        );
+        return ['token'           => sprintf('%s.%s', $user->getUserID(), $password), 'expiration_date' => $expirationDate];
     }
 
     /**
@@ -426,7 +360,7 @@ SQL;
         $query = 'DELETE FROM moddb.user_tokens WHERE user_id = :user_id';
         $db = DB::factory('database');
 
-        $rows = $db->execute($query, array(':user_id' => $user->getUserID()));
+        $rows = $db->execute($query, [':user_id' => $user->getUserID()]);
 
         return $rows === 1;
     }

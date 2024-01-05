@@ -21,7 +21,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class WarehouseExportControllerProvider extends BaseControllerProvider
 {
     // Constants used in log messages.
-     const LOG_MODULE = 'data-warehouse-export';
+     public const LOG_MODULE = 'data-warehouse-export';
 
     /**
      * @var DataWarehouse\Export\QueryHandler
@@ -62,10 +62,10 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     public function setupRoutes(
         Application $app,
         ControllerCollection $controller
-    ) {
+    ): void {
         $root = $this->prefix;
-        $current = get_class($this);
-        $conversions = '\Rest\Utilities\Conversions';
+        $current = static::class;
+        $conversions = \Rest\Utilities\Conversions::class;
 
         $controller->get("$root/realms", "$current::getRealms");
         $controller->post("$root/request", "$current::createRequest");
@@ -84,8 +84,6 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     /**
      * Get all the realms available for exporting for the current user.
      *
-     * @param Request $request
-     * @param Application $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      */
@@ -97,7 +95,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         // to the normal session authentication if a token is not provided.
         try {
             $user = $this->authenticateToken($request);
-        } catch (Exception $e) {
+        } catch (Exception) {
             // NOOP
         }
 
@@ -132,8 +130,6 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     /**
      * Get all the existing export requests for the current user.
      *
-     * @param Request $request
-     * @param Application $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      */
@@ -153,8 +149,6 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     /**
      * Create a new export request for the current user.
      *
-     * @param Request $request
-     * @param Application $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      * @throws BadRequestHttpException
@@ -165,9 +159,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         $realm = $this->getStringParam($request, 'realm', true);
 
         $realms = array_map(
-            function ($realm) {
-                return $realm->getName();
-            },
+            fn($realm) => $realm->getName(),
             $this->realmManager->getRealmsForUser($user)
         );
         if (!in_array($realm, $realms)) {
@@ -225,8 +217,6 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     /**
      * Get the requested data.
      *
-     * @param Request $request
-     * @param Application $app
      * @param int $id
      * @return \Symfony\Component\HttpFoundation\BinaryFileResponse
      * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
@@ -240,9 +230,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
 
         $requests = array_filter(
             $this->queryHandler->listUserRequestsByState($user->getUserId()),
-            function ($request) use ($id) {
-                return $request['id'] == $id;
-            }
+            fn($request) => $request['id'] == $id
         );
 
         if (count($requests) === 0) {
@@ -296,8 +284,6 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
     /**
      * Delete a single request.
      *
-     * @param Request $request
-     * @param Application $app
      * @param int $id
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
@@ -333,8 +319,6 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
      *
      * The request body content must be a JSON encoded array of request IDs.
      *
-     * @param Request $request
-     * @param Application $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      * @throws NotFoundHttpException
@@ -389,7 +373,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         } catch (NotFoundHttpException $e) {
             $dbh->rollBack();
             throw $e;
-        } catch (Exception $e) {
+        } catch (Exception) {
             $dbh->rollBack();
             throw new BadRequestHttpException('Failed to delete export requests');
         }
@@ -398,9 +382,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             'success' => true,
             'message' => 'Deleted export requests',
             'data' => array_map(
-                function ($id) {
-                    return ['id' => $id];
-                },
+                fn($id) => ['id' => $id],
                 $requestIds
             ),
             'total' => count($requestIds)

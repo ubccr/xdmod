@@ -50,14 +50,7 @@ class EtlConfiguration extends Configuration
      * these keys.
      * @var array
      */
-    private $etlConfigReservedKeys = array(
-         'defaults',
-         'endpoints',
-         'paths',
-         'global',
-         'variables',
-         'module'
-     );
+    private $etlConfigReservedKeys = ['defaults', 'endpoints', 'paths', 'global', 'variables', 'module'];
 
     /**
      * If this is a local configuration file we have the option of using global defaults from the parent.
@@ -71,20 +64,20 @@ class EtlConfiguration extends Configuration
      * $endpoints array.
      * @var array
      */
-    private $globalEndpoints = array();
+    private $globalEndpoints = [];
 
     /**
      * Associative array where the key is the generated endpoint key and the value is a DataEndpoint object.
      * @var array
      */
-    private $endpoints = array();
+    private $endpoints = [];
 
     /**
      * An associative array where keys are section names and values are an array of action option
      * objects.
      * @var array
      */
-    private $actionOptions = array();
+    private $actionOptions = [];
 
     /**
      * An associative array containing options to either add to or override individual action
@@ -129,7 +122,7 @@ class EtlConfiguration extends Configuration
         $filename,
         $baseDir = null,
         LoggerInterface $logger = null,
-        array $options = array()
+        array $options = []
     ) {
         parent::__construct($filename, $baseDir, $logger, $options);
 
@@ -200,7 +193,7 @@ class EtlConfiguration extends Configuration
             // array and call array_replace_recursive(). json_decode() can convert objects to arrays
             // recursively and after the merge appears to correctly decode arrays and objects.
 
-            $parentDefaults = ( null !== $this->parentDefaults ? json_decode(json_encode($this->parentDefaults), true) : array() );
+            $parentDefaults = ( null !== $this->parentDefaults ? json_decode(json_encode($this->parentDefaults), true) : [] );
             $localDefaults = json_decode(json_encode($this->parsedConfig->defaults), true);
             $this->parsedConfig->defaults = json_decode(json_encode(array_replace_recursive($parentDefaults, $localDefaults)));
         } elseif ( null !== $this->parentDefaults ) {
@@ -215,7 +208,7 @@ class EtlConfiguration extends Configuration
         foreach ( $this->parsedConfig->defaults->global->paths as $variable => $value ) {
             // Note that key transformers have not been run at this point so strip comments out of
             // the paths block.
-            if ( 0 !== strpos('#', $variable) ) {
+            if ( !str_starts_with('#', $variable) ) {
                 $this->variableStore->$variable = $value;
             }
         }
@@ -276,7 +269,7 @@ class EtlConfiguration extends Configuration
         // register other global endpoints because these should only be registered if an enabled
         // action needs them.
 
-        $this->endpoints = array();
+        $this->endpoints = [];
 
         if ( ! $this->isLocalConfig && isset($this->transformedConfig->defaults->global->endpoints->utility) ) {
             $name = 'utility';
@@ -339,7 +332,7 @@ class EtlConfiguration extends Configuration
                 try {
                     $this->registerAction($actionConfig, $sectionName);
                 } catch ( Exception $e ) {
-                    $actionName = ( isset($actionConfig->name) ? $actionConfig->name : "" );
+                    $actionName = ( $actionConfig->name ?? "" );
                     $this->logAndThrowException(
                         "Error adding action '$actionName' in section '$sectionName': " . $e->getMessage()
                     );
@@ -362,7 +355,7 @@ class EtlConfiguration extends Configuration
     {
         $config = $this->transformedConfig;
         $etlSectionNames = array_diff(array_keys(get_object_vars($config)), $this->etlConfigReservedKeys);
-        $moduleName = ( isset($config->module) ? $config->module : $this->defaultModuleName );
+        $moduleName = ( $config->module ?? $this->defaultModuleName );
         $modulePrefix = ( null !== $moduleName ? sprintf("%s.", $moduleName) : "" );
 
         foreach ( $etlSectionNames as $sectionName ) {
@@ -371,7 +364,7 @@ class EtlConfiguration extends Configuration
 
             // The section name cannot contain a dot.
 
-            if ( false !== strpos($sectionName, '.') ) {
+            if ( str_contains($sectionName, '.') ) {
                 throw new Exception(
                     sprintf("Pipeline names cannot contain dots: '%s'", $sectionName)
                 );
@@ -401,7 +394,7 @@ class EtlConfiguration extends Configuration
                 // If the action name contains a dot, split it on the dot and confirm that the prefix is
                 // the pipeline name and there are no dots in the action name.
 
-                if ( false !== strpos($actionName, '.') ) {
+                if ( str_contains($actionName, '.') ) {
                     throw new Exception(
                         sprintf("Action names cannot contain dots: '%s'", $actionName)
                     );
@@ -424,14 +417,7 @@ class EtlConfiguration extends Configuration
 
     protected function processLocalConfig($localConfigFile)
     {
-        $options = array(
-            'local_config_dir'   => $this->localConfigDir,
-            'is_local_config'    => true,
-            'option_overrides'   => $this->optionOverrides,
-            'variable_store'     => $this->variableStore,
-            'parent_defaults'    => $this->transformedConfig->defaults,
-            'default_module_name' => $this->defaultModuleName
-        );
+        $options = ['local_config_dir'   => $this->localConfigDir, 'is_local_config'    => true, 'option_overrides'   => $this->optionOverrides, 'variable_store'     => $this->variableStore, 'parent_defaults'    => $this->transformedConfig->defaults, 'default_module_name' => $this->defaultModuleName];
 
         return EtlConfiguration::factory($localConfigFile, $this->baseDir, $this->logger, $options);
 
@@ -525,7 +511,7 @@ class EtlConfiguration extends Configuration
      * ------------------------------------------------------------------------------------------
      */
 
-    public function cleanup($deepCleanup = false)
+    public function cleanup($deepCleanup = false): void
     {
         parent::cleanup($deepCleanup);
         $this->parentDefaults = null;
@@ -643,7 +629,7 @@ class EtlConfiguration extends Configuration
         }
 
         if ( ! $this->sectionExists($name) ) {
-            $this->actionOptions[$name] = array();
+            $this->actionOptions[$name] = [];
         }
 
         parent::addSection($name, $data, $overwrite);
@@ -670,7 +656,7 @@ class EtlConfiguration extends Configuration
         // defaults. Options specified on the command line override all of these but those are
         // handled prior to action instantiation.
 
-        $defaultSectionKeys = array($sectionName, 'global');
+        $defaultSectionKeys = [$sectionName, 'global'];
 
         foreach ( $defaultSectionKeys as $defaultSectionKey ) {
 
@@ -684,7 +670,7 @@ class EtlConfiguration extends Configuration
 
                 if ( ! isset($actionConfig->$propertyKey) ) {
                     $actionConfig->$propertyKey = $propertyValue;
-                } elseif ( in_array($propertyKey, array('endpoints', 'variables')) ) {
+                } elseif ( in_array($propertyKey, ['endpoints', 'variables']) ) {
 
                     if ( ! is_object($propertyValue) ) {
                         $this->logAndThrowException(
@@ -766,7 +752,7 @@ class EtlConfiguration extends Configuration
 
         $optionsClassName = $config->options_class;
 
-        if ( false === strstr($optionsClassName, '\\') ) {
+        if ( !str_contains($optionsClassName, '\\') ) {
             if ( isset($config->namespace) ) {
                 $optionsClassName = $config->namespace .
                     ( strpos($config->namespace, '\\') != strlen($config->namespace) - 1 ? "\\" : "" ) .
@@ -908,7 +894,7 @@ class EtlConfiguration extends Configuration
                 }
                 return $carry;
             },
-            array()
+            []
         );
 
     }  // getEnabledActionNames()
@@ -1069,21 +1055,9 @@ class EtlConfiguration extends Configuration
     {
         $parts = explode('.', $actionName);
         if ( 3 == count($parts) ) {
-            return array(
-                'module'        => $parts[0],
-                'short_section' => $parts[1],
-                'section'       => sprintf('%s.%s', $parts[0], $parts[1]),
-                'short_action'  => $parts[2],
-                'action'        => $actionName
-            );
+            return ['module'        => $parts[0], 'short_section' => $parts[1], 'section'       => sprintf('%s.%s', $parts[0], $parts[1]), 'short_action'  => $parts[2], 'action'        => $actionName];
         } elseif ( 2 == count($parts) ) {
-            return array(
-                'module'        => null,
-                'short_section' => $parts[0],
-                'section'       => $parts[0],
-                'short_action'  => $parts[1],
-                'action'        => $actionName
-            );
+            return ['module'        => null, 'short_section' => $parts[0], 'section'       => $parts[0], 'short_action'  => $parts[1], 'action'        => $actionName];
         }
 
         return false;

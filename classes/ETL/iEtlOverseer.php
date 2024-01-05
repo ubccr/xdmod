@@ -56,7 +56,7 @@ interface iEtlOverseer
     public function verifyActions(
         EtlConfiguration $config,
         array $actionNameList,
-        array $actionObjectList = array(),
+        array $actionObjectList = [],
         $sectionName = null,
         $verifyDisabled = false
     );
@@ -81,7 +81,7 @@ interface iEtlOverseer
     public function verifySections(
         EtlConfiguration $config,
         array $sectionNameList,
-        array $sectionActionObjectList = array(),
+        array $sectionActionObjectList = [],
         $verifyDisabled = false
     );
 

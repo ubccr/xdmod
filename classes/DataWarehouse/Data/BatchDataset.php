@@ -21,11 +21,6 @@ use xd_utilities;
 class BatchDataset extends Loggable implements Iterator
 {
     /**
-     * @var \DataWarehouse\Query\RawQuery
-     */
-    private $query;
-
-    /**
      * @var \CCR\DB\iDatabase
      */
     private $dbh;
@@ -70,20 +65,6 @@ class BatchDataset extends Loggable implements Iterator
     private $hashCache = [];
 
     /**
-     * Maximum number of rows to return.
-     *
-     * @var int
-     */
-    private $limit;
-
-    /**
-     * Starting row index.
-     *
-     * @var int
-     */
-    private $offset;
-
-    /**
      * @param RawQuery $query
      * @param XDUser $user
      * @param LoggerInterface $logger
@@ -92,16 +73,20 @@ class BatchDataset extends Loggable implements Iterator
      * @param int $offset
      */
     public function __construct(
-        RawQuery $query,
+        private RawQuery $query,
         XDUser $user,
         LoggerInterface $logger = null,
         $fieldAliases = null,
-        $limit = null,
-        $offset = 0
+        /**
+         * Maximum number of rows to return.
+         */
+        private $limit = null,
+        /**
+         * Starting row index.
+         */
+        private $offset = 0
     ) {
         parent::__construct($logger);
-
-        $this->query = $query;
         $this->dbh = DB::factory($query->_db_profile);
 
         try {
@@ -109,7 +94,7 @@ class BatchDataset extends Loggable implements Iterator
                 'data_warehouse_export',
                 'hash_salt'
             );
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->logger->warning('data_warehouse_export hash_salt is not set');
         }
 
@@ -135,15 +120,11 @@ class BatchDataset extends Loggable implements Iterator
             // Filter out the fields whose aliases were not provided.
             $this->fields = array_filter(
                 $this->fields,
-                function ($field) use ($fieldAliases) {
-                    return in_array($field['alias'], $fieldAliases);
-                }
+                fn($field) => in_array($field['alias'], $fieldAliases)
             );
             // Renumber the indexes.
             $this->fields = array_values($this->fields);
         }
-        $this->limit = $limit;
-        $this->offset = $offset;
     }
 
     /**
@@ -154,9 +135,7 @@ class BatchDataset extends Loggable implements Iterator
     public function getHeader()
     {
         return array_map(
-            function ($field) {
-                return $field['display'];
-            },
+            fn($field) => $field['display'],
             $this->fields
         );
     }
@@ -186,7 +165,7 @@ class BatchDataset extends Loggable implements Iterator
      *
      * Fetches the next row.
      */
-    public function next()
+    public function next(): void
     {
         $this->currentRowIndex++;
         $this->currentRow = $this->getNextRow();
@@ -197,7 +176,7 @@ class BatchDataset extends Loggable implements Iterator
      *
      * Executes the underlying raw query.
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->logger->debug('Executing query');
         $this->sth = $this->query->getRawStatement($this->limit, $this->offset);

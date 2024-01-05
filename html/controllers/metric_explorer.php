@@ -16,14 +16,14 @@
       session_cache_limiter("private");
    }
 
-	require_once dirname(__FILE__).'/../../configuration/linker.php';
+	require_once __DIR__.'/../../configuration/linker.php';
 	\xd_security\start_session();
     session_write_close();
 	
-	$returnData = array();
+	$returnData = [];
 	// --------------------
 	
-	$controller = new XDController(array());
+	$controller = new XDController([]);
 	
 	$controller->registerOperation('get_data');	
 	$controller->registerOperation('get_rawdata');	

@@ -10,14 +10,14 @@ use Xdmod\Template;
 /**
  * Template test class.
  */
-class TemplateTest extends \PHPUnit_Framework_TestCase
+class TemplateTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
      * Test to make sure the template portal_settings.ini matches the
      * default portal_settings.ini file.
      */
-    public function testPortalSettingsTemplate()
+    public function testPortalSettingsTemplate(): void
     {
         $portalSettingsPath = BASE_DIR . '/configuration/portal_settings.ini';
         $defaultContents = file_get_contents($portalSettingsPath);
@@ -44,7 +44,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase
             throw new Exception("Failed to parse '$path'");
         }
 
-        $settings = array();
+        $settings = [];
 
         foreach ($data as $sectionName => $sectionData) {
             foreach ($sectionData as $key => $value) {

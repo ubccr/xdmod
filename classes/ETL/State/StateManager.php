@@ -28,16 +28,16 @@ use ETL\DataEndpoint\iRdbmsEndpoint;
 
 class StateManager
 {
-    const STATE_TABLE = 'etl_action_state';
+    public const STATE_TABLE = 'etl_action_state';
 
     // Intra-action states are meant to be used by subsequent instantiations of the same action
-    const INTRA_ACTION = 'intra';
+    public const INTRA_ACTION = 'intra';
 
     // Inter-aaction states are meant to be shared between actions or used as a data source
-    const INTER_ACTION = 'inter';
+    public const INTER_ACTION = 'inter';
 
     // Max length of the object key
-    const MAX_STATE_KEY_LEN = 64;
+    public const MAX_STATE_KEY_LEN = 64;
 
     /* ------------------------------------------------------------------------------------------
      * Throw an exceptiona and optionally log the message.
@@ -49,7 +49,7 @@ class StateManager
      * ------------------------------------------------------------------------------------------
      */
 
-    private static function logAndThrowException($msg, LoggerInterface $logger = null, $logLevel = Log::ERR)
+    private static function logAndThrowException($msg, LoggerInterface $logger = null, $logLevel = Log::ERR): void
     {
         if ( null !== $logger ) {
             $logger->log($logLevel, $msg);
@@ -113,7 +113,7 @@ class StateManager
                     $logger->info("Created new state object '$key'");
                 }
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             // If an exception was thrown, the message should have already been logged.
             return false;
         }
@@ -160,7 +160,7 @@ WHERE state_key = ?";
         }
 
         try {
-            $stmt = $endpoint->getHandle()->query($sql, array($key), true);
+            $stmt = $endpoint->getHandle()->query($sql, [$key], true);
             $stmt->bindColumn('state_type', $type);
             $stmt->bindColumn('modifying_action', $actionName);
             $stmt->bindColumn('modified_time', $modifiedTime);
@@ -179,7 +179,7 @@ WHERE state_key = ?";
             }
             return false;
         }
-        
+
         $stateObj = unserialize($serializedObj);
 
         // We don't serialize the logger so add it back in upon re-hydration
@@ -195,7 +195,7 @@ WHERE state_key = ?";
         $stateObj->getMetadata()->state_size_bytes = $stateBytes;
 
         return $stateObj;
-        
+
     }  // load()
 
     /* ------------------------------------------------------------------------------------------
@@ -226,7 +226,7 @@ WHERE state_key = ?";
             $msg = "Identifier must be an object implementing iActionState or a non-empty key string";
             self::logAndThrowException($msg, $logger);
         }
-        
+
         if ( strlen($key) > self::MAX_STATE_KEY_LEN ) {
             $msg = "Object state key cannot exceed " . self::MAX_STATE_KEY_LEN. " bytes";
             self::logAndThrowException($msg, $logger);
@@ -241,7 +241,7 @@ WHERE state_key = ?";
         }
 
         try {
-            $rowsAffected = $endpoint->getHandle()->execute($sql, array($key));
+            $rowsAffected = $endpoint->getHandle()->execute($sql, [$key]);
         } catch ( PDOException $e ) {
             $msg = "Error deleting state for key '$key': " . $e->getMessage();
             self::logAndThrowException($msg, $logger);
@@ -297,7 +297,7 @@ ON DUPLICATE KEY UPDATE
   modifying_action = :modifying_action_upd,
   state_size_bytes = :object_size_upd,
   state_object= :object_upd";
-        
+
         $key = $stateObj->getKey();
         $type = $stateObj->getType();
 
@@ -305,7 +305,7 @@ ON DUPLICATE KEY UPDATE
             $logger->info("Save action state object with key '$key' and type '$type'");
             $logger->debug("$sql");
         }
-        
+
         $serialized = serialize($stateObj);
         $size = strlen($serialized);
 
@@ -322,7 +322,7 @@ ON DUPLICATE KEY UPDATE
             $stmt->bindParam(':object_size_upd', $size, PDO::PARAM_INT);
             $stmt->bindParam(':object_upd', $serialized, PDO::PARAM_LOB);
             $stmt->execute();
-        } catch ( PDOException $e ) {
+        } catch ( PDOException ) {
             $msg = "Error saving state object for action '$actionName' with key '$key'";
             self::logAndThrowException($msg, $logger);
         }

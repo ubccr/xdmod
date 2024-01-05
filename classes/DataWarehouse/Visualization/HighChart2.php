@@ -15,7 +15,6 @@ use DataWarehouse\RoleRestrictionsStringBuilder;
 */
 class HighChart2
 {
-    protected $_swapXY;
     protected $_chart;
     protected $_width;
     protected $_height;
@@ -27,27 +26,9 @@ class HighChart2
 
     protected $_total;
 
-    protected $_dashStyles = array(
-        'Solid',
-        'ShortDash',
-        'ShortDot',
-        'ShortDashDot',
-        'ShortDashDotDot',
-        'Dot',
-        'Dash',
-        'LongDash',
-        'DashDot',
-        'LongDashDot',
-        'LongDashDotDot'
-    );
+    protected $_dashStyles = ['Solid', 'ShortDash', 'ShortDot', 'ShortDashDot', 'ShortDashDotDot', 'Dot', 'Dash', 'LongDash', 'DashDot', 'LongDashDot', 'LongDashDotDot'];
 
     protected $_dashStyleCount = 11;
-
-    // we love instance variables: JMS
-    protected $_shareYAxis;
-    protected $_hideTooltip;
-    protected $_showContextMenu;
-    protected $_showWarnings;
     protected $_dataset; // ComplexDataset object, a collection of Simple*Datasets
 
     protected $_xAxisDataObject; // SimpleData object
@@ -56,8 +37,6 @@ class HighChart2
     protected $_queryType = 'aggregate';
 
     protected $_subtitleText = '';
-
-    protected $user;
 
     protected $_colorGenerator;
     /**
@@ -80,81 +59,27 @@ class HighChart2
         $scale,
         $width,
         $height,
-        $user,
-        $swap_xy = false,
-        $showContextMenu = true,
-        $share_y_axis = false,
-        $hide_tooltip = false,
+        protected $user,
+        protected $_swapXY = false,
+        protected $_showContextMenu = true,
+        protected $_shareYAxis = false,
+        protected $_hideTooltip = false,
         $min_aggregation_unit = null,
-        $showWarnings = true
+        protected $_showWarnings = true
     ) {
 
         $this->setDuration($start_date, $end_date, $aggregation_unit, $min_aggregation_unit);
 
         $this->_width = $width *$scale;
         $this->_height = $height *$scale;
-        $this->_scale = 1; //deprecated
-
-        $this->_swapXY = $swap_xy;
-        $this->_shareYAxis = $share_y_axis;
-        $this->_hideTooltip = $hide_tooltip;
+        $this->_scale = 1;
 
         $this->_total = 0;
-        $this->_showContextMenu = $showContextMenu;
-        $this->_showWarnings = $showWarnings;
-        $this->_chart = array(
-            'chart' => array(
-                'inverted' => $this->_swapXY,
-                'zoomType' => 'xy',
-                'alignTicks' => false,
-                'showWarnings' => $this->_showWarnings,
-            ),
-            'credits' => array(
-                'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Highcharts',
-                'href' => ''
-            ),
-            'title' => array(
-                'text' => ''
-            ),
-            'subtitle' => array(
-                'text' => ''
-            ),
-            'xAxis' => array(
-                'categories' => array()
-            ),
-            'yAxis' => array(),
-            'legend' => array(
-                'symbolWidth' => 40,
-                'backgroundColor' => '#FFFFFF',
-                'borderWidth' => 0,
-                'y' => -5,
-                'wordWrap' => true
-            ),
-            'series' => array(),
-            'tooltip' => array(
-                'enabled' => $this->_hideTooltip?false:true,
-                'crosshairs' => true,
-                'shared' => true,
-                'xDateFormat' => $this->getDateFormat()
-            ),
-            'plotOptions' => array(
-                'series' => array(
-                    'allowPointSelect' => false,
-                    'connectNulls' => false,
-                    'animation' => false
-                )
-            ),
-            'dimensions' => array(),
-            'metrics' => array(),
-            'exporting' => array(
-                'enabled' => false
-            )
-        );
+        $this->_chart = ['chart' => ['inverted' => $this->_swapXY, 'zoomType' => 'xy', 'alignTicks' => false, 'showWarnings' => $this->_showWarnings], 'credits' => ['text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Highcharts', 'href' => ''], 'title' => ['text' => ''], 'subtitle' => ['text' => ''], 'xAxis' => ['categories' => []], 'yAxis' => [], 'legend' => ['symbolWidth' => 40, 'backgroundColor' => '#FFFFFF', 'borderWidth' => 0, 'y' => -5, 'wordWrap' => true], 'series' => [], 'tooltip' => ['enabled' => $this->_hideTooltip?false:true, 'crosshairs' => true, 'shared' => true, 'xDateFormat' => $this->getDateFormat()], 'plotOptions' => ['series' => ['allowPointSelect' => false, 'connectNulls' => false, 'animation' => false]], 'dimensions' => [], 'metrics' => [], 'exporting' => ['enabled' => false]];
 
         $this->_colorGenerator = new \DataWarehouse\Visualization\ColorGenerator();
 
         $this->roleRestrictionsStringBuilder = new RoleRestrictionsStringBuilder();
-        $this->user = $user;
     } // __construct()
 
     // ---------------------------------------------------------
@@ -219,7 +144,7 @@ class HighChart2
      * @return Nothing
      */
 
-    public function setDuration($startDate, $endDate, $aggregationUnit, $min_aggregation_unit = null)
+    public function setDuration($startDate, $endDate, $aggregationUnit, $min_aggregation_unit = null): void
     {
         $this->_aggregationUnit = \DataWarehouse\Query\TimeAggregationUnit::deriveAggregationUnitName(
             $aggregationUnit,
@@ -287,26 +212,13 @@ class HighChart2
     // ---------------------------------------------------------
     public function getDateFormat()
     {
-        switch($this->_aggregationUnit)
-        {
-            case 'Month':
-            case 'month':
-                $format = '%b %Y';
-                break;
-            case 'Quarter':
-            case 'quarter':
-                $format = 'Q%Q %Y';
-                break;
-            case 'Year':
-            case 'year':
-                $format = '%Y';
-                break;
-            default:
-            case 'Day':
-            case 'day':
-                $format = '%Y-%m-%d';
-                break;
-        }
+        $format = match ($this->_aggregationUnit) {
+            'Month', 'month' => '%b %Y',
+            'Quarter', 'quarter' => 'Q%Q %Y',
+            'Year', 'year' => '%Y',
+            'Day', 'day' => '%Y-%m-%d',
+            default => $format,
+        };
         return $format;
     } // getDateFormat()
 
@@ -317,7 +229,7 @@ class HighChart2
     // of plotted chart.
     //
     // ---------------------------------------------------------
-    public function setDataSource(array $source)
+    public function setDataSource(array $source): void
     {
         $src = count($source) > 0? ' Src: '.implode(', ', $source).'.':'';
         $this->_chart['credits']['text'] = $this->_startDate.' to '.
@@ -341,13 +253,10 @@ class HighChart2
     // Set chart's title text and highcharts-specific title formatting.
     //
     // ---------------------------------------------------------
-    public function setTitle($title, $font_size = 3)
+    public function setTitle($title, $font_size = 3): void
     {
         $this->_chart['title']['text'] = $title;
-        $this->_chart['title']['style'] = array(
-            'color'=> '#000000',
-            'fontSize' => (16 + $font_size).'px'
-        );
+        $this->_chart['title']['style'] = ['color'=> '#000000', 'fontSize' => (16 + $font_size).'px'];
     } // setTitle()
 
     /**
@@ -365,7 +274,7 @@ class HighChart2
      * @param $subtitle_html The charts subtitle in HTML format
      * @param $font_size The font size for the subtitle plus 12 px
      */
-    public function setSubtitle($subtitle_html, $font_size = 3)
+    public function setSubtitle($subtitle_html, $font_size = 3): void
     {
         if($subtitle_html !== null) {
             $this->_subtitleText = html_entity_decode($subtitle_html);
@@ -374,10 +283,7 @@ class HighChart2
             $this->_subtitleText = '';
             $this->_chart['subtitle']['text'] = '';
         }
-        $this->_chart['subtitle']['style'] = array(
-            'color'=> '#5078a0',
-            'fontSize' => (12 + $font_size).'px'
-        );
+        $this->_chart['subtitle']['style'] = ['color'=> '#5078a0', 'fontSize' => (12 + $font_size).'px'];
         $this->_chart['subtitle']['y'] = 28 + (2 * $font_size);
     } // setSubtitle()
 
@@ -388,13 +294,9 @@ class HighChart2
     // location selection.
     //
     // ---------------------------------------------------------
-    public function setLegend($legend_location, $font_size = 3)
+    public function setLegend($legend_location, $font_size = 3): void
     {
-        $this->_chart['legend']['itemStyle'] = array(
-            'fontWeight' => 'normal',
-            'color' => '#274b6d',
-            'fontSize' => (12  + $font_size).'px'
-        );
+        $this->_chart['legend']['itemStyle'] = ['fontWeight' => 'normal', 'color' => '#274b6d', 'fontSize' => (12  + $font_size).'px'];
         $this->_legend_location = $legend_location;
         switch($legend_location)
         {
@@ -612,7 +514,7 @@ class HighChart2
     protected function setXAxis(&$x_axis, $font_size)
     {
         if (!isset($this->_xAxisDataObject) )  {
-            throw new \Exception(get_class($this)." _xAxisDataObject not set ");
+            throw new \Exception(static::class." _xAxisDataObject not set ");
         }
 
         // part from setXAxisLabel(), which we may or may not keep.
@@ -642,47 +544,16 @@ class HighChart2
         }
 
         // --- set xAxis in _chart object ---
-        $this->_chart['xAxis'] = array(
-                'title' => array(
-                        'text' => $xAxisLabel,
-                        'margin' => 15 + $font_size,
-                        'style' => array(
-                                'color'=> '#000000',
-                                'fontWeight'=> 'bold',
-                                'fontSize' => (12 + $font_size).'px'
-                        )
-                ),
-                'otitle' => $originalXAxisLabel,
-                'dtitle' => $defaultXAxisLabel,
-
-                // set chart labels:
-                'labels' => $this->_swapXY ? array(
-                        'enabled' => true,
-                        'staggerLines' => 1,
-                        'step' => $this->_xAxisDataObject->getCount() < 20 ? 0  :round($this->_xAxisDataObject->getCount() / 20 ),
-                        'style' => array(
-                                'fontWeight'=> 'normal',
-                                'fontSize' => (11 + $font_size).'px'
-                        ),
-                        'settings' => array(
-                            'maxL' => floor($this->_width*20/580)
-                        )
-                ) // !($this->_swapXY)
-                : array(
-                        'enabled' => true,
-                        'staggerLines' => 1,
-                        'rotation' => $this->_xAxisDataObject->getCount()<= 8?0: -90,
-                        'align' => $this->_xAxisDataObject->getCount()<= 8?'center':'right',
-                        'step' => $this->_xAxisDataObject->getCount()< 20?0:round($this->_xAxisDataObject->getCount()/20),
-                        'style' => array('fontSize' => (11 + $font_size).'px'),
-                        'settings' => array(
-                            'maxL' => floor($this->_height*($this->limit<11?30:15)/400),
-                            'wrap' => floor($this->_height*($this->limit<11?18:18)/400)
-                        )
-                ),
-                'lineWidth' => 2 + $font_size / 4,
-                'categories' => $this->_xAxisDataObject->getValues()
-        );
+        $this->_chart['xAxis'] = [
+            'title' => ['text' => $xAxisLabel, 'margin' => 15 + $font_size, 'style' => ['color'=> '#000000', 'fontWeight'=> 'bold', 'fontSize' => (12 + $font_size).'px']],
+            'otitle' => $originalXAxisLabel,
+            'dtitle' => $defaultXAxisLabel,
+            // set chart labels:
+            'labels' => $this->_swapXY ? ['enabled' => true, 'staggerLines' => 1, 'step' => $this->_xAxisDataObject->getCount() < 20 ? 0  :round($this->_xAxisDataObject->getCount() / 20 ), 'style' => ['fontWeight'=> 'normal', 'fontSize' => (11 + $font_size).'px'], 'settings' => ['maxL' => floor($this->_width*20/580)]] // !($this->_swapXY)
+            : ['enabled' => true, 'staggerLines' => 1, 'rotation' => $this->_xAxisDataObject->getCount()<= 8?0: -90, 'align' => $this->_xAxisDataObject->getCount()<= 8?'center':'right', 'step' => $this->_xAxisDataObject->getCount()< 20?0:round($this->_xAxisDataObject->getCount()/20), 'style' => ['fontSize' => (11 + $font_size).'px'], 'settings' => ['maxL' => floor($this->_height*($this->limit<11?30:15)/400), 'wrap' => floor($this->_height*($this->limit<11?18:18)/400)]],
+            'lineWidth' => 2 + $font_size / 4,
+            'categories' => $this->_xAxisDataObject->getValues(),
+        ];
     }   // setXAxis()
 
     // ---------------------------------------------------------
@@ -719,7 +590,7 @@ class HighChart2
         $this->_total = $this->_dataset->getTotalX(); //has to be called after getXAxis
 
         //$this->setXAxisLabel($x_axis);
-        $this->setXAxis($x_axis, $font_size, $queryLim );
+        $this->setXAxis($x_axis, $font_size );
 
         $yAxisArray = $this->_dataset->getYAxis($queryLim, $offset, $this->_shareYAxis);
         return $yAxisArray;
@@ -754,7 +625,7 @@ class HighChart2
         // default 10 from Metric Explorer
         $offset = null,
         $summarizeDataseries = false
-    ) {   // JMS: clearly we do not have enough parameters.
+    ): void {   // JMS: clearly we do not have enough parameters.
                                         // support min/max/average 'truncation' of dataset
 
 
@@ -765,13 +636,13 @@ class HighChart2
         // Instantiate the ComplexDataset to plot
         $this->_dataset = new \DataWarehouse\Data\ComplexDataset();
 
-        list(
+        [
             $dimensions,
             $metrics,
             //$yAxisArray,
             $globalFilterDescriptions,
-            $dataSources
-        ) = $this->_dataset->init(
+            $dataSources,
+        ] = $this->_dataset->init(
             $this->_startDate,
             $this->_endDate,
             $this->_aggregationUnit,
@@ -839,7 +710,7 @@ class HighChart2
 
             $first_data_description = $yAxisObject->series[0]['data_description'];
 
-            list($yAxisColor, $yAxisLineColor) = $this->getColorFromDataDescription($first_data_description);
+            [$yAxisColor, $yAxisLineColor] = $this->getColorFromDataDescription($first_data_description);
 
             // set axis labels
             $defaultYAxisLabel = 'yAxis'.$yAxisIndex;
@@ -874,36 +745,7 @@ class HighChart2
             }
 
             // populate the yAxis:
-            $yAxis = array(
-                'title' => array(
-                    'text' => $yAxisLabel ,
-                    'style' => array(
-                        'color'=> $yAxisColor,
-                        'fontWeight'=> 'bold',
-                        'fontSize' => (12 + $font_size).'px'
-                    )
-                ),
-                'otitle' => $originalYAxisLabel,
-                'dtitle' => $defaultYAxisLabel,
-                'labels' => array(
-                    'style' => array(
-                        'fontWeight'=> 'normal',
-                        'fontSize' => (11 + $font_size).'px'
-                    )
-                ),
-                'startOnTick' => $yAxisMin == null,
-                'endOnTick' => $yAxisMax == null,
-                'opposite' => $yAxisIndex % 2 == 1,
-                'min' => $yAxisMin,
-                'max' => $yAxisMax,
-                'type' => $yAxisObject->log_scale? 'logarithmic' : 'linear',
-                'showLastLabel' => $this->_chart['title']['text'] != '',
-                'gridLineWidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8),
-                'lineWidth' => 2 + $font_size/4,
-                'allowDecimals' => $yAxisObject->decimals > 0,
-                'tickInterval' => $yAxisObject->log_scale ?1:null,
-                'maxPadding' => max(0.05, ($yAxisObject->value_labels?0.25:0.0) + ($yAxisObject->std_err?.25:0))
-            );
+            $yAxis = ['title' => ['text' => $yAxisLabel, 'style' => ['color'=> $yAxisColor, 'fontWeight'=> 'bold', 'fontSize' => (12 + $font_size).'px']], 'otitle' => $originalYAxisLabel, 'dtitle' => $defaultYAxisLabel, 'labels' => ['style' => ['fontWeight'=> 'normal', 'fontSize' => (11 + $font_size).'px']], 'startOnTick' => $yAxisMin == null, 'endOnTick' => $yAxisMax == null, 'opposite' => $yAxisIndex % 2 == 1, 'min' => $yAxisMin, 'max' => $yAxisMax, 'type' => $yAxisObject->log_scale? 'logarithmic' : 'linear', 'showLastLabel' => $this->_chart['title']['text'] != '', 'gridLineWidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8), 'lineWidth' => 2 + $font_size/4, 'allowDecimals' => $yAxisObject->decimals > 0, 'tickInterval' => $yAxisObject->log_scale ?1:null, 'maxPadding' => max(0.05, ($yAxisObject->value_labels?0.25:0.0) + ($yAxisObject->std_err?.25:0))];
 
             $this->_chart['yAxis'][] = $yAxis;
 
@@ -951,27 +793,14 @@ class HighChart2
                     $color = $yAxisColor;
                     $lineColor = $yAxisLineColor;
                 } else {
-                    list($color, $lineColor) = $this->getColorFromDataDescription($data_description);
+                    [$color, $lineColor] = $this->getColorFromDataDescription($data_description);
                 }
 
                 $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
-                $dataLabelsConfig = array(
-                    'enabled' => $data_description->value_labels || $std_err_labels_enabled,
-                    'settings' => array(
-                        'value_labels' => $data_description->value_labels,
-                        'error_labels' => $std_err_labels_enabled,
-                        'decimals' => $decimals
-                    ),
-                    'style' => array(
-                        'fontSize' => (11 + $font_size).'px',
-                        'fontWeight' => 'normal',
-                        'color' => $color,
-                        'textShadow' => false
-                    )
-                );
+                $dataLabelsConfig = ['enabled' => $data_description->value_labels || $std_err_labels_enabled, 'settings' => ['value_labels' => $data_description->value_labels, 'error_labels' => $std_err_labels_enabled, 'decimals' => $decimals], 'style' => ['fontSize' => (11 + $font_size).'px', 'fontWeight' => 'normal', 'color' => $color, 'textShadow' => false]];
 
-                $tooltipConfig = array();
-                $values = array();
+                $tooltipConfig = [];
+                $values = [];
 
                 // to display as pie chart:
                 if($data_description->display_type == 'pie')
@@ -982,45 +811,26 @@ class HighChart2
                     {
                         // If the first value, give it the yAxisColor so we don't skip
                         // that color in the dataset. Otherwise, pick the next color.
-                        $point = array(
-                            'name' => $this->_xAxisDataObject->getValue($index),
-                            'y' => $value,
-                            'color' => ($index == 0) ? $yAxisColor
-                                    : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT)
-                        );
+                        $point = ['name' => $this->_xAxisDataObject->getValue($index), 'y' => $value, 'color' => ($index == 0) ? $yAxisColor
+                                : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT)];
 
                         // N.B.: These are drilldown labels.
                         // X axis labels will be the same, but are plotted
                         // from the x axis object instance variable.
                         // See setXAxis() and _xAxisDataObject.
-                        $point['drilldown'] = array(
-                            'id' => $yAxisDataObject->getXId($index),
-                            'label' => $yAxisDataObject->getXValue($index)
-                        );
+                        $point['drilldown'] = ['id' => $yAxisDataObject->getXId($index), 'label' => $yAxisDataObject->getXValue($index)];
                         $values[] = $point;
 
                     } // foreach
 
                     $dataLabelsConfig  = array_merge(
                         $dataLabelsConfig,
-                        array(
-                            'color' => '#000000',
-                            'padding' => 10,
-                            'settings' => array(
-                                'maxL' => floor($this->_width*($this->limit<11?30:15)/580),
-                                'wrap' => floor($this->_width*($this->limit<11?15:15)/580),
-                                'decimals' => $decimals
-                            )
-                         )
+                        ['color' => '#000000', 'padding' => 10, 'settings' => ['maxL' => floor($this->_width*($this->limit<11?30:15)/580), 'wrap' => floor($this->_width*($this->limit<11?15:15)/580), 'decimals' => $decimals]]
                     );
 
                     $tooltipConfig = array_merge(
                         $tooltipConfig,
-                        array(
-                            'pointFormat' => "{series.name}: {point.y} <b>({point.percentage:.1f}%)</b>",
-                            'percentageDecimals' => 1,
-                            'valueDecimals' => $decimals
-                        )
+                        ['pointFormat' => "{series.name}: {point.y} <b>({point.percentage:.1f}%)</b>", 'percentageDecimals' => 1, 'valueDecimals' => $decimals]
                     );
 
                     $this->_chart['tooltip']['shared'] = false;
@@ -1031,9 +841,7 @@ class HighChart2
                     {
                         $dataLabelsConfig  = array_merge(
                             $dataLabelsConfig,
-                            array(
-                                'x' => 70
-                            )
+                            ['x' => 70]
                         );
                         $this->_chart['xAxis']['labels']['rotation'] = 0;
                     }
@@ -1041,32 +849,23 @@ class HighChart2
                     {
                         $dataLabelsConfig  = array_merge(
                             $dataLabelsConfig,
-                            array(
-                                'rotation' => -90,
-                                'align' => 'center',
-                                'y' => -70,
-                            )
+                            ['rotation' => -90, 'align' => 'center', 'y' => -70]
                         );
                     } // _swapXY
 
                     // set the label for each value:
                     foreach( $yAxisDataObject->getValues() as $index => $value)
                     {
-                        $point = array(
-                            'y' => $yAxisObject->log_scale && $value == 0 ? null : $value//,
-                        );
+                        $point = ['y' => $yAxisObject->log_scale && $value == 0 ? null : $value];
 
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
                         // (Though they are the same labels...)
-                        $point['drilldown'] = array(
-                            'id' => $yAxisDataObject->getXId($index),
-                            'label' => $yAxisDataObject->getXValue($index)
-                        );
+                        $point['drilldown'] = ['id' => $yAxisDataObject->getXId($index), 'label' => $yAxisDataObject->getXValue($index)];
 
                         try {
                             $point['percentage'] = $yAxisDataObject->getError($index);
-                        } catch (\Exception $e) {
+                        } catch (\Exception) {
 
                         }
 
@@ -1075,9 +874,7 @@ class HighChart2
 
                     $tooltipConfig = array_merge(
                         $tooltipConfig,
-                        array(
-                            'valueDecimals' => $decimals
-                        )
+                        ['valueDecimals' => $decimals]
                     );
                 } // if ($data_description->display_type == 'pie')
 
@@ -1086,7 +883,7 @@ class HighChart2
                     $values[$values_count - 1]['isRemainder'] = true;
                 }
 
-                $zIndex = isset($data_description->z_index) ? $data_description->z_index : $data_description_index;
+                $zIndex = $data_description->z_index ?? $data_description_index;
 
                 $dataSeriesName = $yAxisDataObject->getName();
                 if ($data_description->restrictedByRoles && $this->_showWarnings) {
@@ -1125,38 +922,10 @@ class HighChart2
                     ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
                     $values_count == 1;
 
-                $data_series_desc = array(
-                    'name' => $lookupDataSeriesName,
-                    'otitle' => $formattedDataSeriesName,
-                    'datasetId' => $data_description->id,
-                    'zIndex' => $zIndex,
-                    'color'=> $data_description->display_type == 'pie' ?
-                                                        null : $color,
-                    'type' => $data_description->display_type,
-                    'trackByArea'=>  $data_description->display_type == 'area' ||
-                                                        $data_description->display_type == 'areaspline',
-                    'dashStyle' => $data_description->line_type,
-                    'shadow' => $data_description->shadow,
-                    'groupPadding' => 0.05,
-                    'pointPadding' => 0,
-                    'borderWidth' => 0,
-                    'yAxis' => $yAxisIndex,
-                    'lineWidth' => $data_description->display_type !== 'scatter' ?
-                                                        $data_description->line_width + $font_size / 4 : 0,
-                    'marker' => array(
-                        'enabled' => $showMarker,
-                        'lineWidth' => 1,
-                        'lineColor' => $lineColor,
-                        'radius' => $font_size / 4 + 5
-                    ),
-                    'tooltip' => $tooltipConfig,
-                    'showInLegend' => true,
-                    'dataLabels' => $dataLabelsConfig,
-                    'data' => $values,
-                    'cursor' => 'pointer',
-                    'visible' => $visible,
-                    'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                ); // $data_series_desc
+                $data_series_desc = ['name' => $lookupDataSeriesName, 'otitle' => $formattedDataSeriesName, 'datasetId' => $data_description->id, 'zIndex' => $zIndex, 'color'=> $data_description->display_type == 'pie' ?
+                                                    null : $color, 'type' => $data_description->display_type, 'trackByArea'=>  $data_description->display_type == 'area' ||
+                                                    $data_description->display_type == 'areaspline', 'dashStyle' => $data_description->line_type, 'shadow' => $data_description->shadow, 'groupPadding' => 0.05, 'pointPadding' => 0, 'borderWidth' => 0, 'yAxis' => $yAxisIndex, 'lineWidth' => $data_description->display_type !== 'scatter' ?
+                                                    $data_description->line_width + $font_size / 4 : 0, 'marker' => ['enabled' => $showMarker, 'lineWidth' => 1, 'lineColor' => $lineColor, 'radius' => $font_size / 4 + 5], 'tooltip' => $tooltipConfig, 'showInLegend' => true, 'dataLabels' => $dataLabelsConfig, 'data' => $values, 'cursor' => 'pointer', 'visible' => $visible, 'isRestrictedByRoles' => $data_description->restrictedByRoles]; // $data_series_desc
 
                                 // set stacking
                 if($data_description->display_type!=='line')
@@ -1219,7 +988,7 @@ class HighChart2
         // build error data series and add it to chart
         if($data_description->std_err == 1 && $data_description->display_type != 'pie')
         {
-            $error_series = array();
+            $error_series = [];
             $errorCount = $yAxisDataObject->getErrorCount();
             for($i = 0; $i < $errorCount; $i++)
             {
@@ -1227,12 +996,7 @@ class HighChart2
                 $v = $yAxisDataObject->getValue($i);
                 $e = $yAxisDataObject->getError($i);
                 $has_value = isset($v) && $v != 0;
-                $error_series[] = array(
-                            'x' => $i,
-                            'low' => $has_value ? $v-$e : null,
-                            'high' => $has_value ? $v+$e : null,
-                            'stderr' => $e
-                );
+                $error_series[] = ['x' => $i, 'low' => $has_value ? $v-$e : null, 'high' => $has_value ? $v+$e : null, 'stderr' => $e];
             }
 
             // -- set error dataseries name and visibility --
@@ -1255,7 +1019,7 @@ class HighChart2
             }
 
             // create the data series description:
-            $err_data_series_desc = array(
+            $err_data_series_desc = [
                 //'name' => $dsn,
                 'name' => $lookupDataSeriesName,
                 'showInLegend' => true,
@@ -1269,14 +1033,12 @@ class HighChart2
                 'pointPadding' => 0,
                 'lineWidth' => 2,
                 'yAxis' => $yAxisIndex,
-                'tooltip' => array(
-                        'valueDecimals' => $semDecimals
-                    ),
+                'tooltip' => ['valueDecimals' => $semDecimals],
                 'data' => $error_series,
                 'cursor' => 'pointer',
                 'visible' => $visible,
                 'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                );
+            ];
             if(! $data_description->log_scale)
             {
                 $this->_chart['series'][] = $err_data_series_desc;
@@ -1293,14 +1055,7 @@ class HighChart2
                 return;
         }
 
-        $this->_chart['alignedLabels']['items'][] = array(
-            'html' => implode('<br />', $roleRestrictionsStrings),
-
-            'align' => 'left',
-            'backgroundColor' => '#DFDFDF',
-            'verticalAlign' => 'bottom',
-            'y' => 15,
-        );
+        $this->_chart['alignedLabels']['items'][] = ['html' => implode('<br />', $roleRestrictionsStrings), 'align' => 'left', 'backgroundColor' => '#DFDFDF', 'verticalAlign' => 'bottom', 'y' => 15];
     }
 
     // ---------------------------------------------------------
@@ -1332,14 +1087,7 @@ class HighChart2
         $offset = null
     ) {
 
-        $returnData = array(
-            'totalCount' => $this->_total,
-            'success' => true,
-            'message' => 'success',
-            'data' => array(
-                $this->_chart
-            )
-        );
+        $returnData = ['totalCount' => $this->_total, 'success' => true, 'message' => 'success', 'data' => [$this->_chart]];
 
         return $returnData;
     } // exportJsonStore()
@@ -1351,16 +1099,7 @@ class HighChart2
      * @param $axisIndex The axis index
      */
     protected function getAxisOverrides($axis, $origLabel, $axisIndex) {
-        // XDMoD >= 5.6 overrides are keyed to the axis index
-        if(isset($axis->{'original'.$axisIndex})) {
-            return $axis->{'original'.$axisIndex};
-        }
-        // XDMoD < 5.6 stored config overrides indexed on the text string
-        // of the axis label
-        if(isset($axis->{$origLabel})) {
-            return $axis->{$origLabel};
-        }
-        return null;
+        return $axis->{'original'.$axisIndex} ?? $axis->{$origLabel} ?? null;
     }
 
     protected function getColorFromDataDescription($data_description) {
@@ -1374,6 +1113,6 @@ class HighChart2
         $color = '#'.str_pad(dechex($color_value), 6, '0', STR_PAD_LEFT);
         $lineColor = '#'.str_pad(dechex(\DataWarehouse\Visualization::alterBrightness($color_value, -70)), 6, '0', STR_PAD_LEFT);
 
-        return array($color, $lineColor);
+        return [$color, $lineColor];
     }
 } // class HighChart2

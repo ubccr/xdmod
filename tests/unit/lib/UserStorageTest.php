@@ -4,25 +4,25 @@ namespace UnitTests;
 
 use UnitTests\TestHelpers\mock\MockXDUser;
 
-class UserStorageTest extends \PHPUnit_Framework_TestCase
+class UserStorageTest extends \PHPUnit\Framework\TestCase
 {
-    public function testGet() {
+    public function testGet(): void {
 
         $mockuser = new MockXDUser();
         $ustore = new \UserStorage($mockuser, "TEST");
 
         $output = $ustore->get();
 
-        $this->assertInternalType('array', $output);
+        $this->assertIsArray($output);
         $this->assertCount(0, $output);
     }
 
-    public function testGetExisting() {
+    public function testGetExisting(): void {
 
         $mockuser = new MockXDUser();
         $ustore = new \UserStorage($mockuser, "TEST");
 
-        $input = array('test' => '1');
+        $input = ['test' => '1'];
         $res = $ustore->insert($input);
 
         $this->assertArrayHasKey('test', $res);
@@ -31,7 +31,7 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
 
         $output = $ustore->get();
 
-        $this->assertInternalType('array', $output);
+        $this->assertIsArray($output);
         $this->assertCount(1, $output);
 
         $this->assertArrayHasKey('test', $output[0]);
@@ -40,12 +40,12 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
 
     }
 
-    public function testGetById() {
+    public function testGetById(): void {
 
         $mockuser = new MockXDUser();
         $ustore = new \UserStorage($mockuser, "TEST");
 
-        $input = array('test' => '1');
+        $input = ['test' => '1'];
         $res = $ustore->insert($input);
 
         $this->assertArrayHasKey('recordid', $res);
@@ -58,7 +58,7 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(null, $output);
     }
 
-    public function testGetByIdNoExisting() {
+    public function testGetByIdNoExisting(): void {
         $mockuser = new MockXDUser();
         $ustore = new \UserStorage($mockuser, "TEST");
 
@@ -66,18 +66,18 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(null, $output);
 
         // doubl check that the class still works
-        $input = array('test' => '1');
+        $input = ['test' => '1'];
         $res = $ustore->insert($input);
         $this->assertArrayHasKey('test', $ustore->getById($res['recordid']));
     }
 
-    public function testInsertLimits() {
+    public function testInsertLimits(): void {
         $mockuser = new MockXDUser();
         $ustore = new \UserStorage($mockuser, "TEST");
 
         for($i =0; $i < (\UserStorage::MAX_RECORDS + 1); $i++)
         {
-            $tmp = array();
+            $tmp = [];
             $res = $ustore->insert($tmp);
             if($i < \UserStorage::MAX_RECORDS) {
                 $this->assertArrayHasKey('recordid', $res);
@@ -87,13 +87,13 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testUpsertLimits() {
+    public function testUpsertLimits(): void {
         $mockuser = new MockXDUser();
         $ustore = new \UserStorage($mockuser, "TEST");
 
         for($i =0; $i < (\UserStorage::MAX_RECORDS + 1); $i++)
         {
-            $tmp = array();
+            $tmp = [];
             $res = $ustore->upsert($i, $tmp);
             if($i < \UserStorage::MAX_RECORDS) {
                 $this->assertArrayHasKey('recordid', $res);
@@ -106,7 +106,7 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
 
     private function upsertHelper($ustore, $recordid)
     {
-        $tmp = array('value'.$recordid => $recordid);
+        $tmp = ['value'.$recordid => $recordid];
         $result = $ustore->upsert($recordid, $tmp);
         $this->assertArrayHasKey('recordid', $result);
         $this->assertArrayHasKey('value'.$recordid, $result);
@@ -117,7 +117,7 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
 
     private function insertHelper($ustore)
     {
-        $tmp = array('value' => 'stuff');
+        $tmp = ['value' => 'stuff'];
         $result = $ustore->insert($tmp);
         $this->assertArrayHasKey('recordid', $result);
 
@@ -129,7 +129,7 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
         return $result['recordid'];
     }
 
-    public function testBigUpsert() {
+    public function testBigUpsert(): void {
         $mockuser = new MockXDUser();
         $ustore = new \UserStorage($mockuser, "TEST");
 
@@ -137,14 +137,14 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
         $this->upsertHelper($ustore, 1);
         $this->upsertHelper($ustore, PHP_INT_MAX);
 
-        $tmp1 = array("value1" => "1");
+        $tmp1 = ["value1" => "1"];
         $res1 = $ustore->insert($tmp1);
         $this->assertArrayHasKey('recordid', $res1);
         $this->assertNotEquals(0, $res1['recordid']);
         $this->assertNotEquals(1, $res1['recordid']);
         $this->assertNotEquals(PHP_INT_MAX, $res1['recordid']);
 
-        $tmp2 = array("value1" => "1");
+        $tmp2 = ["value1" => "1"];
         $res2 = $ustore->insert($tmp2);
         $this->assertArrayHasKey('recordid', $res2);
         $this->assertNotEquals(0, $res2['recordid']);
@@ -153,7 +153,7 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEquals($res1['recordid'], $res2['recordid']);
     }
 
-    public function testDelById() {
+    public function testDelById(): void {
         $mockuser = new MockXDUser();
         $ustore = new \UserStorage($mockuser, "TEST");
 
@@ -176,11 +176,11 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testDelById2() {
+    public function testDelById2(): void {
         $mockuser = new MockXDUser();
         $ustore = new \UserStorage($mockuser, "TEST");
 
-        $recordids = array();
+        $recordids = [];
         for($i=0; $i< \UserStorage::MAX_RECORDS; $i++) {
             $recordids[ "".$this->insertHelper($ustore)] = 1;
         }
@@ -196,7 +196,7 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testDelByIdNoExisting() {
+    public function testDelByIdNoExisting(): void {
         $mockuser = new MockXDUser();
         $ustore = new \UserStorage($mockuser, "TEST");
 
@@ -209,7 +209,7 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($result, 1);
     }
 
-    public function testDel() {
+    public function testDel(): void {
         $mockuser = new MockXDUser();
         $ustore = new \UserStorage($mockuser, "TEST");
 
@@ -223,7 +223,7 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(null, $result);
     }
 
-    public function testDelByIdString() {
+    public function testDelByIdString(): void {
         $mockuser = new MockXDUser();
         $ustore = new \UserStorage($mockuser, "TEST");
 

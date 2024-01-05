@@ -15,20 +15,6 @@ abstract class Migration
 {
 
     /**
-     * Version before migration.
-     *
-     * @var string
-     */
-    protected $currentVersion;
-
-    /**
-     * Version to migrate to.
-     *
-     * @var string
-     */
-    protected $newVersion;
-
-    /**
      * An empty default Configuration object.
      *
      * @var Configuration
@@ -48,12 +34,14 @@ abstract class Migration
      * @param string $currentVersion The current Open XDMoD version.
      * @param string $newVersion The version to migrate to.
      */
-    public function __construct($currentVersion, $newVersion)
+    public function __construct(/**
+     * Version before migration.
+     */
+    protected $currentVersion, /**
+     * Version to migrate to.
+     */
+    protected $newVersion)
     {
-        $this->currentVersion = $currentVersion;
-        $this->newVersion     = $newVersion;
-
-
         $this->logger = Log::singleton('null');
 
         $this->config = Configuration::factory(
@@ -69,7 +57,7 @@ abstract class Migration
      *
      * @param LoggerInterface $logger The Monolog Logger instance.
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }

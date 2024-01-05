@@ -29,7 +29,7 @@ class AuthenticationControllerProvider extends BaseControllerProvider
      *
      * @throws \Exception if there is a problem retrieving email addresses from configuration files.
      */
-    public function __construct(array $params = array())
+    public function __construct(array $params = [])
     {
         parent::__construct($params);
     }
@@ -38,7 +38,7 @@ class AuthenticationControllerProvider extends BaseControllerProvider
     /**
      * @see aBaseControllerProvider::setupRoutes
      */
-    public function setupRoutes(Application $app, \Silex\ControllerCollection $controller)
+    public function setupRoutes(Application $app, \Silex\ControllerCollection $controller): void
     {
         $root = $this->prefix;
         $controller->post("$root/login", '\Rest\Controllers\AuthenticationControllerProvider::login');
@@ -66,10 +66,7 @@ class AuthenticationControllerProvider extends BaseControllerProvider
 
         $user->postLogin();
 
-        return $app->json(array(
-            'success' => true,
-            'results' => array('token' => $user->getSessionToken(), 'name' => $user->getFormalName())
-        ));
+        return $app->json(['success' => true, 'results' => ['token' => $user->getSessionToken(), 'name' => $user->getFormalName()]]);
     }
 
     /**
@@ -87,10 +84,7 @@ class AuthenticationControllerProvider extends BaseControllerProvider
         $authInfo = Authentication::getAuthenticationInfo($request);
         \XDSessionManager::logoutUser($authInfo['token']);
 
-        return $app->json(array(
-            'success' => true,
-            'message' => 'User logged out successfully'
-        ));
+        return $app->json(['success' => true, 'message' => 'User logged out successfully']);
     }
 
     /**

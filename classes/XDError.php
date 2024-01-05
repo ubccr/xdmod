@@ -5,16 +5,16 @@
  */
 abstract class XDError
 {
-	const UnknownXdmodException = -1;
+	public const UnknownXdmodException = -1;
 
-	const NotAuthenticated = 1;
-	const SessionExpired = 2;
+	public const NotAuthenticated = 1;
+	public const SessionExpired = 2;
 
-	const QueryException = 100;
-	const QueryUnknownGroupBy = 101;
-	const QueryUnavailableTimeAggregationUnit = 102;
-	const QueryAccessDenied = 103;
-	const QueryMissingFilterListTable = 106;
+	public const QueryException = 100;
+	public const QueryUnknownGroupBy = 101;
+	public const QueryUnavailableTimeAggregationUnit = 102;
+	public const QueryAccessDenied = 103;
+	public const QueryMissingFilterListTable = 106;
 
 	/**
 	 * Get a mapping of error names to error codes by reflecting the constants
@@ -24,7 +24,7 @@ abstract class XDError
 	 *     An associative array mapping error names to error codes.
 	 */
 	public static function getErrorCodes() {
-		$reflection = new ReflectionClass(__CLASS__);
+		$reflection = new ReflectionClass(self::class);
 		return $reflection->getConstants();
 	}
 }

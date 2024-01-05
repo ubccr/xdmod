@@ -11,18 +11,12 @@ try {
         CONFIG_DIR
     );
 
-    $returnData = array(
-        'success' => true,
-        'response' => $config['menu'],
-    );
+    $returnData = ['success' => true, 'response' => $config['menu']];
 
     $returnData['count'] = count($returnData['response']);
 
 } catch (Exception $e) {
-    $returnData = array(
-        'success' => false,
-        'message' => $e->getMessage(),
-    );
+    $returnData = ['success' => false, 'message' => $e->getMessage()];
 }
 
 echo json_encode($returnData);

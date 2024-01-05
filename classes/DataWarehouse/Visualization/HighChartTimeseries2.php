@@ -84,7 +84,7 @@ class HighChartTimeseries2 extends HighChart2
         $limit = null,
         $offset = null,
         $summarizeDataseries = false
-    ) {   // JMS: clearly we do not have enough parameters.
+    ): void {   // JMS: clearly we do not have enough parameters.
                                         // support min/max/average 'truncation' of dataset
 
 
@@ -94,15 +94,15 @@ class HighChartTimeseries2 extends HighChart2
         $colorGenerator = new \DataWarehouse\Visualization\ColorGenerator();
 
         $dataSeriesCount  = count($data_series);
-        $dataSources = array();
+        $dataSources = [];
 
         // ---- set up yAxisArray ----
 
         // prepare yAxisArray for each yAxis we will plot:
-        $yAxisArray = array();
+        $yAxisArray = [];
 
         // Keep track of the unique data unit names
-        $yUnitNames = array();
+        $yUnitNames = [];
 
         $multiCategory = false;
         foreach($data_series as $data_description_index => $data_description)
@@ -121,7 +121,7 @@ class HighChartTimeseries2 extends HighChart2
                 $realm = \Realm\Realm::factory($data_description->realm);
                 $stat = $realm->getStatisticObject($data_description->metric);
             }
-            catch(\Exception $ex)
+            catch(\Exception)
             {
                 continue;
             }
@@ -143,16 +143,16 @@ class HighChartTimeseries2 extends HighChart2
 
             if(!isset($yAxisArray[$axisId]))
             {
-                $yAxisArray[$axisId] = array();
+                $yAxisArray[$axisId] = [];
             }
 
             $yAxisArray[$axisId][] = $data_description;
         } // foreach($data_series ...
 
         $yAxisCount = count($yAxisArray);
-        $results = array();
+        $results = [];
 
-        $globalFilterDescriptions = array();
+        $globalFilterDescriptions = [];
 
         // ==== Big long effing loop ====
         // --- Walk through y axes and do some setup ---
@@ -172,7 +172,7 @@ class HighChartTimeseries2 extends HighChart2
 
                 // @refer ComplexDataset::determineRoleParameters()
                 // why this is done twice is a complete mystery to me...
-                $groupedRoleParameters = array();
+                $groupedRoleParameters = [];
                 if(!$data_description->ignore_global)
                 {
                     foreach($global_filters->data as $global_filter)
@@ -181,7 +181,7 @@ class HighChartTimeseries2 extends HighChart2
                         {
                             if(!isset($groupedRoleParameters[$global_filter->dimension_id]))
                             {
-                                $groupedRoleParameters[$global_filter->dimension_id] = array();
+                                $groupedRoleParameters[$global_filter->dimension_id] = [];
                             }
                             $groupedRoleParameters[$global_filter->dimension_id][] = $global_filter->value_id;
                         }
@@ -269,37 +269,8 @@ class HighChartTimeseries2 extends HighChart2
                     $yAxisColor = '#'.str_pad(dechex($yAxisColorValue), 6, '0', STR_PAD_LEFT);
                     $yAxisColorUsedBySeries = false;
 
-                    $yAxis = array(
-                        'title' => array(
-                            'text' => $yAxisLabel,
-                            'style' => array(
-                                'color'=> $yAxisColor,
-                                'fontWeight'=> 'bold',
-                                'fontSize' => (12 + $font_size).'px'
-                            )
-                        ),
-                        'otitle' => $originalYAxisLabel,
-                        'dtitle' => $defaultYAxisLabel,
-                        'labels' =>
-                        array(
-                            'style' => array(
-                                'fontWeight'=> 'normal',
-                                'fontSize' => (11 + $font_size).'px'
-                            )
-                        ),
-                        'opposite' => $yAxisIndex % 2 == 1,
-                        'min' => $yAxisMin,
-                        'max' => $yAxisMax,
-                        'startOnTick' => $yAxisMin == null,
-                        'endOnTick' => $yAxisMax == null,
-                        'type' => $data_description->log_scale? 'logarithmic' : 'linear',
-                        'showLastLabel' =>  $this->_chart['title']['text'] != '',
-                        'gridLineWidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8),
-                        'lineWidth' => 2 + $font_size/4,
-                        'allowDecimals' => $decimals > 0,
-                        'tickInterval' => $data_description->log_scale ?1:null,
-                        'maxPadding' =>  max(0.05, ($data_description->value_labels?0.25:0) + ($data_description->std_err?.25:0))
-                    );
+                    $yAxis = ['title' => ['text' => $yAxisLabel, 'style' => ['color'=> $yAxisColor, 'fontWeight'=> 'bold', 'fontSize' => (12 + $font_size).'px']], 'otitle' => $originalYAxisLabel, 'dtitle' => $defaultYAxisLabel, 'labels' =>
+                    ['style' => ['fontWeight'=> 'normal', 'fontSize' => (11 + $font_size).'px']], 'opposite' => $yAxisIndex % 2 == 1, 'min' => $yAxisMin, 'max' => $yAxisMax, 'startOnTick' => $yAxisMin == null, 'endOnTick' => $yAxisMax == null, 'type' => $data_description->log_scale? 'logarithmic' : 'linear', 'showLastLabel' =>  $this->_chart['title']['text'] != '', 'gridLineWidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8), 'lineWidth' => 2 + $font_size/4, 'allowDecimals' => $decimals > 0, 'tickInterval' => $data_description->log_scale ?1:null, 'maxPadding' =>  max(0.05, ($data_description->value_labels?0.25:0) + ($data_description->std_err?.25:0))];
 
                     $this->_chart['yAxis'][] = $yAxis;
                 } // if($yAxis == null)
@@ -308,7 +279,7 @@ class HighChartTimeseries2 extends HighChart2
 
                 $xAxisData = $dataset->getTimestamps();
 
-                $start_ts_array = array();
+                $start_ts_array = [];
                 foreach($xAxisData->getStartTs() as $st)
                 {
                     $start_ts_array[] = $st*1000;
@@ -339,43 +310,8 @@ class HighChartTimeseries2 extends HighChart2
                     $end_ts = strtotime($this->_endDate)*1000;
                     $expectedDataPointCount = ($end_ts - $start_ts) / $pointInterval;
 
-                    $xAxis = array(
-                        'type' => 'datetime',
-                        'tickLength' => 0,
-                        'title' => array(
-                            'text' => $xAxisLabel,
-                            'style' => array(
-                                'color'=> '#000000',
-                                'fontWeight'=> 'bold',
-                                'fontSize' => (12 + $font_size).'px'
-                            )
-                        ),
-                        'otitle' => $originalXAxisLabel,
-                        'dtitle' => $defaultXAxisLabel,
-                        'labels' => $this->_swapXY ? array(
-                            'enabled' => true,
-                            'staggerLines' => 1,
-                            'format' => $xAxisLabelFormat,
-                            'style' => array(
-                                'fontWeight'=> 'normal',
-                                'fontSize' => (11 + $font_size).'px',
-                                'marginTop' => $font_size * 2
-                            )
-                        )
-                        : array(
-                            'enabled' => true,
-                            'staggerLines' => 1,
-                            'rotation' => $xAxisData->getName() != 'Year'  && $expectedDataPointCount > 25 ? -90 : 0,
-                            'format' => $xAxisLabelFormat,
-                            'style' => array(
-                                'fontSize' => (8 + $font_size).'px',
-                                'marginTop' => $font_size * 2
-                            )
-                        ),
-                        'minTickInterval' => $pointInterval,
-                        'minRange' => $pointInterval,
-                        'lineWidth' => 2 + $font_size / 4
-                    );
+                    $xAxis = ['type' => 'datetime', 'tickLength' => 0, 'title' => ['text' => $xAxisLabel, 'style' => ['color'=> '#000000', 'fontWeight'=> 'bold', 'fontSize' => (12 + $font_size).'px']], 'otitle' => $originalXAxisLabel, 'dtitle' => $defaultXAxisLabel, 'labels' => $this->_swapXY ? ['enabled' => true, 'staggerLines' => 1, 'format' => $xAxisLabelFormat, 'style' => ['fontWeight'=> 'normal', 'fontSize' => (11 + $font_size).'px', 'marginTop' => $font_size * 2]]
+                    : ['enabled' => true, 'staggerLines' => 1, 'rotation' => $xAxisData->getName() != 'Year'  && $expectedDataPointCount > 25 ? -90 : 0, 'format' => $xAxisLabelFormat, 'style' => ['fontSize' => (8 + $font_size).'px', 'marginTop' => $font_size * 2]], 'minTickInterval' => $pointInterval, 'minRange' => $pointInterval, 'lineWidth' => 2 + $font_size / 4];
                      $this->_chart['xAxis'] = $xAxis;
                 } // if(!isset($xAxis))
 
@@ -462,35 +398,25 @@ class HighChartTimeseries2 extends HighChart2
 
                         // --- set up $dataLabelsConfig, $seriesValues, $tooltipConfig ---
                         $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
-                        $dataLabelsConfig = array(
-                            'enabled' => $data_description->value_labels || $std_err_labels_enabled,
-                            'settings' => array(
-                                'value_labels' => $data_description->value_labels,
-                                'error_labels' => $std_err_labels_enabled,
-                                'decimals' => $decimals
-                            ),
-                            'style' => array(
-                                'fontSize' => (11 + $font_size).'px',
-                                'fontWeight'=> 'normal',
-                                // this appears to fix a Highcharts bug that
-                                // makes text fuzzy in the color #0053b9
-                                'textShadow' => false,
-                                'color' => $color
-                             )
-                        );
-                        $tooltipConfig = array();
-                        $seriesValues = array();
+                        $dataLabelsConfig = ['enabled' => $data_description->value_labels || $std_err_labels_enabled, 'settings' => ['value_labels' => $data_description->value_labels, 'error_labels' => $std_err_labels_enabled, 'decimals' => $decimals], 'style' => [
+                            'fontSize' => (11 + $font_size).'px',
+                            'fontWeight'=> 'normal',
+                            // this appears to fix a Highcharts bug that
+                            // makes text fuzzy in the color #0053b9
+                            'textShadow' => false,
+                            'color' => $color,
+                        ]];
+                        $tooltipConfig = [];
+                        $seriesValues = [];
                         if($data_description->display_type == 'pie')
                         {
-                            throw new \Exception(get_class($this)." ERROR: chart display_type 'pie' reached in timeseries plot.");
+                            throw new \Exception(static::class." ERROR: chart display_type 'pie' reached in timeseries plot.");
                         } else {
                             if($this->_swapXY)
                             {
                                 $dataLabelsConfig  = array_merge(
                                     $dataLabelsConfig,
-                                    array(
-                                        'x' => 70
-                                    )
+                                    ['x' => 70]
                                 );
                                 $this->_chart['xAxis']['labels']['rotation'] = 0;
                             }
@@ -498,25 +424,18 @@ class HighChartTimeseries2 extends HighChart2
                             {
                                 $dataLabelsConfig  = array_merge(
                                     $dataLabelsConfig,
-                                    array(
-                                        'rotation' => -90,
-                                        'align' => 'center',
-                                        'y' => -70,
-                                    )
+                                    ['rotation' => -90, 'align' => 'center', 'y' => -70]
                                 );
                             } // if($this->_swapXY)
 
                             // set up seriesValues
                             foreach($values as $i => $v)
                             {
-                                $seriesValue = array(
-                                    'x' => $start_ts_array[$i],
-                                    'y' => $v,
-                                );
+                                $seriesValue = ['x' => $start_ts_array[$i], 'y' => $v];
 
                                 try {
                                     $seriesValue['percentage'] = $yAxisDataObject->getError($i);
-                                } catch (\Exception $e) {
+                                } catch (\Exception) {
 
                                 }
 
@@ -524,13 +443,11 @@ class HighChartTimeseries2 extends HighChart2
                             }
                             $tooltipConfig = array_merge(
                                 $tooltipConfig,
-                                array(
-                                    'valueDecimals' => $decimals
-                                )
+                                ['valueDecimals' => $decimals]
                             );
                         } // ($data_description->display_type == 'pie')
 
-                        $zIndex = isset($data_description->z_index) ? $data_description->z_index : $data_description_index;
+                        $zIndex = $data_description->z_index ?? $data_description_index;
 
                         $areMultipleDataSeries = $dataSeriesCount > 1;
                         $dataSeriesName = $areMultipleDataSeries ? $yAxisDataObject->getName() : $yAxisDataObject->getGroupName();
@@ -574,41 +491,9 @@ class HighChartTimeseries2 extends HighChart2
                         }
 
                         // note that this is governed by XId and XValue in the non-timeseries case!
-                        $drilldown = array('id' => $yAxisDataObject->getGroupId(), 'label' => $yAxisDataObject->getGroupName());
+                        $drilldown = ['id' => $yAxisDataObject->getGroupId(), 'label' => $yAxisDataObject->getGroupName()];
 
-                        $data_series_desc = array(
-                            'name' => $lookupDataSeriesName,
-                            'otitle' => $formattedDataSeriesName,
-                            'datasetId' => $data_description->id,
-                            'zIndex' => $zIndex,
-                            'drilldown' => $drilldown,
-                            'color'=> $data_description->display_type == 'pie'? null: $color,
-                            'trackByArea'=>  $data_description->display_type == 'area' ||  $data_description->display_type == 'areaspline',
-                            'type' => $data_description->display_type,
-                            'dashStyle' => $data_description->line_type,
-                            'shadow' => $data_description->shadow,
-                            'groupPadding' => 0.1,
-                            'pointPadding' => 0,
-                            'borderWidth' => 0,
-                            'yAxis' => $yAxisIndex,
-                            'lineWidth' =>  $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0,
-                            'showInLegend' => $data_description->display_type != 'pie',
-                            'connectNulls' => $data_description->display_type == 'line' || $data_description->display_type == 'spline',
-                            'marker' => array(
-                                'enabled' => $showMarker,
-                                'lineWidth' => 1,
-                                'lineColor' => $lineColor,
-                                'radius' => $font_size/4 + 5
-                            ),
-                            'tooltip' => $tooltipConfig,
-                            'dataLabels' => $dataLabelsConfig,
-                            'data' => $seriesValues,
-                            'cursor' => 'pointer',
-                            'visible' => $visible,
-                            'pointRange' => $pointInterval,
-                            'isRemainder' => $isRemainder,
-                            'isRestrictedByRoles' => $data_description->restrictedByRoles
-                        ); // $data_series_desc
+                        $data_series_desc = ['name' => $lookupDataSeriesName, 'otitle' => $formattedDataSeriesName, 'datasetId' => $data_description->id, 'zIndex' => $zIndex, 'drilldown' => $drilldown, 'color'=> $data_description->display_type == 'pie'? null: $color, 'trackByArea'=>  $data_description->display_type == 'area' ||  $data_description->display_type == 'areaspline', 'type' => $data_description->display_type, 'dashStyle' => $data_description->line_type, 'shadow' => $data_description->shadow, 'groupPadding' => 0.1, 'pointPadding' => 0, 'borderWidth' => 0, 'yAxis' => $yAxisIndex, 'lineWidth' =>  $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0, 'showInLegend' => $data_description->display_type != 'pie', 'connectNulls' => $data_description->display_type == 'line' || $data_description->display_type == 'spline', 'marker' => ['enabled' => $showMarker, 'lineWidth' => 1, 'lineColor' => $lineColor, 'radius' => $font_size/4 + 5], 'tooltip' => $tooltipConfig, 'dataLabels' => $dataLabelsConfig, 'data' => $seriesValues, 'cursor' => 'pointer', 'visible' => $visible, 'pointRange' => $pointInterval, 'isRemainder' => $isRemainder, 'isRestrictedByRoles' => $data_description->restrictedByRoles]; // $data_series_desc
 
                         if($data_description->display_type!=='line')
                         {
@@ -631,22 +516,20 @@ class HighChartTimeseries2 extends HighChart2
                         // ---- Add a trend line on the dataset ----
                         if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
                         {
-                            $newValues = array_filter($values, function ($value) {
-                                return $value !== null;
-                            });
+                            $newValues = array_filter($values, fn($value) => $value !== null);
 
                             $new_values_count = count($newValues);
 
                             if($new_values_count > 1)
                             {
-                                list($m,$b,$r, $r_squared) = \xd_regression\linear_regression(array_keys($newValues), array_values($newValues));
-                                $trend_points = array();
+                                [$m, $b, $r, $r_squared] = \xd_regression\linear_regression(array_keys($newValues), array_values($newValues));
+                                $trend_points = [];
                                 foreach($newValues as $ii => $value) //first first positive point on trend line since when logscale negative values make it barf
                                 {
                                     $y = ($m*$ii)+$b;
                                     if(!$data_description->log_scale || $y > 0)
                                     {
-                                        $trend_points[] = array($start_ts_array[$ii], $y);
+                                        $trend_points[] = [$start_ts_array[$ii], $y];
                                     }
                                 }
 
@@ -668,36 +551,7 @@ class HighChartTimeseries2 extends HighChart2
                                 {
                                     $visible = $data_description->visibility->{$dsn};
                                 }
-                                $data_series_desc = array(
-                                    'name' => $lookupDataSeriesName,
-                                    'otitle' => $dsn,
-                                    'zIndex' => $zIndex,
-                                    'datasetId' => $data_description->id,
-                                    'drilldown' => $drilldown,
-                                    'color'=> $color,
-                                    'type' => $data_description->log_scale?'spline':'line',
-                                    'shadow' => $data_description->shadow,
-                                    'groupPadding' => 0.05,
-                                    'pointPadding' => 0,
-                                    'borderWidth' => 0,
-                                    'enableMouseTracking' => false,
-                                    'yAxis' => $yAxisIndex,
-                                    'lineWidth' => 2 + $font_size/4.0,
-                                    'showInLegend' => true,
-                                    'marker' => array(
-                                        'enabled' => false,
-                                        'hover' => array(
-                                            'enabled' => false
-                                        )
-                                    ),
-                                    'visible' => $visible,
-                                    'dashStyle' => 'ShortDot',
-                                    'm' => $m,
-                                    'b' => $b,
-                                    'data' => $trend_points,
-                                    'isRemainder' => $isRemainder,
-                                    'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                                );
+                                $data_series_desc = ['name' => $lookupDataSeriesName, 'otitle' => $dsn, 'zIndex' => $zIndex, 'datasetId' => $data_description->id, 'drilldown' => $drilldown, 'color'=> $color, 'type' => $data_description->log_scale?'spline':'line', 'shadow' => $data_description->shadow, 'groupPadding' => 0.05, 'pointPadding' => 0, 'borderWidth' => 0, 'enableMouseTracking' => false, 'yAxis' => $yAxisIndex, 'lineWidth' => 2 + $font_size/4.0, 'showInLegend' => true, 'marker' => ['enabled' => false, 'hover' => ['enabled' => false]], 'visible' => $visible, 'dashStyle' => 'ShortDot', 'm' => $m, 'b' => $b, 'data' => $trend_points, 'isRemainder' => $isRemainder, 'isRestrictedByRoles' => $data_description->restrictedByRoles];
                                 $this->_chart['series'][] = $data_series_desc;
                             } // if($new_values_count > 1)
 
@@ -710,7 +564,7 @@ class HighChartTimeseries2 extends HighChart2
                             $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
 
                             $errorCount = $yAxisDataObject->getErrorCount();
-                            $error_series = array();
+                            $error_series = [];
 
                             for($i = 0; $i < $errorCount; $i++)
                             {
@@ -718,12 +572,7 @@ class HighChartTimeseries2 extends HighChart2
                                 $v = $yAxisDataObject->getValue($i);
                                 $e = $yAxisDataObject->getError($i);
                                 $has_value = ( isset($v) && ($v != 0) );
-                                $error_series[] = array(
-                                    'x' => $start_ts_array[$i],
-                                    'low' => $has_value ? $v-$e : null,
-                                    'high' => $has_value ? $v+$e : null,
-                                    'stderr' => $e
-                                );
+                                $error_series[] = ['x' => $start_ts_array[$i], 'low' => $has_value ? $v-$e : null, 'high' => $has_value ? $v+$e : null, 'stderr' => $e];
                             } // for $i ...
                             $dsn = 'Std Err: '.$formattedDataSeriesName;
 
@@ -742,29 +591,7 @@ class HighChartTimeseries2 extends HighChart2
                                 $visible = $data_description->visibility->{$dsn};
                             }
 
-                            $err_data_series_desc = array(
-                                'name' => $lookupDataSeriesName,
-                                'showInLegend' => true,
-                                'otitle' => $dsn,
-                                'zIndex' => $zIndex,
-                                'datasetId' => $data_description->id,
-                                'drilldown' => $drilldown,
-                                'color'=> $error_color,
-                                'type' => 'errorbar',
-                                'shadow' => $data_description->shadow,
-                                'groupPadding' => 0.05,
-                                'lineWidth' =>2 + $font_size/4,
-                                'pointPadding' => 0,
-                                'yAxis' => $yAxisIndex,
-                                'tooltip' => array(
-                                    'valueDecimals' => $semDecimals
-                                ),
-                                'data' => $error_series,
-                                'cursor' => 'pointer',
-                                'visible' => $visible,
-                                'isRemainder' => $isRemainder,
-                                'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                            );
+                            $err_data_series_desc = ['name' => $lookupDataSeriesName, 'showInLegend' => true, 'otitle' => $dsn, 'zIndex' => $zIndex, 'datasetId' => $data_description->id, 'drilldown' => $drilldown, 'color'=> $error_color, 'type' => 'errorbar', 'shadow' => $data_description->shadow, 'groupPadding' => 0.05, 'lineWidth' =>2 + $font_size/4, 'pointPadding' => 0, 'yAxis' => $yAxisIndex, 'tooltip' => ['valueDecimals' => $semDecimals], 'data' => $error_series, 'cursor' => 'pointer', 'visible' => $visible, 'isRemainder' => $isRemainder, 'isRestrictedByRoles' => $data_description->restrictedByRoles];
 
                             if(! $data_description->log_scale)
                             {

@@ -20,7 +20,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
      *
      * @var string
      */
-    const _QUERIES_STORE = 'queries_store';
+    public const _QUERIES_STORE = 'queries_store';
 
 # ==============================================================================
 
@@ -33,14 +33,12 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
      * @param ControllerCollection $controller
      * @return null
      */
-    public function setupRoutes(Application $app, ControllerCollection $controller)
+    public function setupRoutes(Application $app, ControllerCollection $controller): void
     {
         $root = $this->prefix;
-        $base = '\Rest\Controllers\MetricExplorerControllerProvider';
+        $base = \Rest\Controllers\MetricExplorerControllerProvider::class;
 
-        $idConverter = function ($id) {
-            return (int)$id;
-        };
+        $idConverter = fn($id) => (int)$id;
 
         // QUERY ROUTES ========================================================
         $controller
@@ -67,17 +65,12 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
     /**
      * Retrieve all of the queries that the requesting user has currently saved.
      *
-     * @param Request $request
-     * @param Application $app
      * @return JsonResponse
      */
     public function getQueries(Request $request, Application $app)
     {
         $action = 'getQueries';
-        $payload = array(
-            'success' => false,
-            'action' => $action,
-        );
+        $payload = ['success' => false, 'action' => $action];
         $statusCode = 401;
 
         try {
@@ -98,10 +91,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             } else {
                 $payload['message'] = self::EXCEPTION_MESSAGE;
             }
-        } catch (BadRequestHttpException $e) {
-            $payload['message'] = $e->getMessage();
-            $statusCode = $e->getStatusCode();
-        } catch (HttpException $e) {
+        } catch (BadRequestHttpException|HttpException $e) {
             $payload['message'] = $e->getMessage();
             $statusCode = $e->getStatusCode();
         } catch (\Exception $e) {
@@ -118,18 +108,13 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
     /**
      * Retrieve a query's information by unique id for the requesting user.
      *
-     * @param Request $request
-     * @param Application $app
      * @param $id
      * @return JsonResponse
      */
     public function getQueryById(Request $request, Application $app, $id)
     {
         $action = 'getQueryById';
-        $payload = array(
-            'success' => false,
-            'action' => $action,
-        );
+        $payload = ['success' => false, 'action' => $action];
         $statusCode = 401;
 
         try {
@@ -151,10 +136,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             } else {
                 $payload['message'] = self::EXCEPTION_MESSAGE;
             }
-        } catch (BadRequestHttpException $e) {
-            $payload['message'] = $e->getMessage();
-            $statusCode = $e->getStatusCode();
-        } catch (HttpException $e) {
+        } catch (BadRequestHttpException|HttpException $e) {
             $payload['message'] = $e->getMessage();
             $statusCode = $e->getStatusCode();
         } catch (\Exception $e) {
@@ -171,17 +153,12 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
     /**
      * Create a new query to be stored in the requesting users User Profile.
      *
-     * @param Request $request
-     * @param Application $app
      * @return JsonResponse
      */
     public function createQuery(Request $request, Application $app)
     {
         $action = 'creatQuery';
-        $payload = array(
-            'success' => false,
-            'action' => $action,
-        );
+        $payload = ['success' => false, 'action' => $action];
         $statusCode = 401;
         try {
             $user = $this->authorize($request);
@@ -204,10 +181,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             } else {
                 $payload['message'] = self::EXCEPTION_MESSAGE;
             }
-        } catch (BadRequestHttpException $e) {
-            $payload['message'] = $e->getMessage();
-            $statusCode = $e->getStatusCode();
-        } catch (HttpException $e) {
+        } catch (BadRequestHttpException|HttpException $e) {
             $payload['message'] = $e->getMessage();
             $statusCode = $e->getStatusCode();
         } catch (\Exception $e) {
@@ -229,19 +203,13 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
      *   - config
      *   - timestamp
      *
-     * @param Request $request
-     * @param Application $app
      * @param $id
      * @return JsonResponse
      */
     public function updateQueryById(Request $request, Application $app, $id)
     {
         $action = 'updateQuery';
-        $payload = array(
-            'success' => false,
-            'action' => $action,
-            'message' => 'success'
-        );
+        $payload = ['success' => false, 'action' => $action, 'message' => 'success'];
         $statusCode = 401;
 
         try {
@@ -256,9 +224,9 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
                     $data = $this->getStringParam($request, 'data');
                     if (isset($data)) {
                         $jsonData = json_decode($data, true);
-                        $name = isset($jsonData['name']) ? $jsonData['name'] : null;
-                        $config = isset($jsonData['config']) ? $jsonData['config'] : null;
-                        $ts = isset($jsonData['ts']) ? $jsonData['ts'] : microtime(true);
+                        $name = $jsonData['name'] ?? null;
+                        $config = $jsonData['config'] ?? null;
+                        $ts = $jsonData['ts'] ?? microtime(true);
                     } else {
                         $name = $this->getStringParam($request, 'name');
                         $config = $this->getStringParam($request, 'config');
@@ -292,10 +260,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             } else {
                 $payload['message'] = self::EXCEPTION_MESSAGE;
             }
-        } catch (BadRequestHttpException $e) {
-            $payload['message'] = $e->getMessage();
-            $statusCode = $e->getStatusCode();
-        } catch (HttpException $e) {
+        } catch (BadRequestHttpException|HttpException $e) {
             $payload['message'] = $e->getMessage();
             $statusCode = $e->getStatusCode();
         } catch (\Exception $e) {
@@ -312,19 +277,13 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
     /**
      * Delete the query identified by the provided form-param 'id'.
      *
-     * @param Request $request
-     * @param Application $app
      * @param $id of the query to be deleted.
      * @return JsonResponse
      */
     public function deleteQueryById(Request $request, Application $app, $id)
     {
         $action = 'deleteQueryById';
-        $payload = array(
-            'success' => false,
-            'action' => $action,
-            'message' => 'success'
-        );
+        $payload = ['success' => false, 'action' => $action, 'message' => 'success'];
         $statusCode = 401;
 
         try {
@@ -353,10 +312,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
             } else {
                 $payload['message'] = self::EXCEPTION_MESSAGE;
             }
-        } catch (BadRequestHttpException $e) {
-            $payload['message'] = $e->getMessage();
-            $statusCode = $e->getStatusCode();
-        } catch (HttpException $e) {
+        } catch (BadRequestHttpException|HttpException $e) {
             $payload['message'] = $e->getMessage();
             $statusCode = $e->getStatusCode();
         } catch (\Exception $e) {
@@ -370,7 +326,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
         );
     }
 
-    private function removeRoleFromQuery(XDUser $user, array &$query)
+    private function removeRoleFromQuery(XDUser $user, array &$query): void
     {
         // If the query doesn't have a config, stop.
         if (!array_key_exists('config', $query)) {

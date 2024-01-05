@@ -15,43 +15,36 @@ use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use Psr\Log\LoggerInterface;
 
-class FileTest extends \PHPUnit_Framework_TestCase
+class FileTest extends \PHPUnit\Framework\TestCase
 {
-    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";
+    public const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
+    public const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";
 
     /**
      * @var LoggerInterface
      */
     private $logger = null;
 
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Log::EMERG
-        );
+        $conf = ['file' => false, 'db' => false, 'mail' => false, 'consoleLogLevel' => Log::EMERG];
 
         $this->logger = Log::factory('PHPUnit', $conf);
+        parent::__construct($name, $data, $dataName);
     }  // __construct()
 
     /**
      * Test trying to read a directory instead of a file.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testNotFile()
+    public function testNotFile(): void
     {
-        $config = array(
-            'name' => 'Not a file',
-            'path' => sys_get_temp_dir(),
-            'type' => 'file'
-        );
+        $this->expectException(Exception::class);
+        $config = ['name' => 'Not a file', 'path' => sys_get_temp_dir(), 'type' => 'file'];
         $options = new DataEndpointOptions($config);
         $file = DataEndpoint::factory($options, $this->logger);
         $file->verify();
@@ -60,19 +53,15 @@ class FileTest extends \PHPUnit_Framework_TestCase
     /**
      * Test trying to open a file with an invalid mode.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testBadFileMode()
+    public function testBadFileMode(): void
     {
+        $this->expectException(Exception::class);
         $path = tempnam(sys_get_temp_dir(), 'xdmod_test');
 
-        $config = array(
-            'name' => 'Bad file mode',
-            'path' => $path,
-            'mode' => 'junk-mode',
-            'type' => 'file'
-        );
+        $config = ['name' => 'Bad file mode', 'path' => $path, 'mode' => 'junk-mode', 'type' => 'file'];
 
         $options = new DataEndpointOptions($config);
         $file = DataEndpoint::factory($options, $this->logger);
@@ -92,17 +81,13 @@ class FileTest extends \PHPUnit_Framework_TestCase
      * Test reading a simple string from a file.
      */
 
-    public function testReadFile()
+    public function testReadFile(): void
     {
         $path = tempnam(sys_get_temp_dir(), 'xdmod_test');
         $expected = "Random string to a file";
         file_put_contents($path, $expected);
 
-        $config = array(
-            'name' => 'Read test',
-            'path' => $path,
-            'type' => 'file'
-        );
+        $config = ['name' => 'Read test', 'path' => $path, 'type' => 'file'];
 
         $options = new DataEndpointOptions($config);
         $file = DataEndpoint::factory($options, $this->logger);

@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
  * Base class for ETL tests providing common functionality.
  */
 
-abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
+abstract class BaseEtlTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var LoggerInterface
@@ -36,12 +36,7 @@ abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => $level
-        );
+        $conf = ['file' => false, 'db' => false, 'mail' => false, 'consoleLogLevel' => $level];
 
         self::$logger = Log::factory($ident, $conf);
     }

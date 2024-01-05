@@ -47,7 +47,7 @@ class Json
      * @param string $file Destination file path.
      * @param array $data Data to encode and write to file.
      */
-    public static function saveFile($file, array $data)
+    public static function saveFile($file, array $data): void
     {
         $contents = json_encode($data);
 
@@ -174,26 +174,14 @@ class Json
      */
     public static function getErrorMessage($error)
     {
-        switch ($error) {
-            case JSON_ERROR_NONE:
-                return 'No error';
-                break;
-            case JSON_ERROR_DEPTH:
-                return 'Maximum stack depth exceeded';
-                break;
-            case JSON_ERROR_STATE_MISMATCH:
-                return 'Invalid or malformed JSON';
-                break;
-            case JSON_ERROR_CTRL_CHAR:
-                return 'Control character error';
-                break;
-            case JSON_ERROR_SYNTAX:
-                return 'Syntax error';
-                break;
-            default:
-                return 'Unknown error';
-                break;
-        }
+        return match ($error) {
+            JSON_ERROR_NONE => 'No error',
+            JSON_ERROR_DEPTH => 'Maximum stack depth exceeded',
+            JSON_ERROR_STATE_MISMATCH => 'Invalid or malformed JSON',
+            JSON_ERROR_CTRL_CHAR => 'Control character error',
+            JSON_ERROR_SYNTAX => 'Syntax error',
+            default => 'Unknown error',
+        };
     }
 
     /**

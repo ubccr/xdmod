@@ -19,9 +19,9 @@ interface iRealm
      *  2 (SORT_ON_NAME) = Natural sort based on the human-readbale realm name
      */
 
-    const SORT_ON_ORDER = 0;
-    const SORT_ON_SHORT_ID = 1;
-    const SORT_ON_NAME = 2;
+    public const SORT_ON_ORDER = 0;
+    public const SORT_ON_SHORT_ID = 1;
+    public const SORT_ON_NAME = 2;
 
     /**
      * Instantiate a Realm class using the specified configuration or realm name.

@@ -33,7 +33,7 @@ class ListResourcesSetup extends SetupItem
     /**
      * @inheritdoc
      */
-    public function handle()
+    public function handle(): void
     {
         $this->console->displaySectionHeader('Resources Added');
 
@@ -70,11 +70,11 @@ class ListResourcesSetup extends SetupItem
                 }
             }
 
-            $cpu_nodes_message = isset($specs['cpu_node_count']) ? $specs['cpu_node_count'] : "No value available for CPU Node Count. Please update the resource_specs.json file";
-            $cpu_processors_message = isset($specs['cpu_processor_count']) ? $specs['cpu_processor_count'] : "No value available for CPU Processor Count. Please update the resource_specs.json file";
-            $gpu_nodes_message = isset($specs['gpu_node_count']) ? $specs['gpu_node_count'] : "No value available for GPU Node Count. Please update the resource_specs.json file";
-            $gpu_processors_message = isset($specs['gpu_processor_count']) ? $specs['gpu_processor_count'] : "No value available for GPU Processor Count. Please update the resource_specs.json file";
-            $start_date_message = isset($specs['start_date']) ? $specs['start_date'] : "No value available for Start Date. Please update the resource_specs.json file";
+            $cpu_nodes_message = $specs['cpu_node_count'] ?? "No value available for CPU Node Count. Please update the resource_specs.json file";
+            $cpu_processors_message = $specs['cpu_processor_count'] ?? "No value available for CPU Processor Count. Please update the resource_specs.json file";
+            $gpu_nodes_message = $specs['gpu_node_count'] ?? "No value available for GPU Node Count. Please update the resource_specs.json file";
+            $gpu_processors_message = $specs['gpu_processor_count'] ?? "No value available for GPU Processor Count. Please update the resource_specs.json file";
+            $start_date_message = $specs['start_date'] ?? "No value available for Start Date. Please update the resource_specs.json file";
 
 
             $this->console->displayMessage('Resource: ' . $resource['resource']);
@@ -106,9 +106,7 @@ class ListResourcesSetup extends SetupItem
         // Default placeholder values to use if no specs are found. An
         // end date timestamp is added to the specs for ease of
         // comparing the end date with that of other specs.
-        $currentSpecs = array(
-            'end_date_ts' => 0,
-        );
+        $currentSpecs = ['end_date_ts' => 0];
 
         foreach ($this->parent->getResourceSpecs() as $specs) {
             if ($specs['resource'] !== $resource) {

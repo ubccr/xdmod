@@ -12,23 +12,23 @@ use OpenXdmod\Shredder;
  */
 class PbsShredderTest extends JobShredderBaseTestCase
 {
-    const TEST_GROUP = 'unit/shredder/pbs';
+    public const TEST_GROUP = 'unit/shredder/pbs';
 
-    public function testShredderConstructor()
+    public function testShredderConstructor(): void
     {
         $shredder = Shredder::factory('pbs', $this->db);
-        $this->assertInstanceOf('\OpenXdmod\Shredder\Pbs', $shredder);
+        $this->assertInstanceOf(\OpenXdmod\Shredder\Pbs::class, $shredder);
     }
 
     /**
      * @dataProvider accountingLogProvider
      */
-    public function testShredderParsing($line, $row)
+    public function testShredderParsing($line, $row): void
     {
         $shredder = $this
-            ->getMockBuilder('\OpenXdmod\Shredder\Pbs')
-            ->setConstructorArgs(array($this->db))
-            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->getMockBuilder(\OpenXdmod\Shredder\Pbs::class)
+            ->setConstructorArgs([$this->db])
+            ->setMethods(['insertRow', 'getResourceConfig'])
             ->getMock();
 
         $shredder
@@ -38,7 +38,7 @@ class PbsShredderTest extends JobShredderBaseTestCase
 
         $shredder
             ->method('getResourceConfig')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $shredder->setLogger($this->logger);
 

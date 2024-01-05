@@ -75,11 +75,7 @@ try {
         exit;
     }
 
-    $logConf = array(
-        'file' => false,
-        'mail' => false,
-        'consoleLogLevel' => $logLevel
-    );
+    $logConf = ['file' => false, 'mail' => false, 'consoleLogLevel' => $logLevel];
     $logger = Log::factory('batch-export', $logConf);
     $logger->info('Command: ' . implode(' ', array_map('escapeshellarg', $argv)));
     // NOTE: "process_start_time" is needed for the log summary.
@@ -103,7 +99,7 @@ try {
     exit(1);
 }
 
-function displayHelpText()
+function displayHelpText(): void
 {
     global $argv;
 

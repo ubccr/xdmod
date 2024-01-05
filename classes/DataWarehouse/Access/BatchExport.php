@@ -14,19 +14,15 @@ class BatchExport
     /**
      * Get all the realms for a user.
      *
-     * @param \XDUser $user
      * @return array[] Batch export realm configurations enabled for user.
      */
     public static function getBatchExportRealms(XDUser $user)
     {
         $config = RawStatisticsConfiguration::factory();
         $allowedRealms = Realms::getRealmIdsForUser($user);
-
         $realms = array_filter(
             $config->getBatchExportRealms(),
-            function ($realm) use ($allowedRealms) {
-                return in_array($realm['name'], $allowedRealms);
-            }
+            fn($realm) => in_array($realm['name'], $allowedRealms)
         );
 
         // Use array_values to remove gaps in keys that may have been
@@ -37,7 +33,6 @@ class BatchExport
     /**
      * Check if a realm exists for a user.
      *
-     * @param \XDUser $user
      * @param string $realm
      * @return boolean
      */

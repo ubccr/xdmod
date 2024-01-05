@@ -10,18 +10,20 @@ namespace UnitTests\Common;
 *
 */
 
-class IdentityTest extends \PHPUnit_Framework_TestCase
+use ArgumentCountError;
+
+class IdentityTest extends \PHPUnit\Framework\TestCase
 {
     private $_identity;
     private $_identity1;
-    public function setUp()
+    public function setUp(): void
     {
         $this->_identity = new \Common\Identity('identity_name');
         $this->_identity1 = new \Common\Identity('');
-        set_error_handler(array($this, 'errorHandler'));
+        set_error_handler([$this, 'errorHandler']);
     }
 
-    public function errorHandler($errno, $errstr, $errfile, $errline)
+    public function errorHandler($errno, $errstr, $errfile, $errline): void
     {
         throw new \InvalidArgumentException(
             sprintf(
@@ -34,35 +36,36 @@ class IdentityTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         restore_error_handler();
         $this->_identity = null;
         $this->_identity1 = null;
     }
 
     /**
-     * @expectedException ArgumentCountError
+     *
      * @requires PHP 7.1
      */
-    public function testNoDefaultParameterToConstructor()
+    public function testNoDefaultParameterToConstructor(): void
     {
+        $this->expectException(ArgumentCountError::class);
         new \Common\Identity(); // this construction should fail since the name parameter is not specified
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
-        $this->assertEquals($this->_identity->getName(), 'identity_name', "This should pass" );
-        $this->assertEquals($this->_identity1->getName(), '', "This should pass" );
+        $this->assertEquals('identity_name', $this->_identity->getName(), "This should pass" );
+        $this->assertEquals('', $this->_identity1->getName(), "This should pass" );
     }
 
-    public function testSetName()
+    public function testSetName(): void
     {
         $this->_identity1->setName('mock_name');
-        $this->assertEquals($this->_identity1->getName(), 'mock_name', "This should pass" );
+        $this->assertEquals('mock_name', $this->_identity1->getName(), "This should pass" );
     }
 
-    public function testToString()
+    public function testToString(): void
     {
-        $this->assertEquals($this->_identity->__toString(), 'identity_name', "This should pass" );
+        $this->assertEquals('identity_name', $this->_identity->__toString(), "This should pass" );
     }
 }

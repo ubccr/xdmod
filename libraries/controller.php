@@ -10,7 +10,7 @@ namespace xd_controller;
  *
  * @param array $data
  */
-function returnJSON($data = array())
+function returnJSON($data = []): void
 {
     if (isset($_SERVER['SERVER_PROTOCOL'])) {
         header('Content-Type: application/json');

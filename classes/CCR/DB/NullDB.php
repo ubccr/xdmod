@@ -22,37 +22,37 @@ class NullDB implements iDatabase
     {
     }
 
-    public function connect()
+    public function connect(): void
     {
     }
 
-    public function disconnect()
+    public function disconnect(): void
     {
     }
 
-    public function insert($statement, $params = array())
+    public function insert($statement, $params = [])
     {
         return 0;
     }
 
-    public function handle()
+    public function handle(): void
     {
     }
 
     public function query(
         $query,
-        array $params = array(),
+        array $params = [],
         $returnStatement = false
     ) {
-        return array();
+        return [];
     }
 
-    public function execute($query, array $params = array())
+    public function execute($query, array $params = [])
     {
         return 0;
     }
 
-    public function getRowCount($schema, $table)
+    public function getRowCount($schema, $table): void
     {
     }
 

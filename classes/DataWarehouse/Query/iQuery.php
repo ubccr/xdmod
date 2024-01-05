@@ -67,7 +67,7 @@ interface iQuery
         $endDate,
         $groupById = null,
         $statisticId = null,
-        array $parameters = array(),
+        array $parameters = [],
         LoggerInterface $logger = null
     );
 

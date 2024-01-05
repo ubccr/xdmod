@@ -40,7 +40,7 @@ class OracleDB extends PDODB
         // At a minimum we must have either the (db_name) or the (db_host, db_name)
 
         if ( null === $db_name ) {
-            $msg = __CLASS__
+            $msg = self::class
                 . ' requires at a minimum (db_name) for Local Naming '
                 . ' or (db_host, db_name[, db_port]) for Easy Connect Naming';
             throw new Exception($msg);
@@ -112,7 +112,7 @@ class OracleDB extends PDODB
             $this->_dbh->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
 
         } catch (\PDOException $e) {
-            $msg = __CLASS__
+            $msg = self::class
                 . " Error connecting to database '" . $this->_dsn . "' using $namingMethod Naming. "
                 . $e->getMessage();
             throw new Exception($msg);

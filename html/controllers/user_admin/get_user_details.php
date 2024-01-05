@@ -16,7 +16,7 @@ use Models\Services\Acls;
 	
 	// -----------------------------
 	
-	$userDetails = array();
+	$userDetails = [];
 	
 	$userDetails['username'] = $selected_user->getUsername();
 	$userDetails['formal_name'] = $selected_user->getFormalName();
@@ -56,7 +56,7 @@ use Models\Services\Acls;
         $acls,
         function ($carry, $item) use ($selected_user) {
             $aclName = $item['name'];
-            $aclCenters = array();
+            $aclCenters = [];
             if ($item['requires_center'] == true) {
                 $aclCenters = Acls::getDescriptorParamValues(
                     $selected_user,
@@ -69,7 +69,7 @@ use Models\Services\Acls;
 
             return $carry;
         },
-        array()
+        []
     );
 
 	$userDetails['acls'] = $populatedAcls;

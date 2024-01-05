@@ -7,7 +7,7 @@ use XDUser;
 class Users
 {
 
-    const DB_SECTION_NAME = 'database';
+    public const DB_SECTION_NAME = 'database';
 
     /**
      * Function to retrieve a list of users that can optionally be filtered by
@@ -45,8 +45,8 @@ class Users
         }
 
         $additionalJoins = '';
-        $whereClauses = array();
-        $params = array();
+        $whereClauses = [];
+        $params = [];
 
         $sql = <<<SQL
 SELECT DISTINCT
@@ -127,8 +127,8 @@ SQLF;
         }
 
         $query = count($whereClauses) > 0
-            ? implode("\n", array($sql, $additionalJoins, 'WHERE ', join(" AND \n", $whereClauses)))
-            : implode("\n", array($sql, $additionalJoins));
+            ? implode("\n", [$sql, $additionalJoins, 'WHERE ', join(" AND \n", $whereClauses)])
+            : implode("\n", [$sql, $additionalJoins]);
 
         return $db->query($query, $params);
     }
@@ -254,9 +254,7 @@ WHERE
   -- We also only want users that do not have the 'cd' acl
   has_cd.user_id IS NULL;
 SQL;
-        $params = array(
-            ':user_id' => $userId
-        );
+        $params = [':user_id' => $userId];
 
         return $db->query($query, $params);
     }
@@ -320,10 +318,7 @@ WHERE
   has_cd.user_id IS NULL AND
   uo.organization_id = :organization_id;
 SQL;
-        $params = array(
-            ':user_id' => $userId,
-            ':organization_id' => $centerId
-        );
+        $params = [':user_id' => $userId, ':organization_id' => $centerId];
         $db = DB::factory(self::DB_SECTION_NAME);
         return count($db->query($query, $params)) > 0;
     }
@@ -333,7 +328,6 @@ SQL;
      * records are found in the database for the provided user. An array
      * containing `$user->getOrganizationID()` is returned.
      *
-     * @param XDUser $user
      * @return mixed
      * @throws Exception if there is a problem retrieving a db connection
      * @throws Exception if there is a problem executing the sql statement.
@@ -346,15 +340,13 @@ SELECT DISTINCT
 FROM moddb.user_acl_group_by_parameters uagbp
 WHERE uagbp.user_id = :user_id
 SQL;
-        $params = array(
-            ':user_id' => $user->getUserID()
-        );
+        $params = [':user_id' => $user->getUserID()];
 
         $db = DB::factory('database');
         $results = $db->query($query, $params);
 
         if (empty($results)) {
-            $results = array($user->getOrganizationID());
+            $results = [$user->getOrganizationID()];
         }
 
         return $results;
@@ -364,23 +356,22 @@ SQL;
      * Promote the provided $user to 'Center Staff' of the center identified by
      * $centerId.
      *
-     * @param XDUser $user
      * @param $centerId
      * @throws Exception if there is a problem retrieving a db connection
      * @throws Exception if there is a problem executing the sql statement.
      */
-    public static function promoteUserToCenterStaff(XDUser $user, $centerId)
+    public static function promoteUserToCenterStaff(XDUser $user, $centerId): void
     {
         if (!$user->hasAcl(ROLE_ID_CENTER_STAFF)) {
             // Add the Center Staff acl to the user.
-            $user->setRoles(array_merge($user->getAcls(true), array(ROLE_ID_CENTER_STAFF)));
+            $user->setRoles(array_merge($user->getAcls(true), [ROLE_ID_CENTER_STAFF]));
 
             // Save changes
             $user->saveUser();
         }
 
-        $centerConfig = array();
-        $centerConfig[$centerId] = array('active' => true, 'primary' => true);
+        $centerConfig = [];
+        $centerConfig[$centerId] = ['active' => true, 'primary' => true];
         // Add which center the users new center staff acl is related it.
         $user->setOrganizations($centerConfig, ROLE_ID_CENTER_STAFF);
     }
@@ -389,21 +380,20 @@ SQL;
      * Demote the provided $user from having a relation ( via Center Staff ) to
      * the center identified by $centerId.
      *
-     * @param XDUser $user
      * @param $centerId
      * @throws Exception if there is a problem retrieving a db connection
      * @throws Exception if there is a problem executing the sql statement.
      */
-    public static function demoteUserFromCenterStaff(XDUser $user, $centerId)
+    public static function demoteUserFromCenterStaff(XDUser $user, $centerId): void
     {
         $centers = array_values(Users::getCentersFor($user));
         $currentCenters = array_pop($centers);
 
         // If this user has no more center staff centers then remove the center
         // staff acl.
-        if (count(array_diff(array_values($currentCenters), array((string)$centerId))) === 0) {
+        if (count(array_diff(array_values($currentCenters), [(string)$centerId])) === 0) {
             // Remove the center staff acl from the user.
-            $user->setRoles(array_diff($user->getAcls(true), array(ROLE_ID_CENTER_STAFF)));
+            $user->setRoles(array_diff($user->getAcls(true), [ROLE_ID_CENTER_STAFF]));
 
             // Save the acl changes.
             $user->saveUser();
@@ -418,9 +408,7 @@ SQL;
         $query = <<<SQL
 SELECT pi.person_id FROM modw.principalinvestigator pi WHERE pi.person_id = :person_id;
 SQL;
-        $params = array(
-            ':person_id' => $user->getPersonID()
-        );
+        $params = [':person_id' => $user->getPersonID()];
 
         $db = DB::factory('database');
         $rows = $db->query($query, $params);

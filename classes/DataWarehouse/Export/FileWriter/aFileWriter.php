@@ -11,11 +11,6 @@ use Psr\Log\LoggerInterface;
 abstract class aFileWriter extends Loggable implements iFileWriter
 {
     /**
-     * @var string
-     */
-    protected $file;
-
-    /**
      * @var resource
      */
     protected $fh;
@@ -26,11 +21,9 @@ abstract class aFileWriter extends Loggable implements iFileWriter
      * @param string $file
      * @param LoggerInterface $logger
      */
-    public function __construct($file, LoggerInterface $logger)
+    public function __construct(protected $file, LoggerInterface $logger)
     {
         parent::__construct($logger);
-
-        $this->file = $file;
         $this->fh = fopen($this->file, 'w');
 
         if ($this->fh === false) {
@@ -43,7 +36,7 @@ abstract class aFileWriter extends Loggable implements iFileWriter
     /**
      * Close file.
      */
-    public function close()
+    public function close(): void
     {
         if (fclose($this->fh) === false) {
             $this->logAndThrowException(
@@ -57,8 +50,8 @@ abstract class aFileWriter extends Loggable implements iFileWriter
      *
      * @returns string
      */
-    public function __toString()
+    public function __toString(): string
     {
-        return sprintf('%s(file: "%s")', get_class($this), $this->file);
+        return sprintf('%s(file: "%s")', static::class, $this->file);
     }
 }

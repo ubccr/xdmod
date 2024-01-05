@@ -22,12 +22,7 @@ class XDUser extends CCR\Loggable implements JsonSerializable
     private $_account_is_active;
 
     private $_username;
-    private $_password;
     private $_email;
-
-    private $_firstName;
-    private $_middleName;
-    private $_lastName;
 
     private $_timeCreated;
     private $_timeUpdated;
@@ -36,8 +31,6 @@ class XDUser extends CCR\Loggable implements JsonSerializable
     private $_roles;
 
     private $_field_of_science = 0;
-
-    private $_organizationID;
     private $_personID;
 
     private $_user_type = 0;
@@ -71,10 +64,10 @@ class XDUser extends CCR\Loggable implements JsonSerializable
      */
     private static $_publicUser;
 
-    const PUBLIC_USER = 1;
-    const INTERNAL_USER = 2;
+    public const PUBLIC_USER = 1;
+    public const INTERNAL_USER = 2;
 
-    const ADMIN_NOTIFICATION_EMAIL = <<<EML
+    public const ADMIN_NOTIFICATION_EMAIL = <<<EML
 
 User Organization Update --------------------------------
 Name:             %s
@@ -86,7 +79,7 @@ Old Acls:         %s
 New Acls:         %s
 EML;
 
-    const USER_NOTIFICATION_EMAIL = <<<EML
+    public const USER_NOTIFICATION_EMAIL = <<<EML
 Dear %s,
 
 The organization associated with your XDMoD user account has been automatically
@@ -99,7 +92,7 @@ incorrect then please contact support at %s.
 %s
 EML;
 
-    const UAGBP_INSERT_QUERY = <<<SQL
+    public const UAGBP_INSERT_QUERY = <<<SQL
 INSERT INTO user_acl_group_by_parameters(user_id, acl_id, group_by_id, value)
 SELECT inc.*
 FROM (
@@ -134,14 +127,14 @@ SQL;
      *
      * @var array
      */
-    public static $CENTER_ACLS = array('cd', 'cs', 'cc');
+    public static $CENTER_ACLS = ['cd', 'cs', 'cc'];
 
     /**
      * These are the only SSO attribtutes that should be included when setting `$this->ssoAttrs;`
      *
      * @var array
      */
-    private static $INCLUDE_SSO_ATTRS = array('username', 'organization', 'system_username', 'email_address');
+    private static $INCLUDE_SSO_ATTRS = ['username', 'organization', 'system_username', 'email_address'];
 
     /**
      * The attributes present when a user logs in via SSO. Defaults to an empty array otherwise.
@@ -157,17 +150,7 @@ SQL;
      * @var string
      */
     private $currentToken;
-
-    /**
-     * The state of this user's `sticky` bit. Corresponds to the moddb.Users.sticky column.
-     * Indicates that the organization_id and or the person_id has been manually overridden and
-     * should not be automatically updated.
-     *
-     * @var boolean
-     */
-    private $sticky;
     // ---------------------------
-
     /*
      *
      * @constructor
@@ -181,27 +164,32 @@ SQL;
      * @param string $primary_role
      *
      */
-
+    /**
+     * @param bool $sticky
+     */
     function __construct(
         $username = null,
-        $password = null,
+        private $_password = null,
         $email_address = NO_EMAIL_ADDRESS_SET,
-        $first_name = null,
-        $middle_name = null,
-        $last_name = null,
-        $role_set = array(ROLE_ID_USER),
+        private $_firstName = null,
+        private $_middleName = null,
+        private $_lastName = null,
+        $role_set = [ROLE_ID_USER],
         $primary_role = ROLE_ID_USER,
-        $organization_id = null,
+        private $_organizationID = null,
         $person_id = null,
-        array $ssoAttrs = array(),
-        $sticky = false
+        array $ssoAttrs = [],
+        /**
+         * The state of this user's `sticky` bit. Corresponds to the moddb.Users.sticky column.
+         * Indicates that the organization_id and or the person_id has been manually overridden and
+         * should not be automatically updated.
+         */
+        private $sticky = false
     ) {
 
         $this->_pdo = DB::factory('database');
 
-        $userCheck = $this->_pdo->query("SELECT id FROM Users WHERE username=:username", array(
-            ':username' => $username,
-        ));
+        $userCheck = $this->_pdo->query("SELECT id FROM Users WHERE username=:username", [':username' => $username]);
 
         if (count($userCheck) > 0 && $username != NULL) {
 
@@ -216,17 +204,12 @@ SQL;
         $this->_account_is_active = true;
 
         $this->_username = $username;
-        $this->_password = $password;
 
         if (self::userExistsWithEmailAddress($email_address) != INVALID) {
             throw new Exception("An XDMoD user with e-mail address $email_address exists");
         }
 
         $this->_email = $email_address;
-
-        $this->_firstName = $first_name;
-        $this->_middleName = $middle_name;
-        $this->_lastName = $last_name;
 
         $this->setRoles($role_set);
 
@@ -250,25 +233,16 @@ SQL;
         $this->_timeUpdated = NULL;
         $this->_timePasswordUpdated = NULL;
 
-        $this->_organizationID = $organization_id;
-
         // A person id of 0 is not allowed
         $this->_personID = $person_id == 0 ? NULL : $person_id;    //This user MUST have a person_id mapping
 
         $this->_update_token = true;
         $this->_token = NULL;
 
-        $this->sticky = $sticky;
-
         parent::__construct(
             Log::factory(
                 'xduser.sql',
-                array(
-                    'db' => false,
-                    'mail' => false,
-                    'console' => false,
-                    'file'=> LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile')
-                )
+                ['db' => false, 'mail' => false, 'console' => false, 'file'=> LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile')]
             )
         );
 
@@ -283,10 +257,10 @@ SQL;
      *
      */
 
-    public function reloadUser()
+    public function reloadUser(): void
     {
 
-        $this->getUserById($this->_id, $this);
+        static::getUserById($this->_id, $this);
 
     }//reloadUser
 
@@ -330,9 +304,7 @@ SQL;
 
         $pdo = DB::factory('database');
 
-        $userCheck = $pdo->query("SELECT id FROM Users WHERE username=:username", array(
-            ':username' => $username,
-        ));
+        $userCheck = $pdo->query("SELECT id FROM Users WHERE username=:username", [':username' => $username]);
 
         if (count($userCheck) > 0) {
             return $userCheck[0]['id'];
@@ -393,10 +365,7 @@ SQL;
 
         $userCheck = $pdo->query(
             $user_check_query,
-            array(
-                'email_address' => $email_address,
-                'user_type' => SSO_USER_TYPE
-            )
+            ['email_address' => $email_address, 'user_type' => SSO_USER_TYPE]
         );
 
         if (count($userCheck) == 1) {
@@ -442,7 +411,7 @@ SQL;
      *
      */
 
-    public function setFieldOfScience($field_of_science)
+    public function setFieldOfScience($field_of_science): void
     {
 
         $this->_field_of_science = $field_of_science;
@@ -467,9 +436,7 @@ SQL;
 
         $pdo = DB::factory('database');
 
-        $userCheck = $pdo->query("SELECT id FROM Users WHERE token LIKE BINARY :token", array(
-            ':token' => $token,
-        ));
+        $userCheck = $pdo->query("SELECT id FROM Users WHERE token LIKE BINARY :token", [':token' => $token]);
 
         if (count($userCheck) == 0) {
             return NULL;
@@ -533,9 +500,7 @@ SQL;
          time_created, time_last_updated, password_last_updated, account_is_active, organization_id, person_id, field_of_science, token, user_type, sticky
          FROM Users
          WHERE id=:id
-      ", array(
-            ':id' => $uid,
-        ));
+      ", [':id' => $uid]);
 
         if (count($userCheck) == 0) {
             return NULL;
@@ -602,17 +567,14 @@ ORDER BY COALESCE(aclh.level, 0) DESC;
 SQL;
         $results = $pdo->query(
             $query,
-            array(
-                'user_id' => $uid,
-                ':acl_hierarchy_name' => 'acl_hierarchy'
-            )
+            ['user_id' => $uid, ':acl_hierarchy_name' => 'acl_hierarchy']
         );
 
         $acls = array_reduce($results, function ($carry, $item) {
             $acl = new Acl($item);
             $carry [$acl->getName()] = $acl;
             return $carry;
-        }, array());
+        }, []);
 
         $user->setAcls($acls);
         // END: ACL population
@@ -716,7 +678,7 @@ SQL;
 
         $piCheck = $pdo->query(
             "SELECT person_id FROM modw.piperson WHERE person_id=:person_id",
-            array('person_id' => $person_id)
+            ['person_id' => $person_id]
         );
 
         return (count($piCheck) == 1);
@@ -756,10 +718,7 @@ SQL;
             WHERE
                 username = :username
                 AND user_type != :user_type",
-            array(
-                'username' => $uname,
-                'user_type' => SSO_USER_TYPE
-            )
+            ['username' => $uname, 'user_type' => SSO_USER_TYPE]
         );
 
         if (count($userCheck) !== 1) {
@@ -775,7 +734,7 @@ SQL;
             $new_hash = password_hash($pass, PASSWORD_DEFAULT);
             if ($new_hash !== false) {
                 $updatestmt = $pdo->prepare("UPDATE Users SET password = :password_hash WHERE id = :id");
-                $updatestmt->execute(array('password_hash' => $new_hash, 'id' => $userCheck[0]['id']));
+                $updatestmt->execute(['password_hash' => $new_hash, 'id' => $userCheck[0]['id']]);
             }
             return self::getUserByID($userCheck[0]['id']);
         }
@@ -809,7 +768,7 @@ SQL;
      *
      */
 
-    public function issueNewToken()
+    public function issueNewToken(): void
     {
         $this->_update_token = true;
     }
@@ -874,7 +833,7 @@ SQL;
      *
      * @return string representation of the array parameter passed in.
      */
-    public function arrayToString($array = array())
+    public function arrayToString($array = [])
     {
         $result = 'Keys [ ';
         $result .= implode(', ', array_keys($array)) . ']';
@@ -891,7 +850,7 @@ SQL;
      *
      * @return void does not return anything.
      */
-    public function saveUser()
+    public function saveUser(): void
     {
         /* BEGIN: VALIDATION  */
         if ($this->isPublicUser()) {
@@ -944,7 +903,7 @@ SQL;
         /* END: VALIDATION  */
 
         $handle = $this->_pdo->handle();
-        $update_data = array();
+        $update_data = [];
 
         // Determine whether or not we're inserting or updating.
         $forUpdate = isset($this->_id);
@@ -1012,7 +971,7 @@ SQL;
             // Set token to expire in 30 days from now...
             $this->_pdo->execute(
                 'UPDATE Users SET token_expiration=DATE_ADD(NOW(), INTERVAL 30 DAY) WHERE id=:id',
-                array('id' => $this->_id)
+                ['id' => $this->_id]
             );
             $this->_update_token = false;
         }
@@ -1023,22 +982,19 @@ SQL;
         // REMOVE: existing user -> acl relations
         $this->_pdo->execute(
             'DELETE FROM user_acls WHERE user_id = :user_id',
-            array('user_id' => $this->_id)
+            ['user_id' => $this->_id]
         );
 
         // REMOVE: existing user_acl_group_by_parameter records for this user.
         $this->_pdo->execute(
             'DELETE FROM moddb.user_acl_group_by_parameters WHERE user_id = :user_id',
-            array('user_id' => $this->_id)
+            ['user_id' => $this->_id]
         );
 
         // ADD: current user -> acl relations
         foreach ($this->_acls as $acl) {
             if (null !== $acl->getAclId()) {
-                $params = array(
-                    ':user_id' => $this->_id,
-                    ':acl_id' => $acl->getAclId()
-                );
+                $params = [':user_id' => $this->_id, ':acl_id' => $acl->getAclId()];
 
                 // Add the appropriate user_acl record.
                 $this->_pdo->execute(
@@ -1068,7 +1024,7 @@ SQL;
             "SELECT time_created, time_last_updated, password_last_updated
              FROM Users
              WHERE id=:id",
-            array('id' => $this->_id)
+            ['id' => $this->_id]
         );
 
         $this->_timeCreated = $timestampData[0]['time_created'];
@@ -1100,9 +1056,7 @@ SQL;
             ORDER BY
                 init_time DESC
             LIMIT 1",
-            array(
-                ':user_id' => $this->_id,
-            )
+            [':user_id' => $this->_id]
         );
 
         if (count($results) == 0) {
@@ -1129,9 +1083,7 @@ SQL;
             return '';
         }
 
-        $tokenResults = $this->_pdo->query("SELECT token FROM Users WHERE id=:id", array(
-            ':id' => $this->_id,
-        ));
+        $tokenResults = $this->_pdo->query("SELECT token FROM Users WHERE id=:id", [':id' => $this->_id]);
 
         return $tokenResults[0]['token'];
 
@@ -1154,9 +1106,7 @@ SQL;
             return '';
         }
 
-        $tokenResults = $this->_pdo->query("SELECT token_expiration FROM Users WHERE id=:id", array(
-            ':id' => $this->_id,
-        ));
+        $tokenResults = $this->_pdo->query("SELECT token_expiration FROM Users WHERE id=:id", [':id' => $this->_id]);
 
         return $tokenResults[0]['token_expiration'];
 
@@ -1168,7 +1118,7 @@ SQL;
      *
      */
 
-    public function removeUser()
+    public function removeUser(): void
     {
 
         if ($this->isPublicUser()) {
@@ -1176,28 +1126,16 @@ SQL;
         }
 
         // Clean up any report-based data generated by the user
-        $this->_pdo->execute("DELETE FROM ChartPool WHERE user_id=:user_id", array(
-            ':user_id' => $this->_id,
-        ));
-        $this->_pdo->execute("DELETE FROM Reports WHERE user_id=:user_id", array(
-            ':user_id' => $this->_id,
-        ));
-        $this->_pdo->execute("DELETE FROM ReportCharts WHERE user_id=:user_id", array(
-            ':user_id' => $this->_id,
-        ));
+        $this->_pdo->execute("DELETE FROM ChartPool WHERE user_id=:user_id", [':user_id' => $this->_id]);
+        $this->_pdo->execute("DELETE FROM Reports WHERE user_id=:user_id", [':user_id' => $this->_id]);
+        $this->_pdo->execute("DELETE FROM ReportCharts WHERE user_id=:user_id", [':user_id' => $this->_id]);
 
-        $this->_pdo->execute("DELETE FROM user_acl_group_by_parameters WHERE user_id=:user_id", array(
-            ':user_id' => $this->_id
-        ));
+        $this->_pdo->execute("DELETE FROM user_acl_group_by_parameters WHERE user_id=:user_id", [':user_id' => $this->_id]);
 
         // Make sure to remove the acl relations
-        $this->_pdo->execute("DELETE FROM user_acls WHERE user_id = :user_id", array(
-            ':user_id' => $this->_id
-        ));
+        $this->_pdo->execute("DELETE FROM user_acls WHERE user_id = :user_id", [':user_id' => $this->_id]);
 
-        $this->_pdo->execute("DELETE FROM Users WHERE id=:id", array(
-            ':id' => $this->_id,
-        ));
+        $this->_pdo->execute("DELETE FROM Users WHERE id=:id", [':id' => $this->_id]);
 
     }//removeUser
 
@@ -1226,7 +1164,7 @@ SQL;
      *
      */
 
-    public function setUserType($userType)
+    public function setUserType($userType): void
     {
         $this->_user_type = $userType;
     }
@@ -1256,7 +1194,7 @@ SQL;
      *
      */
 
-    public function setAccountStatus($status)
+    public function setAccountStatus($status): void
     {
         $this->_account_is_active = $status;
     }
@@ -1286,7 +1224,7 @@ SQL;
      *
      */
 
-    public function setEmailAddress($email_address)
+    public function setEmailAddress($email_address): void
     {
         $this->_email = $email_address;
     }
@@ -1336,7 +1274,7 @@ SQL;
      *
      */
 
-    public function setFirstName($firstName)
+    public function setFirstName($firstName): void
     {
         $this->_firstName = $firstName;
     }
@@ -1366,7 +1304,7 @@ SQL;
      *
      */
 
-    public function setLastName($lastName)
+    public function setLastName($lastName): void
     {
         $this->_lastName = $lastName;
     }
@@ -1388,7 +1326,7 @@ SQL;
         if (empty($this->_id)) {
 
             // It is likely that the public user ended up here
-            return array();
+            return [];
 
         }
         // NOTE: DO NOT PUT ['] in your comments, you will break the sql.
@@ -1485,11 +1423,7 @@ WHERE ua.user_id = :user_id AND at.name = 'data'
 -- in a hierarchy will be sent to the bottom of the list
 ORDER BY COALESCE(aclh.level, 0) DESC, a.name
 SQL;
-        $params = array(
-            ':acl_hierarchy_name' => 'acl_hierarchy',
-            ':user_id' => $this->_id,
-            ':group_by_name' => 'provider'
-        );
+        $params = [':acl_hierarchy_name' => 'acl_hierarchy', ':user_id' => $this->_id, ':group_by_name' => 'provider'];
 
         try {
             // NOTE: previously we had no DB concept of modules / realms
@@ -1504,10 +1438,7 @@ SQL;
         } catch (PDOException $e) {
             $this->logAndThrowException(
                 "A PDOException was thrown in 'XDUser::enumAllAvailableRoles'",
-                array(
-                    'exception' => $e,
-                    'sql'=> $query
-                )
+                ['exception' => $e, 'sql'=> $query]
             );
 
         }
@@ -1524,7 +1455,7 @@ SQL;
      *
      */
 
-    public function setInstitution($institution_id, $is_primary = false)
+    public function setInstitution($institution_id, $is_primary = false): void
     {
 
         // This feature currently applies to campus champions...
@@ -1575,16 +1506,9 @@ AND cur.value = inc.value
 WHERE cur.user_acl_parameter_id IS NULL;
 SQL;
 
-        $this->_pdo->execute($aclCleanup, array(
-            ':user_id' => $this->_id,
-            ':acl_name' => $aclName
-        ));
+        $this->_pdo->execute($aclCleanup, [':user_id' => $this->_id, ':acl_name' => $aclName]);
 
-        $this->_pdo->execute($aclInsert, array(
-            ':user_id' => $this->_id,
-            ':acl_name' => $aclName,
-            ':value' => $institution_id
-        ));
+        $this->_pdo->execute($aclInsert, [':user_id' => $this->_id, ':acl_name' => $aclName, ':value' => $institution_id]);
 
     }//setInstitution
 
@@ -1599,7 +1523,7 @@ SQL;
      *
      */
 
-    public function disassociateWithInstitution()
+    public function disassociateWithInstitution(): void
     {
 
         // This feature currently applies to campus champions...
@@ -1616,9 +1540,7 @@ SELECT gb.group_by_id
 FROM group_bys gb
 WHERE gb.name = 'institution');
 SQL
-            , array(
-                ':user_id' => $this->_id
-            ));
+            , [':user_id' => $this->_id]);
 
     }//disassociateWithInstitution
 
@@ -1634,7 +1556,7 @@ SQL
      *
      */
 
-    public function setOrganizations($organization_ids = array(), $role = ROLE_ID_CENTER_DIRECTOR, $reassignActiveToPrimary = false)
+    public function setOrganizations($organization_ids = [], $role = ROLE_ID_CENTER_DIRECTOR, $reassignActiveToPrimary = false): void
     {
 
         // This feature currently applies to center directors and center staff members...
@@ -1654,10 +1576,7 @@ SQL
 
         $this->_pdo->execute(
             "DELETE FROM user_acl_group_by_parameters WHERE user_id = :user_id AND acl_id = :acl_id AND group_by_id IN (SELECT gb.group_by_id FROM group_bys gb WHERE gb.name = 'provider')",
-            array(
-                ':user_id' => $this->_id,
-                ':acl_id' => $acl->getAclId()
-            )
+            [':user_id' => $this->_id, ':acl_id' => $acl->getAclId()]
         );
 
         foreach ($organization_ids as $organization_id => $config) {
@@ -1682,11 +1601,7 @@ LEFT JOIN user_acl_group_by_parameters cur
 WHERE cur.user_acl_parameter_id IS NULL;
 SQL
                 ,
-                array(
-                    ':user_id' => $this->_id,
-                    ':acl_id' => $acl->getAclId(),
-                    ':value' => $organization_id
-                )
+                [':user_id' => $this->_id, ':acl_id' => $acl->getAclId(), ':value' => $organization_id]
             );
         }//foreach
     }//setOrganizations
@@ -1707,12 +1622,7 @@ SQL;
 
         $results = $this->_pdo->query(
             $query,
-            array(
-                ':user_id' => $this->_id,
-                ':acl_name' => ROLE_ID_CENTER_DIRECTOR,
-                ':group_by_name' => 'provider',
-                ':organization_id' => $organization_id
-            )
+            [':user_id' => $this->_id, ':acl_name' => ROLE_ID_CENTER_DIRECTOR, ':group_by_name' => 'provider', ':organization_id' => $organization_id]
         );
 
         $matches = $results[0]['num_matches'];
@@ -1762,9 +1672,7 @@ FROM Users u
 WHERE u.id = :user_id;
 SQL;
 
-        $results = $this->_pdo->query($query, array(
-            ':user_id' => $this->_id,
-        ));
+        $results = $this->_pdo->query($query, [':user_id' => $this->_id]);
 
         return (count($results) > 0) ? $results[0]['param_value'] : '-1';
 
@@ -1788,7 +1696,7 @@ SQL;
             $roles = array_reduce($this->_acls, function ($carry, Acl $item) {
                 $carry[] = $item->getName();
                 return $carry;
-            }, array());
+            }, []);
             return $roles;
         }
 
@@ -1803,11 +1711,9 @@ ON a.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
 SQL;
 
-            $results = $this->_pdo->query($query, array(
-                ':user_id' => $this->_id,
-            ));
+            $results = $this->_pdo->query($query, [':user_id' => $this->_id]);
 
-            $roles = array();
+            $roles = [];
 
             foreach ($results as $roleSet) {
 
@@ -1830,7 +1736,7 @@ SQL;
      *
      */
 
-    public function setRoles($role_set)
+    public function setRoles($role_set): void
     {
         $this->_roles = $role_set;
         // Make sure to also set the Acls
@@ -1840,7 +1746,7 @@ SQL;
                 $carry [] = $acl;
             }
             return $carry;
-        }, array());
+        }, []);
         $this->setAcls($acls);
     }
 
@@ -1872,7 +1778,7 @@ SQL;
      */
     function getAllRoles($includePublicRole = false)
     {
-        $allroles = array();
+        $allroles = [];
 
         foreach ($this->enumAllAvailableRoles() as $availableRole) {
             $roleData = array_pad(explode(':', $availableRole['param_value']), 2, NULL);
@@ -1939,7 +1845,7 @@ SQL;
      *
      */
 
-    public function setPersonID($person_id)
+    public function setPersonID($person_id): void
     {
         $this->_personID = $person_id;
     }
@@ -2024,10 +1930,7 @@ SQL;
 
         $roleData = $pdo->query(
             $query,
-            array(
-                ':abbrev' => $role_abbrev,
-                ':pub_abbrev' => ROLE_ID_PUBLIC
-            )
+            [':abbrev' => $role_abbrev, ':pub_abbrev' => ROLE_ID_PUBLIC]
         );
 
         return $roleData[0]['description'];
@@ -2056,9 +1959,7 @@ SQL;
             $string .= $characters[mt_rand(0, strlen($characters) - 1)];
         }
 
-        $results = $this->_pdo->query("SELECT * FROM Users WHERE token=:token", array(
-            ':token' => $string,
-        ));
+        $results = $this->_pdo->query("SELECT * FROM Users WHERE token=:token", [':token' => $string]);
 
         if (count($results) == 0)
             return $string;
@@ -2112,21 +2013,19 @@ SQL;
      *
      * @param array[] $acls
      */
-    public function setAcls(array $acls)
+    public function setAcls(array $acls): void
     {
         $this->_acls = $acls;
     } // setAcls
-
     /**
      * Add the provided acl to this users set of acls if they do not already
      * have it. If the overwrite parameter is provided as true then it will be
      * added ( or overwrite the existing acl ) regardless of whether or not the
      * user currently has it.
      *
-     * @param Acl $acl
      * @param bool $overwrite
      */
-    public function addAcl(Acl $acl, $overwrite = false)
+    public function addAcl(Acl $acl, $overwrite = false): void
     {
         if ( ( !array_key_exists($acl->getName(), $this->_acls) && !$overwrite ) ||
             $overwrite === true
@@ -2134,13 +2033,10 @@ SQL;
             $this->_acls[$acl->getName()] = $acl;
         }
     } // addAcl
-
     /**
      * Remove the provided acl from this users set of acls.
-     *
-     * @param Acl $acl
      */
-    public function removeAcl(Acl $acl)
+    public function removeAcl(Acl $acl): void
     {
         if (array_key_exists($acl->getName(), $this->_acls)) {
             unset($this->_acls[$acl->getName()]);
@@ -2164,7 +2060,7 @@ SQL;
         $isString = is_string($acl);
         $getter = 'get' . ucfirst($property);
         if (false === $isAcl && false === $isString) {
-            $aclClass = get_class($acl);
+            $aclClass = $acl::class;
             throw new Exception("Unknown acl type encountered. Expected Acl or string got $aclClass.");
         }
         $value = $isAcl ? $acl->$getter() : $acl;
@@ -2220,7 +2116,7 @@ FROM Users u
 WHERE u.username = :username
 SQL;
         $db = DB::factory('database');
-        $row = $db->query($query, array(':username' => $username));
+        $row = $db->query($query, [':username' => $username]);
         if (count($row) > 0) {
             $uid = $row[0]['id'];
             return self::getUserByID($uid);
@@ -2241,7 +2137,7 @@ SQL;
      * @throws Exception if this user has not been saved yet
      * @throws Exception if the provided acl cannot be found.
      */
-    public function addAclOrganization($aclName, $organizationId)
+    public function addAclOrganization($aclName, $organizationId): void
     {
         if (empty($this->_id)) {
             throw new Exception("This user must be saved prior to calling " . __FUNCTION__ . ".");
@@ -2266,10 +2162,7 @@ WHERE user_id = :user_id AND
       acl_id  = :acl_id
 SQL;
 
-        $this->_pdo->execute($cleanUserAclGroupByParameters, array(
-            ':user_id' => $this->_id,
-            ':acl_id'  => $acl->getAclId()
-        ));
+        $this->_pdo->execute($cleanUserAclGroupByParameters, [':user_id' => $this->_id, ':acl_id'  => $acl->getAclId()]);
 
         $populateUserAclGroupByParameters = <<<SQL
 INSERT INTO user_acl_group_by_parameters (user_id, acl_id, group_by_id, value)
@@ -2291,11 +2184,7 @@ LEFT JOIN user_acl_group_by_parameters cur
 WHERE cur.user_acl_parameter_id IS NULL;
 SQL;
 
-        $this->_pdo->execute($populateUserAclGroupByParameters, array(
-            ':user_id' => $this->_id,
-            ':acl_id'  => $acl->getAclId(),
-            ':value'   => $organizationId
-        ));
+        $this->_pdo->execute($populateUserAclGroupByParameters, [':user_id' => $this->_id, ':acl_id'  => $acl->getAclId(), ':value'   => $organizationId]);
     } // addAclOrganization
 
         /**
@@ -2307,12 +2196,9 @@ SQL;
      */
     public function jsonSerialize()
     {
-        $ignored = array(
-            '_pdo', '_primary_role', '_publicUser', '_timeCreated','_timeUpdated',
-            '_timePasswordUpdated', '_token', 'logger'
-        );
+        $ignored = ['_pdo', '_primary_role', '_publicUser', '_timeCreated', '_timeUpdated', '_timePasswordUpdated', '_token', 'logger'];
         $reflection = new ReflectionClass($this);
-        $results = array();
+        $results = [];
         $properties = $reflection->getProperties();
         foreach($properties as $property) {
             $name = $property->getName();
@@ -2344,7 +2230,7 @@ SQL;
      * @param int $organizationID the id of the organization that this user should be associated
      *            with
      */
-    public function setOrganizationID($organizationID)
+    public function setOrganizationID($organizationID): void
     {
         $this->_organizationID = $organizationID;
     }
@@ -2390,21 +2276,11 @@ SQL;
      */
     public static function validateRID($rid)
     {
-        $log = \CCR\Log::factory('xms.auth.rid', array(
-            'console' => false,
-            'db' => true,
-            'mail' => false,
-            'file' => LOG_DIR . '/xms-auth-rid.log',
-            'fileLogLevel' => Log::DEBUG
-        ));
+        $log = \CCR\Log::factory('xms.auth.rid', ['console' => false, 'db' => true, 'mail' => false, 'file' => LOG_DIR . '/xms-auth-rid.log', 'fileLogLevel' => Log::DEBUG]);
 
-        $results = array(
-            'status' => INVALID,
-            'user_first_name' => 'INVALID',
-            'user_id' => INVALID
-        );
+        $results = ['status' => INVALID, 'user_first_name' => 'INVALID', 'user_id' => INVALID];
 
-        list($userId, $expiration, $hash) = explode('|', $rid);
+        [$userId, $expiration, $hash] = explode('|', $rid);
 
         $now = time();
 
@@ -2425,7 +2301,7 @@ SQL;
             $results['status'] = $valid ? VALID : INVALID;
             $results['user_first_name'] = $valid ? $user->getFirstName() : 'INVALID';
             $results['user_id'] = $valid ? $user->getUserID() : INVALID;
-        } catch (Exception $e) {
+        } catch (Exception) {
             // If there was an exception then it was because we couldn't find a user by that username
             // so log the error and return the default information.
             $expirationDate = date('Y-m-d H:i:s', $expiration );
@@ -2440,7 +2316,7 @@ SQL;
      *
      * @throws Exception if there is a problem executing any of the required post logged in steps.
      */
-    public function postLogin() {
+    public function postLogin(): void {
         if (!$this->isSticky()) {
             $this->updatePerson();
             $this->synchronizeOrganization();
@@ -2459,7 +2335,7 @@ SQL;
      *
      * @throws Exception
      */
-    public function synchronizeOrganization()
+    public function synchronizeOrganization(): void
     {
         // This is pulled from the moddb.Users.organization_id column for this user record.
         $actualOrganization = $this->getOrganizationID();
@@ -2486,12 +2362,12 @@ SQL;
 
                 // Make sure that they at least have 'usr'
                 if (empty($otherAcls)) {
-                    $otherAcls = array('usr');
+                    $otherAcls = ['usr'];
                 }
 
                 // Now we need to make sure that the user is only assigned their non-center acls so
                 // clear any existing acls they have.
-                $this->setAcls(array());
+                $this->setAcls([]);
 
                 // Update the user w/ their new set of acls.
                 foreach($otherAcls as $aclName) {
@@ -2506,40 +2382,31 @@ SQL;
                 // Notify the XDMoD Admin that a user has had their privileges altered due to an
                 // organization change so that they can take any further steps that may be required.
                 MailWrapper::sendMail(
-                    array(
-                        'subject' => 'XDMoD User: Organization Update',
-                        'body' => sprintf(
-                            self::ADMIN_NOTIFICATION_EMAIL,
-                            $this->getFormalName(),
-                            $this->getUsername(),
-                            $this->getEmailAddress(),
-                            $userOrganizationName,
-                            $currentOrganizationName,
-                            json_encode($originalAcls),
-                            json_encode($otherAcls)
-                        ),
-                        'toAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient'),
-                    )
+                    ['subject' => 'XDMoD User: Organization Update', 'body' => sprintf(
+                        self::ADMIN_NOTIFICATION_EMAIL,
+                        $this->getFormalName(),
+                        $this->getUsername(),
+                        $this->getEmailAddress(),
+                        $userOrganizationName,
+                        $currentOrganizationName,
+                        json_encode($originalAcls),
+                        json_encode($otherAcls)
+                    ), 'toAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient')]
                 );
 
                 $contactAddress = \xd_utilities\getConfiguration('general', 'contact_page_recipient');
 
                 // Notify the user that there was an organization change detected.
                 MailWrapper::sendMail(
-                    array(
-                        'subject' => 'XDMoD User: Organization Update',
-                        'body' => sprintf(
-                            self::USER_NOTIFICATION_EMAIL,
-                            $this->getFormalName(),
-                            $userOrganizationName,
-                            $currentOrganizationName,
-                            $userOrganizationName,
-                            $contactAddress,
-                            MailWrapper::getMaintainerSignature()
-                        ),
-                        'toAddress' => $this->getEmailAddress(),
-                        'replyAddress' => $contactAddress
-                    )
+                    ['subject' => 'XDMoD User: Organization Update', 'body' => sprintf(
+                        self::USER_NOTIFICATION_EMAIL,
+                        $this->getFormalName(),
+                        $userOrganizationName,
+                        $currentOrganizationName,
+                        $userOrganizationName,
+                        $contactAddress,
+                        MailWrapper::getMaintainerSignature()
+                    ), 'toAddress' => $this->getEmailAddress(), 'replyAddress' => $contactAddress]
                 );
             }
 
@@ -2555,7 +2422,7 @@ SQL;
      * is different than the users curent Person.
      *
      */
-    public function updatePerson()
+    public function updatePerson(): void
     {
         $currentPersonId = $this->getPersonID();
         $hasSSO = count($this->ssoAttrs) > 0;
@@ -2577,7 +2444,7 @@ SQL;
         }
     }
 
-    public function setSSOAttrs($ssoAttrs)
+    public function setSSOAttrs($ssoAttrs): void
     {
         $this->ssoAttrs = array_reduce(
             array_intersect(self::$INCLUDE_SSO_ATTRS, array_keys($ssoAttrs)),
@@ -2585,7 +2452,7 @@ SQL;
                 $carry[$key] = $ssoAttrs[$key];
                 return $carry;
             },
-            array()
+            []
         );
     }
 
@@ -2605,7 +2472,7 @@ SQL;
      *
      * @param $sticky
      */
-    public function setSticky($sticky)
+    public function setSticky($sticky): void
     {
         $this->sticky = $sticky;
     }
@@ -2637,7 +2504,7 @@ SQL;
      *
      * @throws Exception if there is a problem connecting to / querying the database.
      */
-    public function getResources($resourceNames = array())
+    public function getResources($resourceNames = [])
     {
         $db = DB::factory('database');
 
@@ -2648,7 +2515,7 @@ SQL;
         FROM modw.resourcefact rf
         WHERE   rf.organization_id =  :organization_id
 SQL;
-        $params = array(':organization_id' => $this->getOrganizationID());
+        $params = [':organization_id' => $this->getOrganizationID()];
 
         // If we have resource names then update the query / params accordingly
         if (count($resourceNames) > 0) {
@@ -2656,9 +2523,7 @@ SQL;
 
             $handle = $db->handle();
             $resourceNames = array_map(
-                function ($value) use ($handle) {
-                    return $handle->quote($value);
-                },
+                fn($value) => $handle->quote($value),
                 $resourceNames
             );
             $params[':resource_codes'] = implode(

@@ -67,7 +67,7 @@ class Query extends Loggable
      *
      * @var array
      */
-    private $roleRestrictions = array();
+    private $roleRestrictions = [];
 
     /**
      * The set of role (global filter) parameters applied to this query, if any.
@@ -76,7 +76,7 @@ class Query extends Loggable
      *
      * @var array
      */
-    private $roleParameters = array();
+    private $roleParameters = [];
 
     /**
      * The set of (local) filter parameters applied to this query, if any.
@@ -85,7 +85,7 @@ class Query extends Loggable
      *
      * @var array
      */
-    private $filterParameters = array();
+    private $filterParameters = [];
 
     /**
      * @var VariableStore Collection of variable names and values available for substitution in SQL
@@ -100,7 +100,7 @@ class Query extends Loggable
 
     protected $aggregationUnitName = null;
 
-    private $leftJoins = array();
+    private $leftJoins = [];
 
     /**
      * @var bool True if this query should use DISTINCT.
@@ -114,7 +114,7 @@ class Query extends Loggable
         $endDate,
         $groupById = null,
         $statisticId = null,
-        array $parameters = array(),
+        array $parameters = [],
         LoggerInterface $logger = null
     ) {
         // If the logger was not passed in, create one specifically for the query logs
@@ -125,25 +125,19 @@ class Query extends Loggable
                     \xd_utilities\getConfiguration('general', 'sql_debug_mode'),
                     FILTER_VALIDATE_BOOLEAN
                 );
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $sqlDebug = false;
             }
             $logger = \CCR\Log::factory(
                 'datawarehouse.query',
-                array(
-                    'console' => false,
-                    'db' => false,
-                    'mail' => false,
-                    'file' => LOG_DIR . '/query.log',
-                    'fileLogLevel' => $sqlDebug ? Log::DEBUG : Log::NOTICE
-                )
+                ['console' => false, 'db' => false, 'mail' => false, 'file' => LOG_DIR . '/query.log', 'fileLogLevel' => $sqlDebug ? Log::DEBUG : Log::NOTICE]
             );
         }
 
         parent::__construct($logger);
 
         $this->variableStore = new VariableStore();
-        $this->pdoparams = array();
+        $this->pdoparams = [];
         $this->pdoindex = 0;
         $this->realm = Realm::factory($realmId, $logger);
 
@@ -173,8 +167,8 @@ class Query extends Loggable
             $this->setStat($statisticId);
         }
 
-        $this->roleParameterDescriptions = array();
-        $this->filterParameterDescriptions = array();
+        $this->roleParameterDescriptions = [];
+        $this->filterParameterDescriptions = [];
         $this->logger->debug(sprintf('Created Query %s', $this));
     }
 
@@ -245,13 +239,13 @@ class Query extends Loggable
      * @var array An array of additional GroupBy objects added via addGroupBy()
      */
 
-    public $_group_bys = array();
+    public $_group_bys = [];
     public function getGroupBys()
     {
         return $this->_group_bys;
     }
 
-    public $_stats = array();
+    public $_stats = [];
     public function getStats()
     {
         return $this->_stats;
@@ -263,18 +257,18 @@ class Query extends Loggable
 
     protected $_main_stat_field = null;
 
-    private $_tables = array();
-    private $_fields = array();
+    private $_tables = [];
+    private $_fields = [];
 
     /**
      * @var array An array of additional Statistic objects added via addStatField()
      */
 
-    protected $_stat_fields = array();
-    private $_where_conditions = array();
-    private $_stat_where_conditions = array();
-    private $_groups = array();
-    private $_orders = array();
+    protected $_stat_fields = [];
+    private $_where_conditions = [];
+    private $_stat_where_conditions = [];
+    private $_groups = [];
+    private $_orders = [];
 
     protected $_aggregation_unit;
 
@@ -314,13 +308,13 @@ class Query extends Loggable
 
     protected $_duration_formula;
 
-    public function execute($limit = 10000000)
+    public function execute($limit = 10_000_000)
     {
         $query_string = $this->getQueryString($limit);
 
         $debug = PDODB::debugging();
         if ($debug == true) {
-            $class = get_class($this);
+            $class = static::class;
             $this->logger->debug(sprintf("%s: \n%s", $class, $query_string));
         }
 
@@ -328,7 +322,7 @@ class Query extends Loggable
         $results = DB::factory($this->_db_profile)->query($query_string, $this->pdoparams);
 
         $time_end = microtime(true);
-        $return = array();
+        $return = [];
         if ($this->_main_stat_field != null) {
             $stat = $this->_main_stat_field->getId();
             $stat_weight = $this->_main_stat_field->getWeightStatName();
@@ -339,8 +333,8 @@ class Query extends Loggable
                 $sort_option = $this->_main_stat_field->getSortOrder();
             }
             if (isset($sort_option)) {
-                $stat_column = array();
-                $name_column = array();
+                $stat_column = [];
+                $name_column = [];
                 foreach ($results as $key => $row) {
                     $stat_column[$key]  = $row[$stat];
                     $name_column[$key]  = $row['name'];
@@ -353,8 +347,8 @@ class Query extends Loggable
                 $stat
             );
             if (count($results) > 0) {
-                $return[$stat] = array();
-                $return['weight'] = array();
+                $return[$stat] = [];
+                $return['weight'] = [];
             }
             $index = 0;
             foreach ($results as $result) {
@@ -419,7 +413,7 @@ class Query extends Loggable
         return $return;
     }
 
-    public function addTable(\DataWarehouse\Query\Model\Table $table)
+    public function addTable(\DataWarehouse\Query\Model\Table $table): void
     {
         $this->_tables[$table->getAlias()->getName()] = $table;
     }
@@ -428,12 +422,12 @@ class Query extends Loggable
         return $this->_tables;
     }
 
-    public function addLeftJoin(\DataWarehouse\Query\Model\Table $table, \DataWarehouse\Query\Model\WhereCondition $where)
+    public function addLeftJoin(\DataWarehouse\Query\Model\Table $table, \DataWarehouse\Query\Model\WhereCondition $where): void
     {
-        $this->leftJoins[$table->getAlias()->getName()] = array($table, $where);
+        $this->leftJoins[$table->getAlias()->getName()] = [$table, $where];
     }
 
-    public function addField(\DataWarehouse\Query\Model\Field $field)
+    public function addField(\DataWarehouse\Query\Model\Field $field): void
     {
         $this->_fields[$field->getAlias()->getName()] = $field;
     }
@@ -441,7 +435,7 @@ class Query extends Loggable
     {
         return $this->_fields;
     }
-    public function addStatField(Statistic $field)
+    public function addStatField(Statistic $field): void
     {
         $this->logger->debug(sprintf("%s Add statistic: '%s'", $this, $field->getId()));
 
@@ -469,7 +463,7 @@ class Query extends Loggable
      *
      * Note this function does not handle pdo parameterization of 'IN' conditions.
      */
-    public function addPdoWhereCondition(\DataWarehouse\Query\Model\WhereCondition $where_condition)
+    public function addPdoWhereCondition(\DataWarehouse\Query\Model\WhereCondition $where_condition): void
     {
         // key on the non-parameterized form since the substitution string is different every time.
         $key = $where_condition->__toString();
@@ -487,7 +481,7 @@ class Query extends Loggable
         );
     }
 
-    public function addWhereCondition(\DataWarehouse\Query\Model\WhereCondition $where_condition)
+    public function addWhereCondition(\DataWarehouse\Query\Model\WhereCondition $where_condition): void
     {
         $this->_where_conditions[$where_condition->__toString()] = $where_condition;
     }
@@ -496,7 +490,7 @@ class Query extends Loggable
         return $this->_where_conditions;
     }
 
-    public function addGroup(\DataWarehouse\Query\Model\Field $field)
+    public function addGroup(\DataWarehouse\Query\Model\Field $field): void
     {
         $this->_groups[$field->getAlias()->getName()] = $field;
     }
@@ -505,11 +499,11 @@ class Query extends Loggable
         return $this->_groups;
     }
 
-    public function prependOrder(\DataWarehouse\Query\Model\OrderBy $field)
+    public function prependOrder(\DataWarehouse\Query\Model\OrderBy $field): void
     {
-        $this->_orders = array_merge(array($field->getField()->getQualifiedName(false) => $field), $this->_orders);
+        $this->_orders = array_merge([$field->getField()->getQualifiedName(false) => $field], $this->_orders);
     }
-    public function addOrder(\DataWarehouse\Query\Model\OrderBy $field)
+    public function addOrder(\DataWarehouse\Query\Model\OrderBy $field): void
     {
         $this->_orders[$field->getField()->getQualifiedName(false)] = $field;
     }
@@ -517,17 +511,17 @@ class Query extends Loggable
     {
         return $this->_orders;
     }
-    public function clearOrders()
+    public function clearOrders(): void
     {
         unset($this->_orders);
-        $this->_orders = array();
+        $this->_orders = [];
     }
     public function getSelectFields()
     {
         $fields = $this->getFields();
         $stat_fields = $this->getStatFields();
 
-        $select_fields = array();
+        $select_fields = [];
         foreach ($fields as $field_key => $field) {
             $select_fields[$field_key] = $field->getQualifiedName(true);
         }
@@ -540,7 +534,7 @@ class Query extends Loggable
     public function getSelectTables()
     {
         $tables = $this->getTables();
-        $select_tables = array();
+        $select_tables = [];
         foreach ($tables as $table) {
             $select_tables[] = $table->getQualifiedName(true, true);
         }
@@ -550,7 +544,7 @@ class Query extends Loggable
     public function getSelectOrderBy()
     {
         $orders = $this->getOrders();
-        $select_order_by = array();
+        $select_order_by = [];
         foreach ($orders as $order_key => $order) {
             $select_order_by[] = $order->getField()->getQualifiedName(false).' '.$order->getOrder();
         }
@@ -562,7 +556,7 @@ class Query extends Loggable
         return $this->_duration_formula;
     }
 
-    public function setDurationFormula(\DataWarehouse\Query\Model\Field $field)
+    public function setDurationFormula(\DataWarehouse\Query\Model\Field $field): void
     {
         $this->_duration_formula = $field;
     }
@@ -613,7 +607,7 @@ class Query extends Loggable
         // values with the alias of the form "<field> AS <alias>" and the alias is qualified with
         // the dimension name (e.g., "person.id AS person_id").
 
-        $select_fields = array();
+        $select_fields = [];
         foreach ($this->getFields() as $field_key => $field) {
             $select_fields[$field_key] = $field->getQualifiedName();
         }
@@ -648,7 +642,7 @@ class Query extends Loggable
 
         $dimension_table = $select_tables[1];
 
-        $restriction_wheres = array();
+        $restriction_wheres = [];
         $dimension_group_by = $this->groupBy();
         $dimension_group_by_id = $dimension_group_by->getId();
         $id_field_without_alias = preg_replace($as_clause_regex, '', $id_field);
@@ -808,7 +802,7 @@ SQL;
         return $pdosubst;
     }
 
-    public function setParameters(array $parameters = array())
+    public function setParameters(array $parameters = []): void
     {
         $this->parameters = $parameters;
         foreach ($parameters as $parameter) {
@@ -840,7 +834,7 @@ SQL;
      * The where conditions and role parameters from the other class will
      * overwrite any existing settings in this class.
      */
-    public function cloneParameters(Query $other)
+    public function cloneParameters(Query $other): void
     {
         $this->_where_conditions = $other->_where_conditions;
         $this->parameters = $other->parameters;
@@ -860,9 +854,9 @@ SQL;
         return $stmt;
     }
 
-    private function getParameters(array $parameters = array())
+    private function getParameters(array $parameters = [])
     {
-        $whereConditions = array();
+        $whereConditions = [];
 
         foreach ($parameters as $parameter) {
             if ($parameter instanceof \DataWarehouse\Query\Model\Parameter) {
@@ -875,7 +869,7 @@ SQL;
         return $whereConditions;
     }
 
-    public function addParameters(array $parameters = array())
+    public function addParameters(array $parameters = []): void
     {
         $this->parameters = array_merge($parameters, $this->parameters);
 
@@ -960,10 +954,7 @@ SQL;
         // restrict a given dimension as much or further than the role
         // restrictions do, then the role restrictions aren't limiting the
         // query.
-        $filterSets = array(
-            $this->roleParameters,
-            $this->filterParameters,
-        );
+        $filterSets = [$this->roleParameters, $this->filterParameters];
         foreach ($filterSets as $filterSet) {
             foreach ($filterSet as $dimensionName => $dimensionData) {
                 if (!array_key_exists($dimensionName, $this->roleRestrictions)) {
@@ -984,11 +975,11 @@ SQL;
         return true;
     }
 
-    public function setFilters($user_filters)
+    public function setFilters($user_filters): void
     {
-        $filters = array();
+        $filters = [];
         if (!isset($user_filters->data) || !is_array($user_filters->data)) {
-            $user_filters->data = array();
+            $user_filters->data = [];
         }
         foreach ($user_filters->data as $user_filter) {
             if (isset($user_filter->checked) && $user_filter->checked == 1) {
@@ -997,34 +988,31 @@ SQL;
         }
 
         //combine the filters and group them by dimension
-        $groupedFilters = array();
+        $groupedFilters = [];
         foreach ($filters as $filter) {
             if (isset($filter->checked) && $filter->checked != 1) {
                 continue;
             }
 
             if (!isset($groupedFilters[$filter->dimension_id])) {
-                $groupedFilters[$filter->dimension_id] = array();
+                $groupedFilters[$filter->dimension_id] = [];
             }
             $groupedFilters[$filter->dimension_id][] = $filter->value_id;
         }
 
-        $filterParameters = array();
-        $filterParameterDescriptions = array();
+        $filterParameters = [];
+        $filterParameterDescriptions = [];
         foreach ($groupedFilters as $filter_parameter_dimension => $filterValues) {
             try {
                 $group_by_instance = $this->realm->getGroupByObject($filter_parameter_dimension);
-            } catch (\Exception $ex) {
+            } catch (\Exception) {
                 // Specifically catch when a realm does not have a groupby, this allows
                 // that specific realm to not have the filter
                 continue;
             }
-            $param = array($filter_parameter_dimension.'_filter' => implode(',', $filterValues));
+            $param = [$filter_parameter_dimension.'_filter' => implode(',', $filterValues)];
             $this->addParameters($group_by_instance->generateQueryFiltersFromRequest($param));
-            $filterParameters[$filter_parameter_dimension] = array(
-                'groupBy' => $group_by_instance,
-                'dimensionValues' => $filterValues,
-            );
+            $filterParameters[$filter_parameter_dimension] = ['groupBy' => $group_by_instance, 'dimensionValues' => $filterValues];
             $filterParameterDescriptions = array_merge($filterParameterDescriptions, $group_by_instance->generateQueryParameterLabelsFromRequest($param));
         }
 
@@ -1048,14 +1036,14 @@ SQL;
      */
     public function setMultipleRoleParameters($rolearray, $user)
     {
-        $allwheres = array();
-        $role_parameters = array();
+        $allwheres = [];
+        $role_parameters = [];
         $wide_role_parameter_found = false;
 
         // Check whether multiple service providers are supported or not.
         try {
             $multiple_providers_supported = \xd_utilities\getConfiguration('features', 'multiple_service_providers') === 'on';
-        } catch (Exception $e) {
+        } catch (Exception) {
             $multiple_providers_supported = false;
         }
 
@@ -1066,7 +1054,7 @@ SQL;
                 // Empty where condition translates to a "WHERE 1". There is no need to add the other
                 // where conditions associated with the other roles since the different
                 // role where conditions are ORed together.
-                return array();
+                return [];
             }
 
             foreach ($roleparams as $role_parameter_dimension => $role_parameter_value) {
@@ -1075,15 +1063,15 @@ SQL;
                 // all data. There is no need to add any where conditions.
                 $is_provider_dimension = $role_parameter_dimension === 'provider';
                 if ($is_provider_dimension && !$multiple_providers_supported) {
-                    return array();
+                    return [];
                 }
 
                 if (is_array($role_parameter_value)) {
-                    $param = array($role_parameter_dimension.'_filter' => implode(',', $role_parameter_value));
+                    $param = [$role_parameter_dimension.'_filter' => implode(',', $role_parameter_value)];
                     $role_parameter_values = $role_parameter_value;
                 } else {
-                    $param = array($role_parameter_dimension.'_filter' => $role_parameter_value);
-                    $role_parameter_values = array($role_parameter_value);
+                    $param = [$role_parameter_dimension.'_filter' => $role_parameter_value];
+                    $role_parameter_values = [$role_parameter_value];
                 }
 
                 // Get the group by object associated with this dimension.
@@ -1111,10 +1099,7 @@ SQL;
                         $role_parameters_value_list[] = $role_parameter_value;
                     }
                 } else {
-                    $role_parameters[$role_parameter_dimension] = array(
-                        'groupBy' => $group_by_instance,
-                        'dimensionValues' => $role_parameter_values,
-                    );
+                    $role_parameters[$role_parameter_dimension] = ['groupBy' => $group_by_instance, 'dimensionValues' => $role_parameter_values];
                 }
 
                 // If this parameter is on a wide-ranging dimension,
@@ -1126,7 +1111,7 @@ SQL;
         }
 
         if (count($allwheres) == 0) {
-            return array();
+            return [];
         }
 
         $this->_where_conditions["allroles"] = "(" . implode(" OR ", $allwheres) . ")";
@@ -1137,25 +1122,25 @@ SQL;
         return $role_parameters;
     }
 
-    public function setRoleParameters($role_parameters = array())
+    public function setRoleParameters($role_parameters = []): void
     {
-        $groupedRoleParameters = array();
-        $roleParameterDescriptions = array();
+        $groupedRoleParameters = [];
+        $roleParameterDescriptions = [];
         foreach ($role_parameters as $role_parameter_dimension => $role_parameter_value) {
             try{
                 $group_by_instance = $this->realm->getGroupByObject($role_parameter_dimension);
-            } catch (\Exception $ex){
+            } catch (\Exception){
                 // Specifically catch when a realm does not have a groupby, this allows
                 // that specific realm to not have the filter
                 continue;
             }
 
             if (is_array($role_parameter_value)) {
-                $param = array($role_parameter_dimension.'_filter' => implode(',', $role_parameter_value));
+                $param = [$role_parameter_dimension.'_filter' => implode(',', $role_parameter_value)];
                 $role_parameter_values = $role_parameter_value;
             } else {
-                $param = array($role_parameter_dimension.'_filter' => $role_parameter_value);
-                $role_parameter_values = array($role_parameter_value);
+                $param = [$role_parameter_dimension.'_filter' => $role_parameter_value];
+                $role_parameter_values = [$role_parameter_value];
             }
 
             $this->addParameters($group_by_instance->generateQueryFiltersFromRequest($param));
@@ -1170,10 +1155,7 @@ SQL;
                     $role_parameters_value_list[] = $current_role_parameter_value;
                 }
             } else {
-                $groupedRoleParameters[$role_parameter_dimension] = array(
-                    'groupBy' => $group_by_instance,
-                    'dimensionValues' => $role_parameter_values,
-                );
+                $groupedRoleParameters[$role_parameter_dimension] = ['groupBy' => $group_by_instance, 'dimensionValues' => $role_parameter_values];
             }
 
             $roleParameterDescriptions = array_merge($roleParameterDescriptions, $group_by_instance->generateQueryParameterLabelsFromRequest($param));
@@ -1242,7 +1224,7 @@ SQL;
         return $statistic;
     }
 
-    public function addOrderBy($sort_group_or_stat_name, $sort_direction)
+    public function addOrderBy($sort_group_or_stat_name, $sort_direction): void
     {
         if (isset($this->_group_bys[$sort_group_or_stat_name])) {
             $this->_group_bys[$sort_group_or_stat_name]->addOrder($this, true, $sort_direction, false);
@@ -1258,47 +1240,27 @@ SQL;
      *
      * @param object $data_description A data description object.
      */
-    public function addOrderByAndSetSortInfo($data_description)
+    public function addOrderByAndSetSortInfo($data_description): void
     {
         switch ($data_description->sort_type) {
             case 'value_asc':
                 $this->addOrderBy($data_description->metric, 'asc');
-                $this->sortInfo = array(
-                array(
-                    'column_name' => $data_description->metric,
-                    'direction' => 'asc'
-                )
-                );
+                $this->sortInfo = [['column_name' => $data_description->metric, 'direction' => 'asc']];
                 break;
 
             case 'value_desc':
                 $this->addOrderBy($data_description->metric, 'desc');
-                $this->sortInfo = array(
-                array(
-                    'column_name' => $data_description->metric,
-                    'direction' => 'desc'
-                )
-                );
+                $this->sortInfo = [['column_name' => $data_description->metric, 'direction' => 'desc']];
                 break;
 
             case 'label_asc':
                 $this->addOrderBy($data_description->group_by, 'asc');
-                $this->sortInfo = array(
-                array(
-                    'column_name' => $data_description->group_by,
-                    'direction' => 'asc'
-                )
-                );
+                $this->sortInfo = [['column_name' => $data_description->group_by, 'direction' => 'asc']];
                 break;
 
             case 'label_desc':
                 $this->addOrderBy($data_description->group_by, 'desc');
-                $this->sortInfo = array(
-                array(
-                    'column_name' => $data_description->group_by,
-                    'direction' => 'desc'
-                )
-                );
+                $this->sortInfo = [['column_name' => $data_description->group_by, 'direction' => 'desc']];
                 break;
         }
     }
@@ -1313,7 +1275,7 @@ SQL;
      * Note: 2019-08-15 This is currently only called from Query::__construct().
      */
 
-    public function setStat($stat)
+    public function setStat($stat): void
     {
         $permitted_statistics = $this->realm->getStatisticIds();
 
@@ -1375,7 +1337,7 @@ SQL;
             $end_date_parsed['year']
         );
 
-        list($this->_min_date_id, $this->_max_date_id) = $this->_aggregation_unit->getDateRangeIds($this->_start_date, $this->_end_date);
+        [$this->_min_date_id, $this->_max_date_id] = $this->_aggregation_unit->getDateRangeIds($this->_start_date, $this->_end_date);
 
         if (!$start_date_given && !$end_date_given) {
             return;
@@ -1472,20 +1434,20 @@ SQL;
      * @see iQuery::__toString()
      */
 
-    public function __toString()
+    public function __toString(): string
     {
-        $primaryGroupById = array();
+        $primaryGroupById = [];
         if ( null !== $this->_group_by ) {
             $primaryGroupById[] = $this->_group_by->getId();
         }
-        $primaryStatisticId = array();
+        $primaryStatisticId = [];
         if ( null !== $this->_main_stat_field ) {
             $primaryStatisticId[] = $this->_main_stat_field->getId();
         }
 
         return sprintf(
             "%s(%s, groupbys=(%s), statistics=(%s))",
-            get_class($this),
+            static::class,
             $this->realm->getId(),
             implode(',', array_merge($primaryGroupById, array_keys($this->_group_bys))),
             implode(',', array_keys($this->_stat_fields))

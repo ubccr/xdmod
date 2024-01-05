@@ -25,7 +25,7 @@ located at: <xdmod_install_dir>/bin/acl-config
 MSG;
     protected $scriptName = 'acl-config';
 
-    public function handle()
+    public function handle(): void
     {
         $this->console->displaySectionHeader($this->sectionHeader);
         $this->console->displayMessage($this->sectionMessage);
@@ -36,7 +36,7 @@ MSG;
 
         $output = shell_exec($cmd);
 
-        $hadError = strpos($output, 'error') !== false;
+        $hadError = str_contains($output, 'error');
 
         if ($hadError == true) {
             $this->console->displayBlankLine();

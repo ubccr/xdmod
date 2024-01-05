@@ -17,7 +17,7 @@ class CompositeMigration extends Migration
      *
      * @var array
      */
-    protected $migrations = array();
+    protected $migrations = [];
 
     /**
      * Constructor.
@@ -39,7 +39,7 @@ class CompositeMigration extends Migration
     /**
      * @inheritdoc
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         parent::setLogger($logger);
 
@@ -51,7 +51,7 @@ class CompositeMigration extends Migration
     /**
      * @inheritdoc
      */
-    public function execute()
+    public function execute(): void
     {
         foreach ($this->migrations as $migration) {
             $migration->execute();

@@ -11,21 +11,21 @@ use IntegrationTests\BaseTest;
 abstract class BaseUserAdminTest extends BaseTest
 {
 
-    const MIN_USERS = 1;
-    const MAX_USERS = 1000;
-    const DEFAULT_TEST_USER_NAME = "test";
-    const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@test.com";
+    public const MIN_USERS = 1;
+    public const MAX_USERS = 1000;
+    public const DEFAULT_TEST_USER_NAME = "test";
+    public const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@test.com";
 
     /**
      * @var int The id of the default user type, 'Testing'
      */
-    const DEFAULT_USER_TYPE = 3;
+    public const DEFAULT_USER_TYPE = 3;
 
-    const CENTER_TACC = 476;
-    const CENTER_SDSC = 856;
-    const CENTER_PSC = 848;
+    public const CENTER_TACC = 476;
+    public const CENTER_SDSC = 856;
+    public const CENTER_PSC = 848;
 
-    const PUBLIC_USER_NAME = 'Public User';
+    public const PUBLIC_USER_NAME = 'Public User';
 
     /**
      * @var XdmodTestHelper
@@ -37,27 +37,27 @@ abstract class BaseUserAdminTest extends BaseTest
      *
      * @var array
      */
-    protected static $newUsers = array();
+    protected static $newUsers = [];
 
     /**
      * Used to keep track of the users that already exist in the database.
      *
      * @var array
      */
-    protected static $existingUsers = array();
+    protected static $existingUsers = [];
 
     /**
      * @var PeopleHelper
      */
     protected $peopleHelper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->helper = new XdmodTestHelper();
         $this->peopleHelper = new PeopleHelper();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         foreach (self::$newUsers as $username => $userId) {
             try {
@@ -91,10 +91,7 @@ abstract class BaseUserAdminTest extends BaseTest
         $helper = new XdmodTestHelper();
 
         $helper->authenticateDashboard('mgr');
-        $data = array(
-            'operation' => 'delete_user',
-            'uid' => $userId
-        );
+        $data = ['operation' => 'delete_user', 'uid' => $userId];
 
         $response = $helper->post('controllers/user_admin.php', null, $data);
 
@@ -103,7 +100,7 @@ abstract class BaseUserAdminTest extends BaseTest
 
         $actualContentType = $response[1]['content_type'];
         $actualHttpCode = $response[1]['http_code'];
-        if (strpos($actualContentType, $expectedContentType) === false) {
+        if (!str_contains($actualContentType, $expectedContentType)) {
             throw new Exception("Expected content-type: $expectedContentType. Received: $actualContentType");
         }
         if ($expectedHttpCode !== $actualHttpCode) {
@@ -116,7 +113,7 @@ abstract class BaseUserAdminTest extends BaseTest
         $actualSuccessMessage = $actualMessage ? 'true' : 'false';
 
         // Begin determining if the response was as expected.
-        if (strpos($actualMessage, 'user_does_not_exist') === false) {
+        if (!str_contains($actualMessage, 'user_does_not_exist')) {
             // If the user does exist...
 
             // then we expect the 'success' property to be true. If not,
@@ -133,7 +130,7 @@ abstract class BaseUserAdminTest extends BaseTest
 
             // then we expect that the users name will be in the returned
             // message. If it's not then throw an exception.
-            if (strpos($actualMessage, $username) === false) {
+            if (!str_contains($actualMessage, $username)) {
                 throw new Exception(
                     sprintf(
                         "Remove User ['message'] did not contain username: %s. Received: %s",
@@ -176,8 +173,8 @@ abstract class BaseUserAdminTest extends BaseTest
         $this->helper->authenticateDashboard('mgr');
 
         // retrieve required arguments
-        $username = isset($options['username']) ? $options['username'] : null;
-        $acls = isset($options['acls']) ? $options['acls'] : null;
+        $username = $options['username'] ?? null;
+        $acls = $options['acls'] ?? null;
 
         $this->assertNotNull(
             $username,
@@ -193,29 +190,18 @@ abstract class BaseUserAdminTest extends BaseTest
         if (isset($options['long_name'])) {
             $person = $this->peopleHelper->getPersonIdByLongName($options['long_name']);
         }
-        $institution = isset($options['institution']) ? $options['institution'] : -1;
-        $firstName = isset($options['first_name']) ? $options['first_name'] : 'Test';
-        $lastName = isset($options['last_name']) ? $options['last_name'] : 'User';
-        $emailAddress = isset($options['email_address']) ? $options['email_address'] : $username . self::DEFAULT_EMAIL_ADDRESS_SUFFIX;
-        $userType = isset($options['user_type']) ? $options['user_type'] : self::DEFAULT_USER_TYPE;
-        $output = isset($options['output']) ? $options['output'] : 'test.create.user';
-        $expectedSuccess = isset($options['expected_success']) ? $options['expected_success'] : true;
+        $institution = $options['institution'] ?? -1;
+        $firstName = $options['first_name'] ?? 'Test';
+        $lastName = $options['last_name'] ?? 'User';
+        $emailAddress = $options['email_address'] ?? $username . self::DEFAULT_EMAIL_ADDRESS_SUFFIX;
+        $userType = $options['user_type'] ?? self::DEFAULT_USER_TYPE;
+        $output = $options['output'] ?? 'test.create.user';
+        $expectedSuccess = $options['expected_success'] ?? true;
 
         // construct form params for post request to create new user.
-        $data = array(
-            'operation' => 'create_user',
-            'account_request_id' => '',
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'email_address' => $emailAddress,
-            'username' => $username,
-            'acls' => json_encode(
-                $acls
-            ),
-            'assignment' => $person,
-            'institution' => $institution,
-            'user_type' => $userType
-        );
+        $data = ['operation' => 'create_user', 'account_request_id' => '', 'first_name' => $firstName, 'last_name' => $lastName, 'email_address' => $emailAddress, 'username' => $username, 'acls' => json_encode(
+            $acls
+        ), 'assignment' => $person, 'institution' => $institution, 'user_type' => $userType];
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
 
@@ -234,15 +220,7 @@ abstract class BaseUserAdminTest extends BaseTest
 
         // substitutions that will be used in the event that the actual and
         // expected have keys in common.
-        $substitutions = array(
-            '$emailAddress' => $emailAddress,
-            '$username' => $username,
-            '$userType' => $userType,
-            '$firstName' => $firstName,
-            '$lastName' => $lastName,
-            '$assignment' => $person,
-            '$institution' => $institution
-        );
+        $substitutions = ['$emailAddress' => $emailAddress, '$username' => $username, '$userType' => $userType, '$firstName' => $firstName, '$lastName' => $lastName, '$assignment' => $person, '$institution' => $institution];
 
         // retrieve the keys that the actual / expected have in common.
         $similar = array_intersect(array_keys($actual), array_keys($expected));
@@ -274,15 +252,13 @@ abstract class BaseUserAdminTest extends BaseTest
         $helper = new XdmodTestHelper();
         $helper->authenticateDashboard('mgr');
 
-        $loginAsParams = array(
-            'uid' => $userId
-        );
+        $loginAsParams = ['uid' => $userId];
 
         // perform the pseudo-login
         $helper->get('internal_dashboard/controllers/pseudo_login.php', $loginAsParams);
 
         // build the update user params
-        $updateUserData = array();
+        $updateUserData = [];
 
         if (isset($password)) {
             $updateUserData['password'] = $password;
@@ -336,18 +312,9 @@ abstract class BaseUserAdminTest extends BaseTest
      */
     protected function updateUser($userId, $emailAddress, $acls, $assignedPerson, $institution, $user_type, $sticky = false)
     {
-        $data = array(
-            'operation' => 'update_user',
-            'uid' => $userId,
-            'email_address' => $emailAddress,
-            'acls' => json_encode(
-                $acls
-            ),
-            'assigned_user' => $assignedPerson,
-            'institution' => $institution,
-            'user_type' => $user_type,
-            'sticky' => $sticky
-        );
+        $data = ['operation' => 'update_user', 'uid' => $userId, 'email_address' => $emailAddress, 'acls' => json_encode(
+            $acls
+        ), 'assigned_user' => $assignedPerson, 'institution' => $institution, 'user_type' => $user_type, 'sticky' => $sticky];
         $this->helper->authenticateDashboard('mgr');
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
@@ -385,10 +352,7 @@ abstract class BaseUserAdminTest extends BaseTest
         $listUsersResponse = $this->helper->post(
             'controllers/user_admin.php',
             null,
-            array(
-                'operation' => 'list_users',
-                'group' => $userGroup
-            )
+            ['operation' => 'list_users', 'group' => $userGroup]
         );
 
         $this->validateResponse($listUsersResponse);
@@ -425,10 +389,7 @@ abstract class BaseUserAdminTest extends BaseTest
         $response = $this->helper->post(
             'controllers/user_admin.php',
             null,
-            array(
-                'operation' => 'get_user_details',
-                'uid' => $userId
-            )
+            ['operation' => 'get_user_details', 'uid' => $userId]
         );
 
         $this->validateResponse($response);
@@ -453,12 +414,12 @@ abstract class BaseUserAdminTest extends BaseTest
      * @param string $expectedContentType the content-type that the response is
      *                                    expected to have.
      */
-    protected function validateResponse($response, $expectedHttpCode = 200, $expectedContentType = 'application/json')
+    protected function validateResponse(mixed $response, $expectedHttpCode = 200, $expectedContentType = 'application/json')
     {
         $actualContentType = $response[1]['content_type'];
         $actualHttpCode = $response[1]['http_code'];
         $this->assertTrue(
-            strpos($actualContentType, $expectedContentType) !== false,
+            str_contains($actualContentType, $expectedContentType),
             "Expected content-type: $expectedContentType. Received: $actualContentType"
         );
         $this->assertEquals(

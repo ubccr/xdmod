@@ -17,7 +17,7 @@ class Rest extends aDataEndpoint implements iDataEndpoint
      * It also allows us to implement auto-discovery.
      */
 
-    const ENDPOINT_NAME = 'rest';
+    public const ENDPOINT_NAME = 'rest';
 
     /**
      * @var stromg The base url for this endpoint
@@ -37,14 +37,14 @@ class Rest extends aDataEndpoint implements iDataEndpoint
     {
         parent::__construct($options, $logger);
 
-        $requiredKeys = array("base_url");
+        $requiredKeys = ["base_url"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
         $this->baseUrl = $options->base_url;
 
         if ( null !== $options->sleep_seconds && is_numeric($options->sleep_seconds) ) {
             $seconds = (float) $options->sleep_seconds;
-            $this->sleepMicroseconds = $seconds * 1000000;
+            $this->sleepMicroseconds = $seconds * 1_000_000;
         }
 
         $this->generateUniqueKey();
@@ -56,7 +56,7 @@ class Rest extends aDataEndpoint implements iDataEndpoint
 
     protected function generateUniqueKey()
     {
-        $this->key = md5(implode($this->keySeparator, array($this->type, $this->name, $this->baseUrl)));
+        $this->key = md5(implode($this->keySeparator, [$this->type, $this->name, $this->baseUrl]));
     }
 
     /**
@@ -121,8 +121,8 @@ class Rest extends aDataEndpoint implements iDataEndpoint
      * @see iDataEndpoint::__toString()
      */
 
-    public function __toString()
+    public function __toString(): string
     {
-        return "{$this->name} (" . get_class($this) . ", base_url = {$this->baseUrl})";
+        return "{$this->name} (" . static::class . ", base_url = {$this->baseUrl})";
     }
 }

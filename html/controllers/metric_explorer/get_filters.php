@@ -1,7 +1,7 @@
 <?php
 require_once('common.php');
 
-$returnData = array();
+$returnData = [];
 
 try
 {
@@ -13,19 +13,11 @@ try
 	if($filters!= NULL) 
 	{
 		 $filtersArray = json_decode($filters);
-		 $returnData = array(
-			'totalCount' => count($filtersArray), 
-			'message' => 'success', 
-			'data' => $filtersArray ,
-			'success' => true);
+		 $returnData = ['totalCount' => count($filtersArray), 'message' => 'success', 'data' => $filtersArray, 'success' => true];
 	}
 	else 
 	{
-		$returnData = array(
-			'totalCount' => 0, 
-			'message' => 'success',
-			'data' => array(),
-			'success' => true);
+		$returnData = ['totalCount' => 0, 'message' => 'success', 'data' => [], 'success' => true];
 	}
 	
 }
@@ -37,11 +29,7 @@ catch(SessionExpiredException $see)
 }
 catch(Exception $ex)
 {
-	$returnData = array(
-			'totalCount' => 0, 
-			'message' => $ex->getMessage(), 
-			'data' => array(),
-			'success' => false);
+	$returnData = ['totalCount' => 0, 'message' => $ex->getMessage(), 'data' => [], 'success' => false];
 }
 
 xd_controller\returnJSON($returnData);

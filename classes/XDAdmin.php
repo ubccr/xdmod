@@ -75,7 +75,7 @@ class XDAdmin
      * @param int $id
      * @param string $creator
      */
-    public function updateAccountRequestStatus($id = -1, $creator = '')
+    public function updateAccountRequestStatus($id = -1, $creator = ''): void
     {
         $create_message = 'Created on ' . date('Y-m-d \a\t h:i A');
 
@@ -85,10 +85,7 @@ class XDAdmin
 
         $this->moddb->execute(
             "UPDATE AccountRequests SET status = :status WHERE id = :id",
-            array(
-                'id'     => $id,
-                'status' => $create_message,
-            )
+            ['id'     => $id, 'status' => $create_message]
         );
     }
 
@@ -124,7 +121,7 @@ SQL;
             ORDER BY email_address
         ");
 
-        $results = array();
+        $results = [];
 
         foreach($emailAddressResults as $address) {
             $results[] = $address['email_address'];

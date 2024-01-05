@@ -104,8 +104,8 @@ abstract class SetupItem
     {
         try {
             $data = Json::loadFile($path);
-        } catch (\Exception $e) {
-            return array();
+        } catch (\Exception) {
+            return [];
         }
 
         // Remove meta data, it's not used anymore.
@@ -128,10 +128,10 @@ abstract class SetupItem
         $data = parse_ini_file($path, true);
 
         if ($data === false) {
-            return array();
+            return [];
         }
 
-        $settings = array();
+        $settings = [];
 
         foreach ($data as $sectionName => $sectionData) {
             foreach ($sectionData as $key => $value) {
@@ -215,7 +215,7 @@ abstract class SetupItem
         $confirm = $this->console->prompt(
             "Overwrite config file '$path'?",
             'yes',
-            array('yes', 'no')
+            ['yes', 'no']
         );
 
         if ($confirm !== 'yes') {
@@ -251,7 +251,7 @@ abstract class SetupItem
      */
     protected function executeCommand($command)
     {
-        $output    = array();
+        $output    = [];
         $returnVar = 0;
 
         exec($command . ' 2>&1', $output, $returnVar);

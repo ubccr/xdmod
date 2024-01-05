@@ -82,7 +82,7 @@ class ExportDBTest extends BaseTest
     private function countUserRequests()
     {
         // Determine number of requests placed by this user
-        $params= array('user_id' => $this->acquireUserId());
+        $params= ['user_id' => $this->acquireUserId()];
         $sql = 'SELECT COUNT(id) AS count FROM batch_export_requests WHERE user_id=:user_id';
         $retval = static::$dbh->query($sql, $params);
         return $retval[0]['count'];
@@ -91,7 +91,7 @@ class ExportDBTest extends BaseTest
     /* *********** PUBLIC TESTS *********** */
 
     // Create three new records in Submitted state.
-    public function testNewRecordCreation()
+    public function testNewRecordCreation(): void
     {
         $query = new QueryHandler();
         $userId = $this->acquireUserId();
@@ -127,7 +127,7 @@ class ExportDBTest extends BaseTest
     }
 
     // Verify counts of Submitted records
-    public function testCountSubmitted()
+    public function testCountSubmitted(): void
     {
         $query = new QueryHandler();
         $submittedCount = $query->countSubmittedRecords();
@@ -145,20 +145,12 @@ class ExportDBTest extends BaseTest
     }
 
     // Verify field list returned from listSubmittedRecords()
-    public function testSubmittedRecordFieldList()
+    public function testSubmittedRecordFieldList(): void
     {
         $query = new QueryHandler();
 
         // Expect these keys from the associative array
-        $expectedKeys = array(
-            'id',
-            'user_id',
-            'realm',
-            'start_date',
-            'end_date',
-            'export_file_format',
-            'requested_datetime'
-        );
+        $expectedKeys = ['id', 'user_id', 'realm', 'start_date', 'end_date', 'export_file_format', 'requested_datetime'];
 
         // List all records in Submitted state:
         $actual = $query->listSubmittedRecords();
@@ -167,7 +159,7 @@ class ExportDBTest extends BaseTest
         $this->assertEquals($this->countSubmittedRecords(), count($actual), 'the expected number of records is returned from the query');
     }
 
-    public function testSubmittedToFailed()
+    public function testSubmittedToFailed(): void
     {
         $query = new QueryHandler();
 
@@ -194,7 +186,7 @@ class ExportDBTest extends BaseTest
         }
     }
 
-    public function testSubmittedToExpired()
+    public function testSubmittedToExpired(): void
     {
         $query = new QueryHandler();
 
@@ -221,7 +213,7 @@ class ExportDBTest extends BaseTest
         }
     }
 
-    public function testSubmittedToAvailable()
+    public function testSubmittedToAvailable(): void
     {
         $query = new QueryHandler();
 
@@ -248,7 +240,7 @@ class ExportDBTest extends BaseTest
         }
     }
 
-    public function testAvailableToFailed()
+    public function testAvailableToFailed(): void
     {
         $query = new QueryHandler();
 
@@ -275,7 +267,7 @@ class ExportDBTest extends BaseTest
         }
     }
 
-    public function testAvailableToExpired()
+    public function testAvailableToExpired(): void
     {
         $query = new QueryHandler();
 
@@ -302,7 +294,7 @@ class ExportDBTest extends BaseTest
         }
     }
 
-    public function testExpiredToFailed()
+    public function testExpiredToFailed(): void
     {
         $query = new QueryHandler();
 
@@ -329,7 +321,7 @@ class ExportDBTest extends BaseTest
         }
     }
 
-    public function testFailedToExpired()
+    public function testFailedToExpired(): void
     {
         $query = new QueryHandler();
 
@@ -356,7 +348,7 @@ class ExportDBTest extends BaseTest
         }
     }
 
-    public function testExpiredToAvailable()
+    public function testExpiredToAvailable(): void
     {
         $query = new QueryHandler();
 
@@ -383,7 +375,7 @@ class ExportDBTest extends BaseTest
         }
     }
 
-    public function testFailedToAvailable()
+    public function testFailedToAvailable(): void
     {
         $query = new QueryHandler();
 
@@ -411,24 +403,13 @@ class ExportDBTest extends BaseTest
     }
 
     // Verify field list returned from listRequestsForUser()
-    public function testUserRecordFieldList()
+    public function testUserRecordFieldList(): void
     {
         $query = new QueryHandler();
         $userId = $this->acquireUserId();
 
         // Expect these keys from the associative array
-        $expectedKeys = array(
-            'id',
-            'realm',
-            'start_date',
-            'end_date',
-            'export_succeeded',
-            'export_expired',
-            'export_expires_datetime',
-            'export_created_datetime',
-            'export_file_format',
-            'requested_datetime'
-        );
+        $expectedKeys = ['id', 'realm', 'start_date', 'end_date', 'export_succeeded', 'export_expired', 'export_expires_datetime', 'export_created_datetime', 'export_file_format', 'requested_datetime'];
 
         // Requests via this user have been created as part of these tests
         $actual = $query->listRequestsForUser($userId);
@@ -438,26 +419,13 @@ class ExportDBTest extends BaseTest
     }
 
     // Verify field list returned from listUserRequestsByState()
-    public function testUserRecordReportStates()
+    public function testUserRecordReportStates(): void
     {
         $query = new QueryHandler();
         $userId = $this->acquireUserId();
 
         // Expect these keys from the associative array
-        $expectedKeys = array(
-            'id',
-            'realm',
-            'start_date',
-            'end_date',
-            'export_succeeded',
-            'export_expired',
-            'export_expires_datetime',
-            'export_created_datetime',
-            'export_file_format',
-            'requested_datetime',
-            'downloaded_datetime',
-            'state'
-        );
+        $expectedKeys = ['id', 'realm', 'start_date', 'end_date', 'export_succeeded', 'export_expired', 'export_expires_datetime', 'export_created_datetime', 'export_file_format', 'requested_datetime', 'downloaded_datetime', 'state'];
 
         // Requests via this user have been created as part of these tests
         $actual = $query->listUserRequestsByState($userId);
@@ -467,7 +435,7 @@ class ExportDBTest extends BaseTest
     }
 
     // Verify that user that did not create request cannot delete it
-    public function testRecordDeleteIncorrectUser()
+    public function testRecordDeleteIncorrectUser(): void
     {
         $query = new QueryHandler();
         $userId = $this->acquireUserId();
@@ -492,7 +460,7 @@ class ExportDBTest extends BaseTest
     }
 
     // Verify that user that created request can delete it
-    public function testRecordDeleteCorrectUser()
+    public function testRecordDeleteCorrectUser(): void
     {
         $query = new QueryHandler();
         $userId = $this->acquireUserId();
@@ -511,7 +479,7 @@ class ExportDBTest extends BaseTest
         }
     }
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         // setup needed to use NORMAL_USER_USER_NAME or the like
         parent::setUpBeforeClass();
@@ -521,9 +489,9 @@ class ExportDBTest extends BaseTest
         static::$maxId = static::$dbh->query('SELECT COALESCE(MAX(id), 0) AS id FROM batch_export_requests')[0]['id'];
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // Reset the batch_export_requests database table to its initial contents
-        static::$dbh->execute('DELETE FROM batch_export_requests WHERE id > :id', array('id' => static::$maxId));
+        static::$dbh->execute('DELETE FROM batch_export_requests WHERE id > :id', ['id' => static::$maxId]);
     }
 }

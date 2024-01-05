@@ -8,9 +8,10 @@ namespace ComponentTests\Query;
 
 use CCR\Log as Logger;
 use DataWarehouse\Query\AggregateQuery;
+use Exception;
 use Psr\Log\LoggerInterface;
 
-class AggregateQueryTest extends \PHPUnit_Framework_TestCase
+class AggregateQueryTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -18,25 +19,17 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
      */
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Logger::EMERG
-        );
+        $conf = ['file' => false, 'db' => false, 'mail' => false, 'consoleLogLevel' => Logger::EMERG];
         self::$logger = Logger::factory('PHPUnit', $conf);
 
         // In order to use a non-standard location for datawarehouse.json we must manually
         // initialize the Realm class.
 
-        $options = (object) array(
-            'config_file_name' => 'datawarehouse.json',
-            'config_base_dir'  => realpath('../artifacts/xdmod/realm')
-        );
+        $options = (object) ['config_file_name' => 'datawarehouse.json', 'config_base_dir'  => realpath('../artifacts/xdmod/realm')];
 
         \Realm\Realm::initialize(self::$logger, $options);
     }
@@ -45,11 +38,12 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
      * Create an aggregate query with no group by or statistic. We will not be able to generate the
      * query string with no fields for the SELECT clause.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testAggregateQueryNoStatisticNoGroupBy()
+    public function testAggregateQueryNoStatisticNoGroupBy(): void
     {
+        $this->expectException(Exception::class);
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
             'day',
@@ -64,7 +58,7 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
      * group by id, short name, and name.
      */
 
-    public function testAggregateQueryNoStatistic()
+    public function testAggregateQueryNoStatistic(): void
     {
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
@@ -100,7 +94,7 @@ SQL;
      * group by id, short name, and name.
      */
 
-    public function testAggregateQueryWithAlternateGroupByColumn()
+    public function testAggregateQueryWithAlternateGroupByColumn(): void
     {
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
@@ -136,7 +130,7 @@ SQL;
      * to the query.
      */
 
-    public function testAggregateQueryGroupByAndStatistic()
+    public function testAggregateQueryGroupByAndStatistic(): void
     {
         // Specifying the statistic in the constructor calls Query::setStat() which adds all
         // available statistics. Note that the order of the statistics in the query are dependent on
@@ -178,7 +172,7 @@ SQL;
      * Create an aggregate query with a statistic but no group by. This is essentially a group by None.
      */
 
-    public function testAggregateQueryStatisticNoGroupBy()
+    public function testAggregateQueryStatisticNoGroupBy(): void
     {
         // Specifying the statistic in the constructor calls Query::setStat() which adds all
         // available statistics. Note that the order of the statistics in the query are dependent on
@@ -218,7 +212,7 @@ SQL;
      * Create an aggregate query and then add a group by and a statistic.
      */
 
-    public function testAggregateQueryAddGroupByAndStatistic()
+    public function testAggregateQueryAddGroupByAndStatistic(): void
     {
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
@@ -255,7 +249,7 @@ SQL;
      * Create an aggregate query with a group by and then add a statistic.
      */
 
-    public function testAggregateQueryWithGroupByAddStatistic()
+    public function testAggregateQueryWithGroupByAddStatistic(): void
     {
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
@@ -269,11 +263,7 @@ SQL;
         // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
         // prepends the metric to the ORDER BY clause. Simulate that here.
 
-        $data_description = (object) array(
-            'sort_type' => 'value_desc',
-            'group_by'  => 'person',
-            'metric'    => 'job_count'
-        );
+        $data_description = (object) ['sort_type' => 'value_desc', 'group_by'  => 'person', 'metric'    => 'job_count'];
         $query->addOrderByAndSetSortInfo($data_description);
 
         $generated = $query->getQueryString(10, 0); // Also test limit=10 and offset=0
@@ -325,7 +315,7 @@ SQL;
      * Test adding an additional JOIN constraint to the query, as is used in GroupByQueue.
      */
 
-    public function testAggregateQueryAdditionalJoinConstraint()
+    public function testAggregateQueryAdditionalJoinConstraint(): void
     {
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
@@ -339,11 +329,7 @@ SQL;
         // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
         // prepends the metric to the ORDER BY clause. Simulate that here.
 
-        $data_description = (object) array(
-            'sort_type' => 'value_desc',
-            'group_by'  => 'queue',
-            'metric'    => 'job_count'
-        );
+        $data_description = (object) ['sort_type' => 'value_desc', 'group_by'  => 'queue', 'metric'    => 'job_count'];
         $query->addOrderByAndSetSortInfo($data_description);
 
 
@@ -375,7 +361,7 @@ SQL;
      * Test using group by none, which is a special case of aggregation unit group-by.
      */
 
-    public function testAggregateQueryGroupByNone()
+    public function testAggregateQueryGroupByNone(): void
     {
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
@@ -389,11 +375,7 @@ SQL;
         // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
         // prepends the metric to the ORDER BY clause. Simulate that here.
 
-        $data_description = (object) array(
-            'sort_type' => 'value_desc',
-            'group_by'  => 'none',
-            'metric'    => 'job_count'
-        );
+        $data_description = (object) ['sort_type' => 'value_desc', 'group_by'  => 'none', 'metric'    => 'job_count'];
         $query->addOrderByAndSetSortInfo($data_description);
         $generated = $query->getQueryString();
         $expected =<<<SQL
@@ -420,7 +402,7 @@ SQL;
      * separately by calling addGroupBy(). The results should be the same.
      */
 
-    public function testAggregateQuerySpecifyGroupBy()
+    public function testAggregateQuerySpecifyGroupBy(): void
     {
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
@@ -446,7 +428,7 @@ SQL;
      * Test the addWhereJoin() method.
      */
 
-    public function testAddWhereJoin()
+    public function testAddWhereJoin(): void
     {
         $expected =<<<SQL
 SELECT
@@ -485,7 +467,7 @@ SQL;
      * the Query class.
      */
 
-    public function testGetFormula()
+    public function testGetFormula(): void
     {
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Cloud',
@@ -506,7 +488,7 @@ SQL;
      * Test the count query.
      */
 
-    public function testAggregateQueryCount()
+    public function testAggregateQueryCount(): void
     {
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
@@ -544,7 +526,7 @@ SQL;
      * name, or short_name with the group by id.
      */
 
-    public function testAggregateQueryDimensionValues()
+    public function testAggregateQueryDimensionValues(): void
     {
         // Note that calling getDimensionValuesQuery() on a query class that specifies start and end
         // dates will fail due to a hard-coded array index reference.

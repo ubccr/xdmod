@@ -6,4 +6,4 @@ if (\xd_utilities\getConfiguration('features', 'xsede') == 'on') {
     $gaqFile = 'xdmod.php';
 }
 
-require_once(dirname(__FILE__) . "/gaq/$gaqFile");
+require_once(__DIR__ . "/gaq/$gaqFile");

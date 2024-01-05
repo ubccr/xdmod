@@ -31,7 +31,7 @@ class PeopleHelper
     public function getPersonIdByLongName($longName)
     {
         $sql = 'SELECT id FROM person WHERE long_name = :name';
-        $people = $this->dbh->query($sql, array('name' => $longName));
+        $people = $this->dbh->query($sql, ['name' => $longName]);
         $isUnknown = strtolower($longName) === 'unknown';
 
         // We only care if there is more than one result if the $longName is not 'unknown'.
@@ -53,7 +53,7 @@ class PeopleHelper
      * @param string $longName
      * @param string $shortName
      */
-    public function createPerson($organizationId, $nsfStatusCodeId, $firstName, $lastName, $longName, $shortName)
+    public function createPerson($organizationId, $nsfStatusCodeId, $firstName, $lastName, $longName, $shortName): void
     {
         $query = <<<SQL
 INSERT INTO modw.person(organization_id, nsfstatuscode_id, first_name, last_name, long_name, short_name, person_origin_id)
@@ -67,14 +67,7 @@ SELECT
 MAX(person_origin_id) + 1 as person_origin_id
 FROM modw.person
 SQL;
-        $params = array(
-            ':organization_id' => $organizationId,
-            ':nsfstatuscode_id' => $nsfStatusCodeId,
-            ':first_name' => $firstName,
-            ':last_name' => $lastName,
-            ':long_name' => $longName,
-            ':short_name' => $shortName
-        );
+        $params = [':organization_id' => $organizationId, ':nsfstatuscode_id' => $nsfStatusCodeId, ':first_name' => $firstName, ':last_name' => $lastName, ':long_name' => $longName, ':short_name' => $shortName];
 
         $this->dbh->execute($query, $params);
     }
@@ -84,14 +77,12 @@ SQL;
      *
      * @param string $longName
      */
-    public function removePerson($longName)
+    public function removePerson($longName): void
     {
         $query = <<<SQL
 DELETE FROM modw.person WHERE long_name = :long_name;
 SQL;
-        $params = array(
-            ':long_name' => $longName
-        );
+        $params = [':long_name' => $longName];
         $this->dbh->execute($query, $params);
     }
 }

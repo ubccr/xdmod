@@ -18,7 +18,7 @@ use stdClass;
  */
 class StripMergePrefixTransformer extends Loggable implements iConfigFileKeyTransformer
 {
-    const MERGE_PREFIX = '+';
+    public const MERGE_PREFIX = '+';
 
     /**
      * @see iConfigFileKeyTransformer::__construct()

@@ -41,19 +41,19 @@ class RestIngestor extends aIngestor implements iAction
     protected $etlSourceQueryResult = null;
 
     // Optional parameters for the rest call
-    protected $restParameters = array();
+    protected $restParameters = [];
 
     // The current url, useful for debugging
     private $currentUrl = null;
 
     // List of transformation and verificaiton directives to apply to request parameters. Keys are
     // parameter names and values are an object containing the directives.
-    private $parameterDirectives = array();
+    private $parameterDirectives = [];
 
     // List of transformation and verificaiton directives to apply to request response fields. Keys
     // are response keys (not database column names) and values are an object containing the
     // directives.
-    private $responseDirectives = array();
+    private $responseDirectives = [];
 
     // This action does not (yet) support multiple destination tables. If multiple destination
     // tables are present, store the first here and use it.
@@ -135,7 +135,7 @@ class RestIngestor extends aIngestor implements iAction
 
         // Set up some default values for the REST response config. These can be overriden.
 
-        $defaultRestResponseConfig = (object) array(
+        $defaultRestResponseConfig = (object) [
             // Optional top-level entry point into the result. NSF api uses "response".
             "response" => null,
             // Optional count for the number of results returned
@@ -147,8 +147,8 @@ class RestIngestor extends aIngestor implements iAction
             // Optional property to identify the previous page of results
             "prev"     => "previous",
             // Error response handling
-            "error"    => null
-            );
+            "error"    => null,
+        ];
 
         if ( null === $this->restResponseConfig && isset($this->parsedDefinitionFile->rest_response) ) {
             $this->restResponseConfig = (object) array_merge(
@@ -258,7 +258,7 @@ class RestIngestor extends aIngestor implements iAction
             );
 
             $this->logger->debug("REST source query:\n$sql");
-            $this->etlSourceQueryResult = $this->utilityHandle->query($sql, array(), true);
+            $this->etlSourceQueryResult = $this->utilityHandle->query($sql, [], true);
 
             if ( 0 == $this->etlSourceQueryResult->rowCount() ) {
                 $this->logger->warning("{$this} Source query return 0 rows, exiting");
@@ -291,19 +291,17 @@ class RestIngestor extends aIngestor implements iAction
 
         // Set up properties used to access data in the result set. Some properties may not be provided.
 
-        $responseKey = ( isset($this->restResponseConfig->response) ? $this->restResponseConfig->response : null );
-        $errorKey = ( isset($this->restResponseConfig->error) ? $this->restResponseConfig->error : null );
-        $countKey = ( isset($this->restResponseConfig->count) ? $this->restResponseConfig->count : null );
-        $resultsKey = ( isset($this->restResponseConfig->results) ? $this->restResponseConfig->results : null );
-        $nextKey = ( isset($this->restResponseConfig->next) ? $this->restResponseConfig->next : null );
-        $prevKey = ( isset($this->restResponseConfig->prev) ? $this->restResponseConfig->prev : null );
+        $responseKey = ( $this->restResponseConfig->response ?? null );
+        $errorKey = ( $this->restResponseConfig->error ?? null );
+        $countKey = ( $this->restResponseConfig->count ?? null );
+        $resultsKey = ( $this->restResponseConfig->results ?? null );
+        $nextKey = ( $this->restResponseConfig->next ?? null );
+        $prevKey = ( $this->restResponseConfig->prev ?? null );
         $fieldMap = ( isset($this->restResponseConfig->field_map) ? (array) $this->restResponseConfig->field_map : null );
 
         $reservedKeys = array_filter(
-            array($countKey, $resultsKey, $nextKey, $prevKey),
-            function ($value) {
-                return ( null !== $value );
-            }
+            [$countKey, $resultsKey, $nextKey, $prevKey],
+            fn($value) => null !== $value
         );
 
         // --------------------------------------------------------------------------------
@@ -382,7 +380,7 @@ class RestIngestor extends aIngestor implements iAction
             // If a results key was specified, grab the response under that key.
 
             $results = null;
-            $columnToResultFieldMap = array();
+            $columnToResultFieldMap = [];
             $numColumns = 0;
 
             if ( null !== $resultsKey ) {
@@ -446,9 +444,7 @@ class RestIngestor extends aIngestor implements iAction
                 // Create a mapping of result fields to database columns using the field map if provided or
                 // the result keys otherwise. A field map is recommended.
 
-                $columnToResultFieldMap = ( null !== $fieldMap
-                                            ? $fieldMap
-                                            : array_fill_keys($resultKeyNames, $resultKeyNames) );
+                $columnToResultFieldMap = ( $fieldMap ?? array_fill_keys($resultKeyNames, $resultKeyNames) );
                 $numColumns = count($columnToResultFieldMap);
 
                 $first = false;
@@ -459,12 +455,12 @@ class RestIngestor extends aIngestor implements iAction
             // Process each result
 
             $recordCounter = 0;
-            $valueList = array();  // PDO bind variables for the query
-            $queryParameters = array();  // PDO bind variables to value mapping for the query
+            $valueList = [];  // PDO bind variables for the query
+            $queryParameters = [];  // PDO bind variables to value mapping for the query
 
             foreach ( $results as $result ) {
 
-                $recordParameters = array();
+                $recordParameters = [];
 
                 // Potentially re-format the results if any processing directives were specified in the
                 // field map.
@@ -474,7 +470,7 @@ class RestIngestor extends aIngestor implements iAction
                         if ( isset($result->$resultKey) ) {
                             try {
                                 $result->$resultKey = $this->applyDirectives($result->$resultKey, $directives);
-                            } catch ( Exception $e ) {
+                            } catch ( Exception ) {
                                 // If a directive failed skip this result. The exception should have already been
                                 // logged.
                                 continue;
@@ -632,7 +628,7 @@ class RestIngestor extends aIngestor implements iAction
                 }
                 try {
                     $this->restParameters[$parameter] = $this->applyDirectives($this->restParameters[$parameter], $directives);
-                } catch ( Exception $e ) {
+                } catch ( Exception ) {
                     $this->logger->err(
                         "{$this} Parameter '$parameter' (" . $this->restParameters[$parameter]
                         . ") failed processing directives, skipping."
@@ -646,19 +642,17 @@ class RestIngestor extends aIngestor implements iAction
 
             // A format was specified. Substitute any existing parameters in the format string.
 
-            $substitutionDetails = array();
+            $substitutionDetails = [];
             $vs = new VariableStore($this->restParameters);
             $queryString = $vs->substitute($this->restRequestConfig->format, null, $substitutionDetails);
 
-            if ( false !== strpos($queryString, '${^REMAINING}') ) {
+            if ( str_contains($queryString, '${^REMAINING}') ) {
                 $used = array_combine($substitutionDetails['substituted'], $substitutionDetails['substituted']);
                 $remaining = array_diff_key($this->restParameters, $used);
                 $parameters = implode(
                     "&",
                     array_map(
-                        function ($v, $k) {
-                            return $k . "=" . urlencode($v);
-                        },
+                        fn($v, $k) => $k . "=" . urlencode($v),
                         $remaining,
                         array_keys($remaining)
                     )
@@ -671,9 +665,7 @@ class RestIngestor extends aIngestor implements iAction
             // Use standard query string format
 
             $parameters = array_map(
-                function ($v, $k) {
-                    return $k . "=" . urlencode($v);
-                },
+                fn($v, $k) => $k . "=" . urlencode($v),
                 $this->restParameters,
                 array_keys($this->restParameters)
             );
@@ -764,7 +756,7 @@ class RestIngestor extends aIngestor implements iAction
         foreach ( $this->parameterDirectives as $parameter => $directives ) {
 
             if ( isset($directives->transform) ) {
-                $transformList = ( is_array($directives->transform) ? $directives->transform : array($directives->transform) );
+                $transformList = ( is_array($directives->transform) ? $directives->transform : [$directives->transform] );
                 foreach ( $transformList as $directive ) {
                     if ( ! is_object($directive) ) {
                         $this->logAndThrowException("Transformation directives for '$parameter' must be an object");
@@ -774,7 +766,7 @@ class RestIngestor extends aIngestor implements iAction
             }
 
             if ( isset($directives->verify) ) {
-                $verifyList = ( is_array($directives->verify) ? $directives->verify : array($directives->verify) );
+                $verifyList = ( is_array($directives->verify) ? $directives->verify : [$directives->verify] );
                 foreach ( $verifyList as $directive ) {
                     if ( ! is_object($directive) ) {
                         $this->logAndThrowException("Verification directives for '$parameter' must be an object");
@@ -788,7 +780,7 @@ class RestIngestor extends aIngestor implements iAction
         foreach ( $this->responseDirectives as $key => $directives ) {
 
             if ( isset($directives->transform) ) {
-                $transformList = ( is_array($directives->transform) ? $directives->transform : array($directives->transform) );
+                $transformList = ( is_array($directives->transform) ? $directives->transform : [$directives->transform] );
                 foreach ( $transformList as $directive ) {
                     if ( ! is_object($directive) ) {
                         $this->logAndThrowException("Transformation directives for '$key' must be an object");
@@ -798,7 +790,7 @@ class RestIngestor extends aIngestor implements iAction
             }
 
             if ( isset($directives->verify) ) {
-                $verifyList = ( is_array($directives->verify) ? $directives->verify : array($directives->verify) );
+                $verifyList = ( is_array($directives->verify) ? $directives->verify : [$directives->verify] );
                 foreach ( $verifyList as $directive ) {
                     if ( ! is_object($directive) ) {
                         $this->logAndThrowException("Verification directives for '$key' must be an object");
@@ -899,14 +891,14 @@ class RestIngestor extends aIngestor implements iAction
         // Apply transform directives first, then verification directives
 
         if ( isset($directives->transform) ) {
-            $transformList = ( is_array($directives->transform) ? $directives->transform : array($directives->transform) );
+            $transformList = ( is_array($directives->transform) ? $directives->transform : [$directives->transform] );
             foreach ( $transformList as $directive ) {
                 $value = $this->applyTransformDirective($value, $directive);
             }
         }
 
         if ( isset($directives->verify) ) {
-            $verifyList = ( is_array($directives->verify) ? $directives->verify : array($directives->verify) );
+            $verifyList = ( is_array($directives->verify) ? $directives->verify : [$directives->verify] );
             foreach ( $verifyList as $directive ) {
                 $this->applyVerifyDirective($value, $directive);
             }

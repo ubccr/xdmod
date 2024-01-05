@@ -50,64 +50,14 @@ class Pbs extends Shredder
      *
      * @var array
      */
-    protected static $columnNames = array(
-        'job_id',
-        'job_array_index',
-        'host',
-        'queue',
-        'user',
-        'groupname',
-        'ctime',
-        'qtime',
-        'start',
-        'end',
-        'etime',
-        'exit_status',
-        'session',
-        'requestor',
-        'jobname',
-        'owner',
-        'account',
-        'session_id',
-        'error_path',
-        'output_path',
-        'exec_host',
-        'resources_used_vmem',
-        'resources_used_mem',
-        'resources_used_walltime',
-        'resources_used_nodes',
-        'resources_used_cpus',
-        'resources_used_gpus',
-        'resources_used_cput',
-        'resource_list_nodes',
-        'resource_list_procs',
-        'resource_list_neednodes',
-        'resource_list_pcput',
-        'resource_list_cput',
-        'resource_list_walltime',
-        'resource_list_ncpus',
-        'resource_list_nodect',
-        'resource_list_mem',
-        'resource_list_pmem',
-        'node_list',
-    );
+    protected static $columnNames = ['job_id', 'job_array_index', 'host', 'queue', 'user', 'groupname', 'ctime', 'qtime', 'start', 'end', 'etime', 'exit_status', 'session', 'requestor', 'jobname', 'owner', 'account', 'session_id', 'error_path', 'output_path', 'exec_host', 'resources_used_vmem', 'resources_used_mem', 'resources_used_walltime', 'resources_used_nodes', 'resources_used_cpus', 'resources_used_gpus', 'resources_used_cput', 'resource_list_nodes', 'resource_list_procs', 'resource_list_neednodes', 'resource_list_pcput', 'resource_list_cput', 'resource_list_walltime', 'resource_list_ncpus', 'resource_list_nodect', 'resource_list_mem', 'resource_list_pmem', 'node_list'];
 
     /**
      * Columns that should be parsed and their expected format.
      *
      * @var array
      */
-    protected static $columnFormats = array(
-        'resources_used_vmem'     => 'memory',
-        'resources_used_mem'      => 'memory',
-        'resources_used_walltime' => 'time',
-        'resources_used_cput'     => 'time',
-        'resource_list_pcput'     => 'time',
-        'resource_list_cput'      => 'time',
-        'resource_list_walltime'  => 'time',
-        'resource_list_mem'       => 'memory',
-        'resource_list_pmem'      => 'memory',
-    );
+    protected static $columnFormats = ['resources_used_vmem'     => 'memory', 'resources_used_mem'      => 'memory', 'resources_used_walltime' => 'time', 'resources_used_cput'     => 'time', 'resource_list_pcput'     => 'time', 'resource_list_cput'      => 'time', 'resource_list_walltime'  => 'time', 'resource_list_mem'       => 'memory', 'resource_list_pmem'      => 'memory'];
 
     /**
      * @inheritdoc
@@ -115,7 +65,7 @@ class Pbs extends Shredder
      * NOTE: "wall_time" uses end - start since resources_used_walltime
      * is occasionally incorrect.
      */
-    protected static $columnMap = array(
+    protected static $columnMap = [
         'date_key'        => 'DATE(FROM_UNIXTIME(end))',
         'job_id'          => 'job_id',
         'job_array_index' => 'NULLIF(job_array_index, -1)',
@@ -131,7 +81,6 @@ class Pbs extends Shredder
         'end_time'        => 'end',
         'submission_time' => 'ctime',
         'eligible_time'   => 'etime',
-
         // Appending a colon to the exit code due to a bug (most likely
         // in PDODBMultiIngestor) that converts zero ("0") to the empty
         // string.
@@ -145,20 +94,12 @@ class Pbs extends Shredder
         'mem_req'         => 'CAST(resource_list_mem AS CHAR)',
         'timelimit'       => 'resource_list_walltime',
         'node_list'       => 'node_list',
-    );
+    ];
 
     /**
      * @inheritdoc
      */
-    protected static $dataMap = array(
-        'job_id'          => 'job_id',
-        'start_time'      => 'start',
-        'end_time'        => 'end',
-        'submission_time' => 'ctime',
-        'walltime'        => 'resources_used_walltime',
-        'nodes'           => 'resources_used_nodes',
-        'cpus'            => 'resources_used_cpus',
-    );
+    protected static $dataMap = ['job_id'          => 'job_id', 'start_time'      => 'start', 'end_time'        => 'end', 'submission_time' => 'ctime', 'walltime'        => 'resources_used_walltime', 'nodes'           => 'resources_used_nodes', 'cpus'            => 'resources_used_cpus'];
 
     /**
      * @var \Xdmod\PbsResourceParser
@@ -177,13 +118,13 @@ class Pbs extends Shredder
     /**
      * @inheritdoc
      */
-    public function shredLine($line)
+    public function shredLine($line): void
     {
         $this->logger->debug("Shredding line '$line'");
 
         $date = $node = $type = null;
 
-        $job = array();
+        $job = [];
 
         if (preg_match(self::$linePattern, $line, $matches)) {
             $date = preg_replace(
@@ -214,11 +155,11 @@ class Pbs extends Shredder
         $paramList = preg_split('/\s+/', $params);
 
         foreach ($paramList as $param) {
-            if (strpos($param, '=') === false) {
+            if (!str_contains($param, '=')) {
                 continue;
             }
 
-            list($key, $value) = explode('=', $param, 2);
+            [$key, $value] = explode('=', $param, 2);
 
             $key = strtolower(str_replace('.', '_', $key));
 
@@ -234,7 +175,7 @@ class Pbs extends Shredder
                 // is currently not compressed, but that could be
                 // implemented in the future to reduce database storage
                 // requirements.
-                $nodes = array();
+                $nodes = [];
                 foreach ($data['host_list'] as $hostData) {
                     $nodes[] = $hostData['node'];
                 }
@@ -341,10 +282,7 @@ class Pbs extends Shredder
             $jobId = $sequence;
         }
 
-        return array(
-            'job_id'          => $jobId,
-            'job_array_index' => $index,
-        );
+        return ['job_id'          => $jobId, 'job_array_index' => $index];
     }
 
     /**
@@ -361,7 +299,7 @@ class Pbs extends Shredder
         $hostList = $this->parseHosts($hosts);
 
         // Key is the node name, value is the number of cpus.
-        $nodeCpus = array();
+        $nodeCpus = [];
 
         foreach ($hostList as $host) {
             $node = $host['node'];
@@ -381,11 +319,7 @@ class Pbs extends Shredder
             $cpuCount += $cpus;
         }
 
-        return array(
-            'host_list'  => $hostList,
-            'node_count' => $nodeCount,
-            'cpu_count'  => $cpuCount,
-        );
+        return ['host_list'  => $hostList, 'node_count' => $nodeCount, 'cpu_count'  => $cpuCount];
     }
 
     /**
@@ -399,8 +333,8 @@ class Pbs extends Shredder
     {
         $this->logger->debug("Parsing time '$time'");
 
-        if (strpos($time, ':') !== false) {
-            list($h, $m, $s) = explode(':', $time);
+        if (str_contains($time, ':')) {
+            [$h, $m, $s] = explode(':', $time);
             return $h * 60 * 60 + $m * 60 + $s;
         } else {
             return $time;
@@ -422,7 +356,7 @@ class Pbs extends Shredder
             $quantity = $matches[1];
 
             // PBS uses kilobytes by default.
-            $unit = isset($matches[2]) ? $matches[2] : 'kb';
+            $unit = $matches[2] ?? 'kb';
 
             return $this->scaleMemory($quantity, $unit);
         } else {
@@ -442,41 +376,19 @@ class Pbs extends Shredder
     {
         $this->logger->debug("Scaling memory '$quantity', '$unit'");
 
-        switch ($unit) {
-            case 'b':
-                return (int)floor($quantity);
-                break;
-            case 'kb':
-                return (int)floor($quantity * 1024);
-                break;
-            case 'mb':
-                return (int)floor($quantity * 1024 * 1024);
-                break;
-            case 'gb':
-                return (int)floor($quantity * 1024 * 1024 * 1024);
-                break;
-            case 'tb':
-                return (int)floor($quantity * 1024 * 1024 * 1024 * 1024);
-                break;
-            case 'w':
-                return (int)floor($quantity * 8);
-                break;
-            case 'kw':
-                return (int)floor($quantity * 8 * 1024);
-                break;
-            case 'mw':
-                return (int)floor($quantity * 8 * 1024 * 1024);
-                break;
-            case 'gw':
-                return (int)floor($quantity * 8 * 1024 * 1024 * 1024);
-                break;
-            case 'tw':
-                return (int)floor($quantity * 8 * 1024 * 1024 * 1024 * 1024);
-                break;
-            default:
-                throw new Exception("Unknown memory unit: '$unit'");
-                break;
-        }
+        return match ($unit) {
+            'b' => (int)floor($quantity),
+            'kb' => (int)floor($quantity * 1024),
+            'mb' => (int)floor($quantity * 1024 * 1024),
+            'gb' => (int)floor($quantity * 1024 * 1024 * 1024),
+            'tb' => (int)floor($quantity * 1024 * 1024 * 1024 * 1024),
+            'w' => (int)floor($quantity * 8),
+            'kw' => (int)floor($quantity * 8 * 1024),
+            'mw' => (int)floor($quantity * 8 * 1024 * 1024),
+            'gw' => (int)floor($quantity * 8 * 1024 * 1024 * 1024),
+            'tw' => (int)floor($quantity * 8 * 1024 * 1024 * 1024 * 1024),
+            default => throw new Exception("Unknown memory unit: '$unit'"),
+        };
     }
 
     /**
@@ -498,49 +410,44 @@ class Pbs extends Shredder
 
         $parts = explode('+', $hosts);
 
-        $hostList = array();
+        $hostList = [];
 
         foreach ($parts as $part) {
-            list($host, $cpuList) = explode('/', $part);
+            [$host, $cpuList] = explode('/', $part);
 
             $cpuParts = explode(',', $cpuList);
 
             foreach ($cpuParts as $cpuPart) {
-                $cpus = array();
+                $cpus = [];
 
-                if (strpos($cpuPart, '-') !== false) {
+                if (str_contains($cpuPart, '-')) {
 
                     // The "-" indicates this is a range of CPU indexes.
-                    list($min, $max) = explode('-', $cpuPart, 2);
+                    [$min, $max] = explode('-', $cpuPart, 2);
                     $cpus = range($min, $max);
 
-                } elseif (strpos($cpuPart, '*') !== false) {
+                } elseif (str_contains($cpuPart, '*')) {
 
                     // The number to the left of the "*" is a unique
                     // index and the number on the right is a CPU count
                     // for that index.
-                    list($index, $count) = explode('*', $cpuPart, 2);
+                    [$index, $count] = explode('*', $cpuPart, 2);
 
                     // The PBS Pro format doesn't specify a CPU number,
                     // so the index is used as a prefix to guarantee
                     // uniqueness.
                     $cpus = array_map(
-                        function ($cpu) use ($index) {
-                            return $index . '.' . $cpu;
-                        },
+                        fn($cpu) => $index . '.' . $cpu,
                         range(1, $count)
                     );
                 } else {
 
                     // Single CPU.
-                    $cpus = array($cpuPart);
+                    $cpus = [$cpuPart];
                 }
 
                 foreach ($cpus as $cpu) {
-                    $hostList[] = array(
-                        'node' => $host,
-                        'cpu'  => $cpu,
-                    );
+                    $hostList[] = ['node' => $host, 'cpu'  => $cpu];
                 }
             }
         }
@@ -565,9 +472,7 @@ class Pbs extends Shredder
             // file name consisting of eight digits (YYYYMMDD) removed.
             return array_filter(
                 parent::getDirectoryFilePaths($dir),
-                function ($path) {
-                    return preg_match('#/\d{8}$#', $path);
-                }
+                fn($path) => preg_match('#/\d{8}$#', $path)
             );
         }
 
@@ -580,7 +485,7 @@ class Pbs extends Shredder
 
         $date->add($oneDay);
 
-        $paths = array();
+        $paths = [];
 
         while ($date->diff($now)->days > 0) {
             $path = $dir . '/' . $date->format('Ymd');

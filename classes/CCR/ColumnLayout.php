@@ -7,9 +7,9 @@ namespace CCR;
  */
 class ColumnLayout
 {
-    private $nextRow = array();
+    private $nextRow = [];
     private $nextColumn = 0;
-    private $settings = array();
+    private $settings = [];
 
     /*
      * @param $columns the default number of columns to manage.
@@ -28,7 +28,7 @@ class ColumnLayout
 
             foreach ($this->settings as $itemId => $rowcol)
             {
-                list($row, $col) = $rowcol;
+                [$row, $col] = $rowcol;
 
                 if (count($this->nextRow) < ($col + 1)) {
                     $this->nextRow = array_pad($this->nextRow, $col + 1, 0);
@@ -62,24 +62,21 @@ class ColumnLayout
      *       that uniqely identifies the item and its relative position and the
      *       column index.
      */
-    public function getLocation($itemId, $itemDefault = null)
+    public function getLocation(mixed $itemId, mixed $itemDefault = null)
     {
         if (!isset($this->settings[$itemId])) {
 
             if ($itemDefault !== null) {
                 $this->settings[$itemId] = $itemDefault;
             } else {
-                $this->settings[$itemId] = array($this->nextRow[$this->nextColumn], $this->nextColumn);
+                $this->settings[$itemId] = [$this->nextRow[$this->nextColumn], $this->nextColumn];
 
                 $this->nextRow[$this->nextColumn] += 1;
                 $this->nextColumn = ($this->nextColumn + 1) % $this->getColumnCount();
             }
         }
 
-        return array(
-            sprintf("%08X%08x", $this->settings[$itemId][1], $this->settings[$itemId][0]) . $itemId,
-            $this->settings[$itemId][1]
-        );
+        return [sprintf("%08X%08x", $this->settings[$itemId][1], $this->settings[$itemId][0]) . $itemId, $this->settings[$itemId][1]];
     }
 
     /**

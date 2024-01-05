@@ -2,7 +2,7 @@
 
 class UserStorage
 {
-    const MAX_RECORDS = 2000;
+    public const MAX_RECORDS = 2000;
 
     public function __construct($user, $container)
     {
@@ -16,10 +16,10 @@ class UserStorage
         $storage = $userProfile->fetchValue($this->_container);
 
         if($storage === null ) {
-            return array();
+            return [];
         }
 
-        $output = array();
+        $output = [];
         foreach($storage['data'] as $value) {
             $output[] = $value;
         }
@@ -47,7 +47,7 @@ class UserStorage
         $storage = $userProfile->fetchValue($this->_container);
 
         if($storage === null) {
-            $storage = array( "maxid" => -1, "data" => array() );
+            $storage = ["maxid" => -1, "data" => []];
         }
 
         $newid = $this->_getnewid($storage);
@@ -80,7 +80,7 @@ class UserStorage
         $storage = $userProfile->fetchValue($this->_container);
 
         if($storage === null) {
-            $storage = array( "maxid" => $id, "data" => array() );
+            $storage = ["maxid" => $id, "data" => []];
         }
         $data['recordid'] = $id;
 

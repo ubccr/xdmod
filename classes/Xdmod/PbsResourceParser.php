@@ -22,9 +22,7 @@ class PbsResourceParser
         }
 
         return array_map(
-            function ($resource) {
-                return explode('=', $resource);
-            },
+            fn($resource) => explode('=', $resource),
             explode(':', $resourceListNodes)
         );
     }

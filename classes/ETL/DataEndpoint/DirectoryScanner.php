@@ -23,7 +23,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * It also allows us to implement auto-discovery.
      */
 
-    const ENDPOINT_NAME = 'directoryscanner';
+    public const ENDPOINT_NAME = 'directoryscanner';
 
     /**
      * @var string The directory path that we will be scanning. This should be a fully qualified
@@ -197,23 +197,11 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
     {
         parent::__construct($options, $logger);
 
-        $requiredKeys = array('path', 'handler');
+        $requiredKeys = ['path', 'handler'];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
-        $messages = array();
-        $propertyTypes = array(
-            'path'                => 'string',
-            'handler'             => 'object',
-            'file_pattern'        => 'string',
-            'directory_pattern'   => 'string',
-            'recursion_depth'     => 'int',
-            'last_modified_start' => 'string',
-            'last_modified_end'   => 'string',
-            'last_modified_methods'   => 'string',
-            'last_modified_file_regex' => 'string',
-            'last_modified_dir_regex'  => 'string',
-            'last_modified_dir_regex_reformat' => 'string'
-        );
+        $messages = [];
+        $propertyTypes = ['path'                => 'string', 'handler'             => 'object', 'file_pattern'        => 'string', 'directory_pattern'   => 'string', 'recursion_depth'     => 'int', 'last_modified_start' => 'string', 'last_modified_end'   => 'string', 'last_modified_methods'   => 'string', 'last_modified_file_regex' => 'string', 'last_modified_dir_regex'  => 'string', 'last_modified_dir_regex_reformat' => 'string'];
 
         if ( ! \xd_utilities\verify_object_property_types($options, $propertyTypes, $messages, true) ) {
             $this->logAndThrowException("Error verifying options: " . implode(", ", $messages));
@@ -232,7 +220,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             switch($property) {
                 case 'path':
                     $this->path = $value;
-                    if ( 0 !== strpos($value, '/') ) {
+                    if ( !str_starts_with($value, '/') ) {
                         $this->logger->info(
                             sprintf("%s: Relative path provided, absolute path recommended", $this)
                         );
@@ -358,9 +346,9 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             (null !== $this->lastModifiedStartTimestamp || null !== $this->lastModifiedEndTimestamp)
         ) {
             if ( null !== $this->lastModifiedDirRegex ) {
-                $this->lastModifiedMethods = array('directory');
+                $this->lastModifiedMethods = ['directory'];
             } else {
-                $this->lastModifiedMethods = array('file');
+                $this->lastModifiedMethods = ['file'];
             }
         }
     }
@@ -374,7 +362,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
 
     protected function generateUniqueKey()
     {
-        $keySource = array($this->type, $this->path, $this->name);
+        $keySource = [$this->type, $this->path, $this->name];
 
         if ( null !== $this->filePattern ) {
             $keySource[] = $this->filePattern;
@@ -590,9 +578,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
         try {
             $dotDirFilterIterator = new \RecursiveCallbackFilterIterator(
                 $iterator,
-                function ($current, $key, $iterator) {
-                    return ( ! $iterator->isDot() );
-                }
+                fn($current, $key, $iterator) => ! $iterator->isDot()
             );
             $iterator = $dotDirFilterIterator;
         }  catch ( Exception $e ) {
@@ -621,8 +607,8 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             $this->logger->info(
                 sprintf(
                     "Applying mtime directory filter: (start: %s, end: %s, dir_regex: %s%s)",
-                    ( null === $lmStartTs ? "null" : $lmStartTs ),
-                    ( null === $lmEndTs ? "null" : $lmEndTs ),
+                    ( $lmStartTs ?? "null" ),
+                    ( $lmEndTs ?? "null" ),
                     $lmDirRegex,
                     ( null !== $lmDirReformat ? ", dir_reformat: $lmDirReformat" : "" )
                 )
@@ -641,7 +627,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                     if ( $current->isDir() ) {
                         $logger->debug(sprintf("Examine directory: %s", $key));
 
-                        $matches = array();
+                        $matches = [];
                         if ( 0 !== preg_match($lmDirRegex, $key, $matches) ) {
 
                             // Reconstruct the timestamp if we have captured sub-expressions and a
@@ -729,8 +715,8 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             $this->logger->info(
                 sprintf(
                     "Applying pattern filters: (directory: %s, file: %s)",
-                    ( null === $dirPattern ? "null" : $dirPattern ),
-                    ( null === $filePattern ? "null" : $filePattern )
+                    ( $dirPattern ?? "null" ),
+                    ( $filePattern ?? "null" )
                 )
             );
 
@@ -779,8 +765,8 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                 $this->logAndThrowException(
                     sprintf(
                         "Error applying pattern filters (directory: %s, file: %s): %s",
-                        ( null === $this->directoryPattern ? "null" : $this->directoryPattern ),
-                        ( null === $this->filePattern ? "null" : $this->filePattern ),
+                        ( $this->directoryPattern ?? "null" ),
+                        ( $this->filePattern ?? "null" ),
                         $e->getMessage()
                     )
                 );
@@ -802,8 +788,8 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             $this->logger->info(
                 sprintf(
                     "Applying mtime filter: (start: %s, end: %s%s)",
-                    ( null === $lmStartTs ? "null" : $lmStartTs ),
-                    ( null === $lmEndTs ? "null" : $lmEndTs ),
+                    ( $lmStartTs ?? "null" ),
+                    ( $lmEndTs ?? "null" ),
                     ( null !== $lmRegex ? ", file_regex: $lmRegex" : "" )
                 )
             );
@@ -851,8 +837,8 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
                 $this->logAndThrowException(
                     sprintf(
                         "Error applying last modified filter (start: %s, end: %s): %s",
-                        ( null === $this->lastModifiedStartTimestamp ? "null" : $this->lastModifiedStartTimestamp ),
-                        ( null === $this->lastModifiedEndTimestamp ? "null" : $this->lastModifiedEndTimestamp ),
+                        ( $this->lastModifiedStartTimestamp ?? "null" ),
+                        ( $this->lastModifiedEndTimestamp ?? "null" ),
                         $e->getMessage()
                     )
                 );
@@ -947,7 +933,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * @see Iterator::next()
      */
 
-    public function next()
+    public function next(): void
     {
         if ( null !== $this->currentFileIterator ) {
             $this->currentFileIterator->next();
@@ -963,7 +949,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * @see Iterator::rewind()
      */
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->handle->rewind();
         $this->numFilesScanned = 0;
@@ -1137,7 +1123,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * @see iDataEndpoint::__toString()
      */
 
-    public function __toString()
+    public function __toString(): string
     {
         $handlerString = (
             null !== $this->handlerTemplate
@@ -1145,7 +1131,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             : ""
         );
 
-        return sprintf('%s (name=%s, path=%s%s)', get_class($this), $this->name, $this->path, $handlerString);
+        return sprintf('%s (name=%s, path=%s%s)', static::class, $this->name, $this->path, $handlerString);
     }
 
     /**
@@ -1161,9 +1147,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             return $this->currentFileIterator->getRecordSeparator();
         } else {
             return (
-                isset($this->handlerTemplate->record_separator)
-                ? $this->handlerTemplate->record_separator
-                : null
+                $this->handlerTemplate->record_separator ?? null
             );
         }
     }
@@ -1181,9 +1165,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             return $this->currentFileIterator->getFieldSeparator();
         } else {
             return (
-                isset($this->handlerTemplate->field_separator)
-                ? $this->handlerTemplate->field_separator
-                : null
+                $this->handlerTemplate->field_separator ?? null
             );
         }
     }
@@ -1201,9 +1183,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             return $this->currentFileIterator->getRecordFieldNames();
         } else {
             return (
-                isset($this->handlerTemplate->header_record)
-                ? $this->handlerTemplate->header_record
-                : true
+                $this->handlerTemplate->header_record ?? true
             );
         }
     }
@@ -1221,9 +1201,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             return $this->currentFileIterator->getRecordFieldNames();
         } else {
             return (
-                isset($this->handlerTemplate->field_names)
-                ? $this->handlerTemplate->field_names
-                : null
+                $this->handlerTemplate->field_names ?? null
             );
         }
     }
@@ -1256,7 +1234,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
         if ( null !== $this->currentFileIterator ) {
             return $this->currentFileIterator->getAttachedFilters();
         } else {
-            return array();
+            return [];
         }
     }
 

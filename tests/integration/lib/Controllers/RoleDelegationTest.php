@@ -22,7 +22,7 @@ class RoleDelegationTest extends BaseUserAdminTest
      */
     private $config;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
         $this->config = json_decode(file_get_contents(__DIR__ . '/../../../ci/testing.json'), true);
@@ -33,19 +33,16 @@ class RoleDelegationTest extends BaseUserAdminTest
      *
      * @dataProvider provideSuccessfulRoleDelegation
      *
-     * @param array $options
      * @throws \Exception if there is a problem authenticating as the provided user.
      */
-    public function testSuccessfulRoleDelegation(array $options)
+    public function testSuccessfulRoleDelegation(array $options): void
     {
         $user = $options['user'];
         $operation = $options['operation'];
         $target = $options['target'];
         $expectedFileName = $options['expected'];
 
-        $data = array(
-            'operation' => $operation
-        );
+        $data = ['operation' => $operation];
 
         $memberId = $this->getMemberId($target);
 
@@ -84,19 +81,16 @@ class RoleDelegationTest extends BaseUserAdminTest
      *
      * @dataProvider provideInvalidRoleDelegation
      *
-     * @param array $options
      * @throws \Exception
      */
-    public function testInvalidRoleDelegation(array $options)
+    public function testInvalidRoleDelegation(array $options): void
     {
         $user = $options['user'];
         $operation = $options['operation'];
         $target = $options['target'];
         $expectedFileName = $options['expected'];
 
-        $data = array(
-            'operation' => $operation
-        );
+        $data = ['operation' => $operation];
 
         $memberId = $this->getMemberId($target);
 
@@ -133,19 +127,16 @@ class RoleDelegationTest extends BaseUserAdminTest
      * not being authorized to perform them.
      *
      * @dataProvider provideUnauthorizedRoleDelegation
-     * @param array $options
      * @throws \Exception
      */
-    public function testUnauthorizedRoleDelegation(array $options)
+    public function testUnauthorizedRoleDelegation(array $options): void
     {
         $user = $options['user'];
         $operation = $options['operation'];
         $target = $options['target'];
         $expectedFileName = $options['expected'];
 
-        $data = array(
-            'operation' => $operation
-        );
+        $data = ['operation' => $operation];
 
         $memberId = $this->getMemberId($target);
 

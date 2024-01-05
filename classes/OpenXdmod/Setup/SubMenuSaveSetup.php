@@ -30,7 +30,7 @@ class SubMenuSaveSetup extends SetupItem
     /**
      * @inheritdoc
      */
-    public function handle()
+    public function handle(): void
     {
         $this->parent->save();
         $this->parent->quit();

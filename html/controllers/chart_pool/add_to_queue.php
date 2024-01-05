@@ -2,13 +2,13 @@
 
 	// Operation: chart_pool->add_to_queue
 
-   \xd_security\assertParametersSet(array(
-		'chart_id'             => RESTRICTION_CHART_TYPE, 
-		 //'chart_title'       => RESTRICTION_CHART_TITLE,
-      'chart_drill_details'  => RESTRICTION_CHART_DETAILS,
-		'chart_date_desc'      => RESTRICTION_CHART_DATE_DESC,
-		'module'               => RESTRICTION_CHART_MODULE
-   ));
+   \xd_security\assertParametersSet([
+       'chart_id'             => RESTRICTION_CHART_TYPE,
+       //'chart_title'       => RESTRICTION_CHART_TITLE,
+       'chart_drill_details'  => RESTRICTION_CHART_DETAILS,
+       'chart_date_desc'      => RESTRICTION_CHART_DATE_DESC,
+       'module'               => RESTRICTION_CHART_MODULE,
+   ]);
    
    // -----------------------------
 

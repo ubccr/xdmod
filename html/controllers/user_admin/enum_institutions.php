@@ -4,7 +4,7 @@
 
 $xda = new XDAdmin();
 
-$name_filter = (isset($_POST['query'])) ? $_POST['query'] : NULL;
+$name_filter = $_POST['query'] ?? NULL;
 
 $query = $xda->enumerateInstitutions($name_filter);
 

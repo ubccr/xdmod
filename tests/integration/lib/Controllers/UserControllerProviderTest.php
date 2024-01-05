@@ -15,7 +15,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
     /**
      * @dataProvider provideGetCurrentUser
      */
-    public function testGetCurrentUser($id, $role, $input, $output)
+    public function testGetCurrentUser($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             $this->helper,
@@ -82,14 +82,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
             ]
         ];
         foreach ($expectedResultsByRole as $role => $expectedResults) {
-            list(
-                $firstName,
-                $lastName,
-                $emailAddress,
-                $activeRole,
-                $mostPrivilegedRole,
-                $personId
-            ) = $expectedResults;
+            [$firstName, $lastName, $emailAddress, $activeRole, $mostPrivilegedRole, $personId] = $expectedResults;
             $expectedResults = [
                 'first_name' => $firstName,
                 'last_name' => $lastName,
@@ -122,7 +115,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
     /**
      * @dataProvider provideUpdateCurrentUser
      */
-    public function testUpdateCurrentUser($id, $role, $input, $output)
+    public function testUpdateCurrentUser($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             $this->helper,
@@ -158,7 +151,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
      *
      * @dataProvider provideBaseRoles
      */
-    public function testAPITokensCRD($role)
+    public function testAPITokensCRD($role): void
     {
         if ('pub' === $role) {
             // If the user is not logged in; attempting to get, create, or
@@ -187,8 +180,8 @@ class UserControllerProviderTest extends BaseUserAdminTest
             // succeed.
             $this->makeTokenRequest(
                 'post',
-                parent::validateSuccessResponse(function ($body) {
-                    $this->assertRegExp(
+                parent::validateSuccessResponse(function ($body): void {
+                    $this->assertMatchesRegularExpression(
                         '/^[0-9]+\\.[0-9a-f]{64}$/',
                         $body['data']['token']
                     );
@@ -198,7 +191,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
             // Now that the user has a token, getting it should succeed.
             $this->makeTokenRequest(
                 'get',
-                parent::validateSuccessResponse(function ($body) {
+                parent::validateSuccessResponse(function ($body): void {
                     parent::validateDate($body['data']['created_on']);
                     parent::validateDate($body['data']['expiration_date']);
                 })
@@ -218,7 +211,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
             // Since the user has a token, revoking it should succeed.
             $this->makeTokenRequest(
                 'delete',
-                parent::validateSuccessResponse(function ($body) {
+                parent::validateSuccessResponse(function ($body): void {
                     parent::assertSame(
                         'Token successfully revoked.',
                         $body['message']
@@ -247,7 +240,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
      * @throws Exception if there is an error making the request or running the
      *                   validation of it.
      */
-    private function makeTokenRequest($method, array $output) {
+    private function makeTokenRequest($method, array $output): void {
         parent::requestAndValidateJson(
             $this->helper,
             [

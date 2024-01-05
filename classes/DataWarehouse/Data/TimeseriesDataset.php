@@ -25,7 +25,7 @@ class TimeseriesDataset
      * class also checks this to set the remainder flag on the dataset for the
      * metric explorer.
      */
-    const SUMMARY_GROUP_ID = -99999;
+    public const SUMMARY_GROUP_ID = -99999;
 
     /**
      * @var TimeseriesQuery. The timeseries query instance that is used to generate the dataset.
@@ -69,7 +69,7 @@ class TimeseriesDataset
         $groupInstance = reset($groupBys);
         $groupIdColumn = $groupInstance->getId() . '_id';
 
-        $seriesIds = array();
+        $seriesIds = [];
 
         while($row = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
             $seriesIds[] = "${row[$groupIdColumn]}";
@@ -97,7 +97,7 @@ class TimeseriesDataset
             }
         }
 
-        return array($timeGroup, $spaceGroup);
+        return [$timeGroup, $spaceGroup];
     }
 
     /**
@@ -114,7 +114,7 @@ class TimeseriesDataset
     {
         $summaryDataset = null;
 
-        list($timeGroup, $spaceGroup) = $this->getGroupByClasses();
+        [$timeGroup, $spaceGroup] = $this->getGroupByClasses();
         $stats = $this->query->getStats();
         $statObj = reset($stats);
         $seriesIds = $this->getSeriesIds($limit, $offset);
@@ -134,19 +134,19 @@ class TimeseriesDataset
             // this happens when the offset is greater than the number of series. This
             // can occur when muliple datasets with different numbers of series
             // are plotted on the same chart.
-            return array();
+            return [];
         }
 
         $statement = $this->query->getRawStatement();
         $statement->execute();
 
-        $columnTypes = array();
+        $columnTypes = [];
         for ($end = $statement->columnCount(), $i = 0; $i < $end; $i++) {
              $raw_meta = $statement->getColumnMeta($i);
              $columnTypes[$raw_meta['name']] = $raw_meta;
         }
 
-        $dataSets = array();
+        $dataSets = [];
         foreach ($seriesIds as $seriesId) {
             $dataSets[$seriesId] = null;
         }
@@ -211,30 +211,30 @@ class TimeseriesDataset
         $sql = "SUM(t.$column_name)";
         $type = 'sum';
 
-        if (strpos($column_name, 'min_') !== false)
+        if (str_contains($column_name, 'min_'))
         {
             $series_name = "Minimum over all $normalizeBy others";
             $sql = "MIN(t.$column_name)";
             $type = 'min';
         }
-        elseif (strpos($column_name, 'max_') !== false)
+        elseif (str_contains($column_name, 'max_'))
         {
             $series_name = "Maximum over all $normalizeBy others";
             $sql = "MAX(t.$column_name)";
             $type = 'max';
         }
-        elseif (strpos($column_name, 'avg_') !== false
-            || strpos($column_name, 'count') !== false
-            || strpos($column_name, 'utilization') !== false
-            || strpos($column_name, 'rate') !== false
-            || strpos($column_name, 'expansion_factor') !== false)
+        elseif (str_contains($column_name, 'avg_')
+            || str_contains($column_name, 'count')
+            || str_contains($column_name, 'utilization')
+            || str_contains($column_name, 'rate')
+            || str_contains($column_name, 'expansion_factor'))
         {
             $series_name = "Avg of $normalizeBy Others";
             $sql = "SUM(t.$column_name)";
             $type = 'avg';
         }
 
-        return array($sql, $series_name, $type);
+        return [$sql, $series_name, $type];
     }
 
     /**
@@ -264,7 +264,7 @@ class TimeseriesDataset
         $query->addGroupBy($where_name);
         $query->addWhereAndJoin($where_name, "NOT IN", $whereExcludeArray);
 
-        list($sql, $series_name, $type) = $this->getSummaryOp($column_name, $normalizeBy);
+        [$sql, $series_name, $type] = $this->getSummaryOp($column_name, $normalizeBy);
 
         $dataObject = new \DataWarehouse\Data\SimpleTimeseriesData($series_name);
         $dataObject->setStatistic($query->_stats[$column_name]);
@@ -279,10 +279,10 @@ class TimeseriesDataset
                         . " ) t "
                         . " GROUP BY t.$start_ts_column_name";
 
-        $statement = DB::factory($query->_db_profile)->query($query_string, array(), true);
+        $statement = DB::factory($query->_db_profile)->query($query_string, [], true);
         $statement->execute();
 
-        $columnTypes = array();
+        $columnTypes = [];
         for ($end = $statement->columnCount(), $i = 0; $i < $end; $i++) {
             $raw_meta = $statement->getColumnMeta($i);
             $columnTypes[$raw_meta['name']] = $raw_meta;
@@ -311,7 +311,7 @@ class TimeseriesDataset
     */
     public function getTimestamps()
     {
-        $dataStartTs = array();
+        $dataStartTs = [];
 
         foreach ($this->query->getTimestamps() as $raw_timetamp) {
             $dataStartTs[] = $raw_timetamp['start_ts'];
@@ -354,100 +354,44 @@ class TimeseriesDataset
      */
     public function exportJsonStore($limit = null, $offset = null)
     {
-        list($timeGroup, $spaceGroup) = $this->getGroupByClasses();
+        [$timeGroup, $spaceGroup] = $this->getGroupByClasses();
         $stats = $this->query->getStats();
         $stat = reset($stats);
 
-        $fields = array(
-            array('name' => $timeGroup->getId(), 'type' => 'string', 'sortDir' => 'DESC'),
-            array('name' => $spaceGroup->getId(), 'type' => 'string', 'sortDir' => 'DESC'),
-            array('name' => $stat->getId(), 'type' => 'float', 'sortDir' => 'DESC')
-        );
+        $fields = [['name' => $timeGroup->getId(), 'type' => 'string', 'sortDir' => 'DESC'], ['name' => $spaceGroup->getId(), 'type' => 'string', 'sortDir' => 'DESC'], ['name' => $stat->getId(), 'type' => 'float', 'sortDir' => 'DESC']];
 
         $stat_unit = $stat->getUnit();
         $data_unit = '';
-        if (substr($stat_unit, -1) == '%') {
+        if (str_ends_with($stat_unit, '%')) {
             $data_unit = '%';
         }
 
         $stat_header = $stat->getName();
         if ($stat_header !== $stat_unit
-            && strpos($stat_header, $stat_unit) === false
+            && !str_contains($stat_header, $stat_unit)
         ) {
             $stat_header .= ' (' . $stat_unit . ')';
         }
 
-        $columns = array(
-            array(
-                'header' => $timeGroup->getName(),
-                'width' => 150,
-                'dataIndex' => $timeGroup->getId(),
-                'sortable' => true,
-                'editable' => false,
-                'locked' => true
-            ),
-            array(
-                'header' => $spaceGroup->getId() === 'none' ? 'Source' : $spaceGroup->getName(),
-                'width' => 150,
-                'dataIndex' => $spaceGroup->getId(),
-                'sortable' => true,
-                'editable' => false,
-                'locked' => true
-            ),
-            array(
-                'header'    => $stat_header,
-                'width'     => 140,
-                'dataIndex' => $stat->getId(),
-                'sortable'  => true,
-                'editable'  => false,
-                'align'     => 'right',
-                'xtype'     => 'numbercolumn',
-                'format'    => ($stat->getPrecision() > 0 ? '0,000.' . str_repeat(0, $stat->getPrecision()) : '0,000') . $data_unit,
-            )
-        );
+        $columns = [['header' => $timeGroup->getName(), 'width' => 150, 'dataIndex' => $timeGroup->getId(), 'sortable' => true, 'editable' => false, 'locked' => true], ['header' => $spaceGroup->getId() === 'none' ? 'Source' : $spaceGroup->getName(), 'width' => 150, 'dataIndex' => $spaceGroup->getId(), 'sortable' => true, 'editable' => false, 'locked' => true], ['header'    => $stat_header, 'width'     => 140, 'dataIndex' => $stat->getId(), 'sortable'  => true, 'editable'  => false, 'align'     => 'right', 'xtype'     => 'numbercolumn', 'format'    => ($stat->getPrecision() > 0 ? '0,000.' . str_repeat(0, $stat->getPrecision()) : '0,000') . $data_unit]];
 
         $statement = $this->query->getRawStatement();
         $statement->execute();
-        $records = array();
+        $records = [];
         while ($row = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
-            $records[] = array(
-                $timeGroup->getId() => $row[$timeGroup->getId() . '_name'],
-                $stat->getId() => $row[$stat->getId()],
-                $spaceGroup->getId() => $row[$spaceGroup->getId() . '_name']
-            );
+            $records[] = [$timeGroup->getId() => $row[$timeGroup->getId() . '_name'], $stat->getId() => $row[$stat->getId()], $spaceGroup->getId() => $row[$spaceGroup->getId() . '_name']];
         }
 
         $message = '';
 
         if (empty($records)) {
             $message = 'Dataset is empty';
-            $fields = array(array("name" => 'Message', "type" => 'string'));
-            $records = array(array('Message' => $message));
-            $columns = array(array(
-                "header"    => 'Message',
-                "width"     => 600,
-                "dataIndex" => 'Message',
-                "sortable"  => false,
-                'editable'  => false,
-                'align'     => 'left',
-                'renderer'  => "CCR.xdmod.ui.stringRenderer",
-            ));
+            $fields = [["name" => 'Message', "type" => 'string']];
+            $records = [['Message' => $message]];
+            $columns = [["header"    => 'Message', "width"     => 600, "dataIndex" => 'Message', "sortable"  => false, 'editable'  => false, 'align'     => 'left', 'renderer'  => "CCR.xdmod.ui.stringRenderer"]];
         }
 
-        return array(
-            'metaData' => array(
-                'totalProperty'   => 'total',
-                'messageProperty' => 'message',
-                'root'            => 'records',
-                'id'              => 'id',
-                'fields'          => $fields
-            ),
-            'message' => '<ul>' . $message . '</ul>',
-            'success' => true,
-            'total'   => count($records),
-            'records' => $records,
-            'columns' => $columns
-        );
+        return ['metaData' => ['totalProperty'   => 'total', 'messageProperty' => 'message', 'root'            => 'records', 'id'              => 'id', 'fields'          => $fields], 'message' => '<ul>' . $message . '</ul>', 'success' => true, 'total'   => count($records), 'records' => $records, 'columns' => $columns];
     }
 
     /**
@@ -455,22 +399,9 @@ class TimeseriesDataset
      */
     public function export($export_title = 'title')
     {
-        $exportData = array(
-            'title' => array(
-                'title' => $export_title
-            ),
-            'title2' => array(
-                'parameters' => $this->query->roleParameterDescriptions
-            ),
-            'duration' => array(
-                'start' => $this->query->getStartDate(),
-                'end'   => $this->query->getEndDate(),
-            ),
-            'headers' => array(),
-            'rows' => array()
-        );
+        $exportData = ['title' => ['title' => $export_title], 'title2' => ['parameters' => $this->query->roleParameterDescriptions], 'duration' => ['start' => $this->query->getStartDate(), 'end'   => $this->query->getEndDate()], 'headers' => [], 'rows' => []];
 
-        list($timeGroup, $spaceGroup) = $this->getGroupByClasses();
+        [$timeGroup, $spaceGroup] = $this->getGroupByClasses();
 
         $exportData['headers'][] = $timeGroup->getName();
 
@@ -479,7 +410,7 @@ class TimeseriesDataset
         $stat_unit  = $stat->getUnit();
 
         $seriesName = $stat->getName();
-        if ( $seriesName != $stat_unit && strpos($seriesName, $stat_unit) === false) {
+        if ( $seriesName != $stat_unit && !str_contains($seriesName, $stat_unit)) {
             $seriesName .= ' (' . $stat_unit . ')';
         }
         if (count($this->query->filterParameterDescriptions) > 0) {
@@ -488,9 +419,9 @@ class TimeseriesDataset
 
         $dimensions = $this->getSeriesIds(null, null);
 
-        $dimensionNames = array();
-        $timeData = array();
-        $timestamps = array();
+        $dimensionNames = [];
+        $timeData = [];
+        $timestamps = [];
 
         $statement = $this->query->getRawStatement();
         $statement->execute();
@@ -506,7 +437,7 @@ class TimeseriesDataset
 
             if (!isset($timestamps[$timeTs]) ) {
                 $timestamps[$timeTs] = $row[$timeGroup->getId() . '_name'];
-                $timeData[$timeTs] = array();
+                $timeData[$timeTs] = [];
             }
 
             $timeData[$timeTs][$dimension] = $row[$stat->getId()];
@@ -524,7 +455,7 @@ class TimeseriesDataset
         ksort($timestamps);
 
         foreach ($timestamps as $timeTs => $timeName) {
-            $values = array($timeName);
+            $values = [$timeName];
 
             foreach ($dimensions as $dimension) {
                 if (isset($timeData[$timeTs][$dimension])) {

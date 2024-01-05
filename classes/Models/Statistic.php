@@ -28,17 +28,5 @@
  */
 class Statistic extends DBObject
 {
-    protected $PROP_MAP = array(
-        'statistic_id' => 'statisticId',
-        'module_id' => 'moduleId',
-        'realm_id' => 'realmId',
-        'name' => 'name',
-        'display'=> 'display',
-        'formula' => 'formula',
-        'alias'=> 'alias',
-        'unit' => 'unit',
-        'decimals' => 'decimals',
-        'description' => 'description',
-        'visible' => 'visible'
-    );
+    protected $PROP_MAP = ['statistic_id' => 'statisticId', 'module_id' => 'moduleId', 'realm_id' => 'realmId', 'name' => 'name', 'display'=> 'display', 'formula' => 'formula', 'alias'=> 'alias', 'unit' => 'unit', 'decimals' => 'decimals', 'description' => 'description', 'visible' => 'visible'];
 }

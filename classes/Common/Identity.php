@@ -7,7 +7,7 @@ namespace Common;
  *
  * @author Amin Ghadersohi
  */
-class Identity
+class Identity implements \Stringable
 {
 
     /**
@@ -42,7 +42,7 @@ class Identity
      *
      * @param string $name
      */
-    public function setName($name)
+    public function setName($name): void
     {
         $this->_name = $name;
     }
@@ -52,7 +52,7 @@ class Identity
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getName();
     }

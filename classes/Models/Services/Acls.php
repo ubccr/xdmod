@@ -38,7 +38,7 @@ class Acls
         return array_reduce($results, function ($carry, $item) {
             $carry [] = new Acl($item);
             return $carry;
-        }, array());
+        }, []);
     }
 
     /**
@@ -63,7 +63,7 @@ SELECT
 FROM acls a
 WHERE a.acl_id = :acl_id
 SQL;
-        $results = $db->query($query, array(':acl_id' => $aclId));
+        $results = $db->query($query, [':acl_id' => $aclId]);
 
         if (count($results) > 0) {
             return new Acl($results[0]);
@@ -92,13 +92,7 @@ SQL;
 INSERT INTO acls(module_id, acl_type_id, name, display, enabled)
 VALUES(:module_id, :acl_type_id, :name, :display, :enabled);
 SQL;
-        $aclId = $db->insert($query, array(
-            ':module_id' => $acl->getModuleId(),
-            ':acl_type_id' => $acl->getAclTypeId(),
-            ':name' => $acl->getName(),
-            ':display' => $acl->getDisplay(),
-            ':enabled' => $acl->getEnabled()
-        ));
+        $aclId = $db->insert($query, [':module_id' => $acl->getModuleId(), ':acl_type_id' => $acl->getAclTypeId(), ':name' => $acl->getName(), ':display' => $acl->getDisplay(), ':enabled' => $acl->getEnabled()]);
 
         $acl->setAclId($aclId);
 
@@ -133,13 +127,7 @@ SET
 WHERE
   a.acl_id = :acl_id
 SQL;
-        $rows = $db->execute($query, array(
-            ':module_id' => $acl->getModuleId(),
-            ':acl_type_id' => $acl->getAclTypeId(),
-            ':name' => $acl->getName(),
-            ':display' => $acl->getDisplay(),
-            ':enabled' => $acl->getEnabled()
-        ));
+        $rows = $db->execute($query, [':module_id' => $acl->getModuleId(), ':acl_type_id' => $acl->getAclTypeId(), ':name' => $acl->getName(), ':display' => $acl->getDisplay(), ':enabled' => $acl->getEnabled()]);
 
         return $rows === 1;
     }
@@ -147,7 +135,6 @@ SQL;
     /**
      * Attempt to delete the acl identified by the provided '$aclId'.
      *
-     * @param Acl $acl
      * @return bool true iff the number of rows deleted = 1.
      * @throws Exception if the provided acls aclId is null
      */
@@ -160,18 +147,14 @@ SQL;
         $db = DB::factory('database');
 
         $query = "DELETE FROM acls WHERE acl_id = :acl_id";
-        $rows = $db->execute($query, array(
-            ':acl_id' => $acl->getAclId()
-        ));
+        $rows = $db->execute($query, [':acl_id' => $acl->getAclId()]);
         return $rows === 1;
     }
 
     /**
      * Retrieve a list of a user's current acls.
      *
-     * @param XDUser $user
      * @return array[]
-     *
      * @throws Exception if the user's userId is null
      */
     public static function listUserAcls(XDUser $user)
@@ -196,7 +179,7 @@ FROM user_acls ua
     ) req ON req.acl_id = ua.acl_id
 WHERE ua.user_id = :user_id
 SQL;
-        return $db->query($sql, array('user_id' => $userId));
+        return $db->query($sql, ['user_id' => $userId]);
     }
 
     /**
@@ -222,10 +205,7 @@ SQL;
             throw new Exception('A valid acl id must be provided.');
         }
         $db = DB::factory('database');
-        $params = array(
-            ':user_id' => $user->getUserId(),
-            ':acl_id' => $aclId
-        );
+        $params = [':user_id' => $user->getUserId(), ':acl_id' => $aclId];
         $query = <<<SQL
 INSERT INTO user_acls(user_id, acl_id)
 SELECT inc.*
@@ -270,10 +250,7 @@ SQL;
         $db = DB::factory('database');
 
         $query = "DELETE FROM user_acls WHERE user_id = :user_id AND acl_id = :acl_id";
-        $rows = $db->execute($query, array(
-            ':user_id' => $user->getUserId(),
-            ':acl_id' => $aclId
-        ));
+        $rows = $db->execute($query, [':user_id' => $user->getUserId(), ':acl_id' => $aclId]);
         return $rows <= 1;
     }
 
@@ -313,7 +290,7 @@ WHERE
   AND a.enabled = TRUE
 SQL;
 
-        $results = $db->query($sql, array('acl_id' => $aclId, 'user_id' => $userId));
+        $results = $db->query($sql, ['acl_id' => $aclId, 'user_id' => $userId]);
 
         return count($results) > 0;
     }
@@ -345,9 +322,9 @@ SQL;
 
         $handle = $db->handle();
         $userId = $user->getUserID();
-        $aclIds = array_reduce($acls, function ($carry, Acl $item) use ($handle) {
+        $aclIds = array_reduce($acls, function ($carry, Acl $item) use ($handle): void {
             $carry [] = $handle->quote($item->getAclId(), PDO::PARAM_INT);
-        }, array());
+        }, []);
 
         $sql = <<<SQL
 SELECT 1
@@ -359,7 +336,7 @@ WHERE
   AND ua.user_id = :user_id
   AND a.enabled = TRUE
 SQL;
-        $results = $db->query($sql, array('user_id' => $userId, 'acl_ids' => $aclIds));
+        $results = $db->query($sql, ['user_id' => $userId, 'acl_ids' => $aclIds]);
 
         return count($results) > 0;
     }
@@ -409,7 +386,7 @@ SQL;
                     $carry [] = $handle->quote($value);
                     return $carry;
                 },
-                array()
+                []
             )
         );
 
@@ -465,7 +442,7 @@ WHERE
   ua.user_id = :user_id AND
   r.name IN ($realmNames);
 SQL;
-        $results = array();
+        $results = [];
 
         /* By retrieving all of the query_descripters ( acl_group_bys ) for all
          * of a users acls / the provided realms in one go we do not need the
@@ -477,18 +454,12 @@ SQL;
          */
         $rows = $db->query(
             $sql,
-            array(
-                ':user_id' => $user->getUserID()
-            )
+            [':user_id' => $user->getUserID()]
         );
 
         foreach ($rows as $row) {
             if ($row['id'] != null) {
-                $results[] = array(
-                    'id' => $row['id'],
-                    'group_by' => $row['group_by'],
-                    'realm' => $row['realm']
-                );
+                $results[] = ['id' => $row['id'], 'group_by' => $row['group_by'], 'realm' => $row['realm']];
             }
         }
 
@@ -516,7 +487,7 @@ SQL;
 
         $sql = "SELECT * FROM acls a WHERE a.name = :name";
 
-        $rows = $db->query($sql, array(':name' => $name));
+        $rows = $db->query($sql, [':name' => $name]);
 
         if (count($rows) > 0) {
             return new Acl($rows[0]);
@@ -536,7 +507,7 @@ SQL;
     public static function getAclByDisplay($display)
     {
         $db = DB::factory('database');
-        $rows = $db->query('SELECT * FROM acls a WHERE a.display = :display', array(':display' => $display));
+        $rows = $db->query('SELECT * FROM acls a WHERE a.display = :display', [':display' => $display]);
         if (count($rows) > 0) {
             return new Acl($rows[0]);
         }
@@ -588,19 +559,15 @@ WHERE
   AND s.visible = TRUE
 ORDER BY r.name, gb.display, s.display;
 SQL;
-        $realms = array();
+        $realms = [];
 
-        $rows = $db->query($query, array(':user_id' => $user->getUserID()));
+        $rows = $db->query($query, [':user_id' => $user->getUserID()]);
         if (count($rows) > 0) {
             foreach ($rows as $row) {
                 $realm = $row['realm'];
 
                 if (!array_key_exists($realm, $realms)) {
-                    $realms[$realm] = array(
-                        'metrics' => array(),
-                        'dimensions' => array(),
-                        'text' => $realm
-                    );
+                    $realms[$realm] = ['metrics' => [], 'dimensions' => [], 'text' => $realm];
                 }
                 $dimensions = &$realms[$realm]['dimensions'];
                 $metrics = &$realms[$realm]['metrics'];
@@ -610,24 +577,17 @@ SQL;
 
                 // Dimension Processing
                 if (isset($dimensionName) && !array_key_exists($dimensionName, $dimensions)) {
-                    $dimensions[$dimensionName] = array(
-                        'info' => $row['dimension_info'],
-                        'text' => $row['dimension_text']
-                    );
+                    $dimensions[$dimensionName] = ['info' => $row['dimension_info'], 'text' => $row['dimension_text']];
                 }
 
                 // Statistic Processing
                 if (isset($metricName) && !array_key_exists($metricName, $metrics)) {
-                    $metrics[$metricName] = array(
-                        'info' => $row['metric_info'],
-                        'text' => $row['metric_text'],
-                        'std_err' => $row['metric_std_err']
-                    );
+                    $metrics[$metricName] = ['info' => $row['metric_info'], 'text' => $row['metric_text'], 'std_err' => $row['metric_std_err']];
                 }
             }
         }
 
-        return array('realms' => $realms);
+        return ['realms' => $realms];
     }
 
     /**
@@ -677,19 +637,15 @@ WHERE
   AND ua.user_id = :user_id;
 SQL;
 
-        $rows = $db->query($query, array(
-            ':realm_name' => $realmName,
-            ':group_by_name' => $groupByName,
-            ':user_id' => $user->getUserID()
-        ));
+        $rows = $db->query($query, [':realm_name' => $realmName, ':group_by_name' => $groupByName, ':user_id' => $user->getUserID()]);
 
         if ($rows !== false && count($rows) > 0) {
             return array_reduce($rows, function ($carry, $item) {
                 $carry [] = $item['name'];
                 return $carry;
-            }, array());
+            }, []);
         }
-        return array();
+        return [];
     }
 
     /**
@@ -716,16 +672,14 @@ FROM group_bys gb
   JOIN realms r ON gb.realm_id = r.realm_id
 WHERE r.name = :realm_name
 SQL;
-        $rows = $db->query($query, array(
-            ':realm_name' => $realmName
-        ));
+        $rows = $db->query($query, [':realm_name' => $realmName]);
         if (count($rows) > 0) {
             return array_reduce($rows, function ($carry, $item) {
                 $carry [] = new GroupBy($item);
                 return $carry;
-            }, array());
+            }, []);
         }
-        return array();
+        return [];
     }
 
     /**
@@ -767,11 +721,7 @@ WHERE uagbp.user_id = :user_id
   AND a.name = :acl_name
   AND gb.name = :group_by_name;
 SQL;
-        $rows = $db->query($query, array(
-            ':user_id' => $user->getUserID(),
-            ':acl_name' => $aclName,
-            ':group_by_name' => $groupByName
-        ));
+        $rows = $db->query($query, [':user_id' => $user->getUserID(), ':acl_name' => $aclName, ':group_by_name' => $groupByName]);
         if (count($rows) > 0) {
             return $rows[0]['value'];
         }
@@ -815,18 +765,14 @@ WHERE uagbp.user_id = :user_id
   AND gb.name = :group_by_name;
 SQL;
         $db = DB::factory('database');
-        $rows = $db->query($query, array(
-            ':user_id' => $user->getUserID(),
-            ':acl_name' => $aclName,
-            ':group_by_name' => $groupByName
-        ));
+        $rows = $db->query($query, [':user_id' => $user->getUserID(), ':acl_name' => $aclName, ':group_by_name' => $groupByName]);
         if (count($rows) > 0) {
             return array_reduce($rows, function ($carry, $item) {
                 $carry [] = $item['value'];
                 return $carry;
-            }, array());
+            }, []);
         }
-        return array();
+        return [];
     }
 
     /**
@@ -914,10 +860,7 @@ ORDER BY COALESCE(aclh.level, 0) DESC, COALESCE(aclp.id, 0) DESC
 LIMIT 1
 SQL;
         $db = DB::factory('database');
-        $rows = $db->query($query, array(
-            ':acl_hierarchy_name' => $aclHierarchyName,
-            ':user_id' => $user->getUserID()
-        ));
+        $rows = $db->query($query, [':acl_hierarchy_name' => $aclHierarchyName, ':user_id' => $user->getUserID()]);
 
         if (count($rows) > 0) {
             return new Acl($rows[0]);
@@ -946,18 +889,16 @@ WHERE at.name = :acl_type_name
 SQL;
         $rows = $db->query(
             $query,
-            array(
-                ':acl_type_name' => $aclTypeName
-            )
+            [':acl_type_name' => $aclTypeName]
         );
 
         if (count($rows) > 0) {
             return array_reduce($rows, function ($carry, $item) {
                 $carry[] = new Acl($item);
                 return $carry;
-            }, array());
+            }, []);
         }
-        return array();
+        return [];
     }
 
     /**
@@ -966,7 +907,6 @@ SQL;
      * `acl_group_bys` table with additional information merged in from roles.json ( anything that
      * isn't 'realm' or 'group_by' ).
      *
-     * @param XDUser $user
      * @param string $realmName
      * @param string $groupByName
      * @param string $statisticName
@@ -1036,9 +976,7 @@ FROM group_bys gb
 WHERE ua.user_id = :user_id $statisticWhere
 SQL;
 
-        $params = array(
-            ':user_id' => $user->getUserID()
-        );
+        $params = [':user_id' => $user->getUserID()];
 
         if (isset($realmName)) {
             $query .= " AND r.name = :realm_name\n";
@@ -1057,8 +995,8 @@ SQL;
         }
         $query .= "\nGROUP BY 1,2";
         $query .= "\nORDER BY 1,2 DESC";
-        $results = array();
-        $sorted = array();
+        $results = [];
+        $sorted = [];
 
         $db = DB::factory('database');
         $rows = $db->query($query, $params);
@@ -1084,15 +1022,15 @@ SQL;
                     : $descripter->getMenuLabel();
 
                 // We need to save the group_by / realm / order for later
-                $results[] = array($descripter, $row['group_by'], $row['realm'], $order);
+                $results[] = [$descripter, $row['group_by'], $row['realm'], $order];
             }
 
             // Now we sort the created query descripters
             usort(
                 $results,
                 function ($a, $b) {
-                    list($aQueryDescripter, $aGroupBy, $aRealm, $aOrder) = $a;
-                    list($bQueryDescripter, $bGroupBy, $bRealm, $bOrder) = $b;
+                    [$aQueryDescripter, $aGroupBy, $aRealm, $aOrder] = $a;
+                    [$bQueryDescripter, $bGroupBy, $bRealm, $bOrder] = $b;
 
                     return strcmp(
                         $aOrder,
@@ -1103,7 +1041,7 @@ SQL;
 
             // Now we setup the final structure of the results based on what parameters we were given.
             foreach ($results as $queryDescripterInfo) {
-                list($queryDescripter, $groupBy, $realm) = $queryDescripterInfo;
+                [$queryDescripter, $groupBy, $realm] = $queryDescripterInfo;
                 if (isset($realmName) && isset($groupByName) && isset($statisticName)) {
                     $sorted = $queryDescripter;
                 } elseif (isset($realmName) && isset($groupByName)) {
@@ -1191,11 +1129,7 @@ SELECT DISTINCT agb.realm_id
 
 SQL;
 
-        $params = array(
-            ':realm_name' => $realmName,
-            ':group_by_name' => $groupByName,
-            ':user_id' => $user->getUserID()
-        );
+        $params = [':realm_name' => $realmName, ':group_by_name' => $groupByName, ':user_id' => $user->getUserID()];
 
         // NOTE: The current aRole::checkDataAccess does not support filtering based on
         // statistic. This means that a user has 'access' to a query descripter so long as the

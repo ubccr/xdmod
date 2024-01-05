@@ -9,21 +9,17 @@ namespace DataWarehouse\Data;
  * @author Amin Ghadersohi
  * @author Jeanette Sperhac
  */
-class SimpleDataset
+class SimpleDataset implements \Stringable
 {
-    // TODO: what say we: make this private??
-    public $_query;
-
-    protected $_columnTypes = array();
+    protected $_columnTypes = [];
 
     protected $_results;
 
     // TODO: what say we:
     private $_count;
 
-    public function __construct(&$query)
+    public function __construct(public $_query)
     {
-        $this->_query = $query;
     }
 
     // TODO: may be unreliable since _query is public!!
@@ -39,7 +35,7 @@ class SimpleDataset
     // Helper function for debugging
     // JMS Oct 2015
     // --------------------------------------------------------
-    public function __toString() {
+    public function __toString(): string {
 
         return "SimpleDataset: \n"
             . "Total Possible Count: {$this->getTotalPossibleCount()}\n"
@@ -83,7 +79,7 @@ class SimpleDataset
             // Populate _columnTypes array from PDO::getColumnMeta()
             // http://php.net/manual/en/pdostatement.getcolumnmeta.php
             if ($get_meta) {
-                $this->_columnTypes = array();
+                $this->_columnTypes = [];
 
                 for ($end = $stmt->columnCount(), $i = 0; $i < $end; $i++) {
                     $raw_meta = $stmt->getColumnMeta($i);
@@ -223,10 +219,10 @@ class SimpleDataset
 
         // Accumulate the values in a temp variable, then set everything
         // at once.
-        $dataErrors = array();
-        $dataValues = array();
-        $dataIds = array();
-        $dataOrderIds = array();
+        $dataErrors = [];
+        $dataValues = [];
+        $dataIds = [];
+        $dataOrderIds = [];
 
         foreach ($results as $row) {
             if ($values_column_name != NULL) {
@@ -237,11 +233,7 @@ class SimpleDataset
                         . " exist in the dataset."
                     );
                 } else {
-                    $dataValues[] = $this->convertSQLtoPHP(
-                        $row[$values_column_name],
-                        $columnTypes[$values_column_name]['native_type'],
-                        $columnTypes[$values_column_name]['precision']
-                    );
+                    $dataValues[] = static::convertSQLtoPHP($row[$values_column_name], $columnTypes[$values_column_name]['native_type'], $columnTypes[$values_column_name]['precision']);
                 }
             }
 
@@ -249,11 +241,7 @@ class SimpleDataset
                 if (!array_key_exists($sem_column_name, $row)) {
                     $dataErrors[] = 0;
                 } else {
-                    $dataErrors[] = $this->convertSQLtoPHP(
-                        $row[$sem_column_name],
-                        $columnTypes[$sem_column_name]['native_type'],
-                        $columnTypes[$sem_column_name]['precision']
-                    );
+                    $dataErrors[] = static::convertSQLtoPHP($row[$sem_column_name], $columnTypes[$sem_column_name]['native_type'], $columnTypes[$sem_column_name]['precision']);
                 }
             }
 
@@ -311,16 +299,13 @@ class SimpleDataset
     // --------------------------------------------------------
     public function export($export_title = 'title')
     {
-        $headers = array();
-        $rows    = array();
+        $headers = [];
+        $rows    = [];
 
-        $duration_info = array(
-            'start' => $this->_query->getStartDate(),
-            'end'   => $this->_query->getEndDate(),
-        );
+        $duration_info = ['start' => $this->_query->getStartDate(), 'end'   => $this->_query->getEndDate()];
 
-        $title  = array('title' => 'None');
-        $title2 = array('parameters' => array());
+        $title  = ['title' => 'None'];
+        $title2 = ['parameters' => []];
 
         $title['title'] = $export_title;
         $title2['parameters'] = $this->_query->roleParameterDescriptions;
@@ -340,7 +325,7 @@ class SimpleDataset
             $stat_unit  = $stat->getUnit();
 
             $data_unit = '';
-            if (substr( $stat_unit, -1 ) == '%') {
+            if (str_ends_with($stat_unit, '%')) {
                 $data_unit = '%';
             }
 
@@ -348,7 +333,7 @@ class SimpleDataset
 
             if (
                 $column_header != $stat_unit
-                && strpos($column_header, $stat_unit) === false
+                && !str_contains($column_header, $stat_unit)
             ) {
                 $column_header .= ' (' . $stat_unit . ')';
             }
@@ -369,7 +354,7 @@ class SimpleDataset
 
 
         foreach ($this->getResults() as $result) {
-            $record = array();
+            $record = [];
             foreach ($group_bys as $group_by) {
                 $record[$group_by->getId()]
                     = $result[ sprintf('%s_name', $group_by->getId()) ];
@@ -384,13 +369,7 @@ class SimpleDataset
             $rows[] = $record;
         } // foreach ($this->getResults() as $result)
 
-        return array(
-            'title'    => $title,
-            'title2'   => $title2,
-            'duration' => $duration_info,
-            'headers'  => $headers,
-            'rows'     => $rows,
-        );
+        return ['title'    => $title, 'title2'   => $title2, 'duration' => $duration_info, 'headers'  => $headers, 'rows'     => $rows];
     } // export()
 
     // --------------------------------------------------------
@@ -402,12 +381,12 @@ class SimpleDataset
     // --------------------------------------------------------
     public function exportJsonStore($limit = null, $offset = null)
     {
-        $fields   = array();
+        $fields   = [];
         $count    = -1;
-        $records  = array();
-        $columns  = array();
-        $subnotes = array();
-        $sortInfo = array();
+        $records  = [];
+        $columns  = [];
+        $subnotes = [];
+        $sortInfo = [];
         $message  = '';
         $count    = $this->_query->getCount();
 
@@ -420,22 +399,11 @@ class SimpleDataset
             $has_stats = count($stats) > 0;
 
             foreach ($group_bys as $group_by) {
-                $fields[] = array(
-                    "name"    => $group_by->getId(),
-                    "type"    => 'string',
-                    'sortDir' => 'DESC',
-                );
+                $fields[] = ["name"    => $group_by->getId(), "type"    => 'string', 'sortDir' => 'DESC'];
 
-                $columns[] = array(
-                    "header"    => $group_by->getId() === 'none'
-                                 ? 'Source'
-                                 : $group_by->getName(),
-                    "width"     => 150,
-                    "dataIndex" => $group_by->getId(),
-                    "sortable"  => true,
-                    'editable'  => false,
-                    'locked'    => $has_stats,
-                );
+                $columns[] = ["header"    => $group_by->getId() === 'none'
+                             ? 'Source'
+                             : $group_by->getName(), "width"     => 150, "dataIndex" => $group_by->getId(), "sortable"  => true, 'editable'  => false, 'locked'    => $has_stats];
             } // foreach ($group_bys as $group_by)
 
             foreach ($stats as $stat) {
@@ -443,7 +411,7 @@ class SimpleDataset
                 $stat_alias = $stat->getId();
 
                 $data_unit = '';
-                if (substr( $stat_unit, -1 ) == '%') {
+                if (str_ends_with($stat_unit, '%')) {
                     $data_unit = '%';
                 }
 
@@ -451,36 +419,23 @@ class SimpleDataset
 
                 if (
                     $column_header != $stat_unit
-                    && strpos($column_header, $stat_unit) === false
+                    && !str_contains($column_header, $stat_unit)
                 ) {
                     $column_header .= ' (' . $stat_unit . ')';
                 }
 
                 $decimals = $stat->getPrecision();
 
-                $fields[] = array(
-                    "name"    => $stat_alias,
-                    "type"    => 'float',
-                    'sortDir' => 'DESC',
-                );
+                $fields[] = ["name"    => $stat_alias, "type"    => 'float', 'sortDir' => 'DESC'];
 
-                $columns[] = array(
-                    "header"    => $column_header,
-                    "width"     => 140,
-                    "dataIndex" => $stat_alias,
-                    "sortable"  => true,
-                    'editable'  => false,
-                    'align'     => 'right',
-                    'xtype'     => 'numbercolumn',
-                    'format'    => (
-                                       $decimals > 0
-                                       ? '0,000.' . str_repeat(0, $decimals)
-                                       : '0,000'
-                                   ) . $data_unit,
-                );
+                $columns[] = ["header"    => $column_header, "width"     => 140, "dataIndex" => $stat_alias, "sortable"  => true, 'editable'  => false, 'align'     => 'right', 'xtype'     => 'numbercolumn', 'format'    => (
+                                   $decimals > 0
+                                   ? '0,000.' . str_repeat(0, $decimals)
+                                   : '0,000'
+                               ) . $data_unit];
             }
             foreach ($results as $result) {
-                $record = array();
+                $record = [];
                 foreach ($group_bys as $group_by) {
                     $record[$group_by->getId()]
                         = $result[ sprintf('%s_name', $group_by->getId()) ];
@@ -497,43 +452,19 @@ class SimpleDataset
 
             $query_orders = $this->_query->getOrders();
             foreach ($query_orders as $query_order) {
-                $sortInfo = array(
-                    'field'     => $query_order->getColumnName(),
-                    'direction' => $query_order->getOrder(),
-                );
+                $sortInfo = ['field'     => $query_order->getColumnName(), 'direction' => $query_order->getOrder()];
             }
         } else {
             $message = 'Dataset is empty';
 
-            $fields = array(array("name" => 'Message', "type" => 'string'));
+            $fields = [["name" => 'Message', "type" => 'string']];
 
-            $records = array(array('Message' => $message));
+            $records = [['Message' => $message]];
 
-            $columns = array(array(
-                "header"    => 'Message',
-                "width"     => 600,
-                "dataIndex" => 'Message',
-                "sortable"  => false,
-                'editable'  => false,
-                'align'     => 'left',
-                'renderer'  => "CCR.xdmod.ui.stringRenderer",
-            ));
+            $columns = [["header"    => 'Message', "width"     => 600, "dataIndex" => 'Message', "sortable"  => false, 'editable'  => false, 'align'     => 'left', 'renderer'  => "CCR.xdmod.ui.stringRenderer"]];
         }
 
-        $returnData = array(
-            "metaData" => array(
-                "totalProperty"   => "total",
-                'messageProperty' => 'message',
-                "root"            => "records",
-                "id"              => "id",
-                "fields"          => $fields,
-            ),
-            'message' => '<ul>' . $message . '</ul>',
-            "success" => true,
-            "total"   => $count,
-            "records" => $records,
-            "columns" => $columns
-        );
+        $returnData = ["metaData" => ["totalProperty"   => "total", 'messageProperty' => 'message', "root"            => "records", "id"              => "id", "fields"          => $fields], 'message' => '<ul>' . $message . '</ul>', "success" => true, "total"   => $count, "records" => $records, "columns" => $columns];
         if (!empty($sortInfo)) {
             $returnData["metaData"]["sortInfo"] = $sortInfo;
         }

@@ -10,7 +10,7 @@
    
       \xd_security\assertParameterSet('selected_report');
     
-      $flush_cache = isset($_POST['flush_cache']) ? $_POST['flush_cache'] : false;
+      $flush_cache = $_POST['flush_cache'] ?? false;
       
       if ($flush_cache == true) {
          $rm->flushReportImageCache();

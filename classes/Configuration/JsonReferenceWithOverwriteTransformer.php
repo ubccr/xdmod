@@ -27,7 +27,7 @@ use stdClass;
 
 class JsonReferenceWithOverwriteTransformer extends JsonReferenceTransformer implements iConfigFileKeyTransformer
 {
-    const REFERENCE_KEY = '$ref-with-overwrite';
+    public const REFERENCE_KEY = '$ref-with-overwrite';
 
     /**
      * @see iConfigFileKeyTransformer::keyMatches()
@@ -47,7 +47,7 @@ class JsonReferenceWithOverwriteTransformer extends JsonReferenceTransformer imp
     public function transform(&$key, &$value, stdClass $obj, Configuration $config)
     {
         $overwriteKey = '$overwrite';
-        $overwriteDirectives = array();
+        $overwriteDirectives = [];
 
         // Need to look into the rest of the object here, do we have access to it?
 

@@ -26,16 +26,16 @@ function getToken()
 /**
  * Sets cookies necessary for use of the REST API by the browser client.
  */
-function setCookies()
+function setCookies(): void
 {
     // Obtain and set a cookie for the user's REST token.
-    setcookie('xdmod_token', getToken(), 0, '/', '', true, true);
+    setcookie('xdmod_token', getToken(), ['expires' => 0, 'path' => '/', 'domain' => '', 'secure' => true, 'httponly' => true]);
 }
 
 /**
  * Prints variables necessary for use of the REST API by the browser client.
  */
-function printJavascriptVariables()
+function printJavascriptVariables(): void
 {
     // Ensure the namespace is set up.
     echo "Ext.namespace('XDMoD.REST');\n\n";

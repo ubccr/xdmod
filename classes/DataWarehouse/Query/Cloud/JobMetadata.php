@@ -16,13 +16,10 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
     {
         $job = $this->lookupJob($user, $jobid);
         if ($job == null) {
-            return array();
+            return [];
         }
 
-        return array(
-          \DataWarehouse\Query\RawQueryTypes::ACCOUNTING => true,
-          \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE => true
-        );
+        return [\DataWarehouse\Query\RawQueryTypes::ACCOUNTING => true, \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE => true];
     }
 
     /**
@@ -30,7 +27,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
      */
     public function getJobSummary(XDUser $user, $jobid)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -38,7 +35,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
      */
     public function getJobExecutableInfo(XDUser $user, $jobid)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -46,27 +43,27 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
      */
     public function getJobTimeseriesMetaData(XDUser $user, $jobid)
     {
-        return array( "tsid" => 'instance', "text" => "Instance timeseries for VM", "leaf" => false );
+        return ["tsid" => 'instance', "text" => "Instance timeseries for VM", "leaf" => false];
     }
 
     public function getJobTimeseriesMetricMeta(XDUser $user, $jobid, $tsid)
     {
-        return array();
+        return [];
     }
 
     public function getJobTimeseriesMetricNodeMeta(XDUser $user, $jobid, $tsid, $nodeid)
     {
-        return array();
+        return [];
     }
 
     public function getJobTimeseriesData(XDUser $user, $jobid, $tsid, $nodeid, $cpuid)
     {
         $job = $this->lookupJob($user, $jobid);
         if ($job == null) {
-            return array();
+            return [];
         }
 
-        $ct = new \DataWarehouse\Query\Cloud\JobTimeseries(array());
+        $ct = new \DataWarehouse\Query\Cloud\JobTimeseries([]);
         $timeseries =  $ct->get($jobid);
 
         return $timeseries;
@@ -83,7 +80,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
      */
     private function lookupJob(XDUser $user, $jobid)
     {
-        $query = new \DataWarehouse\Query\Cloud\JobDataset(array('primary_key' => $jobid));
+        $query = new \DataWarehouse\Query\Cloud\JobDataset(['primary_key' => $jobid]);
         $query->setMultipleRoleParameters($user->getAllRoles(), $user);
         $stmt = $query->getRawStatement(1, 0);
 

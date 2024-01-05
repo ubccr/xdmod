@@ -33,7 +33,7 @@ class NodeSet implements Iterator
      *
      * @var array
      */
-    private $nodes = array();
+    private $nodes = [];
 
     /**
      * Create a node set from a compressed host list string.
@@ -56,7 +56,7 @@ class NodeSet implements Iterator
     /**
      * Constructor.
      */
-    public function __construct(array $nodes = array())
+    public function __construct(array $nodes = [])
     {
         $this->nodes = array_unique($nodes);
 
@@ -69,7 +69,7 @@ class NodeSet implements Iterator
      *
      * @param string $node The name of the node.
      */
-    public function addNode($node)
+    public function addNode($node): void
     {
         if (!in_array($node, $this->nodes)) {
             $this->nodes[] = $node;
@@ -81,13 +81,11 @@ class NodeSet implements Iterator
      *
      * @param string $node The name of the node.
      */
-    public function removeNode($node)
+    public function removeNode($node): void
     {
         $this->nodes = array_filter(
             $this->nodes,
-            function ($v) use ($node) {
-                return $v !== $node;
-            }
+            fn($v) => $v !== $node
         );
 
         // Reset array keys.
@@ -117,7 +115,7 @@ class NodeSet implements Iterator
     /**
      * @see Iterator
      */
-    public function next()
+    public function next(): void
     {
         ++$this->position;
     }
@@ -125,7 +123,7 @@ class NodeSet implements Iterator
     /**
      * @see Iterator
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->position = 0;
     }

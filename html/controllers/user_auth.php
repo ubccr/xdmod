@@ -12,10 +12,10 @@
 	 *
 	 */
 	        
-	require_once dirname(__FILE__).'/../../configuration/linker.php';
+	require_once __DIR__.'/../../configuration/linker.php';
     \xd_security\start_session();
 	
-	$returnData = array();
+	$returnData = [];
 	
 	// --------------------
 	

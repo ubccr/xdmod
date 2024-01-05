@@ -5,11 +5,11 @@ namespace RegressionTests\Controllers;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
-class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
+class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
 {
-    private static $chartFilterTestData = array();
+    private static $chartFilterTestData = [];
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // This is used to write expected results file for the
         // testChartFilters test. The output file is just written to
@@ -26,18 +26,11 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
      * use this function to print out the results from the api call. This
      * can be used to generate new expected test results.
      */
-    private function output($chartData)
+    private function output($chartData): void
     {
-        $result = array(
-            'total' => $chartData->totalCount,
-            'series_data' => array()
-        );
+        $result = ['total' => $chartData->totalCount, 'series_data' => []];
         foreach ($chartData->data[0]->series as $series) {
-            $result['series_data'][] = array(
-                'name' => $series->name,
-                'y' => $series->data[0]->y,
-                'percentage' => $series->data[0]->percentage
-            );
+            $result['series_data'][] = ['name' => $series->name, 'y' => $series->data[0]->y, 'percentage' => $series->data[0]->percentage];
         }
         var_export($result);
     }
@@ -48,14 +41,11 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider filterTestsProvider
      */
-    public function testChartFilters($helper, $settings, $expected)
+    public function testChartFilters($helper, $settings, $expected): void
     {
-        $global_settings = array(
-            'filters' => $this->getFiltersByValue($helper, $settings['realm'], $settings['filter_dimension'], $settings['filter_values']),
-            'date' => $settings['date']
-        );
+        $global_settings = ['filters' => $this->getFiltersByValue($helper, $settings['realm'], $settings['filter_dimension'], $settings['filter_values']), 'date' => $settings['date']];
 
-        $requestData = $this->getChartRequest(array(array('realm' => $settings['realm'], 'group_by' => 'none', 'metric' => $settings['metric'])), $global_settings);
+        $requestData = $this->getChartRequest([['realm' => $settings['realm'], 'group_by' => 'none', 'metric' => $settings['metric']]], $global_settings);
 
         $response = $helper->post('controllers/metric_explorer.php', null, $requestData);
 
@@ -74,13 +64,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         if (isset($expected['yvalue'])) {
             $this->assertEquals($expected['yvalue'], $chartData->series[0]->data[0]->y);
         } else {
-            self::$chartFilterTestData[] = array(
-                'settings' => $settings,
-                'expected' => array(
-                    'subtitle' => $expected['subtitle'],
-                    'yvalue' => $chartData->series[0]->data[0]->y
-                )
-            );
+            self::$chartFilterTestData[] = ['settings' => $settings, 'expected' => ['subtitle' => $expected['subtitle'], 'yvalue' => $chartData->series[0]->data[0]->y]];
         }
     }
 
@@ -88,16 +72,12 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
     {
         $dimensionValues = $this->getDimensionValues($helper, $realm, $dimension);
 
-        $filters = array();
+        $filters = [];
 
         foreach ($values as $value) {
             foreach ($dimensionValues as $dimVal) {
                 if ($value === $dimVal['name']) {
-                    $filters[] = array(
-                        'value_id' => $dimVal['id'],
-                        'dimension_id' => $dimension,
-                        'checked' => true
-                    );
+                    $filters[] = ['value_id' => $dimVal['id'], 'dimension_id' => $dimension, 'checked' => true];
                     break;
                 }
             }
@@ -110,15 +90,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
 
     private function getDimensionValues($helper, $realm, $dimension)
     {
-        $params = array(
-            'operation' => 'get_dimension',
-            'dimension_id' => $dimension,
-            'realm' => $realm,
-            'public_user' => false,
-            'start' => '0',
-            'limit' => '10000',
-            'selectedFilterIds' => ''
-        );
+        $params = ['operation' => 'get_dimension', 'dimension_id' => $dimension, 'realm' => $realm, 'public_user' => false, 'start' => '0', 'limit' => '10000', 'selectedFilterIds' => ''];
 
         $response = $helper->post('/controllers/metric_explorer.php', null, $params);
 
@@ -134,35 +106,21 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
      * Tests the scenario where multiple datasets are plotted but they have different
      * number of dataseries and the paging has paged past the max of one of the series.
      */
-    public function testChartPaging()
+    public function testChartPaging(): void
     {
         $requestData =  $this->getChartRequest(
-            array(
-                array('realm' => 'Jobs', 'group_by' => 'username', 'metric' => 'total_cpu_hours'),
-                array('realm' => 'Jobs', 'group_by' => 'none', 'metric' => 'total_cpu_hours'),
-            ),
-            array(
-                'start' => '4',
-                'showRemainder' => 'false'
-            )
+            [['realm' => 'Jobs', 'group_by' => 'username', 'metric' => 'total_cpu_hours'], ['realm' => 'Jobs', 'group_by' => 'none', 'metric' => 'total_cpu_hours']],
+            ['start' => '4', 'showRemainder' => 'false']
         );
 
-        $expected = array (
-            'total' => '55',
-            'series_data' => array(
-                array('name' => 'aytinis', 'y' => 10091.8844, 'percentage' => null),
-                array('name' => 'sarwa', 'y' => 6955.7733, 'percentage' => null),
-                array('name' => 'crane', 'y' => 6839.52, 'percentage' => null),
-                array('name' => 'duswa', 'y' => 5701.5467, 'percentage' => null)
-            )
-        );
+        $expected = ['total' => '55', 'series_data' => [['name' => 'aytinis', 'y' => 10091.8844, 'percentage' => null], ['name' => 'sarwa', 'y' => 6955.7733, 'percentage' => null], ['name' => 'crane', 'y' => 6839.52, 'percentage' => null], ['name' => 'duswa', 'y' => 5701.5467, 'percentage' => null]]];
         $this->testChartData($requestData, $expected);
     }
 
     /**
      * @dataProvider remainderChartProvider
      */
-    public function testChartData($requestData, $expected)
+    public function testChartData($requestData, $expected): void
     {
         $helper = new XdmodTestHelper();
         $helper->authenticate('cd');
@@ -177,7 +135,6 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         if ($expected === null) {
             $this->output($chartData);
             $this->markTestSkipped();
-            return;
         }
 
         $this->assertEquals($expected['total'], $chartData->totalCount);
@@ -202,29 +159,14 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
      * and shareY axis is true so they get the units shown in the
      * data labels.
      */
-    public function testChartMultiAxis()
+    public function testChartMultiAxis(): void
     {
         $requestData =  $this->getChartRequest(
-            array(
-                array('realm' => 'Jobs', 'group_by' => 'username', 'metric' => 'total_cpu_hours'),
-                array('realm' => 'Jobs', 'group_by' => 'none', 'metric' => 'total_cpu_hours'),
-            ),
-            array(
-                'start' => '4',
-                'showRemainder' => 'false',
-                'share_y_axis' => 'true'
-            )
+            [['realm' => 'Jobs', 'group_by' => 'username', 'metric' => 'total_cpu_hours'], ['realm' => 'Jobs', 'group_by' => 'none', 'metric' => 'total_cpu_hours']],
+            ['start' => '4', 'showRemainder' => 'false', 'share_y_axis' => 'true']
         );
 
-        $expected = array (
-            'total' => '55',
-            'series_data' => array(
-                array('name' => 'aytinis [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 10091.8844, 'percentage' => null),
-                array('name' => 'sarwa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6955.7733, 'percentage' => null),
-                array('name' => 'crane [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6839.52, 'percentage' => null),
-                array('name' => 'duswa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 5701.5467, 'percentage' => null)
-            )
-        );
+        $expected = ['total' => '55', 'series_data' => [['name' => 'aytinis [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 10091.8844, 'percentage' => null], ['name' => 'sarwa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6955.7733, 'percentage' => null], ['name' => 'crane [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6839.52, 'percentage' => null], ['name' => 'duswa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 5701.5467, 'percentage' => null]]];
 
         $this->testChartData($requestData, $expected);
     }
@@ -232,58 +174,21 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
 
     public function getChartRequest($data_settings, $global_settings = null)
     {
-        $dataseries = array();
+        $dataseries = [];
         foreach ($data_settings as $setting) {
             $dataseries[] = $this->generateDataSeries($setting);
         }
 
-        $filterlist = isset($global_settings['filters']) ? $global_settings['filters'] : array();
+        $filterlist = $global_settings['filters'] ?? [];
 
-        $global_filters = array(
-            'data' => $filterlist,
-            'total' => count($filterlist)
-        );
+        $global_filters = ['data' => $filterlist, 'total' => count($filterlist)];
 
-        $testdate = isset($global_settings['date']) ? $global_settings['date'] : '2016-12-31';
-        $startOffset = isset($global_settings['start']) ? $global_settings['start'] : '0';
-        $showRemainder = isset($global_settings['showRemainder']) ? $global_settings['showRemainder'] : 'true';
-        $shareYAxis = isset($global_settings['share_y_axis']) ? $global_settings['share_y_axis'] : 'false';
+        $testdate = $global_settings['date'] ?? '2016-12-31';
+        $startOffset = $global_settings['start'] ?? '0';
+        $showRemainder = $global_settings['showRemainder'] ?? 'true';
+        $shareYAxis = $global_settings['share_y_axis'] ?? 'false';
 
-        $chartSettings = array(
-            'show_title' => 'y',
-            'timeseries' => 'y',
-            'aggregation_unit' => 'Auto',
-            'start_date' => $testdate,
-            'end_date' => $testdate,
-            'global_filters' => urlencode(json_encode($global_filters)),
-            'title' => 'Metric Explorer Test Chart',
-            'show_filters' => 'true',
-            'show_warnings' => 'true',
-            'show_remainder' => $showRemainder,
-            'start' => $startOffset,
-            'limit' => '4',
-            'timeframe_label' => 'User Defined',
-            'operation' => 'get_data',
-            'data_series' => urlencode(json_encode($dataseries)),
-            'swap_xy' => 'false',
-            'share_y_axis' => $shareYAxis,
-            'hide_tooltip' => 'false',
-            'show_guide_lines' => 'y',
-            'showContextMenu' => 'y',
-            'scale' => '1',
-            'format' => 'hc_jsonstore',
-            'width' => '1388',
-            'height' => '494',
-            'legend_type' => 'bottom_center',
-            'font_size' => '3',
-            'featured' => 'false',
-            'trendLineEnabled' => '',
-            'x_axis' => '%7B%7D',
-            'y_axis' => '%7B%7D',
-            'legend' => '%7B%7D',
-            'defaultDatasetConfig' => '%7B%7D',
-            'controller_module' => 'metric_explorer'
-        );
+        $chartSettings = ['show_title' => 'y', 'timeseries' => 'y', 'aggregation_unit' => 'Auto', 'start_date' => $testdate, 'end_date' => $testdate, 'global_filters' => urlencode(json_encode($global_filters)), 'title' => 'Metric Explorer Test Chart', 'show_filters' => 'true', 'show_warnings' => 'true', 'show_remainder' => $showRemainder, 'start' => $startOffset, 'limit' => '4', 'timeframe_label' => 'User Defined', 'operation' => 'get_data', 'data_series' => urlencode(json_encode($dataseries)), 'swap_xy' => 'false', 'share_y_axis' => $shareYAxis, 'hide_tooltip' => 'false', 'show_guide_lines' => 'y', 'showContextMenu' => 'y', 'scale' => '1', 'format' => 'hc_jsonstore', 'width' => '1388', 'height' => '494', 'legend_type' => 'bottom_center', 'font_size' => '3', 'featured' => 'false', 'trendLineEnabled' => '', 'x_axis' => '%7B%7D', 'y_axis' => '%7B%7D', 'legend' => '%7B%7D', 'defaultDatasetConfig' => '%7B%7D', 'controller_module' => 'metric_explorer'];
         return $chartSettings;
     }
 
@@ -292,36 +197,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         static $dataseries_id = 0.1356380402;
         $dataseries_id += 0.0000000001;
 
-        return array (
-            'id' => $dataseries_id,
-            'metric' => $settings['metric'],
-            'category' => '',
-            'realm' => $settings['realm'],
-            'group_by' => $settings['group_by'],
-            'x_axis' => false,
-            'log_scale' => false,
-            'has_std_err' => false,
-            'std_err' => false,
-            'std_err_labels' => false,
-            'value_labels' => false,
-            'display_type' => 'line',
-            'line_type' => '',
-            'line_width' => '',
-            'combine_type' => 'side',
-            'sort_type' => 'value_desc',
-            'filters' => array (
-                'data' => array (),
-                'total' => 0,
-            ),
-            'ignore_global' => false,
-            'long_legend' => true,
-            'trend_line' => false,
-            'color' => '',
-            'shadow' => '',
-            'visibility' => '',
-            'z_index' => 0,
-            'enabled' => true,
-        );
+        return ['id' => $dataseries_id, 'metric' => $settings['metric'], 'category' => '', 'realm' => $settings['realm'], 'group_by' => $settings['group_by'], 'x_axis' => false, 'log_scale' => false, 'has_std_err' => false, 'std_err' => false, 'std_err_labels' => false, 'value_labels' => false, 'display_type' => 'line', 'line_type' => '', 'line_width' => '', 'combine_type' => 'side', 'sort_type' => 'value_desc', 'filters' => ['data' => [], 'total' => 0], 'ignore_global' => false, 'long_legend' => true, 'trend_line' => false, 'color' => '', 'shadow' => '', 'visibility' => '', 'z_index' => 0, 'enabled' => true];
     }
 
     /**
@@ -330,88 +206,20 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
     public function remainderChartProvider()
     {
         if (!in_array('jobs', Utilities::getRealmsToTest())) {
-            return array();
+            return [];
         }
 
-        $tests = array();
+        $tests = [];
 
-        $tests[] = array(
-            $this->getChartRequest(array(array('realm' => 'Jobs', 'group_by' => 'username', 'metric' => 'total_cpu_hours'))),
-            array(
-                'total' => 55,
-                'series_data' => array(
-                    array( 'name' => 'honbu', 'y' => 86581.6175, 'percentage' => 0),
-                    array( 'name' => 'meapi', 'y' => 22004.0533, 'percentage' => 0),
-                    array( 'name' => 'moorh', 'y' => 20518.0064, 'percentage' => 0),
-                    array( 'name' => 'garwa', 'y' => 11780.8131, 'percentage' => 0),
-                    array( 'name' => 'All 51 Others', 'y' => 81345.1393, 'percentage' => null)
-                )
-            )
-        );
+        $tests[] = [$this->getChartRequest([['realm' => 'Jobs', 'group_by' => 'username', 'metric' => 'total_cpu_hours']]), ['total' => 55, 'series_data' => [['name' => 'honbu', 'y' => 86581.6175, 'percentage' => 0], ['name' => 'meapi', 'y' => 22004.0533, 'percentage' => 0], ['name' => 'moorh', 'y' => 20518.0064, 'percentage' => 0], ['name' => 'garwa', 'y' => 11780.8131, 'percentage' => 0], ['name' => 'All 51 Others', 'y' => 81345.1393, 'percentage' => null]]]];
 
-        $tests[] = array(
-            $this->getChartRequest(array(array('realm' => 'Jobs', 'group_by' => 'pi', 'metric' => 'max_processors'))),
-            array (
-                'total' => '34',
-                'series_data' => array (
-                    array('name' => 'Thrush, Hermit', 'y' => 336, 'percentage' => 0),
-                    array('name' => 'Dunlin', 'y' => 192, 'percentage' => 0),
-                    array('name' => 'Scaup, Lesser', 'y' => 192, 'percentage' => 0),
-                    array('name' => 'Nuthatch', 'y' => 112, 'percentage' => 0),
-                    array('name' => 'Maximum over all 30 others', 'y' => 96, 'percentage' => null),
-                )
-            )
-        );
+        $tests[] = [$this->getChartRequest([['realm' => 'Jobs', 'group_by' => 'pi', 'metric' => 'max_processors']]), ['total' => '34', 'series_data' => [['name' => 'Thrush, Hermit', 'y' => 336, 'percentage' => 0], ['name' => 'Dunlin', 'y' => 192, 'percentage' => 0], ['name' => 'Scaup, Lesser', 'y' => 192, 'percentage' => 0], ['name' => 'Nuthatch', 'y' => 112, 'percentage' => 0], ['name' => 'Maximum over all 30 others', 'y' => 96, 'percentage' => null]]]];
 
-        $tests[] = array(
-            $this->getChartRequest(array(array('realm' => 'Jobs', 'group_by' => 'person', 'metric' => 'total_wallduration_hours'))),
-            array (
-                'total' => '55',
-                'series_data' => array (
-                    array('name' => 'Moorhen', 'y' => 20518.0064, 'percentage' => 0),
-                    array('name' => 'Honey-buzzard', 'y' => 8276.1947, 'percentage' => 0),
-                    array('name' => 'Grey, Lesser', 'y' => 5534.6542, 'percentage' => 0),
-                    array('name' => 'Lapwing', 'y' => 2761.8142, 'percentage' => 0),
-                    array('name' => 'All 51 Others', 'y' => 5231.8753, 'percentage' => null),
-                )
-            )
-        );
+        $tests[] = [$this->getChartRequest([['realm' => 'Jobs', 'group_by' => 'person', 'metric' => 'total_wallduration_hours']]), ['total' => '55', 'series_data' => [['name' => 'Moorhen', 'y' => 20518.0064, 'percentage' => 0], ['name' => 'Honey-buzzard', 'y' => 8276.1947, 'percentage' => 0], ['name' => 'Grey, Lesser', 'y' => 5534.6542, 'percentage' => 0], ['name' => 'Lapwing', 'y' => 2761.8142, 'percentage' => 0], ['name' => 'All 51 Others', 'y' => 5231.8753, 'percentage' => null]]]];
 
-        $tests[] = array(
-            $this->getChartRequest(array(array('realm' => 'Jobs', 'group_by' => 'queue', 'metric' => 'min_processors'))),
-            array (
-                'total' => '17',
-                'series_data' => array (
-                    array('name' => 'roti', 'y' => 32, 'percentage' => 0),
-                    array('name' => 'chapti', 'y' => 12, 'percentage' => 0),
-                    array('name' => 'focaccia', 'y' => 12, 'percentage' => 0),
-                    array('name' => 'nann', 'y' => 12, 'percentage' => 0),
-                    array('name' => 'Minimum over all 13 others', 'y' => 1, 'percentage' => null),
-                )
-            )
-        );
+        $tests[] = [$this->getChartRequest([['realm' => 'Jobs', 'group_by' => 'queue', 'metric' => 'min_processors']]), ['total' => '17', 'series_data' => [['name' => 'roti', 'y' => 32, 'percentage' => 0], ['name' => 'chapti', 'y' => 12, 'percentage' => 0], ['name' => 'focaccia', 'y' => 12, 'percentage' => 0], ['name' => 'nann', 'y' => 12, 'percentage' => 0], ['name' => 'Minimum over all 13 others', 'y' => 1, 'percentage' => null]]]];
 
-        $tests[] = array(
-            $this->getChartRequest(array(
-                array('realm' => 'Jobs', 'group_by' => 'person', 'metric' => 'total_wallduration_hours'),
-                array('realm' => 'Jobs', 'group_by' => 'queue', 'metric' => 'total_wallduration_hours')
-            )),
-            array (
-                'total' => '55',
-                'series_data' => array (
-                    array('name' => 'Moorhen', 'y' => 20518.0064, 'percentage' => null),
-                    array('name' => 'Honey-buzzard', 'y' => 8276.1947, 'percentage' => null),
-                    array('name' => 'Grey, Lesser', 'y' => 5534.6542, 'percentage' => null),
-                    array('name' => 'Lapwing', 'y' => 2761.8142, 'percentage' => null),
-                    array('name' => 'All 51 Others', 'y' => 5231.8753, 'percentage' => null),
-                    array('name' => 'white', 'y' => 32448.9128, 'percentage' => null),
-                    array('name' => 'black', 'y' => 7527.9847, 'percentage' => null),
-                    array('name' => 'pikelet', 'y' => 1112.6033, 'percentage' => null),
-                    array('name' => 'croutons', 'y' => 481.5464, 'percentage' => null),
-                    array('name' => 'All 13 Others', 'y' => 751.4976, 'percentage' => null)
-                ),
-            )
-        );
+        $tests[] = [$this->getChartRequest([['realm' => 'Jobs', 'group_by' => 'person', 'metric' => 'total_wallduration_hours'], ['realm' => 'Jobs', 'group_by' => 'queue', 'metric' => 'total_wallduration_hours']]), ['total' => '55', 'series_data' => [['name' => 'Moorhen', 'y' => 20518.0064, 'percentage' => null], ['name' => 'Honey-buzzard', 'y' => 8276.1947, 'percentage' => null], ['name' => 'Grey, Lesser', 'y' => 5534.6542, 'percentage' => null], ['name' => 'Lapwing', 'y' => 2761.8142, 'percentage' => null], ['name' => 'All 51 Others', 'y' => 5231.8753, 'percentage' => null], ['name' => 'white', 'y' => 32448.9128, 'percentage' => null], ['name' => 'black', 'y' => 7527.9847, 'percentage' => null], ['name' => 'pikelet', 'y' => 1112.6033, 'percentage' => null], ['name' => 'croutons', 'y' => 481.5464, 'percentage' => null], ['name' => 'All 13 Others', 'y' => 751.4976, 'percentage' => null]]]];
         return $tests;
     }
 
@@ -425,35 +233,22 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
     private function generateFilterTests()
     {
         // Generate test scenario for filter tests.
-        $baseConfig = array(
-            array('realm' => 'Jobs', 'metric' => 'total_cpu_hours', 'date' => '2016-12-31'),
-            array('realm' => 'Storage', 'metric' => 'avg_logical_usage', 'date' => '2018-12-28'),
-            array('realm' => 'Cloud', 'metric' => 'cloud_core_time', 'date' => '2019-06-26')
-        );
+        $baseConfig = [['realm' => 'Jobs', 'metric' => 'total_cpu_hours', 'date' => '2016-12-31'], ['realm' => 'Storage', 'metric' => 'avg_logical_usage', 'date' => '2018-12-28'], ['realm' => 'Cloud', 'metric' => 'cloud_core_time', 'date' => '2019-06-26']];
 
-        $output = array();
+        $output = [];
 
         $helper = new XdmodTestHelper();
         $helper->authenticate('cd');
 
         foreach ($baseConfig as $config)
         {
-            $response = $helper->get('rest/v1/warehouse/dimensions', array('realm' => $config['realm']));
+            $response = $helper->get('rest/v1/warehouse/dimensions', ['realm' => $config['realm']]);
             foreach ($response[0]['results'] as $dimConfig)
             {
                 $dimension = $dimConfig['id'];
                 $dimensionValues = $this->getDimensionValues($helper, $config['realm'], $dimension);
 
-                $testConfig = array(
-                    'settings' => array(
-                        'realm' => $config['realm'],
-                        'metric' => $config['metric'],
-                        'date' => $config['date'],
-                        'filter_dimension' => $dimension,
-                        'filter_values' => array()
-                    ),
-                    'expected' => array()
-                );
+                $testConfig = ['settings' => ['realm' => $config['realm'], 'metric' => $config['metric'], 'date' => $config['date'], 'filter_dimension' => $dimension, 'filter_values' => []], 'expected' => []];
 
                 foreach ($dimensionValues as $dimval) {
                     $testConfig['settings']['filter_values'][] = $dimval['name'];
@@ -466,7 +261,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
                 if (count($testConfig['settings']['filter_values']) === 1) {
                     $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' =  ' . $testConfig['settings']['filter_values'][0] ;
                 } else {
-                    $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' = ( ' . implode($testConfig['settings']['filter_values'], ',  ') . ' )';
+                    $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' = ( ' . implode(',  ', $testConfig['settings']['filter_values']) . ' )';
                 }
 
                 $output[] = $testConfig;
@@ -493,11 +288,11 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
 
         $enabledRealms = Utilities::getRealmsToTest();
 
-        $output = array();
+        $output = [];
         foreach ($inputs as $test)
         {
             if (in_array(strtolower($test['settings']['realm']), $enabledRealms)) {
-                $output[] = array($helper, $test['settings'], $test['expected']);
+                $output[] = [$helper, $test['settings'], $test['expected']];
             }
         }
 

@@ -20,7 +20,7 @@ use \PDOException;
 class JobsAggregator extends pdoAggregator implements iAction
 {
     // Name of the status table that we will be updating
-    const STATUS_TABLE = "jobfactstatus";
+    public const STATUS_TABLE = "jobfactstatus";
 
     // An optional, comma separated, list of resource identifiers used to restrict operations to only
     // those resources. Generated from $this->resourceIdList
@@ -53,7 +53,7 @@ class JobsAggregator extends pdoAggregator implements iAction
         } catch (PDOException $e ) {
             $this->logAndThrowException(
                 "Error querying {$sourceSchema}.{$tableName}",
-                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->utilityEndpoint)
+                ['exception' => $e, 'sql' => $sql, 'endpoint' => $this->utilityEndpoint]
             );
         }
 
@@ -80,7 +80,7 @@ class JobsAggregator extends pdoAggregator implements iAction
         }
 
         $sql = "UPDATE {$sourceSchema}.{$tableName} SET aggregated_{$aggregationUnit} = 1";
-        $whereClauses = array();
+        $whereClauses = [];
 
         // If we're forcing the date we want to only update jobfactstatus for the dates that we're
         // actually updating.
@@ -114,7 +114,7 @@ class JobsAggregator extends pdoAggregator implements iAction
         } catch (PDOException $e ) {
             $this->logAndThrowException(
                 "Error updating {$sourceSchema}.{$tableName}",
-                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+                ['exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint]
             );
         }
 
@@ -164,7 +164,7 @@ class JobsAggregator extends pdoAggregator implements iAction
         // aggregation periods in the jobfactstatus table so we don't have to hard code them here.
 
         try {
-            $whereClauses = array();
+            $whereClauses = [];
             $sql = "SHOW COLUMNS IN $tableName IN $sourceSchema LIKE 'aggregated_%'";
 
             $result = $this->destinationHandle->query($sql);
@@ -203,7 +203,7 @@ class JobsAggregator extends pdoAggregator implements iAction
         } catch (PDOException $e ) {
             $this->logAndThrowException(
                 "Error cleaning {$sourceSchema}.{$tableName}",
-                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+                ['exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint]
             );
         }
 
@@ -248,7 +248,7 @@ class JobsAggregator extends pdoAggregator implements iAction
 
         if ( $this->getEtlOverseerOptions()->isForce() ) {
 
-            $ranges = array();
+            $ranges = [];
 
             if ( null !== $this->currentStartDate ) {
                 $startDate = $this->sourceHandle->quote($this->currentStartDate);
@@ -306,7 +306,7 @@ class JobsAggregator extends pdoAggregator implements iAction
              * --------------------------------------------------------------------------------
              */
 
-            $whereClauses = array("aggregated_${aggregationUnit} = 0");
+            $whereClauses = ["aggregated_${aggregationUnit} = 0"];
             if ( null !== $this->resourceIdListString ) {
                 $whereClauses[] = "resource_id IN (" . $this->resourceIdListString . ")";
             }
@@ -346,7 +346,7 @@ class JobsAggregator extends pdoAggregator implements iAction
 
         // If we're running in DRYRUN mode return an empty array. This allows us to skip the aggregation
         // period loop.
-        $result = array();
+        $result = [];
 
         try {
             $this->logger->debug("Select dirty aggregation periods:\n$sql");
@@ -356,7 +356,7 @@ class JobsAggregator extends pdoAggregator implements iAction
         } catch (PDOException $e) {
             $this->logAndThrowException(
                 "Error querying aggregation dirty date ids",
-                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->utilityEndpoint)
+                ['exception' => $e, 'sql' => $sql, 'endpoint' => $this->utilityEndpoint]
             );
         }
 
@@ -394,15 +394,12 @@ class JobsAggregator extends pdoAggregator implements iAction
        and resource_id not in (select distinct resource_id from ${utilitySchema}.resourcespecs where processors is not null)" .
             ( null !== $this->resourceIdListString ? " and resource_id IN (" . $this->resourceIdListString . ")" : "");
 
-        $params = array(
-            ":startDate" => $this->currentStartDate,
-            ":endDate" => $this->currentEndDate
-            );
+        $params = [":startDate" => $this->currentStartDate, ":endDate" => $this->currentEndDate];
 
         $this->logger->debug("Verify resource specs exist " . $this->sourceEndpoint . ":\n$sql");
         $result = $this->sourceHandle->query($sql, $params);
         if ( count($result) > 0 ) {
-            $resources = array();
+            $resources = [];
             foreach ($result as $resource) {
                 $resources[] = $resource['resource_id'];
             }

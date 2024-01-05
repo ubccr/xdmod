@@ -11,7 +11,7 @@ namespace UnitTests;
 
 use CCR\Log;
 
-class LogTest extends \PHPUnit_Framework_TestCase
+class LogTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test various log levels including the newly added TRACE.
@@ -19,17 +19,11 @@ class LogTest extends \PHPUnit_Framework_TestCase
      * @dataProvider logLevelProvider
      */
 
-    public function testLogLevels($logLevel, $expectedLines)
+    public function testLogLevels($logLevel, $expectedLines): void
     {
         $tmpFile = tempnam(sys_get_temp_dir(), "xdmod_test_");
 
-        $conf = array(
-            'mail'         => false,
-            'db'           => false,
-            'console'      => false,
-            'file'         => $tmpFile,
-            'fileLogLevel' => $logLevel
-        );
+        $conf = ['mail'         => false, 'db'           => false, 'console'      => false, 'file'         => $tmpFile, 'fileLogLevel' => $logLevel];
 
         // Note that we can't use setMask() to change the log mask because it will not propogate
         // to child loggers.
@@ -66,10 +60,6 @@ class LogTest extends \PHPUnit_Framework_TestCase
 
     public function logLevelProvider()
     {
-        return array(
-            array(\CCR\Log::DEBUG, 8),
-            array(\CCR\Log::WARNING, 5),
-            array(\CCR\Log::ALERT, 2)
-        );
+        return [[\CCR\Log::DEBUG, 8], [\CCR\Log::WARNING, 5], [\CCR\Log::ALERT, 2]];
     }
 }

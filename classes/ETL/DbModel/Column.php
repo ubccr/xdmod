@@ -19,13 +19,11 @@ class Column extends NamedEntity implements iEntity
 {
     // Properties required by this class. These will be merged with other required
     // properties up the call chain. See @Entity::$requiredProperties
-    private $localRequiredProperties = array(
-        'type'
-    );
+    private $localRequiredProperties = ['type'];
 
     // Properties provided by this class. These will be merged with other properties up
     // the call chain. See @Entity::$properties
-    private $localProperties = array(
+    private $localProperties = [
         // Column type (free-form string)
         'type'     => null,
         // The column character set
@@ -36,13 +34,13 @@ class Column extends NamedEntity implements iEntity
         'nullable' => null,
         // Column default
         'default'  => null,
-         // Column extra (see http://dev.mysql.com/doc/refman/5.7/en/create-table.html)
+        // Column extra (see http://dev.mysql.com/doc/refman/5.7/en/create-table.html)
         'extra'    => null,
         // The column comment
         'comment'   => null,
         // Column hints object used to control behavior such as renaming columns
-        'hints'     => null
-    );
+        'hints'     => null,
+    ];
 
     /* ------------------------------------------------------------------------------------------
      * @see iEntity::__construct()
@@ -146,7 +144,7 @@ class Column extends NamedEntity implements iEntity
         // Note that the "enum" type will be handled in a special case below so only match types here
         // that are different and are not both enumerated.
 
-        if ( $this->type != $cmp->type && ! (0 === strpos($this->type, 'enum') && 0 === strpos($cmp->type, 'enum')) ) {
+        if ( $this->type != $cmp->type && ! (str_starts_with($this->type, 'enum') && str_starts_with($cmp->type, 'enum')) ) {
             $this->logCompareFailure('type', $this->type, $cmp->type, $this->name);
             return -1;
         }
@@ -168,12 +166,7 @@ class Column extends NamedEntity implements iEntity
             // automatically. Map them now so we don't get into an endless ALTER TABLE loop.
 
             if ( null !== $srcExtra) {
-                $search = array(
-                    "CURRENT_TIMESTAMP()",
-                    "NOW()",
-                    "LOCALTIME",
-                    "LOCALTIME()"
-                );
+                $search = ["CURRENT_TIMESTAMP()", "NOW()", "LOCALTIME", "LOCALTIME()"];
                 $srcExtra = str_ireplace($search, "CURRENT_TIMESTAMP", $srcExtra);
             }  // if ( null !== $srcExtra)
 
@@ -348,7 +341,7 @@ class Column extends NamedEntity implements iEntity
         // return the essentials of the definition and let the Table class figure out the appropriate
         // way to put them together.
 
-        $parts = array();
+        $parts = [];
         $parts[] = $this->getName(true);
         $parts[] = $this->type;
 
@@ -375,15 +368,7 @@ class Column extends NamedEntity implements iEntity
         // - Note that in MySQL a nullable column with no default is considered a default of NULL.
         // - Note that MySQL assigns TIMESTAMP columns a default of CURRENT_TIMESTAMP with an extra field of "on update CURRENT_TIMESTAMP"
 
-        $currentTimestampAliases = array(
-            'current_timestamp',
-            'current_timestamp()',
-            'now()',
-            'localtime',
-            'localtime()',
-            'localtimestamp',
-            'localtimestamp()'
-        );
+        $currentTimestampAliases = ['current_timestamp', 'current_timestamp()', 'now()', 'localtime', 'localtime()', 'localtimestamp', 'localtimestamp()'];
 
         if ( null !== $this->default ) {
 
@@ -393,15 +378,15 @@ class Column extends NamedEntity implements iEntity
                  ( "timestamp" == $this->type && in_array(strtolower($this->default), $currentTimestampAliases) ) ||
                  ( "datetime" === $this->type && in_array(strtolower($this->default), $currentTimestampAliases) ) ||
                  is_numeric($this->default) ||
-                 "b'" == substr($this->default, 0, 2) ||
-                 "x'" == substr(strtolower($this->default), 0, 2)
+                 str_starts_with($this->default, "b'") ||
+                 str_starts_with(strtolower($this->default), "x'")
             ) {
                 $parts[] = "DEFAULT " . $this->default;
             } elseif ( ($this->nullable && null === $this->default) ) {
                 $parts[] = "DEFAULT NULL";
             } elseif (is_bool($this->default)) {
                 $parts[] = "DEFAULT " . ($this->default ? "TRUE" : "FALSE");
-            } elseif ( "'" == substr($this->default, 0, 1) && "'" == substr($this->default, -1) ) {
+            } elseif ( str_starts_with($this->default, "'") && str_ends_with($this->default, "'") ) {
                 $parts[] = "DEFAULT " . addslashes($this->default);
             }
             else {

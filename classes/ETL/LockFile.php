@@ -118,7 +118,7 @@ class LockFile extends Loggable
             '%s/%s%d',
             $this->lockDir,
             $this->lockFilePrefix,
-            ( null !== $pid ? $pid : $this->pid )
+            ( $pid ?? $this->pid )
         );
     }  // generateLockfileName()
 
@@ -153,7 +153,7 @@ class LockFile extends Loggable
         while ( ($file = readdir($dh) ) !== false ) {
             if ( '.' == $file || '..' == $file ) {
                 continue;
-            } elseif ( '' != $this->lockFilePrefix && 0 !== strpos($file, $this->lockFilePrefix) ) {
+            } elseif ( '' != $this->lockFilePrefix && !str_starts_with($file, $this->lockFilePrefix) ) {
                 // If set, the file must match the prefix
                 continue;
             }
@@ -186,7 +186,7 @@ class LockFile extends Loggable
 
         $this->logger->info("Obtaining lock file '$lockFile'");
 
-        $contents = implode(PHP_EOL, array_merge(array($this->pid), $actionList));
+        $contents = implode(PHP_EOL, array_merge([$this->pid], $actionList));
 
         if ( false === ($fp = @fopen($lockFile, 'w')) ) {
             $error = error_get_last();

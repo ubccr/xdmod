@@ -32,7 +32,7 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
     /**
      * Update portal_settings.ini with the new version number.
      */
-    public function execute()
+    public function execute(): void
     {
         $this->assertJsonConfigIsWritable('resources');
         $this->assertJsonConfigIsWritable('resource_specs');
@@ -61,13 +61,13 @@ EOT;
         }
 
         $dbh = DB::factory('datawarehouse');
-        $seen = array();
+        $seen = [];
 
         $resource_specs_config = Json::loadFile(CONFIG_DIR . '/resource_specs.json');
         $resource_config = Json::loadFile(CONFIG_DIR . '/resources.json');
-        $resource_to_resource_type_map = array();
-        $resource_realms = array();
-        $resource_specs_start_dates = array();
+        $resource_to_resource_type_map = [];
+        $resource_realms = [];
+        $resource_specs_start_dates = [];
 
         foreach ($resource_config as $key => $value) {
             // Add the allocation type property to the resources.json file. The default is cpu.
@@ -95,7 +95,7 @@ EOT;
         $start_date_sql = self::getStartDateSql($resource_realms);
 
         if (!empty($start_date_sql)) {
-            $resource_specs_start_dates_stmt = $dbh->query($start_date_sql, array(), true);
+            $resource_specs_start_dates_stmt = $dbh->query($start_date_sql, [], true);
             $resource_specs_start_dates = $resource_specs_start_dates_stmt->fetchAll(PDO::FETCH_KEY_PAIR);
         }
 
@@ -137,7 +137,7 @@ EOT;
      */
     private static function getStartDateSql($resource_realms)
     {
-        $realm_sql_statements = array();
+        $realm_sql_statements = [];
 
         $realm_sql_statements['jobs'] = "SELECT
               r.code,

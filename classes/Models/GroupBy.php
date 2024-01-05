@@ -37,21 +37,5 @@
 class GroupBy extends DBObject
 {
 
-    protected $PROP_MAP = array(
-        'group_by_id'=> 'groupById',
-        'module_id' => 'moduleId',
-        'realm_id' => 'realmId',
-        'name' => 'name',
-        'display' => 'display',
-        'description' => 'description',
-        'schema_name'=> 'schemaName',
-        'table_name' => 'tableName',
-        'alias'=> 'alias',
-        'id_column' => 'idColumn',
-        'name_column' => 'nameColumn',
-        'shortname_column' => 'shortnameColumn',
-        'order_id_column' => 'orderIdColumn',
-        'fk_column' => 'fkColumn',
-        'class' => 'clazz'
-    );
+    protected $PROP_MAP = ['group_by_id'=> 'groupById', 'module_id' => 'moduleId', 'realm_id' => 'realmId', 'name' => 'name', 'display' => 'display', 'description' => 'description', 'schema_name'=> 'schemaName', 'table_name' => 'tableName', 'alias'=> 'alias', 'id_column' => 'idColumn', 'name_column' => 'nameColumn', 'shortname_column' => 'shortnameColumn', 'order_id_column' => 'orderIdColumn', 'fk_column' => 'fkColumn', 'class' => 'clazz'];
 }

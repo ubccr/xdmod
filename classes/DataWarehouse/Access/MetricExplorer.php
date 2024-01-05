@@ -30,24 +30,12 @@ class MetricExplorer extends Common
         $format = \DataWarehouse\ExportBuilder::getFormat(
             $this->request,
             'png',
-            array(
-                'svg',
-                'png',
-                'pdf',
-                'png_inline',
-                'svg_inline',
-                'xml',
-                'csv',
-                'json',
-                'jsonstore',
-                'hc_jsonstore',
-                '_internal',
-            )
+            ['svg', 'png', 'pdf', 'png_inline', 'svg_inline', 'xml', 'csv', 'json', 'jsonstore', 'hc_jsonstore', '_internal']
         );
 
         $inline = $this->getInline();
 
-        list($start_date, $end_date, $start_ts, $end_ts) = $this->checkDateParameters();
+        [$start_date, $end_date, $start_ts, $end_ts] = $this->checkDateParameters();
 
         if ($start_ts > $end_ts) {
             throw new Exception(
@@ -85,13 +73,13 @@ class MetricExplorer extends Common
 
         $dataset_classname
             = $timeseries
-            ? '\DataWarehouse\Data\TimeseriesDataset'
-            : '\DataWarehouse\Data\SimpleDataset';
+            ? \DataWarehouse\Data\TimeseriesDataset::class
+            : \DataWarehouse\Data\SimpleDataset::class;
 
         $highchart_classname
             = $timeseries
-            ? '\DataWarehouse\Visualization\HighChartTimeseries2'
-            : '\DataWarehouse\Visualization\HighChart2';
+            ? \DataWarehouse\Visualization\HighChartTimeseries2::class
+            : \DataWarehouse\Visualization\HighChart2::class;
 
         $filename = $this->getFilename();
         $filenameSpecifiedInRequest = $filename !== null;
@@ -105,7 +93,7 @@ class MetricExplorer extends Common
 
         $all_data_series = $this->getDataSeries();
 
-        $data_series = array();
+        $data_series = [];
 
         // Discard disabled datasets.
         foreach ($all_data_series as $data_description_index => $data_description) {
@@ -208,14 +196,7 @@ class MetricExplorer extends Common
                 $title
             );
 
-            $returnData['data'][0]['reportGeneratorMeta'] = array(
-                'chart_args'         => $chartIdentifier,
-                'title'              => $title,
-                'params_title'       => $hc->getSubtitleText(),
-                'start_date'         => $start_date,
-                'end_date'           => $end_date,
-                'included_in_report' => $includedInReport ? 'y' : 'n',
-            );
+            $returnData['data'][0]['reportGeneratorMeta'] = ['chart_args'         => $chartIdentifier, 'title'              => $title, 'params_title'       => $hc->getSubtitleText(), 'start_date'         => $start_date, 'end_date'           => $end_date, 'included_in_report' => $includedInReport ? 'y' : 'n'];
 
             return $this->exportImage(
                 $returnData,
@@ -224,18 +205,14 @@ class MetricExplorer extends Common
                 $scale,
                 $format,
                 $filename,
-                array(
-                    'author' => $user->getFormalName(),
-                    'subject' => ($timeseries ? 'Timeseries' : 'Aggregate') . ' data for period ' . $start_date. ' -> ' . $end_date,
-                    'title' => $title
-                )
+                ['author' => $user->getFormalName(), 'subject' => ($timeseries ? 'Timeseries' : 'Aggregate') . ' data for period ' . $start_date. ' -> ' . $end_date, 'title' => $title]
             );
         } // if $format === 'hc_jsonstore' || $format === 'png' || $format === 'svg'
           //  || $format === 'png_inline' || $format === 'svg_inline'
         elseif ($format === 'jsonstore' || $format === 'json' || $format === 'csv' || $format === 'xml') {
-            $datasets = array();
-            $datasetsRestricted = array();
-            $datasetsRestrictedMessages = array();
+            $datasets = [];
+            $datasetsRestricted = [];
+            $datasetsRestrictedMessages = [];
 
             $aggregation_unit = \DataWarehouse\Query\TimeAggregationUnit::deriveAggregationUnitName(
                 $aggregation_unit,
@@ -272,7 +249,7 @@ class MetricExplorer extends Common
                     }
                 }
 
-                $groupedRoleParameters = array();
+                $groupedRoleParameters = [];
                 foreach ($global_filters->data as $global_filter) {
                     if ($global_filter->checked == 1) {
                         if (
@@ -281,7 +258,7 @@ class MetricExplorer extends Common
                             )
                         ) {
                             $groupedRoleParameters[$global_filter->dimension_id]
-                                = array();
+                                = [];
                         }
 
                         $groupedRoleParameters[$global_filter->dimension_id][]
@@ -311,7 +288,7 @@ class MetricExplorer extends Common
             } // foreach ($data_series as $data_description_index => $data_description)
 
             if ($format === 'csv' || $format === 'xml' || $format === 'json') {
-                $exportedDatas = array();
+                $exportedDatas = [];
 
                 // This is to maintain consistency with how the title inside of
                 // Usage tab exports was written when it had its own back-end.
@@ -329,7 +306,7 @@ class MetricExplorer extends Common
             } // if ($format === 'csv' || $format === 'xml')
 
             elseif($format === 'jsonstore') {
-                $exportedDatas = array();
+                $exportedDatas = [];
 
                 foreach ($datasets as $datasetIndex => $dataset) {
                     $exportedData = $dataset->exportJsonStore();
@@ -339,10 +316,7 @@ class MetricExplorer extends Common
                 }
 
 
-                $result = array(
-                    "headers" => \DataWarehouse\ExportBuilder::getHeader($format),
-                    "results" => $exportedDatas,
-                );
+                $result = ["headers" => \DataWarehouse\ExportBuilder::getHeader($format), "results" => $exportedDatas];
 
                 return $result;
             } // elseif($format === 'jsonstore')
@@ -355,9 +329,7 @@ class MetricExplorer extends Common
     private function getAggregationUnit()
     {
         return
-            isset($this->request['aggregation_unit'])
-            ? $this->request['aggregation_unit']
-            : 'auto';
+            $this->request['aggregation_unit'] ?? 'auto';
     } // function getAggregationUnit()
 
     private function getDataSeries()
@@ -372,7 +344,7 @@ class MetricExplorer extends Common
         ) {
             $v = $this->request['data_series']['data'];
 
-            $ret = array();
+            $ret = [];
             foreach ($v as $x) {
                 $y = (object)$x;
 
@@ -449,13 +421,13 @@ class MetricExplorer extends Common
             !isset($this->request['global_filters'])
             || empty($this->request['global_filters'])
         ) {
-            return (object)array('data' => array(), 'total' => 0);
+            return (object)['data' => [], 'total' => 0];
         }
 
         if (is_array($this->request['global_filters'])) {
             $v = $this->request['global_filters']['data'];
 
-            $ret = (object)array('data' => array(), 'total' => 0);
+            $ret = (object)['data' => [], 'total' => 0];
 
             foreach ($v as $x) {
                 $ret->data[] = (object)$x;
@@ -482,7 +454,7 @@ class MetricExplorer extends Common
     private function getXAxis()
     {
         if (!isset($this->request['x_axis']) || empty($this->request['x_axis'])) {
-            return array();
+            return [];
         }
 
         if (is_array($this->request['x_axis'])) {
@@ -506,7 +478,7 @@ class MetricExplorer extends Common
     private function getYAxis()
     {
         if (!isset($this->request['y_axis']) || empty($this->request['y_axis'])) {
-            return array();
+            return [];
         }
 
         if (is_array($this->request['y_axis'])) {
@@ -530,7 +502,7 @@ class MetricExplorer extends Common
     private function getLegend()
     {
         if (!isset($this->request['legend']) || empty($this->request['legend'])) {
-            return array();
+            return [];
         }
 
         if (is_array($this->request['legend'])) {
@@ -589,7 +561,7 @@ class MetricExplorer extends Common
     ) {
         $userRoles = $user->getAllRoles($includePub);
 
-        $authorizedRoles = array();
+        $authorizedRoles = [];
         foreach ($userRoles as $userRole) {
             $accessPermitted = Acls::hasDataAccess(
                 $user,
@@ -619,13 +591,11 @@ class MetricExplorer extends Common
      *                               Explorer chart request. Any new global
      *                               filters will be stored in here.
      */
-    public static function convertActiveRoleToGlobalFilters(XDUser $user, $activeRoleId, $globalFilters) {
+    public static function convertActiveRoleToGlobalFilters(XDUser $user, $activeRoleId, $globalFilters): void {
         // Load the active role's filter parameters.
         // (Regex for artificial service provider roles from now-deleted code.)
         if (preg_match('/rp_(?P<rp_id>[0-9]+)/', $activeRoleId, $resourceProviderRoleIdMatches)) {
-            $activeRoleParameters = array(
-                'provider' => $resourceProviderRoleIdMatches['rp_id'],
-            );
+            $activeRoleParameters = ['provider' => $resourceProviderRoleIdMatches['rp_id']];
         } else {
             $activeRoleComponents = explode(':', $activeRoleId);
             $activeRoleId = $activeRoleComponents[0];
@@ -649,14 +619,7 @@ class MetricExplorer extends Common
             }
 
             // Create and store the filter object.
-            $globalFilters->data[] = (object) array(
-                'id' => $roleFilterId,
-                'value_id' => $parameterValueId,
-                'value_name' => MetricExplorer::getDimensionValueName($user, $parameterDimensionId, $parameterValueId),
-                'dimension_id' => $parameterDimensionId,
-                'realms' => MetricExplorer::getDimensionRealms($user, $parameterDimensionId),
-                'checked' => true
-            );
+            $globalFilters->data[] = (object) ['id' => $roleFilterId, 'value_id' => $parameterValueId, 'value_name' => MetricExplorer::getDimensionValueName($user, $parameterDimensionId, $parameterValueId), 'dimension_id' => $parameterDimensionId, 'realms' => MetricExplorer::getDimensionRealms($user, $parameterDimensionId), 'checked' => true];
             $globalFilters->total++;
         }
     }
@@ -729,7 +692,7 @@ class MetricExplorer extends Common
         $queryAggregationUnit = FilterListHelper::getQueryAggregationUnit();
 
         // Get a dimension values query for each valid realm.
-        $dimensionValuesQueries = array();
+        $dimensionValuesQueries = [];
         foreach ($realms as $realm) {
 
             // Attempt to get the group by object for this realm to check that
@@ -845,7 +808,7 @@ class MetricExplorer extends Common
             // throw a more user-friendly exception.
             if (
                 $e->getCode() === '42S02'
-                && strpos($e->getMessage(), 'modw_filters') !== false
+                && str_contains($e->getMessage(), 'modw_filters')
             ) {
                 throw new MissingFilterListTableException();
             }
@@ -857,7 +820,7 @@ class MetricExplorer extends Common
                 try {
                     $schemaCheckResults = $db->query("SHOW SCHEMAS LIKE 'modw_filters'");
                     $missingSchema = empty($schemaCheckResults);
-                } catch (Exception $schemaCheckException) {
+                } catch (Exception) {
                 }
 
                 if ($missingSchema) {
@@ -875,17 +838,15 @@ class MetricExplorer extends Common
             foreach ($searchComponents as $searchComponent) {
                 $dimensionValues = array_filter(
                     $dimensionValues,
-                    function($dimensionValue) use ($searchComponent) {
-                        return stripos($dimensionValue['short_name'], $searchComponent) !== false
-                            || stripos($dimensionValue['name'], $searchComponent) !== false;
-                    }
+                    fn($dimensionValue) => stripos($dimensionValue['short_name'], $searchComponent) !== false
+                        || stripos($dimensionValue['name'], $searchComponent) !== false
                 );
             }
         }
 
         // Remove rows with duplicate names from the result set, favoring later
         // entries in the result set.
-        $uniqueNameValues = array();
+        $uniqueNameValues = [];
         foreach ($dimensionValues as &$dimensionValue) {
             $uniqueNameValues[$dimensionValue['name']] = &$dimensionValue;
         }
@@ -912,10 +873,7 @@ class MetricExplorer extends Common
         }
 
         // Return the results.
-        return array(
-            'totalCount' => $totalDimensionValues,
-            'data' => $dimensionValues,
-        );
+        return ['totalCount' => $totalDimensionValues, 'data' => $dimensionValues];
     }
 
     /**
@@ -935,9 +893,7 @@ class MetricExplorer extends Common
         foreach ($realms as $realm) {
             try {
                 $groupBy = self::getGroupBy($user, $realm, $dimension_id);
-            } catch (UnknownGroupByException $e) {
-                continue;
-            } catch (AccessDeniedException $e) {
+            } catch (UnknownGroupByException|AccessDeniedException) {
                 continue;
             }
 
@@ -963,13 +919,11 @@ class MetricExplorer extends Common
     ) {
         $realms = Realms::getRealmIdsForUser($user);
 
-        $dimensionRealms = array();
+        $dimensionRealms = [];
         foreach ($realms as $realm) {
             try {
                 self::getGroupBy($user, $realm, $dimension_id);
-            } catch (UnknownGroupByException $e) {
-                continue;
-            } catch (AccessDeniedException $e) {
+            } catch (UnknownGroupByException|AccessDeniedException) {
                 continue;
             }
 
@@ -1000,7 +954,7 @@ class MetricExplorer extends Common
     public static function getDimensionValueName(
         XDUser $user,
         $dimension_id,
-        $value_id,
+        mixed $value_id,
         $getLongName = false
     ) {
         $realms = Realms::getRealmIdsForUser($user);
@@ -1009,16 +963,12 @@ class MetricExplorer extends Common
         foreach ($realms as $realm) {
             try {
                 $groupBy = self::getGroupBy($user, $realm, $dimension_id);
-            } catch (UnknownGroupByException $e) {
-                continue;
-            } catch (AccessDeniedException $e) {
+            } catch (UnknownGroupByException|AccessDeniedException) {
                 continue;
             }
 
             // Attempt to look up the value.
-            $possibleValues = $groupBy->getAttributeValues(array(
-                'id' => $value_id,
-            ));
+            $possibleValues = $groupBy->getAttributeValues(['id' => $value_id]);
             foreach ($possibleValues as $possibleValue) {
                 $dimensionValueName = $possibleValue[$getLongName ? 'long_name' : 'short_name'];
                 break 2;

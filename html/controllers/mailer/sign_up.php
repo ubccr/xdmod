@@ -5,14 +5,7 @@ use CCR\DB;
 
 // Operation: mailer->sign_up
 
-\xd_security\assertParametersSet(array(
-    'first_name'             => RESTRICTION_FIRST_NAME,
-    'last_name'              => RESTRICTION_LAST_NAME,
-    'title'                  => RESTRICTION_NON_EMPTY,
-    'organization'           => RESTRICTION_NON_EMPTY,
-    'field_of_science'       => RESTRICTION_NON_EMPTY,
-    'additional_information' => RESTRICTION_NON_EMPTY
-));
+\xd_security\assertParametersSet(['first_name'             => RESTRICTION_FIRST_NAME, 'last_name'              => RESTRICTION_LAST_NAME, 'title'                  => RESTRICTION_NON_EMPTY, 'organization'           => RESTRICTION_NON_EMPTY, 'field_of_science'       => RESTRICTION_NON_EMPTY, 'additional_information' => RESTRICTION_NON_EMPTY]);
 
 \xd_security\assertEmailParameterSet('email');
 
@@ -51,15 +44,7 @@ $pdo->execute(
             ''
         )
     ",
-    array(
-        'first_name'             => $_POST['first_name'],
-        'last_name'              => $_POST['last_name'],
-        'organization'           => $_POST['organization'],
-        'title'                  => $_POST['title'],
-        'email_address'          => $_POST['email'],
-        'field_of_science'       => $_POST['field_of_science'],
-        'additional_information' => $_POST['additional_information']
-    )
+    ['first_name'             => $_POST['first_name'], 'last_name'              => $_POST['last_name'], 'organization'           => $_POST['organization'], 'title'                  => $_POST['title'], 'email_address'          => $_POST['email'], 'field_of_science'       => $_POST['field_of_science'], 'additional_information' => $_POST['additional_information']]
 );
 
 // Create email.
@@ -85,17 +70,11 @@ Affiliation with $organization:
 
 EOMSG;
 
-$response = array();
+$response = [];
 
 // Original sender's e-mail must be in the "fromAddress" field for the XDMoD Request Tracker to function
 try {
-    MailWrapper::sendMail(array(
-        'body'         => $message,
-        'subject'      => "[" . \xd_utilities\getConfiguration('general', 'title') . "] A visitor has signed up",
-        'toAddress'    => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
-        'fromAddress'  => $_POST['email'],
-        'fromName'     => $_POST['last_name'] . ', ' . $_POST['first_name']
-    ));
+    MailWrapper::sendMail(['body'         => $message, 'subject'      => "[" . \xd_utilities\getConfiguration('general', 'title') . "] A visitor has signed up", 'toAddress'    => \xd_utilities\getConfiguration('general', 'contact_page_recipient'), 'fromAddress'  => $_POST['email'], 'fromName'     => $_POST['last_name'] . ', ' . $_POST['first_name']]);
     $response['success'] = true;
 }
 catch (Exception $e) {

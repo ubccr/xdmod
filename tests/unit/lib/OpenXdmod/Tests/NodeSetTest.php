@@ -10,15 +10,15 @@ use Xdmod\NodeSet;
 /**
  * NodeSet test class
  */
-class NodeSetTest extends \PHPUnit_Framework_TestCase
+class NodeSetTest extends \PHPUnit\Framework\TestCase
 {
-    public function testNodeSetIterator()
+    public function testNodeSetIterator(): void
     {
-        $nodes = array('d14n09', 'd14n11');
+        $nodes = ['d14n09', 'd14n11'];
 
         $nodeSet = new NodeSet($nodes);
 
-        $nodeSetNodes = array();
+        $nodeSetNodes = [];
 
         foreach ($nodeSet as $node) {
             $nodeSetNodes[] = $node;
@@ -28,14 +28,14 @@ class NodeSetTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($nodes, $nodeSetNodes);
     }
 
-    public function testNodeSetFromCompressedHostList()
+    public function testNodeSetFromCompressedHostList(): void
     {
-        $nodes = array('d14n09', 'd14n11');
+        $nodes = ['d14n09', 'd14n11'];
         $hostList = 'd14n[09,11]';
 
         $nodeSet = NodeSet::createFromCompressedHostList($hostList);
 
-        $nodeSetNodes = array();
+        $nodeSetNodes = [];
 
         foreach ($nodeSet as $node) {
             $nodeSetNodes[] = $node;
@@ -45,9 +45,9 @@ class NodeSetTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($nodes, $nodeSetNodes);
     }
 
-    public function testAddNode()
+    public function testAddNode(): void
     {
-        $nodes = array('d14n09', 'd14n11');
+        $nodes = ['d14n09', 'd14n11'];
         $addNode = 'd14n13';
 
         $nodeSet = new NodeSet($nodes);
@@ -55,7 +55,7 @@ class NodeSetTest extends \PHPUnit_Framework_TestCase
         $nodeSet->addNode($addNode);
         $nodes[] = $addNode;
 
-        $nodeSetNodes = array();
+        $nodeSetNodes = [];
 
         foreach ($nodeSet as $node) {
             $nodeSetNodes[] = $node;
@@ -64,18 +64,18 @@ class NodeSetTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($nodes, $nodeSetNodes);
     }
 
-    public function testRemoveNode()
+    public function testRemoveNode(): void
     {
-        $nodes = array('d14n09', 'd14n11');
+        $nodes = ['d14n09', 'd14n11'];
         $removeNode = 'd14n09';
 
         $nodeSet = new NodeSet($nodes);
 
         $nodeSet->removeNode($removeNode);
 
-        $nodes = array('d14n11');
+        $nodes = ['d14n11'];
 
-        $nodeSetNodes = array();
+        $nodeSetNodes = [];
 
         foreach ($nodeSet as $node) {
             $nodeSetNodes[] = $node;

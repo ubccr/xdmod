@@ -9,17 +9,7 @@ use Psr\Log\LoggerInterface;
 
 class PDODBMultiIngestor implements Ingestor
 {
-    const MAX_QUERY_ATTEMPTS = 3;
-
-    protected $_destination_db = null;
-    protected $_source_db = null;
-    protected $_source_query = null;
-    protected $_insert_table = null;
-    protected $_insert_fields = null;
-    protected $_pre_ingest_update_statements;
-    protected $_post_ingest_update_statements;
-    protected $_delete_statement = null;
-    protected $_count_statement = null;
+    public const MAX_QUERY_ATTEMPTS = 3;
     protected $_logger = null;
     protected $_trackchanges = false;
 
@@ -39,25 +29,16 @@ class PDODBMultiIngestor implements Ingestor
     protected $_dest_helper = null;
 
     function __construct(
-        $dest_db,
-        $source_db,
-        $pre_ingest_update_statements = array(),
-        $source_query,
-        $insert_table,
-        $insert_fields = array(),
-        $post_ingest_update_statements = array(),
-        $delete_statement = null,
-        $count_statement = null
+        protected $_destination_db,
+        protected $_source_db,
+        protected $_source_query,
+        protected $_insert_table,
+        protected $_pre_ingest_update_statements = [],
+        protected $_insert_fields = [],
+        protected $_post_ingest_update_statements = [],
+        protected $_delete_statement = null,
+        protected $_count_statement = null
     ) {
-        $this->_destination_db = $dest_db;
-        $this->_source_db = $source_db;
-        $this->_source_query = $source_query;
-        $this->_insert_fields = $insert_fields;
-        $this->_insert_table = $insert_table;
-        $this->_pre_ingest_update_statements = $pre_ingest_update_statements;
-        $this->_post_ingest_update_statements = $post_ingest_update_statements;
-        $this->_delete_statement = $delete_statement;
-        $this->_count_statement = $count_statement;
         $this->_logger = Log::singleton('null');
 
         if ($this->_destination_db->_db_engine == 'mysql') {
@@ -65,15 +46,15 @@ class PDODBMultiIngestor implements Ingestor
         }
     }
 
-    public function enableChangeTracking()
+    public function enableChangeTracking(): void
     {
         $this->_trackchanges = true;
     }
 
-    public function ingest()
+    public function ingest(): void
     {
         $this->_logger->info(
-            'Started ingestion for class: ' . get_class($this)
+            'Started ingestion for class: ' . static::class
         );
         $time_start = microtime(true);
         $sourceRows = 0;
@@ -89,11 +70,7 @@ class PDODBMultiIngestor implements Ingestor
                 )->execute();
             }
             catch (PDOException $e) {
-                $this->_logger->info(array(
-                    'message'    => $e->getMessage(),
-                    'sql'        => $updateStatement,
-                    'stacktrace' => $e->getTraceAsString()
-                ));
+                $this->_logger->info(['message'    => $e->getMessage(), 'sql'        => $updateStatement, 'stacktrace' => $e->getTraceAsString()]);
             }
         }
 
@@ -107,7 +84,7 @@ class PDODBMultiIngestor implements Ingestor
 
         $this->_logger->debug('Source query: ' . $this->_source_query);
 
-        $this->_logger->info(get_class($this) . ': Querying...');
+        $this->_logger->info(static::class . ': Querying...');
 
         $query_success = false;
         $n_attempts = 0;
@@ -133,7 +110,7 @@ class PDODBMultiIngestor implements Ingestor
                 }
 
                 $this->_logger->info(
-                    get_class($this)
+                    static::class
                     . ': Query was cancelled by server with error '
                     . $srcStatement->errorCode() . '. Retrying ' . $n_attempts
                 );
@@ -185,12 +162,12 @@ class PDODBMultiIngestor implements Ingestor
             $this->_logger->debug("Failed to open '$infile_name'");
 
             $infile_name = sys_get_temp_dir() . "/{$this->_insert_table}.data"
-                . $this->_destination_db->_db_port . rand();
+                . $this->_destination_db->_db_port . random_int(0, mt_getrandmax());
             $f = fopen($infile_name, 'w');
 
             if ($f === FALSE) {
                 throw new Exception(
-                    get_class($this)
+                    static::class
                     . ': tmp file error: could not open file: ' . $infile_name
                 );
             }
@@ -198,7 +175,7 @@ class PDODBMultiIngestor implements Ingestor
 
         $this->_logger->debug("Using temporary file '$infile_name'");
 
-        $exec_output = array();
+        $exec_output = [];
 
         while (
             $srcRow = $srcStatement->fetch(
@@ -206,7 +183,7 @@ class PDODBMultiIngestor implements Ingestor
                 PDO::FETCH_ORI_NEXT
             )
         ) {
-            $tmp_values = array();
+            $tmp_values = [];
 
             foreach ($this->_insert_fields as $insert_field) {
                 $tmp_values[$insert_field]
@@ -229,7 +206,7 @@ class PDODBMultiIngestor implements Ingestor
             if ($sourceRows !== 0  && $sourceRows % 100000 == 0) {
                 $message = sprintf(
                     '%s: Rows Written to File: %d of %d',
-                    get_class($this),
+                    static::class,
                     $sourceRows,
                     $rowsTotal
                 );
@@ -264,11 +241,11 @@ class PDODBMultiIngestor implements Ingestor
                     . implode(',', $this->_insert_fields) . ')';
 
                 try {
-                    $output = array();
+                    $output = [];
 
                     if ($this->_destination_db->_db_engine !== 'mysql') {
                         throw new Exception(
-                            get_class($this)
+                            static::class
                             .  ': Unsupported operation: currently only mysql'
                             . 'is supported as destination db. '
                             . $this->_destination_db->_db_engine
@@ -283,11 +260,7 @@ class PDODBMultiIngestor implements Ingestor
                     $f = fopen($infile_name, 'w');
                 }
                 catch (Exception $e) {
-                    $this->_logger->err(array(
-                        'message'    => $e->getMessage(),
-                        'stacktrace' => $e->getTraceAsString(),
-                        'statement'  => $load_statement,
-                    ));
+                    $this->_logger->err(['message'    => $e->getMessage(), 'stacktrace' => $e->getTraceAsString(), 'statement'  => $load_statement]);
                     return;
                 }
             }
@@ -306,11 +279,7 @@ class PDODBMultiIngestor implements Ingestor
                 )->execute();
             }
             catch (PDOException $e) {
-                $this->_logger->err(array(
-                    'message'    => $e->getMessage(),
-                    'sql'        => $updateStatement,
-                    'stacktrace' => $e->getTraceAsString(),
-                ));
+                $this->_logger->err(['message'    => $e->getMessage(), 'sql'        => $updateStatement, 'stacktrace' => $e->getTraceAsString()]);
                 return;
             }
         }
@@ -331,7 +300,7 @@ class PDODBMultiIngestor implements Ingestor
 
         $message = sprintf(
             '%s: Rows Processed: %d of %d (Time Taken: %01.2f s)',
-            get_class($this),
+            static::class,
             $sourceRows,
             $rowsTotal,
             $time
@@ -339,18 +308,11 @@ class PDODBMultiIngestor implements Ingestor
         $this->_logger->info($message);
 
         // NOTE: This is needed for the log summary.
-        $this->_logger->notice(array(
-            'message'          => 'Finished ingestion',
-            'class'            => get_class($this),
-            'start_time'       => $time_start,
-            'end_time'         => $time_end,
-            'records_examined' => $rowsTotal,
-            'records_loaded'   => $sourceRows,
-        ));
+        $this->_logger->notice(['message'          => 'Finished ingestion', 'class'            => static::class, 'start_time'       => $time_start, 'end_time'         => $time_end, 'records_examined' => $rowsTotal, 'records_loaded'   => $sourceRows]);
 
     }
 
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->_logger = $logger;
 
@@ -364,13 +326,13 @@ class PDODBMultiIngestor implements Ingestor
         $tableinfo = explode(".", $this->_insert_table);
         if( 1 == count($tableinfo) ) {
             // Using unqualified table name
-            return array("schema" => $this->_destination_db->_db_name, "tablename" => $this->_insert_table);
+            return ["schema" => $this->_destination_db->_db_name, "tablename" => $this->_insert_table];
         } else {
-            return array("schema" => $tableinfo[0], "tablename" => $tableinfo[1] );
+            return ["schema" => $tableinfo[0], "tablename" => $tableinfo[1]];
         }
     }
 
-    public function checkForChanges()
+    public function checkForChanges(): void
     {
         $stmt = $this->_destination_db->handle()->prepare(
             "SELECT `COLUMN_NAME` FROM `information_schema`.`COLUMNS` WHERE (`TABLE_SCHEMA` = :schema) AND (`TABLE_NAME` = :tablename) AND (`COLUMN_KEY` = 'PRI')");
@@ -379,7 +341,7 @@ class PDODBMultiIngestor implements Ingestor
 
         $primarykeys = $stmt->fetchAll();
 
-        $constraints = array();
+        $constraints = [];
         foreach($primarykeys as $keydata)
         {
             $constraints[] = sprintf(" b.%s = c.%s ", $keydata['COLUMN_NAME'], $keydata['COLUMN_NAME']);
@@ -400,11 +362,7 @@ class PDODBMultiIngestor implements Ingestor
         $sadness = false;
         while($row = $stmt->fetch(PDO::FETCH_ASSOC) )
         {
-            $this->_logger->crit(array(
-                'message'          => 'Missing row',
-                'rowdata'          => print_r($row, true),
-                'class'            => get_class($this)
-            ));
+            $this->_logger->crit(['message'          => 'Missing row', 'rowdata'          => print_r($row, true), 'class'            => static::class]);
             $sadness = true;
         }
 
@@ -431,7 +389,7 @@ class PDODBMultiIngestor implements Ingestor
     protected function getCommonProcessingStatements($configFilePath)
     {
         $processingSteps = $this->loadProcessingConfig($configFilePath);
-        $processingStatements = array();
+        $processingStatements = [];
         foreach ($processingSteps as $step) {
             $this->addCommonProcessingStepToStatements(
                 $step,

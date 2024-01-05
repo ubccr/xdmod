@@ -37,14 +37,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *
      * @var int
      */
-    const _MAX_RECORDS = 50;
+    public const _MAX_RECORDS = 50;
 
     /**
      * The default error message that is provided when a request cannot be processed.
      *
      * @var string
      */
-    const _DEFAULT_ERROR_MSG = 'Unable to execute the requested operation for the provided user.';
+    public const _DEFAULT_ERROR_MSG = 'Unable to execute the requested operation for the provided user.';
 
     /**
      * The identifier that will be used to 'bind' the [GET] /search/history
@@ -53,7 +53,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *
      * @var string
      */
-    const _GET_SEARCH_HISTORY = 'warehouse_get_search_history';
+    public const _GET_SEARCH_HISTORY = 'warehouse_get_search_history';
 
     /**
      * The identifier that will be used to 'bind' the [GET]
@@ -62,7 +62,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *
      * @var string
      */
-    const _GET_SEARCH_HISTORY_BY_ID = 'warehouse_get_search_history_by_id';
+    public const _GET_SEARCH_HISTORY_BY_ID = 'warehouse_get_search_history_by_id';
 
     /**
      * The identifier that is used to store the search history data in the user
@@ -70,7 +70,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *
      * @var string
      */
-    const _HISTORY_STORE = 'searchhistory';
+    public const _HISTORY_STORE = 'searchhistory';
 
     /**
      * The identifier that's used when retrieving the current value of the
@@ -78,7 +78,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *
      * @var string
      */
-    const _API_VERSION = 'api_version';
+    public const _API_VERSION = 'api_version';
 
     /**
      * The default value that will be used if one cannot be retrieved from the
@@ -86,74 +86,33 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *
      * @var int
      */
-    const _DEFAULT_API_VERSION = 0;
+    public const _DEFAULT_API_VERSION = 0;
 
     /**
      * The default value for the query group parameter in various calls.
      *
      * @var string
      */
-    const _DEFAULT_QUERY_GROUP = 'tg_usage';
+    public const _DEFAULT_QUERY_GROUP = 'tg_usage';
 
     /**
      * The types of nodes that this ControllerProvider understands how to deal with.
      *
      * @var array
      */
-    private $_supported_types = array(
-        \DataWarehouse\Query\RawQueryTypes::ACCOUNTING =>
-            array(
-                "infoid" => \DataWarehouse\Query\RawQueryTypes::ACCOUNTING,
-                "dtype" => "infoid",
-                "text" => "Accounting data",
-                "url" => "/rest/v1.0/warehouse/search/jobs/accounting",
-                "documentation" => "Shows information about the job that was obtained from the resource manager.
+    private $_supported_types = [\DataWarehouse\Query\RawQueryTypes::ACCOUNTING =>
+        ["infoid" => \DataWarehouse\Query\RawQueryTypes::ACCOUNTING, "dtype" => "infoid", "text" => "Accounting data", "url" => "/rest/v1.0/warehouse/search/jobs/accounting", "documentation" => "Shows information about the job that was obtained from the resource manager.
                                   This includes timing information such as the start and end time of the job as
                                   well as administrative information such as the user that submitted the job and
-                                  the account that was charged.",
-                "type" => "keyvaluedata",
-                "leaf" => true
-            ),
-        \DataWarehouse\Query\RawQueryTypes::BATCH_SCRIPT =>
-            array(
-                "infoid" => \DataWarehouse\Query\RawQueryTypes::BATCH_SCRIPT,
-                "dtype" => "infoid",
-                "text" => "Job script",
-                "url" => "/rest/v1.0/warehouse/search/jobs/jobscript",
-                "documentation" => "Shows the job batch script that was passed to the resource manager when the
-                                    job was submitted. The script is displayed verbatim.",
-                "type" => "utf8-text",
-                "leaf" => true
-            ),
-        \DataWarehouse\Query\RawQueryTypes::EXECUTABLE =>
-            array(
-                "infoid" => \DataWarehouse\Query\RawQueryTypes::EXECUTABLE,
-                "dtype" => "infoid",
-                "text" => "Executable information",
-                "url" => "/rest/v1.0/warehouse/search/jobs/executable",
-                "documentation" => "Shows information about the processes that were run on the compute nodes during
+                                  the account that was charged.", "type" => "keyvaluedata", "leaf" => true], \DataWarehouse\Query\RawQueryTypes::BATCH_SCRIPT =>
+        ["infoid" => \DataWarehouse\Query\RawQueryTypes::BATCH_SCRIPT, "dtype" => "infoid", "text" => "Job script", "url" => "/rest/v1.0/warehouse/search/jobs/jobscript", "documentation" => "Shows the job batch script that was passed to the resource manager when the
+                                    job was submitted. The script is displayed verbatim.", "type" => "utf8-text", "leaf" => true], \DataWarehouse\Query\RawQueryTypes::EXECUTABLE =>
+        ["infoid" => \DataWarehouse\Query\RawQueryTypes::EXECUTABLE, "dtype" => "infoid", "text" => "Executable information", "url" => "/rest/v1.0/warehouse/search/jobs/executable", "documentation" => "Shows information about the processes that were run on the compute nodes during
                                     the job. This information includes the names of the various processes and may
                                     contain information about the linked libraries, loaded modules and process
-                                    environment.",
-                "type" => "nested",
-                "leaf" => true),
-        \DataWarehouse\Query\RawQueryTypes::PEERS =>
-            array(
-                "infoid" => \DataWarehouse\Query\RawQueryTypes::PEERS,
-                "dtype" => "infoid",
-                "text" => "Peers",
-                'url' => '/rest/v1.0/warehouse/search/jobs/peers',
-                'documentation' => 'Shows the list of other HPC jobs that ran concurrently using the same shared hardware resources.',
-                'type' => 'ganttchart',
-                "leaf" => true
-            ),
-        \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS =>
-            array(
-                "infoid" => \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS,
-                "dtype" => "infoid",
-                "text" => "Summary metrics",
-                "url" => "/rest/v1.0/warehouse/search/jobs/metrics",
-                "documentation" => "shows a table with the performance metrics collected during
+                                    environment.", "type" => "nested", "leaf" => true], \DataWarehouse\Query\RawQueryTypes::PEERS =>
+        ["infoid" => \DataWarehouse\Query\RawQueryTypes::PEERS, "dtype" => "infoid", "text" => "Peers", 'url' => '/rest/v1.0/warehouse/search/jobs/peers', 'documentation' => 'Shows the list of other HPC jobs that ran concurrently using the same shared hardware resources.', 'type' => 'ganttchart', "leaf" => true], \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS =>
+        ["infoid" => \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS, "dtype" => "infoid", "text" => "Summary metrics", "url" => "/rest/v1.0/warehouse/search/jobs/metrics", "documentation" => "shows a table with the performance metrics collected during
                                     the job. These are typically average values over the job. The
                                     label for each row has a tooltip that describes the metric. The
                                     data are grouped into the following categories:
@@ -167,51 +126,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
                                         <li>Network I/O Statistics: information about the data transmitted and
                                          received over the network devices.</li>
                                     </ul>
-                ",
-                "type" => "metrics",
-                "leaf" => true
-            ),
-        \DataWarehouse\Query\RawQueryTypes::DETAILED_METRICS =>
-            array(
-                "infoid" => \DataWarehouse\Query\RawQueryTypes::DETAILED_METRICS,
-                "dtype" => "infoid",
-                "text" => "Detailed metrics",
-                "url" => "/rest/v1.0/warehouse/search/jobs/detailedmetrics",
-                "documentation" => "shows the data generated by the job summarization software. Please
+                ", "type" => "metrics", "leaf" => true], \DataWarehouse\Query\RawQueryTypes::DETAILED_METRICS =>
+        ["infoid" => \DataWarehouse\Query\RawQueryTypes::DETAILED_METRICS, "dtype" => "infoid", "text" => "Detailed metrics", "url" => "/rest/v1.0/warehouse/search/jobs/detailedmetrics", "documentation" => "shows the data generated by the job summarization software. Please
                                     consult the relevant job summarization software documentation for details
-                                    about these metrics.",
-                "type" => "detailedmetrics",
-                "leaf" => true
-            ),
-        \DataWarehouse\Query\RawQueryTypes::ANALYTICS =>
-            array(
-                "infoid" => \DataWarehouse\Query\RawQueryTypes::ANALYTICS,
-                "dtype" => "infoid",
-                "text" => "Job analytics",
-                "url" => "/rest/v1.0/warehouse/search/jobs/analytics",
-                "documentation" => "Click the help icon on each plot to show the description of the analytic",
-                "type" => "analytics",
-                "hidden" => true,
-                "leaf" => true
-            ),
-        \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS =>
-            array(
-                "infoid" => \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS,
-                "dtype" => "infoid",
-                "text" => "Timeseries",
-                "leaf" => false
-            ),
-        \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE =>
-            array(
-                "infoid" => \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE,
-                "dtype" => "infoid",
-                "text" => "VM State/Events",
-                "documentation" => "Show the lifecycle of a VM. Green signifies when a VM is active and red signifies when a VM is stopped.",
-                "url" => "/rest/v1.0/warehouse/search/cloud/vmstate",
-                "type" => "vmstate",
-                "leaf" => true
-            )
-    );
+                                    about these metrics.", "type" => "detailedmetrics", "leaf" => true], \DataWarehouse\Query\RawQueryTypes::ANALYTICS =>
+        ["infoid" => \DataWarehouse\Query\RawQueryTypes::ANALYTICS, "dtype" => "infoid", "text" => "Job analytics", "url" => "/rest/v1.0/warehouse/search/jobs/analytics", "documentation" => "Click the help icon on each plot to show the description of the analytic", "type" => "analytics", "hidden" => true, "leaf" => true], \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS =>
+        ["infoid" => \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS, "dtype" => "infoid", "text" => "Timeseries", "leaf" => false], \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE =>
+        ["infoid" => \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE, "dtype" => "infoid", "text" => "VM State/Events", "documentation" => "Show the lifecycle of a VM. Green signifies when a VM is active and red signifies when a VM is stopped.", "url" => "/rest/v1.0/warehouse/search/cloud/vmstate", "type" => "vmstate", "leaf" => true]];
 
     /**
      * This function is responsible for the setting up of any routes that this
@@ -222,12 +143,12 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param ControllerCollection $controller
      * @return null
      */
-    public function setupRoutes(Application $app, ControllerCollection $controller)
+    public function setupRoutes(Application $app, ControllerCollection $controller): void
     {
         $root = $this->prefix;
 
-        $current = get_class($this);
-        $conversions = '\Rest\Utilities\Conversions';
+        $current = static::class;
+        $conversions = \Rest\Utilities\Conversions::class;
         // Search history routes
 
         $controller
@@ -360,8 +281,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *   total: ... number of records in 'data' ...
      * }
      *
-     * @param Request $request
-     * @param Application $app
      * @return array in the format array( boolean success, string message)
      * @throws AccessDeniedException
      * @throws BadRequestHttpException
@@ -461,17 +380,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $userHistory = $this->getUserStore($user, $realm);
         $searches = $userHistory->get();
         foreach ($searches as $search) {
-            $text = isset($search['text']) ? $search['text'] : null;
+            $text = $search['text'] ?? null;
             if ($text == $title) {
                 if (!isset($search['dtype'])) {
                     $search['dtype'] = 'recordid';
                 }
                 return $app->json(
-                    array(
-                        'action' => $action,
-                        'success' => true,
-                        'data' => $search
-                    ),
+                    ['action' => $action, 'success' => true, 'data' => $search],
                     200
                 );
                 break;
@@ -550,12 +465,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
 
         return $app->json(
-            array(
-                'success' => true,
-                'action' => $action,
-                'total' => count($created),
-                'results' => $created
-            )
+            ['success' => true, 'action' => $action, 'total' => count($created), 'results' => $created]
         );
     }
 
@@ -589,11 +499,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         $results = $app->json(
-            array(
-                'success' => true,
-                'action' => $action,
-                'results' => $result
-            ),
+            ['success' => true, 'action' => $action, 'results' => $result],
             200
         );
 
@@ -622,11 +528,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $deleted = $history->delById($id);
 
         return $app->json(
-            array(
-                'success' => true,
-                'action' => $action,
-                'total' => $deleted
-            )
+            ['success' => true, 'action' => $action, 'total' => $deleted]
         );
     }
 
@@ -652,18 +554,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $history->del();
 
         return $app->json(
-            array(
-                'success' => true,
-                'action' => $action
-            )
+            ['success' => true, 'action' => $action]
         );
     }
 
     /**
      * Attempt to perform a search of the jobs realm with the criteria provided in the
      *
-     * @param Request $request
-     * @param Application $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws BadRequestHttpException
      * @throws AccessDeniedException
@@ -692,8 +589,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * @param Request $request
-     * @param Application $app
      * @param string $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws BadRequestHttpException
@@ -734,10 +629,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $realms = Realms::getRealmsForUser($user);
 
         // Return the realms found.
-        return $app->json(array(
-            'success' => true,
-            'results' => $realms,
-        ));
+        return $app->json(['success' => true, 'results' => $realms]);
     }
 
     /**
@@ -762,7 +654,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new BadRequestHttpException('syntax error in config parameter');
         }
 
-        $mandatory = array('realm', 'group_by', 'statistics', 'aggregation_unit', 'start_date', 'end_date', 'order_by');
+        $mandatory = ['realm', 'group_by', 'statistics', 'aggregation_unit', 'start_date', 'end_date', 'order_by'];
         foreach ($mandatory as $required_property) {
             if (!property_exists($config, $required_property)) {
                 throw new BadRequestHttpException('Missing mandatory config property ' . $required_property);
@@ -815,11 +707,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             unset($val[$config->group_by . '_order_id']);
         }
         return $app->json(
-            array(
-                'results' => $results,
-                'total' => $dataset->getTotalPossibleCount(),
-                'success' => true
-            )
+            ['results' => $results, 'total' => $dataset->getTotalPossibleCount(), 'success' => true]
         );
     }
 
@@ -848,26 +736,23 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $realmParam
         );
 
-        $dimensionsToReturn = array();
+        $dimensionsToReturn = [];
         foreach($groupBys as $groupByName => $queryDescriptors) {
             foreach($queryDescriptors as $queryDescriptor) {
                 if ($groupByName !== 'none') {
-                    $dimensionsToReturn[] = array(
+                    $dimensionsToReturn[] = [
                         'id' => $queryDescriptor->getGroupByName(),
                         'name' => $queryDescriptor->getGroupByLabel(),
                         // NOTE: 'Category' is capitalized for historical reasons.
                         'Category' => $queryDescriptor->getGroupByCategory(),
-                        'description' => $queryDescriptor->getGroupByDescription()
-                    );
+                        'description' => $queryDescriptor->getGroupByDescription(),
+                    ];
                 }
             }
         }
 
         // Return the dimensions found.
-        return $app->json(array(
-            'success' => true,
-            'results' => $dimensionsToReturn,
-        ));
+        return $app->json(['success' => true, 'results' => $dimensionsToReturn]);
     }
 
     /**
@@ -916,10 +801,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         // Return the found dimension values.
-        return $app->json(array(
-            'success' => true,
-            'results' => $dimensionValuesData,
-        ));
+        return $app->json(['success' => true, 'results' => $dimensionValuesData]);
     }
 
     /**
@@ -941,14 +823,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
         try {
             $multipleProvidersSupported = \xd_utilities\getConfiguration('features', 'multiple_service_providers') === 'on';
         }
-        catch(Exception $e){
+        catch(Exception){
             $multipleProvidersSupported = false;
         }
 
         // Generate generic quick filters for all users.
-        $filters = array();
-        $filtersByFilterId = array();
-        $dimensionIdsToNames = array();
+        $filters = [];
+        $filtersByFilterId = [];
+        $dimensionIdsToNames = [];
 
         $serviceProviderDimensionId = 'provider';
         if ($multipleProvidersSupported) {
@@ -958,12 +840,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $dimensionIdsToNames[$serviceProviderDimensionId] = $serviceProviderDimensionName;
             $serviceProviders = $serviceProviderGroupBy->getAttributeValues();
             foreach ($serviceProviders as $serviceProvider) {
-                $filtersByFilterId[$serviceProviderDimensionId][$serviceProvider['id']] = array(
-                    'valueName' => $serviceProvider['short_name'],
-                    'valueId' => $serviceProvider['id'],
-                    'isUserSpecificFilter' => false,
-                    'isMostPrivilegedRoleFilter' => false,
-                );
+                $filtersByFilterId[$serviceProviderDimensionId][$serviceProvider['id']] = ['valueName' => $serviceProvider['short_name'], 'valueId' => $serviceProvider['id'], 'isUserSpecificFilter' => false, 'isMostPrivilegedRoleFilter' => false];
                 $filters[$serviceProviderDimensionId][] = &$filtersByFilterId[$serviceProviderDimensionId][$serviceProvider['id']];
             }
         }
@@ -995,12 +872,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                         continue;
                     }
 
-                    $filtersByFilterId[$dimensionId][$valueId] = array(
-                        'valueName' => $valueName,
-                        'valueId' => $valueId,
-                        'isUserSpecificFilter' => true,
-                        'isMostPrivilegedRoleFilter' => $isMostPrivilegedRole,
-                    );
+                    $filtersByFilterId[$dimensionId][$valueId] = ['valueName' => $valueName, 'valueId' => $valueId, 'isUserSpecificFilter' => true, 'isMostPrivilegedRoleFilter' => $isMostPrivilegedRole];
                     $filters[$dimensionId][] = &$filtersByFilterId[$dimensionId][$valueId];
 
                     if (!isset($dimensionIdsToNames[$dimensionId])) {
@@ -1012,20 +884,12 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         // Return the quick filters.
-        return $app->json(array(
-            'success' => true,
-            'results' => array(
-                'dimensionNames' => $dimensionIdsToNames,
-                'filters' => $filters,
-            ),
-        ));
+        return $app->json(['success' => true, 'results' => ['dimensionNames' => $dimensionIdsToNames, 'filters' => $filters]]);
     }
 
         /**
      * Attempt to retrieve the the name for the provided dimensionId.
      *
-     * @param Request     $request
-     * @param Application $app
      * @param string      $dimensionId
      *
      * @return \Symfony\Component\HttpFoundation\JsonResponse
@@ -1038,15 +902,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $status = $success ? 200 : 404;
         $payload = $success
-                 ? array(
-                     'success' => $success,
-                     'results' => array(
-                         'name' => $dimensionName
-                     ))
-                 : array(
-                         'success' => false,
-                         'message' => "Unable to find a name for dimension: $dimensionId"
-                 );
+                 ? ['success' => $success, 'results' => ['name' => $dimensionName]]
+                 : ['success' => false, 'message' => "Unable to find a name for dimension: $dimensionId"];
 
         return $app->json(
             $payload,
@@ -1058,8 +915,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * Attempt to retrieve the the name for the provided dimensionId and
      * valueId.
      *
-     * @param Request     $request
-     * @param Application $app
      * @param string      $dimensionId
      * @param string      $valueId
      *
@@ -1073,16 +928,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $status = $success ? 200 : 404;
         $payload = $success
-                 ? array(
-                     'success' => $success,
-                     'results' => array(
-                         'name' => $valueName
-                     )
-                 )
-                 : array(
-                     'success' => $success,
-                     'message' => "Unable to find a name for dimesion: $dimensionId | value: $valueId"
-                 );
+                 ? ['success' => $success, 'results' => ['name' => $valueName]]
+                 : ['success' => $success, 'message' => "Unable to find a name for dimesion: $dimensionId | value: $valueId"];
 
         return $app->json(
             $payload,
@@ -1108,10 +955,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         // Return the available aggregation units.
         $aggregation_units = \DataWarehouse\QueryBuilder::getAggregationUnits();
-        return $app->json(array(
-            'success' => true,
-            'results' => array_keys($aggregation_units),
-        ));
+        return $app->json(['success' => true, 'results' => array_keys($aggregation_units)]);
     }
 
     /**
@@ -1132,10 +976,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         // Return the available dataset types.
         $datasetTypes = \DataWarehouse\QueryBuilder::getDatasetTypes();
-        return $app->json(array(
-            'success' => true,
-            'results' => $datasetTypes,
-        ));
+        return $app->json(['success' => true, 'results' => $datasetTypes]);
     }
 
     /**
@@ -1155,10 +996,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $this->authorize($request);
 
         // Return the available dataset output formats.
-        return $app->json(array(
-            'success' => true,
-            'results' => \DataWarehouse\ExportBuilder::$dataset_action_formats,
-        ));
+        return $app->json(['success' => true, 'results' => \DataWarehouse\ExportBuilder::$dataset_action_formats]);
     }
 
     /**
@@ -1204,10 +1042,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $this->authorize($request);
 
         // Return the available plot output formats.
-        return $app->json(array(
-            'success' => true,
-            'results' => \DataWarehouse\VisualizationBuilder::$plot_action_formats,
-        ));
+        return $app->json(['success' => true, 'results' => \DataWarehouse\VisualizationBuilder::$plot_action_formats]);
     }
 
     /**
@@ -1227,10 +1062,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $this->authorize($request);
 
         // Return the available plot display types.
-        return $app->json(array(
-            'success' => true,
-            'results' => \DataWarehouse\VisualizationBuilder::$display_types,
-        ));
+        return $app->json(['success' => true, 'results' => \DataWarehouse\VisualizationBuilder::$display_types]);
     }
 
     /**
@@ -1250,10 +1082,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $this->authorize($request);
 
         // Return the available plot combine types.
-        return $app->json(array(
-            'success' => true,
-            'results' => \DataWarehouse\VisualizationBuilder::$combine_types,
-        ));
+        return $app->json(['success' => true, 'results' => \DataWarehouse\VisualizationBuilder::$combine_types]);
     }
 
     /**
@@ -1303,7 +1132,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             throw new BadRequestHttpException('Invalid search parameters specified in params object');
         } else {
             $QueryClass = "\\DataWarehouse\\Query\\$realm\\RawData";
-            $query = new $QueryClass($realm, "day", $startDate, $endDate, null, "", array());
+            $query = new $QueryClass($realm, "day", $startDate, $endDate, null, "", []);
 
             $allRoles = $user->getAllRoles();
             $query->setMultipleRoleParameters($allRoles, $user);
@@ -1315,7 +1144,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $dataSet = new \DataWarehouse\Data\SimpleDataset($query);
             $raw = $dataSet->getResults($limit, $offset);
 
-            $data = array();
+            $data = [];
             foreach ($raw as $row) {
                 $resource = $row['resource'];
                 $localJobId = $row['local_job_id'];
@@ -1328,12 +1157,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $total = $dataSet->getTotalPossibleCount();
 
             $results = $app->json(
-                array(
-                    'success' => true,
-                    'action' => $action,
-                    'results' => $data,
-                    'totalCount' => $total
-                )
+                ['success' => true, 'action' => $action, 'results' => $data, 'totalCount' => $total]
             );
 
             if ($total === 0) {
@@ -1342,18 +1166,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 // need to rerun the query without the role params to see if any results come back.
                 // note the data for the priviledged query is not returned to the user.
 
-                $privQuery = new $QueryClass("day", $startDate, $endDate, null, "", array());
+                $privQuery = new $QueryClass("day", $startDate, $endDate, null, "", []);
                 $privQuery->setRoleParameters($params);
 
                 $privDataSet = new \DataWarehouse\Data\SimpleDataset($privQuery, 1, 0);
                 $privResults = $privDataSet->getResults();
                 if (count($privResults) != 0) {
                     $results = $app->json(
-                        array(
-                            'success' => false,
-                            'action' => $action,
-                            'message' => 'Unable to complete the requested operation. Access Denied.'
-                        ),
+                        ['success' => false, 'action' => $action, 'message' => 'Unable to complete the requested operation. Access Denied.'],
                         401
                     );
                 }
@@ -1364,9 +1184,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * @param Request $request
-     * @param Application $app
-     * @param XDUser $user
      * @param $action
      * @param $realm
      * @param $jobId
@@ -1407,11 +1224,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 break;
             default:
                 $results = $app->json(
-                    array(
-                        'success' => false,
-                        'action' => $actionName,
-                        'message' => "Unable to process the requested operation. Unsupported action $action."
-                    ),
+                    ['success' => false, 'action' => $actionName, 'message' => "Unable to process the requested operation. Unsupported action $action."],
                     400
                 );
                 break;
@@ -1443,64 +1256,20 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $i = 0;
 
-        $result = array(
-            'series' => array(
-                array(
-                    'name' => 'Walltime',
-                    'data' => array(
-                        array(
-                            'x' => $i++,
-                            'low' => $thisjob['start_time_ts'] * 1000.0,
-                            'high' => $thisjob['end_time_ts'] * 1000.0
-                        )
-                    )
-                ),
-                array(
-                    'name' => 'Walltime',
-                    'data' => array()
-                )
-            ),
-            'categories' => array(
-                'Current'
-            ),
-            'schema' => array(
-                'timezone' => $thisjob['timezone'],
-                'ref' => array(
-                    'realm' => $realm,
-                    'jobid' => $jobId,
-                    "text" => $thisjob['resource'] . '-' . $thisjob['local_job_id']
-                )
-            )
-        );
+        $result = ['series' => [['name' => 'Walltime', 'data' => [['x' => $i++, 'low' => $thisjob['start_time_ts'] * 1000.0, 'high' => $thisjob['end_time_ts'] * 1000.0]]], ['name' => 'Walltime', 'data' => []]], 'categories' => ['Current'], 'schema' => ['timezone' => $thisjob['timezone'], 'ref' => ['realm' => $realm, 'jobid' => $jobId, "text" => $thisjob['resource'] . '-' . $thisjob['local_job_id']]]];
 
         $dataset = $this->getJobDataSet($user, $realm, $jobId, 'peers');
         foreach ($dataset->getResults() as $index => $jobpeer) {
             if ( ($index >= $start) && ($index < ($start + $limit))) {
-                $result['series'][1]['data'][] = array(
-                    'x' => $i++,
-                    'low' => $jobpeer['start_time_ts'] * 1000.0,
-                    'high' => $jobpeer['end_time_ts'] * 1000.0,
-                    'ref' => array(
-                        'realm' => $realm,
-                        'jobid' => $jobpeer['jobid'],
-                        'local_job_id' => $jobpeer['local_job_id'],
-                        'resource' => $jobpeer['resource']
-                    )
-                );
+                $result['series'][1]['data'][] = ['x' => $i++, 'low' => $jobpeer['start_time_ts'] * 1000.0, 'high' => $jobpeer['end_time_ts'] * 1000.0, 'ref' => ['realm' => $realm, 'jobid' => $jobpeer['jobid'], 'local_job_id' => $jobpeer['local_job_id'], 'resource' => $jobpeer['resource']]];
                 $result['categories'][] = $jobpeer['resource'] . '-' . $jobpeer['local_job_id'];
             }
         }
 
-        return  $app->json(array(
-            'success' => true,
-            'data' => array($result),
-            'total' => count($dataset->getResults())
-        ));
+        return  $app->json(['success' => true, 'data' => [$result], 'total' => count($dataset->getResults())]);
     }
 
     /**
-     * @param Application $app
-     * @param XDUser $user
      * @param $realm
      * @param $jobId
      * @param $action
@@ -1513,16 +1282,12 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $dataSet = $this->getJobDataSet($user, $realm, $jobId, $action);
 
         return $app->json(
-            array(
-                'data' => $dataSet->export(),
-                'success' => true
-            ),
+            ['data' => $dataSet->export(), 'success' => true],
             200
         );
     }
 
     /**
-     * @param XDUser $user
      * @param string $realm
      * @param int $jobId
      * @param string $action
@@ -1536,7 +1301,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";
-        $params = array('primary_key' => $jobId);
+        $params = ['primary_key' => $jobId];
         $query = new $QueryClass($params, $action);
 
         $allRoles = $user->getAllRoles();
@@ -1588,19 +1353,19 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     private function arraytostore(array $values)
     {
-            return array(array("key" => ".", "value" => "", "expanded" => true, "children" => $this->atosrecurse($values, false) ));
+            return [["key" => ".", "value" => "", "expanded" => true, "children" => $this->atosrecurse($values)]];
     }
 
     private function atosrecurse(array $values)
     {
-        $result = array();
+        $result = [];
         foreach($values as $key => $value) {
             if( is_array($value) ) {
                 if(count($value) > 0 ) {
-                    $result[] = array("key" => "$key", "value" => "", "expanded" => true, "children" => $this->atosrecurse($value) );
+                    $result[] = ["key" => "$key", "value" => "", "expanded" => true, "children" => $this->atosrecurse($value)];
                 }
             } else {
-                $result[] = array("key" => "$key", "value" => $value, "leaf" => true);
+                $result[] = ["key" => "$key", "value" => $value, "leaf" => true];
             }
         }
         return $result;
@@ -1608,8 +1373,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
 
     /**
-     * @param Application $app
-     * @param XDUser $user
      * @param string $realm
      * @param int $jobId
      * @param string $tsId
@@ -1638,7 +1401,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
         $info = new $infoclass();
 
-        $result = array();
+        $result = [];
         foreach ($info->getJobTimeseriesMetricNodeMeta($user, $jobId, $tsId, $nodeId) as $cpu) {
             $cpu['url'] = "/rest/v0.1/warehouse/search/jobs/timeseries";
             $cpu['type'] = "timeseries";
@@ -1646,13 +1409,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $result[] = $cpu;
         }
 
-        return $app->json(array("success" => true, "results" => $result));
+        return $app->json(["success" => true, "results" => $result]);
 
     }
 
     /**
-     * @param Application $app
-     * @param XDUser $user
      * @param $realm
      * @param int $jobId
      * @param $tsId
@@ -1678,7 +1439,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
         $info = new $infoclass();
 
-        $result = array();
+        $result = [];
         foreach ($info->getJobTimeseriesMetricMeta($user, $jobId, $tsId) as $node) {
             $node['url'] = "/rest/v0.1/warehouse/search/jobs/timeseries";
             $node['type'] = "timeseries";
@@ -1686,12 +1447,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $result[] = $node;
         }
 
-        return $app->json(array("success" => true, "results" => $result));
+        return $app->json(["success" => true, "results" => $result]);
     }
 
     /**
-     * @param Application $app
-     * @param XDUser $user
      * @param string $realm
      * @param int $jobId
      * @param int $infoId
@@ -1714,27 +1473,27 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
                 $info = new $infoclass();
 
-                $result = array();
+                $result = [];
                 foreach ($info->getJobTimeseriesMetaData($user, $jobId) as $tsid) {
                     $tsid['url'] = "/rest/v0.1/warehouse/search/jobs/vmstate";
                     $tsid['type'] = "timeseries";
                     $tsid['dtype'] = "tsid";
                     $result[] = $tsid;
                 }
-                return $app->json(array('success' => true, "results" => $result));
+                return $app->json(['success' => true, "results" => $result]);
                 break;
             case "" . \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS:
                 $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
                 $info = new $infoclass();
 
-                $result = array();
+                $result = [];
                 foreach ($info->getJobTimeseriesMetaData($user, $jobId) as $tsid) {
                     $tsid['url'] = "/rest/v0.1/warehouse/search/jobs/timeseries";
                     $tsid['type'] = "timeseries";
                     $tsid['dtype'] = "tsid";
                     $result[] = $tsid;
                 }
-                return $app->json(array('success' => true, "results" => $result));
+                return $app->json(['success' => true, "results" => $result]);
                 break;
             default:
                 throw new BadRequestHttpException("Node is a leaf");
@@ -1742,8 +1501,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * @param Application $app
-     * @param XDUser $user
      * @param string $realm
      * @param int $jobId
      * @param string $action
@@ -1764,17 +1521,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $data = array_intersect_key($this->_supported_types, $jobMetaData);
 
         return $app->json(
-            array(
-                'success' => true,
-                'action' => $action,
-                'results' => array_values($data)
-            )
+            ['success' => true, 'action' => $action, 'results' => array_values($data)]
         );
     }
 
     /**
-     * @param Application $app
-     * @param XDUser $user
      * @param string $realm
      * @param string $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
@@ -1783,59 +1534,40 @@ class WarehouseControllerProvider extends BaseControllerProvider
     {
         $history = $this->getUserStore($user, $realm);
         $output = $history->get();
-        $results = array();
+        $results = [];
         foreach ($output as $item) {
-            $results[] = array(
-                'text' => $item['text'],
-                'dtype' => 'recordid',
-                'recordid' => $item['recordid'],
-                'searchterms' => $item['searchterms']
-            );
+            $results[] = ['text' => $item['text'], 'dtype' => 'recordid', 'recordid' => $item['recordid'], 'searchterms' => $item['searchterms']];
         }
 
         return $app->json(
-            array(
-                'success' => true,
-                'action' => $action,
-                'results' => $results,
-                'total' => count($results)
-            )
+            ['success' => true, 'action' => $action, 'results' => $results, 'total' => count($results)]
         );
     }
 
     /**
-     * @param Application $app
      * @param $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     private function processHistoryDefaultRealmRequest(Application $app, XDUser $user, $action)
     {
-        $results = array();
+        $results = [];
 
         foreach(\DataWarehouse\Access\RawData::getRawDataRealms($user) as $realmconfig) {
             $history = $this->getUserStore($user, $realmconfig['name']);
             $records = $history->get();
             if (!empty($records)) {
-                $results[] = array(
-                    'dtype' => 'realm',
-                    'realm' => $realmconfig['name'],
-                    'text' => $realmconfig['display']
-                );
+                $results[] = ['dtype' => 'realm', 'realm' => $realmconfig['name'], 'text' => $realmconfig['display']];
             }
         }
 
         return $app->json(
-            array(
-                'success' => true,
-                'action' => $action,
-                'results' => $results
-            )
+            ['success' => true, 'action' => $action, 'results' => $results]
         );
     }
 
     private function encodeFloatArray(array $in)
     {
-        $out = array();
+        $out = [];
         foreach ($in as $key => $value) {
             if (is_float($value) && is_nan($value)) {
                 $out[$key] = 'NaN';
@@ -1853,29 +1585,29 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $jobsummary = $query->getJobSummary($user, $jobId);
 
-        $result = array();
+        $result = [];
 
         // Really this should be a recursive function!
         foreach ($jobsummary as $key => $val) {
             $name = "$key";
             if (is_array($val)) {
                 if (array_key_exists('avg', $val) && !is_array($val['avg'])) {
-                    $result[] = array_merge(array("name" => $name, "leaf" => true), $this->encodeFloatArray($val));
+                    $result[] = array_merge(["name" => $name, "leaf" => true], $this->encodeFloatArray($val));
                 } else {
-                    $l1data = array("name" => $name, "avg" => "", "expanded" => "true", "children" => array());
+                    $l1data = ["name" => $name, "avg" => "", "expanded" => "true", "children" => []];
                     foreach ($val as $subkey => $subval) {
                         $subName = "$subkey";
                         if (is_array($subval)) {
                             if (array_key_exists('avg', $subval) && !is_array($subval['avg'])) {
-                                $l1data['children'][] = array_merge(array("name" => $subName, "leaf" => true), $this->encodeFloatArray($subval));
+                                $l1data['children'][] = array_merge(["name" => $subName, "leaf" => true], $this->encodeFloatArray($subval));
                             } else {
-                                $l2data = array("name" => $subName, "avg" => "", "expanded" => "true", "children" => array());
+                                $l2data = ["name" => $subName, "avg" => "", "expanded" => "true", "children" => []];
 
                                 foreach ($subval as $subsubkey => $subsubval) {
                                     $subSubName = "$subsubkey";
                                     if (is_array($subsubval)) {
                                         if (array_key_exists('avg', $subsubval) && !is_array($subsubval['avg'])) {
-                                            $l2data['children'][] = array_merge(array("name" => $subSubName, "leaf" => true), $this->encodeFloatArray($subsubval));
+                                            $l2data['children'][] = array_merge(["name" => $subSubName, "leaf" => true], $this->encodeFloatArray($subsubval));
                                         }
                                     }
                                 }
@@ -1908,7 +1640,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $filename = tempnam(sys_get_temp_dir(), 'xdmod');
         $fp = fopen($filename, 'w');
 
-        $columns = array('Time');
+        $columns = ['Time'];
         $ndatapoints = 0;
         foreach ($data['series'] as $series) {
             if (isset($series['dtype'])) {
@@ -1921,13 +1653,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
         fputcsv($fp, $columns);
 
         for ($i = 0; $i < $ndatapoints; $i++) {
-            $outline = array();
+            $outline = [];
             foreach ($data['series'] as $series) {
                 if (isset($series['dtype'])) {
                     if (count($outline) === 0) {
-                        $outline[] = isset($series['data'][$i]['x']) ? $series['data'][$i]['x'] : $series['data'][$i][0];
+                        $outline[] = $series['data'][$i]['x'] ?? $series['data'][$i][0];
                     }
-                    $outline[] = isset($series['data'][$i]['y']) ? $series['data'][$i]['y'] : $series['data'][$i][1];
+                    $outline[] = $series['data'][$i]['y'] ?? $series['data'][$i][1];
                 }
             }
             fputcsv($fp, $outline);
@@ -1962,17 +1694,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $lineWidth = 1 + $settings['scale'];
 
-        $chartConfig = array(
-           'data' => $data,
-           'axisTickSize' => $axisLabelFontSize,
-           'axisTitleSize' => $axisTitleFontSize,
-           'lineWidth' => $lineWidth,
-           'chartTitleSize' => $mainTitleFontSize
-        );
+        $chartConfig = ['data' => $data, 'axisTickSize' => $axisLabelFontSize, 'axisTitleSize' => $axisTitleFontSize, 'lineWidth' => $lineWidth, 'chartTitleSize' => $mainTitleFontSize];
 
-        $globalConfig = array(
-            'timezone' => $data['schema']['timezone']
-        );
+        $globalConfig = ['timezone' => $data['schema']['timezone']];
 
         $chartImage = \xd_charting\exportHighchart($chartConfig, $settings['width'], $settings['height'], $settings['scale'], $type, $globalConfig, $settings['fileMetadata'], true);
         $chartFilename = $settings['fileMetadata']['title'] . '.' . $type;
@@ -1993,7 +1717,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $format = $this->getStringParam($request, 'format', false, 'json');
 
-        if (!in_array($format, array('json', 'png', 'svg', 'pdf', 'csv'))) {
+        if (!in_array($format, ['json', 'png', 'svg', 'pdf', 'csv'])) {
             throw new BadRequestHttpException('Unsupported format type.');
         }
 
@@ -2001,18 +1725,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             case 'png':
             case 'pdf':
             case 'svg':
-                $exportConfig = array(
-                    'width' => $this->getIntParam($request, 'width', false, 916),
-                    'height' => $this->getIntParam($request, 'height', false, 484),
-                    'scale' => floatval($this->getStringParam($request, 'scale', false, '1')),
-                    'font_size' => $this->getIntParam($request, 'font_size', false, 3),
-                    'show_title' => $this->getStringParam($request, 'show_title', false, 'y') === 'y' ? true : false,
-                    'fileMetadata' => array(
-                        'author' => $user->getFormalName(),
-                        'subject' => 'Timeseries data for ' . $results['schema']['source'],
-                        'title' => $results['schema']['description']
-                    )
-                );
+                $exportConfig = ['width' => $this->getIntParam($request, 'width', false, 916), 'height' => $this->getIntParam($request, 'height', false, 484), 'scale' => floatval($this->getStringParam($request, 'scale', false, '1')), 'font_size' => $this->getIntParam($request, 'font_size', false, 3), 'show_title' => $this->getStringParam($request, 'show_title', false, 'y') === 'y' ? true : false, 'fileMetadata' => ['author' => $user->getFormalName(), 'subject' => 'Timeseries data for ' . $results['schema']['source'], 'title' => $results['schema']['description']]];
                 $response = $this->chartImageResponse($results, $format, $exportConfig);
                 break;
             case 'csv':
@@ -2020,7 +1733,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 break;
             case 'json':
             default:
-                $response = $app->json(array("success" => true, "data" => array($results)));
+                $response = $app->json(["success" => true, "data" => [$results]]);
                 break;
         }
 
@@ -2033,8 +1746,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * confusion between this internal identifier and the job id provided
      * by the resource-manager).
      *
-     * @param Application $app
-     * @param \XDUser $user
      * @param string $realm
      * @param array $searchparams
      * @return \Symfony\Component\HttpFoundation\JsonResponse
@@ -2048,14 +1759,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         if (isset($searchparams['jobref']) && is_numeric($searchparams['jobref'])) {
-            $params = array(
-                'primary_key' => $searchparams['jobref']
-            );
+            $params = ['primary_key' => $searchparams['jobref']];
         } elseif (isset($searchparams['resource_id']) && isset($searchparams['local_job_id'])) {
-            $params = array(
-                'resource_id' => $searchparams['resource_id'],
-                'job_identifier' => $searchparams['local_job_id']
-            );
+            $params = ['resource_id' => $searchparams['resource_id'], 'job_identifier' => $searchparams['local_job_id']];
         } else {
             throw new BadRequestHttpException('invalid search parameters');
         }
@@ -2068,7 +1774,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $dataSet = new \DataWarehouse\Data\RawDataset($query, $user);
 
-        $results = array();
+        $results = [];
         foreach ($dataSet->getResults() as $result) {
             $result['text'] = $result['resource'] . "-" . $result['local_job_id'];
             $result['dtype'] = 'jobid';
@@ -2085,17 +1791,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         return $app->json(
-            array(
-                'success' => true,
-                "results" => $results,
-                "totalCount" => count($results)
-            )
+            ['success' => true, "results" => $results, "totalCount" => count($results)]
         );
     }
 
     private function getUserStore(\XDUser $user, $realm)
     {
-        $container = implode('-', array_filter(array(self::_HISTORY_STORE, strtoupper($realm))));
+        $container = implode('-', array_filter([self::_HISTORY_STORE, strtoupper($realm)]));
         return new \UserStorage($user, $container);
     }
 
@@ -2121,8 +1823,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * - fields: array containing the 'display' property of each field gotten.
      * - data: array of arrays containing the field values gotten.
      *
-     * @param Request $request
-     * @param Application $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws BadRequestHttpException if any of the required parameters are
      *                                 not included; if an invalid start date,
@@ -2166,8 +1866,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *         the 'datawarehouse' section of the portal_settings.ini
      *         configuration file.
      *
-     * @param Request $request
-     * @param Application $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws Exception if there is no setting for 'rest_raw_row_limit' in
      *                   the 'datawarehouse' section of portal_settings.ini.
@@ -2194,9 +1892,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     private function validateRawDataParams($request, $user)
     {
         $params = [];
-        list(
-            $params['start_date'], $params['end_date']
-        ) = $this->validateRawDataDateParams($request);
+        [$params['start_date'], $params['end_date']] = $this->validateRawDataDateParams($request);
         $params['realm'] = $this->getStringParam($request, 'realm', true);
         $queryDescripters = Acls::getQueryDescripters($user, $params['realm']);
         if (empty($queryDescripters)) {

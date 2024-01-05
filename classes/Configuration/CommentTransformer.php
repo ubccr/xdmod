@@ -16,7 +16,7 @@ use CCR\Loggable;
 
 class CommentTransformer extends Loggable implements iConfigFileKeyTransformer
 {
-    const COMMENT_PREFIX = '#';
+    public const COMMENT_PREFIX = '#';
 
     /* ------------------------------------------------------------------------------------------
      * @see iConfigFileKeyTransformer::__construct()

@@ -40,7 +40,7 @@ class Console
      *
      * @param string $message The message that will be displayed.
      */
-    public function displayMessage($msg)
+    public function displayMessage($msg): void
     {
         echo $msg, "\n";
     }
@@ -48,7 +48,7 @@ class Console
     /**
      * Display a blank line.
      */
-    public function displayBlankLine()
+    public function displayBlankLine(): void
     {
         $this->displayMessage('');
     }
@@ -56,7 +56,7 @@ class Console
     /**
      * Display a section header.
      */
-    public function displaySectionHeader($headerText)
+    public function displaySectionHeader($headerText): void
     {
         $this->clear();
         $this->displayMessage(str_repeat('=', 72));
@@ -70,10 +70,10 @@ class Console
      *
      * @param  array|string $lines One string or an array of strings to print.
      */
-    public function displayWarning($lines)
+    public function displayWarning($lines): void
     {
         if (!is_array($lines)) {
-            $lines = array($lines);
+            $lines = [$lines];
         }
 
         $this->displayMessage(str_repeat('!', 72));
@@ -89,7 +89,7 @@ class Console
     /**
      * Clear the terminal.
      */
-    public function clear()
+    public function clear(): void
     {
         system('clear');
     }
@@ -105,7 +105,7 @@ class Console
      *
      * @return string The user's response (or the default option).
      */
-    public function prompt($query, $default = '', array $options = array())
+    public function prompt($query, $default = '', array $options = [])
     {
         $prompt = $query;
 
@@ -116,13 +116,13 @@ class Console
 
             $lastChar = substr($prompt, -1, 1);
 
-            if (in_array($lastChar, array(':', '?'))) {
+            if (in_array($lastChar, [':', '?'])) {
                 $prompt = substr($prompt, 0, strlen($prompt) - 1);
             }
 
             $prompt .= ' (' . implode(', ', $options) . ')';
 
-            if (in_array($lastChar, array(':', '?'))) {
+            if (in_array($lastChar, [':', '?'])) {
                 $prompt .= $lastChar;
             }
         }
@@ -162,7 +162,7 @@ class Console
     public function promptBool($query, $default = true)
     {
         $defaultTxt = $default ? 'yes' : 'no';
-        $options = array('yes', 'no');
+        $options = ['yes', 'no'];
 
         return filter_var($this->prompt($query, $defaultTxt, $options), FILTER_VALIDATE_BOOLEAN);
     }

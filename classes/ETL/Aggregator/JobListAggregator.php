@@ -38,7 +38,7 @@ class JobListAggregator extends pdoAggregator implements iAction
     /* ------------------------------------------------------------------------------------------
      * Delete the old records from each destination table and its associated _job_list table
      */
-    protected function deleteAggregationPeriodData($aggregationUnit, $aggregationPeriodId, array $sqlRestrictions = array())
+    protected function deleteAggregationPeriodData($aggregationUnit, $aggregationPeriodId, array $sqlRestrictions = [])
     {
         $totalRowsDeleted = 0;
 

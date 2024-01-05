@@ -12,7 +12,6 @@ use DataWarehouse\Access\Usage;
 class XDReportManager
 {
 
-    private $_user = null;
     private $_user_id = null;
     private $_charts_per_page = 1;
     private $_report_name = null;
@@ -31,24 +30,20 @@ class XDReportManager
      *
      * @var array
      */
-    private static $_header_map = array(
-        'doc' => 'application/vnd.ms-word',
-        'pdf' => 'application/pdf',
-    );
+    private static $_header_map = ['doc' => 'application/vnd.ms-word', 'pdf' => 'application/pdf'];
 
-    const DEFAULT_FORMAT = 'pdf';
+    public const DEFAULT_FORMAT = 'pdf';
 
     /**
-     * @param XDUser $user
+     * @param XDUser $_user
      */
-    public function __construct($user)
+    public function __construct(private $_user)
     {
         $this->_pdo = DB::factory('database');
-        $this->_user = $user;
-        $this->_user_id         = $user->getUserID();
+        $this->_user_id         = $_user->getUserID();
     }
 
-    public function emptyCache()
+    public function emptyCache(): void
     {
         $this->_pdo->execute(
             '
@@ -56,7 +51,7 @@ class XDReportManager
                 SET image_data = NULL
                 WHERE user_id = :user_id
             ',
-            array('user_id' => $this->_user_id)
+            ['user_id' => $this->_user_id]
         );
     }
 
@@ -80,16 +75,13 @@ class XDReportManager
                 FROM moddb.Reports
                 WHERE schedule = :schedule
             ',
-            array('schedule' => $schedule_frequency)
+            ['schedule' => $schedule_frequency]
         );
 
-        $scheduled_reports = array();
+        $scheduled_reports = [];
 
         foreach ($results as $report_data) {
-            $scheduled_reports[] = array(
-                'user_id'   => $report_data['user_id'],
-                'report_id' => $report_data['report_id'],
-            );
+            $scheduled_reports[] = ['user_id'   => $report_data['user_id'], 'report_id' => $report_data['report_id']];
         }
 
         return $scheduled_reports;
@@ -105,7 +97,7 @@ class XDReportManager
         $charts_per_page,
         $report_schedule,
         $report_delivery
-    ) {
+    ): void {
         $this->_report_id = $report_id;
         $this->_report_name = $report_name;
         $this->_report_title = $report_title;
@@ -117,7 +109,7 @@ class XDReportManager
         $this->_report_delivery = $report_delivery;
     }
 
-    public function saveThisReport()
+    public function saveThisReport(): void
     {
         if (!isset($this->_report_id)) {
             throw new \Exception(
@@ -138,17 +130,7 @@ class XDReportManager
                 delivery        = :delivery
             WHERE report_id = :report_id
             ",
-            array(
-                'report_name'     => $this->_report_name,
-                'report_title'    => $this->_report_title,
-                'report_header'   => $this->_report_header,
-                'report_footer'   => $this->_report_footer,
-                'charts_per_page' => $this->_charts_per_page,
-                'format'          => $this->_report_format,
-                'schedule'        => $this->_report_schedule,
-                'delivery'        => $this->_report_delivery,
-                'report_id'       => $this->_report_id,
-            )
+            ['report_name'     => $this->_report_name, 'report_title'    => $this->_report_title, 'report_header'   => $this->_report_header, 'report_footer'   => $this->_report_footer, 'charts_per_page' => $this->_charts_per_page, 'format'          => $this->_report_format, 'schedule'        => $this->_report_schedule, 'delivery'        => $this->_report_delivery, 'report_id'       => $this->_report_id]
         );
     }
 
@@ -171,17 +153,17 @@ class XDReportManager
 
     public function getPreviewData($report_id, $token, $charts_per_page)
     {
-        $report_data = $this->loadReportData($report_id, false);
+        $report_data = $this->loadReportData($report_id);
 
-        $rData = array();
-        $chartSlot = array();
+        $rData = [];
+        $chartSlot = [];
 
         $chartCount = 0;
 
         foreach ($report_data['queue'] as $report_chart) {
             $suffix = ($chartCount++ % $charts_per_page);
             if (strtolower($report_chart['timeframe_type']) == 'user defined') {
-                list($start_date, $end_date)
+                [$start_date, $end_date]
                     = explode(' to ', $report_chart['chart_date_description']);
             }
             else {
@@ -219,23 +201,15 @@ class XDReportManager
                 $report_chart['chart_drill_details'] = ORGANIZATION_NAME_ABBREV;
             }
 
-            $chartSlot[$suffix] = array(
-                'report_title'                   => (count($rData) == 0 && !empty($report_data['general']['title'])) ? $this->fontWrapper($report_data['general']['title'], 22) . '<br />' : '',
-                'header_text'                    => $this->fontWrapper($report_data['general']['header'], 12),
-                'footer_text'                    => $this->fontWrapper($report_data['general']['footer'], 12),
-                'chart_title_' . $suffix         => $this->fontWrapper($report_chart['chart_title'], 16),
-                'chart_drill_details_' . $suffix => $this->fontWrapper($report_chart['chart_drill_details'], 12),
-                'chart_timeframe_' . $suffix     => $this->fontWrapper($report_chart['chart_date_description'], 14),
-                'chart_id_' . $suffix            => '/report_image_renderer.php?type=report&ref=' . $report_id . ';' . $report_chart['ordering']
-            );
+            $chartSlot[$suffix] = ['report_title'                   => (count($rData) == 0 && !empty($report_data['general']['title'])) ? $this->fontWrapper($report_data['general']['title'], 22) . '<br />' : '', 'header_text'                    => $this->fontWrapper($report_data['general']['header'], 12), 'footer_text'                    => $this->fontWrapper($report_data['general']['footer'], 12), 'chart_title_' . $suffix         => $this->fontWrapper($report_chart['chart_title'], 16), 'chart_drill_details_' . $suffix => $this->fontWrapper($report_chart['chart_drill_details'], 12), 'chart_timeframe_' . $suffix     => $this->fontWrapper($report_chart['chart_date_description'], 14), 'chart_id_' . $suffix            => '/report_image_renderer.php?type=report&ref=' . $report_id . ';' . $report_chart['ordering']];
 
             if (count($chartSlot) == $charts_per_page) {
-                $combinedSlots = array();
+                $combinedSlots = [];
                 foreach ($chartSlot as $e) {
                     $combinedSlots += $e;
                 }
                 $rData[] = $combinedSlots;
-                $chartSlot = array();
+                $chartSlot = [];
             }
         }
 
@@ -243,19 +217,14 @@ class XDReportManager
 
             // Handle remainder of charts...
 
-            $combinedSlots = array();
+            $combinedSlots = [];
 
             foreach ($chartSlot as $e) {
                 $combinedSlots += $e;
             }
 
             for ($i = count($chartSlot); $i < $charts_per_page; $i++) {
-                $combinedSlots += array(
-                    'chart_title_' . $i         => '',
-                    'chart_drill_details_' . $i => '',
-                    'chart_timeframe_' . $i     => '',
-                    'chart_id_' . $i            => 'img_placeholder.php?'
-                );
+                $combinedSlots += ['chart_title_' . $i         => '', 'chart_drill_details_' . $i => '', 'chart_timeframe_' . $i     => '', 'chart_id_' . $i            => 'img_placeholder.php?'];
             }
 
             $rData[] = $combinedSlots;
@@ -264,7 +233,7 @@ class XDReportManager
         return $rData;
     }
 
-    public function insertThisReport($report_derivation_method = 'Manual')
+    public function insertThisReport($report_derivation_method = 'Manual'): void
     {
         if (!isset($this->_report_id)) {
             throw new \Exception(
@@ -302,20 +271,7 @@ class XDReportManager
                     :charts_per_page
                 )
             ",
-            array(
-                'report_id'       => $this->_report_id,
-                'user_id'         => $this->_user_id,
-                'report_name'     => $this->_report_name,
-                'derived_from'    => $report_derivation_method,
-                'report_title'    => $this->_report_title,
-                'report_header'   => $this->_report_header,
-                'report_footer'   => $this->_report_footer,
-                'report_format'   => $this->_report_format,
-                'report_schedule' => $this->_report_schedule,
-                'report_delivery' => $this->_report_delivery,
-                'selected'        => 0,
-                'charts_per_page' => $this->_charts_per_page
-            )
+            ['report_id'       => $this->_report_id, 'user_id'         => $this->_user_id, 'report_name'     => $this->_report_name, 'derived_from'    => $report_derivation_method, 'report_title'    => $this->_report_title, 'report_header'   => $this->_report_header, 'report_footer'   => $this->_report_footer, 'report_format'   => $this->_report_format, 'report_schedule' => $this->_report_schedule, 'report_delivery' => $this->_report_delivery, 'selected'        => 0, 'charts_per_page' => $this->_charts_per_page]
         );
     }
 
@@ -323,7 +279,7 @@ class XDReportManager
     {
         $pdo = DB::factory('database');
 
-        $values = array();
+        $values = [];
 
         // If the existing $base_name has a numerical suffix, consider
         // that value when generating the new suffix.
@@ -343,10 +299,7 @@ class XDReportManager
                 WHERE user_id = :user_id
                     AND name LIKE :base_name
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'base_name' => "$base_name%"
-            )
+            ['user_id'   => $this->_user_id, 'base_name' => "$base_name%"]
         );
 
         foreach ($results as $report_data) {
@@ -374,17 +327,13 @@ class XDReportManager
                     AND report_id != :report_id
                     AND name LIKE :report_name
             ",
-            array(
-                'user_id'     => $this->_user_id,
-                'report_id'   => $report_id,
-                'report_name' => $report_name,
-            )
+            ['user_id'     => $this->_user_id, 'report_id'   => $report_id, 'report_name' => $report_name]
         );
 
         return (count($results) == 0);
     }
 
-    public function emptyQueue()
+    public function emptyQueue(): void
     {
         $this->_pdo->execute(
             "DELETE FROM ChartPool WHERE user_id='{$this->_user_id}'"
@@ -423,10 +372,10 @@ class XDReportManager
 
         $results = $this->_pdo->query(
             $query,
-            array('user_id' => $this->_user_id)
+            ['user_id' => $this->_user_id]
         );
 
-        $chartEntries = array();
+        $chartEntries = [];
 
         foreach ($results as $entry) {
             $timeframe_type = $this->getParameterIn(
@@ -442,15 +391,7 @@ class XDReportManager
                 . $entry['insertion_rank']
                 . '&token=';
 
-            $chartEntries[] = array(
-                'chart_id'               => $entry['chart_id'],
-                'thumbnail_link'         => $thumbnail_link,
-                'chart_title'            => $entry['chart_title'],
-                'chart_drill_details'    => $entry['chart_drill_details'],
-                'chart_date_description' => $entry['chart_date_description'],
-                'type'                   => $entry['type'],
-                'timeframe_type'         => $timeframe_type
-            );
+            $chartEntries[] = ['chart_id'               => $entry['chart_id'], 'thumbnail_link'         => $thumbnail_link, 'chart_title'            => $entry['chart_title'], 'chart_drill_details'    => $entry['chart_drill_details'], 'chart_date_description' => $entry['chart_date_description'], 'type'                   => $entry['type'], 'timeframe_type'         => $timeframe_type];
         }
 
         return $chartEntries;
@@ -485,26 +426,15 @@ class XDReportManager
                 r.last_modified
         ";
 
-        $Entries = array();
+        $Entries = [];
 
         $results = $this->_pdo->query(
             $query,
-            array('user_id' => $this->_user_id)
+            ['user_id' => $this->_user_id]
         );
 
         foreach ($results as $entry) {
-            $Entries[] = array(
-                'report_id'       => $entry['report_id'],
-                'report_name'     => $entry['name'],
-                'creation_method' => $entry['derived_from'],
-                'report_title'    => $entry['title'],
-                'charts_per_page' => $entry['charts_per_page'],
-                'report_format'   => $entry['format'],
-                'report_schedule' => $entry['schedule'],
-                'report_delivery' => $entry['delivery'],
-                'chart_count'     => $entry['chart_count'],
-                'last_modified'   => $entry['last_modified']
-            );
+            $Entries[] = ['report_id'       => $entry['report_id'], 'report_name'     => $entry['name'], 'creation_method' => $entry['derived_from'], 'report_title'    => $entry['title'], 'charts_per_page' => $entry['charts_per_page'], 'report_format'   => $entry['format'], 'report_schedule' => $entry['schedule'], 'report_delivery' => $entry['delivery'], 'chart_count'     => $entry['chart_count'], 'last_modified'   => $entry['last_modified']];
         }
 
         return $Entries;
@@ -512,11 +442,11 @@ class XDReportManager
 
     private function generateUID()
     {
-        list($usec, $sec) = explode(" ", microtime());
+        [$usec, $sec] = explode(" ", microtime());
         return ((float)$usec + (float)$sec);
     }
 
-    public function flushReportImageCache()
+    public function flushReportImageCache(): void
     {
         $cache_dir = sys_get_temp_dir() . '/';
 
@@ -543,7 +473,7 @@ class XDReportManager
 
     public function loadReportData($report_id)
     {
-        $return_data = array();
+        $return_data = [];
 
         $query = "
             SELECT
@@ -560,14 +490,11 @@ class XDReportManager
                 AND report_id = :report_id
         ";
 
-        $return_data['general'] = array();
+        $return_data['general'] = [];
 
         $results = $this->_pdo->query(
             $query,
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         if (count($results) == 0) {
@@ -602,18 +529,15 @@ class XDReportManager
             ORDER BY ordering ASC
         ";
 
-        $return_data['queue'] = array();
+        $return_data['queue'] = [];
 
         $results = $this->_pdo->query(
             $query,
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         foreach ($results as $entry) {
-            $chart_data = array();
+            $chart_data = [];
 
             $chart_data['chart_id'] = $entry['chart_id'];
 
@@ -662,16 +586,13 @@ class XDReportManager
 
         $results = $this->_pdo->query(
             $query,
-            array(
-                'report_id' => $report_id,
-                'user_id'   => $this->_user_id,
-            )
+            ['report_id' => $report_id, 'user_id'   => $this->_user_id]
         );
 
-        $report_data = array();
+        $report_data = [];
 
         foreach ($results as $entry) {
-            $chart_data = array();
+            $chart_data = [];
 
             $chart_data['order']          = $entry['ordering'];
             $chart_data['title']          = $entry['chart_title'];
@@ -685,7 +606,7 @@ class XDReportManager
         return $report_data;
     }
 
-    private function createElement(&$dom, &$node, $elementText, $text)
+    private function createElement(&$dom, &$node, $elementText, $text): void
     {
         $elementNode = $dom->createElement($elementText);
         $node->appendChild($elementNode);
@@ -694,21 +615,18 @@ class XDReportManager
         $elementNode->appendChild($textNode);
     }
 
-    public function removeReportbyID($report_id)
+    public function removeReportbyID($report_id): void
     {
         $this->_pdo->execute(
             "
                 DELETE FROM Reports
                 WHERE user_id = :user_id AND report_id = :report_id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
     }
 
-    public function buildBlobMap($report_id, &$map)
+    public function buildBlobMap($report_id, &$map): void
     {
         $query = "
             SELECT chart_id, image_data
@@ -718,10 +636,7 @@ class XDReportManager
 
         $map = $this->_pdo->query(
             $query,
-            array(
-                'report_id' => $report_id,
-                'user_id'   => $this->_user_id,
-            )
+            ['report_id' => $report_id, 'user_id'   => $this->_user_id]
         );
     }
 
@@ -736,21 +651,18 @@ class XDReportManager
         return null;
     }
 
-    public function removeReportCharts($report_id)
+    public function removeReportCharts($report_id): void
     {
         $this->_pdo->execute(
             "
                 DELETE FROM ReportCharts
                 WHERE user_id = :user_id AND report_id = :report_id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
     }
 
-    public function syncDatesBetweenIDAndBlobs($report_id)
+    public function syncDatesBetweenIDAndBlobs($report_id): void
     {
         $query = "
             SELECT
@@ -761,14 +673,14 @@ class XDReportManager
             WHERE report_id = :report_id
         ";
 
-        $result = $this->_pdo->query($query, array('report_id' => $report_id));
+        $result = $this->_pdo->query($query, ['report_id' => $report_id]);
 
         foreach ($result as $r) {
             if (is_null($r['blob_timestamp'])) {
                 continue;
             }
 
-            list($blob_start, $blob_end) = explode(',', $r['blob_timestamp']);
+            [$blob_start, $blob_end] = explode(',', $r['blob_timestamp']);
 
             print "order: " . $r['ordering'] . "\n";
             print "blob start: $blob_start\n";
@@ -797,8 +709,8 @@ class XDReportManager
         $position_in_report,
         $timeframe_type,
         $entry_type,
-        &$map = array()
-    ) {
+        &$map = []
+    ): void {
         $this->_pdo->execute(
             "
                 INSERT INTO ReportCharts (
@@ -829,34 +741,18 @@ class XDReportManager
                     :selected
                 )
             ",
-            array(
-                'chart_id'               => $chart_id,
-                'report_id'              => $report_id,
-                'user_id'                => $this->_user_id,
-                'chart_title'            => $chart_title,
-                'chart_drill_details'    => $chart_drill_details,
-                'chart_type'             => '',
-                'chart_date_description' => $chart_date_description,
-                'ordering'               => $position_in_report,
-                'timeframe_type'         => $timeframe_type,
-                'image_data'             => $this->resolveBlobFromChartId($map, $chart_id),
-                'type'                   => $entry_type,
-                'selected'               => 0,
-            )
+            ['chart_id'               => $chart_id, 'report_id'              => $report_id, 'user_id'                => $this->_user_id, 'chart_title'            => $chart_title, 'chart_drill_details'    => $chart_drill_details, 'chart_type'             => '', 'chart_date_description' => $chart_date_description, 'ordering'               => $position_in_report, 'timeframe_type'         => $timeframe_type, 'image_data'             => $this->resolveBlobFromChartId($map, $chart_id), 'type'                   => $entry_type, 'selected'               => 0]
         );
     }
 
-    public function removeChartFromChartPoolByID($chart_id)
+    public function removeChartFromChartPoolByID($chart_id): void
     {
         $this->_pdo->execute(
             "
                 DELETE FROM ChartPool
                 WHERE chart_id = :chart_id AND user_id = :user_id
             ",
-            array(
-                'chart_id' => $chart_id,
-                'user_id'  => $this->_user_id,
-            )
+            ['chart_id' => $chart_id, 'user_id'  => $this->_user_id]
         );
     }
 
@@ -871,10 +767,7 @@ class XDReportManager
                     AND r.report_id = :report_id
                     AND r.user_id = u.id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         return $results[0]['first_name'] . " " . $results[0]['last_name'];
@@ -891,10 +784,7 @@ class XDReportManager
                     AND r.report_id = :report_id
                     AND r.user_id = u.id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         return $results[0]['first_name'];
@@ -911,10 +801,7 @@ class XDReportManager
                     AND r.report_id = :report_id
                     AND r.user_id = u.id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         return $results[0]['last_name'];
@@ -931,10 +818,7 @@ class XDReportManager
                     AND r.report_id = :report_id
                     AND r.user_id = u.id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         return $results[0]['email_address'];
@@ -948,10 +832,7 @@ class XDReportManager
                 FROM Reports
                 WHERE user_id = :user_id AND report_id = :report_id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         return $results[0]['format'];
@@ -965,10 +846,7 @@ class XDReportManager
                 FROM Reports
                 WHERE user_id = :user_id AND report_id = :report_id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         return ($sanitize == false)
@@ -984,10 +862,7 @@ class XDReportManager
                 FROM Reports
                 WHERE user_id = :user_id AND report_id = :report_id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         return $results[0]['header'];
@@ -1001,10 +876,7 @@ class XDReportManager
                 FROM Reports
                 WHERE user_id = :user_id AND report_id = :report_id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         return $results[0]['footer'];
@@ -1018,10 +890,7 @@ class XDReportManager
                 FROM Reports
                 WHERE user_id = :user_id AND report_id = :report_id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         return $results[0]['title'];
@@ -1035,10 +904,7 @@ class XDReportManager
                 FROM Reports
                 WHERE user_id = :user_id AND report_id = :report_id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         return $results[0]['derived_from'];
@@ -1052,10 +918,7 @@ class XDReportManager
                 FROM Reports
                 WHERE user_id = :user_id AND report_id = :report_id
             ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
+            ['user_id'   => $this->_user_id, 'report_id' => $report_id]
         );
 
         return $results[0]['charts_per_page'];
@@ -1127,7 +990,7 @@ class XDReportManager
         }
     }
 
-    private function ripTransform(&$arr, $item)
+    private function ripTransform(&$arr, $item): void
     {
         if (is_array($arr) && isset($arr[$item])) {
             unset($arr[$item]);
@@ -1221,10 +1084,7 @@ class XDReportManager
                         WHERE user_id = :user_id
                             AND insertion_rank = :insertion_rank
                     ",
-                    array(
-                        'user_id' => $this->_user_id,
-                        'insertion_rank' => $insertion_rank
-                    )
+                    ['user_id' => $this->_user_id, 'insertion_rank' => $insertion_rank]
                 );
 
                 $trace = "user_id = {$this->_user_id},"
@@ -1260,10 +1120,7 @@ class XDReportManager
                         FROM ReportCharts
                         WHERE report_id = :report_id AND ordering = :ordering
                     ",
-                    array(
-                        'report_id' => $insertion_rank['report_id'],
-                        'ordering'  => $insertion_rank['ordering'],
-                    )
+                    ['report_id' => $insertion_rank['report_id'], 'ordering'  => $insertion_rank['ordering']]
                 );
 
                 $trace = "report_id = {$insertion_rank['report_id']},"
@@ -1284,7 +1141,7 @@ class XDReportManager
         $active_end   = $this->getParameterIn('end_date', $chart_id);
 
         if (isset($iq[0]['chart_date_description'])) {
-            list($active_start, $active_end)
+            [$active_start, $active_end]
                 = explode(' to ', $iq[0]['chart_date_description']);
         }
 
@@ -1337,7 +1194,7 @@ class XDReportManager
             // refreshed.
 
             $blob_elements = explode(';', $image_data, 2);
-            list($blob_start, $blob_end) = explode(',', $blob_elements[0]);
+            [$blob_start, $blob_end] = explode(',', $blob_elements[0]);
 
             if (($blob_start == $start_date) && ($blob_end == $end_date)) {
                 $image_data_header = substr($blob_elements[1], 0, 8);
@@ -1374,30 +1231,16 @@ class XDReportManager
     private function getChartData($chart_id, $overrides)
     {
         $arg_set = explode("&", $chart_id);
-        $query_params = array();
+        $query_params = [];
 
         foreach ($arg_set as $a) {
-            list($arg_name, $arg_value) = explode('=', $a, 2);
+            [$arg_name, $arg_value] = explode('=', $a, 2);
             $query_params[$arg_name] = $arg_value;
         }
 
         $callargs = array_merge($query_params, $overrides);
 
-        $supportedControllers = array(
-            'metric_explorer' => array(
-                'class' => '\DataWarehouse\Access\MetricExplorer',
-                'function' => 'get_data' ),
-            'usage_explorer' => array(
-                'class' => '\DataWarehouse\Access\MetricExplorer',
-                'function' => 'get_data' ),
-            'data_explorer' => array(
-                'class' => '\DataWarehouse\Access\DataExplorer',
-                'function' => 'get_ak_plot'),
-            'custom_query' => array(
-                'class' => '\DataWarehouse\Access\CustomQuery',
-                'function' => 'get_data'
-            )
-        );
+        $supportedControllers = ['metric_explorer' => ['class' => \DataWarehouse\Access\MetricExplorer::class, 'function' => 'get_data'], 'usage_explorer' => ['class' => \DataWarehouse\Access\MetricExplorer::class, 'function' => 'get_data'], 'data_explorer' => ['class' => '\DataWarehouse\Access\DataExplorer', 'function' => 'get_ak_plot'], 'custom_query' => ['class' => '\DataWarehouse\Access\CustomQuery', 'function' => 'get_data']];
 
         if( isset($query_params['controller_module']) && isset($query_params['operation']) )
         {
@@ -1450,11 +1293,11 @@ class XDReportManager
                 );
                 $temp_file = str_replace('.png', '.xrc', $temp_file);
 
-                $iq = array();
+                $iq = [];
 
                 if (file_exists($temp_file) == true) {
                     $chart_id_config = file($temp_file);
-                    $iq[] = array('chart_id' => $chart_id_config[0]);
+                    $iq[] = ['chart_id' => $chart_id_config[0]];
                 }
                 else {
                     return $this->generateChartBlob(
@@ -1474,10 +1317,7 @@ class XDReportManager
                         WHERE user_id = :user_id
                             AND insertion_rank = :insertion_rank
                     ",
-                    array(
-                        'user_id'        => $this->_user_id,
-                        'insertion_rank' => $insertion_rank,
-                    )
+                    ['user_id'        => $this->_user_id, 'insertion_rank' => $insertion_rank]
                 );
                 break;
 
@@ -1490,10 +1330,7 @@ class XDReportManager
                         WHERE report_id = :report_id
                             AND ordering = :ordering
                     ",
-                    array(
-                        'report_id' => $insertion_rank['report_id'],
-                        'ordering'  => $insertion_rank['ordering'],
-                    )
+                    ['report_id' => $insertion_rank['report_id'], 'ordering'  => $insertion_rank['ordering']]
                 );
                 break;
         }
@@ -1504,23 +1341,7 @@ class XDReportManager
 
         $chart_id = $iq[0]['chart_id'];
 
-        $chartoverrides = array(
-            "render_for_report" => "y",
-            "start_date" => "$start_date",
-            "end_date" => "$end_date",
-            "format" => 'png_inline',
-            "scale" => 1,
-            "width" => 800,
-            "height" => 600,
-            "show_title" => 'n',
-            "title" => '',
-            "subtitle" => '',
-            "show_filters" => false,
-            "font_size" => 3,
-            "show_guide_lines" => 'y',
-            "show_gradient" => 'n',
-            "format" => 'png_inline'
-        );
+        $chartoverrides = ["render_for_report" => "y", "start_date" => "$start_date", "end_date" => "$end_date", "format" => 'png_inline', "scale" => 1, "width" => 800, "height" => 600, "show_title" => 'n', "title" => '', "subtitle" => '', "show_filters" => false, "font_size" => 3, "show_guide_lines" => 'y', "show_gradient" => 'n', "format" => 'png_inline'];
 
         $raw_png_data = $this->getChartData($chart_id, $chartoverrides);
 
@@ -1533,12 +1354,8 @@ class XDReportManager
                         WHERE user_id = :user_id
                             AND insertion_rank = :insertion_rank
                     ",
-                    array(
-                        'user_id'        => $this->_user_id,
-                        'insertion_rank' => $insertion_rank,
-                        'image_data'     => "$start_date,$end_date;"
-                                            . $raw_png_data
-                    )
+                    ['user_id'        => $this->_user_id, 'insertion_rank' => $insertion_rank, 'image_data'     => "$start_date,$end_date;"
+                                        . $raw_png_data]
                 );
                 break;
 
@@ -1555,12 +1372,8 @@ class XDReportManager
                         WHERE report_id = :report_id
                             AND ordering = :ordering
                     ",
-                    array(
-                        'report_id'  => $insertion_rank['report_id'],
-                        'ordering'   => $insertion_rank['ordering'],
-                        'image_data' => "$start_date,$end_date;"
-                                        . $raw_png_data
-                    )
+                    ['report_id'  => $insertion_rank['report_id'], 'ordering'   => $insertion_rank['ordering'], 'image_data' => "$start_date,$end_date;"
+                                    . $raw_png_data]
                 );
                 break;
         }
@@ -1607,17 +1420,14 @@ class XDReportManager
             exec('HOME=' . $template_path . ' libreoffice --headless --convert-to pdf ' . $template_path . '/' .  $report_id . '.doc --outdir ' . $template_path);
         }
 
-        return array(
-            'template_path' => $template_path,
-            'report_file'   => $report_output_file,
-        );
+        return ['template_path' => $template_path, 'report_file'   => $report_output_file];
     }
 
     public function mailReport(
         $report_id,
         $report_file,
         $frequency = '',
-        $additional_config = array()
+        $additional_config = []
     ) {
 
         $frequency = (!empty($frequency)) ? ' '.$frequency : $frequency;
@@ -1661,19 +1471,7 @@ class XDReportManager
                         . '.' . $report_format;
             }
 
-            $properties = array(
-                'recipient_name'       => $report_owner,
-                'maintainer_signature' => MailWrapper::getMaintainerSignature(),
-                'toAddress'            => $destination_email_address,
-                'attachment' => array(
-                    array('fileName'             => $report_file,
-                          'attachment_file_name' => $attachment_file_name,
-                          'encoding'             => 'base64',
-                          'type'                 => self::$_header_map[$report_format],
-                          'disposition'          => 'inline'
-                    )
-                )
-            );
+            $properties = ['recipient_name'       => $report_owner, 'maintainer_signature' => MailWrapper::getMaintainerSignature(), 'toAddress'            => $destination_email_address, 'attachment' => [['fileName'             => $report_file, 'attachment_file_name' => $attachment_file_name, 'encoding'             => 'base64', 'type'                 => self::$_header_map[$report_format], 'disposition'          => 'inline']]];
 
             if($templateType === 'custom_report') {
                 $properties['frequency'] = $frequency;
@@ -1686,7 +1484,7 @@ class XDReportManager
 
             MailWrapper::sendTemplate($templateType, $properties);
         }
-        catch (\Exception $e) {
+        catch (\Exception) {
             return false;
         }
 
@@ -1701,14 +1499,14 @@ class XDReportManager
      */
     private function gatherReportSettings($report_id)
     {
-        $settings = array();
+        $settings = [];
 
         $settings['header'] = $this->getReportHeader($report_id);
         $settings['footer'] = $this->getReportFooter($report_id);
         $settings['title'] = $this->getReportTitle($report_id);
         $settings['charts_per_page'] = (int) $this->getReportChartsPerPage($report_id);
 
-        $settings['charts'] = array();
+        $settings['charts'] = [];
 
         foreach ($this->fetchReportData($report_id) as $entry) {
 
@@ -1719,7 +1517,7 @@ class XDReportManager
             }
 
             if (strtolower($entry['timeframe_type']) == 'user defined') {
-                list($start_date, $end_date)
+                [$start_date, $end_date]
                     = explode(' to ', $entry['comments']);
             }
             else {
@@ -1730,7 +1528,7 @@ class XDReportManager
             }
 
             $chart['comments'] = $start_date . ' to ' . $end_date;
-            $chart['imagedata'] = $this->fetchChartBlob("report", array("report_id" => $report_id, "ordering" => $entry['order'] ) );
+            $chart['imagedata'] = $this->fetchChartBlob("report", ["report_id" => $report_id, "ordering" => $entry['order']] );
             $settings['charts'][] = $chart;
         }
 
@@ -1743,16 +1541,14 @@ class XDReportManager
      * @param templateName string an optional filter to only return templates that match the name
      */
     public static function enumerateReportTemplates(
-        $acls = array(),
+        $acls = [],
         $templateName = null
     ) {
         $pdo = DB::factory('database');
         $aclNames = implode(
             ',',
             array_map(
-                function ($value) use ($pdo) {
-                    return $pdo->quote($value);
-                },
+                fn($value) => $pdo->quote($value),
                 $acls
             )
         );
@@ -1768,7 +1564,7 @@ class XDReportManager
             JOIN acls a                   ON rta.acl_id = a.acl_id
         WHERE a.name IN ($aclNames)
 SQL;
-        $queryparams = array();
+        $queryparams = [];
         if ($templateName !== null) {
             $query .= " AND rt.`name` = ?";
             $queryparams[] = $templateName;
@@ -1800,7 +1596,7 @@ SQL;
                 FROM ReportTemplates
                 WHERE id = :id
             ',
-            array('id' => $template_id)
+            ['id' => $template_id]
         );
 
         if (count($results) == 0) {
@@ -1812,7 +1608,7 @@ SQL;
         $templateClass = '\\ReportTemplates\\' . $results[0]['template'];
 
         $template_definition_file
-            = dirname(__FILE__)
+            = __DIR__
             . '/ReportTemplates/'
             . $results[0]['template'] . '.php';
 
@@ -1822,7 +1618,7 @@ SQL;
             );
         }
 
-        $r = array('general' => $results[0]);
+        $r = ['general' => $results[0]];
 
         $r['charts'] = $pdo->query(
             '
@@ -1837,7 +1633,7 @@ SQL;
                 WHERE template_id = :id
                 ORDER BY ordering ASC
             ',
-            array('id' => $template_id)
+            ['id' => $template_id]
         );
 
         return new $templateClass($user, $r);

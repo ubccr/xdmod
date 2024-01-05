@@ -26,7 +26,7 @@ use Psr\Log\LoggerInterface;
 class ManageTables extends aRdbmsDestinationAction implements iAction
 {
     // List of ETL Table objects generated from the definition files
-    private $etlTableDefinitions = array();
+    private $etlTableDefinitions = [];
 
     /* ------------------------------------------------------------------------------------------
      * @see aAction::__construct()
@@ -40,7 +40,7 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
 
         $this->setLogger($logger);
 
-        $requiredKeys = array("definition_file_list");
+        $requiredKeys = ["definition_file_list"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
         if ( ! $options instanceof MaintenanceOptions ) {
@@ -70,7 +70,7 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
     public function initialize(EtlOverseerOptions $etlOverseerOptions = null)
     {
         if ( $this->isInitialized() ) {
-            return;
+            return true;
         }
 
         parent::initialize($etlOverseerOptions);
@@ -128,7 +128,7 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function execute(EtlOverseerOptions $etlOverseerOptions)
+    public function execute(EtlOverseerOptions $etlOverseerOptions): void
     {
         $time_start = microtime(true);
         $this->initialize($etlOverseerOptions);
@@ -156,10 +156,6 @@ class ManageTables extends aRdbmsDestinationAction implements iAction
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->logger->notice(array('action'       => (string) $this,
-                                    'start_time'   => $time_start,
-                                    'end_time'     => $time_end,
-                                    'elapsed_time' => round($time, 5)
-                                  ));
+        $this->logger->notice(['action'       => (string) $this, 'start_time'   => $time_start, 'end_time'     => $time_end, 'elapsed_time' => round($time, 5)]);
     }  // execute()
 }  // class ManageTables

@@ -52,7 +52,7 @@ class Maintenance
         // If the class name does not include a namespace designation, use the namespace from the
         // ingestor configuration or the default namespace if not specified.
 
-        if ( false === strstr($className, '\\') ) {
+        if ( !str_contains($className, '\\') ) {
             if ( $options->namespace ) {
                 $className = $options->namespace .
                     ( strpos($options->namespace, '\\') != strlen($options->namespace) - 1 ? "\\" : "" ) .
@@ -65,7 +65,7 @@ class Maintenance
         if ( class_exists($className) ) {
             $action = new $className($options, $etlConfig, $logger);
         } else {
-            $msg = __CLASS__ . ": Error creating action '{$options->name}', class '$className' not found";
+            $msg = self::class . ": Error creating action '{$options->name}', class '$className' not found";
             if ( null !== $logger ) {
                 $logger->err($msg);
             }
@@ -73,7 +73,7 @@ class Maintenance
         }
 
         if ( ! $action instanceof iAction ) {
-            $msg = __CLASS__ . ": $className does not implenment interface iAction";
+            $msg = self::class . ": $className does not implenment interface iAction";
             if ( null !== $logger ) {
                 $logger->err($msg);
             }

@@ -203,7 +203,7 @@ require_once 'user_check.php';
     // Convert array values to boolean
     array_walk(
         $features,
-        function (&$v) {
+        function (&$v): void {
             $v = ($v == 'on');
         }
     );

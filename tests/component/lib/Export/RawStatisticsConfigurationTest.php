@@ -5,14 +5,14 @@ namespace ComponentTests\Export;
 use CCR\Json;
 use DataWarehouse\Data\RawStatisticsConfiguration;
 use Exception;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 
 /**
  * Test data warehouse export raw statistics configuration.
  *
  * @coversDefaultClass \DataWarehouse\Data\RawStatisticsConfiguration
  */
-class RawStatisticsConfigurationTest extends PHPUnit_Framework_TestCase
+class RawStatisticsConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var array Realms used for testing.
@@ -42,14 +42,12 @@ class RawStatisticsConfigurationTest extends PHPUnit_Framework_TestCase
      * Store enabled batch export realm names before adding new test
      * configuration files and then add test configuration files.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
         static::$realmNames = array_map(
-            function ($realm) {
-                return $realm['name'];
-            },
+            fn($realm) => $realm['name'],
             RawStatisticsConfiguration::factory()->getBatchExportRealms()
         );
 
@@ -79,7 +77,7 @@ class RawStatisticsConfigurationTest extends PHPUnit_Framework_TestCase
     /**
      * Remove test configuration files.
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();
 
@@ -103,13 +101,11 @@ class RawStatisticsConfigurationTest extends PHPUnit_Framework_TestCase
      * @runInSeparateProcess
      * @covers ::getBatchExportRealms
      */
-    public function testEnabledRealms()
+    public function testEnabledRealms(): void
     {
         // Names of all currently enabled realms.
         $realmNames = array_map(
-            function ($realm) {
-                return $realm['name'];
-            },
+            fn($realm) => $realm['name'],
             RawStatisticsConfiguration::factory()->getBatchExportRealms()
         );
 

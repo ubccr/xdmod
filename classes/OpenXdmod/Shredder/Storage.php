@@ -30,7 +30,7 @@ class Storage extends Shredder
      * The storage shredder does not support shredding a single file so throw
      * an exception.
      */
-    public function shredFile($file)
+    public function shredFile($file): void
     {
         throw new Exception(<<<EOMSG
 Storage shredder does not support shredding by file.  Please use the -d option

@@ -43,7 +43,7 @@ abstract class aRdbmsDestinationAction extends aAction
      * ------------------------------------------------------------------------------------------
      */
 
-    protected $etlDestinationTableList = array();
+    protected $etlDestinationTableList = [];
 
     /** -----------------------------------------------------------------------------------------
      * A 2-dimensional associative array where the keys are ETL table names and the values
@@ -53,7 +53,7 @@ abstract class aRdbmsDestinationAction extends aAction
      * ------------------------------------------------------------------------------------------
      */
 
-    protected $destinationFieldMappings = array();
+    protected $destinationFieldMappings = [];
 
     /** -----------------------------------------------------------------------------------------
      * Set to TRUE to indicate a destination field mapping was not specified in the
@@ -73,7 +73,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
-        $requiredKeys = array("destination");
+        $requiredKeys = ["destination"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
         parent::__construct($options, $etlConfig, $logger);
@@ -162,7 +162,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
         $parsedTableDefinitionList =
             ( ! is_array($parsedTableDefinition)
-              ? array($parsedTableDefinition)
+              ? [$parsedTableDefinition]
               : $parsedTableDefinition );
 
         foreach ( $parsedTableDefinitionList as $tableDefinition ) {
@@ -233,7 +233,7 @@ abstract class aRdbmsDestinationAction extends aAction
         array $sourceFields,
         iDataEndpoint $sourceEndpoint = null
     ) {
-        $this->destinationFieldMappings = array();
+        $this->destinationFieldMappings = [];
 
         if ( ! isset($this->parsedDefinitionFile->destination_record_map) ) {
 
@@ -293,8 +293,8 @@ abstract class aRdbmsDestinationAction extends aAction
 
     protected function generateDestinationFieldMap(array $sourceFields)
     {
-        $destinationFieldMap = array();
-        $fieldMapDebugOutput = array();
+        $destinationFieldMap = [];
+        $fieldMapDebugOutput = [];
         $numSourceFields = count($sourceFields);
 
         $this->logger->debug(
@@ -399,7 +399,7 @@ abstract class aRdbmsDestinationAction extends aAction
         // For each table field specified in the destination table field mapping, verify
         // that it is present in one of the destination table definitions.
 
-        $undefinedFields = array();
+        $undefinedFields = [];
 
         foreach ( $this->destinationFieldMappings as $etlTableKey => $destinationTableMap ) {
 
@@ -454,7 +454,7 @@ abstract class aRdbmsDestinationAction extends aAction
         array $sourceFields,
         iDataEndpoint $sourceEndpoint = null
     ) {
-        $undefinedFields = array();
+        $undefinedFields = [];
 
         foreach ( $this->destinationFieldMappings as $etlTableKey => $destinationTableMap ) {
             if ( ! array_key_exists($etlTableKey, $this->etlDestinationTableList) ) {
@@ -479,16 +479,12 @@ abstract class aRdbmsDestinationAction extends aAction
 
             $missing = array_filter(
                 $missing,
-                function ($item) {
-                    return ! Utilities::containsVariable($item);
-                }
+                fn($item) => ! Utilities::containsVariable($item)
             );
 
             if ( 0  != count($missing) ) {
                 $missing = array_map(
-                    function ($k, $v) {
-                        return "$k = $v";
-                    },
+                    fn($k, $v) => "$k = $v",
                     array_keys($missing),
                     $missing
                 );
@@ -562,7 +558,7 @@ abstract class aRdbmsDestinationAction extends aAction
             } catch (PDOException $e) {
                 $this->logAndThrowException(
                     "Error verifying table $tableName",
-                    array('exception' => $e, 'endpoint' => $this->destinationEndpoint)
+                    ['exception' => $e, 'endpoint' => $this->destinationEndpoint]
                 );
             }
 
@@ -576,7 +572,7 @@ abstract class aRdbmsDestinationAction extends aAction
             } catch (PDOException $e) {
                 $this->logAndThrowException(
                     "Error truncating destination with key '$etlTableKey'",
-                    array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+                    ['exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint]
                 );
             }
         }  // foreach ( $this->etlDestinationTableList as $etlTable )
@@ -592,7 +588,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
     protected function performPreExecuteTasks()
     {
-        $sqlList = array();
+        $sqlList = [];
         $disableForeignKeys = false;
 
         try {
@@ -642,7 +638,7 @@ abstract class aRdbmsDestinationAction extends aAction
 
     protected function performPostExecuteTasks($numRecordsProcessed = null)
     {
-        $sqlList = array();
+        $sqlList = [];
         $enableForeignKeys = false;
 
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
@@ -709,7 +705,7 @@ abstract class aRdbmsDestinationAction extends aAction
             catch (PDOException $e) {
                 $this->logAndThrowException(
                     sprintf("Error executing %s SQL", ( "" != $msgPrefix ? "$msgPrefix " : "" )),
-                    array('exception' => $e, 'sql' => $sql, 'endpoint' => $endpoint)
+                    ['exception' => $e, 'sql' => $sql, 'endpoint' => $endpoint]
                 );
             }
         }  // foreach ($sqlList as $sql)
@@ -765,10 +761,16 @@ abstract class aRdbmsDestinationAction extends aAction
             $this->logAndThrowException("Select block not found in parsed SQL");
         }
 
-        $columnNames = array();
+        $columnNames = [];
 
         foreach ( $parsedSql['SELECT'] as $item ) {
+            if (is_bool($item)) {
+                var_export($parsedSql);
+                fwrite(STDERR, "Is BooL!\n");
+            }
             if ( array_key_exists('alias', $item)
+                 && is_array($item['alias'])
+                 && array_key_exists('as', $item['alias'])
                  && $item['alias']['as']
                  && array_key_exists('name', $item['alias'])
             ) {
@@ -905,7 +907,7 @@ abstract class aRdbmsDestinationAction extends aAction
             $msg .= sprintf(" (filtering codes: %s)", implode(',', $this->options->hide_sql_warning_codes));
         }
 
-        $warningsToLog = array();
+        $warningsToLog = [];
 
         foreach ( $warnings as $row ) {
             if ( null !== $this->options->hide_sql_warning_codes ) {
@@ -914,7 +916,7 @@ abstract class aRdbmsDestinationAction extends aAction
                 $code = null;
 
                 if ( ! is_array($row) ) {
-                    list($level, $code) = preg_split('/\s+/', $row);
+                    [$level, $code] = preg_split('/\s+/', $row);
                 } else {
                     $level = $row['Level'];
                     $code = $row['Code'];
@@ -925,7 +927,7 @@ abstract class aRdbmsDestinationAction extends aAction
                 }
             }
 
-            $warningsToLog[] = implode(' ', (is_array($row) ? $row : array($row)));
+            $warningsToLog[] = implode(' ', (is_array($row) ? $row : [$row]));
         }
 
         if ( count($warningsToLog) > 0 ) {
@@ -954,10 +956,10 @@ abstract class aRdbmsDestinationAction extends aAction
     protected function quoteIdentifierNames(array $names, iRdbmsEndpoint $endpoint = null)
     {
         // Default to the destination endpoint
-        $endpoint = ( null === $endpoint ? $this->destinationEndpoint : $endpoint);
+        $endpoint ??= $this->destinationEndpoint;
 
         $quoteChar = $endpoint->getSystemQuoteChar();
-        $quotedNames = array();
+        $quotedNames = [];
 
         foreach ( $names as $name ) {
             $quotedNames[] = sprintf("%s%s%s", $quoteChar, $name, $quoteChar);

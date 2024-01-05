@@ -15,7 +15,7 @@ class Postgres extends aRdbmsEndpoint implements iRdbmsEndpoint
      * It also allows us to implement auto-discovery.
      */
 
-    const ENDPOINT_NAME = 'postgres';
+    public const ENDPOINT_NAME = 'postgres';
 
     /**
      * @see iDataEndpoint::__construct()
@@ -68,7 +68,7 @@ WHERE nspname = :schema";
             $msg = "Schema name cannot be empty";
             $this->logAndThrowException($msg);
         } else {
-            $schemaName = ( 0 !== strpos($schemaName, $this->systemQuoteChar)
+            $schemaName = ( !str_starts_with($schemaName, $this->systemQuoteChar)
                             ? $this->quoteSystemIdentifier($schemaName)
                             : $schemaName );
         }
@@ -76,7 +76,7 @@ WHERE nspname = :schema";
         // Don't use bind parameters because we don't want to quote the schema
         $sql = "CREATE SCHEMA IF NOT EXISTS $schemaName";
 
-        $params = array(":schema" => $this->getSchema());
+        $params = [":schema" => $this->getSchema()];
 
         try {
             $dbh = $this->getHandle();
@@ -84,7 +84,7 @@ WHERE nspname = :schema";
         } catch (\PdoException $e) {
             $this->logAndThrowException(
                 "Error creating schema '$schemaName'",
-                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+                ['exception' => $e, 'sql' => $sql, 'endpoint' => $this]
             );
         }
 

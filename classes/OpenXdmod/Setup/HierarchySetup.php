@@ -14,7 +14,7 @@ class HierarchySetup extends SetupItem
     /**
      * @inheritdoc
      */
-    public function handle()
+    public function handle(): void
     {
         $this->console->displaySectionHeader('Hierarchy Setup');
 
@@ -29,14 +29,7 @@ EOT
         );
         $this->console->displayBlankLine();
 
-        $items = array(
-            'top_level_label'    => 'Top Level Name:',
-            'top_level_info'     => 'Top Level Description:',
-            'middle_level_label' => 'Middle Level Name:',
-            'middle_level_info'  => 'Middle Level Description:',
-            'bottom_level_label' => 'Bottom Level Name:',
-            'bottom_level_info'  => 'Bottom Level Description:',
-        );
+        $items = ['top_level_label'    => 'Top Level Name:', 'top_level_info'     => 'Top Level Description:', 'middle_level_label' => 'Middle Level Name:', 'middle_level_info'  => 'Middle Level Description:', 'bottom_level_label' => 'Bottom Level Name:', 'bottom_level_info'  => 'Bottom Level Description:'];
 
         $hierarchy = $this->loadJsonConfig('hierarchy');
 

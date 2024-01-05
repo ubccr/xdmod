@@ -13,34 +13,30 @@ use CCR\Log;
 use ETL\JsonPointer;
 use CCR\Loggable;
 
-class JsonPointerTest extends \PHPUnit_Framework_TestCase
+class JsonPointerTest extends \PHPUnit\Framework\TestCase
 {
-    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";
+    public const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
+    public const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";
 
     /**
      * @var \Monolog\Logger|\Psr\Log\LoggerInterface|null
      */
     private $logger = null;
 
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Log::EMERG
-        );
+        $conf = ['file' => false, 'db' => false, 'mail' => false, 'consoleLogLevel' => Log::EMERG];
         $this->logger = Log::factory('PHPUnit', $conf);
+        parent::__construct($name, $data, $dataName);
     }
 
     /**
      * Test various JSON pointers.
      */
 
-    public function testJsonPointer()
+    public function testJsonPointer(): void
     {
         $file = self::TEST_ARTIFACT_INPUT_PATH . DIRECTORY_SEPARATOR . 'sample_config.json';
         $fileContents = file_get_contents($file);

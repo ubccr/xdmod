@@ -32,68 +32,14 @@ class Slurm extends Shredder
      *
      * @var array
      */
-    protected static $fieldNames = array(
-        'jobid',
-        'jobidraw',
-        'cluster',
-        'partition',
-        'qos',
-        'account',
-        'group',
-        'gid',
-        'user',
-        'uid',
-        'submit',
-        'eligible',
-        'start',
-        'end',
-        'elapsed',
-        'exitcode',
-        'state',
-        'nnodes',
-        'ncpus',
-        'reqcpus',
-        'reqmem',
-        'reqtres',
-        'alloctres',
-        'timelimit',
-        'nodelist',
-        'jobname',
-    );
+    protected static $fieldNames = ['jobid', 'jobidraw', 'cluster', 'partition', 'qos', 'account', 'group', 'gid', 'user', 'uid', 'submit', 'eligible', 'start', 'end', 'elapsed', 'exitcode', 'state', 'nnodes', 'ncpus', 'reqcpus', 'reqmem', 'reqtres', 'alloctres', 'timelimit', 'nodelist', 'jobname'];
 
      /**
       * The field names needed from Slurm as named in the database.
       *
       * @var array
       */
-    protected static $columnNames = array(
-        'job_id',
-        'job_id_raw',
-        'cluster_name',
-        'partition_name',
-        'qos_name',
-        'account_name',
-        'group_name',
-        'gid_number',
-        'user_name',
-        'uid_number',
-        'submit_time',
-        'eligible_time',
-        'start_time',
-        'end_time',
-        'elapsed',
-        'exit_code',
-        'state',
-        'nnodes',
-        'ncpus',
-        'req_cpus',
-        'req_mem',
-        'req_tres',
-        'alloc_tres',
-        'timelimit',
-        'node_list',
-        'job_name',
-    );
+    protected static $columnNames = ['job_id', 'job_id_raw', 'cluster_name', 'partition_name', 'qos_name', 'account_name', 'group_name', 'gid_number', 'user_name', 'uid_number', 'submit_time', 'eligible_time', 'start_time', 'end_time', 'elapsed', 'exit_code', 'state', 'nnodes', 'ncpus', 'req_cpus', 'req_mem', 'req_tres', 'alloc_tres', 'timelimit', 'node_list', 'job_name'];
 
     /**
      * The number of columns in input lines.
@@ -105,50 +51,12 @@ class Slurm extends Shredder
     /**
      * @inheritdoc
      */
-    protected static $columnMap = array(
-        'date_key'        => 'DATE(FROM_UNIXTIME(end_time))',
-        'job_id'          => 'job_id',
-        'job_array_index' => 'NULLIF(job_array_index, -1)',
-        'job_id_raw'      => 'job_id_raw',
-        'job_name'        => 'job_name',
-        'resource_name'   => 'cluster_name',
-        'queue_name'      => 'partition_name',
-        'qos_name'        => 'qos_name',
-        'user_name'       => 'user_name',
-        'uid_number'      => 'uid_number',
-        'group_name'      => 'group_name',
-        'gid_number'      => 'gid_number',
-        'account_name'    => 'account_name',
-        'pi_name'         => 'group_name',
-        'start_time'      => 'start_time',
-        'end_time'        => 'end_time',
-        'submission_time' => 'submit_time',
-        'eligible_time'   => 'eligible_time',
-        'exit_code'       => 'exit_code',
-        'exit_state'      => 'state',
-        'wall_time'       => 'GREATEST(CAST(end_time AS SIGNED) - CAST(start_time AS SIGNED), 0)',
-        'wait_time'       => 'GREATEST(CAST(start_time AS SIGNED) - CAST(submit_time AS SIGNED), 0)',
-        'node_count'      => 'nnodes',
-        'cpu_count'       => 'ncpus',
-        'gpu_count'       => 'ngpus',
-        'cpu_req'         => 'req_cpus',
-        'mem_req'         => 'req_mem',
-        'timelimit'       => 'timelimit',
-        'node_list'       => 'node_list',
-    );
+    protected static $columnMap = ['date_key'        => 'DATE(FROM_UNIXTIME(end_time))', 'job_id'          => 'job_id', 'job_array_index' => 'NULLIF(job_array_index, -1)', 'job_id_raw'      => 'job_id_raw', 'job_name'        => 'job_name', 'resource_name'   => 'cluster_name', 'queue_name'      => 'partition_name', 'qos_name'        => 'qos_name', 'user_name'       => 'user_name', 'uid_number'      => 'uid_number', 'group_name'      => 'group_name', 'gid_number'      => 'gid_number', 'account_name'    => 'account_name', 'pi_name'         => 'group_name', 'start_time'      => 'start_time', 'end_time'        => 'end_time', 'submission_time' => 'submit_time', 'eligible_time'   => 'eligible_time', 'exit_code'       => 'exit_code', 'exit_state'      => 'state', 'wall_time'       => 'GREATEST(CAST(end_time AS SIGNED) - CAST(start_time AS SIGNED), 0)', 'wait_time'       => 'GREATEST(CAST(start_time AS SIGNED) - CAST(submit_time AS SIGNED), 0)', 'node_count'      => 'nnodes', 'cpu_count'       => 'ncpus', 'gpu_count'       => 'ngpus', 'cpu_req'         => 'req_cpus', 'mem_req'         => 'req_mem', 'timelimit'       => 'timelimit', 'node_list'       => 'node_list'];
 
     /**
      * @inheritdoc
      */
-    protected static $dataMap = array(
-        'job_id'          => 'job_id',
-        'start_time'      => 'start_time',
-        'end_time'        => 'end_time',
-        'submission_time' => 'submit_time',
-        'walltime'        => 'elapsed',
-        'nodes'           => 'nnodes',
-        'cpus'            => 'ncpus',
-    );
+    protected static $dataMap = ['job_id'          => 'job_id', 'start_time'      => 'start_time', 'end_time'        => 'end_time', 'submission_time' => 'submit_time', 'walltime'        => 'elapsed', 'nodes'           => 'nnodes', 'cpus'            => 'ncpus'];
 
     /**
      * The Slurm job states corresponding to jobs that are no longer
@@ -218,7 +126,7 @@ class Slurm extends Shredder
     /**
      * @inheritdoc
      */
-    public function shredLine($line)
+    public function shredLine($line): void
     {
         $this->logger->debug("Shredding line '$line'");
 
@@ -228,7 +136,7 @@ class Slurm extends Shredder
             throw new Exception("Malformed Slurm sacct line: '$line'");
         }
 
-        $job = array();
+        $job = [];
 
         // Map numeric $fields array into a associative array.
         foreach (self::$columnNames as $index => $name) {
@@ -236,7 +144,7 @@ class Slurm extends Shredder
         }
 
         // Skip job steps.
-        if (strpos($job['job_id'], '.') !== false) {
+        if (str_contains($job['job_id'], '.')) {
             $this->logger->debug('Skipping job step');
             return;
         }
@@ -255,7 +163,7 @@ class Slurm extends Shredder
 
         // Split the job state because canceled jobs are reported as "CANCELLED
         // by ...".
-        list($jobState) = explode(' ', strtoupper($job['state']), 2);
+        [$jobState] = explode(' ', strtoupper($job['state']), 2);
 
         if (!in_array($jobState, self::$endedJobStates)) {
             if (in_array($jobState, self::$nonEndedJobStates)) {
@@ -299,22 +207,14 @@ class Slurm extends Shredder
         $job['job_name'] = mb_convert_encoding($job['job_name'], 'ISO-8859-1', 'UTF-8');
 
         // Convert datetime strings into unix timestamps.
-        $dateKeys = array(
-            'submit_time',
-            'eligible_time',
-            'start_time',
-            'end_time',
-        );
+        $dateKeys = ['submit_time', 'eligible_time', 'start_time', 'end_time'];
 
         foreach ($dateKeys as $key) {
             $job[$key] = $this->parseDateTime($job[$key]);
         }
 
         // Convert slurm time fields into number of seconds.
-        $timeKeys = array(
-            'elapsed',
-            'timelimit',
-        );
+        $timeKeys = ['elapsed', 'timelimit'];
 
         foreach ($timeKeys as $key) {
             $job[$key] = $this->parseTimeField($job[$key]);
@@ -340,7 +240,7 @@ class Slurm extends Shredder
                 throw new Exception($msg);
             }
 
-            list($jobId, $arrayPart) =  explode('_', $job['job_id'], 2);
+            [$jobId, $arrayPart] =  explode('_', $job['job_id'], 2);
 
             try {
                 $arrayIds = $this->parseJobArrayIndexes($arrayPart);
@@ -407,8 +307,8 @@ class Slurm extends Shredder
             return $nodes[0];
         } else {
             $parts = explode('[', $nodeList);
-            list($range) = explode(']', $parts[1]);
-            list($number) = preg_split('/[^0-9]/', $range);
+            [$range] = explode(']', $parts[1]);
+            [$number] = preg_split('/[^0-9]/', $range);
             return $parts[0] . $number;
         }
     }
@@ -524,11 +424,11 @@ class Slurm extends Shredder
     private function parseJobArrayIndexes($arrayList)
     {
         if (preg_match('/^\d+$/', $arrayList)) {
-            return array($arrayList);
+            return [$arrayList];
         }
 
         $containsBrackets
-            = strpos($arrayList, '[') === 0
+            = str_starts_with($arrayList, '[')
             && strrpos($arrayList, ']') === strlen($arrayList) - 1;
 
         if ($containsBrackets) {
@@ -539,11 +439,11 @@ class Slurm extends Shredder
                 substr($arrayList, 1, strlen($arrayList) - 2)
             );
 
-            $arrayIds = array();
+            $arrayIds = [];
 
             foreach ($arrayParts as $arrayPart) {
-                if (strpos($arrayPart, '-') !== false) {
-                    list($min, $max) = explode('-', $arrayPart, 2);
+                if (str_contains($arrayPart, '-')) {
+                    [$min, $max] = explode('-', $arrayPart, 2);
                     $arrayIds = array_merge($arrayIds, range($min, $max));
                 } else {
                     $arrayIds[] = $arrayPart;

@@ -25,7 +25,7 @@ class DataEndpoint
      * @const string
      */
 
-    const DATA_ENDPOINT_RELATIVE_NS = 'DataEndpoint';
+    public const DATA_ENDPOINT_RELATIVE_NS = 'DataEndpoint';
 
     /**
      * Fully namespaced interface that all data endpoints must implement
@@ -33,7 +33,7 @@ class DataEndpoint
      * @const string
      */
 
-    const DATA_ENDPOINT_REQUIRED_INTERFACE = 'ETL\\DataEndpoint\\iDataEndpoint';
+    public const DATA_ENDPOINT_REQUIRED_INTERFACE = 'ETL\\DataEndpoint\\iDataEndpoint';
 
     /**
      * The name of the constant expected to be defined in all data endpoint classes. This
@@ -43,7 +43,7 @@ class DataEndpoint
      * @const string
      */
 
-    const ENDPOINT_NAME_CONSTANT = 'ENDPOINT_NAME';
+    public const ENDPOINT_NAME_CONSTANT = 'ENDPOINT_NAME';
 
     /**
      * Associative array where the keys are data endpoint names and the values are fully
@@ -104,7 +104,7 @@ class DataEndpoint
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function discover($force = false, LoggerInterface $logger = null)
+    public static function discover($force = false, LoggerInterface $logger = null): void
     {
         if ( null !== self::$endpointClassMap && ! $force ) {
             return;
@@ -117,7 +117,7 @@ class DataEndpoint
         // file resides represent sub-namespaces.
 
         // The endpoint directory is relative to the directory where this file is found
-        $endpointDir =  dirname(__FILE__)
+        $endpointDir =  __DIR__
             . DIRECTORY_SEPARATOR
             . strtr(self::DATA_ENDPOINT_RELATIVE_NS, '\\', DIRECTORY_SEPARATOR);
         $endpointDirLength = strlen($endpointDir);
@@ -127,7 +127,7 @@ class DataEndpoint
 
         $dirIterator = new \RecursiveDirectoryIterator($endpointDir);
         $flattenedIterator = new \RecursiveIteratorIterator($dirIterator);
-        self::$endpointClassMap = array();
+        self::$endpointClassMap = [];
 
         // The iterator returns SplFileInfo objects where the keys are the path to the
         // file.
@@ -141,7 +141,7 @@ class DataEndpoint
             // Set up an array so we can programmatically construct the namespace based on
             // the path to the class file
 
-            $constructedNamespace = array(__NAMESPACE__, self::DATA_ENDPOINT_RELATIVE_NS);
+            $constructedNamespace = [__NAMESPACE__, self::DATA_ENDPOINT_RELATIVE_NS];
 
             // Construct any additional sub-namespaces for subdirectories discovered under
             // the endpoint namespace (e.g. the subdirectory DataEndpoint/Filters
@@ -187,7 +187,7 @@ class DataEndpoint
                             $logger->warning(
                                 sprintf(
                                     "%s Endpoint with name '%s' already exists, skipping",
-                                    __CLASS__,
+                                    self::class,
                                     $name
                                 )
                             );
@@ -198,7 +198,7 @@ class DataEndpoint
                         $logger->warning(
                             sprintf(
                                 "%s Class '%s' does not define %s, skipping",
-                                __CLASS__,
+                                self::class,
                                 $r->getName(),
                                 self::ENDPOINT_NAME_CONSTANT
                             )
@@ -206,7 +206,7 @@ class DataEndpoint
 
                     }
                 }
-            } catch ( \ReflectionException $e ) {
+            } catch ( \ReflectionException ) {
                 // The class does not exist
                 continue;
             }
@@ -236,7 +236,7 @@ class DataEndpoint
         // If the type is defined and has a mapping to an implementation, create a class for the type.
 
         if ( ! array_key_exists($options->type, self::$endpointClassMap) ) {
-            $msg = sprintf("%s: Undefined data endpoint type: '%s'", __CLASS__, $options->type);
+            $msg = sprintf("%s: Undefined data endpoint type: '%s'", self::class, $options->type);
             if ( null !== $logger ) {
                 $logger->err($msg);
             }
@@ -249,7 +249,7 @@ class DataEndpoint
         $endpoint = new $className($options, $logger);
 
         if ( ! $endpoint instanceof iDataEndpoint ) {
-            $msg = sprintf("%s: %s does not implement iDataEndpoint", __CLASS__, $className);
+            $msg = sprintf("%s: %s does not implement iDataEndpoint", self::class, $className);
             if ( null !== $logger ) {
                 $logger->err($msg);
             }

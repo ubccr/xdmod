@@ -11,7 +11,7 @@ use CCR\Log as Logger;
 use Psr\Log\LoggerInterface;
 use Realm\Realm;
 
-class GroupByTest extends \PHPUnit_Framework_TestCase
+class GroupByTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -19,24 +19,16 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
      */
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Logger::EMERG
-        );
+        $conf = ['file' => false, 'db' => false, 'mail' => false, 'consoleLogLevel' => Logger::EMERG];
         self::$logger = Logger::factory('PHPUnit', $conf);
 
         // In order to use a non-standard location for datawarehouse.json we must manually
         // initialize the Realm class.
 
-        $options = (object) array(
-            'config_file_name' => 'datawarehouse.json',
-            'config_base_dir'  => realpath('../artifacts/xdmod/realm')
-        );
+        $options = (object) ['config_file_name' => 'datawarehouse.json', 'config_base_dir'  => realpath('../artifacts/xdmod/realm')];
 
         Realm::initialize(self::$logger, $options);
     }
@@ -45,17 +37,14 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
      * (1) generateQueryParameterLabelsFromRequest()
      */
 
-    public function testGenerateQueryParameterLabelsFromRequest()
+    public function testGenerateQueryParameterLabelsFromRequest(): void
     {
         $realm = Realm::factory('Jobs', self::$logger);
 
         // GroupBy with a single columm key
 
         $obj = $realm->getGroupByObject('person');
-        $simulatedRequest = array(
-            'person' => '10',
-            'person_filter' => '20,30'
-        );
+        $simulatedRequest = ['person' => '10', 'person_filter' => '20,30'];
         $parameters = $obj->generateQueryParameterLabelsFromRequest($simulatedRequest);
 
         $generated = array_shift($parameters);
@@ -66,10 +55,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         // Multi-column keys use a carat (^) to separate the keys in filters.
 
         $obj = $realm->getGroupByObject('resource');
-        $simulatedRequest = array(
-            'resource' => '1^frearson',
-            'resource_filter' => '2^mortorq,3^phillips'
-        );
+        $simulatedRequest = ['resource' => '1^frearson', 'resource_filter' => '2^mortorq,3^phillips'];
         $parameters = $obj->generateQueryParameterLabelsFromRequest($simulatedRequest);
 
         $generated = array_shift($parameters);
@@ -81,7 +67,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
      * (2) getAttributeValues()
      */
 
-    public function testGetAttributeValues()
+    public function testGetAttributeValues(): void
     {
         $realm = Realm::factory('Jobs', self::$logger);
 
@@ -91,37 +77,25 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         $values = $obj->getAttributeValues();
         $this->assertCount(9, $values, 'Number of resource attributes returned with no filter');
 
-        $restrictions = array(
-            'id' => '1^frearson'
-        );
+        $restrictions = ['id' => '1^frearson'];
         $values = $obj->getAttributeValues($restrictions);
         $this->assertCount(1, $values, 'Number of resource attributes returned with id = 1^frearson');
 
-        $restrictions = array(
-            'name' => 'mortorq'
-        );
+        $restrictions = ['name' => 'mortorq'];
         $values = $obj->getAttributeValues($restrictions);
         $this->assertCount(1, $values, 'Number of resource attributes returned with name = mortorq');
 
-        $restrictions = array(
-            'id'   => '2^mortorq',
-            'name' => 'mortorq'
-        );
+        $restrictions = ['id'   => '2^mortorq', 'name' => 'mortorq'];
         $values = $obj->getAttributeValues($restrictions);
         $this->assertCount(1, $values, 'Number of resource attributes returned with id = 2^motorq, name = mortorq');
 
-        $restrictions = array(
-            'id'   => '1^motorq',
-            'name' => 'mortorq'
-        );
+        $restrictions = ['id'   => '1^motorq', 'name' => 'mortorq'];
         $values = $obj->getAttributeValues($restrictions);
         $this->assertCount(0, $values, 'Number of resource attributes returned with id = 1^motorq, name = mortorq');
 
         $obj = $realm->getGroupByObject('person');
 
-        $restrictions = array(
-            'name' => 'Avocet'
-        );
+        $restrictions = ['name' => 'Avocet'];
         $values = $obj->getAttributeValues($restrictions);
         $this->assertCount(1, $values, 'Number of person attributes returned with id = 552');
     }

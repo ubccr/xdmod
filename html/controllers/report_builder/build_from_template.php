@@ -1,9 +1,6 @@
 <?php
 
-   \xd_security\assertParametersSet(array(
-      'template_id',
-      'resource_provider'
-   ));
+   \xd_security\assertParametersSet(['template_id', 'resource_provider']);
    
    try {
    

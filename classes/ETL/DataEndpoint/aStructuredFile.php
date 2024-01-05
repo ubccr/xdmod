@@ -18,7 +18,7 @@ abstract class aStructuredFile extends File
     /**
      * @const integer The default number of bytes for file read operations.
      */
-    const DEFAULT_READ_BYTES = 4096;
+    public const DEFAULT_READ_BYTES = 4096;
 
     /**
      * @var array|null Optional path to a schema describing each record the structured file.  This
@@ -29,7 +29,7 @@ abstract class aStructuredFile extends File
     /**
      * @var array|null The list of filters that have been attached to the file handle
      */
-    protected $filterList = array();
+    protected $filterList = [];
 
     /**
      * @var array|null The list of filters definition objects used to create filters.
@@ -39,7 +39,7 @@ abstract class aStructuredFile extends File
     /**
      * @var array The list of records read from the input file
      */
-    protected $recordList = array();
+    protected $recordList = [];
 
     /**
      * @var string Character used to separate records in the input file, defaults to NULL.
@@ -62,14 +62,14 @@ abstract class aStructuredFile extends File
      * present in the record return NULL for those fields. If NULL, return all discovered record
      * fields.
      */
-    protected $requestedRecordFieldNames = array();
+    protected $requestedRecordFieldNames = [];
 
     /**
      * @var array An array of field names corresponding to the data in the file. File formats may
      * interpret this differently, but all implementations are expected to return data for all
      * fields specified here. If a field does not exist in the data, its value expected to be NULL.
      */
-    protected $discoveredRecordFieldNames = array();
+    protected $discoveredRecordFieldNames = [];
 
     /**
      * @var boolean A flag indicating whether or not records should be returned exactly as they were
@@ -87,16 +87,8 @@ abstract class aStructuredFile extends File
     {
         parent::__construct($options, $logger);
 
-        $messages = array();
-        $propertyTypes = array(
-            'record_schema_path' => 'string',
-            'filters'            => 'array',
-            'record_separator'   => 'string',
-            'field_separator'    => 'string',
-            'header_record'      => 'bool',
-            'field_names'        => 'array',
-            'record_passthrough' => 'bool'
-        );
+        $messages = [];
+        $propertyTypes = ['record_schema_path' => 'string', 'filters'            => 'array', 'record_separator'   => 'string', 'field_separator'    => 'string', 'header_record'      => 'bool', 'field_names'        => 'array', 'record_passthrough' => 'bool'];
 
         if ( ! \xd_utilities\verify_object_property_types($options, $propertyTypes, $messages, true) ) {
             $this->logAndThrowException("Error verifying options: " . implode(", ", $messages));
@@ -159,7 +151,7 @@ abstract class aStructuredFile extends File
 
         // Start with the standard components and add in each filter
 
-        $keySource = array($this->type, $this->path, $this->mode);
+        $keySource = [$this->type, $this->path, $this->mode];
         foreach ( $this->filterDefinitions as $filter )
         {
             if ( isset($filter->path) ) {
@@ -208,7 +200,7 @@ abstract class aStructuredFile extends File
 
         // Register supported filters. Be sure to use the namespace in the class name.
         $filterName = \ETL\DataEndpoint\Filter\ExternalProcess::NAME;
-        stream_filter_register($filterName, 'ETL\DataEndpoint\Filter\ExternalProcess');
+        stream_filter_register($filterName, \ETL\DataEndpoint\Filter\ExternalProcess::class);
         $this->logger->debug("Registering filter: $filterName");
 
         $fd = $this->connect();
@@ -223,8 +215,8 @@ abstract class aStructuredFile extends File
                 continue;
             }
 
-            $messages = array();
-            $properties = array('name' => 'string', 'type' => 'string');
+            $messages = [];
+            $properties = ['name' => 'string', 'type' => 'string'];
             if ( ! \xd_utilities\verify_object_property_types($config, $properties, $messages) ) {
                 $this->logAndThrowException("Filter missing required properties: " . implode(', ', $messages));
             }
@@ -234,12 +226,12 @@ abstract class aStructuredFile extends File
 
             switch ($config->type) {
                 case 'external':
-                    $properties = array('path' => 'string');
+                    $properties = ['path' => 'string'];
                     if ( ! \xd_utilities\verify_object_property_types($config, $properties, $messages) ) {
                         $this->logger->warning(
                             sprintf("Skipping filter '%s': %s", $config->name, implode(", ", $messages))
                         );
-                        continue;
+                        continue 2;
                     }
                     $filterName = 'xdmod.external_process';
                     $resource = @stream_filter_prepend($fd, $filterName, STREAM_FILTER_READ, $config);
@@ -283,7 +275,7 @@ abstract class aStructuredFile extends File
 
         // Reset the record list and it's iterator pointer
 
-        $this->recordList = array();
+        $this->recordList = [];
         $this->rewind();
 
         $fd = $this->connect();
@@ -517,7 +509,7 @@ abstract class aStructuredFile extends File
      * @see Iterator::next()
      */
 
-    public function next()
+    public function next(): void
     {
         next($this->recordList);
     }
@@ -526,7 +518,7 @@ abstract class aStructuredFile extends File
      * @see Iterator::rewind()
      */
 
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->recordList);
     }
@@ -567,14 +559,14 @@ abstract class aStructuredFile extends File
      * @see iDataEndpoint::__toString()
      */
 
-    public function __toString()
+    public function __toString(): string
     {
         if ( null === $this->filterDefinitions ) {
             return parent::__toString();
         } else {
             return sprintf(
                 '%s (name=%s, path=%s, %d filters)',
-                get_class($this),
+                static::class,
                 $this->name,
                 $this->path,
                 count($this->filterDefinitions)

@@ -27,58 +27,41 @@ use Exception;
 abstract class aOptions extends \stdClass implements \Iterator
 {
     // The list of required options. These options cannot be set to NULL or an empty string.
-    protected $requiredOptions = array(
-        "name",
-        "class",
-        "factory",
-        "enabled",
-        "paths"
-        );
+    protected $requiredOptions = ["name", "class", "factory", "enabled", "paths"];
 
     // Associative array used to store the options. Supported options are given a default value and
     // possible verificaiton in __set() but additional options can be added as well.
-    protected $options = array(
+    protected $options = [
         // The name of this ingestor
         "name" => null,
-
         // PHP class name that implements this ingestor
         "class" => null,
-
         // The PHP namespace for instantiating an action. Useful for testing.
         "namespace" => null,
-
         // Name of the factory class for creating objects of this type to be set by the extending class
         // ** Must include the namespace of the factory. **
         "factory" => null,
-
         // Optional description for this ingestor
         "description" => null,
-
         // TRUE if this aggregator is enabled
         "enabled" => true,
-
         // Object containing path information for the various directories used by the ETL process (table
         // configs, data, etc.)
         "paths" => null,
-
         // File containing definitions of the ETL destination table, source query, etc. May be null
         // if an action does not require it.
         "definition_file" => null,
-
         // By default, do not truncate the destination data
         "truncate_destination" => false,
-
         // Should an exception thrown by this action stop the ETL process?
         "stop_on_exception" => true,
-
         // Maximum number of records to operate on (e.g., ingest) in a single chunk.
         "db_insert_chunk_size" => 250000,
-
         // The number of seconds to allot for the timeout per record chunk per destination. If
         // multiple table destinations are being populated this will be multiplied by the number
         // of destinations.
-        "net_write_timeout_per_db_chunk" => 60
-        );
+        "net_write_timeout_per_db_chunk" => 60,
+    ];
 
     /* ------------------------------------------------------------------------------------------
      * Constructor. Optionally initialize the options using key/value pairs from an associative array
@@ -109,7 +92,7 @@ abstract class aOptions extends \stdClass implements \Iterator
 
     public function verify()
     {
-        $missingOptions = array();
+        $missingOptions = [];
 
         // Verify requred options
 
@@ -122,7 +105,7 @@ abstract class aOptions extends \stdClass implements \Iterator
         }
 
         if ( 0 != count($missingOptions) ) {
-            $msg = get_class($this) . ": Required options not provided: " . implode(", ", $missingOptions);
+            $msg = static::class . ": Required options not provided: " . implode(", ", $missingOptions);
             throw new Exception($msg);
         }
 
@@ -153,7 +136,7 @@ abstract class aOptions extends \stdClass implements \Iterator
                 $origValue = $value;
                 $value = \xd_utilities\filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
                 if ( null === $value ) {
-                    $msg = get_class($this) . ": '$property' must be a boolean (type = " . gettype($origValue) . ")";
+                    $msg = static::class . ": '$property' must be a boolean (type = " . gettype($origValue) . ")";
                     throw new Exception($msg);
                 }
                 break;
@@ -161,7 +144,7 @@ abstract class aOptions extends \stdClass implements \Iterator
             case 'db_insert_chunk_size':
             case 'net_write_timeout_per_db_chunk':
                 if ( ! is_int($value) ) {
-                    $msg = get_class($this) . ": '$property' must be an integer (type = " . gettype($value) . ")";
+                    $msg = static::class . ": '$property' must be an integer (type = " . gettype($value) . ")";
                     throw new Exception($msg);
                 }
                 break;
@@ -169,14 +152,14 @@ abstract class aOptions extends \stdClass implements \Iterator
             case 'name':
             case 'definition_file':
                 if ( ! is_string($value) ) {
-                    $msg = get_class($this) . ": '$property' must be a string (type = " . gettype($value) . ")";
+                    $msg = static::class . ": '$property' must be a string (type = " . gettype($value) . ")";
                     throw new Exception($msg);
                 }
                 break;
 
             case 'paths':
                 if ( ! is_object($value) ) {
-                    $msg = get_class($this) . ": '$property' must be an object (type = " . gettype($value) . ")";
+                    $msg = static::class . ": '$property' must be an object (type = " . gettype($value) . ")";
                     throw new Exception($msg);
                 }
                 break;
@@ -210,7 +193,7 @@ abstract class aOptions extends \stdClass implements \Iterator
         // Required parameters are not allowed to be empty.
 
         if ( null === $value || "" === $value ) {
-            $msg = get_class($this) . ": '$property' is a required parameter and cannot be empty or NULL";
+            $msg = static::class . ": '$property' is a required parameter and cannot be empty or NULL";
             throw new Exception($msg);
         }
 
@@ -291,7 +274,7 @@ abstract class aOptions extends \stdClass implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function next()
+    public function next(): void
     {
         next($this->options);
     }  // next()
@@ -301,7 +284,7 @@ abstract class aOptions extends \stdClass implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->options);
     }  // rewind()

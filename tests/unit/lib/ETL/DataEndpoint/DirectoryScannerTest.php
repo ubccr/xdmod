@@ -29,52 +29,36 @@ use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use Psr\Log\LoggerInterface;
 
-class DirectoryScanner extends \PHPUnit_Framework_TestCase
+class DirectoryScanner extends \PHPUnit\Framework\TestCase
 {
-    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";
+    public const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
+    public const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";
 
     /**
      * @var LoggerInterface
      */
     private $logger = null;
 
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Log::EMERG
-        );
+        $conf = ['file' => false, 'db' => false, 'mail' => false, 'consoleLogLevel' => Log::EMERG];
 
         $this->logger = Log::factory('PHPUnit', $conf);
+        parent::__construct($name, $data, $dataName);
     }  // __construct()
 
     /**
      * 1. Test passing options with the wrong types.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testInvalidOptions()
+    public function testInvalidOptions(): void
     {
-        $config = array(
-            'name' => 'Invalid Options',
-            'type' => 'directoryscanner',
-            'path' => '/dev/null',
-            'file_pattern' => 1,
-            'directory_pattern' => false,
-            'recursion_depth' => '2',
-            'last_modified_start' => 10,
-            'last_modified_end' => 10,
-            'handler' => (object) array(
-                'type' => 'jsonfile',
-                'record_separator' => "\n"
-            )
-        );
+        $this->expectException(Exception::class);
+        $config = ['name' => 'Invalid Options', 'type' => 'directoryscanner', 'path' => '/dev/null', 'file_pattern' => 1, 'directory_pattern' => false, 'recursion_depth' => '2', 'last_modified_start' => 10, 'last_modified_end' => 10, 'handler' => (object) ['type' => 'jsonfile', 'record_separator' => "\n"]];
         $options = new DataEndpointOptions($config);
         $scanner = DataEndpoint::factory($options, $this->logger);
         $scanner->verify();
@@ -83,20 +67,13 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
     /**
      * 2. Test trying to read a file instead of a directory.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testNotDirectory()
+    public function testNotDirectory(): void
     {
-        $config = array(
-            'name' => 'Not a directory',
-            'type' => 'directoryscanner',
-            'path' => '/dev/null',
-            'handler' => (object) array(
-                'type' => 'jsonfile',
-                'record_separator' => "\n"
-            )
-        );
+        $this->expectException(Exception::class);
+        $config = ['name' => 'Not a directory', 'type' => 'directoryscanner', 'path' => '/dev/null', 'handler' => (object) ['type' => 'jsonfile', 'record_separator' => "\n"]];
         $options = new DataEndpointOptions($config);
         $scanner = DataEndpoint::factory($options, $this->logger);
         $scanner->verify();
@@ -107,17 +84,9 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
      * 3. Test basic scanner with no filters and default handler for all file types. This
      *    directory includes a file that is empty (has no records).
      */
-    public function testBasicOptions()
+    public function testBasicOptions(): void
     {
-        $config = array(
-            'name' => 'Euca files',
-            'type' => 'directoryscanner',
-            'path' => self::TEST_ARTIFACT_INPUT_PATH . '/directory_scanner',
-            'handler' => (object) array(
-                'type' => 'jsonfile',
-                'record_separator' => "\n"
-            )
-        );
+        $config = ['name' => 'Euca files', 'type' => 'directoryscanner', 'path' => self::TEST_ARTIFACT_INPUT_PATH . '/directory_scanner', 'handler' => (object) ['type' => 'jsonfile', 'record_separator' => "\n"]];
         $options = new DataEndpointOptions($config);
         $scanner = DataEndpoint::factory($options, $this->logger);
         $scanner->verify();
@@ -141,22 +110,11 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
      * 4. Test trying to read a file filtered using the file_pattern and directory_pattern regex.
      *
      */
-    public function testPatternFilters()
+    public function testPatternFilters(): void
     {
         // Restrict to directories containing "_scanner" and files matching "euca*.json"
 
-        $config = array(
-            'name' => 'Euca files',
-            'type' => 'directoryscanner',
-            'path' => self::TEST_ARTIFACT_INPUT_PATH,
-            'directory_pattern' => '/_scanner/',
-            'file_pattern' => '/euca.*\.json/',
-            'handler' => (object) array(
-                'extension' => '.json',
-                'type' => 'jsonfile',
-                'record_separator' => "\n"
-            )
-        );
+        $config = ['name' => 'Euca files', 'type' => 'directoryscanner', 'path' => self::TEST_ARTIFACT_INPUT_PATH, 'directory_pattern' => '/_scanner/', 'file_pattern' => '/euca.*\.json/', 'handler' => (object) ['extension' => '.json', 'type' => 'jsonfile', 'record_separator' => "\n"]];
         $options = new DataEndpointOptions($config);
         $scanner = DataEndpoint::factory($options, $this->logger);
         $scanner->verify();
@@ -177,7 +135,7 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
      * 5. Test trying to read a file modified between a particular start and end date.
      */
 
-    public function testLastModifiedFilters()
+    public function testLastModifiedFilters(): void
     {
         // Restrict to files matching "euca*.json", and modified recently.
 
@@ -188,19 +146,7 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
         sleep(1);
         $endDate = date('c');
 
-        $config = array(
-            'name' => 'Euca files',
-            'type' => 'directoryscanner',
-            'path' => self::TEST_ARTIFACT_INPUT_PATH,
-            'file_pattern' => '/euca.*\.json/',
-            'last_modified_start' => $startDate,
-            'last_modified_end' => $endDate,
-            'handler' => (object) array(
-                'extension' => '.json',
-                'type' => 'jsonfile',
-                'record_separator' => "\n"
-            )
-        );
+        $config = ['name' => 'Euca files', 'type' => 'directoryscanner', 'path' => self::TEST_ARTIFACT_INPUT_PATH, 'file_pattern' => '/euca.*\.json/', 'last_modified_start' => $startDate, 'last_modified_end' => $endDate, 'handler' => (object) ['extension' => '.json', 'type' => 'jsonfile', 'record_separator' => "\n"]];
         $options = new DataEndpointOptions($config);
         $scanner = DataEndpoint::factory($options, $this->logger);
         $scanner->verify();
@@ -221,23 +167,13 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
     /**
      * 6. Test catching a bad file regex.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testLastModifiedBadFileRegex()
+    public function testLastModifiedBadFileRegex(): void
     {
-        $config = array(
-            'name' => 'Files using regex',
-            'type' => 'directoryscanner',
-            'path' => sys_get_temp_dir(),
-            'file_pattern' => '/\.json$/',
-            'last_modified_file_regex' => 'badregex',
-            'handler' => (object) array(
-                'extension' => '.json',
-                'type' => 'jsonfile',
-                'record_separator' => "\n"
-            )
-        );
+        $this->expectException(Exception::class);
+        $config = ['name' => 'Files using regex', 'type' => 'directoryscanner', 'path' => sys_get_temp_dir(), 'file_pattern' => '/\.json$/', 'last_modified_file_regex' => 'badregex', 'handler' => (object) ['extension' => '.json', 'type' => 'jsonfile', 'record_separator' => "\n"]];
         $options = new DataEndpointOptions($config);
         DataEndpoint::factory($options, $this->logger);
     }  // testLastModifiedBadFileRegex()
@@ -245,23 +181,13 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
     /**
      * 7. Test catching a bad directory regex.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testLastModifiedBadDirRegex()
+    public function testLastModifiedBadDirRegex(): void
     {
-        $config = array(
-            'name' => 'Files using regex',
-            'type' => 'directoryscanner',
-            'path' => sys_get_temp_dir(),
-            'file_pattern' => '/\.json$/',
-            'last_modified_dir_regex' => 'badregex',
-            'handler' => (object) array(
-                'extension' => '.json',
-                'type' => 'jsonfile',
-                'record_separator' => "\n"
-            )
-        );
+        $this->expectException(Exception::class);
+        $config = ['name' => 'Files using regex', 'type' => 'directoryscanner', 'path' => sys_get_temp_dir(), 'file_pattern' => '/\.json$/', 'last_modified_dir_regex' => 'badregex', 'handler' => (object) ['extension' => '.json', 'type' => 'jsonfile', 'record_separator' => "\n"]];
 
         $options = new DataEndpointOptions($config);
         DataEndpoint::factory($options, $this->logger);
@@ -271,30 +197,17 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
      * 8. Test a regex that matches the file but is not a timestamp.
      */
 
-    public function testLastModifiedRegexNotTimestamp()
+    public function testLastModifiedRegexNotTimestamp(): void
     {
         $origFile = self::TEST_ARTIFACT_INPUT_PATH . '/euca_acct.json';
         $newDir = sys_get_temp_dir() . '/xdmod_test';
         @mkdir($newDir, 0750, true);
 
-        $fileList = array();
+        $fileList = [];
         @copy($origFile, $fileList[] = sprintf('%s/%s', $newDir, 'file-2018-01-01.json'));
         @copy($origFile, $fileList[] = sprintf('%s/%s', $newDir, 'file-regex-not-timestamp.json'));
 
-        $config = array(
-            'name' => 'Files using regex that is not a timestamp',
-            'type' => 'directoryscanner',
-            'path' => $newDir,
-            'file_pattern' => '/\.json$/',
-            'last_modified_start' => '2018-02-01',
-            'last_modified_end' => '2018-03-31',
-            'last_modified_file_regex' => '/regex-not-timestamp/',
-            'handler' => (object) array(
-                'extension' => '.json',
-                'type' => 'jsonfile',
-                'record_separator' => "\n"
-            )
-        );
+        $config = ['name' => 'Files using regex that is not a timestamp', 'type' => 'directoryscanner', 'path' => $newDir, 'file_pattern' => '/\.json$/', 'last_modified_start' => '2018-02-01', 'last_modified_end' => '2018-03-31', 'last_modified_file_regex' => '/regex-not-timestamp/', 'handler' => (object) ['extension' => '.json', 'type' => 'jsonfile', 'record_separator' => "\n"]];
         $options = new DataEndpointOptions($config);
         $scanner = DataEndpoint::factory($options, $this->logger);
         $scanner->verify();
@@ -321,7 +234,7 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
      *    modification time parsed from the filename using a regex.
      */
 
-    public function testLastModifiedFiltersUsingFileRegex()
+    public function testLastModifiedFiltersUsingFileRegex(): void
     {
         // Restrict to files matching "*.json", and modified in the specified range.
 
@@ -329,26 +242,13 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
         $newDir = sys_get_temp_dir() . '/xdmod_test';
         @mkdir($newDir, 0750, true);
 
-        $fileList = array();
+        $fileList = [];
         @copy($origFile, $fileList[] = sprintf('%s/%s', $newDir, 'file-2018-01-01.json'));
         @copy($origFile, $fileList[] = sprintf('%s/%s', $newDir, 'file-2018-02-01.json'));
         @copy($origFile, $fileList[] = sprintf('%s/%s', $newDir, 'file-2018-03-01.json'));
         @copy($origFile, $fileList[] = sprintf('%s/%s', $newDir, 'file-2018-04-01.json'));
 
-        $config = array(
-            'name' => 'Files using regex',
-            'type' => 'directoryscanner',
-            'path' => $newDir,
-            'file_pattern' => '/\.json$/',
-            'last_modified_start' => '2018-02-01',
-            'last_modified_end' => '2018-03-31',
-            'last_modified_file_regex' => '/\d{4}-\d{2}-\d{2}/',
-            'handler' => (object) array(
-                'extension' => '.json',
-                'type' => 'jsonfile',
-                'record_separator' => "\n"
-            )
-        );
+        $config = ['name' => 'Files using regex', 'type' => 'directoryscanner', 'path' => $newDir, 'file_pattern' => '/\.json$/', 'last_modified_start' => '2018-02-01', 'last_modified_end' => '2018-03-31', 'last_modified_file_regex' => '/\d{4}-\d{2}-\d{2}/', 'handler' => (object) ['extension' => '.json', 'type' => 'jsonfile', 'record_separator' => "\n"]];
         $options = new DataEndpointOptions($config);
         $scanner = DataEndpoint::factory($options, $this->logger);
         $scanner->verify();
@@ -377,44 +277,23 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
      *     a modification time parsed from the directory using a regex.
      */
 
-    public function testLastModifiedFiltersUsingDirectoryRegex()
+    public function testLastModifiedFiltersUsingDirectoryRegex(): void
     {
         // Restrict to files matching "*.json", and modified in the specified range.
 
         $tmpDir = sys_get_temp_dir() . '/xdmod_test';
-        $dirList = array(
-            $tmpDir . '/2018/11/HOSTNAME-1/2018-11-01',
-            $tmpDir . '/2018/12/HOSTNAME-1/2018-12-01',
-            $tmpDir . '/2018/12/HOSTNAME-1/2018-12-02'
-        );
+        $dirList = [$tmpDir . '/2018/11/HOSTNAME-1/2018-11-01', $tmpDir . '/2018/12/HOSTNAME-1/2018-12-01', $tmpDir . '/2018/12/HOSTNAME-1/2018-12-02'];
         @mkdir($tmpDir);
         foreach ( $dirList as $dir ) {
             @mkdir($dir, 0750, true);
         }
 
-        $fileList = array(
-            $tmpDir . '/2018/11/HOSTNAME-1/2018-11-01/file1.json',
-            $tmpDir . '/2018/12/HOSTNAME-1/2018-12-01/file2.json',
-            $tmpDir . '/2018/12/HOSTNAME-1/2018-12-02/file3.json'
-        );
+        $fileList = [$tmpDir . '/2018/11/HOSTNAME-1/2018-11-01/file1.json', $tmpDir . '/2018/12/HOSTNAME-1/2018-12-01/file2.json', $tmpDir . '/2018/12/HOSTNAME-1/2018-12-02/file3.json'];
         foreach ( $fileList as $file ) {
             @touch($file);
         }
 
-        $config = array(
-            'name' => 'Files using regex',
-            'type' => 'directoryscanner',
-            'path' => $tmpDir,
-            'file_pattern' => '/\.json$/',
-            'last_modified_start' => '2018-12-01',
-            'last_modified_end' => '2018-12-02',
-            'last_modified_dir_regex' => '/\d{4}-\d{2}-\d{2}/',
-            'handler' => (object) array(
-                'extension' => '.json',
-                'type' => 'jsonfile',
-                'record_separator' => "\n"
-            )
-        );
+        $config = ['name' => 'Files using regex', 'type' => 'directoryscanner', 'path' => $tmpDir, 'file_pattern' => '/\.json$/', 'last_modified_start' => '2018-12-01', 'last_modified_end' => '2018-12-02', 'last_modified_dir_regex' => '/\d{4}-\d{2}-\d{2}/', 'handler' => (object) ['extension' => '.json', 'type' => 'jsonfile', 'record_separator' => "\n"]];
         $options = new DataEndpointOptions($config);
         $scanner = DataEndpoint::factory($options, $this->logger);
         $scanner->verify();
@@ -454,46 +333,23 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
      *     and is skipped.
      */
 
-    public function testLastModifiedFiltersUsingDirectoryRegexReformat()
+    public function testLastModifiedFiltersUsingDirectoryRegexReformat(): void
     {
         // Restrict to files matching "*.json", and modified in the specified range.
 
         $tmpDir = sys_get_temp_dir() . '/xdmod_test';
-        $dirList = array(
-            $tmpDir . '/2018/11/HOSTNAME-1/201811',
-            $tmpDir . '/2018/12/HOSTNAME-1/201812',
-            $tmpDir . '/2018/12/HOSTNAME-1/2018-12'
-        );
+        $dirList = [$tmpDir . '/2018/11/HOSTNAME-1/201811', $tmpDir . '/2018/12/HOSTNAME-1/201812', $tmpDir . '/2018/12/HOSTNAME-1/2018-12'];
         @mkdir($tmpDir);
         foreach ( $dirList as $dir ) {
             @mkdir($dir, 0750, true);
         }
 
-        $fileList = array(
-            $tmpDir . '/2018/11/HOSTNAME-1/201811/file1.json',
-            $tmpDir . '/2018/12/HOSTNAME-1/201812/file2.json',
-            $tmpDir . '/2018/12/HOSTNAME-1/201812/file3.json',
-            $tmpDir . '/2018/12/HOSTNAME-1/2018-12/file4.json' // File path does not match regex, skip.
-        );
+        $fileList = [$tmpDir . '/2018/11/HOSTNAME-1/201811/file1.json', $tmpDir . '/2018/12/HOSTNAME-1/201812/file2.json', $tmpDir . '/2018/12/HOSTNAME-1/201812/file3.json', $tmpDir . '/2018/12/HOSTNAME-1/2018-12/file4.json'];
         foreach ( $fileList as $file ) {
             @touch($file);
         }
 
-        $config = array(
-            'name' => 'Files using regex',
-            'type' => 'directoryscanner',
-            'path' => $tmpDir,
-            'file_pattern' => '/\.json$/',
-            'last_modified_start' => '2018-12-01',
-            'last_modified_end' => '2018-12-02',
-            'last_modified_dir_regex' => '/(\d{4})(\d{2})/',
-            'last_modified_dir_regex_reformat' => '$1-$2',
-            'handler' => (object) array(
-                'extension' => '.json',
-                'type' => 'jsonfile',
-                'record_separator' => "\n"
-            )
-        );
+        $config = ['name' => 'Files using regex', 'type' => 'directoryscanner', 'path' => $tmpDir, 'file_pattern' => '/\.json$/', 'last_modified_start' => '2018-12-01', 'last_modified_end' => '2018-12-02', 'last_modified_dir_regex' => '/(\d{4})(\d{2})/', 'last_modified_dir_regex_reformat' => '$1-$2', 'handler' => (object) ['extension' => '.json', 'type' => 'jsonfile', 'record_separator' => "\n"]];
         $options = new DataEndpointOptions($config);
         $scanner = DataEndpoint::factory($options, $this->logger);
         $scanner->verify();
@@ -531,47 +387,23 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
      *     filename using a regex.
      */
 
-    public function testLastModifiedFiltersUsingFileAndDirectoryRegex()
+    public function testLastModifiedFiltersUsingFileAndDirectoryRegex(): void
     {
         // Restrict to files matching "*.json", and modified in the specified range.
 
         $tmpDir = sys_get_temp_dir() . '/xdmod_test';
-        $dirList = array(
-            $tmpDir . '/2018/11/HOSTNAME-1/201811',
-            $tmpDir . '/2018/12/HOSTNAME-1/201812'
-        );
+        $dirList = [$tmpDir . '/2018/11/HOSTNAME-1/201811', $tmpDir . '/2018/12/HOSTNAME-1/201812'];
         @mkdir($tmpDir);
         foreach ( $dirList as $dir ) {
             @mkdir($dir, 0750, true);
         }
 
-        $fileList = array(
-            $tmpDir . '/2018/11/HOSTNAME-1/201811/file1.json',
-            $tmpDir . '/2018/12/HOSTNAME-1/201812/file-2018-12-01.json',
-            $tmpDir . '/2018/12/HOSTNAME-1/201812/file-2018-12-02.json',
-            $tmpDir . '/2018/12/HOSTNAME-1/201812/file-2018-12-03.json'
-        );
+        $fileList = [$tmpDir . '/2018/11/HOSTNAME-1/201811/file1.json', $tmpDir . '/2018/12/HOSTNAME-1/201812/file-2018-12-01.json', $tmpDir . '/2018/12/HOSTNAME-1/201812/file-2018-12-02.json', $tmpDir . '/2018/12/HOSTNAME-1/201812/file-2018-12-03.json'];
         foreach ( $fileList as $file ) {
             @touch($file);
         }
 
-        $config = array(
-            'name' => 'Files using regex',
-            'type' => 'directoryscanner',
-            'path' => $tmpDir,
-            'file_pattern' => '/\.json$/',
-            'last_modified_start' => '2018-12-01',
-            'last_modified_end' => '2018-12-02',
-            'last_modified_file_regex' => '/\d{4}-\d{2}-\d{2}/',
-            'last_modified_dir_regex' => '/(\d{4})(\d{2})/',
-            'last_modified_dir_regex_reformat' => '$1-$2',
-            'last_modified_methods' => 'file,directory',
-            'handler' => (object) array(
-                'extension' => '.json',
-                'type' => 'jsonfile',
-                'record_separator' => "\n"
-            )
-        );
+        $config = ['name' => 'Files using regex', 'type' => 'directoryscanner', 'path' => $tmpDir, 'file_pattern' => '/\.json$/', 'last_modified_start' => '2018-12-01', 'last_modified_end' => '2018-12-02', 'last_modified_file_regex' => '/\d{4}-\d{2}-\d{2}/', 'last_modified_dir_regex' => '/(\d{4})(\d{2})/', 'last_modified_dir_regex_reformat' => '$1-$2', 'last_modified_methods' => 'file,directory', 'handler' => (object) ['extension' => '.json', 'type' => 'jsonfile', 'record_separator' => "\n"]];
         $options = new DataEndpointOptions($config);
         $scanner = DataEndpoint::factory($options, $this->logger);
         $scanner->verify();

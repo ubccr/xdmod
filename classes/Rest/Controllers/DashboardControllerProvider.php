@@ -18,10 +18,10 @@ class DashboardControllerProvider extends BaseControllerProvider
     /**
      * @see BaseControllerProvider::setupRoutes
      */
-    public function setupRoutes(Application $app, ControllerCollection $controller)
+    public function setupRoutes(Application $app, ControllerCollection $controller): void
     {
         $root = $this->prefix;
-        $class = get_class($this);
+        $class = static::class;
 
         $controller->get("$root/components", "$class::getComponents");
 
@@ -65,10 +65,7 @@ class DashboardControllerProvider extends BaseControllerProvider
         $person_id = $user->getPersonID(true);
         $obj_warehouse = new \XDWarehouse();
 
-        return array(
-            'PERSON_ID' => $person_id,
-            'PERSON_NAME' => $obj_warehouse->resolveName($person_id)
-        );
+        return ['PERSON_ID' => $person_id, 'PERSON_NAME' => $obj_warehouse->resolveName($person_id)];
     }
 
     /**
@@ -88,15 +85,15 @@ class DashboardControllerProvider extends BaseControllerProvider
      * - If a user chart has the same name as a chart in the role configuration
      *   then its settings will be used in place of the role chart.
      */
-    const TOP_COMPONENT = 't.';
-    const CHART_COMPONENT = 'c.';
-    const NON_CHART_COMPONENT = 'p.';
+    public const TOP_COMPONENT = 't.';
+    public const CHART_COMPONENT = 'c.';
+    public const NON_CHART_COMPONENT = 'p.';
 
     public function getComponents(Request $request, Application $app)
     {
         $user = $this->getUserFromRequest($request);
 
-        $dashboardComponents = array();
+        $dashboardComponents = [];
 
         $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($user)->getName();
 
@@ -106,7 +103,7 @@ class DashboardControllerProvider extends BaseControllerProvider
             'roles.json',
             CONFIG_DIR,
             null,
-            array('config_variables' => $this->getConfigVariables($user))
+            ['config_variables' => $this->getConfigVariables($user)]
         );
 
         $presets = $roleConfig['roles'][$mostPrivilegedAcl];
@@ -130,18 +127,13 @@ class DashboardControllerProvider extends BaseControllerProvider
 
                     $defaultLayout = null;
                     if (isset($component['location']) && isset($component['location']['row']) && isset($component['location']['column'])) {
-                        $defaultLayout = array($component['location']['row'], $component['location']['column']);
+                        $defaultLayout = [$component['location']['row'], $component['location']['column']];
                     }
 
-                    list($chartLocation, $column) = $layout->getLocation($componentType . $component['name'], $defaultLayout);
+                    [$chartLocation, $column] = $layout->getLocation($componentType . $component['name'], $defaultLayout);
                 }
 
-                $dashboardComponents[$chartLocation] = array(
-                        'name' => $componentType . $component['name'],
-                        'type' => $component['type'],
-                        'config' => isset($component['config']) ? $component['config'] : array(),
-                        'column' => $column
-                );
+                $dashboardComponents[$chartLocation] = ['name' => $componentType . $component['name'], 'type' => $component['type'], 'config' => $component['config'] ?? [], 'column' => $column];
             }
         }
 
@@ -164,29 +156,16 @@ class DashboardControllerProvider extends BaseControllerProvider
 
                     $name = self::CHART_COMPONENT . $query['name'];
 
-                    list($chartLocation, $column) = $layout->getLocation($name);
+                    [$chartLocation, $column] = $layout->getLocation($name);
 
-                    $dashboardComponents[$chartLocation] = array(
-                        'name' => $name,
-                        'type' => 'xdmod-dash-chart-cmp',
-                        'config' => array(
-                            'name' => $query['name'],
-                            'chart' => $queryConfig
-                        ),
-                        'column' => $column
-                    );
+                    $dashboardComponents[$chartLocation] = ['name' => $name, 'type' => 'xdmod-dash-chart-cmp', 'config' => ['name' => $query['name'], 'chart' => $queryConfig], 'column' => $column];
                 }
             }
         }
 
         ksort($dashboardComponents);
 
-        return $app->json(array(
-            'success' => true,
-            'total' => count($dashboardComponents),
-            'portalConfig' => array('columns' => $layout->getColumnCount()),
-            'data' => array_values($dashboardComponents)
-        ));
+        return $app->json(['success' => true, 'total' => count($dashboardComponents), 'portalConfig' => ['columns' => $layout->getColumnCount()], 'data' => array_values($dashboardComponents)]);
     }
 
     /**
@@ -205,11 +184,7 @@ class DashboardControllerProvider extends BaseControllerProvider
 
         $storage = new \UserStorage($user, 'summary_layout');
 
-        return $app->json(array(
-            'success' => true,
-            'total' => 1,
-            'data' => $storage->upsert(0, $content)
-        ));
+        return $app->json(['success' => true, 'total' => 1, 'data' => $storage->upsert(0, $content)]);
     }
 
     /**
@@ -224,10 +199,7 @@ class DashboardControllerProvider extends BaseControllerProvider
 
         $storage->del();
 
-        return $app->json(array(
-            'success' => true,
-            'total' => 1
-        ));
+        return $app->json(['success' => true, 'total' => 1]);
     }
 
     /*
@@ -244,11 +216,7 @@ class DashboardControllerProvider extends BaseControllerProvider
 
         $storage = new \UserStorage($user, 'viewed_user_tour');
 
-        return $app->json(array(
-            'success' => true,
-            'total' => 1,
-            'msg' => $storage->upsert(0, ['viewedTour' => $viewedTour])
-        ));
+        return $app->json(['success' => true, 'total' => 1, 'msg' => $storage->upsert(0, ['viewedTour' => $viewedTour])]);
     }
 
     /**
@@ -270,7 +238,7 @@ class DashboardControllerProvider extends BaseControllerProvider
                 }
             }
             if (is_null($userReport)){
-                $availTemplates = $rm->enumerateReportTemplates(array($role), 'Dashboard Tab Report');
+                $availTemplates = $rm->enumerateReportTemplates([$role], 'Dashboard Tab Report');
                 if (empty($availTemplates)) {
                     throw new NotFoundHttpException("No dashboard tab report template available for $role");
                 }
@@ -288,9 +256,9 @@ class DashboardControllerProvider extends BaseControllerProvider
             $count = 0;
             foreach($data['queue'] as $queue) {
                 $chart_id = explode("&", $queue['chart_id']);
-                $chart_id_parsed = array();
+                $chart_id_parsed = [];
                 foreach($chart_id as $value) {
-                    list($key, $value) = explode("=", $value);
+                    [$key, $value] = explode("=", $value);
                     $key = urldecode($key);
                     $value = urldecode($value);
                     $json = json_decode($value, true);
@@ -305,11 +273,7 @@ class DashboardControllerProvider extends BaseControllerProvider
                 $data['queue'][$count]['chart_id'] = $chart_id_parsed;
                 $count++;
             }
-            return $app->json(array(
-                'success' => true,
-                'total' => count($data),
-                'data' => $data
-            ));
+            return $app->json(['success' => true, 'total' => count($data), 'data' => $data]);
         }
     }
     /*
@@ -319,11 +283,7 @@ class DashboardControllerProvider extends BaseControllerProvider
     {
         $user = $this->authorize($request);
         $storage = new \UserStorage($user, 'viewed_user_tour');
-        return $app->json(array(
-            'success' => true,
-            'total' => 1,
-            'data' => $storage->get()
-        ));
+        return $app->json(['success' => true, 'total' => 1, 'data' => $storage->get()]);
     }
     /**
      * Get saved charts and reports.
@@ -343,7 +303,7 @@ class DashboardControllerProvider extends BaseControllerProvider
             $rm = new \XDReportManager($user);
             $reports = $rm->fetchReportTable();
             foreach ($reports as &$report) {
-                $tmp = array();
+                $tmp = [];
                 $tmp['type'] = 'Report';
                 $tmp['name'] = $report['report_name'];
                 $tmp['chart_count'] = $report['chart_count'];
@@ -359,11 +319,7 @@ class DashboardControllerProvider extends BaseControllerProvider
                 $tmp['config'] = $report['report_id'];
                 $data[] = $tmp;
             }
-            return $app->json(array(
-                'success' => true,
-                'total' => count($data),
-                'data' => $data
-            ));
+            return $app->json(['success' => true, 'total' => count($data), 'data' => $data]);
         }
     }
 
@@ -402,7 +358,7 @@ class DashboardControllerProvider extends BaseControllerProvider
 
             $result = $query->execute();
         } catch (PDOException $e) {
-            if ($e->getCode() === '42S02' && strpos($e->getMessage(), 'modw_aggregates.jobfact_by_') !== false) {
+            if ($e->getCode() === '42S02' && str_contains($e->getMessage(), 'modw_aggregates.jobfact_by_')) {
                 $msg = 'Aggregate table not found, have you ingested your data?';
                 throw new Exception($msg);
             } else {
@@ -418,13 +374,7 @@ class DashboardControllerProvider extends BaseControllerProvider
         $formats = $rawRoles['roles'][$mostPrivileged]['statistics_formats'];
 
         return $app->json(
-            array(
-                'totalCount' => 1,
-                'success' => true,
-                'message' => '',
-                'formats' => $formats,
-                'data' => array($result)
-            )
+            ['totalCount' => 1, 'success' => true, 'message' => '', 'formats' => $formats, 'data' => [$result]]
         );
     }
 }

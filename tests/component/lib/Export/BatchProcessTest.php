@@ -19,7 +19,7 @@ class BatchProcessTest extends BaseTest
     /**
      * Test artifacts path.
      */
-    const TEST_GROUP = 'component/export/batch_process';
+    public const TEST_GROUP = 'component/export/batch_process';
 
     /**
      * Database handle.
@@ -64,7 +64,7 @@ class BatchProcessTest extends BaseTest
     /**
      * Create test objects and data.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         self::$queryHandler = new QueryHandler();
@@ -74,7 +74,7 @@ class BatchProcessTest extends BaseTest
         );
         self::$dbh = DB::factory('database');
 
-        list($row) = self::$dbh->query('SELECT COUNT(*) AS count FROM batch_export_requests');
+        [$row] = self::$dbh->query('SELECT COUNT(*) AS count FROM batch_export_requests');
         if ($row['count'] > 0) {
             error_log(sprintf('Expected 0 rows in moddb.batch_export_requests, found %d', $row['count']));
         }
@@ -85,7 +85,7 @@ class BatchProcessTest extends BaseTest
         }
 
         // Find a valid user ID.
-        list($user) = self::$dbh->query("SELECT id FROM Users WHERE username = 'normaluser'");
+        [$user] = self::$dbh->query("SELECT id FROM Users WHERE username = 'normaluser'");
 
         // Create records and set one to be expiring.
         self::$submittedRequestId = self::$queryHandler->createRequestRecord($user['id'], 'Jobs', '2019-01-01', '2019-01-31', 'CSV');
@@ -105,7 +105,7 @@ class BatchProcessTest extends BaseTest
     /**
      * Remove test data from database and generated files.
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // Delete any requests that weren't already deleted.
         self::$dbh->execute('DELETE FROM batch_export_requests');
@@ -138,7 +138,7 @@ class BatchProcessTest extends BaseTest
         while (count($lines) > 0) {
             $line = array_shift($lines);
             // Check for a new message.
-            if (substr($line, 0, 5) === 'From ') {
+            if (str_starts_with($line, 'From ')) {
                 // Store previous email.
                 if (!empty($currentEmail)) {
                     // Remove trailing newline.
@@ -153,7 +153,7 @@ class BatchProcessTest extends BaseTest
                 // Parse headers.
                 while (count($lines) > 0 && $lines[0] != "\n") {
                     $line = substr(array_shift($lines), 0, -1);
-                    list($key, $value) = explode(': ', $line, 2);
+                    [$key, $value] = explode(': ', $line, 2);
                     while ($lines[0][0] === "\t") {
                         $value .= ' ' . substr(substr(array_shift($lines), 0, -1), 1);
                     }
@@ -196,9 +196,7 @@ class BatchProcessTest extends BaseTest
             // Filter out files starting with ".".
             array_filter(
                 scandir($dir),
-                function ($file) {
-                    return $file[0] !== '.';
-                }
+                fn($file) => $file[0] !== '.'
             )
         );
     }
@@ -206,7 +204,7 @@ class BatchProcessTest extends BaseTest
     /**
      * Test the batch processor dry run option.
      */
-    public function testDryRun()
+    public function testDryRun(): void
     {
         // Capture state before processing requests.
         $emails = self::getEmails();
@@ -235,7 +233,7 @@ class BatchProcessTest extends BaseTest
     /**
      * Test processing batch export requests.
      */
-    public function testRequestProcessing()
+    public function testRequestProcessing(): void
     {
         // Capture state before processing requests.
         $emailsBefore = self::getEmails();
@@ -263,9 +261,7 @@ class BatchProcessTest extends BaseTest
             'Same number of export files'
         );
         $filePathsAfter = array_map(
-            function ($file) {
-                return $file['path'];
-            },
+            fn($file) => $file['path'],
             $filesAfter
         );
         $this->assertContains(
@@ -285,9 +281,7 @@ class BatchProcessTest extends BaseTest
         );
 
         $submittedRequestsIdsBefore = array_map(
-            function ($request) {
-                return $request['id'];
-            },
+            fn($request) => $request['id'],
             $submittedRequestsBefore
         );
         $this->assertContains(
@@ -297,9 +291,7 @@ class BatchProcessTest extends BaseTest
         );
 
         $submittedRequestsIdsAfter = array_map(
-            function ($request) {
-                return $request['id'];
-            },
+            fn($request) => $request['id'],
             $submittedRequestsAfter
         );
         $this->assertNotContains(
@@ -315,9 +307,7 @@ class BatchProcessTest extends BaseTest
         );
 
         $expiringRequestsIdsBefore = array_map(
-            function ($request) {
-                return $request['id'];
-            },
+            fn($request) => $request['id'],
             $expiringRequestsBefore
         );
         $this->assertContains(
@@ -327,9 +317,7 @@ class BatchProcessTest extends BaseTest
         );
 
         $expiringRequestsIdsAfter = array_map(
-            function ($request) {
-                return $request['id'];
-            },
+            fn($request) => $request['id'],
             $expiringRequestsAfter
         );
         $this->assertNotContains(

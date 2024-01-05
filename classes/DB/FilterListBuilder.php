@@ -22,7 +22,7 @@ class FilterListBuilder extends Loggable
      *
      * @var array
      */
-    private $builtListTables = array();
+    private $builtListTables = [];
 
     /**
      * The set of names of dimensions used by roles.
@@ -39,7 +39,7 @@ class FilterListBuilder extends Loggable
     /**
      * Build filter lists for all realms' dimensions.
      */
-    public function buildAllLists()
+    public function buildAllLists(): void
     {
         // Get the ids of the realms to be processed.
         $realmNames = \Realm\Realm::getRealmNames();
@@ -55,15 +55,12 @@ class FilterListBuilder extends Loggable
      *
      * @param string $realmName The name of a realm to build lists for.
      */
-    public function buildRealmLists($realmName)
+    public function buildRealmLists($realmName): void
     {
         // Get a query for the given realm.
         $startTime = microtime(true);
         $this->logger->notice(
-            array(
-                'message' => 'start',
-                'action' => $realmName . '.build-filter-list'
-            )
+            ['message' => 'start', 'action' => $realmName . '.build-filter-list']
         );
 
         $realmQuery = new \DataWarehouse\Query\AggregateQuery(
@@ -82,12 +79,7 @@ class FilterListBuilder extends Loggable
             $this->buildDimensionLists($realmQuery, $groupByObj, $currentRealm);
         }
         $this->logger->notice(
-            array(
-                'message' => 'end',
-                'action' => $realmName . '.build-filter-list',
-                'start_time' => $startTime,
-                'end_time' => microtime(true)
-            )
+            ['message' => 'end', 'action' => $realmName . '.build-filter-list', 'start_time' => $startTime, 'end_time' => microtime(true)]
         );
     }
 
@@ -101,7 +93,7 @@ class FilterListBuilder extends Loggable
      * @param iGroupBy $groupBy    The dimension's GroupBy to build lists for.
      * @param iRealm   $realm      The realm currently being used.
      */
-    private function buildDimensionLists(iQuery $realmQuery, iGroupBy $groupBy, iRealm $currentRealm)
+    private function buildDimensionLists(iQuery $realmQuery, iGroupBy $groupBy, iRealm $currentRealm): void
     {
         // Check that the given dimension has associated filter lists.
         // If it does not, stop.
@@ -114,10 +106,7 @@ class FilterListBuilder extends Loggable
         $dimensionId = $groupBy->getId();
         $startTime = microtime(true);
         $this->logger->notice(
-            array(
-                'message' => 'start',
-                'action' => $currentRealm->getName() . '.build-filter-list.' . $dimensionId
-            )
+            ['message' => 'start', 'action' => $currentRealm->getName() . '.build-filter-list.' . $dimensionId]
         );
 
         $mainTableName = FilterListHelper::getTableName($realmQuery, $groupBy);
@@ -251,12 +240,7 @@ class FilterListBuilder extends Loggable
             $this->builtListTables[$pairTableName] = true;
         }
         $this->logger->notice(
-            array(
-                'message' => 'end',
-                'action' => $currentRealm->getName() . '.build-filter-list.' . $dimensionId,
-                'start_time' => $startTime,
-                'end_time' => microtime(true)
-            )
+            ['message' => 'end', 'action' => $currentRealm->getName() . '.build-filter-list.' . $dimensionId, 'start_time' => $startTime, 'end_time' => microtime(true)]
         );
     }
 
@@ -286,7 +270,7 @@ class FilterListBuilder extends Loggable
         // If the set of dimensions associated with roles has not yet been
         // generated, do so now.
         if (!isset(self::$rolesDimensionNames)) {
-            self::$rolesDimensionNames = array();
+            self::$rolesDimensionNames = [];
 
             $roles = \Configuration\XdmodConfiguration::assocArrayFactory(
                 'roles.json',
@@ -295,7 +279,7 @@ class FilterListBuilder extends Loggable
             )['roles'];
 
             foreach ($roles as $roleData) {
-                $roleDimensionNames = \xd_utilities\array_get($roleData, 'dimensions', array());
+                $roleDimensionNames = \xd_utilities\array_get($roleData, 'dimensions', []);
                 foreach ($roleDimensionNames as $roleDimensionName) {
                     self::$rolesDimensionNames[$roleDimensionName] = true;
                 }
@@ -315,7 +299,7 @@ class FilterListBuilder extends Loggable
      */
     private function createDimensionQuery(iQuery $realmQuery, iGroupBy $groupBy)
     {
-        $queryClassName = get_class($realmQuery);
+        $queryClassName = $realmQuery::class;
         return new $queryClassName(
             $realmQuery->getRealmName(),
             FilterListHelper::getQueryAggregationUnit(),
@@ -369,8 +353,6 @@ class FilterListBuilder extends Loggable
         }
 
         $columnDescriptionResult = $columnDescriptionResults[0];
-        return array(
-            'type' => $columnDescriptionResult['Type'],
-        );
+        return ['type' => $columnDescriptionResult['Type']];
     }
 }

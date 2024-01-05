@@ -24,13 +24,11 @@ class Roles
      * @throws \Exception If there is a problem reading / processing the underlying `roles.json`
      *                    configuration data.
      */
-    public static function getRoleNames(array $blacklist = array())
+    public static function getRoleNames(array $blacklist = [])
     {
         return  array_filter(
             array_keys(self::getConfigData()),
-            function ($item) use ($blacklist) {
-                return !in_array($item, $blacklist);
-            }
+            fn($item) => !in_array($item, $blacklist)
         );
     }
 

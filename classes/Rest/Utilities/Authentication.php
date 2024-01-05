@@ -22,49 +22,49 @@ class Authentication
      *
      * @var string
      */
-    const _DEFAULT_AUTH_TOKEN = 'Token';
+    public const _DEFAULT_AUTH_TOKEN = 'Token';
 
     /**
      * A default key for retrieving the username from a Silex Request header.
      *
      * @var string
      */
-    const _DEFAULT_AUTH_USER = 'php-auth-user';
+    public const _DEFAULT_AUTH_USER = 'php-auth-user';
 
     /**
      * A default key for retrieving a users' password from a Silex Request header.
      *
      * @var string
      */
-    const _DEFAULT_AUTH_PASSWORD = 'php-auth-pw';
+    public const _DEFAULT_AUTH_PASSWORD = 'php-auth-pw';
 
     /**
      * A default key for retrieving a user token from a Silex Requests' parameters.
      *
      * @var string
      */
-    const _DEFAULT_TOKEN = 'token';
+    public const _DEFAULT_TOKEN = 'token';
 
     /**
      * A default key for retrieving a users' username from a Silex Requests' parameters.
      *
      * @var string
      */
-    const _DEFAULT_USER = 'username';
+    public const _DEFAULT_USER = 'username';
 
     /**
      * A default key for retrieving a users' password from a Silex Requests' parameters.
      *
      * @var string
      */
-    const _DEFAULT_PASSWORD = 'password';
+    public const _DEFAULT_PASSWORD = 'password';
 
     /**
      * A default key for retrieving a user token from a Silex Request header.
      *
      * @var string
      */
-    const _DEFAULT_COOKIE_TOKEN = 'xdmod_token';
+    public const _DEFAULT_COOKIE_TOKEN = 'xdmod_token';
 
     /**
      * This function will, with the provided Request object, retrieve the
@@ -116,13 +116,11 @@ class Authentication
         return $user;
 
     }//authenticateUser
-
     /**
      * This function will attempt to retrieve the currently logged in users'
      * authentication information from the provided Request object. If a
      * Request object is not provided than an empty array is returned.
      *
-     * @param Request $request
      * @return array of the form array(
      *         'username' => <user_name>,
      *         'password' => <password>,
@@ -132,12 +130,12 @@ class Authentication
     public static function getAuthenticationInfo(Request $request)
     {
         if (!isset($request)) {
-            return array();
+            return [];
         }
 
         try {
             $useBasicAuth = \xd_utilities\getConfiguration('rest', 'basic_auth') == 'on';
-        } catch (Exception $e) {
+        } catch (Exception) {
             $useBasicAuth = false;
         }
 
@@ -161,12 +159,7 @@ class Authentication
             $token = $request->cookies->get(Authentication::_DEFAULT_COOKIE_TOKEN);
         }
 
-        return array(
-            'username' => $username,
-            'password' => $password,
-            'token' => $token,
-            'ip' => $request->getClientIp()
-        );
+        return ['username' => $username, 'password' => $password, 'token' => $token, 'ip' => $request->getClientIp()];
     } // _getAuthenticationInfo
 
     /**
@@ -214,11 +207,7 @@ class Authentication
                 AND session_id = :session_id
                 AND init_time = :init_time
         ";
-        $resolver_query_params = array(
-            ':session_token' => $token,
-            ':session_id' => $session_id,
-            ':init_time' => $_SESSION['xdInit'],
-        );
+        $resolver_query_params = [':session_token' => $token, ':session_id' => $session_id, ':init_time' => $_SESSION['xdInit']];
 
         $pdo = DB::factory('database');
 
@@ -238,13 +227,7 @@ class Authentication
                     AND ip_address = :ip_address
                     AND init_time = :init_time
             ";
-            $pdo->execute($last_active_query, array(
-                ':last_active' => $last_active_time,
-                ':session_token' => $token,
-                ':session_id' => $session_id,
-                ':ip_address' => $ip_address,
-                ':init_time' => $_SESSION['xdInit'],
-            ));
+            $pdo->execute($last_active_query, [':last_active' => $last_active_time, ':session_token' => $token, ':session_id' => $session_id, ':ip_address' => $ip_address, ':init_time' => $_SESSION['xdInit']]);
 
             $user = XDUser::getUserByID($user_check[0]['user_id']);
 
@@ -269,7 +252,7 @@ class Authentication
      */
     private static function getMicrotime()
     {
-        list($usec, $sec) = explode(' ', microtime());
+        [$usec, $sec] = explode(' ', microtime());
         return $usec + $sec;
     }
 }

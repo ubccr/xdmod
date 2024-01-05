@@ -16,14 +16,14 @@ use XDReportManager;
  */
 class ParameterizedReportTemplate extends \ReportTemplates\aReportTemplate
 {
-    protected $variables = array();
-    protected $replacements = array();
+    protected $variables = [];
+    protected $replacements = [];
 
     public function __construct($user, $report_skeleton) {
         parent::__construct($user, $report_skeleton);
 
 
-        $dims = array();
+        $dims = [];
         foreach ($user->getAcls(true) as $acl) {
             $parameters = Parameters::getParameters($user, $acl);
             foreach ($parameters as $dimensionId => $valueId) {
@@ -38,7 +38,7 @@ class ParameterizedReportTemplate extends \ReportTemplates\aReportTemplate
         $this->replacements = array_values($dims);
     }
 
-    public function buildReportFromTemplate(array &$params = array(), $report_id_suffix = null)
+    public function buildReportFromTemplate(array &$params = [], $report_id_suffix = null): void
     {
         $rm = new XDReportManager($this->_user);
 

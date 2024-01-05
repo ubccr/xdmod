@@ -17,17 +17,17 @@
       session_cache_limiter("private");
    }
 
-   require_once dirname(__FILE__).'/../../configuration/linker.php';
+   require_once __DIR__.'/../../configuration/linker.php';
     \xd_security\start_session();
     session_write_close();
 
-	$returnData = array();
+	$returnData = [];
 	
 	set_time_limit(0);
 	
 	// --------------------
 	
-	$controller = new XDController(array(STATUS_LOGGED_IN));
+	$controller = new XDController([STATUS_LOGGED_IN]);
 
 	$controller->registerOperation('enum_available_charts');
 	$controller->registerOperation('enum_reports');

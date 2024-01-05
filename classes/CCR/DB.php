@@ -26,7 +26,7 @@ class DB
 {
     // An array (pool) of database connection handles, one per configuration file section
 
-    private static $instancePool = array();
+    private static $instancePool = [];
 
     // Ensure that this class is a singleton
 

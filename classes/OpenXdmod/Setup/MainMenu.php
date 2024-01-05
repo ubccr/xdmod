@@ -25,13 +25,11 @@ class MainMenu extends Menu
         // Sort menu items by relative position.
         usort(
             $itemConf,
-            function ($a, $b) {
-                return $a['position'] < $b['position'] ? -1 : 1;
-            }
+            fn($a, $b) => $a['position'] < $b['position'] ? -1 : 1
         );
 
         $console = Console::factory();
-        $items   = array();
+        $items   = [];
         $count   = 0;
 
         foreach ($itemConf as $conf) {
@@ -39,9 +37,7 @@ class MainMenu extends Menu
             // If there is no trigger in the configuration, then use
             // consecutive numbers.
             $trigger
-                = isset($conf['trigger'])
-                ? $conf['trigger']
-                : ++$count;
+                = $conf['trigger'] ?? ++$count;
 
             $cls     = __NAMESPACE__ . '\\' .  $conf['handler'];
             $handler = new $cls($console);

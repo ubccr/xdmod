@@ -13,11 +13,9 @@ class UserAdminTest extends BaseUserAdminTest
      * Tests all of the situations in which user creation can fail ( i.e. throw an exception ).
      *
      * @dataProvider provideCreateUserFails
-     * @param array $params
-     * @param array $expected
      * @throws \Exception
      */
-    public function testCreateUserFails(array $params, array $expected)
+    public function testCreateUserFails(array $params, array $expected): void
     {
         $this->helper->authenticateDashboard('mgr');
 
@@ -39,110 +37,44 @@ class UserAdminTest extends BaseUserAdminTest
      */
     public function provideCreateUserFails()
     {
-        $params = array(
-            'operation' => 'create_user',
-            'account_request_id' => '',
-            'first_name' => 'Ezekiah',
-            'last_name' => 'Jones',
-            'email_address' => 'ejones@test.com',
-            'username' => 'ejones',
-            'acls' => json_encode(
-                array(
-                    'usr' => array()
-                )
-            ),
-            'assignment' => 29010,
-            'institution' => -1,
-            'user_type' => 1
-        );
+        $params = ['operation' => 'create_user', 'account_request_id' => '', 'first_name' => 'Ezekiah', 'last_name' => 'Jones', 'email_address' => 'ejones@test.com', 'username' => 'ejones', 'acls' => json_encode(
+            ['usr' => []]
+        ), 'assignment' => 29010, 'institution' => -1, 'user_type' => 1];
 
-        $expected = array(
-            "success" => false,
-            "count" => 0,
-            "total" => 0,
-            "totalCount" => 0,
-            "results" => [],
-            "data" => [],
-            "message" => ''
-        );
+        $expected = ["success" => false, "count" => 0, "total" => 0, "totalCount" => 0, "results" => [], "data" => [], "message" => ''];
 
-        return array(
+        return [
             // Username not provided
-            array(
-                $this->copyAndRemove($params, array('username')),
-                $this->copyAndReplace($expected, array('message' => "'username' not specified."))
-            ),
+            [$this->copyAndRemove($params, ['username']), $this->copyAndReplace($expected, ['message' => "'username' not specified."])],
             // Username empty
-            array(
-                $this->copyAndReplace($params, array('username' => '')),
-                $this->copyAndReplace($expected, array('message' => "Invalid value specified for 'username'."))
-            ),
+            [$this->copyAndReplace($params, ['username' => '']), $this->copyAndReplace($expected, ['message' => "Invalid value specified for 'username'."])],
             // first_name not provided
-            array(
-                $this->copyAndRemove($params, array('first_name')),
-                $this->copyAndReplace($expected, array('message' => "'first_name' not specified."))
-            ),
+            [$this->copyAndRemove($params, ['first_name']), $this->copyAndReplace($expected, ['message' => "'first_name' not specified."])],
             // first_name empty
-            array(
-                $this->copyAndReplace($params, array('first_name' => '')),
-                $this->copyAndReplace($expected, array('message' => "Invalid value specified for 'first_name'."))
-            ),
+            [$this->copyAndReplace($params, ['first_name' => '']), $this->copyAndReplace($expected, ['message' => "Invalid value specified for 'first_name'."])],
             // last_name not provided
-            array(
-                $this->copyAndRemove($params, array('last_name')),
-                $this->copyAndReplace($expected, array('message' => "'last_name' not specified."))
-            ),
+            [$this->copyAndRemove($params, ['last_name']), $this->copyAndReplace($expected, ['message' => "'last_name' not specified."])],
             // last_name empty
-            array(
-                $this->copyAndReplace($params, array('last_name' => '')),
-                $this->copyAndReplace($expected, array('message' => "Invalid value specified for 'last_name'."))
-            ),
+            [$this->copyAndReplace($params, ['last_name' => '']), $this->copyAndReplace($expected, ['message' => "Invalid value specified for 'last_name'."])],
             // user_type not provided
-            array(
-                $this->copyAndRemove($params, array('user_type')),
-                $this->copyAndReplace($expected, array('message' => "'user_type' not specified."))
-            ),
+            [$this->copyAndRemove($params, ['user_type']), $this->copyAndReplace($expected, ['message' => "'user_type' not specified."])],
             // user_type empty
-            array(
-                $this->copyAndReplace($params, array('user_type' => '')),
-                $this->copyAndReplace($expected, array('message' => "Invalid value specified for 'user_type'."))
-            ),
+            [$this->copyAndReplace($params, ['user_type' => '']), $this->copyAndReplace($expected, ['message' => "Invalid value specified for 'user_type'."])],
             // email_address not provided
-            array(
-                $this->copyAndRemove($params, array('email_address')),
-                $this->copyAndReplace($expected, array('message' => "'email_address' not specified."))
-            ),
+            [$this->copyAndRemove($params, ['email_address']), $this->copyAndReplace($expected, ['message' => "'email_address' not specified."])],
             // email_address empty
-            array(
-                $this->copyAndReplace($params, array('email_address' => '')),
-                $this->copyAndReplace($expected, array('message' => "Failed to assert 'email_address'."))
-            ),
+            [$this->copyAndReplace($params, ['email_address' => '']), $this->copyAndReplace($expected, ['message' => "Failed to assert 'email_address'."])],
             // acls not provided
-            array(
-                $this->copyAndRemove($params, array('acls')),
-                $this->copyAndReplace($expected, array('message' => "Acl information is required"))
-            ),
+            [$this->copyAndRemove($params, ['acls']), $this->copyAndReplace($expected, ['message' => "Acl information is required"])],
             // acls empty
-            array(
-                $this->copyAndReplace($params, array('acls' => '')),
-                $this->copyAndReplace($expected, array('message' => "Acl information is required"))
-            ),
+            [$this->copyAndReplace($params, ['acls' => '']), $this->copyAndReplace($expected, ['message' => "Acl information is required"])],
             // acls only contain 'flag' acls ( dev )
-            array(
-                $this->copyAndReplace($params, array('acls' => '{"dev": []}')),
-                $this->copyAndReplace($expected, array('message' => 'Please include a non-feature acl ( i.e. User, PI etc. )'))
-            ),
+            [$this->copyAndReplace($params, ['acls' => '{"dev": []}']), $this->copyAndReplace($expected, ['message' => 'Please include a non-feature acl ( i.e. User, PI etc. )'])],
             // acls only contain 'flag' acls ( mgr )
-            array(
-                $this->copyAndReplace($params, array('acls' => '{"mgr": []}')),
-                $this->copyAndReplace($expected, array('message' => 'Please include a non-feature acl ( i.e. User, PI etc. )'))
-            ),
+            [$this->copyAndReplace($params, ['acls' => '{"mgr": []}']), $this->copyAndReplace($expected, ['message' => 'Please include a non-feature acl ( i.e. User, PI etc. )'])],
             // acls only contain 'flag' acls ( dev, mgr )
-            array(
-                $this->copyAndReplace($params, array('acls' => '{"dev": [], "mgr": []}')),
-                $this->copyAndReplace($expected, array('message' => 'Please include a non-feature acl ( i.e. User, PI etc. )'))
-            )
-        );
+            [$this->copyAndReplace($params, ['acls' => '{"dev": [], "mgr": []}']), $this->copyAndReplace($expected, ['message' => 'Please include a non-feature acl ( i.e. User, PI etc. )'])],
+        ];
     }
 
     /**
@@ -152,10 +84,9 @@ class UserAdminTest extends BaseUserAdminTest
      *
      * @dataProvider provideCreateUsersSuccess
      * @group UserAdminTest.createUsers
-     * @param array $user
      * @throws \Exception
      */
-    public function testCreateUsersSuccess(array $user)
+    public function testCreateUsersSuccess(array $user): void
     {
         $userId = $this->createUser($user);
 
@@ -180,9 +111,8 @@ class UserAdminTest extends BaseUserAdminTest
 
     /**
      * @dataProvider provideThatExistingUsersCanBeRetrieved
-     * @param array $user
      */
-    public function testThatExistingUsersCanBeRetrieved(array $user)
+    public function testThatExistingUsersCanBeRetrieved(array $user): void
     {
         $username = $user['username'];
         $userType = $user['user_type'];
@@ -212,10 +142,8 @@ class UserAdminTest extends BaseUserAdminTest
      * @dataProvider provideTestUsersQuickFilters
      * @depends      testCreateUsersSuccess
      * @group UserAdminTest.createUsers
-     *
-     * @param array $user
      */
-    public function testUsersQuickFilters(array $user)
+    public function testUsersQuickFilters(array $user): void
     {
         $this->assertArrayHasKey('username', $user);
 
@@ -231,7 +159,7 @@ class UserAdminTest extends BaseUserAdminTest
         if (isset($user['long_name'])) {
             $personId = $this->peopleHelper->getPersonIdByLongName($user['long_name']);
             foreach ($expectedFilters as $type => $filters) {
-                if (in_array($type, array('person', 'pi'))) {
+                if (in_array($type, ['person', 'pi'])) {
                     $expectedFilters[$type] = array_map(
                         function ($filter) use ($personId) {
                             $filter['valueId'] = $personId;
@@ -268,7 +196,7 @@ class UserAdminTest extends BaseUserAdminTest
     public function provideTestUsersQuickFilters()
     {
         # Handle special case where there's no PI data (Cloud Realm enabled only)
-        if (parent::getRealms() == array("cloud")) {
+        if (parent::getRealms() == ["cloud"]) {
             return Json::loadFile(
                 parent::getTestFiles()->getFile('user_admin', 'user_quick_filters-update_enumAllAvailableRoles', 'output/cloud')
             );
@@ -283,10 +211,9 @@ class UserAdminTest extends BaseUserAdminTest
      * @depends      testCreateUsersSuccess
      * @dataProvider provideGetMenus
      * @group UserAdminTest.createUsers
-     * @param array $user
      * @throws \Exception
      */
-    public function testGetMenus(array $user)
+    public function testGetMenus(array $user): void
     {
         $this->assertArrayHasKey('username', $user);
         $this->assertArrayHasKey('output', $user);
@@ -298,12 +225,7 @@ class UserAdminTest extends BaseUserAdminTest
             $this->helper->authenticateDirect($username, $username);
         }
 
-        $data = array(
-            'operation' => 'get_menus',
-            'public_user' => $username === self::PUBLIC_USER_NAME ? 'true' : 'false',
-            'query_group' => 'tg_usage',
-            'node' => 'category_'
-        );
+        $data = ['operation' => 'get_menus', 'public_user' => $username === self::PUBLIC_USER_NAME ? 'true' : 'false', 'query_group' => 'tg_usage', 'node' => 'category_'];
 
         $response = $this->helper->post('controllers/user_interface.php', null, $data);
 
@@ -314,12 +236,12 @@ class UserAdminTest extends BaseUserAdminTest
         $this->validateJsonAgainstFile($actual, 'schema', 'get-menus.spec');
 
         # Check expected file
-        $expected = array();
+        $expected = [];
         foreach(self::$XDMOD_REALMS as $realm) {
             $expectedOutputFile = parent::getTestFiles()->getFile('user_admin', $output, "output/$realm");
 
             if(!is_file($expectedOutputFile)) {
-                $newFile = array();
+                $newFile = [];
                 foreach ($actual as $arr) {
                     if (isset($arr['realm'])) {
                         if (strtolower($arr['realm']) == $realm) {
@@ -327,14 +249,7 @@ class UserAdminTest extends BaseUserAdminTest
                         }
                     }
                 }
-                $separator = array(
-                    "text" => "",
-                    "id" => "-111",
-                    "node_type" => "separator",
-                    "iconCls" => "blank",
-                    "leaf" => true,
-                    "disabled" => true
-                );
+                $separator = ["text" => "", "id" => "-111", "node_type" => "separator", "iconCls" => "blank", "leaf" => true, "disabled" => true];
                 array_push($newFile, $separator);
                 $filePath = dirname($expectedOutputFile);
                 if (!is_dir($filePath)){
@@ -371,10 +286,9 @@ class UserAdminTest extends BaseUserAdminTest
      * @depends      testCreateUsersSuccess
      * @dataProvider provideGetTabs
      * @group UserAdminTest.createUsers
-     * @param array $user
      * @throws \Exception
      */
-    public function testGetTabs(array $user)
+    public function testGetTabs(array $user): void
     {
         $this->assertArrayHasKey('username', $user);
         $this->assertArrayHasKey('output', $user);
@@ -387,10 +301,7 @@ class UserAdminTest extends BaseUserAdminTest
             $this->helper->authenticateDirect($username, $username);
         }
 
-        $data = array(
-            'operation' => 'get_tabs',
-            'public_user' => ($isPublicUser ? 'true' : 'false')
-        );
+        $data = ['operation' => 'get_tabs', 'public_user' => ($isPublicUser ? 'true' : 'false')];
 
         $response = $this->helper->post('controllers/user_interface.php', null, $data);
         $this->validateResponse($response);
@@ -442,7 +353,7 @@ class UserAdminTest extends BaseUserAdminTest
      * @param string $username
      * @throws \Exception
      */
-    public function testGetDwDescripters($username)
+    public function testGetDwDescripters($username): void
     {
         $isPublicUser = $username === self::PUBLIC_USER_NAME;
 
@@ -482,27 +393,14 @@ class UserAdminTest extends BaseUserAdminTest
      */
     public function provideGetDwDescripters()
     {
-        return array(
-            array("admin"),
-            array("centerdirector"),
-            array("centerstaff"),
-            array("principal"),
-            array("normaluser"),
-            array("test.cd.one-center"),
-            array("test.pi"),
-            array("test.normal-user"),
-            array("test.usr_dev"),
-            array("test.usr_mgr"),
-            array("test.usr_mgr_dev")
-        );
+        return [["admin"], ["centerdirector"], ["centerstaff"], ["principal"], ["normaluser"], ["test.cd.one-center"], ["test.pi"], ["test.normal-user"], ["test.usr_dev"], ["test.usr_mgr"], ["test.usr_mgr_dev"]];
     }
 
     /**
      * @dataProvider provideGetUserVisits
-     * @param array $options
      * @throws \Exception
      */
-    public function testGetUserVisits(array $options)
+    public function testGetUserVisits(array $options): void
     {
         $this->assertArrayHasKey('data', $options);
         $this->assertArrayHasKey('output', $options);
@@ -515,9 +413,7 @@ class UserAdminTest extends BaseUserAdminTest
         $helper = $options['helper'];
 
         $data = array_merge(
-            array(
-                'operation' => 'enum_user_visits'
-            ),
+            ['operation' => 'enum_user_visits'],
             $testData
         );
 
@@ -542,8 +438,8 @@ class UserAdminTest extends BaseUserAdminTest
             $actualStats = $actual['stats'];
             $expectedStats = $expected['stats'];
 
-            $expectedDifferences = array('visit_frequency', 'timeframe');
-            $actualDifferences = array();
+            $expectedDifferences = ['visit_frequency', 'timeframe'];
+            $actualDifferences = [];
 
             foreach ($expectedStats as $key => $expectedStat) {
                 $this->entryExists(
@@ -586,10 +482,9 @@ class UserAdminTest extends BaseUserAdminTest
      *
      * @dataProvider provideGetUserVisits
      *
-     * @param array $options
      * @throws \Exception
      */
-    public function testGetUserVisitsExport(array $options)
+    public function testGetUserVisitsExport(array $options): void
     {
         $this->assertArrayHasKey('data', $options);
         $this->assertArrayHasKey('output', $options);
@@ -601,9 +496,7 @@ class UserAdminTest extends BaseUserAdminTest
         $helper = $options['helper'];
 
         $data = array_merge(
-            array(
-                'operation' => 'enum_user_visits_export'
-            ),
+            ['operation' => 'enum_user_visits_export'],
             $testData
         );
 
@@ -612,7 +505,7 @@ class UserAdminTest extends BaseUserAdminTest
         $this->validateResponse($response, 200, $expectedContentType);
 
 
-        $actual = array();
+        $actual = [];
         if (true === $expectedSuccess) {
             /* If we expected the request to succeed then the returned data should
              * be 'csv', process accordingly to ensure we're comparing apples to
@@ -636,7 +529,7 @@ class UserAdminTest extends BaseUserAdminTest
             // we expect the incoming data to be json formatted.
             $actualLines = json_decode($response[0], true);
             foreach($actualLines as $key => $value) {
-                $actual[] = array($key, $value);
+                $actual[] = [$key, $value];
             }
         }
 
@@ -645,8 +538,8 @@ class UserAdminTest extends BaseUserAdminTest
 
         $rows = 0;
         $length = 1;
-        $expected = array();
-        $ignoredColumns = array('visit_frequency' => null, 'timeframe' => null) ;
+        $expected = [];
+        $ignoredColumns = ['visit_frequency' => null, 'timeframe' => null] ;
 
         if (true === $expectedSuccess) {
             /**
@@ -729,7 +622,7 @@ class UserAdminTest extends BaseUserAdminTest
             // is a json file. Process accordingly.
             $expectedJson = JSON::loadFile($expectedFileName);
             foreach($expectedJson as $key => $value) {
-                $expected[] = array($key, $value);
+                $expected[] = [$key, $value];
             }
 
             $this->assertEquals($expected, $actual);
@@ -765,10 +658,9 @@ class UserAdminTest extends BaseUserAdminTest
      * @depends testGetUserVisitsExport
      * @dataProvider provideGetUserVisitsIncrements
      *
-     * @param array $options
      * @throws \Exception
      */
-    public function testGetUserVisitsIncrements(array $options)
+    public function testGetUserVisitsIncrements(array $options): void
     {
         $user = $options['user'];
         $difference = $options['difference'];
@@ -817,7 +709,6 @@ class UserAdminTest extends BaseUserAdminTest
      * 'internal_dashboard/controllers/controller.php?operation=enum_user_visits'
      * endpoint. Validates the response and returned data structure.
      *
-     * @param array $options
      * @return null|int returns null if user is not found else it returns the
      *                  users visit_frequency.
      * @throws \Exception if there is a problem authenticating with the
@@ -834,9 +725,7 @@ class UserAdminTest extends BaseUserAdminTest
         $this->helper->authenticateDashboard('mgr');
 
         $data = array_merge(
-            array(
-                'operation' => 'enum_user_visits'
-            ),
+            ['operation' => 'enum_user_visits'],
             $testData
         );
 

@@ -42,7 +42,7 @@ class JsonFileWriter extends aFileWriter
     /**
      * Write the closing bracket and close the file.
      */
-    public function close()
+    public function close(): void
     {
         if (fwrite($this->fh, "\n]") === false) {
             $this->logAndThrowException(
@@ -58,7 +58,7 @@ class JsonFileWriter extends aFileWriter
      *
      * @param array $record
      */
-    public function writeRecord(array $record)
+    public function writeRecord(array $record): void
     {
         $json = json_encode($record, JSON_UNESCAPED_SLASHES);
 

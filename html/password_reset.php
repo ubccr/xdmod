@@ -6,19 +6,15 @@
       The Center For Computational Research, University At Buffalo
    */
 
-	require_once dirname(__FILE__).'/../configuration/linker.php';
+	require_once __DIR__.'/../configuration/linker.php';
 	
 	$page_title = xd_utilities\getConfiguration('general', 'title');
 	$site_address = xd_utilities\getConfigurationUrlBase('general', 'site_address');
 
-$rid = filter_input(INPUT_GET, 'rid', FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => RESTRICTION_RID)));
+$rid = filter_input(INPUT_GET, 'rid', FILTER_VALIDATE_REGEXP, ['options' => ['regexp' => RESTRICTION_RID]]);
 
 if ($rid === false) {
-    $validationCheck = array(
-        'status' => INVALID,
-        'user_first_name' => 'INVALID',
-        'user_id' => INVALID
-    );
+    $validationCheck = ['status' => INVALID, 'user_first_name' => 'INVALID', 'user_id' => INVALID];
 } else {
     $validationCheck = XDUser::validateRID($rid);
 }

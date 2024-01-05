@@ -10,25 +10,22 @@
 namespace UnitTests\ETL\VariableStore;
 
 use ETL\VariableStore;
+use Exception;
 
-class VariableStoreTest extends \PHPUnit_Framework_TestCase
+class VariableStoreTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
      * Test constructor and initializers.
      */
 
-    public function testConstructor()
+    public function testConstructor(): void
     {
         // Empty store
         $store = new VariableStore();
         $this->assertCount(0, $store->toArray(), 'Store not empty');
 
-        $init = array(
-            'variable_1' => 'value_1',
-            'variable_2' => 'value_3',
-            'variable_3' => 'value_2'
-        );
+        $init = ['variable_1' => 'value_1', 'variable_2' => 'value_3', 'variable_3' => 'value_2'];
         $store1 = new VariableStore($init);
         $this->assertCount(3, $store1->toArray(), 'Initialize store with array');
 
@@ -39,11 +36,12 @@ class VariableStoreTest extends \PHPUnit_Framework_TestCase
     /**
      * Test constructor with invalid initializer.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testConstructorBadInitializer()
+    public function testConstructorBadInitializer(): void
     {
+        $this->expectException(Exception::class);
         new VariableStore('bad initializer');
     }
 
@@ -51,7 +49,7 @@ class VariableStoreTest extends \PHPUnit_Framework_TestCase
      * Test setting and retrieving of variables
      */
 
-    public function testSettersAndGetters()
+    public function testSettersAndGetters(): void
     {
         $store = new VariableStore();
         $store->variable1 = 'value1';
@@ -59,11 +57,11 @@ class VariableStoreTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('value2', $store->variable2);
         $this->assertEquals(
-            array('variable1' => 'value1', 'variable2' => 'value2'),
+            ['variable1' => 'value1', 'variable2' => 'value2'],
             $store->toArray()
         );
 
-        $store->add(array('variable1' => 'new value', 'variable3' => 'value3'));
+        $store->add(['variable1' => 'new value', 'variable3' => 'value3']);
 
         $this->assertCount(3, $store->toArray(), 'Adding via add()');
         $this->assertNotEquals('new value', $store->variable1, 'Do not overwrite by default');
@@ -83,20 +81,21 @@ class VariableStoreTest extends \PHPUnit_Framework_TestCase
     /**
      * Test non-scalar value
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testNonScalarValue()
+    public function testNonScalarValue(): void
     {
+        $this->expectException(Exception::class);
         $store = new VariableStore();
-        $store->first = array(1, 2, 3);
+        $store->first = [1, 2, 3];
     }
 
     /**
      * Test overwriting of variables.
      */
 
-    public function testOverwrite()
+    public function testOverwrite(): void
     {
         $store = new VariableStore();
         $store->variable1 = 'value1';
@@ -108,10 +107,7 @@ class VariableStoreTest extends \PHPUnit_Framework_TestCase
         $store->overwrite('variable1', 'new value');
         $this->assertEquals('new value', $store->variable1, 'Testing overwrite()');
 
-        $variables = array(
-            'variable1' => 'overwritten',
-            'variable3' => 'new variable'
-        );
+        $variables = ['variable1' => 'overwritten', 'variable3' => 'new variable'];
         $store->add($variables, true);
         $this->assertEquals('overwritten', $store->variable1, 'Overwrite via add(overwrite=true)');
         $this->assertEquals('new variable', $store->variable3, 'New variable via add(overwrite=true)');
@@ -121,15 +117,10 @@ class VariableStoreTest extends \PHPUnit_Framework_TestCase
      * Test variable substitution.
      */
 
-    public function testSubstitution()
+    public function testSubstitution(): void
     {
         $string = 'The ${color} ${animal} jumped over the ${OBJECT} ${num} times';
-        $init = array(
-            'color'  => 'brown',
-            'animal' => 'fox',
-            'OBJECT' => 'fence',
-            'num'    => 4
-        );
+        $init = ['color'  => 'brown', 'animal' => 'fox', 'OBJECT' => 'fence', 'num'    => 4];
         $store = new VariableStore($init);
 
         $this->assertEquals(
@@ -140,7 +131,7 @@ class VariableStoreTest extends \PHPUnit_Framework_TestCase
 
         // Unset a variable and get details on what variables were substituted or not
 
-        $details = array();
+        $details = [];
         $store->num = null;
         $substituted = $store->substitute($string, null, $details);
         $this->assertEquals(

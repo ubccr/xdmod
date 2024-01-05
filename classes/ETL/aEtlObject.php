@@ -20,9 +20,6 @@ use stdClass;
 
 abstract class aEtlObject extends \CCR\Loggable
 {
-    // All ELT objects can be named
-    protected $name = null;
-
     // Flag indicating whether or not initialization was performed on this action.
     protected $initialized = false;
 
@@ -31,10 +28,9 @@ abstract class aEtlObject extends \CCR\Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(LoggerInterface $logger = null, $name = null)
+    public function __construct(LoggerInterface $logger = null, protected $name = null)
     {
         parent::__construct($logger);
-        $this->name = $name;
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -108,7 +104,7 @@ abstract class aEtlObject extends \CCR\Loggable
 
     protected function verifyRequiredConfigKeys(array $requiredKeys, stdClass $config)
     {
-        $missing = array();
+        $missing = [];
 
         foreach ( $requiredKeys as $key ) {
             if ( ! isset($config->$key) ) {
@@ -133,8 +129,8 @@ abstract class aEtlObject extends \CCR\Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->name . " (" . get_class($this) . ")";
+        return $this->name . " (" . static::class . ")";
     }  // __toString()
 }  // abstract class aEtlObject

@@ -17,7 +17,7 @@ use ETL\JsonPointer;
 
 class JsonReferenceTransformer extends aUrlTransformer implements iConfigFileKeyTransformer
 {
-    const REFERENCE_KEY = '$ref';
+    public const REFERENCE_KEY = '$ref';
 
     /** -----------------------------------------------------------------------------------------
      * @see iConfigFileKeyTransformer::keyMatches()

@@ -28,7 +28,7 @@ class Cloudresourcespecs extends Shredder
      * Throw an exception if someone tries to shred cloud data using the -i flag instead
      * of using -d
      */
-    public function shredFile($line)
+    public function shredFile($line): void
     {
         throw new Exception('Cloud resources specs do not support shredding by file. Please use the -d option and specify a directory');
     }
@@ -46,10 +46,7 @@ class Cloudresourcespecs extends Shredder
         Utilities::runEtlPipeline(
             ['shred-cloud-resource-specs'],
             $this->logger,
-            array(
-              'include-only-resource-codes' => $this->resource,
-              'variable-overrides' => ['CLOUD_RESOURCE_SPECS_DIRECTORY' => $directory]
-            )
+            ['include-only-resource-codes' => $this->resource, 'variable-overrides' => ['CLOUD_RESOURCE_SPECS_DIRECTORY' => $directory]]
         );
     }
 

@@ -6,7 +6,7 @@ use CCR\Json;
 
 class TestFiles
 {
-    const TEST_ARTIFACT_OUTPUT_PATH = './artifacts';
+    public const TEST_ARTIFACT_OUTPUT_PATH = './artifacts';
 
     /**
      * The base directory to use when retrieving test files.
@@ -40,12 +40,12 @@ class TestFiles
             throw new \Exception("Base Dir: $baseDir is not a directory. Unable to continue");
         }
         $this->baseDir = $baseDir;
-        $this->defaultEnvironment = isset($defaultEnvironment) ? $defaultEnvironment : 'xdmod';
+        $this->defaultEnvironment = $defaultEnvironment ?? 'xdmod';
         $this->setupEnvironment();
     }
 
 
-    private function setupEnvironment()
+    private function setupEnvironment(): void
     {
         $testEnv = getenv('TEST_ENV');
         $this->env = $testEnv !== false ? $testEnv : $this->defaultEnvironment;
@@ -55,14 +55,7 @@ class TestFiles
     {
         return \xd_utilities\resolve_path(implode(
             DIRECTORY_SEPARATOR,
-            array(
-                $this->baseDir,
-                self::TEST_ARTIFACT_OUTPUT_PATH,
-                $this->env,
-                $testGroup,
-                $type,
-                $fileName . $extension,
-            )
+            [$this->baseDir, self::TEST_ARTIFACT_OUTPUT_PATH, $this->env, $testGroup, $type, $fileName . $extension]
         ));
     }
 

@@ -14,7 +14,7 @@ class GeneralSetup extends SetupItem
     /**
      * @inheritdoc
      */
-    public function handle()
+    public function handle(): void
     {
         $settings = $this->loadIniConfig('portal_settings');
 
@@ -124,7 +124,7 @@ EOT
         $settings['features_user_dashboard'] = $this->console->prompt(
             'Enable Dashboard Tab?',
             $settings['features_user_dashboard'],
-            array('on', 'off')
+            ['on', 'off']
         );
 
         $this->saveIniConfig($settings, 'portal_settings');

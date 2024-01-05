@@ -19,18 +19,18 @@ class Join extends SchemaEntity implements iEntity
 {
     // Properties required by this class. These will be merged with other required
     // properties up the call chain. See @Entity::$requiredProperties
-    private $localRequiredProperties = array();
+    private $localRequiredProperties = [];
 
     // Properties provided by this class. These will be merged with other properties up
     // the call chain. See @Entity::$properties
-    private $localProperties = array(
+    private $localProperties = [
         // Join type (e.g., "LEFT OUTER")
         'type'  => null,
         // Alias for the joined table
         'alias' => null,
         // Join ON clause (not needed for FROM)
-        'on'    => null
-    );
+        'on'    => null,
+    ];
 
     /* ------------------------------------------------------------------------------------------
      * @see iEntity::__construct()
@@ -101,11 +101,11 @@ class Join extends SchemaEntity implements iEntity
 
     public function getSql($includeSchema = false)
     {
-        $parts = array();
+        $parts = [];
 
         // Allow subqueries and keywords such as DUAL (e.g., SELECT 'a' FROM DUAL) to be included
         // and not quoted.
-        $quoteName = ( 0 !== strpos($this->name, '(') && 'DUAL' != strtoupper($this->name));
+        $quoteName = ( !str_starts_with($this->name, '(') && 'DUAL' != strtoupper($this->name));
 
         $parts[] = ( null !== $this->schema && $includeSchema ? $this->getFullName() : $this->getName($quoteName) );
         if ( null !== $this->alias ) {

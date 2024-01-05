@@ -26,7 +26,7 @@ class TestAction extends aAction implements iAction
     protected $options;
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
-        $requiredKeys = array("type");
+        $requiredKeys = ["type"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
         parent::__construct($options, $etlConfig, $logger);
     }
@@ -40,19 +40,19 @@ class TestAction extends aAction implements iAction
         switch ($this->options->type) {
 
             case 'sleep':
-                $sleepSeconds = ( isset($this->options->sleep_seconds) ? $this->options->sleep_seconds : 60 );
+                $sleepSeconds = ( $this->options->sleep_seconds ?? 60 );
                 $this->logger->debug("Sleeping $sleepSeconds seconds");
                 sleep($sleepSeconds);
                 break;
 
             case 'exception':
-                $msg = ( isset($this->options->exception_message) ? $this->options->exception_message : "" );
+                $msg = ( $this->options->exception_message ?? "" );
                 $this->logger->debug("Throwing exception");
                 $this->logAndThrowException($msg);
                 break;
 
             case 'echo':
-                $msg = ( isset($this->options->echo_message) ? $this->options->echo_message : "" );
+                $msg = ( $this->options->echo_message ?? "" );
                 $this->logger->debug("Printing message '$msg'");
                 print "$msg\n";
                 break;

@@ -18,16 +18,7 @@ class QueryBuilder
 
     public static $_realms = null;
 
-    public static $_datasetTypes = array(
-        array(
-            'id'    => 'timeseries',
-            'label' => 'Timeseries'
-        ) ,
-        array(
-            'id'    => 'aggregate',
-            'label' => 'Aggregate'
-        )
-    );
+    public static $_datasetTypes = [['id'    => 'timeseries', 'label' => 'Timeseries'], ['id'    => 'aggregate', 'label' => 'Aggregate']];
 
     private $_params;
 
@@ -98,13 +89,7 @@ class QueryBuilder
     public function getStatisticFromRequest(&$request)
     {
         return
-            isset($request['statistic'])
-            ? $request['statistic']
-            : (
-                isset($request['fact'])
-                ? $request['fact']
-                : NULL
-            );
+            $request['statistic'] ?? $request['fact'] ?? NULL;
     }
 
     public function pullQueryParameterDescriptionsFromRequest(
@@ -114,7 +99,7 @@ class QueryBuilder
         $realm            = $this->getRealmFromRequest($request);
         $statistic        = $this->getStatisticFromRequest($request);
         $group_by         = $this->getGroupByFromRequest($request);
-        $query_group      = $this->getQueryGroupFromRequest($request);
+        $query_group      = static::getQueryGroupFromRequest($request);
         $rp_usage_regex   = '/rp_(?P<rp_id>[0-9]+)_usage/';
         $rp_summary_regex = '/rp_(?P<rp_id>[0-9]+)_summary/';
 
@@ -160,12 +145,7 @@ class QueryBuilder
         if (is_array($query_descripter)) {
             throw new \Exception(
                 'QueryBuilder params incorrect: '
-                . json_encode(array(
-                    'query_group' => $query_group,
-                    'realm'       => $realm,
-                    'group_by'    => $group_by,
-                    'statistic'   => $statistic,
-                ))
+                . json_encode(['query_group' => $query_group, 'realm'       => $realm, 'group_by'    => $group_by, 'statistic'   => $statistic])
             );
         }
 

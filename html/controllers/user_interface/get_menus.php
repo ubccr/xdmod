@@ -5,10 +5,10 @@ use Models\Services\Realms;
 
 require_once __DIR__ . '/../common_params.php';
 
-$returnData = array();
+$returnData = [];
 
 try {
-   $user = \xd_security\detectUser(array(XDUser::PUBLIC_USER));
+   $user = \xd_security\detectUser([XDUser::PUBLIC_USER]);
 
     if (isset($_REQUEST['node']) && $_REQUEST['node'] == 'realms') {
         $query_group_name = 'tg_usage';
@@ -20,16 +20,7 @@ try {
         $realms = Realms::getRealmsForUser($user);
 
         foreach ($realms as $realm) {
-            $returnData[] = array(
-                'text'        => $realm,
-                'id'          => 'realm_' . $realm,
-                'realm'       => $realm,
-                'query_group' => $query_group_name,
-                'node_type'   => 'realm',
-                'iconCls'     => 'realm',
-                'description' => $realm,
-                'leaf'        => false,
-            );
+            $returnData[] = ['text'        => $realm, 'id'          => 'realm_' . $realm, 'realm'       => $realm, 'query_group' => $query_group_name, 'node_type'   => 'realm', 'iconCls'     => 'realm', 'description' => $realm, 'leaf'        => false];
         }
     } elseif (
         isset($_REQUEST['node'])
@@ -48,15 +39,11 @@ try {
         $realms = Realms::getRealmIdsForUser($user);
 
         // Filter the categories by those that the user has access to.
-        $categories = array_map(function ($category) use ($realms) {
-            return array_filter($category, function ($realm) use ($realms) {
-                return in_array($realm, $realms);
-            });
-        }, $categories);
+        $categories = array_map(fn($category) => array_filter($category, fn($realm) => in_array($realm, $realms)), $categories);
         $categories = array_filter($categories);
 
         // Ensure the categories are sorted as the realms were.
-        $categoryRealmIndices = array();
+        $categoryRealmIndices = [];
         foreach ($categories as $categoryName => $category) {
             foreach ($category as $realm) {
                 $realmIndex = array_search($realm, $realms);
@@ -78,14 +65,12 @@ try {
             if (!empty($missingCategories)) {
                 throw new Exception("Invalid categories: " . implode(', ', $missingCategories));
             }
-            $categories = array_map(function ($categoryName) use ($categories) {
-                return $categories[$categoryName];
-            }, $requestedCategories);
+            $categories = array_map(fn($categoryName) => $categories[$categoryName], $requestedCategories);
         }
 
         foreach ($categories as $categoryName => $category) {
             $hasItems = false;
-            $categoryReturnData = array();
+            $categoryReturnData = [];
             foreach ($category as $realm_name) {
 
                 // retrieve the query descripters this user is authorized to view for this realm.
@@ -123,20 +108,7 @@ try {
                         : $realm_name
                     );
 
-                    $categoryReturnData[$nodeId] = array(
-                        'text' => $nodeText,
-                        'id' => $nodeId,
-                        'group_by' => $queryDescriptor->getGroupByName(),
-                        'query_group' => $query_group_name,
-                        'category' => $categoryName,
-                        'realm' => $nodeRealms,
-                        'defaultChartSettings' => $queryDescriptor->getChartSettings(true),
-                        'chartSettings' => $queryDescriptor->getChartSettings(true),
-                        'node_type' => 'group_by',
-                        'iconCls' => 'menu',
-                        'description' => $queryDescriptor->getGroupByLabel(),
-                        'leaf' => false
-                    );
+                    $categoryReturnData[$nodeId] = ['text' => $nodeText, 'id' => $nodeId, 'group_by' => $queryDescriptor->getGroupByName(), 'query_group' => $query_group_name, 'category' => $categoryName, 'realm' => $nodeRealms, 'defaultChartSettings' => $queryDescriptor->getChartSettings(true), 'chartSettings' => $queryDescriptor->getChartSettings(true), 'node_type' => 'group_by', 'iconCls' => 'menu', 'description' => $queryDescriptor->getGroupByLabel(), 'leaf' => false];
 
                     $hasItems = true;
                 }
@@ -148,19 +120,12 @@ try {
                     array_values($categoryReturnData)
                 );
 
-                $returnData[] = array(
-                    'text'      => '',
-                    'id'        => '-111',
-                    'node_type' => 'separator',
-                    'iconCls'   => 'blank',
-                    'leaf'      => true,
-                    'disabled'  => true
-                );
+                $returnData[] = ['text'      => '', 'id'        => '-111', 'node_type' => 'separator', 'iconCls'   => 'blank', 'leaf'      => true, 'disabled'  => true];
             }
         }
     } elseif (
         isset($_REQUEST['node'])
-        && substr($_REQUEST['node'], 0, 9) == 'group_by_'
+        && str_starts_with($_REQUEST['node'], 'group_by_')
     ) {
         if (isset($_REQUEST['category'])) {
             $categoryName = $_REQUEST['category'];
@@ -205,28 +170,12 @@ try {
                             $chartSettingsArray['swap_xy'] = false;
                             $chartSettings = json_encode($chartSettingsArray);
                         }
-                        $returnData[] = array(
-                            'text'                 => $statistic_object->getName(false),
-                            'id'                   => 'statistic_'
-                            . $realm_name
-                            . '_'
-                            . $group_by_name
-                            . '_'
-                            . $statName,
-                            'statistic'            => $statName,
-                            'group_by'             => $group_by_name,
-                            'group_by_label'       => $group_by->getName(),
-                            'query_group'          => $query_group_name,
-                            'category'             => $categoryName,
-                            'realm'                => $realm_name,
-                            'defaultChartSettings' => $chartSettings,
-                            'chartSettings'        => $chartSettings,
-                            'node_type'            => 'statistic',
-                            'iconCls'              => 'chart',
-                            'description'          => $statName,
-                            'leaf'                 => true,
-                            'supportsAggregate'    => $statistic_object->usesTimePeriodTablesForAggregate()
-                        );
+                        $returnData[] = ['text'                 => $statistic_object->getName(false), 'id'                   => 'statistic_'
+                        . $realm_name
+                        . '_'
+                        . $group_by_name
+                        . '_'
+                        . $statName, 'statistic'            => $statName, 'group_by'             => $group_by_name, 'group_by_label'       => $group_by->getName(), 'query_group'          => $query_group_name, 'category'             => $categoryName, 'realm'                => $realm_name, 'defaultChartSettings' => $chartSettings, 'chartSettings'        => $chartSettings, 'node_type'            => 'statistic', 'iconCls'              => 'chart', 'description'          => $statName, 'leaf'                 => true, 'supportsAggregate'    => $statistic_object->usesTimePeriodTablesForAggregate()];
                     }
                 }
 
@@ -234,7 +183,7 @@ try {
                     throw new Exception("Category not found.");
                 }
 
-                $texts = array();
+                $texts = [];
                 foreach($returnData as $key => $row) {
                     $texts[$key] = $row['text'];
                 }
@@ -247,12 +196,7 @@ try {
     //       which would allow this block to be removed.
     throw $see;
 } catch (Exception $ex) {
-    $returnData = array(
-        'totalCount' => 0,
-        'message'    => $ex->getMessage(),
-        'data'       => array($ex->getTraceAsString()),
-        'success'    => false,
-    );
+    $returnData = ['totalCount' => 0, 'message'    => $ex->getMessage(), 'data'       => [$ex->getTraceAsString()], 'success'    => false];
 }
 
 xd_controller\returnJSON($returnData);

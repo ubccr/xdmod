@@ -13,18 +13,18 @@ try {
         CONFIG_DIR
     );
 
-    $summaries = array();
+    $summaries = [];
 
     foreach ($config['summary'] as $summary) {
 
         // Add an empty config if none is found.
         if (!isset($summary['config'])) {
-            $summary['config'] = array();
+            $summary['config'] = [];
         }
 
         // Add log config.
         if ($summary['class'] === 'XDMoD.Log.TabPanel') {
-            $logList = array();
+            $logList = [];
 
             foreach ($config['logs'] as $log) {
                 $logSummary = Summary::factory($log['ident']);
@@ -33,11 +33,7 @@ try {
                     continue;
                 }
 
-                $logList[] = array(
-                    'id'    => $log['ident'] . '-log-panel',
-                    'ident' => $log['ident'],
-                    'title' => $log['title'],
-                );
+                $logList[] = ['id'    => $log['ident'] . '-log-panel', 'ident' => $log['ident'], 'title' => $log['title']];
             }
 
             $summary['config']['logConfigList'] = $logList;
@@ -46,18 +42,12 @@ try {
         $summaries[] = $summary;
     }
 
-    $returnData = array(
-        'success'  => true,
-        'response' => $summaries,
-    );
+    $returnData = ['success'  => true, 'response' => $summaries];
 
     $returnData['count'] = count($returnData['response']);
 
 } catch (Exception $e) {
-    $returnData = array(
-        'success' => false,
-        'message' => $e->getMessage(),
-    );
+    $returnData = ['success' => false, 'message' => $e->getMessage()];
 }
 
 echo json_encode($returnData);

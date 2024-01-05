@@ -68,11 +68,7 @@ WHERE a.name = :acl_name AND
   uagbp.value = :center_id AND
       u.id = :user_id;
 SQL;
-        $params = array(
-            ':user_id' => $userId,
-            ':center_id' => $centerId,
-            ':acl_name' => $centerAclName
-        );
+        $params = [':user_id' => $userId, ':center_id' => $centerId, ':acl_name' => $centerAclName];
         $db = DB::factory('database');
         return count($db->query($query, $params)) > 0;
     }
@@ -87,7 +83,7 @@ SQL;
      * @throws Exception if there is a problem obtaining a database connection
      * @throws Exception if there is a problem executing a sql statement
      */
-    public static function removeCenterRelation($userId, $centerId, $aclName)
+    public static function removeCenterRelation($userId, $centerId, $aclName): void
     {
         $query = <<<SQL
 DELETE FROM moddb.user_acl_group_by_parameters 
@@ -97,11 +93,7 @@ WHERE
   value = :center_id;
 SQL;
 
-        $params = array(
-            ':user_id' => $userId,
-            ':center_id' => $centerId,
-            ':acl_name' => $aclName
-        );
+        $params = [':user_id' => $userId, ':center_id' => $centerId, ':acl_name' => $aclName];
 
         $db = DB::factory('database');
 

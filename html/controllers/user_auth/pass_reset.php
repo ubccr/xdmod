@@ -42,15 +42,7 @@ try {
 
     MailWrapper::sendTemplate(
         'password_reset',
-        array(
-            'first_name'           => $user_to_email->getFirstName(),
-            'username'             => $user_to_email->getUsername(),
-            'reset_url'            => $resetUrl,
-            'expiration'           => strftime("%c %Z", explode('|', $rid)[1]),
-            'maintainer_signature' => MailWrapper::getMaintainerSignature(),
-            'subject'              => "$page_title: Password Reset",
-            'toAddress'            => $user_to_email->getEmailAddress()
-        )
+        ['first_name'           => $user_to_email->getFirstName(), 'username'             => $user_to_email->getUsername(), 'reset_url'            => $resetUrl, 'expiration'           => strftime("%c %Z", explode('|', $rid)[1]), 'maintainer_signature' => MailWrapper::getMaintainerSignature(), 'subject'              => "$page_title: Password Reset", 'toAddress'            => $user_to_email->getEmailAddress()]
     );
     $returnData['success'] = true;
     $returnData['status']  = 'success';

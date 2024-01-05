@@ -10,35 +10,28 @@
 namespace UnitTests\Realm;
 
 use CCR\Log as Logger;
+use Exception;
 use Psr\Log\LoggerInterface;
 use \Realm\Realm;
 
-class GroupByTest extends \PHPUnit_Framework_TestCase
+class GroupByTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var LoggerInterface|null
      */
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Logger::EMERG
-        );
+        $conf = ['file' => false, 'db' => false, 'mail' => false, 'consoleLogLevel' => Logger::EMERG];
         self::$logger = Logger::factory('PHPUnit', $conf);
 
         // In order to use a non-standard location for datawarehouse.json we must manually
         // initialize the Realm class.
 
-        $options = (object) array(
-            'config_file_name' => 'datawarehouse.json',
-            'config_base_dir'  => realpath('../artifacts/xdmod/realm')
-        );
+        $options = (object) ['config_file_name' => 'datawarehouse.json', 'config_base_dir'  => realpath('../artifacts/xdmod/realm')];
 
         \Realm\Realm::initialize(self::$logger, $options);
     }
@@ -46,11 +39,12 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
     /**
      * (1) Invalid realm name.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testInvalidGroupBy()
+    public function testInvalidGroupBy(): void
     {
+        $this->expectException(Exception::class);
         $realm = Realm::factory('Jobs', self::$logger);
         $realm->getGroupByObject('DoesNotExist');
     }
@@ -59,7 +53,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
      * (2) Test checking to see if a group by exists.
      */
 
-    public function testGroupByExists()
+    public function testGroupByExists(): void
     {
         $realm = Realm::factory('Jobs', self::$logger);
 
@@ -74,39 +68,24 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
      * (3) Test various sorting methods on the group by objects.
      */
 
-    public function testGetGroupByObjectList()
+    public function testGetGroupByObjectList(): void
     {
         $realm = Realm::factory('Jobs', self::$logger);
         $objectList = $realm->getGroupByObjects();
-        $generated = array();
+        $generated = [];
         foreach ( $objectList as $id => $obj ) {
             $generated[$id] = $obj->getName();
         }
-        $expected = array(
-            'resource' => 'Resource',
-            'person' => 'User',
-            'none' => 'None',
-            'day' => 'Day',
-            'month' => 'Month',
-            'username' => 'System Username',
-            'queue' => 'Queue'
-        );
+        $expected = ['resource' => 'Resource', 'person' => 'User', 'none' => 'None', 'day' => 'Day', 'month' => 'Month', 'username' => 'System Username', 'queue' => 'Queue'];
         $this->assertEquals($expected, $generated, "getGroupByObjects('Jobs')");
 
         $realm = Realm::factory('Cloud', self::$logger);
         $objectList = $realm->getGroupByObjects(Realm::SORT_ON_NAME);
-        $generated = array();
+        $generated = [];
         foreach ( $objectList as $id => $obj ) {
             $generated[$id] = $obj->getName();
         }
-        $expected = array(
-            'alternate_groupby_class' => 'Alternate GroupBy Class Example',
-            'configuration' => 'Instance Type',
-            'username' => 'System Username',
-            'day' => 'Day',
-            'month' => 'Month',
-            'none' => 'None'
-        );
+        $expected = ['alternate_groupby_class' => 'Alternate GroupBy Class Example', 'configuration' => 'Instance Type', 'username' => 'System Username', 'day' => 'Day', 'month' => 'Month', 'none' => 'None'];
         $this->assertEquals($expected, $generated, "getGroupByObjects('Cloud'), SORT_ON_NAME");
     }
 
@@ -114,7 +93,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
      * (4) Test retrieval of the group by object.
      */
 
-    public function testGetGroupByObject()
+    public function testGetGroupByObject(): void
     {
         $realm = Realm::factory('Cloud', self::$logger);
         $obj = $realm->getGroupByObject('username');
@@ -126,17 +105,14 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
      * (5) Test generating query filters from a web request.
      */
 
-    public function testGenerateQueryFiltersFromRequest()
+    public function testGenerateQueryFiltersFromRequest(): void
     {
         $realm = Realm::factory('Jobs', self::$logger);
 
         // GroupBy with a single columm key
 
         $obj = $realm->getGroupByObject('person');
-        $simulatedRequest = array(
-            'person' => '10',
-            'person_filter' => '20,30'
-        );
+        $simulatedRequest = ['person' => '10', 'person_filter' => '20,30'];
         $parameters = $obj->generateQueryFiltersFromRequest($simulatedRequest);
 
         $generated = array_shift($parameters);
@@ -147,10 +123,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         // Multi-column keys use a carat (^) to separate the keys in filters.
 
         $obj = $realm->getGroupByObject('resource');
-        $simulatedRequest = array(
-            'resource' => '10^15',
-            'resource_filter' => '20^25,30^35'
-        );
+        $simulatedRequest = ['resource' => '10^15', 'resource_filter' => '20^25,30^35'];
         $parameters = $obj->generateQueryFiltersFromRequest($simulatedRequest);
 
         $generated = array_shift($parameters);
@@ -166,7 +139,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
      * (6) Test group by metadata.
      */
 
-    public function testGroupByMetadata()
+    public function testGroupByMetadata(): void
     {
         $realm = Realm::factory('Cloud', self::$logger);
         $obj = $realm->getGroupByObject('username');
@@ -200,14 +173,10 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $generated, 'getAttributeTable(false)');
 
         $generated = $obj->getAttributeKeys();
-        $expected = array(
-            'id'
-        );
+        $expected = ['id'];
         $this->assertEquals($expected, $generated, 'getAttributeKeys()');
         $generated = $obj->getAggregateKeys();
-        $expected = array(
-            'systemaccount_id'
-        );
+        $expected = ['systemaccount_id'];
         $this->assertEquals($expected, $generated, 'getAggregateKeys()');
 
         $generated = $obj->getModuleName();
@@ -294,7 +263,7 @@ SQL;
      * simply tests that the infrastructure attempts to instantiate the specified class.
      */
 
-    public function testAlternateGroupByClass()
+    public function testAlternateGroupByClass(): void
     {
         $realm = Realm::factory('Cloud', self::$logger);
         try {
@@ -317,7 +286,7 @@ SQL;
      * (10) Test setting custom chart display types for datasets.
      */
 
-    public function testCustomChartTypes()
+    public function testCustomChartTypes(): void
     {
         $realm = Realm::factory('Cloud', self::$logger);
         $obj = $realm->getGroupByObject('configuration');
@@ -336,11 +305,12 @@ SQL;
      * (11) Test an unknown dataset type when querying the default chart display type for that
      *      dataset.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testUnknownDatasetType()
+    public function testUnknownDatasetType(): void
     {
+        $this->expectException(Exception::class);
         $realm = Realm::factory('Cloud', self::$logger);
         $obj = $realm->getGroupByObject('configuration');
 
@@ -351,7 +321,7 @@ SQL;
      * (12) Test custom group by chart options by testing one of each type of value.
      */
 
-    public function testCustomChartOptions()
+    public function testCustomChartOptions(): void
     {
         $realm = Realm::factory('Cloud', self::$logger);
         $obj = $realm->getGroupByObject('configuration');

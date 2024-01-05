@@ -22,14 +22,7 @@ use xd_utilities;
 function buildError($error)
 {
     // Default values that may be expected by EXT JS.
-    $response = array(
-        'success'    => false,
-        'count'      => 0,
-        'total'      => 0,
-        'totalCount' => 0,
-        'results'    => array(),
-        'data'       => array(),
-    );
+    $response = ['success'    => false, 'count'      => 0, 'total'      => 0, 'totalCount' => 0, 'results'    => [], 'data'       => []];
 
     if ($error instanceof Exception) {
         $response['message'] = $error->getMessage();
@@ -63,7 +56,7 @@ function buildError($error)
  *
  * @param string|Exception $error
  */
-function presentError($error)
+function presentError($error): void
 {
     xd_controller\returnJSON(buildError($error));
 }
@@ -74,7 +67,7 @@ function presentError($error)
  * @param  boolean $allow_caching Allow the generated JavaScript to be cached.
  *                                (Defaults to false.)
  */
-function useDynamicJavascriptHeaders($allow_caching = false) {
+function useDynamicJavascriptHeaders($allow_caching = false): void {
     // Set the content type of the response to JavaScript.
     header('Content-Type: application/javascript');
 

@@ -7,37 +7,16 @@
  * @author Ryan J. Gentner
  */
 
-require_once dirname(__FILE__) . '/../configuration/linker.php';
+require_once __DIR__ . '/../configuration/linker.php';
 
 use \DataWarehouse\Access\ReportGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Rest\Utilities\Authentication;
 
-$emptyBlobs = array('fa0a056630132658467089d779e0e177', '02477ed21bfccd97c1dc2b18d5f1916a');
+$emptyBlobs = ['fa0a056630132658467089d779e0e177', '02477ed21bfccd97c1dc2b18d5f1916a'];
 
-$filters = array(
-    'type' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_CHART_TYPE_REGEX)
-    ),
-    'ref' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_CHART_REF_REGEX)
-    ),
-    'did' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_CHART_DID_REGEX)
-    ),
-    'start' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_DATE_REGEX)
-    ),
-    'end' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_DATE_REGEX)
-    ),
-);
+$filters = ['type' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_CHART_TYPE_REGEX]], 'ref' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_CHART_REF_REGEX]], 'did' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_CHART_DID_REGEX]], 'start' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_DATE_REGEX]], 'end' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_DATE_REGEX]]];
 
 try {
     $request = Request::createFromGlobals();
@@ -69,17 +48,9 @@ try {
             $user_id = $matches[1];
 
             if (isset($request['start']) && isset($request['end'])) {
-                $insertion_rank = array(
-                    'rank' => $matches[2],
-                    'start_date' => $request['start'],
-                    'end_date' => $request['end'],
-                    'did' => isset($request['did']) ? $request['did'] : '',
-                );
+                $insertion_rank = ['rank' => $matches[2], 'start_date' => $request['start'], 'end_date' => $request['end'], 'did' => $request['did'] ?? ''];
             } else {
-                $insertion_rank = array(
-                    'rank' => $matches[2],
-                    'did' => isset($request['did']) ? $request['did'] : '',
-                );
+                $insertion_rank = ['rank' => $matches[2], 'did' => $request['did'] ?? ''];
             }
 
             break;
@@ -92,7 +63,7 @@ try {
             }
 
             $user_id = $matches[2];
-            $insertion_rank =  array('report_id' => $matches[1], 'ordering' => $matches[4]);
+            $insertion_rank =  ['report_id' => $matches[1], 'ordering' => $matches[4]];
             break;
 
         case 'cached':
@@ -115,12 +86,7 @@ try {
 
             $user_id = $matches[2];
 
-            $insertion_rank = array(
-                'report_id' => $matches[1],
-                'ordering' => $matches[4],
-                'start_date' => $request['start'],
-                'end_date' => $request['end'],
-            );
+            $insertion_rank = ['report_id' => $matches[1], 'ordering' => $matches[4], 'start_date' => $request['start'], 'end_date' => $request['end']];
             break;
 
         default:
@@ -146,7 +112,7 @@ try {
     }
 
     if (in_array(md5($blob), $emptyBlobs)) {
-        readfile(dirname(__FILE__) . '/gui/images/report_thumbnail_no_data.png');
+        readfile(__DIR__ . '/gui/images/report_thumbnail_no_data.png');
         exit;
     }
 
@@ -155,7 +121,7 @@ try {
 } catch (Exception $e) {
     header("Content-Type: image/png");
     $unique_id = uniqid();
-    $im = imagecreatefrompng(dirname(__FILE__) . '/gui/images/report_thumbnail_error.png');
+    $im = imagecreatefrompng(__DIR__ . '/gui/images/report_thumbnail_error.png');
     imagestring($im, 5, 20, 505, 'Error Code: ' . $unique_id, imagecolorallocate($im, 100, 100, 100));
     imagepng($im);
 

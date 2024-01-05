@@ -14,12 +14,12 @@ class XdmodTestHelper
     private $cookiefile;
     private $userrole = 'public';
 
-    public function __construct($config = array())
+    public function __construct($config = [])
     {
         $this->config = json_decode(file_get_contents(__DIR__ . '/../../../ci/testing.json'), true);
 
         $this->siteurl = $this->config['url'];
-        $this->headers = array();
+        $this->headers = [];
         $this->decodeTextAsJson = false;
 
         $this->cookiefile = tempnam(sys_get_temp_dir(), "xdmodtestcookies.");
@@ -40,7 +40,7 @@ class XdmodTestHelper
      * This function must be called after any use of CURLOPT_CUSTOMREQUEST to
      * reset the request type.
      */
-    private function resetCurlSession()
+    private function resetCurlSession(): void
     {
         // Close existing session to write cookies to file.
         if (isset($this->curl)) {
@@ -53,7 +53,7 @@ class XdmodTestHelper
         curl_setopt($this->curl, CURLOPT_FOLLOWLOCATION, true);
 
         # Enable header information in the response data
-        curl_setopt($this->curl, CURLOPT_HEADERFUNCTION, array($this, 'processResponseHeader'));
+        curl_setopt($this->curl, CURLOPT_HEADERFUNCTION, [$this, 'processResponseHeader']);
 
         # Disable ssl certificate checks (needed when using self-signed certificates).
         curl_setopt($this->curl, CURLOPT_SSL_VERIFYHOST, false); //NOSONAR
@@ -77,7 +77,7 @@ class XdmodTestHelper
         return strlen($headerline);
     }
 
-    private function setauthvariables($token, $cookie = null)
+    private function setauthvariables($token, $cookie = null): void
     {
         if ($token === null) {
             unset($this->headers['Token']);
@@ -92,7 +92,7 @@ class XdmodTestHelper
 
     public function getheaders()
     {
-        $headers = array();
+        $headers = [];
         foreach ($this->headers as $name => $value) {
             $headers[] = "$name: $value";
         }
@@ -107,7 +107,7 @@ class XdmodTestHelper
      * @param name the name of the header
      * @param value the value to set. If null then the header is unset.
      */
-    public function addheader($name, $value)
+    public function addheader($name, $value): void
     {
         if ($value !== null) {
             $this->headers[$name] = $value;
@@ -124,13 +124,10 @@ class XdmodTestHelper
      */
     public function getheader($name)
     {
-        if (isset($this->headers[$name])) {
-            return $this->headers[$name];
-        }
-        return null;
+        return $this->headers[$name] ?? null;
     }
 
-    public function authenticate($userrole)
+    public function authenticate($userrole): void
     {
         if (! isset($this->config['role'][$userrole])) {
             throw new \Exception("User role $userrole not defined in testing.json file");
@@ -142,12 +139,9 @@ class XdmodTestHelper
         $this->setauthvariables($authtokens['token']);
     }
 
-    public function authenticateDirect($username, $password)
+    public function authenticateDirect($username, $password): void
     {
-        $data = array(
-            'username' => $username,
-            'password' => $password
-        );
+        $data = ['username' => $username, 'password' => $password];
         $this->setauthvariables(null);
         $authresult = $this->post("rest/auth/login", null, $data);
         $authtokens = $authresult[0]['results'];
@@ -176,25 +170,25 @@ class XdmodTestHelper
         $action = $form->item(0)->getAttribute('action');
 
         $elements = $xpath->query("//form[@action]//input");
-        $formInputs = array();
+        $formInputs = [];
         foreach ($elements as $element) {
             $formInputs[$element->getAttribute('name')] = $element->getAttribute('value');
         }
 
-        return array($action, $formInputs);
+        return [$action, $formInputs];
     }
 
     /*
      * Authenticate a user via SSO. SSO authentication requires a saml-idp
      * server. This is setup in the integration_tests/scripts/samlSetup.sh
      */
-    public function authenticateSSO($parameters, $includeDefault = true)
+    public function authenticateSSO($parameters, $includeDefault = true): void
     {
-        $result = $this->get('rest/auth/idpredirect', array('returnTo' => '/gui/general/login.php'));
+        $result = $this->get('rest/auth/idpredirect', ['returnTo' => '/gui/general/login.php']);
         $nextlocation = $result[0];
         $result = $this->get($nextlocation, null, true);
 
-        list($action, $authSettings) = $this->getHTMLFormData($result[0]);
+        [$action, $authSettings] = $this->getHTMLFormData($result[0]);
         if ($includeDefault) {
             $finalSettings = array_merge($authSettings, $parameters);
         } else {
@@ -207,14 +201,14 @@ class XdmodTestHelper
 
         $result = $this->post($url, null, $finalSettings, true);
 
-        list($action, $credentials) = $this->getHTMLFormData($result[0]);
+        [$action, $credentials] = $this->getHTMLFormData($result[0]);
 
         $result = $this->post($action, null, $credentials, true);
 
         if ($result[1]['http_code'] !== 200) {
             throw new \Exception('SSO signin failure: HTTP code' . $result[1]['http_code']);
         }
-        if (strpos($result[0], 'Logging you into XDMoD') === false) {
+        if (!str_contains($result[0], 'Logging you into XDMoD')) {
             throw new \Exception('SSO signin failure: ' . $result[0]);
         }
     }
@@ -227,23 +221,20 @@ class XdmodTestHelper
      *                         internal dashboard.
      * @throws \Exception if the specified $userrole is not present in testing.json
      */
-    public function authenticateDashboard($userrole)
+    public function authenticateDashboard($userrole): void
     {
         if (! isset($this->config['role'][$userrole])) {
             throw new \Exception("User role $userrole not defined in testing.json file");
         }
         $this->userrole = $userrole;
         $this->setauthvariables(null);
-        $data = array(
-            'xdmod_username' => $this->config['role'][$userrole]['username'],
-            'xdmod_password' => $this->config['role'][$userrole]['password']
-        );
+        $data = ['xdmod_username' => $this->config['role'][$userrole]['username'], 'xdmod_password' => $this->config['role'][$userrole]['password']];
         $authresult = $this->post("internal_dashboard/user_check.php", null, $data);
-        $cookie = isset($authresult[2]['Set-Cookie']) ? $authresult[2]['Set-Cookie'] : null;
+        $cookie = $authresult[2]['Set-Cookie'] ?? null;
         $this->setauthvariables('', $cookie);
     }
 
-    public function logout()
+    public function logout(): void
     {
         $this->post("rest/auth/logout", null, null);
         $this->setauthvariables(null);
@@ -253,21 +244,19 @@ class XdmodTestHelper
      * Attempt to execute the internal dashboard's logout action for the current
      * session.
      */
-    public function logoutDashboard()
+    public function logoutDashboard(): void
     {
         $this->post(
             'internal_dashboard/controllers/controller.php',
             null,
-            array(
-                'operation' => 'logout'
-            )
+            ['operation' => 'logout']
         );
         $this->setauthvariables(null);
     }
 
     private function docurl()
     {
-        $this->responseHeaders = array();
+        $this->responseHeaders = [];
 
         $content = curl_exec($this->curl);
         if ($content === false) {
@@ -286,7 +275,7 @@ class XdmodTestHelper
                 }
                 break;
         }
-        return array($content, $curlinfo, $this->responseHeaders);
+        return [$content, $curlinfo, $this->responseHeaders];
     }
 
     public function delete($path, $params = null, $data = null)

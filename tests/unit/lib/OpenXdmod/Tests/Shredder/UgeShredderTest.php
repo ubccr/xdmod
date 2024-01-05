@@ -13,23 +13,23 @@ use OpenXdmod\Shredder;
  */
 class UgeShredderTest extends JobShredderBaseTestCase
 {
-    const TEST_GROUP = 'unit/shredder/uge';
+    public const TEST_GROUP = 'unit/shredder/uge';
 
-    public function testShredderConstructor()
+    public function testShredderConstructor(): void
     {
         $shredder = Shredder::factory('uge', $this->db);
-        $this->assertInstanceOf('\OpenXdmod\Shredder\Uge', $shredder);
+        $this->assertInstanceOf(\OpenXdmod\Shredder\Uge::class, $shredder);
     }
 
     /**
      * @dataProvider accountingLogProvider
      */
-    public function testShredderParsing($line, $row)
+    public function testShredderParsing($line, $row): void
     {
         $shredder = $this
-            ->getMockBuilder('\OpenXdmod\Shredder\Uge')
+            ->getMockBuilder(\OpenXdmod\Shredder\Uge::class)
             ->disableOriginalConstructor()
-            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->setMethods(['insertRow', 'getResourceConfig'])
             ->getMock();
 
         $shredder
@@ -39,7 +39,7 @@ class UgeShredderTest extends JobShredderBaseTestCase
 
         $shredder
             ->method('getResourceConfig')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $shredder->setLogger(\CCR\Log::singleton('null'));
 

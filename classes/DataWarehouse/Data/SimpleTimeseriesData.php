@@ -13,7 +13,7 @@ class SimpleTimeseriesData extends SimpleData
     /**
      * Only available for timeseries data.
      */
-    protected $_start_ts = array();
+    protected $_start_ts = [];
     protected $_group_name;
     protected $_group_id;
 
@@ -31,7 +31,7 @@ class SimpleTimeseriesData extends SimpleData
      *
      * @return void
      */
-    public function addDatum($time, $value, $error_value) {
+    public function addDatum(mixed $time, mixed $value, mixed $error_value): void {
         $this->_start_ts[] = $time;
         $this->_values[] = $value;
         $this->_errors[] = $error_value;
@@ -43,15 +43,15 @@ class SimpleTimeseriesData extends SimpleData
     public function getStartTs()
     {
         return $this->_start_ts;
-    } 
+    }
 
     /**
      *  JMS June 2015
      */
-    public function setStartTs( $ts )
+    public function setStartTs( $ts ): void
     {
         $this->_start_ts = $ts;
-    } 
+    }
 
     /**
      *  JMS June 2015
@@ -64,7 +64,7 @@ class SimpleTimeseriesData extends SimpleData
     /**
      *  JMS June 2015
      */
-    public function setGroupName( $g )
+    public function setGroupName( $g ): void
     {
         $this->_group_name= $g;
     }
@@ -80,14 +80,14 @@ class SimpleTimeseriesData extends SimpleData
     /**
      *  JMS June 2015
      */
-    public function setGroupId( $g )
+    public function setGroupId( $g ): void
     {
         $this->_group_id= $g;
     }
 
     public function getChartTimes()
     {
-        $chartTimes = array();
+        $chartTimes = [];
 
         foreach ($this->_start_ts as $timestamp) {
             $chartTimes[] = chartTime2($timestamp);
@@ -96,9 +96,9 @@ class SimpleTimeseriesData extends SimpleData
         return $chartTimes;
     } // function getChartTimes()
 
-    public function makeUnique()
+    public function makeUnique(): array
     {
-        $uniqueValues = array();
+        $uniqueValues = [];
 
         foreach ($this->_values as $index => $value) {
             $id = $this->_ids[$index];
@@ -123,7 +123,7 @@ class SimpleTimeseriesData extends SimpleData
         return $uniqueValues;
     } // function makeUnique()
 
-    public function joinTo(SimpleTimeseriesData $left, $no_value = null)
+    public function joinTo(SimpleTimeseriesData $left, $no_value = null): void
     {
         $t_values    = $this->_values;
         $t_errors    = $this->_errors;
@@ -131,16 +131,16 @@ class SimpleTimeseriesData extends SimpleData
         $t_ids       = $this->_ids;
         $t_start_ts  = $this->_start_ts;
 
-        $ts_to_index = array();
+        $ts_to_index = [];
         foreach ($t_start_ts as $index => $ts) {
             $ts_to_index[$ts] = $index;
         }
 
-        $this->_values    = array();
-        $this->_errors    = array();
-        $this->_ids       = array();
-        $this->_order_ids = array();
-        $this->_start_ts  = array();
+        $this->_values    = [];
+        $this->_errors    = [];
+        $this->_ids       = [];
+        $this->_order_ids = [];
+        $this->_start_ts  = [];
 
         foreach ($left->_start_ts as $index => $start_ts) {
             $this->_start_ts[] = $start_ts;
@@ -164,30 +164,30 @@ class SimpleTimeseriesData extends SimpleData
 
     // -----------------------------
     // summarize()
-    // 
+    //
     // was known as add() in TimeseriesData
     // enables summarization of datasets
-    // so that a set of timeseries datasets 
+    // so that a set of timeseries datasets
     // can be reported as a single column
-    // 
+    //
     // Depending on the stat alias, we take
     // min, max, or sum of ts datasets.
-    // Averaging is done elsewhere (see 
+    // Averaging is done elsewhere (see
     // class @HighChartTimeseries2)
     //
     // NOTE that all errors get set == 0.
     // This is consistent with previous implementation.
-    // 
+    //
     // JMS 24 July 15
     // -----------------------------
-    public function summarize(SimpleTimeseriesData $d)
+    public function summarize(SimpleTimeseriesData $d): void
     {
         $values = $this->getValues();
         $sems = $this->getErrors();
         $stat = $this->getStatistic()->getId();
 
-        $isMin = strpos($stat, 'min_') !== false ;
-        $isMax = strpos($stat, 'max_') !== false ;
+        $isMin = str_contains($stat, 'min_') ;
+        $isMax = str_contains($stat, 'max_') ;
 
         $in_values  = $d->getValues();
         $in_sems    = $d->getErrors();
@@ -216,9 +216,9 @@ class SimpleTimeseriesData extends SimpleData
         $this->setErrors($sems);
     } // summarize
 
-    // Helper function for debugging 
+    // Helper function for debugging
     // JMS April 2015
-    public function __toString() {
+    public function __toString(): string {
 
         $retval = parent::__toString();
         $retval .= "Start Timestamp:".  implode(',',$this->getStartTs())."\n"
@@ -227,6 +227,6 @@ class SimpleTimeseriesData extends SimpleData
             . "groupId: " . $this->getGroupId() . "\n";
         return $retval;
 
-    } // __toString() 
+    } // __toString()
 
 } // class SimpleTimeseriesData

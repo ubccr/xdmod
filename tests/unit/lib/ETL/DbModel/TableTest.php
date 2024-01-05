@@ -7,13 +7,14 @@ namespace UnitTests\ETL\DbModel;
 
 use CCR\Log;
 use ETL\DbModel\Table;
-use PHPUnit_Framework_TestCase;
+use Exception;
+use \PHPUnit\Framework\TestCase;
 
-class TableTest extends PHPUnit_Framework_TestCase
+class TableTest extends \PHPUnit\Framework\TestCase
 {
     private static $logger;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$logger = Log::singleton('null');
     }
@@ -21,10 +22,11 @@ class TableTest extends PHPUnit_Framework_TestCase
     /**
      * Test that the table schema cannot be changed.
      *
-     * @expectedException Exception
+     *
      */
-    public function testTableSchemaError()
+    public function testTableSchemaError(): void
     {
+        $this->expectException(Exception::class);
         $config = (object) [
             'schema' => 'my_schema',
             'name' => 'my_table',
@@ -42,7 +44,7 @@ class TableTest extends PHPUnit_Framework_TestCase
     /**
      * Test that the table schema may be set after the table is instantiated.
      */
-    public function testTableSchemaAssignmentAfterInstantiation()
+    public function testTableSchemaAssignmentAfterInstantiation(): void
     {
         $schemaName = 'my_schema';
         $config = (object) [
@@ -64,7 +66,7 @@ class TableTest extends PHPUnit_Framework_TestCase
      * Test that the table schema may be set by both the constructor and
      * afterward.
      */
-    public function testTableSchemaDuplicateAssignment()
+    public function testTableSchemaDuplicateAssignment(): void
     {
         $schemaName = 'my_schema';
         $config = (object) [
@@ -86,7 +88,7 @@ class TableTest extends PHPUnit_Framework_TestCase
     /**
      * Test that the table schema may be set repeatedly to the same name.
      */
-    public function testTableSchemaMultipleAssignment()
+    public function testTableSchemaMultipleAssignment(): void
     {
         $schemaName = 'my_schema';
 
@@ -128,10 +130,11 @@ class TableTest extends PHPUnit_Framework_TestCase
      * Test that the table schema must be a string.
      *
      * @dataProvider tableSchemaTypeErrorProvider
-     * @expectedException Exception
+     *
      */
-    public function testTableSchemaTypeError($schemaName)
+    public function testTableSchemaTypeError($schemaName): void
     {
+        $this->expectException(Exception::class);
         $config = (object) [
             'schema' => $schemaName,
             'name' => 'my_table',
@@ -162,9 +165,7 @@ class TableTest extends PHPUnit_Framework_TestCase
                 (object) ['schema' => 'schema_in_object']
             ],
             'function' => [
-                function () {
-                    return 'schema_returned_from_function';
-                }
+                fn() => 'schema_returned_from_function'
             ]
         ];
     }

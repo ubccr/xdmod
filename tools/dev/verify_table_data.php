@@ -26,63 +26,45 @@ use CCR\DB;
 
 // Allow initialization of some options from the configuration file
 
-$scriptOptions = array(
+$scriptOptions = [
     // Attempt to auto-detect how columns should be compared
     'autodetect-column-comparison' => false,
     // Tables for comparison
-    'compare-tables'   => array(),
+    'compare-tables'   => [],
     // Coalesce these columns before comparing
-    'coalesce-columns' => array(),
+    'coalesce-columns' => [],
     // Configuration section to use when connecting to the database
     'database-config'  => "datawarehouse",
     // Destination table schema, defaults to source table schema if not set
     'dest-schema'      => null,
     // Exclude these columns from tables
-    'exclude-columns'  => array(),
+    'exclude-columns'  => [],
     // Ignore the column count between tables as long as the source columns are present in
     // the destination
     'ignore-column-count' => false,
     // Ignore the column types between tables
     'ignore-column-type'  => false,
     // Map these column names from source to destination tables
-    'map-columns'      => array(),
+    'map-columns'      => [],
     // Number of missing rows to display, all rows if NULL
     'num-missing-rows' => null,
     // Use a percent of experimental error when comparing these columns
-    'pct-error-columns'    => array(),
+    'pct-error-columns'    => [],
     // Show the columns that are different between source and destination rows
     'show-row-differences' => null,
     // Source table schema
     'source-schema'    => null,
     // Truncate these columns before comparing
-    'truncate-columns' => array(),
+    'truncate-columns' => [],
     // Apply where clauses to query
-    'wheres'           => array(),
-    'verbosity'        => Log::NOTICE
-);
+    'wheres'           => [],
+    'verbosity'        => Log::NOTICE,
+];
 
 // ==========================================================================================
 // Process command line arguments
 
-$options = array(
-    'a'   => 'autodetect-column-comparison',
-    '3:'  => 'coalesce-column:',
-    'c:'  => 'database-config:',
-    'd:'  => 'dest-schema:',
-    'x:'  => 'exclude-column:',
-    'h'   => 'help',
-    '1'   => 'ignore-column-count',
-    '2'   => 'ignore-column-type',
-    'm:'  => 'map-column:',
-    'n:'  => 'num-missing-rows:',
-    'p:'  => 'pct-error-column:',
-    '5'   => 'show-row-differences',
-    's:'  => 'source-schema:',
-    't:'  => 'table:',
-    '4:'  => 'truncate-column:',
-    'v:'  => 'verbosity:',
-    'w:'  => 'where:'
-    );
+$options = ['a'   => 'autodetect-column-comparison', '3:'  => 'coalesce-column:', 'c:'  => 'database-config:', 'd:'  => 'dest-schema:', 'x:'  => 'exclude-column:', 'h'   => 'help', '1'   => 'ignore-column-count', '2'   => 'ignore-column-type', 'm:'  => 'map-column:', 'n:'  => 'num-missing-rows:', 'p:'  => 'pct-error-column:', '5'   => 'show-row-differences', 's:'  => 'source-schema:', 't:'  => 'table:', '4:'  => 'truncate-column:', 'v:'  => 'verbosity:', 'w:'  => 'where:'];
 
 $args = getopt(implode('', array_keys($options)), $options);
 
@@ -103,7 +85,7 @@ foreach ($args as $arg => $value) {
             // Merge array because long and short options are grouped separately
             $scriptOptions['coalesce-columns'] = array_merge(
                 $scriptOptions['coalesce-columns'],
-                ( is_array($value) ? $value : array($value) )
+                ( is_array($value) ? $value : [$value] )
             );
             break;
 
@@ -122,7 +104,7 @@ foreach ($args as $arg => $value) {
 
         case 'm':
         case 'map-column':
-            $value = ( is_array($value) ? $value : array($value) );
+            $value = ( is_array($value) ? $value : [$value] );
             foreach ( $value as $option ) {
                 $parts = explode('=', $option);
                 if ( 2 == count($parts) ) {
@@ -147,7 +129,7 @@ foreach ($args as $arg => $value) {
             // Merge array because long and short options are grouped separately
             $scriptOptions['pct-error-columns'] = array_merge(
                 $scriptOptions['pct-error-columns'],
-                ( is_array($value) ? $value : array($value) )
+                ( is_array($value) ? $value : [$value] )
             );
             break;
 
@@ -162,13 +144,13 @@ foreach ($args as $arg => $value) {
 
         case 't':
         case 'table':
-            $value = ( is_array($value) ? $value : array($value) );
+            $value = ( is_array($value) ? $value : [$value] );
             foreach ( $value as $option ) {
                 $parts = explode('=', $option);
                 if ( 1 == count($parts) ) {
-                    $scriptOptions['compare-tables'][] = array($parts[0], $parts[0]);
+                    $scriptOptions['compare-tables'][] = [$parts[0], $parts[0]];
                 } elseif ( 2 == count($parts) ) {
-                    $scriptOptions['compare-tables'][] = array($parts[0], $parts[1]);
+                    $scriptOptions['compare-tables'][] = [$parts[0], $parts[1]];
                 } else {
                     usage_and_exit("Tables must be in the form 'table' or 'source_table=dest_table'");
                 }
@@ -179,7 +161,7 @@ foreach ($args as $arg => $value) {
             // Merge array because long and short options are grouped separately
             $scriptOptions['truncate-columns'] = array_merge(
                 $scriptOptions['truncate-columns'],
-                ( is_array($value) ? $value : array($value) )
+                ( is_array($value) ? $value : [$value] )
             );
             break;
 
@@ -188,7 +170,7 @@ foreach ($args as $arg => $value) {
             // Merge array because long and short options are grouped separately
             $scriptOptions['exclude-columns'] = array_merge(
                 $scriptOptions['exclude-columns'],
-                ( is_array($value) ? $value : array($value) )
+                ( is_array($value) ? $value : [$value] )
             );
             break;
 
@@ -197,7 +179,7 @@ foreach ($args as $arg => $value) {
             // Merge array because long and short options are grouped separately
             $scriptOptions['wheres'] = array_merge(
                 $scriptOptions['wheres'],
-                ( is_array($value) ? $value : array($value) )
+                ( is_array($value) ? $value : [$value] )
             );
             break;
 
@@ -251,9 +233,7 @@ if ( null === $scriptOptions['dest-schema'] ) {
 // ------------------------------------------------------------------------------------------
 // Set up the logger
 
-$conf = array(
-    'mail' => false
-);
+$conf = ['mail' => false];
 
 if ( null !== $scriptOptions['verbosity'] ) {
     $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
@@ -273,7 +253,7 @@ try {
 $success = true;
 
 foreach ($scriptOptions['compare-tables'] as $table ) {
-    list($srcTable, $destTable) = $table;
+    [$srcTable, $destTable] = $table;
     $retval = compareTables($srcTable, $destTable);
     $success = $success && $retval;
 }
@@ -294,22 +274,22 @@ function compareTables($srcTable, $destTable)
 
     // Tables may already contain a schema specification. If it does, override the defdault schema.
 
-    if ( false !== strpos($srcTable, '.') ) {
+    if ( str_contains($srcTable, '.') ) {
         $parts = explode('.', $srcTable);
         if ( 2 != count($parts) ) {
             $logger->err("Too many dots in source table name: '$srcTable'");
             return false;
         }
-        list($srcSchema, $srcTable) = $parts;
+        [$srcSchema, $srcTable] = $parts;
     }
 
-    if ( false !== strpos($destTable, '.') ) {
+    if ( str_contains($destTable, '.') ) {
         $parts = explode('.', $destTable);
         if ( 2 != count($parts) ) {
             $logger->err("Too many dots in destination table name: '$destTable'");
             return false;
         }
-        list($destSchema, $destTable) = $parts;
+        [$destSchema, $destTable] = $parts;
     }
 
     $qualifiedSrcTable = sprintf("%s.%s", $srcSchema, $srcTable);
@@ -471,16 +451,11 @@ function getTableColumns($table, $schema, array $excludeColumns)
     global $dbh, $logger;
     $tableName = "`$schema`.`$table`";
 
-    $where = array(
-        "table_schema = :schema",
-        "table_name = :tablename",
-    );
+    $where = ["table_schema = :schema", "table_name = :tablename"];
 
     if ( 0 != count($excludeColumns) ) {
         $excludeColumns = array_map(
-            function ($c) {
-                return "'$c'";
-            },
+            fn($c) => "'$c'",
             $excludeColumns
         );
         $where[] = "column_name NOT IN (" . implode(',', $excludeColumns) . ")";
@@ -496,10 +471,7 @@ FROM information_schema.columns
 " . ( 0 != count($where) ? "WHERE " . implode(' AND ', $where) : "" ) ."
 ORDER BY ordinal_position ASC";
 
-    $params = array(
-        ":schema" => $schema,
-        ":tablename"  => $table
-    );
+    $params = [":schema" => $schema, ":tablename"  => $table];
 
     try {
         $stmt = $dbh->prepare($sql);
@@ -515,7 +487,7 @@ ORDER BY ordinal_position ASC";
         return false;
     }
 
-    $retval = array();
+    $retval = [];
 
     foreach ( $result as $row) {
         $retval[$row['name']] = $row;
@@ -537,11 +509,7 @@ function getTablePrimaryKeyColumns($table, $schema)
     global $dbh, $logger;
     $tableName = "`$schema`.`$table`";
 
-    $where = array(
-        "table_schema = :schema",
-        "table_name = :tablename",
-        "column_key = 'PRI'"
-    );
+    $where = ["table_schema = :schema", "table_name = :tablename", "column_key = 'PRI'"];
 
     // If we need the order of the columns in the index, use the STATISTICS table.
     $sql = "SELECT
@@ -550,10 +518,7 @@ FROM information_schema.columns
 " . ( 0 != count($where) ? "WHERE " . implode(' AND ', $where) : "" ) . "
 ORDER BY ordinal_position ASC";
 
-    $params = array(
-        ":schema" => $schema,
-        ":tablename"  => $table
-    );
+    $params = [":schema" => $schema, ":tablename"  => $table];
 
     try {
         $stmt = $dbh->prepare($sql);
@@ -563,7 +528,7 @@ ORDER BY ordinal_position ASC";
         exit();
     }
 
-    $retval = array();
+    $retval = [];
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if ( 0 == count($result) ) {
@@ -645,12 +610,12 @@ function compareTableData(
     //    aggregate function may differ after several digits in the mantissa or MySQL may
     //    use scientific notation to show an approximate-value numeric literal.
 
-    $truncateColumns = array();
-    $errorColumns = array();
-    $coalesceColumns = array();
+    $truncateColumns = [];
+    $errorColumns = [];
+    $coalesceColumns = [];
 
     if ( $scriptOptions['autodetect-column-comparison'] ) {
-        $dataTypes = array('DECIMAL', 'NUMERIC', 'DOUBLE', 'FLOAT');
+        $dataTypes = ['DECIMAL', 'NUMERIC', 'DOUBLE', 'FLOAT'];
 
         foreach ( $srcTableColumnInfo as $srcKey => $srcColInfo ) {
 
@@ -756,9 +721,7 @@ function compareTableData(
         $srcTableColumns
     );
 
-    $where = array(
-        "dest.$comparisonColumn IS NULL"
-    );
+    $where = ["dest.$comparisonColumn IS NULL"];
 
     if ( 0 != count($scriptOptions['wheres']) ) {
         $where = array_merge($where, $scriptOptions['wheres']);
@@ -802,10 +765,10 @@ function compareTableData(
                     continue;
                 }
 
-                $constraints = array();  // JOIN constraints
-                $where = array();        // WHERE clause with parameters
-                $parameters = array();   // Parameters for WHERE
-                $pkDisplay = array();    // Primary key for display
+                $constraints = [];  // JOIN constraints
+                $where = [];        // WHERE clause with parameters
+                $parameters = [];   // Parameters for WHERE
+                $pkDisplay = [];    // Primary key for display
 
                 foreach ( $keyColumns as $col ) {
                     $constraints[] = sprintf('src.%s = dest.%s', $col, $col);
@@ -846,16 +809,12 @@ function compareTableData(
 
                     $padding = array_reduce(
                         array_keys($srcValueDiff),
-                        function ($carry, $col) use ($row) {
-                            return (strlen($col) > $carry ? strlen($col) : $carry);
-                        },
+                        fn($carry, $col) => strlen($col) > $carry ? strlen($col) : $carry,
                         0
                     );
 
                     $display = array_map(
-                        function ($col) use ($srcValueDiff, $destValueDiff, $padding) {
-                            return sprintf("%" . $padding . "s: '%s' != '%s'", $col, $srcValueDiff[$col], $destValueDiff[$col]);
-                        },
+                        fn($col) => sprintf("%" . $padding . "s: '%s' != '%s'", $col, $srcValueDiff[$col], $destValueDiff[$col]),
                         array_keys($srcValueDiff)
                     );
                     $logger->warning(
@@ -879,7 +838,7 @@ function compareTableData(
  * ------------------------------------------------------------------------------------------
  */
 
-function usage_and_exit($msg = null)
+function usage_and_exit($msg = null): void
 {
     global $argv, $scriptOptions;
 

@@ -10,14 +10,7 @@ foreach($roles as $currentRole) {
     // requiresCenter can only be true iff the current install supports
     // multiple service providers.
     if ($currentRole['name'] !== 'pub') {
-        $roleEntries[] = array(
-            'acl' => $currentRole['display'],
-            'acl_id' => $currentRole['name'],
-            'include' => false,
-            'primary' => false,
-            'displays_center' => false,
-            'requires_center' => false
-        );
+        $roleEntries[] = ['acl' => $currentRole['display'], 'acl_id' => $currentRole['name'], 'include' => false, 'primary' => false, 'displays_center' => false, 'requires_center' => false];
     }
 }//foreach
 

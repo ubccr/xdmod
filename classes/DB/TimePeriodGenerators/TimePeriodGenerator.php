@@ -10,7 +10,7 @@ abstract class TimePeriodGenerator
     /**
      * The DateTime format used by the database.
      */
-    const DATABASE_DATETIME_FORMAT = 'Y-m-d H:i:s';
+    public const DATABASE_DATETIME_FORMAT = 'Y-m-d H:i:s';
 
     /**
      * Gets an instance of a subclass matching the given unit of time.
@@ -28,23 +28,13 @@ abstract class TimePeriodGenerator
      */
     public static function getGeneratorForUnit($unit)
     {
-        switch ($unit) {
-            case 'day':
-                return new DayGenerator();
-                break;
-            case 'month':
-                return new MonthGenerator();
-                break;
-            case 'quarter':
-                return new QuarterGenerator();
-                break;
-            case 'year':
-                return new YearGenerator();
-                break;
-            default:
-                throw new Exception("No time period generator was found for unit of time \"$unit\".");
-                break;
-        }
+        return match ($unit) {
+            'day' => new DayGenerator(),
+            'month' => new MonthGenerator(),
+            'quarter' => new QuarterGenerator(),
+            'year' => new YearGenerator(),
+            default => throw new Exception("No time period generator was found for unit of time \"$unit\"."),
+        };
     }
 
     /**
@@ -183,13 +173,7 @@ abstract class TimePeriodGenerator
         $hours = $seconds / 3600;
 
         // Return the calculated data.
-        return array(
-            'start_ts' => $start_ts,
-            'middle_ts' => $middle_ts,
-            'end_ts' => $end_ts,
-            'total_hours' => $hours,
-            'total_seconds' => $seconds,
-        );
+        return ['start_ts' => $start_ts, 'middle_ts' => $middle_ts, 'end_ts' => $end_ts, 'total_hours' => $hours, 'total_seconds' => $seconds];
     }
 
     /**
@@ -200,7 +184,7 @@ abstract class TimePeriodGenerator
      * @param  iDatabase $db The database the tables are being generated for.
      *                       A schema should be in use by this connection.
      */
-    public function generateMainTable(iDatabase $db)
+    public function generateMainTable(iDatabase $db): void
     {
         // The min and max are always going to be the start and end of "time"
 
@@ -243,17 +227,7 @@ abstract class TimePeriodGenerator
 
             // Insert the calculated values into the database.
             // If the statement string has not been created yet, create it.
-            $insert_param_values = array(
-                ':id' => $current_id,
-                ':year' => $current_year,
-                $db_start_param => $current_start_datetime_str,
-                $db_end_param => $current_end_datetime_str,
-                ':hours' => $current_info['total_hours'],
-                ':seconds' => $current_info['total_seconds'],
-                $db_start_ts_param => $current_info['start_ts'],
-                $db_end_ts_param => $current_info['end_ts'],
-                $db_middle_ts_param => $current_info['middle_ts'],
-            );
+            $insert_param_values = [':id' => $current_id, ':year' => $current_year, $db_start_param => $current_start_datetime_str, $db_end_param => $current_end_datetime_str, ':hours' => $current_info['total_hours'], ':seconds' => $current_info['total_seconds'], $db_start_ts_param => $current_info['start_ts'], $db_end_ts_param => $current_info['end_ts'], $db_middle_ts_param => $current_info['middle_ts']];
             if ($current_time_period_in_year > 0) {
                 $insert_param_values[$db_time_period_of_year_param] = $current_time_period_in_year;
             }
@@ -261,9 +235,7 @@ abstract class TimePeriodGenerator
             if ($insert_statement === null) {
                 $insert_params = array_keys($insert_param_values);
                 $insert_columns = array_map(
-                    function ($insert_param) {
-                        return substr($insert_param, 1);
-                    },
+                    fn($insert_param) => substr($insert_param, 1),
                     $insert_params
                 );
 

@@ -6,7 +6,7 @@
 
    class XDUserProfile {
 
-      const TARGET_SCHEMA = 'moddb.UserProfiles';
+      public const TARGET_SCHEMA = 'moddb.UserProfiles';
       /*
       CREATE TABLE moddb.UserProfiles (
          user_id INT(11), primary key(user_id),
@@ -16,14 +16,13 @@
 
       // Class constants (used as keys for accessing/setting values in the profile) -------------
 
-      const INITIAL_TAB = 0;
-      const LAST_VISITED_TAB = 1;
-      const DASHBOARD_CHARTS = 2;
+      public const INITIAL_TAB = 0;
+      public const LAST_VISITED_TAB = 1;
+      public const DASHBOARD_CHARTS = 2;
 
       // Private variables --------------------------------
 
-		private $_pdo;                       // PDO Handle (set in __construct)
-		private $_user_id;                   // User ID (set in __construct)
+		private $_pdo;                   // User ID (set in __construct)
 		private $_profile_data;              // Represents cached profile data
 
       // -----------------------------------------------------
@@ -32,11 +31,9 @@
       //
       // @param int $user_id [user id pertaining to the user whose profile you want to manage]
 
-      function __construct($user_id) {
+      function __construct(private $_user_id) {
 
          $this->_pdo = DB::factory('database');
-
-         $this->_user_id = $user_id;
 
          $this->_load();
 
@@ -49,7 +46,7 @@
       // @param String $param [The parameter / key]
       // @param Object $value [The object to be mapped to the parameter / key]
 
-      public function setValue($param, $value) {
+      public function setValue($param, $value): void {
 
          $this->_profile_data[$param] = $value;
 
@@ -61,7 +58,7 @@
       //
       // NOTE: Should be used for debugging purposes only
 
-      public function getDump() {
+      public function getDump(): void {
 
          print '<pre>';
          print_r($this->_profile_data);
@@ -94,7 +91,7 @@
 
       public function fetchValue($param) {
 
-         return (isset($this->_profile_data[$param])) ? $this->_profile_data[$param] : NULL;
+         return $this->_profile_data[$param] ?? NULL;
 
       }//fetchValue
 
@@ -106,7 +103,7 @@
       //
       // @param String $param [The parameter identifying the item to be discarded]
 
-      public function dropValue($param) {
+      public function dropValue($param): void {
 
          // NOTE: The actual value will stay in the profile cache until a call to save() is made.
 
@@ -124,15 +121,13 @@
       //
       // Clear local cache as well as data in the persistence model (implicit save)
 
-      public function clear() {
+      public function clear(): void {
 
-         $this->_profile_data = array();
+         $this->_profile_data = [];
 
          $this->_pdo->execute(
                               'DELETE FROM '.self::TARGET_SCHEMA.' WHERE user_id=:user_id',
-                              array(
-                                 'user_id' => $this->_user_id
-                              )
+                              ['user_id' => $this->_user_id]
          );
 
       }//clear
@@ -144,7 +139,7 @@
       // Re-Populate local cache with data currently in the persistence model
       // NOTE: Any unsaved data will be lost as the result of calling reload()
 
-      public function reload() {
+      public function reload(): void {
 
          $this->_load();
 
@@ -157,14 +152,12 @@
       // Discard what is in the local cache and (re-)populate it with data in the persistence model
       // NOTE: Any unsaved data will be lost as the result of calling load()
 
-      private function _load() {
+      private function _load(): void {
 
-         $this->_profile_data = array();
+         $this->_profile_data = [];
 
          $results = $this->_pdo->query('SELECT serialized_profile_data FROM '.self::TARGET_SCHEMA.' WHERE user_id=:user_id',
-          array(
-            'user_id' => $this->_user_id
-          )
+          ['user_id' => $this->_user_id]
          );
 
          if (count($results) > 0) {
@@ -174,7 +167,7 @@
             if (!is_array($this->_profile_data)) {
 
                // Unserialization failed -- initialize to an empty array
-               $this->_profile_data = array();
+               $this->_profile_data = [];
 
             }
 
@@ -190,7 +183,7 @@
       //
       // @throws Exception if there was an issue executing the SQL command to write the data to the DB
 
-      public function save() {
+      public function save(): void {
 
          $this->_pdo->execute('LOCK TABLES '.self::TARGET_SCHEMA.' WRITE');
          $this->_pdo->execute('BEGIN');
@@ -203,10 +196,7 @@
             $serialized = serialize($this->_profile_data);
             $this->_pdo->execute(
               $targetQuery,
-              array(
-                'serialized_profile_data' => $serialized,
-                'user_id' => $this->_user_id
-              )
+              ['serialized_profile_data' => $serialized, 'user_id' => $this->_user_id]
             );
 
             $this->_pdo->execute('COMMIT');

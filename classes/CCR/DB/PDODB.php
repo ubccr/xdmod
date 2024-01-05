@@ -28,18 +28,6 @@ use Exception;
 class PDODB implements iDatabase
 {
 
-    // Database connection parameters. Be aware that these are accessed directly
-    // throughout the ETLv1 code and in the ETLv2 pdoIngester.php
-    public $_db_engine = null;
-    public $_db_host = null;
-    public $_db_port = null;
-    public $_db_name = null;
-    public $_db_username = null;
-    public $_db_password = null;
-
-    // Optional extra parameters to be added to the DSN
-    public $dsn_extra = null;
-
     // Generated DSN
     protected $dsn = null;
 
@@ -47,22 +35,15 @@ class PDODB implements iDatabase
     protected $_dbh = null;
 
     protected static $debug_mode = false;
-    protected static $queries = array();
-    protected static $params = array();
+    protected static $queries = [];
+    protected static $params = [];
 
     // --------------------------------------------------------------------------------
     // @see iDatabase::__construct()
     // --------------------------------------------------------------------------------
 
-    public function __construct($db_engine, $db_host, $db_port, $db_name, $db_username, $db_password, $dsn_extra = null)
+    public function __construct(public $_db_engine, public $_db_host, public $_db_port, public $_db_name, public $_db_username, public $_db_password, public $dsn_extra = null)
     {
-        $this->_db_engine = $db_engine;
-        $this->_db_host = $db_host;
-        $this->_db_port = $db_port;
-        $this->_db_name = $db_name;
-        $this->_db_username = $db_username;
-        $this->_db_password = $db_password;
-        $this->dsn_extra = $dsn_extra;
     } // __construct()
 
     // --------------------------------------------------------------------------------
@@ -95,7 +76,7 @@ class PDODB implements iDatabase
     // See iDatabase::disconnect()
     // --------------------------------------------------------------------------------
 
-    public function disconnect()
+    public function disconnect(): void
     {
         $this->_dbh = null;
     }
@@ -124,7 +105,7 @@ class PDODB implements iDatabase
             . ';dbname=' . $this->_db_name;
 
         if ( null !== $this->dsn_extra ) {
-            $dsn .= ( 0 !== strpos($this->dsn_extra, ';') ? ';' : '' ) . $this->dsn_extra;
+            $dsn .= ( !str_starts_with($this->dsn_extra, ';') ? ';' : '' ) . $this->dsn_extra;
         }
 
         return $dsn;
@@ -143,7 +124,7 @@ class PDODB implements iDatabase
     // @see iDatabase::query()
     // --------------------------------------------------------------------------------
 
-    public function query($query, array $params = array(), $returnStatement = false)
+    public function query($query, array $params = [], $returnStatement = false)
     {
         $stmt = $this->prepare($query);
 
@@ -151,12 +132,12 @@ class PDODB implements iDatabase
             if ( static::debugging() ) {
                 $this->debug($query, $params);
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             // TODO: setup the logger and log this.
         }
 
         if (false === $stmt->execute($params)) {
-            list($sqlState, $errorCode, $errorMsg) = $stmt->errorInfo;
+            [$sqlState, $errorCode, $errorMsg] = $stmt->errorInfo;
             throw new Exception("$sqlState: $errorMsg ($errorCode)");
         }
         if ($returnStatement !== false) {
@@ -170,7 +151,7 @@ class PDODB implements iDatabase
     // @see iDatabase::execute()
     // --------------------------------------------------------------------------------
 
-    public function execute($query, array $params = array())
+    public function execute($query, array $params = [])
     {
         $stmt = $this->prepare($query);
 
@@ -178,12 +159,12 @@ class PDODB implements iDatabase
             if ( static::debugging() ) {
                 $this->debug($query, $params);
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             // TODO: setup the logger and log this.
         }
 
         if (false === $stmt->execute($params)) {
-            list($sqlState, $errorCode, $errorMsg) = $stmt->errorInfo;
+            [$sqlState, $errorCode, $errorMsg] = $stmt->errorInfo;
             throw new Exception("$sqlState: $errorMsg ($errorCode)");
         }
 
@@ -209,7 +190,7 @@ class PDODB implements iDatabase
     // @see iDatabase::insert()
     // --------------------------------------------------------------------------------
 
-    public function insert($statement, $params = array())
+    public function insert($statement, $params = [])
     {
         $stmt = $this->prepare($statement);
 
@@ -217,12 +198,12 @@ class PDODB implements iDatabase
             if ( static::debugging() ) {
                 $this->debug($statement, $params);
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             // TODO: setup the logger and log this.
         }
 
         if (false === $stmt->execute($params)) {
-            list($sqlState, $errorCode, $errorMsg) = $stmt->errorInfo;
+            [$sqlState, $errorCode, $errorMsg] = $stmt->errorInfo;
             throw new Exception("$sqlState: $errorMsg ($errorCode)");
         }
 
@@ -237,7 +218,7 @@ class PDODB implements iDatabase
     public function getRowCount($schema, $table)
     {
         if (empty($table)) {
-            throw new Exception(__CLASS__ . ": No table string provided");
+            throw new Exception(self::class . ": No table string provided");
         }
 
         $full_tablename = (empty($schema) ? '' : $schema . '.') . $table;
@@ -245,9 +226,9 @@ class PDODB implements iDatabase
 
         try {
             if ( static::debugging() ) {
-                $this->debug($query, array());
+                $this->debug($query, []);
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             // TODO: setup the logger and log this.
         }
 
@@ -263,7 +244,7 @@ class PDODB implements iDatabase
     // @param $err PDOException object to be displayed
     // --------------------------------------------------------------------------------
 
-    public static function exceptionToHTML(PDOException $err)
+    public static function exceptionToHTML(PDOException $err): void
     {
         $trace = '<table border="0">';
         foreach ($err->getTrace() as $a => $b) {
@@ -304,10 +285,7 @@ class PDODB implements iDatabase
 
     public static function debugInfo()
     {
-        return array(
-            "queries" => PDODB::$queries,
-            "params" => PDODB::$params
-        );
+        return ["queries" => PDODB::$queries, "params" => PDODB::$params];
     }
 
     /**
@@ -316,7 +294,7 @@ class PDODB implements iDatabase
      * NOTE: For SQL debugging to be enabled, general debugging must be enabled
      * in the config file.
      */
-    public static function debugOn()
+    public static function debugOn(): void
     {
         PDODB::$debug_mode = true;
     }
@@ -327,12 +305,12 @@ class PDODB implements iDatabase
      * NOTE: This will not disable SQL debugging if SQL debugging has been
      * enabled in the config file.
      */
-    public static function debugOff()
+    public static function debugOff(): void
     {
         PDODB::$debug_mode = false;
     }
 
-    public static function resetDebugInfo()
+    public static function resetDebugInfo(): void
     {
         unset($GLOBALS['PDODB::$queries']);
         unset($GLOBALS['PDODB::$params']);
@@ -368,13 +346,13 @@ class PDODB implements iDatabase
                 \xd_utilities\getConfiguration('general', 'sql_debug_mode'),
                 FILTER_VALIDATE_BOOLEAN
             );
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         return  $sql_debug_mode || PDODB::$debug_mode;
     }
 
-    private function debug($query, $params)
+    private function debug($query, $params): void
     {
         PDODB::$queries[] = trim(preg_replace("(\s+)", " ", $query));
         PDODB::$params[] = PDODB::protectParams($params);

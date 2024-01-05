@@ -10,7 +10,7 @@ if ($member === null) {
     \xd_response\presentError('user_does_not_exist');
 }
 
-$returnData = array();
+$returnData = [];
 try {
 
     $activeUser = \xd_security\getLoggedInUser();

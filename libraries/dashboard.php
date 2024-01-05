@@ -16,8 +16,8 @@ FROM Users u
     ON ua.acl_id = a.acl_id
 SQL;
 
-    $whereClauses = array();
-    $params = array();
+    $whereClauses = [];
+    $params = [];
 
     if ($acl_filter !== 'any') {
         $whereClauses[] = 'a.acl_id = :acl_filter';
@@ -35,21 +35,12 @@ SQL;
     $whereClause = implode(" AND\n", $whereClauses);
 
     if (count($whereClauses) > 0) {
-        $queryParts = array(
-            $query,
-            'WHERE',
-            $whereClause
-        );
+        $queryParts = [$query, 'WHERE', $whereClause];
     } else {
-        $queryParts = array(
-            $query
-        );
+        $queryParts = [$query];
     }
-    return array(
-        implode(
-            "\n",
-            $queryParts
-        ),
-        $params
-    );
+    return [implode(
+        "\n",
+        $queryParts
+    ), $params];
 }// deriveUserEnumerationQuery

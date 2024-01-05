@@ -170,7 +170,7 @@ function loadConfiguration()
 /**
  * Clear cached configuration data.
  */
-function clearConfigurationCache()
+function clearConfigurationCache(): void
 {
     global $iniData;
     $iniData = null;
@@ -187,7 +187,7 @@ function quote($entity)
 /**
  * Remove an element from an array.
  */
-function remove_element_by_value(&$array, $value)
+function remove_element_by_value(&$array, $value): void
 {
     $index = array_search($value, $array);
     if (!is_bool($index)) {
@@ -206,7 +206,7 @@ function remove_element_by_value(&$array, $value)
  */
 function string_begins_with($string, $search)
 {
-    return (strncmp($string, $search, strlen($search)) == 0);
+    return (str_starts_with($string, $search));
 }
 
 /**
@@ -273,7 +273,7 @@ function array_delete_by_key(&$array, $delete_key, $use_old_keys = false)
  * @return mixed       The value for the key or the given default if the
  *                     key was not present.
  */
-function array_extract(array &$a, $key, $default = null) {
+function array_extract(array &$a, mixed $key, mixed $default = null) {
     $value = array_get($a, $key, $default);
     unset($a[$key]);
     return $value;
@@ -289,7 +289,7 @@ function array_extract(array &$a, $key, $default = null) {
  * @return mixed       The value for the key or the given default if the
  *                     key was not present.
  */
-function array_get(array $a, $key, $default = null) {
+function array_get(array $a, mixed $key, mixed $default = null) {
     if (!array_key_exists($key, $a)) {
         return $default;
     }
@@ -308,7 +308,7 @@ function array_get(array $a, $key, $default = null) {
  * @return mixed       The old value for the key or the given default if the
  *                     key was not present.
  */
-function array_replace_key_value(array &$a, $key, $newValue, $default = null) {
+function array_replace_key_value(array &$a, mixed $key, mixed $newValue, mixed $default = null) {
     $oldValue = array_get($a, $key, $default);
     $a[$key] = $newValue;
     return $oldValue;
@@ -391,7 +391,7 @@ function checkForCenterLogo($apply_css = true)
             $use_center_logo = true;
             $img_data = base64_encode(file_get_contents($logo));
         }
-    } catch(\Exception $e) {
+    } catch(\Exception) {
     }
 
     if ($use_center_logo == true && $apply_css == true) {
@@ -427,7 +427,7 @@ EOF;
  * \filter_var($value, $filter, $options)
  */
 
-function filter_var($value, $filter = FILTER_DEFAULT, $options = null)
+function filter_var(mixed $value, $filter = FILTER_DEFAULT, mixed $options = null)
 {
     return ( FILTER_VALIDATE_BOOLEAN == $filter && false === $value
              ? false
@@ -438,15 +438,15 @@ function filter_var($value, $filter = FILTER_DEFAULT, $options = null)
  * If the specified path is not already fully qualified (e.g., /var/tmp) then prepend the
  * specified base path to the path.
  *
- * @param $path A string containing a path
- * @param $base_bath A string containing the base path to be prepended to relative paths
+ * @param string $path A string containing a path
+ * @param string $base_path A string containing the base path to be prepended to relative paths
  *
- * @return A fully qualified path, with the base path prepended to a relative path
+ * @return string A fully qualified path, with the base path prepended to a relative path
  */
 
 function qualify_path($path, $base_path)
 {
-    if ( 0 !== strpos($path, DIRECTORY_SEPARATOR) && null !== $base_path && "" != $base_path ) {
+    if ( !str_starts_with($path, DIRECTORY_SEPARATOR) && null !== $base_path && "" != $base_path ) {
         $path = $base_path . DIRECTORY_SEPARATOR . $path;
     }
 
@@ -470,12 +470,12 @@ function resolve_path($path)
     // If we don't limit to filly qualified paths then relative paths such as "../../foo"
     // are not properly resolved.
 
-    if ( 0 !== strpos($path, DIRECTORY_SEPARATOR) ) {
+    if ( !str_starts_with($path, DIRECTORY_SEPARATOR) ) {
         return $path;
     }
 
     $parts = explode(DIRECTORY_SEPARATOR, str_replace('//', '/', $path));
-    $resolved = array();
+    $resolved = [];
 
     foreach ($parts as $part) {
         if ( '.' == $part ) {
@@ -508,7 +508,7 @@ function verify_required_object_properties($obj, array $propertyList, array &$mi
         throw new Exception(sprintf("First argument must be an object, %s given", gettype($obj)));
     }
 
-    $missing = array();
+    $missing = [];
 
     foreach ( $propertyList as $p ) {
         if ( ! isset($obj->$p) ) {
@@ -548,7 +548,7 @@ function verify_object_property_types(
         throw new Exception(sprintf("First argument must be an object, %s given", gettype($obj)));
     }
 
-    $messages = array();
+    $messages = [];
 
     foreach ( $propertyList as $p => $type ) {
         if ( ! isset($obj->$p) ) {
@@ -571,14 +571,14 @@ function verify_object_property_types(
 /**
  * If CAPTCHA settings are correct, validate a captcha
  */
-function verify_captcha(){
+function verify_captcha(): void{
     $captchaSiteKey = '';
     $captchaSecret = '';
     try {
         $captchaSiteKey = getConfiguration('mailer', 'captcha_public_key');
         $captchaSecret = getConfiguration('mailer', 'captcha_private_key');
     }
-    catch(exception $e){
+    catch(exception){
     }
 
     if ('' !== $captchaSiteKey && '' !== $captchaSecret && !isset($_SESSION['xdUser'])) {

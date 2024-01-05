@@ -155,47 +155,26 @@ class Config
         }
 
         $fileIncludePaths
-            = isset($config['files']['include_paths'])
-            ? $config['files']['include_paths']
-            : array();
+            = $config['files']['include_paths'] ?? [];
 
         $fileIncludePatterns
-            = isset($config['files']['include_patterns'])
-            ? $config['files']['include_patterns']
-            : array();
+            = $config['files']['include_patterns'] ?? [];
 
         $fileExcludePaths
-            = isset($config['files']['exclude_paths'])
-            ? $config['files']['exclude_paths']
-            : array();
+            = $config['files']['exclude_paths'] ?? [];
 
         $fileExcludePatterns
-            = isset($config['files']['exclude_patterns'])
-            ? $config['files']['exclude_patterns']
-            : array();
+            = $config['files']['exclude_patterns'] ?? [];
 
         $fileMaps
             = isset($config['file_maps'])
             ? static::normalizeFileMaps($config['file_maps'])
-            : array();
+            : [];
 
         $commandsPreBuild
-            = isset($config['commands']['pre_build'])
-            ? $config['commands']['pre_build']
-            : array();
+            = $config['commands']['pre_build'] ?? [];
 
-        return new static(array(
-            'name'                  => $config['name'],
-            'version'               => $config['version'],
-            'release'               => $config['release'],
-            'prerelease'            => $config['prerelease'],
-            'file_include_paths'    => $fileIncludePaths,
-            'file_include_patterns' => $fileIncludePatterns,
-            'file_exclude_paths'    => $fileExcludePaths,
-            'file_exclude_patterns' => $fileExcludePatterns,
-            'file_maps'             => $fileMaps,
-            'commands_pre_build'    => $commandsPreBuild
-        ));
+        return new static(['name'                  => $config['name'], 'version'               => $config['version'], 'release'               => $config['release'], 'prerelease'            => $config['prerelease'], 'file_include_paths'    => $fileIncludePaths, 'file_include_patterns' => $fileIncludePatterns, 'file_exclude_paths'    => $fileExcludePaths, 'file_exclude_patterns' => $fileExcludePatterns, 'file_maps'             => $fileMaps, 'commands_pre_build'    => $commandsPreBuild]);
     }
 
     /**
@@ -267,7 +246,7 @@ class Config
      */
     private static function normalizeFileMaps(array $maps)
     {
-        return array_map(array(__CLASS__, 'normalizeFileMap'), $maps);
+        return array_map([self::class, 'normalizeFileMap'], $maps);
     }
 
     /**
@@ -281,7 +260,7 @@ class Config
     {
         // Convert numeric arrays to be associative.
         if (!(bool)count(array_filter(array_keys($map), 'is_string'))) {
-            $assocMap = array();
+            $assocMap = [];
 
             foreach ($map as $index => $value) {
                 if (is_array($value)) {
@@ -294,7 +273,7 @@ class Config
             $map = $assocMap;
         }
 
-        $normalizedMap = array();
+        $normalizedMap = [];
 
         foreach ($map as $src => $dest) {
             $normalizedMap[$src] = static::normalizeFileMapDestination($src, $dest);
@@ -324,7 +303,7 @@ class Config
 
             // Trailing "/" indicates that the contents of the directory should
             // be copied into the destination.
-            if (substr($src, -1) === '/') {
+            if (str_ends_with($src, '/')) {
                 return '';
             } else {
                 return $pathParts[count($pathParts) - 1];
@@ -362,7 +341,7 @@ class Config
         $patch = '';
         $preRelease = '';
 
-        $matches = array();
+        $matches = [];
         preg_match("/(\d+)?\.(\d+)?\.?(\d+)?\.?-?([0-9A-Za-z-.]+)?/", $version, $matches);
         $length = count($matches);
         for ($i = 1; $i < $length; $i++) {
@@ -382,12 +361,7 @@ class Config
             }
         }
 
-        return array(
-            $major,
-            $minor,
-            $patch,
-            $preRelease
-        );
+        return [$major, $minor, $patch, $preRelease];
     }
 
     /**
@@ -420,12 +394,7 @@ class Config
         $this->fileMaps = $conf['file_maps'];
 
         $this->commandsPreBuild = $conf['commands_pre_build'];
-        list(
-            $this->versionMajor,
-            $this->versionMinor,
-            $this->versionPatch,
-            $this->versionPreRelease
-        ) = $this->getVersionDetails($this->version);
+        [$this->versionMajor, $this->versionMinor, $this->versionPatch, $this->versionPreRelease] = $this->getVersionDetails($this->version);
     }
 
     /**

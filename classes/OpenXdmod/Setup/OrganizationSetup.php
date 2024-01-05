@@ -14,7 +14,7 @@ class OrganizationSetup extends SetupItem
     /**
      * @inheritdoc
      */
-    public function handle()
+    public function handle(): void
     {
         $this->console->displaySectionHeader('Organization Setup');
 

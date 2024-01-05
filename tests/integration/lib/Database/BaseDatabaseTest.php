@@ -15,7 +15,7 @@ abstract class BaseDatabaseTest extends BaseTest
     /**
      * @throws Exception
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->db = DB::factory('datawarehouse');
     }
@@ -67,7 +67,7 @@ abstract class BaseDatabaseTest extends BaseTest
                 INNER JOIN modw.resourcetype ON modw.resourcefact.resourcetype_id=modw.resourcetype.id;');
                 $resourceTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR);
 
-                $usedTypes = array();
+                $usedTypes = [];
                 foreach($resourceTypes['resource_types'] as $id => $items) {
                     foreach($items['realms'] as $rlm) {
                         if ($rlm == ucfirst($realm)) {
@@ -76,7 +76,7 @@ abstract class BaseDatabaseTest extends BaseTest
                     }
                 }
 
-                $usedCodes = array();
+                $usedCodes = [];
                 foreach($usedTypes as $type) {
                     foreach($resourceConversions as $resource) {
                         if ($resource['abbrev'] == $type) {
@@ -85,7 +85,7 @@ abstract class BaseDatabaseTest extends BaseTest
                     }
                 }
 
-                $newFile = array();
+                $newFile = [];
                 foreach($usedCodes as $code) {
                     foreach($actual as $item) {
                         if ($code == $item['code']){

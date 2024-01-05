@@ -2,10 +2,10 @@
 
 namespace IntegrationTests\Logging;
 
-class CCRDBHandlerTest extends \PHPUnit_Framework_TestCase
+class CCRDBHandlerTest extends \PHPUnit\Framework\TestCase
 {
 
-    public function testHandlerWritesCorrectly()
+    public function testHandlerWritesCorrectly(): void
     {
         $db = \CCR\DB::factory('logger');
 
@@ -15,11 +15,7 @@ class CCRDBHandlerTest extends \PHPUnit_Framework_TestCase
 
         $logger = \CCR\Log::factory(
             'test-ccr-db-handler',
-            array(
-                'file' => false,
-                'console' => false,
-                'mail' => false
-            )
+            ['file' => false, 'console' => false, 'mail' => false]
         );
 
         $logger->pushHandler(new \CCR\CCRDBHandler());
@@ -48,12 +44,12 @@ class CCRDBHandlerTest extends \PHPUnit_Framework_TestCase
         $json = null;
         try {
             $json = json_decode($message);
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->fail("Expected the `message` property to be json de-codable. Received: $message");
         }
 
         $this->assertNotNull($json);
-        $this->assertObjectHasAttribute(
+        $this->assertObjectHasProperty(
             'message',
             $json,
             sprintf(

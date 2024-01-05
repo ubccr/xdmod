@@ -1,26 +1,22 @@
 <?php
 
-	$returnData = array();
+	$returnData = [];
 	try
 	{
-		$charts = array();
+		$charts = [];
 		
 		$user = \xd_security\getLoggedInUser();
 		
 		$parameter_descriptions = \DataWarehouse\QueryBuilder::getInstance()->pullQueryParameterDescriptionsFromRequest($_REQUEST, $user);
 
-		$key_value_param_descriptions = array();
+		$key_value_param_descriptions = [];
 		foreach($parameter_descriptions as $param_desc)
 		{
 			$kv = explode('=',$param_desc);
-			$key_value_param_descriptions[] = array('key' => trim($kv[0],' '), 'value' => trim($kv[1],' '));
+			$key_value_param_descriptions[] = ['key' => trim($kv[0],' '), 'value' => trim($kv[1],' ')];
 		}
 
-		$returnData = array(
-			'totalCount' => count($key_value_param_descriptions),
-			'success' => true, 
-			'message' => 'success', 
-			'data' => $key_value_param_descriptions);
+		$returnData = ['totalCount' => count($key_value_param_descriptions), 'success' => true, 'message' => 'success', 'data' => $key_value_param_descriptions];
 			
 	}
 	catch(SessionExpiredException $see)
@@ -31,11 +27,7 @@
 	}
 	catch(Exception $ex)
 	{
-		$returnData = array(
-			'totalCount' => 0, 
-			'message' => $ex->getMessage(), 
-			'data' => array(),
-			'success' => false);
+		$returnData = ['totalCount' => 0, 'message' => $ex->getMessage(), 'data' => [], 'success' => false];
 	}
 	
 	print json_encode($returnData);

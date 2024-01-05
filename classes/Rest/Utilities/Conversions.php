@@ -12,10 +12,9 @@ class Conversions
     }
 
     /**
-     * @param mixed $value
      * @return string
      */
-    public static function toString($value)
+    public static function toString(mixed $value)
     {
         $isObject = is_object($value);
         $hasToString = method_exists($value, '__toString');

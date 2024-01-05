@@ -12,23 +12,23 @@ use OpenXdmod\Shredder;
  */
 class SgeShredderTest extends JobShredderBaseTestCase
 {
-    const TEST_GROUP = 'unit/shredder/sge';
+    public const TEST_GROUP = 'unit/shredder/sge';
 
-    public function testShredderConstructor()
+    public function testShredderConstructor(): void
     {
         $shredder = Shredder::factory('sge', $this->db);
-        $this->assertInstanceOf('\OpenXdmod\Shredder\Sge', $shredder);
+        $this->assertInstanceOf(\OpenXdmod\Shredder\Sge::class, $shredder);
     }
 
     /**
      * @dataProvider accountingLogProvider
      */
-    public function testShredderParsing($line, $row)
+    public function testShredderParsing($line, $row): void
     {
         $shredder = $this
-            ->getMockBuilder('\OpenXdmod\Shredder\Sge')
+            ->getMockBuilder(\OpenXdmod\Shredder\Sge::class)
             ->disableOriginalConstructor()
-            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->setMethods(['insertRow', 'getResourceConfig'])
             ->getMock();
 
         $shredder
@@ -38,7 +38,7 @@ class SgeShredderTest extends JobShredderBaseTestCase
 
         $shredder
             ->method('getResourceConfig')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $shredder->setLogger($this->logger);
 

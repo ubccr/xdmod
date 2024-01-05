@@ -20,7 +20,7 @@ class Logger extends \Monolog\Logger implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = [])
     {
         // This is so that when code calls $logger->log(\CCR\Log::DEBUG, "Message"); it doesn't bork.
         if ($level < \Monolog\Logger::DEBUG) {
@@ -32,7 +32,7 @@ class Logger extends \Monolog\Logger implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function addRecord($level, $message, array $context = array())
+    public function addRecord($level, $message, array $context = [])
     {
         return parent::addRecord($level, $this->extractMessage($message), $context);
     }
@@ -40,16 +40,15 @@ class Logger extends \Monolog\Logger implements LoggerInterface
     /**
      * This function was extracted from the class `\Log\Log_xdconsole` so that we can keep our log output the same.
      *
-     * @param mixed $record
      *
      * @return string
      */
-    protected function extractMessage($record)
+    protected function extractMessage(mixed $record)
     {
         if (is_array($record)) {
             return json_encode($this->recursivelyStringifyObjects($record));
         }
-        return json_encode(array('message' => $record));
+        return json_encode(['message' => $record]);
     }
 
     /**

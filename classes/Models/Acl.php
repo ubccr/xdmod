@@ -34,19 +34,17 @@ use CCR\DB;
  */
 class Acl extends DBObject
 {
-    protected $PROP_MAP = array(
+    protected $PROP_MAP = [
         'acl_id' => 'aclId',
         'module_id' => 'moduleId',
         'acl_type_id' => 'aclTypeId',
         'name' => 'name',
         'display' => 'display',
         'enabled' => 'enabled',
-
         // Needed for getParameters
         'user_id' => 'userId',
-
         // Needed for getMostPrivilegedRole
         'organization' => 'organization',
-        'organization_id' => 'organizationId'
-    );
+        'organization_id' => 'organizationId',
+    ];
 }

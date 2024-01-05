@@ -18,7 +18,7 @@ class SlurmHelperTest extends BaseTest
     /**
      * Test artifacts path.
      */
-    const TEST_GROUP = 'component/slurm_helper';
+    public const TEST_GROUP = 'component/slurm_helper';
 
     /**
      * Database handle for `mod_shredder`.
@@ -54,7 +54,7 @@ class SlurmHelperTest extends BaseTest
         $stdoutRegex,
         $stderrRegex,
         $exitStatus
-    ) {
+    ): void {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
@@ -62,8 +62,8 @@ class SlurmHelperTest extends BaseTest
 
         $result = $this->executeSlurmHelper($sacctOutputType, $sacctExitStatus);
         $this->assertEquals($exitStatus, $result['exit_status']);
-        $this->assertRegExp($stdoutRegex, $result['stdout']);
-        $this->assertRegExp($stderrRegex, $result['stderr']);
+        $this->assertMatchesRegularExpression($stdoutRegex, $result['stdout']);
+        $this->assertMatchesRegularExpression($stderrRegex, $result['stderr']);
     }
 
     /**
@@ -79,18 +79,10 @@ class SlurmHelperTest extends BaseTest
     {
         $process = proc_open(
             'xdmod-slurm-helper -q -r frearson',
-            array(
-                0 => array('file', '/dev/null', 'r'),
-                1 => array('pipe', 'w'),
-                2 => array('pipe', 'w'),
-            ),
+            [0 => ['file', '/dev/null', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
             $pipes,
             null,
-            array(
-                'PATH' => realpath(__DIR__ . '/../scripts') . ':' . getenv('PATH'),
-                'XDMOD_SACCT_OUTPUT_TYPE' => $outputType,
-                'XDMOD_SACCT_EXIT_STATUS' => $exitStatus,
-            )
+            ['PATH' => realpath(__DIR__ . '/../scripts') . ':' . getenv('PATH'), 'XDMOD_SACCT_OUTPUT_TYPE' => $outputType, 'XDMOD_SACCT_EXIT_STATUS' => $exitStatus]
         );
 
         if (!is_resource($process)) {
@@ -111,11 +103,7 @@ class SlurmHelperTest extends BaseTest
 
         $exitStatus = proc_close($process);
 
-        return array(
-            'exit_status' => $exitStatus,
-            'stdout' => $stdout,
-            'stderr' => $stderr,
-        );
+        return ['exit_status' => $exitStatus, 'stdout' => $stdout, 'stderr' => $stderr];
     }
 
     public function sacctCommandProvider()
@@ -123,7 +111,7 @@ class SlurmHelperTest extends BaseTest
         return $this->getTestFiles()->loadJsonFile(self::TEST_GROUP, 'sacct');
     }
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         static::$dbh = DB::factory('shredder');
@@ -131,10 +119,9 @@ class SlurmHelperTest extends BaseTest
         static::$maxShreddedJobId = static::$dbh->query('SELECT COALESCE(MAX(shredded_job_id), 0) AS id FROM shredded_job')[0]['id'];
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
-        parent::tearDownAfterClass();
-        static::$dbh->execute('DELETE FROM shredded_job_slurm WHERE shredded_job_slurm_id > :id', array('id' => static::$maxSlurmJobId));
-        static::$dbh->execute('DELETE FROM shredded_job WHERE shredded_job_id > :id', array('id' => static::$maxShreddedJobId));
+        static::$dbh->execute('DELETE FROM shredded_job_slurm WHERE shredded_job_slurm_id > :id', ['id' => static::$maxSlurmJobId]);
+        static::$dbh->execute('DELETE FROM shredded_job WHERE shredded_job_id > :id', ['id' => static::$maxShreddedJobId]);
     }
 }

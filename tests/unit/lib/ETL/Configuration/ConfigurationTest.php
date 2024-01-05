@@ -11,34 +11,31 @@ namespace UnitTests\ETL\Configuration;
 
 use CCR\Log;
 use Configuration\Configuration;
+use Exception;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
-    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
+    public const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
+    public const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
 
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
       // Set up a logger so we can get warnings and error messages from the ETL infrastructure
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Log::EMERG
-        );
+        $conf = ['file' => false, 'db' => false, 'mail' => false, 'consoleLogLevel' => Log::EMERG];
         self::$logger = Log::factory('PHPUnit', $conf);
     }
 
     /**
      * Test JSON parse errors
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testJsonParseError()
+    public function testJsonParseError(): void
     {
+        $this->expectException(Exception::class);
         Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/parse_error.json');
     }
 
@@ -46,7 +43,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * Test basic parsing of a JSON file
      */
 
-    public function testConfiguration()
+    public function testConfiguration(): void
     {
         $configObj = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config.json');
         $generated = json_decode($configObj->toJson());
@@ -58,7 +55,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * Test removal of comments from a JSON file
      */
 
-    public function testComments()
+    public function testComments(): void
     {
         $configObj = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/comments.json');
         $generated = json_decode($configObj->toJson());
@@ -70,7 +67,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * Test inclusion of a reference with fully qualified path names.
      */
 
-    public function testFullPathReference()
+    public function testFullPathReference(): void
     {
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/reference_target.json', '/tmp/reference_target.json');
         $configObj = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_full_reference.json');
@@ -84,7 +81,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * Test inclusion of a reference with a relative path name (base directory will be used)
      */
 
-    public function testRelativePathReference()
+    public function testRelativePathReference(): void
     {
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/reference_target.json', '/tmp/reference_target.json');
         $configObj = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_relative_reference.json');
@@ -97,11 +94,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     /**
      * Test inclusion of a reference with fully qualified path names.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testBadFragment()
+    public function testBadFragment(): void
     {
+        $this->expectException(Exception::class);
         Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_bad_fragment.json');
     }
 
@@ -109,13 +107,13 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * Test variables in the configuration file.
      */
 
-    public function testConfigurationVariables()
+    public function testConfigurationVariables(): void
     {
         $configObj = Configuration::factory(
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json',
             null,
             null,
-            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+            ['config_variables' => ['TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40]]
         );
         $generated = json_decode($configObj->toJson());
         $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/sample_config.expected'));
@@ -131,7 +129,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * - A nested JSON reference
      */
 
-    public function testJsonReferenceAndIncludeWithVariables()
+    public function testJsonReferenceAndIncludeWithVariables(): void
     {
         @copy(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json', '/tmp/sample_config_with_variables.json');
         @copy(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_reference.json', '/tmp/sample_config_with_reference.json');
@@ -139,15 +137,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_transformer_keys.json',
             null,
             self::$logger,
-            array(
-                'config_variables' => array(
-                    'TABLE_NAME' => 'resource_allocations',
-                    'WIDTH' => 40,
-                    'TMPDIR' => '/tmp',
-                    'SQLDIR'  => 'etl_sql.d',
-                    'SOURCE_SCHEMA' => 'modw'
-                )
-            )
+            ['config_variables' => ['TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40, 'TMPDIR' => '/tmp', 'SQLDIR'  => 'etl_sql.d', 'SOURCE_SCHEMA' => 'modw']]
         );
         $generated = json_decode($configObj->toJson());
         $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/sample_config_with_transformer_keys.expected'));
@@ -161,7 +151,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * the Configuration object.
      */
 
-    public function testLocalConfigurationObjectCache()
+    public function testLocalConfigurationObjectCache(): void
     {
         $tmpFile = sprintf('%s/sample_config_with_variables.json', sys_get_temp_dir());
         @copy(
@@ -179,14 +169,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             $tmpFile,
             null,
             null,
-            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+            ['config_variables' => ['TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40]]
         );
 
         $configObj2 = Configuration::factory(
             $tmpFile,
             null,
             null,
-            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+            ['config_variables' => ['TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40]]
         );
 
         // Using the local object cache we can compare objects directly
@@ -204,7 +194,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             $tmpFile,
             null,
             null,
-            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+            ['config_variables' => ['TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40]]
         );
 
         $this->assertTrue($configObj1 !== $configObj3, "Updating stale cache, newer file");
@@ -217,7 +207,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             $tmpFile,
             null,
             null,
-            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+            ['config_variables' => ['TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40]]
         );
 
         $this->assertTrue($configObj3 !== $configObj4, "Updating stale cache, older file");
@@ -230,7 +220,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             $tmpFile,
             null,
             null,
-            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+            ['config_variables' => ['TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40]]
         );
 
         $this->assertTrue($configObj3 !== $configObj5, "Object cache disabled");
@@ -244,7 +234,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * to be the same.
      */
 
-    public function testApcuObjectCache()
+    public function testApcuObjectCache(): void
     {
         // Copy the configuration file to a temporary directory so this test does not affect others.
 
@@ -260,14 +250,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
             $tmpFile,
             null,
             null,
-            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+            ['config_variables' => ['TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40]]
         );
 
         $configObj2 = Configuration::factory(
             $tmpFile,
             null,
             null,
-            array('config_variables' => array('TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40))
+            ['config_variables' => ['TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40]]
         );
 
         // We cannot compare the objects directly because those in the APCu cache have been
@@ -287,11 +277,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     /**
      * Test calling Configuration::__construct() directly, which is not allowed.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testCallConfigurationConstructor()
+    public function testCallConfigurationConstructor(): void
     {
+        $this->expectException(Exception::class);
         new Configuration(
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json'
         );
@@ -304,22 +295,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * - No '$overwrite' key
      */
 
-    public function testJsonReferenceWithOverwriteWithVariables()
+    public function testJsonReferenceWithOverwriteWithVariables(): void
     {
         @copy(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json', '/tmp/sample_config_with_variables.json');
         $configObj = Configuration::factory(
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_json_overwrite_transformer_keys.json',
             null,
             self::$logger,
-            array(
-                'config_variables' => array(
-                    'TABLE_NAME' => 'resource_allocations',
-                    'WIDTH' => 40,
-                    'TMPDIR' => '/tmp',
-                    'SQLDIR'  => 'etl_sql.d',
-                    'SOURCE_SCHEMA' => 'modw'
-                )
-            )
+            ['config_variables' => ['TABLE_NAME' => 'resource_allocations', 'WIDTH' => 40, 'TMPDIR' => '/tmp', 'SQLDIR'  => 'etl_sql.d', 'SOURCE_SCHEMA' => 'modw']]
         );
         $generated = json_decode($configObj->toJson());
         $expected = json_decode(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/sample_config_with_json_overwrite_transformer_keys.expected'));
@@ -331,20 +314,17 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * Test the JSON reference with overwrite in the following scenarios:
      * - No '$overwrite' key present
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testJsonReferenceWithOverwriteWithNoOverwriteDirective()
+    public function testJsonReferenceWithOverwriteWithNoOverwriteDirective(): void
     {
+        $this->expectException(Exception::class);
         Configuration::factory(
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_missing_json_overwrite_key.json',
             null,
             self::$logger,
-            array(
-                'config_variables' => array(
-                    'TMPDIR' => '/tmp'
-                )
-            )
+            ['config_variables' => ['TMPDIR' => '/tmp']]
         );
     }
 }

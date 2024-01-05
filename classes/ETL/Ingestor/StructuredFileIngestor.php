@@ -67,8 +67,8 @@ class StructuredFileIngestor extends aIngestor implements iAction
             $this->logAndThrowException(
                 sprintf(
                     "Source endpoint %s does not implement %s",
-                    get_class($this->sourceEndpoint),
-                    "ETL\\DataEndpoint\\iStructuredFile"
+                    $this->sourceEndpoint::class,
+                    \ETL\DataEndpoint\iStructuredFile::class
                 )
             );
         }
@@ -88,7 +88,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
     protected function _execute()
     {
         $numRecords = 0;
-        $insertStatements = array();
+        $insertStatements = [];
 
         // We will need to get the record fields from the source data. This happens after the first
         // record is parsed.
@@ -136,20 +136,20 @@ class StructuredFileIngestor extends aIngestor implements iAction
         // fields so we cam properly build the SQL parameter list in the proper order. At the same
         // time generate other data structures that will be needed later.
 
-        $destinationFieldIdToSourceFieldMap = array();
+        $destinationFieldIdToSourceFieldMap = [];
 
         // Templates for source field values containing pre-determined values such as variables or
         // macros
-        $sourceFieldToValueMapTemplate = array();
+        $sourceFieldToValueMapTemplate = [];
 
         // Scalar source fields that map to source fields
-        $simpleSourceFields = array();
+        $simpleSourceFields = [];
 
         // Complex source fields that must be evaluated by the source endpoint
-        $complexSourceFields = array();
+        $complexSourceFields = [];
 
         // Variables or macros that will be substituted
-        $variableSourceFields = array();
+        $variableSourceFields = [];
 
         // Iterate over the destination field mappings rather than the destination table list because it
         // is possible that a table definition is provided but no data is mapped to it.
@@ -163,10 +163,10 @@ class StructuredFileIngestor extends aIngestor implements iAction
             // they correspond to. At the same time, split the source fileds into lists of simple
             // and complex fields.
 
-            $simpleSourceFields[$etlTableKey] = array();
-            $complexSourceFields[$etlTableKey] = array();
-            $variableSourceFields[$etlTableKey] = array();
-            $destinationFieldIdToSourceFieldMap[$etlTableKey] = array();
+            $simpleSourceFields[$etlTableKey] = [];
+            $complexSourceFields[$etlTableKey] = [];
+            $variableSourceFields[$etlTableKey] = [];
+            $destinationFieldIdToSourceFieldMap[$etlTableKey] = [];
 
             foreach ( array_values($destFieldToSourceFieldMap) as $index => $sourceField ){
                 $destinationFieldIdToSourceFieldMap[$etlTableKey][$index] = $sourceField;
@@ -183,11 +183,9 @@ class StructuredFileIngestor extends aIngestor implements iAction
             }
 
             $valuesComponents = array_map(
-                function ($destField) use ($customInsertValuesComponents) {
-                    return ( property_exists($customInsertValuesComponents, $destField)
-                             ? $customInsertValuesComponents->$destField
-                             : '?' );
-                },
+                fn($destField) => property_exists($customInsertValuesComponents, $destField)
+                         ? $customInsertValuesComponents->$destField
+                         : '?',
                 $destinationFields
             );
 
@@ -202,9 +200,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
                 implode(', ', $destinationFields),
                 implode(', ', $valuesComponents),
                 implode(', ', array_map(
-                    function ($destField) {
-                        return "$destField = COALESCE(VALUES($destField), $destField)";
-                    },
+                    fn($destField) => "$destField = COALESCE(VALUES($destField), $destField)",
                     $destinationFields
                 ))
             );
@@ -219,14 +215,14 @@ class StructuredFileIngestor extends aIngestor implements iAction
             } catch (PDOException $e) {
                 $this->logAndThrowException(
                     "Error preparing insert statement for table key '$etlTableKey'",
-                    array('exception' => $e, 'endpoint' => $this)
+                    ['exception' => $e, 'endpoint' => $this]
                 );
             }
 
             // If there are source fields that are variables or macros, evaluate them once here and
             // save them to a reusable template.
 
-            $sourceFieldToValueMapTemplate[$etlTableKey] = array();
+            $sourceFieldToValueMapTemplate[$etlTableKey] = [];
 
             if ( 0 != count($variableSourceFields[$etlTableKey]) ) {
                 foreach ( $variableSourceFields[$etlTableKey] as $variable ) {
@@ -246,7 +242,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
         // SQL parameter list but checking each field of each source record will reduce ingest
         // performance.  Perform a on the first record to provide some sanity checking.
 
-        $invalidSourceValues = array();
+        $invalidSourceValues = [];
 
         foreach ( $this->destinationFieldMappings as $etlTableKey => $destFieldToSourceFieldMap ) {
             $parameters = $this->generateParametersFromSourceRecord(
@@ -273,19 +269,15 @@ class StructuredFileIngestor extends aIngestor implements iAction
                 sprintf(
                     "Source record contains non-scalar values that cannot be used as SQL params. %s",
                     implode('; ', array_map(
-                        function ($table, $invalidValues) {
-                            return sprintf(
-                                "Table '%s': %s",
-                                $table,
-                                implode(', ', array_map(
-                                    function ($k, $v) {
-                                        return sprintf("field '%s' = %s", $k, gettype($v));
-                                    },
-                                    array_keys($invalidValues),
-                                    $invalidValues
-                                ))
-                            );
-                        },
+                        fn($table, $invalidValues) => sprintf(
+                            "Table '%s': %s",
+                            $table,
+                            implode(', ', array_map(
+                                fn($k, $v) => sprintf("field '%s' = %s", $k, gettype($v)),
+                                array_keys($invalidValues),
+                                $invalidValues
+                            ))
+                        ),
                         array_keys($invalidSourceValues),
                         $invalidSourceValues
                     ))
@@ -296,7 +288,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
         // Insert each source record. Note that the source record may be an array or an
         // object and must be Traversable.
 
-        $warnings = array();
+        $warnings = [];
 
         foreach ( $this->sourceEndpoint as $sourceRecord ) {
 
@@ -324,7 +316,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
                             $etlTableKey,
                             $this->sourceEndpoint->key()
                         ),
-                        array('exception' => $e, 'endpoint' => $this)
+                        ['exception' => $e, 'endpoint' => $this]
                     );
                 }
 
@@ -394,7 +386,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
 
         // Map the values from the source record to the correct order in the parameter list
 
-        $parameters = array();
+        $parameters = [];
         foreach ( $destinationFieldIdToSourceFieldMap as $index => $sourceField ) {
             $parameters[$index] = $sourceFieldToValueMap[$sourceField];
         }

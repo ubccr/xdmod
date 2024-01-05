@@ -32,7 +32,7 @@ class VariableStore extends Loggable
      * @var array
      */
 
-    private $variables = array();
+    private $variables = [];
 
     /**
      * Regex used to identify variables in the source string.
@@ -63,7 +63,7 @@ class VariableStore extends Loggable
         } else {
             $this->logAndThrowException(sprintf(
                 "%s::%s() Expected array or VariableStore, got %s",
-                get_class($this),
+                static::class,
                 __FUNCTION__,
                 gettype($store)
             ));
@@ -74,9 +74,9 @@ class VariableStore extends Loggable
      * Clear the variables in the store
      */
 
-    public function clear()
+    public function clear(): void
     {
-        $this->variables = array();
+        $this->variables = [];
     }
 
     /**
@@ -113,10 +113,10 @@ class VariableStore extends Loggable
         } elseif ( ! array_key_exists($var, $this->variables) ) {
             $this->variables[$var] = $value;
         } else {
-            list($file, $line) = $this->getCallerInfo();
+            [$file, $line] = $this->getCallerInfo();
             $this->logger->notice(sprintf(
                 "(%s) Attempt to overwrite %s ('%s') with '%s' in %s line %d",
-                get_class($this),
+                static::class,
                 $var,
                 $this->variables[$var],
                 $value,
@@ -226,9 +226,7 @@ class VariableStore extends Loggable
         return implode(
             ', ',
             array_map(
-                function ($k, $v) {
-                    return "$k='$v'";
-                },
+                fn($k, $v) => "$k='$v'",
                 array_keys($map),
                 $map
             )
@@ -273,7 +271,7 @@ class VariableStore extends Loggable
 
         // Return if there is no possibility that there is a variable in the string (this is likely).
 
-        if ( false === strpos($string, '${') ) {
+        if ( !str_contains($string, '${') ) {
             return $string;
         }
 
@@ -292,15 +290,12 @@ class VariableStore extends Loggable
             }
         } else {
 
-            $substitutionDetails = array(
-                'unsubstituted' => array(),
-                'substituted'   => array()
-            );
+            $substitutionDetails = ['unsubstituted' => [], 'substituted'   => []];
 
             // Perform the substitution and track variables that have been substituted
 
             array_map(
-                function ($v, $k) use (&$string, &$substitutionDetails) {
+                function ($v, $k) use (&$string, &$substitutionDetails): void {
                     if ( null === $v ) {
                         return;
                     }
@@ -316,7 +311,7 @@ class VariableStore extends Loggable
 
             // If there are any variables left in the string, track them as unsubstituted.
 
-            $matches = array();
+            $matches = [];
             if ( 0 !== preg_match_all($this->variableRegex, $string, $matches ) ) {
                 $substitutionDetails['unsubstituted'] = next($matches);
             }
@@ -324,10 +319,10 @@ class VariableStore extends Loggable
             $substitutionDetails['unsubstituted'] = array_unique($substitutionDetails['unsubstituted']);
 
             if ( $exceptionForUnusedVariables && 0 != count($substitutionDetails['unsubstituted']) ) {
-                list($file, $line) = $this->getCallerInfo();
+                [$file, $line] = $this->getCallerInfo();
                 $this->logAndThrowException(sprintf(
                     "%s: %s in string '%s' at %s line %d",
-                    ( null !== $exceptionPrefix ? $exceptionPrefix : "Undefined macros found" ),
+                    ( $exceptionPrefix ?? "Undefined macros found" ),
                     implode(', ', $substitutionDetails['unsubstituted']),
                     $string,
                     $file,

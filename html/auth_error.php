@@ -1,6 +1,6 @@
 <?php
 
-	require_once dirname(__FILE__).'/../configuration/linker.php';
+	require_once __DIR__.'/../configuration/linker.php';
 	
 	$email_tech_support = xd_utilities\getConfiguration('general', 'tech_support_recipient');
 	

@@ -5,67 +5,67 @@ namespace ComponentTests;
 use IntegrationTests\TestHarness\TestFiles;
 use Models\Services\Realms;
 
-abstract class BaseTest extends \PHPUnit_Framework_TestCase
+abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
     private static $TEST_ARTIFACT_OUTPUT_PATH;
 
     protected static $XDMOD_REALMS;
 
-    const DEFAULT_TEST_ENVIRONMENT = 'open_xdmod';
+    public const DEFAULT_TEST_ENVIRONMENT = 'open_xdmod';
 
-    const DEFAULT_PROJECT = 'acls';
+    public const DEFAULT_PROJECT = 'acls';
 
-    const DEFAULT_TYPE = 'output';
+    public const DEFAULT_TYPE = 'output';
 
-    const PUBLIC_USER_NAME = 'Public User';
-    const PUBLIC_ACL_NAME = 'pub';
-    const PUBLIC_USER_EXPECTED = '/public_user.json';
+    public const PUBLIC_USER_NAME = 'Public User';
+    public const PUBLIC_ACL_NAME = 'pub';
+    public const PUBLIC_USER_EXPECTED = '/public_user.json';
 
-    const CENTER_DIRECTOR_USER_NAME = 'centerdirector';
-    const CENTER_DIRECTOR_ACL_NAME = 'cd';
-    const CENTER_DIRECTOR_EXPECTED = '/center_director.json';
+    public const CENTER_DIRECTOR_USER_NAME = 'centerdirector';
+    public const CENTER_DIRECTOR_ACL_NAME = 'cd';
+    public const CENTER_DIRECTOR_EXPECTED = '/center_director.json';
 
-    const CENTER_STAFF_USER_NAME = 'centerstaff';
-    const CENTER_STAFF_ACL_NAME = 'cs';
-    const CENTER_STAFF_EXPECTED = '/center_staff.json';
+    public const CENTER_STAFF_USER_NAME = 'centerstaff';
+    public const CENTER_STAFF_ACL_NAME = 'cs';
+    public const CENTER_STAFF_EXPECTED = '/center_staff.json';
 
-    const PRINCIPAL_INVESTIGATOR_USER_NAME = 'principal';
-    const PRINCIPAL_INVESTIGATOR_ACL_NAME = 'pi';
-    const PRINCIPAL_INVESTIGATOR_EXPECTED = '/principal.json';
+    public const PRINCIPAL_INVESTIGATOR_USER_NAME = 'principal';
+    public const PRINCIPAL_INVESTIGATOR_ACL_NAME = 'pi';
+    public const PRINCIPAL_INVESTIGATOR_EXPECTED = '/principal.json';
 
-    const NORMAL_USER_USER_NAME = 'normaluser';
-    const NORMAL_USER_ACL = 'usr';
-    const NORMAL_USER_EXPECTED = '/normal_user.json';
+    public const NORMAL_USER_USER_NAME = 'normaluser';
+    public const NORMAL_USER_ACL = 'usr';
+    public const NORMAL_USER_EXPECTED = '/normal_user.json';
 
-    const VALID_SERVICE_PROVIDER_ID = 1;
-    const VALID_SERVICE_PROVIDER_NAME = 'screw';
+    public const VALID_SERVICE_PROVIDER_ID = 1;
+    public const VALID_SERVICE_PROVIDER_NAME = 'screw';
 
-    const INVALID_ID = -999;
-    const INVALID_ACL_NAME = 'babbaganoush';
+    public const INVALID_ID = -999;
+    public const INVALID_ACL_NAME = 'babbaganoush';
 
     // Used when creating users to test all possible combinations of the ACLs
-    const DEFAULT_CENTER = 1;
-    const DEFAULT_USER_TYPE = 3;
+    public const DEFAULT_CENTER = 1;
+    public const DEFAULT_USER_TYPE = 3;
 
-    const MIN_USERS = 1;
-    const MAX_USERS = 1000;
-    const DEFAULT_TEST_USER_NAME = "test";
-    const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@test.com";
+    public const MIN_USERS = 1;
+    public const MAX_USERS = 1000;
+    public const DEFAULT_TEST_USER_NAME = "test";
+    public const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@test.com";
 
     private static $ENV;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::setupEnvironment();
         self::setupPaths();
-        $xdmod_realms = array();
+        $xdmod_realms = [];
         $rawRealms = Realms::getRealms();
         foreach($rawRealms as $item) {
             array_push($xdmod_realms, strtolower($item->name));
         }
         self::$XDMOD_REALMS = $xdmod_realms;
     }
-    private static function setupEnvironment()
+    private static function setupEnvironment(): void
     {
         $testEnvironment = getenv('TEST_ENV');
         if ($testEnvironment !== false) {
@@ -75,7 +75,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    private static function setupPaths()
+    private static function setupPaths(): void
     {
         self::$TEST_ARTIFACT_OUTPUT_PATH = __DIR__ . "/../../artifacts/xdmod";
     }
@@ -98,7 +98,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      * @param string  $type
      * @return string
      */
-    public function getTestFile($fileName, $project = self::DEFAULT_PROJECT, $type = self::DEFAULT_TYPE, $additionalDirs = array())
+    public function getTestFile($fileName, $project = self::DEFAULT_PROJECT, $type = self::DEFAULT_TYPE, $additionalDirs = [])
     {
         if (!isset(self::$ENV)){
             self::setupEnvironment();
@@ -111,15 +111,9 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         return implode(
             DIRECTORY_SEPARATOR,
             array_merge(
-                array(
-                    self::$TEST_ARTIFACT_OUTPUT_PATH,
-                    'xdmod',
-                    $project,
-                    $type,
-                    self::$ENV
-                ),
+                [self::$TEST_ARTIFACT_OUTPUT_PATH, 'xdmod', $project, $type, self::$ENV],
                 $additionalDirs,
-                array($fileName)
+                [$fileName]
             )
         );
     }
@@ -135,7 +129,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
 
     protected function arrayFilterKeysRecursive(array $keyList, array $input)
     {
-        $tmpArray = array();
+        $tmpArray = [];
         foreach ($input as $key => &$value)
         {
             if (!in_array($key, $keyList)) {

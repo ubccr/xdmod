@@ -10,13 +10,6 @@ use Exception;
 class TableNotFoundException extends Exception
 {
     /**
-     * Name of the table that wasn't found.
-     *
-     * @var string
-     */
-    private $table;
-
-    /**
      * Create exception.
      *
      * @param string $messge Error message.
@@ -28,9 +21,11 @@ class TableNotFoundException extends Exception
         $message,
         $code,
         $previous,
-        $table
+        /**
+         * Name of the table that wasn't found.
+         */
+        private $table
     ) {
-        $this->table = $table;
         parent::__construct($message, $code, $previous);
     }
 

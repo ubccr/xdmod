@@ -7,7 +7,7 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class MetricExplorerTest extends TokenAuthTest
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->helper = new XdmodTestHelper();
     }
@@ -33,7 +33,7 @@ class MetricExplorerTest extends TokenAuthTest
      */
     public static function getDwDescriptersBodyValidator($testInstance)
     {
-        return function ($body, $assertMessage) use ($testInstance) {
+        return function ($body, $assertMessage) use ($testInstance): void {
             $testInstance->assertSame(
                 1,
                 $body['totalCount'],
@@ -53,19 +53,16 @@ class MetricExplorerTest extends TokenAuthTest
                         $assertMessage
                     );
                     foreach ($realm[$property] as $item) {
-                        $testInstance->assertInternalType(
-                            'string',
+                        $testInstance->assertIsString(
                             $item['text'],
                             $assertMessage
                         );
-                        $testInstance->assertInternalType(
-                            'string',
+                        $testInstance->assertIsString(
                             $item['info'],
                             $assertMessage
                         );
                         if ('metrics' === $property) {
-                            $testInstance->assertInternalType(
-                                'bool',
+                            $testInstance->assertIsBool(
                                 $item['std_err'],
                                 $assertMessage
                             );
@@ -90,43 +87,9 @@ class MetricExplorerTest extends TokenAuthTest
      * Check for correct handling of invalid or missing input parameters to the
      * metric explorer charting controller
      */
-    public function testInvalidChartRequests() {
+    public function testInvalidChartRequests(): void {
 
-        $params = array(
-            "show_title" => "y",
-            "timeseries" => "y",
-            "aggregation_unit" => "Auto",
-            "start_date" => "2016-12-29",
-            "end_date" => "2017-01-01",
-            "global_filters" => "%7B%22data%22%3A%5B%5D%2C%22total%22%3A0%7D",
-            "title" => "untitled query 1",
-            "show_filters" => "true",
-            "show_warnings" => "true",
-            "show_remainder" => "false",
-            "start" => "0",
-            "limit" => "10",
-            "timeframe_label" => "User Defined",
-            "operation" => "get_data",
-            "data_series" => "%5B%7B%22group_by%22%3A%22none%22%2C%22color%22%3A%22auto%22%2C%22log_scale%22%3Afalse%2C%22std_err%22%3Afalse%2C%22value_labels%22%3Afalse%2C%22display_type%22%3A%22line%22%2C%22combine_type%22%3A%22side%22%2C%22sort_type%22%3A%22value_desc%22%2C%22ignore_global%22%3Afalse%2C%22long_legend%22%3Atrue%2C%22x_axis%22%3Afalse%2C%22has_std_err%22%3Afalse%2C%22trend_line%22%3Afalse%2C%22line_type%22%3A%22Solid%22%2C%22line_width%22%3A2%2C%22shadow%22%3Afalse%2C%22filters%22%3A%7B%22data%22%3A%5B%5D%2C%22total%22%3A0%7D%2C%22z_index%22%3A0%2C%22visibility%22%3Anull%2C%22enabled%22%3Atrue%2C%22metric%22%3A%22job_count%22%2C%22realm%22%3A%22Jobs%22%2C%22category%22%3A%22Jobs%22%2C%22id%22%3A2627927508440901%7D%5D",
-            "swap_xy" => "false",
-            "share_y_axis" => "false",
-            "hide_tooltip" => "false",
-            "show_guide_lines" => "y",
-            "showContextMenu" => "y",
-            "scale" => "1",
-            "format" => "hc_jsonstore",
-            "width" => "1500",
-            "height" => "626",
-            "legend_type" => "bottom_center",
-            "font_size" => "3",
-            "featured" => "false",
-            "trendLineEnabled" => "",
-            "x_axis" => "%7B%7D",
-            "y_axis" => "%7B%7D",
-            "legend" => "%7B%7D",
-            "defaultDatasetConfig" => "%7B%7D",
-            "controller_module" => "metric_explorer"
-        );
+        $params = ["show_title" => "y", "timeseries" => "y", "aggregation_unit" => "Auto", "start_date" => "2016-12-29", "end_date" => "2017-01-01", "global_filters" => "%7B%22data%22%3A%5B%5D%2C%22total%22%3A0%7D", "title" => "untitled query 1", "show_filters" => "true", "show_warnings" => "true", "show_remainder" => "false", "start" => "0", "limit" => "10", "timeframe_label" => "User Defined", "operation" => "get_data", "data_series" => "%5B%7B%22group_by%22%3A%22none%22%2C%22color%22%3A%22auto%22%2C%22log_scale%22%3Afalse%2C%22std_err%22%3Afalse%2C%22value_labels%22%3Afalse%2C%22display_type%22%3A%22line%22%2C%22combine_type%22%3A%22side%22%2C%22sort_type%22%3A%22value_desc%22%2C%22ignore_global%22%3Afalse%2C%22long_legend%22%3Atrue%2C%22x_axis%22%3Afalse%2C%22has_std_err%22%3Afalse%2C%22trend_line%22%3Afalse%2C%22line_type%22%3A%22Solid%22%2C%22line_width%22%3A2%2C%22shadow%22%3Afalse%2C%22filters%22%3A%7B%22data%22%3A%5B%5D%2C%22total%22%3A0%7D%2C%22z_index%22%3A0%2C%22visibility%22%3Anull%2C%22enabled%22%3Atrue%2C%22metric%22%3A%22job_count%22%2C%22realm%22%3A%22Jobs%22%2C%22category%22%3A%22Jobs%22%2C%22id%22%3A2627927508440901%7D%5D", "swap_xy" => "false", "share_y_axis" => "false", "hide_tooltip" => "false", "show_guide_lines" => "y", "showContextMenu" => "y", "scale" => "1", "format" => "hc_jsonstore", "width" => "1500", "height" => "626", "legend_type" => "bottom_center", "font_size" => "3", "featured" => "false", "trendLineEnabled" => "", "x_axis" => "%7B%7D", "y_axis" => "%7B%7D", "legend" => "%7B%7D", "defaultDatasetConfig" => "%7B%7D", "controller_module" => "metric_explorer"];
 
         $this->helper->authenticate('cd');
 
@@ -145,43 +108,9 @@ class MetricExplorerTest extends TokenAuthTest
      * Check for correct handling of invalid or missing input parameters to the
      * metric explorer charting controller
      */
-    public function testInvalidRawDataRequests() {
+    public function testInvalidRawDataRequests(): void {
 
-        $params = array(
-            'show_title' => 'y',
-            'timeseries' => 'y',
-            'aggregation_unit' => 'Auto',
-            'start_date' => '2013-06-08',
-            'end_date' => '2023-06-08',
-            'global_filters' => '%7B%22data%22%3A%5B%7B%22id%22%3A%22resource%3D2%22%2C%22value_id%22%3A%222%22%2C%22value_name%22%3A%22mortorq%22%2C%22dimension_id%22%3A%22resource%22%2C%22realms%22%3A%5B%22Cloud%22%2C%22Jobs%22%2C%22Storage%22%5D%2C%22checked%22%3Atrue%7D%5D%7D',
-            'title' => 'untitled query 1',
-            'show_filters' => 'true',
-            'show_warnings' => 'true',
-            'show_remainder' => 'false',
-            'start' => '0',
-            'limit' => '20',
-            'timeframe_label' => '10 year',
-            'operation' => 'get_rawdata',
-            'data_series' => '%5B%7B%22group_by%22%3A%22resource%22%2C%22color%22%3A%22auto%22%2C%22log_scale%22%3Afalse%2C%22std_err%22%3Afalse%2C%22value_labels%22%3Afalse%2C%22display_type%22%3A%22line%22%2C%22combine_type%22%3A%22side%22%2C%22sort_type%22%3A%22value_desc%22%2C%22ignore_global%22%3Afalse%2C%22long_legend%22%3Atrue%2C%22x_axis%22%3Afalse%2C%22has_std_err%22%3Afalse%2C%22trend_line%22%3Afalse%2C%22line_type%22%3A%22Solid%22%2C%22line_width%22%3A2%2C%22shadow%22%3Afalse%2C%22filters%22%3A%7B%22data%22%3A%5B%5D%2C%22total%22%3A0%7D%2C%22z_index%22%3A0%2C%22visibility%22%3Anull%2C%22enabled%22%3Atrue%2C%22metric%22%3A%22job_count%22%2C%22realm%22%3A%22Jobs%22%2C%22category%22%3A%22Jobs%22%2C%22id%22%3A-755536863343043%7D%5D',
-            'swap_xy' => 'false',
-            'share_y_axis' => 'false',
-            'hide_tooltip' => 'false',
-            'show_guide_lines' => 'y',
-            'showContextMenu' => 'y',
-            'scale' => '1',
-            'format' => 'jsonstore',
-            'width' => '1428',
-            'height' => '525',
-            'legend_type' => 'bottom_center',
-            'x_axis' => '%7B%7D',
-            'y_axis' => '%7B%7D',
-            'legend' => '%7B%7D',
-            'defaultDatasetConfig' => '%7B%7D',
-            'controller_module' => 'metric_explorer',
-            'inline' => 'n',
-            'datapoint' => '1475280000000',
-            'datasetId' => '-755536863343043'
-        );
+        $params = ['show_title' => 'y', 'timeseries' => 'y', 'aggregation_unit' => 'Auto', 'start_date' => '2013-06-08', 'end_date' => '2023-06-08', 'global_filters' => '%7B%22data%22%3A%5B%7B%22id%22%3A%22resource%3D2%22%2C%22value_id%22%3A%222%22%2C%22value_name%22%3A%22mortorq%22%2C%22dimension_id%22%3A%22resource%22%2C%22realms%22%3A%5B%22Cloud%22%2C%22Jobs%22%2C%22Storage%22%5D%2C%22checked%22%3Atrue%7D%5D%7D', 'title' => 'untitled query 1', 'show_filters' => 'true', 'show_warnings' => 'true', 'show_remainder' => 'false', 'start' => '0', 'limit' => '20', 'timeframe_label' => '10 year', 'operation' => 'get_rawdata', 'data_series' => '%5B%7B%22group_by%22%3A%22resource%22%2C%22color%22%3A%22auto%22%2C%22log_scale%22%3Afalse%2C%22std_err%22%3Afalse%2C%22value_labels%22%3Afalse%2C%22display_type%22%3A%22line%22%2C%22combine_type%22%3A%22side%22%2C%22sort_type%22%3A%22value_desc%22%2C%22ignore_global%22%3Afalse%2C%22long_legend%22%3Atrue%2C%22x_axis%22%3Afalse%2C%22has_std_err%22%3Afalse%2C%22trend_line%22%3Afalse%2C%22line_type%22%3A%22Solid%22%2C%22line_width%22%3A2%2C%22shadow%22%3Afalse%2C%22filters%22%3A%7B%22data%22%3A%5B%5D%2C%22total%22%3A0%7D%2C%22z_index%22%3A0%2C%22visibility%22%3Anull%2C%22enabled%22%3Atrue%2C%22metric%22%3A%22job_count%22%2C%22realm%22%3A%22Jobs%22%2C%22category%22%3A%22Jobs%22%2C%22id%22%3A-755536863343043%7D%5D', 'swap_xy' => 'false', 'share_y_axis' => 'false', 'hide_tooltip' => 'false', 'show_guide_lines' => 'y', 'showContextMenu' => 'y', 'scale' => '1', 'format' => 'jsonstore', 'width' => '1428', 'height' => '525', 'legend_type' => 'bottom_center', 'x_axis' => '%7B%7D', 'y_axis' => '%7B%7D', 'legend' => '%7B%7D', 'defaultDatasetConfig' => '%7B%7D', 'controller_module' => 'metric_explorer', 'inline' => 'n', 'datapoint' => '1475280000000', 'datasetId' => '-755536863343043'];
 
         $this->helper->authenticate('cd');
 
@@ -206,7 +135,7 @@ class MetricExplorerTest extends TokenAuthTest
     /**
      * @dataProvider provideTokenAuthTestData
      */
-    public function testGetDwDescripterTokenAuth($role, $tokenType) {
+    public function testGetDwDescripterTokenAuth($role, $tokenType): void {
         parent::runTokenAuthTest(
             $role,
             $tokenType,
@@ -224,7 +153,7 @@ class MetricExplorerTest extends TokenAuthTest
     /**
      * @dataProvider getDimensionFiltersProvider
      */
-    public function testGetDimensionFilters($role, $tokenType, $expectedCount)
+    public function testGetDimensionFilters($role, $tokenType, $expectedCount): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -255,7 +184,7 @@ class MetricExplorerTest extends TokenAuthTest
                 ) use (
                     $tokenType,
                     $expectedCount
-                ) {
+                ): void {
                     $this->assertGreaterThanOrEqual(
                         0,
                         $body['totalCount'],
@@ -268,14 +197,12 @@ class MetricExplorerTest extends TokenAuthTest
                     );
                     foreach ($body['data'] as $item) {
                         foreach (['id', 'name', 'short_name'] as $property) {
-                            $this->assertInternalType(
-                                'string',
+                            $this->assertIsString(
                                 $item[$property],
                                 $assertMessage
                             );
                         }
-                        $this->assertInternalType(
-                            'bool',
+                        $this->assertIsBool(
                             $item['checked'],
                             $assertMessage
                         );
@@ -302,7 +229,7 @@ class MetricExplorerTest extends TokenAuthTest
     {
         $tests = [];
         foreach (parent::provideTokenAuthTestData() as $testData) {
-            list($role, $tokenType) = $testData;
+            [$role, $tokenType] = $testData;
             if ('valid_token' !== $tokenType) {
                 $tests[] = [$role, $tokenType, null];
             }
@@ -322,118 +249,39 @@ class MetricExplorerTest extends TokenAuthTest
 
     public function rawDataProvider()
     {
-        $params = array (
-            'show_title' => 'y',
-            'timeseries' => 'y',
-            'aggregation_unit' => 'Auto',
-            'start_date' => '2016-12-28',
-            'end_date' => '2017-01-01',
-            'global_filters' => array(
-                'data' => array(
-                    array(
-                        'checked' => true,
-                        'value_id' => '110',
-                        'dimension_id' => 'person'
-                    ),
-                 ),
-            ),
-            'title' => 'untitled query 1',
-            'show_filters' => 'true',
-            'show_warnings' => 'true',
-            'show_remainder' => 'false',
-            'start' => '0',
-            'limit' => '20',
-            'timeframe_label' => 'User Defined',
-            'operation' => 'get_rawdata',
-            'data_series' => array (
-                array(
-                'group_by' => 'person',
-                'color' => 'auto',
-                'log_scale' => false,
-                'std_err' => false,
-                'value_labels' => false,
-                'display_type' => 'line',
-                'combine_type' => 'side',
-                'sort_type' => 'value_desc',
-                'ignore_global' => false,
-                'long_legend' => true,
-                'x_axis' => false,
-                'has_std_err' => false,
-                'trend_line' => false,
-                'line_type' => 'Solid',
-                'line_width' => 2,
-                'shadow' => false,
-                'filters' => array (
-                    'data' => array (),
-                    'total' => 0,
-                ),
-                'z_index' => 0,
-                'visibility' => null,
-                'enabled' => true,
-                'metric' => 'job_count',
-                'realm' => 'Jobs',
-                'category' => 'Jobs',
-                'id' => 0.41070416068466,
-                ),
-            ),
-            'swap_xy' => 'false',
-            'share_y_axis' => 'false',
-            'hide_tooltip' => 'false',
-            'show_guide_lines' => 'y',
-            'showContextMenu' => 'y',
-            'scale' => '1',
-            'format' => 'jsonstore',
-            'width' => '1884',
-            'height' => '700',
-            'legend_type' => 'bottom_center',
-            'font_size' => '3',
-            'featured' => 'false',
-            'trendLineEnabled' => '',
-            'controller_module' => 'metric_explorer',
-            'inline' => 'n',
-            'datapoint' => '1483056000000',
-            'datasetId' => '0.41070416068466'
-        );
+        $params = ['show_title' => 'y', 'timeseries' => 'y', 'aggregation_unit' => 'Auto', 'start_date' => '2016-12-28', 'end_date' => '2017-01-01', 'global_filters' => ['data' => [['checked' => true, 'value_id' => '110', 'dimension_id' => 'person']]], 'title' => 'untitled query 1', 'show_filters' => 'true', 'show_warnings' => 'true', 'show_remainder' => 'false', 'start' => '0', 'limit' => '20', 'timeframe_label' => 'User Defined', 'operation' => 'get_rawdata', 'data_series' => [['group_by' => 'person', 'color' => 'auto', 'log_scale' => false, 'std_err' => false, 'value_labels' => false, 'display_type' => 'line', 'combine_type' => 'side', 'sort_type' => 'value_desc', 'ignore_global' => false, 'long_legend' => true, 'x_axis' => false, 'has_std_err' => false, 'trend_line' => false, 'line_type' => 'Solid', 'line_width' => 2, 'shadow' => false, 'filters' => ['data' => [], 'total' => 0], 'z_index' => 0, 'visibility' => null, 'enabled' => true, 'metric' => 'job_count', 'realm' => 'Jobs', 'category' => 'Jobs', 'id' => 0.41070416068466]], 'swap_xy' => 'false', 'share_y_axis' => 'false', 'hide_tooltip' => 'false', 'show_guide_lines' => 'y', 'showContextMenu' => 'y', 'scale' => '1', 'format' => 'jsonstore', 'width' => '1884', 'height' => '700', 'legend_type' => 'bottom_center', 'font_size' => '3', 'featured' => 'false', 'trendLineEnabled' => '', 'controller_module' => 'metric_explorer', 'inline' => 'n', 'datapoint' => '1483056000000', 'datasetId' => '0.41070416068466'];
 
         $params['global_filters'] = urlencode(json_encode($params['global_filters']));
         $params['data_series'] = urlencode(json_encode($params['data_series']));
 
-        $tests = array();
+        $tests = [];
 
-        $tests[] = array($params, 20, true);
+        $tests[] = [$params, 20, true];
 
         $params['limit'] = '1000\'; DROP TABLE Users;';
-        $tests[] = array($params, 712, true);
+        $tests[] = [$params, 712, true];
 
         unset($params['limit']);
-        $tests[] = array($params, 712, true);
+        $tests[] = [$params, 712, true];
 
         $params['start'] = 40;
         $params['limit'] = 40;
-        $tests[] = array($params, 40, false);
+        $tests[] = [$params, 40, false];
 
         $params['start'] = -10;
         $params['limit'] = -1;
-        $tests[] = array($params, 712, true);
+        $tests[] = [$params, 712, true];
 
         unset($params['start']);
         $params['limit'] = 10;
-        $tests[] = array($params, 712, true);
+        $tests[] = [$params, 712, true];
 
         $params['start'] = 40;
         $params['limit'] = 40;
 
-        $invalid_filter =  array(
-            'data' => array(
-                array(
-                    'checked' => true,
-                    'value_id' => 'Timmy O\'Tool',
-                    'dimension_id' => 'person'
-                ),
-            ),
-        );
+        $invalid_filter =  ['data' => [['checked' => true, 'value_id' => 'Timmy O\'Tool', 'dimension_id' => 'person']]];
         $params['global_filters'] = urlencode(json_encode($invalid_filter));
-        $tests[] = array($params, 0, false);
+        $tests[] = [$params, 0, false];
 
         return $tests;
     }
@@ -441,7 +289,7 @@ class MetricExplorerTest extends TokenAuthTest
     /**
      * @dataProvider rawDataProvider
      */
-    public function testGetRawData($params, $limit, $shouldHaveTotalAvail)
+    public function testGetRawData($params, $limit, $shouldHaveTotalAvail): void
     {
         // Jobs realm specific test
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -465,15 +313,11 @@ class MetricExplorerTest extends TokenAuthTest
     /**
      * @dataProvider chartDataProvider
      */
-    public function testChartQueryEndpoint($chartSettings)
+    public function testChartQueryEndpoint($chartSettings): void
     {
-        $settings = array(
-            'name' => 'Test &lt; <img src="test.gif" onerror="alert()" />',
-            'ts' => microtime(true),
-            'config' => $chartSettings
-        );
+        $settings = ['name' => 'Test &lt; <img src="test.gif" onerror="alert()" />', 'ts' => microtime(true), 'config' => $chartSettings];
         $this->helper->authenticate('cd');
-        $response = $this->helper->post('rest/v1/metrics/explorer/queries', null, array('data' => json_encode($settings)));
+        $response = $this->helper->post('rest/v1/metrics/explorer/queries', null, ['data' => json_encode($settings)]);
 
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
@@ -546,9 +390,7 @@ class MetricExplorerTest extends TokenAuthTest
    "limit": 10
 }
 EOF;
-        return array(
-            array($emptyChart)
-        );
+        return [[$emptyChart]];
     }
 
     /**
@@ -559,7 +401,7 @@ EOF;
         $role,
         $input,
         $output
-    ) {
+    ): void {
         parent::authenticateRequestAndValidateJson(
             $this->helper,
             $role,
@@ -592,20 +434,15 @@ EOF;
     private function validateQueryErrorBody($action)
     {
         // This function is passed to parent::provideRestEndpointTests().
-        return function ($message) use ($action) {
-            // This function is passed to parent::validateErrorResponseBody().
-            return function ($body, $assertMessage) use ($message, $action) {
-                return parent::assertEquals(
-                    [
-                        'success' => false,
-                        'message' => $message,
-                        'action' => $action
-                    ],
-                    $body,
-                    $assertMessage
-                );
-            };
-        };
+        return fn($message) => fn($body, $assertMessage) => parent::assertEquals(
+            [
+                'success' => false,
+                'message' => $message,
+                'action' => $action
+            ],
+            $body,
+            $assertMessage
+        );
     }
 
     /**
@@ -616,7 +453,7 @@ EOF;
         $role,
         $input,
         $output
-    ) {
+    ): void {
         // Get a query ID.
         $chartSettings = $this->chartDataProvider()[0][0];
         $settings = [

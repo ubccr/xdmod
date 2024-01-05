@@ -12,24 +12,19 @@ class UserInterfaceTest extends BaseUserAdminTest
      *
      * @dataProvider provideTestGetMenus
      *
-     * @param array $options
      * @throws \Exception
      */
-    public function testGetMenus(array $options)
+    public function testGetMenus(array $options): void
     {
         $user = $options['user'];
         $additionalData = $options['data'];
 
-        $defaultExpected = array(
-            "output" => "$user-get_menus",
-            "http_code" => 200,
-            "content_type" => 'application/json'
-        );
+        $defaultExpected = ["output" => "$user-get_menus", "http_code" => 200, "content_type" => 'application/json'];
 
-        $expectedConfig = isset($options['expected']) ? $options['expected'] : $defaultExpected;
+        $expectedConfig = $options['expected'] ?? $defaultExpected;
         $expectedOutputFileName = $expectedConfig['output'];
-        $expectedHttpCode = isset($expectedConfig['http_code']) ? $expectedConfig['http_code'] : 200;
-        $expectedContentType = isset($expectedConfig['content_type']) ? $expectedConfig['content_type'] : 'application/json';
+        $expectedHttpCode = $expectedConfig['http_code'] ?? 200;
+        $expectedContentType = $expectedConfig['content_type'] ?? 'application/json';
 
         // Make sure to authenticate the user if necessary.
         if ($user !== ROLE_ID_PUBLIC) {
@@ -37,10 +32,7 @@ class UserInterfaceTest extends BaseUserAdminTest
         }
 
         $data = array_merge(
-            array(
-                'operation' => 'get_menus',
-                'query_group' => 'tg_usage'
-            ),
+            ['operation' => 'get_menus', 'query_group' => 'tg_usage'],
             $additionalData
         );
 
@@ -57,13 +49,13 @@ class UserInterfaceTest extends BaseUserAdminTest
         $this->validateJsonAgainstFile($actual, 'schema', 'get-menus.spec');
 
         # Check expected file
-        $expected = array();
+        $expected = [];
         foreach(self::$XDMOD_REALMS as $realm) {
             $expectedOutputFile = $this->getTestFiles()->getFile('user_interface', $expectedOutputFileName, "output/$realm");
 
             # Create missing files/directories
             if (!is_file($expectedOutputFile)) {
-                $newFile = array();
+                $newFile = [];
                 foreach ($actual as $arr) {
                     if (isset($arr['realm'])) {
                         if (strtolower($arr['realm']) == $realm) {
@@ -71,14 +63,7 @@ class UserInterfaceTest extends BaseUserAdminTest
                         }
                     }
                 }
-                $separator = array(
-                    "text" => "",
-                    "id" => "-111",
-                    "node_type" => "separator",
-                    "iconCls" => "blank",
-                    "leaf" => true,
-                    "disabled" => true
-                );
+                $separator = ["text" => "", "id" => "-111", "node_type" => "separator", "iconCls" => "blank", "leaf" => true, "disabled" => true];
                 array_push($newFile, $separator);
                 $filePath = dirname($expectedOutputFile);
                 if (!is_dir($filePath)){

@@ -102,12 +102,11 @@ class RawStatisticsConfiguration
         // to reindex the keys
         $rawDataRealms =  array_filter(
             $this->config['realms'],
-            function ($realm) {
+            fn($realm) =>
                 // If the "raw_data" key doesn't exist the realm is assumed to
                 // support "show raw data".
-                return !(array_key_exists('raw_data', $realm)
-                    && $realm['raw_data'] === false);
-            }
+                !(array_key_exists('raw_data', $realm)
+                && $realm['raw_data'] === false)
         );
 
         return array_values($rawDataRealms);
@@ -121,6 +120,7 @@ class RawStatisticsConfiguration
     public function getBatchExportRealms()
     {
         if (!array_key_exists('realms', $this->config)) {
+            fwrite(STDERR, "Realms not Found!\n");
             return [];
         }
 
@@ -128,9 +128,7 @@ class RawStatisticsConfiguration
         // batch exportable.
         $realms = array_filter(
             $this->config['realms'],
-            function ($realm) {
-                return !(array_key_exists('export_enabled', $realm) && $realm['export_enabled'] === false);
-            }
+            fn($realm) => !(array_key_exists('export_enabled', $realm) && $realm['export_enabled'] === false)
         );
 
         // Use array_values to remove gaps in keys that may have been
@@ -203,7 +201,7 @@ class RawStatisticsConfiguration
                 continue;
             }
 
-            $export = isset($field['batchExport']) ? $field['batchExport'] : false;
+            $export = $field['batchExport'] ?? false;
             if ($export === false) {
                 continue;
             }
@@ -224,7 +222,7 @@ class RawStatisticsConfiguration
 
             $fields[] = [
                 'name' => $field['name'],
-                'alias' => isset($field['alias']) ? $field['alias'] : $field['name'],
+                'alias' => $field['alias'] ?? $field['name'],
                 'display' => $display,
                 'anonymize' => ($export === 'anonymize'),
                 'documentation' => $field['documentation']

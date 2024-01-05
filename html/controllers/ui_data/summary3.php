@@ -5,11 +5,11 @@ use User\Roles;
 
 @set_time_limit(0);
 
-@require_once dirname(__FILE__).'/../../../configuration/linker.php';
+@require_once __DIR__.'/../../../configuration/linker.php';
 \xd_security\start_session();
 
 try {
-    $logged_in_user = \xd_security\detectUser(array(XDUser::PUBLIC_USER));
+    $logged_in_user = \xd_security\detectUser([XDUser::PUBLIC_USER]);
 
     $debug_level = 0;
 
@@ -34,7 +34,7 @@ try {
         $aggregation_unit = lcfirst($_REQUEST['aggregation_unit']);
     }
 
-    $raw_parameters = array();
+    $raw_parameters = [];
     if (isset($_REQUEST['filters'])) {
         $filtersObject = json_decode($_REQUEST['filters']);
         foreach ($filtersObject->data as $filter) {
@@ -68,7 +68,7 @@ try {
             );
             $result = $query->execute();
         } catch (PDOException $e) {
-            if ($e->getCode() === '42S02' && strpos($e->getMessage(), 'modw_aggregates.jobfact_by_') !== false) {
+            if ($e->getCode() === '42S02' && str_contains($e->getMessage(), 'modw_aggregates.jobfact_by_')) {
                 $msg = 'Aggregate table not found, have you ingested your data?';
                 throw new Exception($msg);
             } else {
@@ -89,7 +89,7 @@ try {
         $mostPrivilegedAclSummaryCharts = $roles[$mostPrivilegedAclName]['summary_charts'];
     }
 
-    $summaryCharts = array();
+    $summaryCharts = [];
     foreach ($mostPrivilegedAclSummaryCharts as $chart)
     {
         $realm = $chart['data_series']['data'][0]['realm'];
@@ -112,7 +112,7 @@ try {
 
                     $queryConfig = json_decode($query['config']);
 
-                    $name = isset($query['name']) ? $query['name'] : null;
+                    $name = $query['name'] ?? null;
 
                     if (isset($name)) {
                         if (preg_match('/summary_(?P<index>\S+)/', $query['name'], $matches) > 0) {
@@ -146,16 +146,13 @@ try {
     //print_r($summaryCharts);
     $result['charts'] = json_encode(array_values($summaryCharts));
 
-    echo json_encode(array('totalCount' => 1, 'success' => true, 'message' => '', 'data' => array($result) ));
+    echo json_encode(['totalCount' => 1, 'success' => true, 'message' => '', 'data' => [$result]]);
 
 } catch (SessionExpiredException $see) {
     // TODO: Refactor generic catch block below to handle specific exceptions,
     //       which would allow this block to be removed.
     throw $see;
 } catch (Exception $ex) {
-    echo json_encode(array('totalCount' => 0,
-                           'message' => $ex->getMessage()."<hr>".$ex->getTraceAsString(),
-                           'data' => array(),
-                           'success' => false));
+    echo json_encode(['totalCount' => 0, 'message' => $ex->getMessage()."<hr>".$ex->getTraceAsString(), 'data' => [], 'success' => false]);
 }
 

@@ -58,11 +58,11 @@ use CCR\DB;
  *
  * @return mixed
  **/
-function getConfigValue($section, $key, $default = null)
+function getConfigValue($section, $key, mixed $default = null)
 {
     try {
         $result = \xd_utilities\getConfiguration($section, $key);
-    } catch(\Exception $e) {
+    } catch(\Exception) {
         $result = $default;
     }
     return $result;
@@ -77,18 +77,13 @@ if($role === 'instance'){
 elseif ($role === 'hub'){
     $db = DB::factory('datawarehouse');
     $instanceResults = $db->query('SELECT * FROM federation_instances;');
-    $instances = array();
-    $lastCloudQuery = array();
+    $instances = [];
+    $lastCloudQuery = [];
     $derived = 1;
     foreach ($instanceResults as $instance) {
         $prefix = $instance['prefix'];
         $extra = json_decode($instance['extra'], true);
-        $instances[$prefix] = array(
-            'contact' => $extra['contact'],
-            'url' => $extra['url'],
-            'lastCloudEvent' => null,
-            'lastJobTask' => null
-        );
+        $instances[$prefix] = ['contact' => $extra['contact'], 'url' => $extra['url'], 'lastCloudEvent' => null, 'lastJobTask' => null];
         unset($extra['contact']);
         unset($extra['url']);
         $instances[$prefix]['extra'] = $extra;
@@ -98,7 +93,7 @@ elseif ($role === 'hub'){
         );
         $derived++;
     }
-    $lastCloudResults = $db->query('SELECT * FROM ' . implode('', array($lastCloudQuery, ' UNION ALL SELECT * FROM ')));
+    $lastCloudResults = $db->query('SELECT * FROM ' . implode('', [$lastCloudQuery, ' UNION ALL SELECT * FROM ']));
     foreach ($lastCloudResults as $result) {
         $instances[$result['prefix']]['lastCloudEvent'] = $result['event_ts'];
     }

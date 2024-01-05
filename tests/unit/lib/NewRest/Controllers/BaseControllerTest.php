@@ -4,25 +4,24 @@ namespace UnitTests\NewRest\Controllers;
 
 use Rest\Controllers\BaseControllerProvider;
 
-class BaseControllerTest extends \PHPUnit_Framework_TestCase
+class BaseControllerTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
      * @dataProvider generateUserDataSet
-     * @param mixed $user
      * @param array $requestedAcl
      */
-    public function testAuthorized($user, $requestedAcl, $expectedException, $expectedMessage)
+    public function testAuthorized(mixed $user, $requestedAcl, $expectedException, $expectedMessage): void
     {
         $attributes = $this->getAttributes($user);
         $request = $this->getRequest($attributes);
 
-        $baseController = $this->getMockForAbstractClass('Rest\Controllers\BaseControllerProvider');
+        $baseController = $this->getMockForAbstractClass(\Rest\Controllers\BaseControllerProvider::class);
         $exception = null;
 
         try {
             if ($requestedAcl !== null) {
-                $authorized = $baseController->authorize($request, array($requestedAcl));
+                $authorized = $baseController->authorize($request, [$requestedAcl]);
             } else {
                 $authorized = $baseController->authorize($request);
             }
@@ -32,7 +31,7 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
             $exception = $e;
         }
 
-        $exceptionClass = $exception !== null ? get_class($exception) : null;
+        $exceptionClass = $exception !== null ? $exception::class : null;
         $message = $exception !== null ? $exception->getMessage() : null;
 
         $this->assertEquals($exceptionClass, $expectedException);
@@ -42,11 +41,11 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $attributes
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     public function getRequest($attributes)
     {
-        $mock = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $mock = $this->createMock(\Symfony\Component\HttpFoundation\Request::class);
         $mock->attributes = $attributes;
         return $mock;
     }
@@ -54,12 +53,12 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $user
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     public function getAttributes($user)
     {
-        $builder = $this->getMockBuilder('\Symfony\Component\HttpFoundation\ParameterBag');
-        $builder->setMethods(array('get'));
+        $builder = $this->getMockBuilder(\Symfony\Component\HttpFoundation\ParameterBag::class);
+        $builder->setMethods(['get']);
         $mock = $builder->getMock();
         $mock->method('get')
             ->with($this->equalTo(BaseControllerProvider::_USER))
@@ -82,53 +81,19 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
      */
     public function generateUserDataSet()
     {
-        $mgr = $this->createUser(array('mgr', 'usr'));
-        $cd = $this->createUser(array('cd', 'usr'));
-        $pi = $this->createUser(array('pi', 'usr'));
-        $usr = $this->createUser(array('usr'), 'usr');
-        $sab = $this->createUser(array('usr', 'sab'));
-        $pub = $this->createUser(array('pub'));
+        $mgr = $this->createUser(['mgr', 'usr']);
+        $cd = $this->createUser(['cd', 'usr']);
+        $pi = $this->createUser(['pi', 'usr']);
+        $usr = $this->createUser(['usr'], 'usr');
+        $sab = $this->createUser(['usr', 'sab']);
+        $pub = $this->createUser(['pub']);
 
-        $accessDeniedException = 'Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException';
-        $unauthorizedException = 'Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException';
+        $accessDeniedException = \Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException::class;
+        $unauthorizedException = \Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException::class;
 
         $notAuthorized = BaseControllerProvider::EXCEPTION_MESSAGE;
 
-        $tests = array(
-            array($mgr, null, null, null),
-            array($mgr, ROLE_ID_MANAGER, null, null),
-
-            array($cd, null, null, null),
-            array($cd, ROLE_ID_CENTER_DIRECTOR, null, null),
-            array($cd, ROLE_ID_MANAGER, $accessDeniedException, $notAuthorized),
-
-            array($pi, null, null, null),
-            array($pi, ROLE_ID_PRINCIPAL_INVESTIGATOR, null, null),
-            array($pi, ROLE_ID_USER, null, null),
-            array($pi, ROLE_ID_MANAGER, $accessDeniedException, $notAuthorized),
-            array($pi, ROLE_ID_CENTER_DIRECTOR, $accessDeniedException, $notAuthorized),
-
-            array($usr, null, null, null),
-            array($usr, ROLE_ID_USER, null, null),
-            array($usr, ROLE_ID_MANAGER, $accessDeniedException, $notAuthorized),
-            array($usr, ROLE_ID_CENTER_DIRECTOR, $accessDeniedException, $notAuthorized),
-            array($usr, ROLE_ID_PRINCIPAL_INVESTIGATOR, $accessDeniedException, $notAuthorized),
-
-            array($sab, null, null, null),
-            array($sab, 'sab', null, null),
-            array($sab, ROLE_ID_USER, null, null),
-            array($sab, ROLE_ID_MANAGER, $accessDeniedException, $notAuthorized),
-            array($sab, ROLE_ID_CENTER_DIRECTOR, $accessDeniedException, $notAuthorized),
-            array($sab, ROLE_ID_PRINCIPAL_INVESTIGATOR, $accessDeniedException, $notAuthorized),
-
-            array($pub, null, $unauthorizedException, $notAuthorized),
-            array($pub, ROLE_ID_PUBLIC, null, null),
-            array($pub, ROLE_ID_USER, $unauthorizedException, $notAuthorized),
-            array($pub, ROLE_ID_CENTER_DIRECTOR, $unauthorizedException, $notAuthorized),
-            array($pub, ROLE_ID_MANAGER, $unauthorizedException, $notAuthorized),
-            array($pub, ROLE_ID_PRINCIPAL_INVESTIGATOR, $unauthorizedException, $notAuthorized)
-
-        );
+        $tests = [[$mgr, null, null, null], [$mgr, ROLE_ID_MANAGER, null, null], [$cd, null, null, null], [$cd, ROLE_ID_CENTER_DIRECTOR, null, null], [$cd, ROLE_ID_MANAGER, $accessDeniedException, $notAuthorized], [$pi, null, null, null], [$pi, ROLE_ID_PRINCIPAL_INVESTIGATOR, null, null], [$pi, ROLE_ID_USER, null, null], [$pi, ROLE_ID_MANAGER, $accessDeniedException, $notAuthorized], [$pi, ROLE_ID_CENTER_DIRECTOR, $accessDeniedException, $notAuthorized], [$usr, null, null, null], [$usr, ROLE_ID_USER, null, null], [$usr, ROLE_ID_MANAGER, $accessDeniedException, $notAuthorized], [$usr, ROLE_ID_CENTER_DIRECTOR, $accessDeniedException, $notAuthorized], [$usr, ROLE_ID_PRINCIPAL_INVESTIGATOR, $accessDeniedException, $notAuthorized], [$sab, null, null, null], [$sab, 'sab', null, null], [$sab, ROLE_ID_USER, null, null], [$sab, ROLE_ID_MANAGER, $accessDeniedException, $notAuthorized], [$sab, ROLE_ID_CENTER_DIRECTOR, $accessDeniedException, $notAuthorized], [$sab, ROLE_ID_PRINCIPAL_INVESTIGATOR, $accessDeniedException, $notAuthorized], [$pub, null, $unauthorizedException, $notAuthorized], [$pub, ROLE_ID_PUBLIC, null, null], [$pub, ROLE_ID_USER, $unauthorizedException, $notAuthorized], [$pub, ROLE_ID_CENTER_DIRECTOR, $unauthorizedException, $notAuthorized], [$pub, ROLE_ID_MANAGER, $unauthorizedException, $notAuthorized], [$pub, ROLE_ID_PRINCIPAL_INVESTIGATOR, $unauthorizedException, $notAuthorized]];
         return $tests;
     }
 
@@ -138,29 +103,19 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
      *
      * @param array $roles an array of strings representing the
      *                              roles / acls this user is assigned
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     protected function createUser(array $roles)
     {
         $builder = $this->getMockBuilder('\XDUser')
             ->disableOriginalConstructor()
-            ->setMethods(
-                array(
-                    'getRoles',
-                    'isManager',
-                    'isPublicUser',
-                    'hasAcl',
-                    '__toString'
-                )
+            ->onlyMethods(
+                ['getRoles', 'isManager', 'isPublicUser', 'hasAcl', '__toString', 'hasAcls']
             );
         $stub = $builder->getMock();
         $stub->method('getRoles')->willReturn($roles);
-        $stub->method('isManager')->willReturnCallback(function () use ($roles) {
-            return in_array(ROLE_ID_MANAGER, $roles);
-        });
-        $stub->method('isPublicUser')->willReturnCallback(function () use ($roles) {
-            return in_array(ROLE_ID_PUBLIC, $roles);
-        });
+        $stub->method('isManager')->willReturnCallback(fn() => in_array(ROLE_ID_MANAGER, $roles));
+        $stub->method('isPublicUser')->willReturnCallback(fn() => in_array(ROLE_ID_PUBLIC, $roles));
         $stub->method('hasAcl')->willReturnCallback(function () use ($roles) {
             $args = func_get_args();
             if (count($args) >= 1) {
@@ -169,11 +124,7 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
             }
             return false;
         });
-        $stub->method('__toString')->willReturn(json_encode(array(
-            'roles' => $roles,
-            'is_manager' => in_array(ROLE_ID_MANAGER, $roles),
-            'is_public_user' => in_array(ROLE_ID_PUBLIC, $roles)
-        )));
+        $stub->method('__toString')->willReturn(json_encode(['roles' => $roles, 'is_manager' => in_array(ROLE_ID_MANAGER, $roles), 'is_public_user' => in_array(ROLE_ID_PUBLIC, $roles)]));
         $stub->method('hasAcls')->willreturnCallback(
             function () use ($roles) {
                 $args = func_get_args();

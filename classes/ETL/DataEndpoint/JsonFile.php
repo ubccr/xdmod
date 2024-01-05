@@ -24,7 +24,7 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
      * It also allows us to implement auto-discovery.
      */
 
-    const ENDPOINT_NAME = 'jsonfile';
+    public const ENDPOINT_NAME = 'jsonfile';
 
     /**
      * @see iDataEndpoint::__construct()
@@ -136,7 +136,7 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
                 continue;
             }
 
-            $errors = array();
+            $errors = [];
             foreach ($validator->getErrors() as $err) {
                 $errors[] = $err['message'];
             }
@@ -247,7 +247,7 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
     public function validateDestinationMapSourceFields(array $destinationTableMap)
     {
         $sourceRecordFields = $this->getRecordFieldNames();
-        $missing = array();
+        $missing = [];
 
         foreach ( $destinationTableMap as $destField => $sourceField ) {
             // If the source field matches a field in the source record or it is a valid JSON
@@ -286,7 +286,7 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
     {
         try {
             return JsonPointer::extractFragment($record, $sourceField);
-        } catch ( Exception $e ) {
+        } catch ( Exception ) {
             return $invalidRefValue;
         }
     }
@@ -303,38 +303,18 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
     {
         $message = "";
 
-        switch ( $errorCode ) {
-            case JSON_ERROR_NONE:
-                $message = "No error has occurred";
-                break;
-            case JSON_ERROR_DEPTH:
-                $message = "The maximum stack depth has been exceeded";
-                break;
-            case JSON_ERROR_STATE_MISMATCH:
-                $message = "Invalid or malformed JSON";
-                break;
-            case JSON_ERROR_CTRL_CHAR:
-                $message = "  Control character error, possibly incorrectly encoded";
-                break;
-            case JSON_ERROR_SYNTAX:
-                $message = "Syntax error";
-                break;
-            case JSON_ERROR_UTF8:
-                $message = "Malformed UTF-8 characters, possibly incorrectly encoded";
-                break;
-            case JSON_ERROR_RECURSION:
-                $message = "One or more recursive references in the value to be encoded";
-                break;
-            case JSON_ERROR_INF_OR_NAN:
-                $message = "One or more NAN or INF values in the value to be encoded";
-                break;
-            case JSON_ERROR_UNSUPPORTED_TYPE:
-                $message = "A value of a type that cannot be encoded was given";
-                break;
-            default:
-                $message = "Unknown error";
-                break;
-        }
+        $message = match ($errorCode) {
+            JSON_ERROR_NONE => "No error has occurred",
+            JSON_ERROR_DEPTH => "The maximum stack depth has been exceeded",
+            JSON_ERROR_STATE_MISMATCH => "Invalid or malformed JSON",
+            JSON_ERROR_CTRL_CHAR => "  Control character error, possibly incorrectly encoded",
+            JSON_ERROR_SYNTAX => "Syntax error",
+            JSON_ERROR_UTF8 => "Malformed UTF-8 characters, possibly incorrectly encoded",
+            JSON_ERROR_RECURSION => "One or more recursive references in the value to be encoded",
+            JSON_ERROR_INF_OR_NAN => "One or more NAN or INF values in the value to be encoded",
+            JSON_ERROR_UNSUPPORTED_TYPE => "A value of a type that cannot be encoded was given",
+            default => "Unknown error",
+        };
 
         return $message;
 

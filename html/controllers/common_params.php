@@ -33,26 +33,21 @@ function checkDateParameters()
         );
     }
 
-    return array(
-        $_REQUEST['start_date'],
-        $_REQUEST['end_date'],
-        mktime(
-            $start_date_parsed['hour'],
-            $start_date_parsed['minute'],
-            $start_date_parsed['second'],
-            $start_date_parsed['month'],
-            $start_date_parsed['day'],
-            $start_date_parsed['year']
-        ),
-        mktime(
-            23,
-            59,
-            59,
-            $end_date_parsed['month'],
-            $end_date_parsed['day'],
-            $end_date_parsed['year']
-        )
-    );
+    return [$_REQUEST['start_date'], $_REQUEST['end_date'], mktime(
+        $start_date_parsed['hour'],
+        $start_date_parsed['minute'],
+        $start_date_parsed['second'],
+        $start_date_parsed['month'],
+        $start_date_parsed['day'],
+        $start_date_parsed['year']
+    ), mktime(
+        23,
+        59,
+        59,
+        $end_date_parsed['month'],
+        $end_date_parsed['day'],
+        $end_date_parsed['year']
+    )];
 }
 
 function getShowTitle()
@@ -178,17 +173,15 @@ function getOffset()
 
 function getSortInfo()
 {
-    $sortInfo = array();
+    $sortInfo = [];
 
     if (isset($_REQUEST['sort']) && $_REQUEST['sort'] != '') {
-        $sortRec = array();
+        $sortRec = [];
 
         $sortRec['column_name'] = $_REQUEST['sort'];
 
         $sortRec['direction']
-            = isset($_REQUEST['dir'])
-            ? $_REQUEST['dir']
-            : 'asc';
+            = $_REQUEST['dir'] ?? 'asc';
 
         $sortInfo[] = $sortRec;
     }

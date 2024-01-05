@@ -21,12 +21,7 @@ class LegacyControllerProvider extends BaseControllerProvider
      *
      * @var array
      */
-    private static $legacyRouteMapping = array(
-        '/version/xdmodversion/current' => array(
-            'route' => '/versions/current',
-            'method' => 'GET',
-        ),
-    );
+    private static $legacyRouteMapping = ['/version/xdmodversion/current' => ['route' => '/versions/current', 'method' => 'GET']];
 
     /**
      * Convert a URL arguments string from the old REST stack
@@ -52,7 +47,7 @@ class LegacyControllerProvider extends BaseControllerProvider
         $urlArgumentPairs = explode('/', $urlArgumentsString);
 
         // Create an associative array from the pairs.
-        $urlArguments = array();
+        $urlArguments = [];
         foreach ($urlArgumentPairs as $urlArgumentPair) {
             $urlArgumentPairComponents = explode('=', $urlArgumentPair, 2);
 
@@ -71,7 +66,7 @@ class LegacyControllerProvider extends BaseControllerProvider
     /**
      * @see BaseControllerProvider::setupRoutes
      */
-    public function setupRoutes(Application $app, \Silex\ControllerCollection $controller)
+    public function setupRoutes(Application $app, \Silex\ControllerCollection $controller): void
     {
         foreach (self::$legacyRouteMapping as $legacyRoute => $legacyRouteOptions) {
             $controller->match($legacyRoute, '\Rest\Controllers\LegacyControllerProvider::redirectLegacyRoute')
@@ -102,8 +97,8 @@ class LegacyControllerProvider extends BaseControllerProvider
         // This cannot be passed in from the route definition,
         // as Silex will apply a different method of URL decoding than the
         // old REST stack did.
-        list($routeMountPoint, $urlArgumentsAndParamsString) = explode($legacyRoute, $request->getRequestUri(), 2);
-        list($urlArgumentsString, $urlParamsString) = explode('?', $urlArgumentsAndParamsString, 2);
+        [$routeMountPoint, $urlArgumentsAndParamsString] = explode($legacyRoute, $request->getRequestUri(), 2);
+        [$urlArgumentsString, $urlParamsString] = explode('?', $urlArgumentsAndParamsString, 2);
 
         $urlArguments = $this->parseUrlArguments($urlArgumentsString);
 

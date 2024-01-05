@@ -12,7 +12,7 @@ class JsonConfigFile extends JsonFile
      * It also allows us to implement auto-discovery.
      */
 
-    const ENDPOINT_NAME = 'jsonconfigfile';
+    public const ENDPOINT_NAME = 'jsonconfigfile';
 
     /**
      * A configuration file contain a single json object that can contain
@@ -35,7 +35,7 @@ class JsonConfigFile extends JsonFile
             );
         }
 
-        $this->recordList = array($decoded);
+        $this->recordList = [$decoded];
 
         return true;
     }

@@ -12,7 +12,7 @@ require_once __DIR__ . '/../../configuration/linker.php';
 
 \xd_security\start_session();
 
-$controller = new XDController(array(STATUS_LOGGED_IN));
+$controller = new XDController([STATUS_LOGGED_IN]);
 
 $controller->registerOperation('enum_tg_users');
 $controller->registerOperation('assign_assumed_person');

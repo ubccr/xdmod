@@ -18,15 +18,11 @@ class NamedEntity extends Entity
 {
     // Properties required by this class. These will be merged with other required
     // properties up the call chain. See @Entity::$requiredProperties
-    private $localRequiredProperties = array(
-        'name'
-    );
+    private $localRequiredProperties = ['name'];
 
     // Properties provided by this class. These will be merged with other properties up
     // the call chain. See @Entity::$properties
-    private $localProperties = array(
-        'name' => null
-    );
+    private $localProperties = ['name' => null];
 
     /* ------------------------------------------------------------------------------------------
      * @see iEntity::__construct()
@@ -110,8 +106,8 @@ class NamedEntity extends Entity
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __toString()
+    public function __toString(): string
     {
-        return sprintf('%s (%s)', $this->name, get_class($this));
+        return sprintf('%s (%s)', $this->name, static::class);
     }  // __toString()
 }  // class NamedEntity

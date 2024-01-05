@@ -14,7 +14,6 @@ class RawData
     /**
      * Get all the realms for a user.
      *
-     * @param \XDUser $user
      * @return array[] Raw data realm configurations enabled for user.
      */
     public static function getRawDataRealms(XDUser $user)
@@ -24,9 +23,7 @@ class RawData
 
         $realms = array_filter(
             $config->getRawDataRealms(),
-            function ($realmConfig) use ($allowedRealms) {
-                return in_array($realmConfig['name'], $allowedRealms);
-            }
+            fn($realmConfig) => in_array($realmConfig['name'], $allowedRealms)
         );
 
         // Use array_values to remove gaps in keys that may have been
@@ -37,7 +34,6 @@ class RawData
     /**
      * Check if a realm exists for a user.
      *
-     * @param \XDUser $user
      * @param string $realm
      * @return boolean
      */

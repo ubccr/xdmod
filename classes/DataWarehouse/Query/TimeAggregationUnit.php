@@ -9,18 +9,14 @@ use Configuration\XdmodConfiguration;
  *
  * Abstract class for defining classes pertaining to grouping data over time.
  */
-abstract class TimeAggregationUnit
+abstract class TimeAggregationUnit implements \Stringable
 {
-    //The unit name is passed to this class via the constructor by extending subclasses
-    private $_unit_name;
-
     //The schema + table name of the aggregate table we're generating units for
     private $_agg_table_prefix;
 
     //protected constructor can only be called from extending classes.
-    protected function __construct($unit_name)
+    protected function __construct(private $_unit_name)
     {
-        $this->_unit_name = $unit_name;
     } //__construct
 
     /**
@@ -81,7 +77,7 @@ abstract class TimeAggregationUnit
             u.' . $unit . '_start <= ? AND
             u.' . $unit . '_end > ?';
 
-        $dateResult = \DataWarehouse::connect()->query($query, array($end, $start));
+        $dateResult = \DataWarehouse::connect()->query($query, [$end, $start]);
         return array_values($dateResult[0]);
     }
 
@@ -90,7 +86,7 @@ abstract class TimeAggregationUnit
         return $this->_agg_table_prefix;
     }
 
-    public function setAggTablePrefix($aggregate_table_prefix)
+    public function setAggTablePrefix($aggregate_table_prefix): void
     {
         $this->_agg_table_prefix = $aggregate_table_prefix;
     }
@@ -98,7 +94,7 @@ abstract class TimeAggregationUnit
     /**
      * @return string this object as a string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->getUnitName();
     } //__toString
@@ -113,7 +109,7 @@ abstract class TimeAggregationUnit
      *  This array keeps track of the TimeAggregationUnit subclasses that have registed
      *   using RegisterUnit
      */
-    public static $_unit_name_to_class_name = array();
+    public static $_unit_name_to_class_name = [];
 
     /**
      * This provides the approximate length of each aggregation unit in days
@@ -121,12 +117,7 @@ abstract class TimeAggregationUnit
      *
      * @var array
      */
-    private static $unit_sizes_in_days = array(
-        'day' => 1,
-        'month' => 30,
-        'quarter' => 90,
-        'year' => 365,
-    );
+    private static $unit_sizes_in_days = ['day' => 1, 'month' => 30, 'quarter' => 90, 'year' => 365];
 
     /**
      * Registers an TimeAggregationUnit subclass
@@ -135,7 +126,7 @@ abstract class TimeAggregationUnit
      * @param string $unit_class_name for example 'DayAggregationUnit'
      *
      */
-    public static function registerUnit($unit_name, $unit_class_name)
+    public static function registerUnit($unit_name, $unit_class_name): void
     {
         self::$_unit_name_to_class_name[$unit_name] = $unit_class_name;
     } //registerUnit
@@ -144,15 +135,15 @@ abstract class TimeAggregationUnit
      * Registers all TimeAggregationUnit subclasses.
      *
      */
-    public static function registerAggregationUnits()
+    public static function registerAggregationUnits(): void
     {
         if (!self::$_initialized) {
             //TODO: automate this by search directory
-            self::registerUnit('day', '\\DataWarehouse\\Query\\TimeAggregationUnits\\DayAggregationUnit');
+            self::registerUnit('day', \DataWarehouse\Query\TimeAggregationUnits\DayAggregationUnit::class);
             // self::registerUnit('week', '\\DataWarehouse\\Query\\TimeAggregationUnits\\WeekAggregationUnit');
-            self::registerUnit('month', '\\DataWarehouse\\Query\\TimeAggregationUnits\\MonthAggregationUnit');
-            self::registerUnit('quarter', '\\DataWarehouse\\Query\\TimeAggregationUnits\\QuarterAggregationUnit');
-            self::registerUnit('year', '\\DataWarehouse\\Query\\TimeAggregationUnits\\YearAggregationUnit');
+            self::registerUnit('month', \DataWarehouse\Query\TimeAggregationUnits\MonthAggregationUnit::class);
+            self::registerUnit('quarter', \DataWarehouse\Query\TimeAggregationUnits\QuarterAggregationUnit::class);
+            self::registerUnit('year', \DataWarehouse\Query\TimeAggregationUnits\YearAggregationUnit::class);
 
             self::$_initialized = true;
         }
@@ -217,7 +208,7 @@ abstract class TimeAggregationUnit
      *                                     no limit. (Default: null)
      * @return string A properly-formatted name for a concrete aggregation unit.
      */
-    public static function deriveAggregationUnitName($time_period, $start_date, $end_date, $min_aggregation_unit = null)
+    public static function deriveAggregationUnitName($time_period, $start_date, $end_date, mixed $min_aggregation_unit = null)
     {
         $time_period = strtolower($time_period);
 
@@ -296,7 +287,7 @@ abstract class TimeAggregationUnit
     {
         try {
             $realm = \Realm\Realm::factory($realm);
-        } catch ( \Exception $e ) {
+        } catch ( \Exception ) {
             // If the given realm could not be found, return null.
             return null;
         }
@@ -371,6 +362,6 @@ abstract class TimeAggregationUnit
                 break;
         }
 
-        return array($start_dt->format('Y-m-d'), $end_dt->format('Y-m-d'));
+        return [$start_dt->format('Y-m-d'), $end_dt->format('Y-m-d')];
     }
 }

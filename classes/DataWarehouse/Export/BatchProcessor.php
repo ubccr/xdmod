@@ -17,7 +17,7 @@ use xd_utilities;
 class BatchProcessor extends Loggable
 {
     // Constants used in log messages.
-    const LOG_MODULE = 'data-warehouse-export';
+    public const LOG_MODULE = 'data-warehouse-export';
 
     /**
      * Database handle for moddb.
@@ -87,7 +87,7 @@ class BatchProcessor extends Loggable
      *
      * @param boolean $dryRun
      */
-    public function setDryRun($dryRun)
+    public function setDryRun($dryRun): void
     {
         $this->dryRun = $dryRun;
     }
@@ -95,7 +95,7 @@ class BatchProcessor extends Loggable
     /**
      * Process all requests.
      */
-    public function processRequests()
+    public function processRequests(): void
     {
         // Delete removed and expiring files before creating new files.
         $this->processDeletedRequests();
@@ -108,7 +108,7 @@ class BatchProcessor extends Loggable
      *
      * Generate the data export and update the request.
      */
-    private function processSubmittedRequests()
+    private function processSubmittedRequests(): void
     {
         $this->logger->info([
             'module' => self::LOG_MODULE,
@@ -124,7 +124,7 @@ class BatchProcessor extends Loggable
      *
      * @param array $request The export request data.
      */
-    private function processSubmittedRequest(array $request)
+    private function processSubmittedRequest(array $request): void
     {
         $requestId = $request['id'];
         $userId = $request['user_id'];
@@ -201,7 +201,7 @@ class BatchProcessor extends Loggable
      * Check if the request has expired and, if so, remove expired data and
      * update the request.
      */
-    private function processExpiringRequests()
+    private function processExpiringRequests(): void
     {
         $this->logger->info([
             'module' => self::LOG_MODULE,
@@ -217,7 +217,7 @@ class BatchProcessor extends Loggable
      *
      * @param array $request The export request data.
      */
-    private function processExpiringRequest(array $request)
+    private function processExpiringRequest(array $request): void
     {
         $this->logger->info([
             'module' => self::LOG_MODULE,
@@ -254,7 +254,7 @@ class BatchProcessor extends Loggable
      * If a request has been deleted then the associated data file needs to be
      * removed from the file system.
      */
-    private function processDeletedRequests()
+    private function processDeletedRequests(): void
     {
         $this->logger->info([
             'module' => self::LOG_MODULE,
@@ -262,9 +262,7 @@ class BatchProcessor extends Loggable
         ]);
         $this->fileManager->removeDeletedRequests(
             array_map(
-                function ($request) {
-                    return $request['id'];
-                },
+                fn($request) => $request['id'],
                 $this->queryHandler->listDeletedRecords()
             )
         );
@@ -273,8 +271,6 @@ class BatchProcessor extends Loggable
     /**
      * Get the data set for the given request.
      *
-     * @param array $request
-     * @param \XDUser $user
      * @return \DataWarehouse\Data\BatchDataset;
      * @throws \Exception
      */
@@ -324,7 +320,7 @@ class BatchProcessor extends Loggable
      * @param \XDUser $user The user that requested the export.
      * @param array $request The batch request data.
      */
-    private function sendExportSuccessEmail(XDUser $user, array $request)
+    private function sendExportSuccessEmail(XDUser $user, array $request): void
     {
         if ($this->dryRun) {
             $this->logger->notice([
@@ -341,7 +337,7 @@ class BatchProcessor extends Loggable
         ]);
 
         // Remove time from expiration date time.
-        list($expirationDate) = explode(' ', $request['export_expires_datetime']);
+        [$expirationDate] = explode(' ', $request['export_expires_datetime']);
 
         MailWrapper::sendTemplate(
             'batch_export_success',
@@ -376,7 +372,7 @@ class BatchProcessor extends Loggable
         XDUser $user,
         array $request,
         Exception $e
-    ) {
+    ): void {
         if ($this->dryRun) {
             $this->logger->notice([
                 'module' => self::LOG_MODULE,

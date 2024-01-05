@@ -21,7 +21,7 @@ abstract class DatabasesMigration extends Migration
      *
      * @param MySQLHelper[]
      */
-    protected $databaseHelpers = array();
+    protected $databaseHelpers = [];
 
     /**
      * Admin credentials for the MySQL database.
@@ -36,7 +36,7 @@ abstract class DatabasesMigration extends Migration
     /**
      * @inheritdoc
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         parent::setLogger($logger);
 
@@ -67,23 +67,12 @@ abstract class DatabasesMigration extends Migration
     /**
      * @inheritdoc
      */
-    public function execute()
+    public function execute(): void
     {
 
         // Mapping of database names to their portal_settings.ini config
         // section.
-        $databases = array(
-            'mod_logger'      => 'logger',
-            'moddb'           => 'database',
-            'modw'            => 'datawarehouse',
-            'modw_aggregates' => 'datawarehouse',
-            'modw_filters'    => 'datawarehouse',
-            'mod_shredder'    => 'shredder',
-            'mod_hpcdb'       => 'hpcdb',
-            'modw_etl'        => 'logger',
-            'modw_supremm'    => 'datawarehouse',
-            'modw_cloud'      => 'datawarehouse'
-        );
+        $databases = ['mod_logger'      => 'logger', 'moddb'           => 'database', 'modw'            => 'datawarehouse', 'modw_aggregates' => 'datawarehouse', 'modw_filters'    => 'datawarehouse', 'mod_shredder'    => 'shredder', 'mod_hpcdb'       => 'hpcdb', 'modw_etl'        => 'logger', 'modw_supremm'    => 'datawarehouse', 'modw_cloud'      => 'datawarehouse'];
 
         $dir = BASE_DIR . '/db/migrations/'
             . $this->currentVersion . '-' . $this->newVersion;
@@ -135,7 +124,7 @@ abstract class DatabasesMigration extends Migration
             $proceed = $console->prompt(
                 "One or more migrations in this upgrade require admin credentials for the MySQL database. Would you like to proceed?",
                 'yes',
-                array('yes', 'no')
+                ['yes', 'no']
             ) === 'yes';
             if (!$proceed) {
                 exit;
@@ -144,10 +133,7 @@ abstract class DatabasesMigration extends Migration
             $user = $console->prompt("MySQL Admin Username:", 'root');
             $pass = $console->silentPrompt("MySQL Admin Password:");
 
-            self::$mysqlAdminCredentials = array(
-                'user' => $user,
-                'pass' => $pass,
-            );
+            self::$mysqlAdminCredentials = ['user' => $user, 'pass' => $pass];
         }
 
         return self::$mysqlAdminCredentials;

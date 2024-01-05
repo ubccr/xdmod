@@ -11,28 +11,11 @@ class VisualizationBuilder
 {
     private static $_self = NULL;
 
-    public static $plot_action_formats = array(
-        'session_variable',
-        'png',
-        'png_inline',
-        'img_tag',
-        'svg'
-    );
+    public static $plot_action_formats = ['session_variable', 'png', 'png_inline', 'img_tag', 'svg'];
 
-    public static $display_types = array(
-        'bar',
-        'h_bar',
-        'line',
-        'pie',
-        'area'
-    );
+    public static $display_types = ['bar', 'h_bar', 'line', 'pie', 'area'];
 
-    public static $combine_types = array(
-        'side',
-        'percentage',
-        'stack',
-        'overlay'
-    );
+    public static $combine_types = ['side', 'percentage', 'stack', 'overlay'];
 
     public static function getInstance()
     {
@@ -66,7 +49,7 @@ class VisualizationBuilder
 
     public static function make_seed()
     {
-        list($usec, $sec) = explode(' ', microtime());
+        [$usec, $sec] = explode(' ', microtime());
         return (float) $sec + ((float) $usec * 100000);
     }
 }

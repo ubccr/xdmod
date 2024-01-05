@@ -24,13 +24,6 @@ class Summary
     protected $dbh = null;
 
     /**
-     * "ident" value used by the logger.
-     *
-     * @var string
-     */
-    protected $ident = null;
-
-    /**
      * Time the process started (Y-m-d H:i:s).
      *
      * @var string
@@ -114,7 +107,7 @@ class Summary
      *
      * @var array
      */
-    protected $recordCounts = array();
+    protected $recordCounts = [];
 
     /**
      * The array keys used by the logger to extract record counts from log messages. By default
@@ -123,7 +116,7 @@ class Summary
      *
      * @var array
      */
-    protected $recordCountKeys = array();
+    protected $recordCountKeys = [];
 
     /**
      * Constructor.
@@ -134,10 +127,11 @@ class Summary
      *   panel.
      */
 
-    protected function __construct($ident, $queryRecordCounts)
+    protected function __construct(/**
+     * "ident" value used by the logger.
+     */
+    protected $ident, $queryRecordCounts)
     {
-        $this->ident = $ident;
-
         $this->dbh = DB::factory('logger');
 
         $row = $this->_getProcessStartRow();
@@ -227,27 +221,14 @@ class Summary
     public function getData()
     {
         return array_merge(
-            array(
-                'process_start_time'    => $this->processStartTime,
-                'process_end_time'      => $this->processEndTime,
-                'data_start_time'       => $this->dataStartTime,
-                'data_end_time'         => $this->dataEndTime,
-                'warning_count'         => $this->warningCount,
-                'error_count'           => $this->errorCount,
-                'critical_count'        => $this->criticalCount,
-                'alert_count'           => $this->alertCount,
-                'emergency_count'       => $this->emergencyCount,
-            ),
+            ['process_start_time'    => $this->processStartTime, 'process_end_time'      => $this->processEndTime, 'data_start_time'       => $this->dataStartTime, 'data_end_time'         => $this->dataEndTime, 'warning_count'         => $this->warningCount, 'error_count'           => $this->errorCount, 'critical_count'        => $this->criticalCount, 'alert_count'           => $this->alertCount, 'emergency_count'       => $this->emergencyCount],
             $this->recordCounts
         );
     }
 
     private function _getProcessStartRow()
     {
-        return $this->_getRow(array(
-            array('priority', '=',   Log::NOTICE),
-            array('message',  'LIKE', '%"process_start_time":%'),
-        ));
+        return $this->_getRow([['priority', '=', Log::NOTICE], ['message', 'LIKE', '%"process_start_time":%']]);
     }
 
     private function _getProcessEndRow()
@@ -256,26 +237,19 @@ class Summary
             return null;
         }
 
-        return $this->_getRow(array(
-            array('priority', '=',    Log::NOTICE),
-            array('message',  'LIKE', '%"process_end_time":%'),
-            array('id',       '>',    $this->processStartRowId),
-        ));
+        return $this->_getRow([['priority', '=', Log::NOTICE], ['message', 'LIKE', '%"process_end_time":%'], ['id', '>', $this->processStartRowId]]);
     }
 
     private function _getDataTimes()
     {
-        $constraints = array(
-            array('priority', '=',    Log::NOTICE),
-            array('message',  'LIKE', '%"data_start_time":%'),
-        );
+        $constraints = [['priority', '=', Log::NOTICE], ['message', 'LIKE', '%"data_start_time":%']];
 
         if ($this->processStartRowId !== null) {
-            $constraints[] = array('id', '>', $this->processStartRowId);
+            $constraints[] = ['id', '>', $this->processStartRowId];
         }
 
         if ($this->processEndRowId !== null) {
-            $constraints[] = array('id', '<', $this->processEndRowId);
+            $constraints[] = ['id', '<', $this->processEndRowId];
         }
 
         $row = $this->_getRow($constraints);
@@ -291,8 +265,8 @@ class Summary
     {
         $sql = 'SELECT priority, COUNT(*) AS count FROM log_table';
 
-        $clauses = array();
-        $params = array();
+        $clauses = [];
+        $params = [];
 
         if ($this->ident !== null) {
             $clauses[] = 'ident = ?';
@@ -317,7 +291,7 @@ class Summary
 
         $rows = $this->dbh->query($sql, $params);
 
-        $countForPriority = array();
+        $countForPriority = [];
 
         foreach ($rows as $row) {
             $countForPriority[$row['priority']] = $row['count'];
@@ -328,26 +302,23 @@ class Summary
 
     private function _getRecordCounts()
     {
-        if ( count($this->recordCountKeys) == 0 ) return array();
-        $counts = array();
+        if ( count($this->recordCountKeys) == 0 ) return [];
+        $counts = [];
 
         foreach ($this->recordCountKeys as $key) {
             $counts[$key . '_count'] = 0;
 
-            $constraints = array(
-                 array('priority', '=',    Log::NOTICE),
-                 array('message',  'LIKE', '%"' . $key . '":%'),
-            );
+            $constraints = [['priority', '=', Log::NOTICE], ['message', 'LIKE', '%"' . $key . '":%']];
 
             if ($this->processStartRowId !== null) {
-                $constraints[] = array('id', '>', $this->processStartRowId);
+                $constraints[] = ['id', '>', $this->processStartRowId];
             }
 
             if ($this->processEndRowId !== null) {
-                $constraints[] = array('id', '<', $this->processEndRowId);
+                $constraints[] = ['id', '<', $this->processEndRowId];
             }
 
-            list($sql, $params) = $this->_buildQuery(
+            [$sql, $params] = $this->_buildQuery(
                 $constraints,
                 true,
                 false
@@ -364,9 +335,9 @@ class Summary
         return $counts;
     }
 
-    protected function _getRow(array $constraints = array())
+    protected function _getRow(array $constraints = [])
     {
-        list($sql, $params) = $this->_buildQuery($constraints);
+        [$sql, $params] = $this->_buildQuery($constraints);
 
         $rows = $this->dbh->query($sql, $params);
 
@@ -378,14 +349,14 @@ class Summary
     }
 
     protected function _buildQuery(
-        array $constraints = array(),
+        array $constraints = [],
         $order = true,
         $limit = true
     ) {
         $sql = 'SELECT id, logtime, priority, message FROM log_table';
 
-        $clauses = array();
-        $params = array();
+        $clauses = [];
+        $params = [];
 
         if ($this->ident !== null) {
             $clauses[] = 'ident = ?';
@@ -393,7 +364,7 @@ class Summary
         }
 
         foreach ($constraints as $constraint) {
-            list($column, $op, $value) = $constraint;
+            [$column, $op, $value] = $constraint;
             $clauses[] = "$column $op ?";
             $params[]  = $value;
         }
@@ -410,7 +381,7 @@ class Summary
             $sql .= ' LIMIT 1';
         }
 
-        return array($sql, $params);
+        return [$sql, $params];
     }
 }
 

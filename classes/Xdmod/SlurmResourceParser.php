@@ -29,9 +29,7 @@ class SlurmResourceParser
     public function parseTres($tres)
     {
         return array_map(
-            function ($resource) {
-                return explode('=', $resource, 2);
-            },
+            fn($resource) => explode('=', $resource, 2),
             explode(',', $tres)
         );
     }

@@ -4,20 +4,20 @@ namespace UnitTests\DataWarehouse\Export;
 
 use CCR\Log;
 use DataWarehouse\Export\FileWriter\NullFileWriter;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use IntegrationTests\TestHarness\TestFiles;
 
 /**
  * Test data warehouse export null file writer.
  */
-class NullFileWriterTest extends PHPUnit_Framework_TestCase
+class NullFileWriterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test artifacts path.
      * @var string
      */
-    const TEST_GROUP = 'unit/data_warehouse/export/file_writer/null';
+    public const TEST_GROUP = 'unit/data_warehouse/export/file_writer/null';
 
     /**
      * @var LoggerInterface
@@ -27,7 +27,7 @@ class NullFileWriterTest extends PHPUnit_Framework_TestCase
     /**
      * Create logger.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$logger = Log::singleton('null');
     }
@@ -48,7 +48,7 @@ class NullFileWriterTest extends PHPUnit_Framework_TestCase
      *
      * @dataProvider writeRecordsProvider
      */
-    public function testWriteRecords(array $records)
+    public function testWriteRecords(array $records): void
     {
         $file = tempnam(sys_get_temp_dir(), 'dw-export-test-');
         $fileWriter = new NullFileWriter($file, self::$logger);

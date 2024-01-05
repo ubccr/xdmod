@@ -31,7 +31,7 @@ class XDSamlAuthentication
      */
     protected $_sources = null;
 
-    const BASE_ADMIN_EMAIL = <<<EML
+    public const BASE_ADMIN_EMAIL = <<<EML
 
 Person Details -----------------------------------
 Name:              %s
@@ -57,19 +57,14 @@ EML;
     {
         $this->logger = Log::factory(
             'XDSamlAuthentication',
-            array(
-                'file' => false,
-                'db' => true,
-                'mail' => false,
-                'console' => false
-            )
+            ['file' => false, 'db' => true, 'mail' => false, 'console' => false]
         );
 
         $this->_sources = \SimpleSAML_Auth_Source::getSources();
         if ($this->isSamlConfigured()) {
             try {
                 $authSource = \xd_utilities\getConfiguration('authentication', 'source');
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $authSource = null;
             }
             if (!is_null($authSource) && array_search($authSource, $this->_sources) !== false) {
@@ -95,7 +90,7 @@ EML;
     /**
      * Logs out of the saml session
      */
-    public function logout(){
+    public function logout(): void{
         if ($this->isSamlConfigured()) {
             \SimpleSAML_Session::getSessionFromRequest()->doLogout($this->authSourceName);
         }
@@ -147,7 +142,7 @@ EML;
                     $firstName,
                     $middleName,
                     $lastName,
-                    array(ROLE_ID_USER),
+                    [ROLE_ID_USER],
                     ROLE_ID_USER,
                     $userOrganization,
                     $personId,
@@ -234,9 +229,7 @@ EML;
             $orgDisplay = $idp['OrganizationDisplayName'];
         }
         else {
-            $orgDisplay = array(
-                'en' => 'Single Sign On'
-            );
+            $orgDisplay = ['en' => 'Single Sign On'];
         }
         if (!empty($idp['icon'])) {
             $icon = $idp['icon'];
@@ -244,10 +237,7 @@ EML;
         else {
             $icon = "";
         }
-        return array(
-            'organization' => $orgDisplay,
-            'icon' => $icon
-        );
+        return ['organization' => $orgDisplay, 'icon' => $icon];
     }
 
     /**
@@ -259,7 +249,7 @@ EML;
      * @param boolean $linked whether or not we were able to link the SSO User with an XDMoD Person.
      * @throws Exception if there is a problem with notifying the user.
      */
-    private function handleNotifications(XDUser $user, $samlAttributes, $linked)
+    private function handleNotifications(XDUser $user, $samlAttributes, $linked): void
     {
         if ($user->getOrganizationID() !== -1) {
             // Only send email if we were unable to identify an organization for the user.
@@ -281,11 +271,7 @@ EML;
 
         try {
             MailWrapper::sendMail(
-                array(
-                    'subject' => $subject,
-                    'body' => $body,
-                    'toAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient')
-                )
+                ['subject' => $subject, 'body' => $body, 'toAddress' => \xd_utilities\getConfiguration('general', 'tech_support_recipient')]
             );
         } catch (Exception $e) {
             // log the exception so we have some persistent visibility into the problem.

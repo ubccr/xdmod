@@ -89,9 +89,9 @@ use InvalidArgumentException;
  *      );
  *  }
  */
-abstract class BaseTest extends \PHPUnit_Framework_TestCase
+abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
-    const DATE_REGEX = '/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/';
+    public const DATE_REGEX = '/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/';
 
     protected static $XDMOD_REALMS;
     protected static $ROLES;
@@ -107,7 +107,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         'output' => ['status_code', 'body_validator']
     ];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$XDMOD_REALMS = Utilities::getRealmsToTest();
     }
@@ -149,9 +149,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
     public function provideBaseRoles()
     {
         return array_map(
-            function ($role) {
-                return [$role];
-            },
+            fn($role) => [$role],
             self::getBaseRoles()
         );
     }
@@ -179,24 +177,18 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         array $input
     ) {
         $method = $input['method'];
-        switch ($method) {
-            case 'get':
-                $response = $testHelper->$method(
-                    $input['path'],
-                    $input['params']
-                );
-                break;
-            case 'post':
-            case 'put':
-            case 'delete':
-            case 'patch':
-                $response = $testHelper->$method(
-                    $input['path'],
-                    $input['params'],
-                    $input['data']
-                );
-                break;
-        }
+        $response = match ($method) {
+            'get' => $testHelper->$method(
+                $input['path'],
+                $input['params']
+            ),
+            'post', 'put', 'delete', 'patch' => $testHelper->$method(
+                $input['path'],
+                $input['params'],
+                $input['data']
+            ),
+            default => $response,
+        };
         return $response;
     }
 
@@ -537,7 +529,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         // Provide token authentication tests.
         if ($tokenAuth && $this instanceof TokenAuthTest) {
             foreach ($this->provideTokenAuthTestData() as $testData) {
-                list($role, $tokenType) = $testData;
+                [$role, $tokenType] = $testData;
                 if ('valid_token' !== $tokenType) {
                     $tests[] = [
                         $tokenType,
@@ -745,7 +737,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         if (!is_null($bodyValidator)) {
             return $bodyValidator($message, $code);
         }
-        return function ($body, $assertMessage) use ($message, $code) {
+        return function ($body, $assertMessage) use ($message, $code): void {
             parent::assertEquals(
                 [
                     'success' => false,
@@ -779,7 +771,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             'body_validator' => function (
                 $body,
                 $assertMessage
-            ) use ($validator) {
+            ) use ($validator): void {
                 if (is_callable($validator)) {
                     parent::assertSame(true, $body['success'], $assertMessage);
                     $validator($body, $assertMessage);
@@ -798,7 +790,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      */
     protected function validateDate($date)
     {
-        parent::assertRegExp(self::DATE_REGEX, $date);
+        parent::assertMatchesRegularExpression(self::DATE_REGEX, $date);
     }
 
     /**

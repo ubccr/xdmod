@@ -38,9 +38,7 @@ class OrganizationHelper
     public function getIdByLongName($longName)
     {
         $query = "SELECT id FROM modw.organization WHERE long_name = :long_name";
-        $params = array(
-            ':long_name'=> $longName
-        );
+        $params = [':long_name'=> $longName];
 
         $rows = $this->db->query($query, $params);
 

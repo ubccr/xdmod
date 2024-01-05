@@ -6,31 +6,24 @@
 namespace UnitTests\Realm;
 
 use CCR\Log as Logger;
+use Exception;
 use Realm\Realm;
 
-class RealmTest extends \PHPUnit_Framework_TestCase
+class RealmTest extends \PHPUnit\Framework\TestCase
 {
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Logger::EMERG
-        );
+        $conf = ['file' => false, 'db' => false, 'mail' => false, 'consoleLogLevel' => Logger::EMERG];
         self::$logger = Logger::factory('PHPUnit', $conf);
 
         // In order to use a non-standard location for datawarehouse.json we must manually
         // initialize the Realm class.
 
-        $options = (object) array(
-            'config_file_name' => 'datawarehouse.json',
-            'config_base_dir'  => realpath('../artifacts/xdmod/realm')
-        );
+        $options = (object) ['config_file_name' => 'datawarehouse.json', 'config_base_dir'  => realpath('../artifacts/xdmod/realm')];
 
         \Realm\Realm::initialize(self::$logger, $options);
     }
@@ -38,11 +31,12 @@ class RealmTest extends \PHPUnit_Framework_TestCase
     /**
      * (1) Invalid realm name.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testInvalidRealmName()
+    public function testInvalidRealmName(): void
     {
+        $this->expectException(Exception::class);
         Realm::factory('RealmDoesNotExist', self::$logger);
     }
 
@@ -51,30 +45,18 @@ class RealmTest extends \PHPUnit_Framework_TestCase
      *     included.
      */
 
-    public function testGetRealmNames()
+    public function testGetRealmNames(): void
     {
         $generated = Realm::getRealmNames(Realm::SORT_ON_ORDER);
-        $expected = array(
-            'Jobs' => 'Jobs',
-            'Cloud' => 'Cloud',
-            'HiddenRealm' => 'Do not show hidden realms in the metric catalog.'
-        );
+        $expected = ['Jobs' => 'Jobs', 'Cloud' => 'Cloud', 'HiddenRealm' => 'Do not show hidden realms in the metric catalog.'];
         $this->assertEquals($expected, $generated, "Sort realm names on order");
 
         $generated = Realm::getRealmNames(Realm::SORT_ON_SHORT_ID);
-        $expected = array(
-            'Cloud' => 'Cloud',
-            'HiddenRealm' => 'Do not show hidden realms in the metric catalog.',
-            'Jobs' => 'Jobs'
-        );
+        $expected = ['Cloud' => 'Cloud', 'HiddenRealm' => 'Do not show hidden realms in the metric catalog.', 'Jobs' => 'Jobs'];
         $this->assertEquals($expected, $generated, "Sort realm names on short id");
 
         $generated = Realm::getRealmNames(Realm::SORT_ON_NAME);
-        $expected = array(
-            'Cloud' => 'Cloud',
-            'HiddenRealm' => 'Do not show hidden realms in the metric catalog.',
-            'Jobs' => 'Jobs'
-        );
+        $expected = ['Cloud' => 'Cloud', 'HiddenRealm' => 'Do not show hidden realms in the metric catalog.', 'Jobs' => 'Jobs'];
         $this->assertEquals($expected, $generated, "Sort realm names on name");
     }
 
@@ -82,44 +64,20 @@ class RealmTest extends \PHPUnit_Framework_TestCase
      * (3) Test retrieval of the group by names.
      */
 
-    public function testGetGroupByNames()
+    public function testGetGroupByNames(): void
     {
         $realm = Realm::factory('Jobs', self::$logger);
 
         $generated = $realm->getGroupByNames(); // Default sort order is SORT_ON_ORDER
-        $expected = array(
-            'none' => 'None',
-            'day' => 'Day',
-            'resource' => 'Resource',
-            'person' => 'User',
-            'month' => 'Month',
-            'username' => 'System Username',
-            'queue' => 'Queue'
-        );
+        $expected = ['none' => 'None', 'day' => 'Day', 'resource' => 'Resource', 'person' => 'User', 'month' => 'Month', 'username' => 'System Username', 'queue' => 'Queue'];
         $this->assertEquals($expected, $generated, "getGroupByNames(SORT_ON_ORDER)");
 
         $generated = $realm->getGroupByNames(Realm::SORT_ON_SHORT_ID);
-        $expected = array(
-            'day' => 'Day',
-            'none' => 'None',
-            'person' => 'User',
-            'resource' => 'Resource',
-            'month' => 'Month',
-            'queue' => 'Queue',
-            'username' => 'System Username'
-        );
+        $expected = ['day' => 'Day', 'none' => 'None', 'person' => 'User', 'resource' => 'Resource', 'month' => 'Month', 'queue' => 'Queue', 'username' => 'System Username'];
         $this->assertEquals($expected, $generated, "getGroupByNames(SORT_ON_SHORT_ID)");
 
         $generated = $realm->getGroupByNames(Realm::SORT_ON_NAME);
-        $expected = array(
-            'day' => 'Day',
-            'month' => 'Month',
-            'none' => 'None',
-            'resource' => 'Resource',
-            'queue' => 'Queue',
-            'username' => 'System Username',
-            'person' => 'User'
-        );
+        $expected = ['day' => 'Day', 'month' => 'Month', 'none' => 'None', 'resource' => 'Resource', 'queue' => 'Queue', 'username' => 'System Username', 'person' => 'User'];
         $this->assertEquals($expected, $generated, "getGroupByNames(SORT_ON_NAME)");
     }
 
@@ -127,32 +85,20 @@ class RealmTest extends \PHPUnit_Framework_TestCase
      * (4) Test retrieval of the statistic names.
      */
 
-    public function testGetStatisticNames()
+    public function testGetStatisticNames(): void
     {
         $realm = Realm::factory('Cloud', self::$logger);
 
         $generated = $realm->getStatisticNames(); // Default sort order is SORT_ON_ORDER
-        $expected = array(
-            'cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions',
-            'core_time' => 'CPU Hours: Total',
-            'alternate_statistic_class' => 'Alternate Statistic Class Example'
-        );
+        $expected = ['cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions', 'core_time' => 'CPU Hours: Total', 'alternate_statistic_class' => 'Alternate Statistic Class Example'];
         $this->assertEquals($expected, $generated, "getStatisticNames(SORT_ON_ORDER)");
 
         $generated = $realm->getStatisticNames(Realm::SORT_ON_SHORT_ID);
-        $expected = array(
-            'alternate_statistic_class' => 'Alternate Statistic Class Example',
-            'core_time' => 'CPU Hours: Total',
-            'cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions'
-        );
+        $expected = ['alternate_statistic_class' => 'Alternate Statistic Class Example', 'core_time' => 'CPU Hours: Total', 'cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions'];
         $this->assertEquals($expected, $generated, "getStatisticNames(SORT_ON_SHORT_ID)");
 
         $generated = $realm->getStatisticNames(Realm::SORT_ON_NAME);
-        $expected = array(
-            'cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions',
-            'alternate_statistic_class' => 'Alternate Statistic Class Example',
-            'core_time' => 'CPU Hours: Total'
-        );
+        $expected = ['cloud_num_sessions_running' => '${ORGANIZATION_NAME} Number of Active Sessions', 'alternate_statistic_class' => 'Alternate Statistic Class Example', 'core_time' => 'CPU Hours: Total'];
         $this->assertEquals($expected, $generated, "getStatisticNames(SORT_ON_NAME)");
     }
 
@@ -160,29 +106,16 @@ class RealmTest extends \PHPUnit_Framework_TestCase
      * (5) Test getDrillTargets()
      */
 
-    public function testGetDrillTargets()
+    public function testGetDrillTargets(): void
     {
         $realm = Realm::factory('Jobs', self::$logger);
         $generated = $realm->getDrillTargets('person');
-        $expected = array(
-            'none-None',
-            'day-Day',
-            'month-Month',
-            'resource-Resource',
-            'username-System Username',
-            'queue-Queue'
-        );
+        $expected = ['none-None', 'day-Day', 'month-Month', 'resource-Resource', 'username-System Username', 'queue-Queue'];
         $this->assertEquals($expected, $generated, "getDrillTargets('person')");
 
         $realm = Realm::factory('Cloud', self::$logger);
         $generated = $realm->getDrillTargets('none');  // Will be returned using SORT_ON_ORDER
-        $expected = array(
-            'day-Day',
-            'month-Month',
-            'alternate_groupby_class-Alternate GroupBy Class Example',
-            'configuration-Instance Type',
-            'username-System Username'
-        );
+        $expected = ['day-Day', 'month-Month', 'alternate_groupby_class-Alternate GroupBy Class Example', 'configuration-Instance Type', 'username-System Username'];
         $this->assertEquals($expected, $generated, "getDrillTargets('none')");
     }
 
@@ -190,7 +123,7 @@ class RealmTest extends \PHPUnit_Framework_TestCase
      * (6) Test realm metadata.
      */
 
-    public function testRealmMetadata()
+    public function testRealmMetadata(): void
     {
         $realm = Realm::factory('Jobs', self::$logger);
 
@@ -245,7 +178,7 @@ class RealmTest extends \PHPUnit_Framework_TestCase
      *   - A realm with show_in_catelog=false (category will be null)
      */
 
-    public function testRealmCategories()
+    public function testRealmCategories(): void
     {
         // Jobs realm has a category
         $realmId = 'Jobs';
@@ -267,18 +200,10 @@ class RealmTest extends \PHPUnit_Framework_TestCase
      * (8) Test retrieval of the category list.
      */
 
-    public function testRealmCategoryList()
+    public function testRealmCategoryList(): void
     {
         $categoryList = \DataWarehouse::getCategories();
-        $expected = array(
-            'HPC Metrics' => array(
-                'Jobs'
-            ),
-            'Cloud' => array(
-                'Cloud'
-            )
-            // HiddenRealm will not be included
-        );
+        $expected = ['HPC Metrics' => ['Jobs'], 'Cloud' => ['Cloud']];
         $this->assertEquals($expected, $categoryList, 'getCategories()');
     }
 }

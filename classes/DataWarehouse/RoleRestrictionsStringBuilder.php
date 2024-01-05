@@ -12,7 +12,7 @@ class RoleRestrictionsStringBuilder
      *
      * @var array
      */
-    private $roleRestrictionsLists = array();
+    private $roleRestrictionsLists = [];
 
     /**
      * Generate a string describing each registered role restriction list.
@@ -21,18 +21,16 @@ class RoleRestrictionsStringBuilder
      */
     public function getRoleRestrictionsStrings()
     {
-        $roleRestrictionsStrings = array();
+        $roleRestrictionsStrings = [];
         foreach ($this->roleRestrictionsLists as $roleRestrictionsList) {
             $symbol = $roleRestrictionsList['symbol'];
 
-            $parameterStrings = array();
+            $parameterStrings = [];
             foreach ($roleRestrictionsList['parameters'] as $dimensionId => $parameterOptions) {
                 $parameterGroupBy = $parameterOptions['groupBy'];
-                $parameterValueNames = array();
+                $parameterValueNames = [];
                 foreach ($parameterOptions['dimensionValues'] as $valueId) {
-                    $parameterPossibleValues = $parameterGroupBy->getAttributeValues(array(
-                        'id' => $valueId,
-                    ));
+                    $parameterPossibleValues = $parameterGroupBy->getAttributeValues(['id' => $valueId]);
                     if (empty($parameterPossibleValues)) {
                         $parameterValueNames[] = '[Value Name Not Found]';
                     } else {
@@ -105,10 +103,7 @@ class RoleRestrictionsStringBuilder
         // Register the list and return its symbol.
         $numAsterisks = count($this->roleRestrictionsLists) + 1;
         $symbol = str_repeat('*', $numAsterisks);
-        $this->roleRestrictionsLists[] = array(
-            'symbol' => $symbol,
-            'parameters' => $roleRestrictionsParameters,
-        );
+        $this->roleRestrictionsLists[] = ['symbol' => $symbol, 'parameters' => $roleRestrictionsParameters];
 
         return $symbol;
     }

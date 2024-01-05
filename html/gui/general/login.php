@@ -1,14 +1,14 @@
 <?php
 require_once __DIR__ . '/../../../configuration/linker.php';
 \xd_security\start_session();
-$formal_name = isset($_REQUEST['xd_user_formal_name']) ? $_REQUEST['xd_user_formal_name'] :  "";
+$formal_name = $_REQUEST['xd_user_formal_name'] ?? "";
 $samlError = false;
 $auth = null;
 $message = '';
 
 try {
     $auth = new Authentication\SAML\XDSamlAuthentication();
-} catch (InvalidArgumentException $ex) {
+} catch (InvalidArgumentException) {
     // This will catch when apache or nginx have been set up
     // to to have an alternate saml configuration directory
     // that does not exist, so we ignore it as saml isnt set

@@ -15,7 +15,7 @@ class File extends aDataEndpoint implements iDataEndpoint
      * @const string Defines the name for this endpoint that should be used in configuration
      * files. It also allows us to implement auto-discovery.
      */
-    const ENDPOINT_NAME = 'file';
+    public const ENDPOINT_NAME = 'file';
 
     /**
      * @var string The path to the file.
@@ -35,14 +35,11 @@ class File extends aDataEndpoint implements iDataEndpoint
     {
         parent::__construct($options, $logger);
 
-        $requiredKeys = array("path");
+        $requiredKeys = ["path"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
-        $messages = array();
-        $propertyTypes = array(
-            'path' => 'string',
-            'mode' => 'string'
-        );
+        $messages = [];
+        $propertyTypes = ['path' => 'string', 'mode' => 'string'];
 
         if ( ! \xd_utilities\verify_object_property_types($options, $propertyTypes, $messages, true) ) {
             $this->logAndThrowException("Error verifying options: " . implode(", ", $messages));
@@ -67,7 +64,7 @@ class File extends aDataEndpoint implements iDataEndpoint
 
     protected function generateUniqueKey()
     {
-        $this->key = md5(implode($this->keySeparator, array($this->type, $this->path, $this->mode)));
+        $this->key = md5(implode($this->keySeparator, [$this->type, $this->path, $this->mode]));
     }
 
     /**
@@ -144,8 +141,8 @@ class File extends aDataEndpoint implements iDataEndpoint
 
     public function verify($dryrun = false, $leaveConnected = false)
     {
-        $readModes = array("r", "r+", "w+", "a+", "x+", "c+");
-        $writeModes = array("r+", "w", "w+", "a", "a+", "x", "x+", "c", "c+");
+        $readModes = ["r", "r+", "w+", "a+", "x+", "c+"];
+        $writeModes = ["r+", "w", "w+", "a", "a+", "x", "x+", "c", "c+"];
 
         if ( ! in_array($this->mode, array_merge($readModes, $writeModes)) ) {
             $this->logAndThrowException("Unsupported mode '" . $this->mode . "'");
@@ -172,8 +169,8 @@ class File extends aDataEndpoint implements iDataEndpoint
      * @see iDataEndpoint::__toString()
      */
 
-    public function __toString()
+    public function __toString(): string
     {
-        return sprintf('%s (name=%s, path=%s)', get_class($this), $this->name, $this->path);
+        return sprintf('%s (name=%s, path=%s)', static::class, $this->name, $this->path);
     }
 }

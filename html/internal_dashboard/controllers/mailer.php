@@ -9,22 +9,19 @@ use Xdmod\EmailTemplate;
 \xd_security\start_session();
 
 xd_security\enforceUserRequirements(
-    array(STATUS_LOGGED_IN, STATUS_MANAGER_ROLE),
+    [STATUS_LOGGED_IN, STATUS_MANAGER_ROLE],
     'xdDashboardUser'
 );
 
 $pdo = DB::factory('database');
 
-$operation = isset($_REQUEST['operation']) ? $_REQUEST['operation'] : '';
+$operation = $_REQUEST['operation'] ?? '';
 
-$response = array();
+$response = [];
 
 switch ($operation) {
     case 'enum_presets':
-        $response['presets'] = array(
-            'Maintenance',
-            'New Release',
-        );
+        $response['presets'] = ['Maintenance', 'New Release'];
 
         $response['success'] = true;
         $response['count'] = count($response['presets']);
@@ -44,16 +41,7 @@ switch ($operation) {
         $contact_email = xd_utilities\getConfiguration('general', 'contact_page_recipient');
         $site_address  = xd_utilities\getConfigurationUrlBase('general', 'site_address');
 
-        $template->apply(array(
-            'version'              => $version,
-            'contact_email'        => $contact_email,
-            'organization'         => ORGANIZATION_NAME,
-            'maintainer_signature' => MailWrapper::getMaintainerSignature(),
-            'date'                 => date('l, j F'),
-            'site_title'           => \xd_utilities\getConfiguration('general', 'title'),
-            'site_address'         => $site_address,
-            'product_name'         => MailWrapper::getProductName(),
-        ));
+        $template->apply(['version'              => $version, 'contact_email'        => $contact_email, 'organization'         => ORGANIZATION_NAME, 'maintainer_signature' => MailWrapper::getMaintainerSignature(), 'date'                 => date('l, j F'), 'site_title'           => \xd_utilities\getConfiguration('general', 'title'), 'site_address'         => $site_address, 'product_name'         => MailWrapper::getProductName()]);
 
         $response['success'] = true;
         $response['content'] = $template->getContents();
@@ -63,11 +51,11 @@ switch ($operation) {
         $group_filter = \xd_security\assertParameterSet('group_filter');
         $acl_filter = \xd_security\assertParameterSet('role_filter');
 
-        list($query, $params) = \xd_dashboard\listUserEmailsByGroupAndAcl($group_filter, $acl_filter);
+        [$query, $params] = \xd_dashboard\listUserEmailsByGroupAndAcl($group_filter, $acl_filter);
 
         $results = $pdo->query($query, $params);
 
-        $addresses = array();
+        $addresses = [];
 
         foreach ($results as $r) {
             $addresses[] = $r['email_address'];
@@ -86,15 +74,7 @@ switch ($operation) {
         $title = \xd_utilities\getConfiguration('general', 'title');
 
         // Send a copy of the email to the contact page recipient.
-        $response['status'] = MailWrapper::sendMail(array(
-                                  'body'        => \xd_security\assertParameterSet('message', '/.*/', false),
-                                  'subject'     => "[$title] " . \xd_security\assertParameterSet('subject'),
-                                  'toAddress'   => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
-                                  'toName'      => 'Undisclosed Recipients',
-                                  'fromAddress' => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
-                                  'fromName'    => $title,
-                                  'bcc'         => \xd_security\assertParameterSet('target_addresses')
-                              ));
+        $response['status'] = MailWrapper::sendMail(['body'        => \xd_security\assertParameterSet('message', '/.*/', false), 'subject'     => "[$title] " . \xd_security\assertParameterSet('subject'), 'toAddress'   => \xd_utilities\getConfiguration('general', 'contact_page_recipient'), 'toName'      => 'Undisclosed Recipients', 'fromAddress' => \xd_utilities\getConfiguration('general', 'contact_page_recipient'), 'fromName'    => $title, 'bcc'         => \xd_security\assertParameterSet('target_addresses')]);
         break;
     default:
         $response['success'] = false;

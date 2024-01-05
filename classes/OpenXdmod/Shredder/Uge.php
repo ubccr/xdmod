@@ -15,23 +15,19 @@ class Uge extends Sge
     /**
      * These fields are milliseconds in UGE.
      */
-    protected $timestampFields = array(
-        'submission_time',
-        'start_time',
-        'end_time',
-    );
+    protected $timestampFields = ['submission_time', 'start_time', 'end_time'];
 
     /**
      * @inheritdoc
      *
      * TODO: Refactor Sge class to not require the copy/paste below.
      */
-    public function shredLine($line)
+    public function shredLine($line): void
     {
         $this->logger->debug("Shredding line '$line'");
 
         // Ignore comments.
-        if (substr($line, 0, 1) == '#') {
+        if (str_starts_with($line, '#')) {
             return;
         }
 
@@ -51,7 +47,7 @@ class Uge extends Sge
             return;
         }
 
-        $job = array();
+        $job = [];
 
         // Map numeric $entries array into a associative array.
         foreach (self::$entryNames as $index => $name) {

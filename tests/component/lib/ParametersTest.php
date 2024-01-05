@@ -17,7 +17,7 @@ class ParametersTest extends BaseTest
      * @throws Exception if the 'database' db config cannot be found.
      * @throws Exception if the default test base directory cannot be found.
      */
-    public function testGetParameters($userName, $aclName, $expectedFileName)
+    public function testGetParameters($userName, $aclName, $expectedFileName): void
     {
 
         $user = \XDUser::getUserByUserName($userName);

@@ -12,25 +12,21 @@ namespace UnitTests\ETL\Configuration;
 use CCR\Log;
 use Configuration\Configuration;
 use Configuration\IncludeTransformer;
+use Exception;
 
-class IncludeTest extends \PHPUnit_Framework_TestCase
+class IncludeTest extends \PHPUnit\Framework\TestCase
 {
 
-    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
+    public const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
+    public const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
 
     protected static $transformer = null;
     protected static $config = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
       // Set up a logger so we can get warnings and error messages from the ETL infrastructure
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Log::EMERG
-        );
+        $conf = ['file' => false, 'db' => false, 'mail' => false, 'consoleLogLevel' => Log::EMERG];
         $logger = Log::factory('PHPUnit', $conf);
 
         // Configuration is used in the transformer to qualify relative paths
@@ -41,28 +37,30 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
     /**
      * Test invalid file
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testIncludeInvalidFile()
+    public function testIncludeInvalidFile(): void
     {
+        $this->expectException(Exception::class);
         $key = '$include';
         $value = 'file_does_not_exist.txt';
-        $obj = (object) array($key => $value);
+        $obj = (object) [$key => $value];
         self::$transformer->transform($key, $value, $obj, self::$config);
     }
 
     /**
      * Badly formed URL
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testBadUrl()
+    public function testBadUrl(): void
     {
+        $this->expectException(Exception::class);
         $key = '$include';
         $value = 'badscheme://string';
-        $obj = (object) array($key => $value);
+        $obj = (object) [$key => $value];
         self::$transformer->transform($key, $value, $obj, self::$config);
     }
 
@@ -70,11 +68,11 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
      * Include a document (e.g., SQL query)
      */
 
-    public function testIncludeFile()
+    public function testIncludeFile(): void
     {
         $key = '$include';
         $value = 'etl_sql.d/query.sql';
-        $obj = (object) array($key => $value);
+        $obj = (object) [$key => $value];
         $expected = file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/' . $value);
         self::$transformer->transform($key, $value, $obj, self::$config);
 
@@ -87,14 +85,14 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
      * Test variables in the include URL.
      */
 
-    public function testIncludeFileWithVariable()
+    public function testIncludeFileWithVariable(): void
     {
         self::$config->getVariableStore()->FILENAME = 'query';
         self::$config->getVariableStore()->SUBDIR = 'etl_sql.d';
 
         $key = '$include';
         $value = '${SUBDIR}/${FILENAME}.sql';
-        $obj = (object) array($key => $value);
+        $obj = (object) [$key => $value];
         self::$transformer->transform($key, $value, $obj, self::$config);
 
         $expected = file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/etl_sql.d/query.sql');

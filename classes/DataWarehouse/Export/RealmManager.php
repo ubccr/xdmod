@@ -35,37 +35,33 @@ class RealmManager
     public function getRealms()
     {
         $exportable = array_map(
-            function ($realm) {
-                return $realm['name'];
-            },
+            fn($realm) => $realm['name'],
             $this->config->getBatchExportRealms()
         );
 
         $realms = array_filter(
             Realms::getRealms(),
-            function ($realm) use ($exportable) {
-                return in_array($realm->getName(), $exportable);
-            }
+            fn($realm) => in_array($realm->getDisplay(), $exportable)
         );
 
         // Use array_values to remove gaps in keys that may have been
         // introduced by the use of array_filter.
-        return array_values($realms);
+        $values = array_values($realms);
+        usort($values, fn($left, $right) => strcmp($left->getName(), $right->getName()) * -1);
+        return $values;
     }
 
     /**
      * Get an array of all the batch exportable realms for a user.
      *
-     * @param \XDUser $user
      * @return \Models\Realm[]
      */
     public function getRealmsForUser(XDUser $user)
     {
+        $baseRealms = $this->getRealms();
         $realms = array_filter(
-            $this->getRealms(),
-            function ($realm) use ($user) {
-                return BatchExport::realmExists($user, $realm->getName());
-            }
+            $baseRealms,
+            fn($realm) => BatchExport::realmExists($user, $realm->getDisplay())
         );
 
         // Use array_values to remove gaps in keys that may have been

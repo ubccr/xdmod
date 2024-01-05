@@ -8,12 +8,12 @@ abstract class UserException extends XDException
 	/**
 	 * The message used by this exception if none is provided.
 	 */
-    const defaultMessage = 'Unknown XDMoD Exception Occurred (User-Related)';
+    public const defaultMessage = 'Unknown XDMoD Exception Occurred (User-Related)';
 
     /**
      * The code used by this exception if none is provided.
      */
-    const defaultCode = XDError::UnknownXdmodException;
+    public const defaultCode = XDError::UnknownXdmodException;
 
     public function __construct($message = self::defaultMessage, $code = self::defaultCode, Exception $previous = null)
 	{

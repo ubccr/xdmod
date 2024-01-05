@@ -17,7 +17,7 @@ use xd_utilities;
 class FileManager extends Loggable
 {
     // Constants used in log messages.
-    const LOG_MODULE = 'data-warehouse-export';
+    public const LOG_MODULE = 'data-warehouse-export';
 
     /**
      * Data warehouse batch export directory path.
@@ -104,7 +104,7 @@ class FileManager extends Loggable
      * This is the path of the file that will be used to store the export data on
      * the Open XDMoD server after it has been generated.
      *
-     * @param intger $id Batch export request primary key.
+     * @param integer $id Batch export request primary key.
      * @return string
      */
     public function getExportDataFilePath($id)
@@ -154,7 +154,6 @@ class FileManager extends Loggable
     /**
      * Write a data set to a temporary file.
      *
-     * @param \DataWarehouse\Data\BatchDataset $dataSet
      * @param string $format
      * @return string Path to file that was written to.
      * @throws \Exception If writing the data fails.
@@ -285,7 +284,7 @@ class FileManager extends Loggable
      * @param int $id Export request primary key.
      * @throws \Exception If removing the file fails.
      */
-    public function removeExportFile($id)
+    public function removeExportFile($id): void
     {
         $zipFile = $this->getExportDataFilePath($id);
 
@@ -307,7 +306,7 @@ class FileManager extends Loggable
      * @param array $deletedRequestIds Request IDs for "Deleted" export
      *   files.
      */
-    public function removeDeletedRequests(array $deletedRequestIds)
+    public function removeDeletedRequests(array $deletedRequestIds): void
     {
         foreach ($deletedRequestIds as $id) {
             $exportFile = $this->getExportDataFilePath($id);

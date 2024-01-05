@@ -33,7 +33,7 @@ class Version
      *
      * @var MySQLHelper[]
      */
-    protected static $databaseHelpers = array();
+    protected static $databaseHelpers = [];
 
     /**
      * HTTP query timeout length in seconds.
@@ -55,7 +55,7 @@ class Version
      *
      * @param int $timeout Timeout length in seconds.
      */
-    public static function setTimeout($timeout)
+    public static function setTimeout($timeout): void
     {
         static::$timeout = $timeout;
     }
@@ -65,7 +65,7 @@ class Version
      *
      * @param LoggerInterface $logger A Monolog Logger instance.
      */
-    public static function setLogger(LoggerInterface $logger)
+    public static function setLogger(LoggerInterface $logger): void
     {
         static::$logger = $logger;
 
@@ -104,7 +104,7 @@ class Version
      *
      * @return string The current version string.
      */
-    public static function getLatestVersionNumber(array $args = array())
+    public static function getLatestVersionNumber(array $args = [])
     {
         if (isset(static::$latestVersion)) {
             return static::$latestVersion;
@@ -131,12 +131,7 @@ class Version
             $url .= '?' . http_build_query($args);
         }
 
-        $contextOpts = array(
-            'http' => array(
-                'timeout'    => static::$timeout,
-                'user_agent' => 'XDMoD',
-            ),
-        );
+        $contextOpts = ['http' => ['timeout'    => static::$timeout, 'user_agent' => 'XDMoD']];
 
         $context = stream_context_create($contextOpts);
 
@@ -220,7 +215,7 @@ class Version
      *
      * @return bool True if a newer version is available.
      */
-    public static function isNewerVersionAvailable(array $args = array())
+    public static function isNewerVersionAvailable(array $args = [])
     {
         $currentVersion = static::getCurrentVersionNumber();
 

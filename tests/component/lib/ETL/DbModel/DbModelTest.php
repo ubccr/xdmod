@@ -18,7 +18,7 @@ use ETL\Configuration\EtlConfiguration;
 
 class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
 {
-    const TMPDIR_PREFIX = 'xdmod-dbmodel-test';
+    public const TMPDIR_PREFIX = 'xdmod-dbmodel-test';
     private static $tmpDir = null;
     private static $etlConfig = null;
     private static $etlOverseerOptions = null;
@@ -32,7 +32,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
      * @return Nothing
      */
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         self::$testArtifactInputPath = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/');
         self::$testArtifactOutputPath = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/output/');
@@ -42,7 +42,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
         self::$etlConfig = EtlConfiguration::factory($configFile, self::$testArtifactInputPath);
         self::$endpoint = self::$etlConfig->getGlobalEndpoint('utility');
 
-        self::$etlOverseerOptions = new EtlOverseerOptions(array());
+        self::$etlOverseerOptions = new EtlOverseerOptions([]);
     }
 
     /**
@@ -51,7 +51,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
      * @return Nothing
      */
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::$endpoint->getHandle()->execute('DROP TABLE IF EXISTS `test`.`modify_table_test`');
     }
@@ -60,7 +60,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
      * Create a new table based on a JSON configuration.
      */
 
-    public function testTableCreation()
+    public function testTableCreation(): void
     {
         // Execute a ManageTables action to create a new table. We are expecting the table does not
         // exist.
@@ -87,7 +87,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
      * 7. Swap the order of awarded and recommended
      */
 
-    public function testTableModification()
+    public function testTableModification(): void
     {
         // Execute a ManageTables action to modify the table and then discover the table to comapre
         // the result to the expected value.
@@ -110,7 +110,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
      * 4. Alter the definition of one of the re-ordered columns
      */
 
-    public function testReorderTableColumns()
+    public function testReorderTableColumns(): void
     {
         // Execute a ManageTables action to reorder columns and then discover the table to comapre
         // the result to the expected value.
@@ -130,7 +130,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
      * 1. Rename and reorder a column at the same time
      */
 
-    public function testSimultaneousRenameAndReorderColumns()
+    public function testSimultaneousRenameAndReorderColumns(): void
     {
         // Execute a ManageTables action to reorder columns and then discover the table to comapre
         // the result to the expected value.
@@ -151,7 +151,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
      *    by MySQL.
      */
 
-    public function testNormalizationOfTableDefinition()
+    public function testNormalizationOfTableDefinition(): void
     {
         // Create a baseline table and then test normalization of DbModel values (e.g., nothing
         // should be changed).

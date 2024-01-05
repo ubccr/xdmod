@@ -3,27 +3,9 @@
 use \DataWarehouse\Access\ReportGenerator;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
-$filters = array(
-    'format' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array(
-            'regexp' => ReportGenerator::REPORT_FORMATS_REGEX,
-            'default' => ''
-        )
-    ),
-    'report_loc' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array(
-            'regexp' => ReportGenerator::REPORT_TMPDIR_REGEX,
-            'default' => null
-        )
-    )
-);
+$filters = ['format' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_FORMATS_REGEX, 'default' => '']], 'report_loc' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_TMPDIR_REGEX, 'default' => null]]];
 
-\xd_security\assertParametersSet(array(
-    'report_loc',
-    'format'
-));
+\xd_security\assertParametersSet(['report_loc', 'format']);
 
 try {
 

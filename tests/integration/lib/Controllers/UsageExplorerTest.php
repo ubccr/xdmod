@@ -7,7 +7,7 @@ use IntegrationTests\TestHarness\UsageExplorerHelper;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
 function arrayRecursiveDiff($a1, $a2) {
-    $retval = array();
+    $retval = [];
 
     foreach ($a1 as $key => $value) {
         if (array_key_exists($key, $a2)) {
@@ -32,19 +32,10 @@ class UsageExplorerTest extends TokenAuthTest
 {
     private static $publicView;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
-        self::$publicView = array(
-            "public_user" => "true",
-            "realm" => "Jobs",
-            "group_by" => "none",
-            "start_date"=> "2017-05-01",
-            "end_date" => "2017-05-31",
-            "statistic" => "job_count",
-            "operation" => "get_charts",
-            "controller_module"=> "user_interface"
-        );
+        self::$publicView = ["public_user" => "true", "realm" => "Jobs", "group_by" => "none", "start_date"=> "2017-05-01", "end_date" => "2017-05-31", "statistic" => "job_count", "operation" => "get_charts", "controller_module"=> "user_interface"];
     }
 
     /**
@@ -52,7 +43,7 @@ class UsageExplorerTest extends TokenAuthTest
      */
     protected $helper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->helper = new XdmodTestHelper();
     }
@@ -60,7 +51,7 @@ class UsageExplorerTest extends TokenAuthTest
     /**
      * @dataProvider corruptDataProvider
      */
-    public function testCorruptRequestData($input, $expectedMessage)
+    public function testCorruptRequestData($input, $expectedMessage): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -76,34 +67,25 @@ class UsageExplorerTest extends TokenAuthTest
 
     public function corruptDataProvider()
     {
-        $tests = array();
-        $view = array(
-            "public_user" => "true",
-            "realm" => "Jobs",
-            "group_by" => "none",
-            "start_date"=> "2017-05-01",
-            "end_date" => "2017-05-31",
-            "statistic" => "job_count",
-            "operation" => "get_charts",
-            "controller_module"=> "user_interface"
-        );
+        $tests = [];
+        $view = ["public_user" => "true", "realm" => "Jobs", "group_by" => "none", "start_date"=> "2017-05-01", "end_date" => "2017-05-31", "statistic" => "job_count", "operation" => "get_charts", "controller_module"=> "user_interface"];
 
         $view['start_date'] = null;
-        $tests[] = array($view, 'missing required start_date parameter');
+        $tests[] = [$view, 'missing required start_date parameter'];
 
         $view['start_date'] = '2017-05-01';
         $view['end_date'] = null;
-        $tests[] = array($view, 'missing required end_date parameter');
+        $tests[] = [$view, 'missing required end_date parameter'];
 
         $view['end_date'] = 'Yesterday';
-        $tests[] = array($view, 'end_date param is not in the correct format of Y-m-d.');
+        $tests[] = [$view, 'end_date param is not in the correct format of Y-m-d.'];
 
         $view['start_date'] = 'Tomorrow';
         $view['end_date'] = '2017-05-01';
-        $tests[] = array($view, 'start_date param is not in the correct format of Y-m-d.');
+        $tests[] = [$view, 'start_date param is not in the correct format of Y-m-d.'];
 
         $view['group_by'] = "elephants";
-        $tests[] = array($view, "No GroupBy found with id 'elephants' in Realm: Jobs");
+        $tests[] = [$view, "No GroupBy found with id 'elephants' in Realm: Jobs"];
 
         return $tests;
     }
@@ -112,14 +94,14 @@ class UsageExplorerTest extends TokenAuthTest
      * Checks the structure of the get_tabs endpoint.
      * @dataProvider corruptDataProvider
      */
-    public function testGetTabs()
+    public function testGetTabs(): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, array('operation' => 'get_tabs', 'public_user' => 'true'));
+        $response = $this->helper->post('/controllers/user_interface.php', null, ['operation' => 'get_tabs', 'public_user' => 'true']);
 
         $this->assertEquals($response[1]['content_type'], 'application/json');
         $this->assertEquals($response[1]['http_code'], 200);
@@ -145,7 +127,7 @@ class UsageExplorerTest extends TokenAuthTest
      * Check that the System Username plots are not available to the public user
      *
      */
-    public function testSystemUsernameAccess()
+    public function testSystemUsernameAccess(): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -167,99 +149,30 @@ EOF;
 
     public function aggregateDataProvider()
     {
-        $view = array(
-            "public_user" => "true",
-            "realm" => "Jobs",
-            "group_by" => "none",
-            "statistic" => "avg_wallduration_hours",
-            "start_date" => "2016-01-01",
-            "end_date" => "2016-12-31",
-            "operation" => "get_charts",
-            "timeframe_label" => "User Defined",
-            "scale" => "1",
-            "aggregation_unit" => "Auto",
-            "dataset_type" => "aggregate",
-            "thumbnail" => "n",
-            "query_group" => "tg_usage",
-            "display_type" => "line",
-            "combine_type" => "side",
-            "limit" => "10",
-            "offset" => "0",
-            "log_scale" => "n",
-            "show_guide_lines" => "y",
-            "show_trend_line" => "n",
-            "show_error_bars" => "n",
-            "show_aggregate_labels" => "n",
-            "show_error_labels" => "n",
-            "hide_tooltip" => "false",
-            "show_title" => "y",
-            "width" => "1377",
-            "height" => "590",
-            "legend_type" => "bottom_center",
-            "font_size" => "3",
-            "controller_module" => "user_interface"
-        );
+        $view = ["public_user" => "true", "realm" => "Jobs", "group_by" => "none", "statistic" => "avg_wallduration_hours", "start_date" => "2016-01-01", "end_date" => "2016-12-31", "operation" => "get_charts", "timeframe_label" => "User Defined", "scale" => "1", "aggregation_unit" => "Auto", "dataset_type" => "aggregate", "thumbnail" => "n", "query_group" => "tg_usage", "display_type" => "line", "combine_type" => "side", "limit" => "10", "offset" => "0", "log_scale" => "n", "show_guide_lines" => "y", "show_trend_line" => "n", "show_error_bars" => "n", "show_aggregate_labels" => "n", "show_error_labels" => "n", "hide_tooltip" => "false", "show_title" => "y", "width" => "1377", "height" => "590", "legend_type" => "bottom_center", "font_size" => "3", "controller_module" => "user_interface"];
 
         $view['start_date'] = "2016-01-01";
         $view['end_date'] = "2016-12-31";
-        $validRange = array($view, 1.97829913);
+        $validRange = [$view, 1.97829913];
 
         $view['start_date'] = "2017-01-01";
         $view['end_date'] = "2017-12-31";
-        $validStart = array($view, 1.01283296);
+        $validStart = [$view, 1.01283296];
 
         $view['start_date'] = "2015-01-01";
         $view['end_date'] = "2015-12-31";
-        $past = array($view, null);
+        $past = [$view, null];
 
         $view['start_date'] = "2018-01-01";
         $view['end_date'] = "2018-12-31";
-        $future = array($view, null);
+        $future = [$view, null];
 
-        return array(
-            $validRange,
-            $validStart,
-            $past,
-            $future
-        );
+        return [$validRange, $validStart, $past, $future];
     }
 
     public function provideJsonExport() {
 
-        $input = array(
-            'public_user' => 'true',
-            'realm' => 'Jobs',
-            'group_by' => 'none',
-            'statistic' => 'max_processors',
-            'start_date' => '2016-12-01',
-            'end_date' => '2016-12-31',
-            'timeframe_label' => 'User%20Defined',
-            'scale' => '1',
-            'aggregation_unit' => 'Auto',
-            'dataset_type' => 'timeseries',
-            'thumbnail' => 'n',
-            'query_group' => 'tg_usage',
-            'display_type' => 'datasheet',
-            'combine_type' => 'side',
-            'limit' => '10',
-            'offset' => '0',
-            'log_scale' => 'n',
-            'show_guide_lines' => 'y',
-            'show_trend_line' => 'n',
-            'show_error_bars' => 'n',
-            'show_aggregate_labels' => 'n',
-            'show_error_labels' => 'n',
-            'hide_tooltip' => 'false',
-            'show_title' => 'y',
-            'width' => '876',
-            'height' => '592',
-            'legend_type' => 'bottom_center',
-            'font_size' => '3',
-            'drilldowns' => '%5Bobject%20Object%5D',
-            'none' => '-9999',
-            'format' => 'jsonstore',
-            'operation' => 'get_data'
-        );
+        $input = ['public_user' => 'true', 'realm' => 'Jobs', 'group_by' => 'none', 'statistic' => 'max_processors', 'start_date' => '2016-12-01', 'end_date' => '2016-12-31', 'timeframe_label' => 'User%20Defined', 'scale' => '1', 'aggregation_unit' => 'Auto', 'dataset_type' => 'timeseries', 'thumbnail' => 'n', 'query_group' => 'tg_usage', 'display_type' => 'datasheet', 'combine_type' => 'side', 'limit' => '10', 'offset' => '0', 'log_scale' => 'n', 'show_guide_lines' => 'y', 'show_trend_line' => 'n', 'show_error_bars' => 'n', 'show_aggregate_labels' => 'n', 'show_error_labels' => 'n', 'hide_tooltip' => 'false', 'show_title' => 'y', 'width' => '876', 'height' => '592', 'legend_type' => 'bottom_center', 'font_size' => '3', 'drilldowns' => '%5Bobject%20Object%5D', 'none' => '-9999', 'format' => 'jsonstore', 'operation' => 'get_data'];
 
         $expected = json_decode(<<<EOF
 {
@@ -285,7 +198,7 @@ EOF;
 EOF
 , true);
 
-        $data = array();
+        $data = [];
 
         $input['group_by']  = 'none';
         $expected['message'] = '<ul><li><b>Screwdriver</b>: Summarizes Jobs data reported to the Screwdriver database.</li><li><b>Job Size: Max (Core Count)</b>: The maximum size Screwdriver job in number of cores.<br/><i>Job Size: </i>The total number of processor cores used by a (parallel) job.</li></ul>';
@@ -293,7 +206,7 @@ EOF
         $fieldCount = 2;
         $recordCount = 10;
 
-        $data[] = array($input, $expected, $fieldCount, $recordCount);
+        $data[] = [$input, $expected, $fieldCount, $recordCount];
 
         $input['group_by']  = 'pi';
         $expected['message'] = '<ul><li><b>PI</b>: The principal investigator of a project.</li><li><b>Job Size: Max (Core Count)</b>: The maximum size Screwdriver job in number of cores.<br/><i>Job Size: </i>The total number of processor cores used by a (parallel) job.</li></ul>';
@@ -301,20 +214,20 @@ EOF
         $fieldCount = 42;
         $recordCount = 10;
 
-        $data[] = array($input, $expected, $fieldCount, $recordCount);
+        $data[] = [$input, $expected, $fieldCount, $recordCount];
 
         $input['pi_filter'] = "5,7,32,11";
         $expected['total'] = 18;
         $fieldCount = 5;
         $recordCount = 10;
-        $data[] = array($input, $expected, $fieldCount, $recordCount);
+        $data[] = [$input, $expected, $fieldCount, $recordCount];
 
         return $data;
     }
     /**
      * @dataProvider provideJsonExport
      */
-    public function testJsonExport($input, $expected, $fieldCount, $recordCount)
+    public function testJsonExport($input, $expected, $fieldCount, $recordCount): void
     {
         $response = $this->helper->post('/controllers/user_interface.php', null, $input);
 
@@ -331,7 +244,7 @@ EOF
         $this->assertEquals('DESC', $firstField['sortDir']);
 
         foreach($fields as $field) {
-            $this->assertRegExp('/dimension_column_\d+/', $field['name']);
+            $this->assertMatchesRegularExpression('/dimension_column_\d+/', $field['name']);
             $this->assertEquals('float', $field['type']);
             $this->assertEquals('DESC', $field['sortDir']);
         }
@@ -340,9 +253,9 @@ EOF
         $records = $got['records'];
         $this->assertCount($recordCount, $records);
         foreach($records as $record) {
-            $this->assertRegexp('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $record['day']);
+            $this->assertMatchesRegularExpression('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $record['day']);
             foreach($record as $rkey => $rval) {
-                $this->assertRegExp('/^day|dimension_column_\d+$/', $rkey);
+                $this->assertMatchesRegularExpression('/^day|dimension_column_\d+$/', $rkey);
             }
         }
 
@@ -351,12 +264,12 @@ EOF
         $this->assertCount($fieldCount, $columns);
         $firstCol = array_shift($columns);
 
-        $this->assertEquals(array('header' => 'Day', 'width' => 150, 'dataIndex' => 'day', 'sortable' => 1, 'editable' => false, 'locked' => 1), $firstCol);
+        $this->assertEquals(['header' => 'Day', 'width' => 150, 'dataIndex' => 'day', 'sortable' => 1, 'editable' => false, 'locked' => 1], $firstCol);
 
         foreach($columns as $column) {
-            $this->assertRegExp('/^\[[^\]]+\] Job Size: Max \(Core Count\)$/', $column['header']);
+            $this->assertMatchesRegularExpression('/^\[[^\]]+\] Job Size: Max \(Core Count\)$/', $column['header']);
             $this->assertEquals(140, $column['width']);
-            $this->assertRegExp('/^dimension_column_\d+$/', $column['dataIndex']);
+            $this->assertMatchesRegularExpression('/^dimension_column_\d+$/', $column['dataIndex']);
             $this->assertEquals(1, $column['sortable']);
             $this->assertEquals(false, $column['editable']);
             $this->assertEquals('right', $column['align']);
@@ -366,9 +279,9 @@ EOF
 
         // These have been checked - zero out so allow checking
         // of the rest
-        $got['metaData']['fields'] = array();
-        $got['columns'] = array();
-        $got['records'] = array();
+        $got['metaData']['fields'] = [];
+        $got['columns'] = [];
+        $got['records'] = [];
         $result = arrayRecursiveDiff($got, $expected);
         $this->assertEmpty($result);
     }
@@ -376,7 +289,7 @@ EOF
     /**
      * @dataProvider aggregateDataProvider
      */
-    public function testAggregateViewValidData($view, $expected)
+    public function testAggregateViewValidData($view, $expected): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -402,7 +315,7 @@ EOF
     /**
      * @dataProvider errorBarDataProvider
      */
-    public function testErrorBars($input, $expected)
+    public function testErrorBars($input, $expected): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -461,18 +374,16 @@ EOF
 EOF;
         $baseSettings = json_decode($baseJson, true);
 
-        $ret = array(
-            array($baseSettings, 'y')
-        );
+        $ret = [[$baseSettings, 'y']];
 
         $baseSettings['statistic'] = 'job_count';
-        $ret[] = array($baseSettings, 'n');
+        $ret[] = [$baseSettings, 'n'];
 
         $baseSettings['statistic'] = 'avg_node_hours';
-        $ret[] = array($baseSettings, 'y');
+        $ret[] = [$baseSettings, 'y'];
 
         $baseSettings['group_by'] = 'nsfdirectorate';
-        $ret[] = array($baseSettings, 'n');
+        $ret[] = [$baseSettings, 'n'];
 
         return $ret;
     }
@@ -480,7 +391,7 @@ EOF;
     /**
      * @dataProvider exportDataProvider
      */
-    public function testExport($chartConfig, $expectedMimeType, $expectedFinfo)
+    public function testExport($chartConfig, $expectedMimeType, $expectedFinfo): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -538,64 +449,40 @@ EOF;
 
         $baseSettings = json_decode($baseJson, true);
 
-        $ret = array(
-            array($baseSettings, 'application/pdf', 'application/pdf; charset=binary'),
-        );
+        $ret = [[$baseSettings, 'application/pdf', 'application/pdf; charset=binary']];
 
         $baseSettings['scale'] = '1';
         $baseSettings['font_size'] = '3';
         $baseSettings['format'] = 'png';
-        $ret[] = array($baseSettings, 'image/png', 'image/png; charset=binary');
+        $ret[] = [$baseSettings, 'image/png', 'image/png; charset=binary'];
 
         $baseSettings['format'] = 'csv';
-        $ret[] = array($baseSettings, 'application/xls', 'text/plain; charset=us-ascii');
+        $ret[] = [$baseSettings, 'application/xls', 'text/plain; charset=us-ascii'];
 
         /**
          * The following array of expected values are necessary due to `finfo` returning different
          * values for the same input from PHP 5.4 -> PHP 7.2. The response mimetype has also changed
          * when returning xml from centos7 -> centos8, again for the same input.
          */
-        $osSpecificExpected = array(
-            'svg' => array(
-                'centos8' => array(
-                    'image/svg+xml',
-                    'image/svg; charset=utf-8'
-                ),
-                'centos7' => array(
-                    'image/svg+xml',
-                    'text/plain; charset=utf-8',
-                )
-            ),
-            'xml' => array(
-                'centos8' => array(
-                    'text/xml;charset=UTF-8',
-                    'text/xml; charset=us-ascii'
-
-                ),
-                'centos7' => array(
-                    'text/xml',
-                    'application/xml; charset=us-ascii'
-                )
-            )
-        );
+        $osSpecificExpected = ['svg' => ['centos8' => ['image/svg+xml', 'image/svg; charset=utf-8'], 'centos7' => ['image/svg+xml', 'text/plain; charset=utf-8']], 'xml' => ['centos8' => ['text/xml;charset=UTF-8', 'text/xml; charset=us-ascii'], 'centos7' => ['text/xml', 'application/xml; charset=us-ascii']]];
 
         // Try to determine what os / version we're operating on ( CentOS only ).
         $osInfo = false;
         try {
             $osInfo = parse_ini_file('/etc/os-release');
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             // if we don't have access to OS related info then that's fine, we'll just use the default expected.json
         }
 
         // If we do have some osInfo then make sure we have the distribution ( `ID` ) and the version (`VERSION_ID`)
         // and continue on
         if ($osInfo !== false && isset($osInfo['VERSION_ID']) && isset($osInfo['ID'])) {
-            $osIdentifier = implode("", array($osInfo['ID'], $osInfo['VERSION_ID']));
+            $osIdentifier = implode("", [$osInfo['ID'], $osInfo['VERSION_ID']]);
             foreach($osSpecificExpected as $fileType => $fileTypeExpected) {
                 $baseSettings['format'] = $fileType;
                 if (isset($fileTypeExpected[$osIdentifier])) {
-                    list($mimetype, $finfo) = $fileTypeExpected[$osIdentifier];
-                    $ret[] = array($baseSettings, $mimetype, $finfo);
+                    [$mimetype, $finfo] = $fileTypeExpected[$osIdentifier];
+                    $ret[] = [$baseSettings, $mimetype, $finfo];
                 }
             }
         } else {
@@ -609,7 +496,7 @@ EOF;
      * Ensure that the public user is able to see all of the realms that are
      * currently installed in this instance of XDMoD.
      */
-    public function testPublicUserGetMenus()
+    public function testPublicUserGetMenus(): void
     {
         $data = <<< EOF
 {
@@ -641,7 +528,7 @@ EOF;
                 }
                 return $carry;
             },
-            array()
+            []
         );
 
         $this->assertTrue(count($categories) >= 1, "There were no 'menus' that had a category propery, this is unexpected.");
@@ -655,7 +542,7 @@ EOF;
      * @dataProvider dataFilteringProvider
      * @group DataAccess
      */
-    public function testDataFiltering($user, $chartSettings, $expectedNames)
+    public function testDataFiltering($user, $chartSettings, $expectedNames): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -683,53 +570,22 @@ EOF;
      */
     public function dataFilteringProvider()
     {
-        $tests = array();
+        $tests = [];
 
-        $chartSettings = array(
-            'public_user' => 'false',
-            'realm' => 'Jobs',
-            'group_by' => 'username',
-            'statistic' => 'running_job_count',
-            'start_date' => '2016-12-22',
-            'end_date' => '2017-01-01',
-            'timeframe_label' => 'User Defined',
-            'scale' => '1',
-            'aggregation_unit' => 'Auto',
-            'dataset_type' => 'timeseries',
-            'thumbnail' => 'n',
-            'query_group' => 'tg_usage',
-            'display_type' => 'line',
-            'combine_type' => 'stack',
-            'limit' => '10',
-            'offset' => '0',
-            'log_scale' => 'n',
-            'show_guide_lines' => 'y',
-            'show_trend_line' => 'n',
-            'show_error_bars' => 'n',
-            'show_aggregate_labels' => 'n',
-            'show_error_labels' => 'n',
-            'hide_tooltip' => 'false',
-            'show_title' => 'y',
-            'width' => '1529',
-            'height' => '706',
-            'legend_type' => 'bottom_center',
-            'font_size' => '3',
-            'operation' => 'get_charts',
-            'controller_module' => 'user_interface'
-        );
+        $chartSettings = ['public_user' => 'false', 'realm' => 'Jobs', 'group_by' => 'username', 'statistic' => 'running_job_count', 'start_date' => '2016-12-22', 'end_date' => '2017-01-01', 'timeframe_label' => 'User Defined', 'scale' => '1', 'aggregation_unit' => 'Auto', 'dataset_type' => 'timeseries', 'thumbnail' => 'n', 'query_group' => 'tg_usage', 'display_type' => 'line', 'combine_type' => 'stack', 'limit' => '10', 'offset' => '0', 'log_scale' => 'n', 'show_guide_lines' => 'y', 'show_trend_line' => 'n', 'show_error_bars' => 'n', 'show_aggregate_labels' => 'n', 'show_error_labels' => 'n', 'hide_tooltip' => 'false', 'show_title' => 'y', 'width' => '1529', 'height' => '706', 'legend_type' => 'bottom_center', 'font_size' => '3', 'operation' => 'get_charts', 'controller_module' => 'user_interface'];
 
-        $expectedNames = array('swath', 'savsp', 'litst', 'ybsbu', 'ovenb', 'sante');
+        $expectedNames = ['swath', 'savsp', 'litst', 'ybsbu', 'ovenb', 'sante'];
 
-        $tests[] = array('pi', $chartSettings, $expectedNames);
+        $tests[] = ['pi', $chartSettings, $expectedNames];
 
         $chartSettings['limit'] = 2;
 
-        $expectedNames = array('swath', 'savsp', 'Avg of 4 Others');
-        $tests[] = array('pi', $chartSettings, $expectedNames);
+        $expectedNames = ['swath', 'savsp', 'Avg of 4 Others'];
+        $tests[] = ['pi', $chartSettings, $expectedNames];
 
         $chartSettings['limit'] = 10;
-        $expectedNames = array('whimb');
-        $tests[] = array('usr', $chartSettings, $expectedNames);
+        $expectedNames = ['whimb'];
+        $tests[] = ['usr', $chartSettings, $expectedNames];
 
         return $tests;
     }
@@ -750,10 +606,10 @@ EOF;
      * @param $options
      * @throws \Exception if there is a problem authenticating
      */
-    public function testFilterIdLookup($options)
+    public function testFilterIdLookup($options): void
     {
         //TODO: Needs further integration for storage realm
-        if (self::$XDMOD_REALMS == array("storage"))  {
+        if (self::$XDMOD_REALMS == ["storage"])  {
             $this->markTestSkipped('Needs realm integration.');
         }
 
@@ -762,7 +618,7 @@ EOF;
         $helper = $options['helper'];
 
         $expectedValue = $options['expected']['value'];
-        $expectedXpath = isset($options['expected']['xpath']) ? $options['expected']['xpath'] : null;
+        $expectedXpath = $options['expected']['xpath'] ?? null;
 
         $originalResults = $helper->post('controllers/user_interface.php', null, $data);
 
@@ -830,66 +686,23 @@ EOF;
     public function provideFilterIdLookup()
     {
 
-        $users = array('pub','cd', 'cs', 'pi', 'usr');
+        $users = ['pub', 'cd', 'cs', 'pi', 'usr'];
 
         // Base POST parameters for the request we are testing.
-        $baseData = array(
-            'dataset_type' => 'aggregate',
-            'query_group' => 'tg_usage',
-            'limit' => 10,
-            'format' => 'xml',
-            'operation' => 'get_data'
-        );
+        $baseData = ['dataset_type' => 'aggregate', 'query_group' => 'tg_usage', 'limit' => 10, 'format' => 'xml', 'operation' => 'get_data'];
 
         // Per realm test scenario data.
         //TODO: Needs further integration for storage realm
-        $realmData = array();
+        $realmData = [];
 
         if (in_array("cloud", parent::getRealms())) {
             array_push(
                 $realmData,
                 // Cloud, single value filter tests
-                array(
-                    'realm' => 'Cloud',
-                    'filters' => array(
-                        array(
-                            array('project' => 'zealous'),
-                            array('project_filter' => 'zealous'),
-                            array('project_filter'=> 'zealous')
-                        )
-                    ),
-                    'expected' => array(
-                        'value' => array('zealous', '1755.8894'),
-                        'xpath' => '//rows//row//cell/value'
-                    ),
-                    'additional_data' => array(
-                        'group_by' => 'project',
-                        'statistic' => 'cloud_core_time',
-                        'start_date' => '2018-04-01',
-                        'end_date' => '2018-05-01'
-                    )
-                ),
+                ['realm' => 'Cloud', 'filters' => [[['project' => 'zealous'], ['project_filter' => 'zealous'], ['project_filter'=> 'zealous']]], 'expected' => ['value' => ['zealous', '1755.8894'], 'xpath' => '//rows//row//cell/value'], 'additional_data' => ['group_by' => 'project', 'statistic' => 'cloud_core_time', 'start_date' => '2018-04-01', 'end_date' => '2018-05-01']],
                 // Cloud, multi-value filter tests. ( Note: at time of writing, only one project has any
                 // core_time in the docker image. )
-                array(
-                    'realm' => 'Cloud',
-                    'filters' => array(
-                        array(
-                            array('project_filter' => "zealous, youthful, zen"),
-                            array('project_filter'=> 'zealous, youthful, zen')
-                        )
-                    ),
-                    'expected' => array(
-                        'value' => array('zealous', '1755.8894'),
-                        'xpath' => '//rows//row//cell/value'
-                    ),
-                    'additional_data' => array(
-                        'group_by' => 'project',
-                        'statistic' => 'cloud_core_time',
-                        'start_date' => '2018-04-01',
-                        'end_date' => '2018-05-01'
-                    )
-                )
+                ['realm' => 'Cloud', 'filters' => [[['project_filter' => "zealous, youthful, zen"], ['project_filter'=> 'zealous, youthful, zen']]], 'expected' => ['value' => ['zealous', '1755.8894'], 'xpath' => '//rows//row//cell/value'], 'additional_data' => ['group_by' => 'project', 'statistic' => 'cloud_core_time', 'start_date' => '2018-04-01', 'end_date' => '2018-05-01']]
             );
         };
 
@@ -897,130 +710,29 @@ EOF;
             array_push(
                 $realmData,
                 // Jobs, single value filter tests
-                array(
-                    'realm' => 'Jobs',
-                    'filters' => array(
-                        array(
-                            array('resource' => '1'),
-                            array('resource_filter'=> '1'),
-                            array('resource_filter' => '"frearson"')
-                        ),
-                        array(
-                            array('pi' => '40'),
-                            array('pi_filter' => '40'),
-                            array('pi_filter' => '"taifl"')
-                        )
-                    ),
-                    'expected' => array(
-                        'value' => array('frearson', '78142.2133'),
-                        'xpath' => '//rows//row//cell/value'
-                    ),
-                    'additional_data' => array(
-                        'group_by' => 'resource',
-                        'statistic' => 'total_cpu_hours',
-                        'start_date' => '2016-12-22',
-                        'end_date' => '2017-01-01'
-                    )
-                ),
+                ['realm' => 'Jobs', 'filters' => [[['resource' => '1'], ['resource_filter'=> '1'], ['resource_filter' => '"frearson"']], [['pi' => '40'], ['pi_filter' => '40'], ['pi_filter' => '"taifl"']]], 'expected' => ['value' => ['frearson', '78142.2133'], 'xpath' => '//rows//row//cell/value'], 'additional_data' => ['group_by' => 'resource', 'statistic' => 'total_cpu_hours', 'start_date' => '2016-12-22', 'end_date' => '2017-01-01']],
                 // Jobs, multi-value filter tests
-                array(
-                    'realm' => 'Jobs',
-                    'filters' => array(
-                        array(
-                            array('resource' => '4,1'),
-                            array('resource_filter'=> '1,4'),
-                            array('resource_filter' => '\'frearson\',"pozidriv"')
-                        ),
-                        array(
-                            array('pi' => '40,22'),
-                            array('pi_filter' => '22,40'),
-                            array('pi_filter' => '"taifl",\'henha\'')
-                        )
-                    ),
-                    'expected' => array(
-                        'value' => array('frearson', '78142.2133', 'pozidriv', '25358.4119'),
-                        'xpath' => '//rows//row//cell//value'
-                    ),
-                    'additional_data' => array(
-                        'group_by' => 'resource',
-                        'statistic' => 'total_cpu_hours',
-                        'start_date' => '2016-12-22',
-                        'end_date' => '2017-01-01'
-                    )
-                ),
+                ['realm' => 'Jobs', 'filters' => [[['resource' => '4,1'], ['resource_filter'=> '1,4'], ['resource_filter' => '\'frearson\',"pozidriv"']], [['pi' => '40,22'], ['pi_filter' => '22,40'], ['pi_filter' => '"taifl",\'henha\'']]], 'expected' => ['value' => ['frearson', '78142.2133', 'pozidriv', '25358.4119'], 'xpath' => '//rows//row//cell//value'], 'additional_data' => ['group_by' => 'resource', 'statistic' => 'total_cpu_hours', 'start_date' => '2016-12-22', 'end_date' => '2017-01-01']],
                 // Jobs, multi-value ( inc. invalid numeric values ) filter tests
-                array(
-                    'realm' => 'Jobs',
-                    'filters' => array(
-                        array(
-                            array('resource' => '4,1,99999'),
-                            array('resource_filter'=> '1,4,99999'),
-                            array('resource_filter' => '"frearson","pozidriv"')
-                        ),
-                        array(
-                            array('pi' => '40,22,99999'),
-                            array('pi_filter' => '22,40,99999'),
-                            array('pi_filter' => '"taifl","henha"')
-                        )
-                    ),
-                    'expected' => array(
-                        'value' => array('frearson', '78142.2133', 'pozidriv', '25358.4119'),
-                        'xpath' => '//rows//row//cell//value'
-                    ),
-                    'additional_data' => array(
-                        'group_by' => 'resource',
-                        'statistic' => 'total_cpu_hours',
-                        'start_date' => '2016-12-22',
-                        'end_date' => '2017-01-01'
-                    )
-                ),
+                ['realm' => 'Jobs', 'filters' => [[['resource' => '4,1,99999'], ['resource_filter'=> '1,4,99999'], ['resource_filter' => '"frearson","pozidriv"']], [['pi' => '40,22,99999'], ['pi_filter' => '22,40,99999'], ['pi_filter' => '"taifl","henha"']]], 'expected' => ['value' => ['frearson', '78142.2133', 'pozidriv', '25358.4119'], 'xpath' => '//rows//row//cell//value'], 'additional_data' => ['group_by' => 'resource', 'statistic' => 'total_cpu_hours', 'start_date' => '2016-12-22', 'end_date' => '2017-01-01']],
                 // Jobs, multi-value ( inc. unknown string values ) filter tests
-                array(
-                    'realm' => 'Jobs',
-                    'filters' => array(
-                        array(
-                            array('resource_filter' => '"frearson","pozidriv","unknownresource"')
-                        ),
-                        array(
-                            array('pi_filter' => '"taifl",\'henha\',"unknownperson"')
-                        )
-                    ),
-                    'expected' => array(
-                        'value' => array(
-                            'success' => false,
-                            'count' => 0,
-                            'total' => 0,
-                            'totalCount'=> 0,
-                            'results' => array(),
-                            'data' => array(),
-                            'message' => 'Invalid filter value detected: %s',
-                            'code' => 0
-                        )
-                    ),
-                    'additional_data' => array(
-                        'group_by' => 'resource',
-                        'statistic' => 'total_cpu_hours',
-                        'start_date' => '2016-12-22',
-                        'end_date' => '2017-01-01'
-                    )
-                )
+                ['realm' => 'Jobs', 'filters' => [[['resource_filter' => '"frearson","pozidriv","unknownresource"']], [['pi_filter' => '"taifl",\'henha\',"unknownperson"']]], 'expected' => ['value' => ['success' => false, 'count' => 0, 'total' => 0, 'totalCount'=> 0, 'results' => [], 'data' => [], 'message' => 'Invalid filter value detected: %s', 'code' => 0]], 'additional_data' => ['group_by' => 'resource', 'statistic' => 'total_cpu_hours', 'start_date' => '2016-12-22', 'end_date' => '2017-01-01']]
             );
         }
 
         /**
          * Generates all combinations of the elements contained within $data.
          *
-         * @param array $data
          * @return array
          */
         function generateCombinations(array $data)
         {
-            $results = array(array());
+            $results = [[]];
             foreach ($data as $datum) {
-                $temp = array();
+                $temp = [];
                 foreach ($datum as $subDatum) {
                     foreach($results as $result) {
-                        $temp[] = array_merge($result, array($subDatum));
+                        $temp[] = array_merge($result, [$subDatum]);
                     }
                 }
                 $results = $temp;
@@ -1047,7 +759,7 @@ EOF;
             return array_reduce(
                 $results,
                 function ($carry, $item) {
-                    $results = array();
+                    $results = [];
                     foreach($item as $subItem) {
                         foreach($subItem as $key => $value) {
                             $results[$key] = $value;
@@ -1056,11 +768,11 @@ EOF;
                     array_push($carry, $results);
                     return $carry;
                 },
-                array()
+                []
             );
         } // allCombinations
 
-        $results = array();
+        $results = [];
         foreach($users as $user) {
             $helper = new XdmodTestHelper();
             if ($user !== 'pub') {
@@ -1080,12 +792,7 @@ EOF;
 
                     $requestData = array_merge($requestData, $realmDatum['additional_data']);
 
-                    $results[] = array(array(
-                        'user' => $user,
-                        'helper' => $helper,
-                        'data' => $requestData,
-                        'expected' => $realmDatum['expected']
-                    ));
+                    $results[] = [['user' => $user, 'helper' => $helper, 'data' => $requestData, 'expected' => $realmDatum['expected']]];
                 }
             }
             $results[count($results) - 1]['last'] = true;
@@ -1109,21 +816,12 @@ EOF;
         $startDate,
         $endDate,
         $isEmpty
-    ) {
+    ): void {
         if (!in_array('jobs', self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
         $this->helper->authenticate('cd');
-        $data = array(
-            'operation' => 'get_data',
-            'start_date' => $startDate,
-            'end_date' => $endDate,
-            'realm' => 'Jobs',
-            'statistic' => 'active_person_count',
-            'group_by' => $groupBy,
-            'dataset_type' => 'timeseries',
-            'format' => 'csv'
-        );
+        $data = ['operation' => 'get_data', 'start_date' => $startDate, 'end_date' => $endDate, 'realm' => 'Jobs', 'statistic' => 'active_person_count', 'group_by' => $groupBy, 'dataset_type' => 'timeseries', 'format' => 'csv'];
         if (isset($filterKey)) {
             $data[$filterKey] = $filterValue;
             $expectedParameterLine = "\"$filterKeyName =  $filterValueName\"";
@@ -1140,7 +838,7 @@ EOF;
         if (!$isEmpty) {
             $columns .= ',';
             if (isset($groupByName)) {
-                $otherColumns = array();
+                $otherColumns = [];
                 foreach ($groups as $group) {
                     $otherColumns[] = "\"[$group] $statName\"";
                 }
@@ -1178,25 +876,16 @@ END;
 
     public function provideGetTimeseriesDataCsv()
     {
-        $noGroupBy = array('none', null, 'Screwdriver');
-        $withGroupBy = array(
-            'resource',
-            'Resource',
-            array('robertson', 'pozidriv', 'frearson', 'mortorq', 'phillips')
-        );
-        $noFilter = array(null, null, null, null);
-        $withFilter = array(
-            'provider_filter',
-            'Service Provider',
-            1,
-            'screw'
-        );
-        $emptyData = array('9999-12-01', '9999-12-31', true);
-        $nonEmptyData = array('2016-12-01', '2016-12-31', false);
-        $arrays = array();
-        foreach (array($noGroupBy, $withGroupBy) as $groupParams) {
-            foreach (array($noFilter, $withFilter) as $filterParams) {
-                foreach (array($emptyData, $nonEmptyData) as $emptinessParams) {
+        $noGroupBy = ['none', null, 'Screwdriver'];
+        $withGroupBy = ['resource', 'Resource', ['robertson', 'pozidriv', 'frearson', 'mortorq', 'phillips']];
+        $noFilter = [null, null, null, null];
+        $withFilter = ['provider_filter', 'Service Provider', 1, 'screw'];
+        $emptyData = ['9999-12-01', '9999-12-31', true];
+        $nonEmptyData = ['2016-12-01', '2016-12-31', false];
+        $arrays = [];
+        foreach ([$noGroupBy, $withGroupBy] as $groupParams) {
+            foreach ([$noFilter, $withFilter] as $filterParams) {
+                foreach ([$emptyData, $nonEmptyData] as $emptinessParams) {
                     $arrays[] = array_merge(
                         $groupParams,
                         $filterParams,
@@ -1211,7 +900,7 @@ END;
     /**
      * @dataProvider provideTokenAuthTestData
      */
-    public function testGetDataTokenAuth($role, $tokenType)
+    public function testGetDataTokenAuth($role, $tokenType): void
     {
         parent::runTokenAuthTest(
             $role,

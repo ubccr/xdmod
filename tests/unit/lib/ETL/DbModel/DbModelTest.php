@@ -20,27 +20,24 @@ use ETL\DbModel\Index;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Trigger;
 use ETL\Configuration\EtlConfiguration;
+use Exception;
 use Psr\Log\LoggerInterface;
 
-class DbModelTest extends \PHPUnit_Framework_TestCase
+class DbModelTest extends \PHPUnit\Framework\TestCase
 {
-    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";
+    public const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/input";
+    public const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";
 
     /**
      * @var LoggerInterface|null
      */
     private static $logger = null;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
-        $conf = array(
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Log::WARNING
-        );
+        $conf = ['db' => false, 'mail' => false, 'consoleLogLevel' => Log::WARNING];
         self::$logger = Log::factory('PHPUnit', $conf);
     }
 
@@ -49,7 +46,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
      * the same table.
      */
 
-    public function testParseJsonFile()
+    public function testParseJsonFile(): void
     {
         // Instantiate the reference table
         $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def-charset.json';
@@ -73,29 +70,9 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
      * Test generating SQL with and without a table schema.
      */
 
-    public function testTableSchema()
+    public function testTableSchema(): void
     {
-        $config = (object) array(
-            'name' => "table_no_schema",
-            'columns' => array(
-                (object) array(
-                    'name' => 'column1',
-                    'type' => 'int(11)',
-                    'nullable' => true,
-                    'default' => 0,
-                    'comment' => 'This is my comment'
-                ),
-                (object) array(
-                    'name' => 'column2',
-                    'type' => 'varchar(16)',
-                    'nullable' => false,
-                    'default' => 'Test Column',
-                    'charset' => 'utf8mb4',
-                    'collation' => 'utf8mb4_general_ci',
-                    'comment' => 'No comment',
-                ),
-            ),
-        );
+        $config = (object) ['name' => "table_no_schema", 'columns' => [(object) ['name' => 'column1', 'type' => 'int(11)', 'nullable' => true, 'default' => 0, 'comment' => 'This is my comment'], (object) ['name' => 'column2', 'type' => 'varchar(16)', 'nullable' => false, 'default' => 'Test Column', 'charset' => 'utf8mb4', 'collation' => 'utf8mb4_general_ci', 'comment' => 'No comment']]];
 
         $table = new Table($config, '`', self::$logger);
         $table->schema = "my_schema";
@@ -123,11 +100,13 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     /**
      * Test index initialization error.
      *
-     * @expectedException Exception
-     * @expectedExceptionMessage "columns" must be an array
+     *
+     *
      */
-    public function testIndexInitializationError()
+    public function testIndexInitializationError(): void
     {
+        $this->expectExceptionMessage("\"columns\" must be an array");
+        $this->expectException(Exception::class);
         $config = (object) [
             'name' => 'initialize_error',
             'columns' => [
@@ -153,24 +132,13 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     /**
      * Test table verification error
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testTableVerificationError()
+    public function testTableVerificationError(): void
     {
-        $config = (object) array(
-            'name' => "verification_error",
-            'columns' => array( (object) array(
-                'name' => 'column1',
-                'type' => 'int(11)',
-                'nullable' => true,
-                'default' => 0,
-                'comment' => 'This is my comment'
-            )),
-            'indexes' => array( (object) array(
-                'columns' => array('column1', 'missing_column')
-            ))
-        );
+        $this->expectException(Exception::class);
+        $config = (object) ['name' => "verification_error", 'columns' => [(object) ['name' => 'column1', 'type' => 'int(11)', 'nullable' => true, 'default' => 0, 'comment' => 'This is my comment']], 'indexes' => [(object) ['columns' => ['column1', 'missing_column']]]];
 
         $table = new Table($config);  // No logger here
         $table->verify();
@@ -180,51 +148,29 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
      * Verify creating table elements manually.
      */
 
-    public function testCreateSql()
+    public function testCreateSql(): void
     {
-        $config = (object) array(
-            'name' => 'column1',
-            'type' => 'int(11)',
-            'nullable' => true,
-            'default' => 0,
-            'comment' => 'This is my comment'
-        );
+        $config = (object) ['name' => 'column1', 'type' => 'int(11)', 'nullable' => true, 'default' => 0, 'comment' => 'This is my comment'];
 
         $obj = new Column($config, '`', self::$logger);
         $generated = $obj->getSql();
         $expected = "`column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment'";
         $this->assertEquals($expected, $generated);
 
-        $config = (object) array(
-            'name' => 'column2',
-            'type' => 'varchar(16)',
-            'nullable' => false,
-            'default' => 'Test Column',
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_general_ci',
-            'comment' => 'No comment',
-        );
+        $config = (object) ['name' => 'column2', 'type' => 'varchar(16)', 'nullable' => false, 'default' => 'Test Column', 'charset' => 'utf8mb4', 'collation' => 'utf8mb4_general_ci', 'comment' => 'No comment'];
 
         $obj = new Column($config, '`', self::$logger);
         $generated = $obj->getSql();
         $expected = "`column2` varchar(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'";
         $this->assertEquals($expected, $generated);
 
-        $config = (object) array(
-            'name' => 'created',
-            'type' => 'datetime',
-            'nullable' => false,
-            'default' => 'NOW()',
-            'comment' => 'The date and time at which a thing is created.'
-        );
+        $config = (object) ['name' => 'created', 'type' => 'datetime', 'nullable' => false, 'default' => 'NOW()', 'comment' => 'The date and time at which a thing is created.'];
         $obj = new Column($config, '`', self::$logger);
         $generated = $obj->getSql();
         $expected = "`created` datetime NOT NULL DEFAULT NOW() COMMENT 'The date and time at which a thing is created.'";
         $this->assertEquals($expected, $generated);
 
-        $config = (object) array(
-            'columns' => array('col1', 'col2')
-        );
+        $config = (object) ['columns' => ['col1', 'col2']];
 
         // Test with a system quote character
         $obj = new Index($config, '`', self::$logger);
@@ -238,11 +184,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $expected = "INDEX index_col1_col2 (col1, col2)";
         $this->assertEquals($expected, $generated);
 
-        $config = (object) array(
-            'columns' => array('col1', 'col2'),
-            'referenced_table' => 'other_table',
-            'referenced_columns' => array('col3', 'col4'),
-        );
+        $config = (object) ['columns' => ['col1', 'col2'], 'referenced_table' => 'other_table', 'referenced_columns' => ['col3', 'col4']];
 
         // Test with a system quote character
         $obj = new ForeignKeyConstraint($config, '`', self::$logger);
@@ -256,13 +198,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $expected = "CONSTRAINT fk_col1_col2 FOREIGN KEY (col1, col2) REFERENCES other_table (col3, col4)";
         $this->assertEquals($expected, $generated);
 
-        $config = (object) array(
-            'name' => 'before_ins',
-            'time' => 'before',
-            'event' => 'insert',
-            'table' => 'jobfact',
-            'body' => 'BEGIN DELETE FROM jobfactstatus WHERE job_id = NEW.job_id; END'
-        );
+        $config = (object) ['name' => 'before_ins', 'time' => 'before', 'event' => 'insert', 'table' => 'jobfact', 'body' => 'BEGIN DELETE FROM jobfactstatus WHERE job_id = NEW.job_id; END'];
 
         $obj = new Trigger($config, '`', self::$logger);
         $generated = $obj->getSql();
@@ -279,7 +215,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
      * Also manually add elements and verify the ALTER TABLE statement generated.
      */
 
-    public function testAlterTable()
+    public function testAlterTable(): void
     {
         // Instantiate the reference table
         $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def-charset.json';
@@ -300,42 +236,19 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
 
         // Alter the table by manually adding columns, index, and trigger.
 
-        $config = (object) array(
-            'name' => 'new_column',
-            'type' => 'boolean',
-            'nullable' => false,
-            'default' => 0
-        );
+        $config = (object) ['name' => 'new_column', 'type' => 'boolean', 'nullable' => false, 'default' => 0];
         $destTable->addColumn($config);
 
-        $config = (object) array(
-            'name' => 'new_column2',
-            'type' => 'char(64)',
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_general_ci',
-            'nullable' => true,
-        );
+        $config = (object) ['name' => 'new_column2', 'type' => 'char(64)', 'charset' => 'utf8mb4', 'collation' => 'utf8mb4_general_ci', 'nullable' => true];
         $destTable->addColumn($config);
 
-        $config = (object) array(
-            'columns' => array('new_column')
-        );
+        $config = (object) ['columns' => ['new_column']];
         $destTable->addIndex($config);
 
-        $config = (object) array(
-            'columns' => array('new_column'),
-            'referenced_table' => 'other_table',
-            'referenced_columns' => array('other_column'),
-        );
+        $config = (object) ['columns' => ['new_column'], 'referenced_table' => 'other_table', 'referenced_columns' => ['other_column']];
         $destTable->addForeignKeyConstraint($config);
 
-        $config = (object) array(
-            'name' => 'before_ins',
-            'time' => 'before',
-            'event' => 'insert',
-            'table' => 'jobfact',
-            'body' => 'BEGIN DELETE FROM jobfactstatus WHERE job_id = NEW.job_id; END'
-        );
+        $config = (object) ['name' => 'before_ins', 'time' => 'before', 'event' => 'insert', 'table' => 'jobfact', 'body' => 'BEGIN DELETE FROM jobfactstatus WHERE job_id = NEW.job_id; END'];
         $destTable->addTrigger($config);
 
         // The getSql() and alterSql() methods return an array containing distinct SQL statements.
@@ -349,7 +262,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
      * Test removing all elements from the table
      */
 
-    public function testDeleteTableElements()
+    public function testDeleteTableElements(): void
     {
         // Instantiate the reference table
         $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def-charset.json';
@@ -364,7 +277,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
      * Test the query object including variable substitution
      */
 
-    public function testQuery()
+    public function testQuery(): void
     {
         $config = json_decode(file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/resource_allocations.json'));
         $query = new Query($config->source_query, '"', self::$logger);
@@ -372,10 +285,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
 
         // Process variables present in the SQL
         $variableStore = new VariableStore(
-            array(
-                'TIMEZONE' => 'America/New_York',
-                'SOURCE_SCHEMA' => 'xras'
-            ),
+            ['TIMEZONE' => 'America/New_York', 'SOURCE_SCHEMA' => 'xras'],
             self::$logger
         );
         $generated = $variableStore->substitute(
@@ -392,7 +302,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
      * Test generating an AggregationTable
      */
 
-    public function testAggregationTable()
+    public function testAggregationTable(): void
     {
         $aggregationUnit = 'quarter';
         $file = self::TEST_ARTIFACT_INPUT_PATH . '/resourceallocationfact_by.aggregation.json';
@@ -405,10 +315,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
 
         // Process variables present in the SQL
         $variableStore = new VariableStore(
-            array(
-                'AGGREGATION_UNIT' => $aggregationUnit,
-                'SOURCE_SCHEMA' => 'xras'
-            ),
+            ['AGGREGATION_UNIT' => $aggregationUnit, 'SOURCE_SCHEMA' => 'xras'],
             self::$logger
         );
         $generated = $variableStore->substitute(
@@ -425,7 +332,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
      * Test generating SQL from an aggregation source query
      */
 
-    public function testAggregationTableQuery()
+    public function testAggregationTableQuery(): void
     {
         $aggregationUnit = 'quarter';
         $file = self::TEST_ARTIFACT_INPUT_PATH . '/resourceallocationfact_by.aggregation.json';
@@ -437,16 +344,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
 
         // Process variables present in the SQL
         $variableStore = new VariableStore(
-            array(
-                'AGGREGATION_UNIT' => $aggregationUnit,
-                'SOURCE_SCHEMA' => 'modw_ra',
-                'UTILITY_SCHEMA' => 'modw',
-                ':PERIOD_ID' => ':period_id',
-                ':YEAR_VALUE' => ':year_value',
-                ':PERIOD_VALUE' => ':period_value',
-                ':PERIOD_START_TS' => ':period_start_ts',
-                ':PERIOD_END_TS' => ':period_end_ts'
-            ),
+            ['AGGREGATION_UNIT' => $aggregationUnit, 'SOURCE_SCHEMA' => 'modw_ra', 'UTILITY_SCHEMA' => 'modw', ':PERIOD_ID' => ':period_id', ':YEAR_VALUE' => ':year_value', ':PERIOD_VALUE' => ':period_value', ':PERIOD_START_TS' => ':period_start_ts', ':PERIOD_END_TS' => ':period_end_ts'],
             self::$logger
         );
         $generated = $variableStore->substitute(
@@ -463,7 +361,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
      * Test generating a stdClass from an object
      */
 
-    public function testGenerateQueryStdClass()
+    public function testGenerateQueryStdClass(): void
     {
         // Generate a query
         $config = json_decode(file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/resource_allocations.json'));
@@ -475,10 +373,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $generated = $newQuery->getSql();
 
         $variableStore = new VariableStore(
-            array(
-                'TIMEZONE' => 'America/New_York',
-                'SOURCE_SCHEMA' => 'xras'
-            ),
+            ['TIMEZONE' => 'America/New_York', 'SOURCE_SCHEMA' => 'xras'],
             self::$logger
         );
         $generated = $variableStore->substitute(
@@ -495,7 +390,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
      * Test generating a stdClass from an table
      */
 
-    public function testGenerateTableStdClass()
+    public function testGenerateTableStdClass(): void
     {
         // Instantiate the reference table
         $config = self::TEST_ARTIFACT_INPUT_PATH . '/table_def-charset.json';

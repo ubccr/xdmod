@@ -10,11 +10,10 @@ class UserOrganizationTest extends BaseUserAdminTest
 
     private $config;
 
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
-        parent::__construct($name, $data, $dataName);
-
         $this->config = json_decode(file_get_contents(__DIR__ . '/../../../ci/testing.json'), true);
+        parent::__construct($name, $data, $dataName);
     }
 
 
@@ -26,9 +25,9 @@ class UserOrganizationTest extends BaseUserAdminTest
      * @param array $options the options that will control how the test is executed.
      * @throws \Exception if there is a problem authenticating w/ XDMoD
      */
-    public function testOrganizationUpdateOnLogin(array $options)
+    public function testOrganizationUpdateOnLogin(array $options): void
     {
-        $centerRelatedAcls = array('cd', 'cs');
+        $centerRelatedAcls = ['cd', 'cs'];
 
         $user = $options['user'];
         $newOrganization = $options['organization'];
@@ -38,14 +37,14 @@ class UserOrganizationTest extends BaseUserAdminTest
         if (is_string($user)) {
             $userName = $this->config['role'][$user]['username'];
             $userGroup = 1;
-            $userCenterRoles = array_intersect($centerRelatedAcls, array($user));
+            $userCenterRoles = array_intersect($centerRelatedAcls, [$user]);
 
             $this->helper->authenticate($user);
         } else {
             $this->createUser($user);
             $userName = $user['username'];
             $userGroup = $user['user_type'];
-            $userAcls = isset($user['acls']) ? $user['acls'] : array();
+            $userAcls = $user['acls'] ?? [];
             $userCenterRoles = array_intersect($centerRelatedAcls, array_keys($userAcls));
 
             $this->helper->authenticateDirect($userName, $userName);
@@ -53,13 +52,7 @@ class UserOrganizationTest extends BaseUserAdminTest
 
         $userId = $this->retrieveUserId($userName, $userGroup);
 
-        $requestedProperties = array(
-            'institution',
-            'assigned_user_id',
-            'acls',
-            'email_address',
-            'user_type'
-        );
+        $requestedProperties = ['institution', 'assigned_user_id', 'acls', 'email_address', 'user_type'];
 
         $currentUserInfo = $this->retrieveUserProperties($userId, $requestedProperties);
 
@@ -91,7 +84,7 @@ class UserOrganizationTest extends BaseUserAdminTest
             $this->helper->authenticateDirect($userName, $userName);
         }
 
-        $updatedOrganization = $this->retrieveUserProperties($userId, array('institution'));
+        $updatedOrganization = $this->retrieveUserProperties($userId, ['institution']);
 
         // Ensure that the organization update was successful.
         $this->assertEquals(
@@ -116,7 +109,7 @@ class UserOrganizationTest extends BaseUserAdminTest
             $this->helper->authenticateDirect($userName, $userName);
         }
 
-        $finalOrganization = $this->retrieveUserProperties($userId, array('institution'));
+        $finalOrganization = $this->retrieveUserProperties($userId, ['institution']);
 
         $this->assertEquals(
             $originalOrganization,
@@ -131,7 +124,7 @@ class UserOrganizationTest extends BaseUserAdminTest
 
         // If the user had center related roles we have a few more things to check.
         if (count($userCenterRoles) > 0) {
-            $currentUserAcls = array_keys($this->retrieveUserProperties($userId, array('acls')));
+            $currentUserAcls = array_keys($this->retrieveUserProperties($userId, ['acls']));
             $missingAcls = array_diff($originalAcls, $currentUserAcls);
 
             // They should have had their center related role revoked, so they should have at least
@@ -142,10 +135,10 @@ class UserOrganizationTest extends BaseUserAdminTest
             $userAcls = array_reduce(
                 $originalAcls,
                 function ($carry, $item) {
-                    $carry[$item] = array();
+                    $carry[$item] = [];
                     return $carry;
                 },
-                array()
+                []
             );
 
             $this->updateUser(
@@ -191,10 +184,7 @@ class UserOrganizationTest extends BaseUserAdminTest
     private function updatePersonOrganization($personId, $organizationId)
     {
         $query = "UPDATE modw.person SET organization_id = :organization_id WHERE id = :person_id";
-        $params = array(
-            ':person_id' => $personId,
-            ':organization_id' => $organizationId
-        );
+        $params = [':person_id' => $personId, ':organization_id' => $organizationId];
 
         $db = DB::factory('database');
 
@@ -212,11 +202,7 @@ class UserOrganizationTest extends BaseUserAdminTest
     public function createTestOrganization($organizationId)
     {
         $query = "INSERT INTO modw.organization (id, abbrev, name) VALUES (:organization_id, :organization_abbrev, :organization_name)";
-        $params = array(
-            ':organization_id' => $organizationId,
-            ':organization_abbrev' => "ORG_$organizationId",
-            ':organization_name' => "Organization $organizationId"
-        );
+        $params = [':organization_id' => $organizationId, ':organization_abbrev' => "ORG_$organizationId", ':organization_name' => "Organization $organizationId"];
 
         $db = DB::factory('database');
 
@@ -233,9 +219,7 @@ class UserOrganizationTest extends BaseUserAdminTest
     public function deleteTestOrganization($organizationId)
     {
         $query = "DELETE FROM modw.organization WHERE id = :organization_id";
-        $params = array(
-            ':organization_id' => $organizationId
-        );
+        $params = [':organization_id' => $organizationId];
 
         $db = DB::factory('database');
 

@@ -4,17 +4,17 @@ namespace IntegrationTests\Database;
 
 use CCR\DB;
 use CCR\DB\MySQLHelper;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 
 /**
  * Test the data warehouse export database table.
  */
-class DataWarehouseExportTest extends PHPUnit_Framework_TestCase
+class DataWarehouseExportTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Name of the data warehouse export batch requests table.
      */
-    const EXPORT_REQUEST_TABLE_NAME = 'batch_export_requests';
+    public const EXPORT_REQUEST_TABLE_NAME = 'batch_export_requests';
 
     /** @var \CCR\DB */
     private $db;
@@ -22,7 +22,7 @@ class DataWarehouseExportTest extends PHPUnit_Framework_TestCase
     /** @var \CCR\DB\MySQLHelper */
     private $dbHelper;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->db = DB::factory('database');
         $this->dbHelper = MySQLHelper::factory($this->db);
@@ -31,7 +31,7 @@ class DataWarehouseExportTest extends PHPUnit_Framework_TestCase
     /**
      * Test that the table used by the data warehouse export exists.
      */
-    public function testTableExists()
+    public function testTableExists(): void
     {
         $this->assertTrue(
             $this->dbHelper->tableExists(self::EXPORT_REQUEST_TABLE_NAME),
@@ -44,9 +44,9 @@ class DataWarehouseExportTest extends PHPUnit_Framework_TestCase
      *
      * @depends testTableExists
      */
-    public function testTableEmpty()
+    public function testTableEmpty(): void
     {
-        list($row) = $this->db->query(
+        [$row] = $this->db->query(
             sprintf(
                 'SELECT COUNT(*) AS count FROM `%s`',
                 self::EXPORT_REQUEST_TABLE_NAME

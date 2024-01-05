@@ -30,39 +30,29 @@ class Query extends Entity implements iEntity
 
     // The overseer restriction values for this query. These are the templates that have
     // been processed by the overseer to include the values based on overseer options.
-    protected $overseerRestrictionValues = array();
+    protected $overseerRestrictionValues = [];
 
     // Properties required by this class. These will be merged with other required
     // properties up the call chain. See @Entity::$requiredProperties
-    private $localRequiredProperties = array(
-        'records',
-        'joins'
-    );
+    private $localRequiredProperties = ['records', 'joins'];
 
     // Properties provided by this class. These will be merged with other properties up
     // the call chain. See @Entity::$properties
-    private $localProperties = array(
+    private $localProperties = [
         // Records describing the fields used to populate the aggregation table
-        'records'  => array(),
-
+        'records'  => [],
         // Join tables. A single table generates the FROM clause while the rest are added as JOINS
-        'joins' => array(),
-
+        'joins' => [],
         // Optional array of WHERE clauses
-        'where'   => array(),
-
+        'where'   => [],
         // Optional array of GROUP BY clauses
-        'groupby'   => array(),
-
+        'groupby'   => [],
         // Optional array of ORDER BY fields
-        'orderby'   => array(),
-
+        'orderby'   => [],
         // Optional defined macros
-        'macros'     => array(),
-
+        'macros'     => [],
         // Query hints (See http://dev.mysql.com/doc/refman/5.7/en/query-cache-in-select.html)
         'query_hint' => null,
-
         // The list of ETL overseer restrictions supported by this query, as parsed from
         // the query definition. Queries are not required to support restrictions and if a
         // value for a restriction has not been set the restriction will not be
@@ -76,8 +66,8 @@ class Query extends Entity implements iEntity
         //         "include_only_resource_codes": "jf.resource_id IN ${VALUE}",
         //         "exclude_resource_codes": "jf.resource_id NOT IN ${VALUE}"
         //      }
-        'overseer_restrictions' => array()
-    );
+        'overseer_restrictions' => [],
+    ];
 
     /* ------------------------------------------------------------------------------------------
      * @see iEntity::__construct()
@@ -140,7 +130,7 @@ class Query extends Entity implements iEntity
                 // PdoIngestor::initialize() these values are compared to destination table column
                 // names and source query records.
 
-                if ( in_array($property, array('groupby', 'orderby')) ) {
+                if ( in_array($property, ['groupby', 'orderby']) ) {
                     $value = array_map('strtolower', $value);
                 }
                 break;
@@ -186,7 +176,7 @@ class Query extends Entity implements iEntity
                 sprintf(
                     '%s expected object of type Table, got %s',
                     __FUNCTION__,
-                    ( is_object($destinationTable) ? get_class($destinationTable) : gettype($destinationTable) )
+                    ( get_debug_type($destinationTable) )
                 )
             );
         }
@@ -391,7 +381,7 @@ class Query extends Entity implements iEntity
 
         // Use the records to generate the SELECT columns
 
-        $columnList = array();
+        $columnList = [];
         $thisObj = $this;
         foreach ( $this->records as $columnName => $formula ) {
             // Do not quote the source field names because we may have functions in the query, but
@@ -409,7 +399,7 @@ class Query extends Entity implements iEntity
 
         $myJoins = $this->joins;
 
-        $joinList = array();
+        $joinList = [];
         $joinList[] = "FROM " . $myJoins[0]->getSql($includeSchema);
 
         for ($i = 1; $i < count($myJoins); $i++) {
@@ -491,7 +481,7 @@ class Query extends Entity implements iEntity
     {
         // If we are not setting a property that is a special case, just call the main setter
 
-        $specialCaseProperties = array('joins', 'records', 'overseer_restrictions');
+        $specialCaseProperties = ['joins', 'records', 'overseer_restrictions'];
 
         if ( ! in_array($property, $specialCaseProperties) ) {
             parent::__set($property, $value);
@@ -507,7 +497,7 @@ class Query extends Entity implements iEntity
         switch ($property) {
             case 'joins':
                 // Clear the array no matter what, that way NULL is handled properly.
-                $this->properties[$property] = array();
+                $this->properties[$property] = [];
                 if ( null !== $value ) {
                     foreach ( $value as $item ) {
                         $this->properties[$property][] =
@@ -520,7 +510,7 @@ class Query extends Entity implements iEntity
 
             case 'records':
                 // Clear the array no matter what, that way NULL is handled properly.
-                $this->properties[$property] = array();
+                $this->properties[$property] = [];
                 if ( null !== $value ) {
                     foreach ( $value as $column => $formula ) {
                         // Provide a method for adding and verifying more complex information
@@ -531,8 +521,8 @@ class Query extends Entity implements iEntity
 
             case 'overseer_restrictions':
                 // Clear the array no matter what, that way NULL is handled properly.
-                $this->properties[$property] = array();
-                $this->overseerRestrictionValues = array();
+                $this->properties[$property] = [];
+                $this->overseerRestrictionValues = [];
                 if ( null !== $value ) {
                     foreach ( $value as $restriction => $template ) {
                         $this->addOverseerRestriction($restriction, $template);

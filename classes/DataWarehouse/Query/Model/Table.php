@@ -5,18 +5,16 @@ class Table extends \Common\Identity
 {
     protected $_schema;
     protected $_alias;
-    protected $_join_index;
 
     public function __construct(
         \DataWarehouse\Query\Model\Schema $schema,
         $tablename,
         $aliasname,
-        $join_index = ''
+        protected $_join_index = ''
     ) {
         parent::__construct($tablename);
         $this->_alias = new \DataWarehouse\Query\Model\Alias($aliasname);
         $this->_schema = $schema;
-        $this->_join_index = $join_index;
     }
     public function getJoinIndex()
     {

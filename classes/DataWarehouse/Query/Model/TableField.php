@@ -3,13 +3,11 @@ namespace DataWarehouse\Query\Model;
 
 class TableField extends Field
 {
-    private $_table;
     public function __construct(
-        \DataWarehouse\Query\Model\Table $table,
+        private \DataWarehouse\Query\Model\Table $_table,
         $fieldname,
         $aliasname = ''
     ) {
-        $this->_table = $table;
         parent::__construct($fieldname, $aliasname==''?$fieldname:$aliasname);
     }
 
@@ -23,7 +21,7 @@ class TableField extends Field
         return $ret;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return $this->_table->getAlias().'.'.$this->getDefinition();
     }

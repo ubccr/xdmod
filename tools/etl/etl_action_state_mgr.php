@@ -27,13 +27,13 @@ use ETL\State\StateManager;
 // ==========================================================================================
 // Script options with defaults
 
-$scriptOptions = array(
+$scriptOptions = [
     // Base path for relative file locations
     'base-dir'          => null,
     // ETL configuration file
     'config-file'       => CONFIG_DIR . '/etl/etl.json',
     // List of action state objects to delete
-    'delete-objects'    => array(),
+    'delete-objects'    => [],
     // Run in dryrun mode performing all operations except execution of the actions
     'dryrun'            => false,
     // Data endpoint to use (defined in EtlConfiguration)
@@ -41,26 +41,16 @@ $scriptOptions = array(
     // List action state objects
     'list'              => false,
     // List of action state objects to dump
-    'info-objects'      => array(),
-    'verbosity'         => Log::NOTICE
-    );
+    'info-objects'      => [],
+    'verbosity'         => Log::NOTICE,
+];
 
 $showList = false;
 
 // ==========================================================================================
 // Process command line arguments
 
-$options = array(
-    'h'   => 'help',
-    'b:'  => 'base-dir:',
-    'c:'  => 'config-file:',
-    'd:'  => 'delete:',
-    'e:'  => 'endpoint:',
-    'i:'  => 'info:',
-    'l'  => 'list',
-    't'   => 'dryrun',
-    'v:'  => 'verbosity:'
-    );
+$options = ['h'   => 'help', 'b:'  => 'base-dir:', 'c:'  => 'config-file:', 'd:'  => 'delete:', 'e:'  => 'endpoint:', 'i:'  => 'info:', 'l'  => 'list', 't'   => 'dryrun', 'v:'  => 'verbosity:'];
 
 $args = getopt(implode('', array_keys($options)), $options);
 
@@ -81,7 +71,7 @@ foreach ($args as $arg => $value) {
     case 'd':
     case 'delete':
         $scriptOptions['delete-objects'] = array_merge($scriptOptions['delete-objects'],
-                                                       ( is_array($value) ? $value : array($value) ));
+                                                       ( is_array($value) ? $value : [$value] ));
         break;
 
     case 't':
@@ -97,7 +87,7 @@ foreach ($args as $arg => $value) {
     case 'i':
     case 'info':
         $scriptOptions['info-objects'] = array_merge($scriptOptions['info-objects'],
-                                                     ( is_array($value) ? $value : array($value) ));
+                                                     ( is_array($value) ? $value : [$value] ));
         break;
 
     case 'l':
@@ -150,9 +140,9 @@ $parsedArgs = array_keys($args);
 foreach ( $argv as $index => $arg ) {
     $opt = null;
 
-    if ( 0 === strpos($arg, "--") ) {
+    if ( str_starts_with($arg, "--") ) {
         $opt = substr($arg, 2);
-    } else if ( 0 === strpos($arg, "-") ) {
+    } else if ( str_starts_with($arg, "-") ) {
         $opt = substr($arg, 1);
     }
     if ( null !== $opt && ! in_array($opt, $parsedArgs) ) {
@@ -163,10 +153,7 @@ foreach ( $argv as $index => $arg ) {
 // ------------------------------------------------------------------------------------------
 // Set up the logger
 
-$conf = array(
-    'emailSubject' => gethostname() . ': XDMOD: Data Warehouse: Federated ETL Log',
-    'mail' => false
-    );
+$conf = ['emailSubject' => gethostname() . ': XDMOD: Data Warehouse: Federated ETL Log', 'mail' => false];
 
 if ( null !== $scriptOptions['verbosity'] ) $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
 
@@ -215,15 +202,7 @@ if ( $scriptOptions['list'] ) {
     if ( 0 == count($list) ) {
         print "No state objects found\n";
     } else {
-        $headings = array(
-            "Key",
-            "Type",
-            "Creating Action",
-            "Creation Time",
-            "Last Mod Action",
-            "Modification Time",
-            "Size (bytes)"
-            );
+        $headings = ["Key", "Type", "Creating Action", "Creation Time", "Last Mod Action", "Modification Time", "Size (bytes)"];
         print implode(LIST_SEPARATOR, $headings) . "\n";
 
         foreach ( $list as $row ) {
@@ -267,7 +246,7 @@ exit(0);
  * Display usage text and exit with error status.
  */
 
-function usage_and_exit($msg = null)
+function usage_and_exit($msg = null): void
 {
     global $argv, $scriptOptions;
 

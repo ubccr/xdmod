@@ -39,7 +39,7 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
-        $requiredKeys = array("definition_file");
+        $requiredKeys = ["definition_file"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
         parent::__construct($options, $etlConfig, $logger);
@@ -69,8 +69,8 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
             $this->logAndThrowException(
                 sprintf(
                     "Source endpoint %s does not implement %s",
-                    get_class($this->sourceEndpoint),
-                    "ETL\\DataEndpoint\\iStructuredFile"
+                    $this->sourceEndpoint::class,
+                    \ETL\DataEndpoint\iStructuredFile::class
                 )
             );
         }
@@ -93,19 +93,14 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 
         // Verify that we have a properly "update" property
 
-        $requiredKeys = array(
-            'update' => 'object'
-        );
+        $requiredKeys = ['update' => 'object'];
 
         $messages = null;
         if ( ! \xd_utilities\verify_object_property_types($this->parsedDefinitionFile, $requiredKeys, $messages) ) {
             $this->logAndThrowException(sprintf("Definition file error: %s", implode(', ', $messages)));
         }
 
-        $requiredKeys = array(
-            'set'   => 'array',
-            'where' => 'array'
-        );
+        $requiredKeys = ['set'   => 'array', 'where' => 'array'];
 
         if ( ! \xd_utilities\verify_object_property_types($this->parsedDefinitionFile->update, $requiredKeys, $messages) ) {
             $this->logAndThrowException(
@@ -147,7 +142,7 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function execute(EtlOverseerOptions $etlOverseerOptions)
+    public function execute(EtlOverseerOptions $etlOverseerOptions): void
     {
         $numRecordsProcessed = 0;
         $numRecordsUpdated = 0;
@@ -178,15 +173,11 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
             $this->etlDestinationTable->getFullName(),
             implode(
                 ', ',
-                array_map(function ($s) {
-                    return "$s = ?";
-                }, $this->parsedDefinitionFile->update->set)
+                array_map(fn($s) => "$s = ?", $this->parsedDefinitionFile->update->set)
             ),
             implode(
                 ' AND ',
-                array_map(function ($w) {
-                    return "$w = ?";
-                }, $this->parsedDefinitionFile->update->where)
+                array_map(fn($w) => "$w = ?", $this->parsedDefinitionFile->update->where)
             )
         );
 
@@ -223,9 +214,7 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
                 foreach ( $this->sourceEndpoint as $record ) {
 
                     $row = array_map(
-                        function ($field) use ($record) {
-                            return $record[$field];
-                        },
+                        fn($field) => $record[$field],
                         $queryDataFields
                     );
 
@@ -237,7 +226,7 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
             } catch (PDOException $e) {
                 $this->logAndThrowException(
                     "Error updating " . $this->etlDestinationTable->getFullName(),
-                    array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
+                    ['exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint]
                 );
             }
         }
@@ -245,13 +234,6 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->logger->notice(array(
-                                  'action'         => (string) $this,
-                                  'start_time'     => $time_start,
-                                  'end_time'       => $time_end,
-                                  'elapsed_time'   => round($time, 5),
-                                  'records_loaded' => $numRecordsProcessed,
-                                  'records_updated' => $numRecordsUpdated
-                                  ));
+        $this->logger->notice(['action'         => (string) $this, 'start_time'     => $time_start, 'end_time'       => $time_end, 'elapsed_time'   => round($time, 5), 'records_loaded' => $numRecordsProcessed, 'records_updated' => $numRecordsUpdated]);
     }  // execute()
 }  // class StructuredFileIngestor

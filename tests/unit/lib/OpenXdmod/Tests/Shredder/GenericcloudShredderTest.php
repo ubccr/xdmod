@@ -12,36 +12,36 @@ use OpenXdmod\Shredder;
 /**
  * PBS shredder test class.
  */
-class GenericcloudShredderTest extends \PHPUnit_Framework_TestCase
+class GenericcloudShredderTest extends \PHPUnit\Framework\TestCase
 {
     protected $db;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->db = new NullDB();
     }
 
-    public function testShredderConstructor()
+    public function testShredderConstructor(): void
     {
         $shredder = Shredder::factory('genericcloud', $this->db);
-        $this->assertInstanceOf('\OpenXdmod\Shredder\Genericcloud', $shredder);
+        $this->assertInstanceOf(\OpenXdmod\Shredder\Genericcloud::class, $shredder);
     }
 
     /**
      * Tests to make sure that if a non-existent directory is given that the shredDirectory
      * function returns false
      */
-    public function testShredderParsing()
+    public function testShredderParsing(): void
     {
         $shredder = $this
-            ->getMockBuilder('\OpenXdmod\Shredder\Genericcloud')
-            ->setConstructorArgs(array($this->db))
-            ->setMethods(array('getResourceConfig'))
+            ->getMockBuilder(\OpenXdmod\Shredder\Genericcloud::class)
+            ->setConstructorArgs([$this->db])
+            ->setMethods(['getResourceConfig'])
             ->getMock();
 
         $shredder
             ->method('getResourceConfig')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $shredder->setLogger(Log::singleton('null'));
 

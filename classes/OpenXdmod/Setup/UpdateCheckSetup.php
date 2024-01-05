@@ -14,7 +14,7 @@ class UpdateCheckSetup extends SetupItem
     /**
      * @inheritdoc
      */
-    public function handle()
+    public function handle(): void
     {
         $this->console->displaySectionHeader('Automatic Update Check Setup');
 
@@ -32,7 +32,7 @@ EOT
         $answer = $this->console->prompt(
             'Enable automatic update check?',
             'yes',
-            array('yes', 'no')
+            ['yes', 'no']
         );
 
         $config = $this->getUpdateCheckConfig();

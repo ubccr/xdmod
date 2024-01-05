@@ -4,14 +4,14 @@ namespace ComponentTests;
 
 use XDUser;
 
-class RIDTest extends \PHPUnit_Framework_TestCase
+class RIDTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
      * @dataProvider provideGenerateRID
      * @throws \Exception
      */
-    public function testGenerateAndValidateRID(array $options)
+    public function testGenerateAndValidateRID(array $options): void
     {
         $username = $options['user'];
         $expiration = $options['expiration'];
@@ -47,55 +47,6 @@ class RIDTest extends \PHPUnit_Framework_TestCase
 
     public function provideGenerateRID()
     {
-        return array(
-            array(
-                array(
-                    'user' => 'centerdirector',
-                    'expiration' => null
-                )
-            ),
-            array(
-                array(
-                    'user' => 'principal',
-                    'expiration' => null
-                )
-            ),
-            array(
-                array(
-                    'user' => 'centerstaff',
-                    'expiration' => null
-                )
-            ),
-            array(
-                array(
-                    'user' => 'normaluser',
-                    'expiration' => null
-                )
-            ),
-            array(
-                array(
-                    'user' => 'centerdirector',
-                    'expiration' => 1
-                )
-            ),
-            array(
-                array(
-                    'user' => 'centerstaff',
-                    'expiration' => 1
-                )
-            ),
-            array(
-                array(
-                    'user' => 'principal',
-                    'expiration' => 1
-                )
-            ),
-            array(
-                array(
-                    'user' => 'normaluser',
-                    'expiration' => 1
-                )
-            )
-        );
+        return [[['user' => 'centerdirector', 'expiration' => null]], [['user' => 'principal', 'expiration' => null]], [['user' => 'centerstaff', 'expiration' => null]], [['user' => 'normaluser', 'expiration' => null]], [['user' => 'centerdirector', 'expiration' => 1]], [['user' => 'centerstaff', 'expiration' => 1]], [['user' => 'principal', 'expiration' => 1]], [['user' => 'normaluser', 'expiration' => 1]]];
     }
 }

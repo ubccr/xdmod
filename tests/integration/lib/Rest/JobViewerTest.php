@@ -7,32 +7,16 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class JobViewerTest extends BaseTest
 {
-    const ENDPOINT = 'rest/v0.1/warehouse/';
+    public const ENDPOINT = 'rest/v0.1/warehouse/';
 
-    public function setUp()
+    public function setUp(): void
     {
-        $xdmodConfig = array( 'decodetextasjson' => true );
+        $xdmodConfig = ['decodetextasjson' => true];
         $this->xdmodhelper = new XdmodTestHelper($xdmodConfig);
     }
 
     private static function getDimensions() {
-        return array(
-            'nsfdirectorate',
-            'parentscience',
-            'gpucount',
-            'jobsize',
-            'jobwaittime',
-            'jobwalltime',
-            'nodecount',
-            'pi',
-            'fieldofscience',
-            'qos',
-            'queue',
-            'resource',
-            'resource_type',
-            'username',
-            'person'
-        );
+        return ['nsfdirectorate', 'parentscience', 'gpucount', 'jobsize', 'jobwaittime', 'jobwalltime', 'nodecount', 'pi', 'fieldofscience', 'qos', 'queue', 'resource', 'resource_type', 'username', 'person'];
     }
 
     /**
@@ -41,7 +25,7 @@ class JobViewerTest extends BaseTest
      * fresh installs and for upgrades. Needless to say, the expected results
      * must be updated when the SUPReMM schema changes.
      */
-    public function testDimensions()
+    public function testDimensions(): void
     {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -49,9 +33,7 @@ class JobViewerTest extends BaseTest
         }
 
         $this->xdmodhelper->authenticate('cd');
-        $queryparams = array(
-            'realm' => 'Jobs'
-        );
+        $queryparams = ['realm' => 'Jobs'];
         $response = $this->xdmodhelper->get(self::ENDPOINT . 'dimensions', $queryparams);
 
         $this->assertEquals(200, $response[1]['http_code']);
@@ -61,7 +43,7 @@ class JobViewerTest extends BaseTest
         $this->assertArrayHasKey('success', $resdata);
         $this->assertTrue($resdata['success']);
 
-        $dimids = array();
+        $dimids = [];
         foreach ($resdata['results'] as $dimension) {
             $dimids[] = $dimension['id'];
         }
@@ -73,12 +55,12 @@ class JobViewerTest extends BaseTest
 
     public function dimensionsProvider()
     {
-        $xdmodhelper = new XdmodTestHelper(array('decodetextasjson' => true));
+        $xdmodhelper = new XdmodTestHelper(['decodetextasjson' => true]);
         $xdmodhelper->authenticate('cd');
 
-        $testCases = array();
+        $testCases = [];
         foreach (self::getDimensions() as $dimension) {
-            $testCases[] = array($xdmodhelper, $dimension);
+            $testCases[] = [$xdmodhelper, $dimension];
         }
         return $testCases;
     }
@@ -88,16 +70,14 @@ class JobViewerTest extends BaseTest
      *
      * @dataProvider dimensionsProvider
      */
-    public function testDimensionValues($xdmodhelper, $dimension)
+    public function testDimensionValues($xdmodhelper, $dimension): void
     {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $queryparams = array(
-            'realm' => 'Jobs'
-        );
+        $queryparams = ['realm' => 'Jobs'];
         $response = $xdmodhelper->get(self::ENDPOINT . 'dimensions/' . $dimension, $queryparams);
 
         $this->assertEquals(200, $response[1]['http_code']);
@@ -109,7 +89,7 @@ class JobViewerTest extends BaseTest
         $this->assertGreaterThan(0, count($resdata['results']));
     }
 
-    public function testResourceEndPoint()
+    public function testResourceEndPoint(): void
     {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -118,9 +98,7 @@ class JobViewerTest extends BaseTest
 
         $this->xdmodhelper->authenticate('cd');
 
-        $queryparams = array(
-            'realm' => 'Jobs'
-        );
+        $queryparams = ['realm' => 'Jobs'];
 
         $response = $this->xdmodhelper->get(self::ENDPOINT . 'dimensions/resource', $queryparams);
 
@@ -142,16 +120,14 @@ class JobViewerTest extends BaseTest
         $this->xdmodhelper->logout();
     }
 
-    public function testResourceNoAuth()
+    public function testResourceNoAuth(): void
     {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $queryparams = array(
-            'realm' => 'Jobs'
-        );
+        $queryparams = ['realm' => 'Jobs'];
         $response = $this->xdmodhelper->get(self::ENDPOINT . 'dimensions/resource', $queryparams);
 
         $this->assertEquals(401, $response[1]['http_code']);
@@ -186,41 +162,29 @@ class JobViewerTest extends BaseTest
         return $jobdata;
     }
 
-    public function testBasicJobSearch() {
+    public function testBasicJobSearch(): void {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $queryparams = array(
-            'realm' => 'Jobs',
-            'params' => json_encode(
-                array(
-                    'resource_id' => 5,
-                    'local_job_id' => 6117153
-                )
-            )
-        );
+        $queryparams = ['realm' => 'Jobs', 'params' => json_encode(
+            ['resource_id' => 5, 'local_job_id' => 6_117_153]
+        )];
         $this->validateSingleJobSearch($queryparams);
     }
 
-    public function testBasicJobSearchNoAuth() {
+    public function testBasicJobSearchNoAuth(): void {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $searchparams = array(
-            'realm' => 'Jobs',
-            'params' => json_encode(
-                array(
-                    'resource_id' => 5,
-                    'local_job_id' => 6117153
-                )
-            )
-        );
+        $searchparams = ['realm' => 'Jobs', 'params' => json_encode(
+            ['resource_id' => 5, 'local_job_id' => 6_117_153]
+        )];
 
-        foreach (array('usr', 'pi') as $unpriv) {
+        foreach (['usr', 'pi'] as $unpriv) {
             $this->xdmodhelper->authenticate($unpriv);
             $response = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
             $this->assertEquals(403, $response[1]['http_code']);
@@ -230,14 +194,14 @@ class JobViewerTest extends BaseTest
         }
     }
 
-    public function testInvalidJobSearch() {
+    public function testInvalidJobSearch(): void {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
         $this->xdmodhelper->authenticate('cd');
-        $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', array() );
+        $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', [] );
 
         $this->assertArrayHasKey('success', $result[0]);
         $this->assertFalse($result[0]['success']);
@@ -246,16 +210,13 @@ class JobViewerTest extends BaseTest
         $this->xdmodhelper->logout();
     }
 
-    public function testInvalidJobSearchJson() {
+    public function testInvalidJobSearchJson(): void {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $searchparams = array(
-            'realm' => 'Jobs',
-            'params' => 'this is not json data'
-        );
+        $searchparams = ['realm' => 'Jobs', 'params' => 'this is not json data'];
 
         $this->xdmodhelper->authenticate('cd');
         $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
@@ -273,93 +234,24 @@ class JobViewerTest extends BaseTest
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $xdmodhelper = new XdmodTestHelper(array('decodetextasjson' => true));
+        $xdmodhelper = new XdmodTestHelper(['decodetextasjson' => true]);
         $xdmodhelper->authenticate('cd');
 
-        $tests = array();
+        $tests = [];
 
-        $tests[] = array(
-            $xdmodhelper,
-            array(
-                'realm' => 'Jobs',
-                'params' => json_encode(array('resource_id' => '2801'))
-            ),
-            false
-        );
+        $tests[] = [$xdmodhelper, ['realm' => 'Jobs', 'params' => json_encode(['resource_id' => '2801'])], false];
 
-        $tests[] = array(
-            $xdmodhelper,
-            array(
-                'start_date' => '2015-01-01',
-                'end_date' => '2015-01-01',
-                'realm' => 'Blobs',
-                'params' => json_encode(array()),
-                'start' => 0,
-                'limit' => 10
-            ),
-            false
-        );
+        $tests[] = [$xdmodhelper, ['start_date' => '2015-01-01', 'end_date' => '2015-01-01', 'realm' => 'Blobs', 'params' => json_encode([]), 'start' => 0, 'limit' => 10], false];
 
-        $tests[] = array(
-            $xdmodhelper,
-            array(
-                'start_date' => '2015-01-01',
-                'realm' => 'Jobs',
-                'params' => json_encode(array()),
-                'start' => 0,
-                'limit' => 10
-            ),
-            false
-        );
+        $tests[] = [$xdmodhelper, ['start_date' => '2015-01-01', 'realm' => 'Jobs', 'params' => json_encode([]), 'start' => 0, 'limit' => 10], false];
 
-        $tests[] = array(
-            $xdmodhelper,
-            array(
-                'start_date' => '2015-01-01',
-                'end_date' => '2015-01-01',
-                'realm' => 'Jobs',
-                'params' => json_encode(array())
-            ),
-            false
-        );
+        $tests[] = [$xdmodhelper, ['start_date' => '2015-01-01', 'end_date' => '2015-01-01', 'realm' => 'Jobs', 'params' => json_encode([])], false];
 
-        $tests[] = array(
-            $xdmodhelper,
-            array(
-                'start_date' => '2015-01-01',
-                'end_date' => '2015-01-01',
-                'realm' => 'Jobs',
-                'params' => json_encode(array()),
-                'start' => 0,
-            ),
-            false
-        );
+        $tests[] = [$xdmodhelper, ['start_date' => '2015-01-01', 'end_date' => '2015-01-01', 'realm' => 'Jobs', 'params' => json_encode([]), 'start' => 0], false];
 
-        $tests[] = array(
-            $xdmodhelper,
-            array(
-                'start_date' => '2015-01-01',
-                'end_date' => '2015-01-01',
-                'realm' => 'Jobs',
-                'params' => json_encode(3),
-                'start' => 0,
-                'limit' => 20
-            ),
-            false
-        );
+        $tests[] = [$xdmodhelper, ['start_date' => '2015-01-01', 'end_date' => '2015-01-01', 'realm' => 'Jobs', 'params' => json_encode(3), 'start' => 0, 'limit' => 20], false];
 
-        $tests[] = array(
-            $xdmodhelper,
-            array(
-                'start_date' => '2015-01-01',
-                'end_date' => '2015-01-01',
-                'realm' => 'Jobs',
-                'params' => json_encode(array(3)),
-                'start' => 0,
-                'limit' => 20
-            ),
-            true
-        );
+        $tests[] = [$xdmodhelper, ['start_date' => '2015-01-01', 'end_date' => '2015-01-01', 'realm' => 'Jobs', 'params' => json_encode([3]), 'start' => 0, 'limit' => 20], true];
 
         return $tests;
     }
@@ -367,7 +259,7 @@ class JobViewerTest extends BaseTest
     /**
      * @dataProvider missingParamsProvider
      */
-    public function testInvalidJobSearchMissingParams($xdmodhelper, $searchparams, $isfinal) {
+    public function testInvalidJobSearchMissingParams($xdmodhelper, $searchparams, $isfinal): void {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
@@ -384,23 +276,15 @@ class JobViewerTest extends BaseTest
         }
     }
 
-    public function testAdvancedSearchInvalid() {
+    public function testAdvancedSearchInvalid(): void {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $searchparams = array(
-            'start_date' => '2015-01-01',
-            'end_date' => '2015-01-01',
-            'realm' => 'Jobs',
-            'params' => json_encode(
-                array( 'non existent dimension 1' => array(0),
-                'another invalid dimension' => array(1) )
-            ),
-            'limit' => 10,
-            'start' => 0
-        );
+        $searchparams = ['start_date' => '2015-01-01', 'end_date' => '2015-01-01', 'realm' => 'Jobs', 'params' => json_encode(
+            ['non existent dimension 1' => [0], 'another invalid dimension' => [1]]
+        ), 'limit' => 10, 'start' => 0];
 
         $this->xdmodhelper->authenticate('cd');
         $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
@@ -410,20 +294,13 @@ class JobViewerTest extends BaseTest
         $this->xdmodhelper->logout();
     }
 
-    public function testAdvancedSearchNoParams() {
+    public function testAdvancedSearchNoParams(): void {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $searchparams = array(
-            'start_date' => '2016-12-31',
-            'end_date' => '2016-12-31',
-            'realm' => 'Jobs',
-            'params' => '{}',
-            'limit' => 5,
-            'start' => 0
-        );
+        $searchparams = ['start_date' => '2016-12-31', 'end_date' => '2016-12-31', 'realm' => 'Jobs', 'params' => '{}', 'limit' => 5, 'start' => 0];
 
         $this->xdmodhelper->authenticate('usr');
         $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
@@ -451,34 +328,12 @@ class JobViewerTest extends BaseTest
      * Test that the search history save new search correctly sanitizes the text input.
      * @return void
      */
-    public function testSearchSaving() {
+    public function testSearchSaving(): void {
 
-        $input = array(
-            "text" => "Typing in <script>alert(1)</script>",
-            "searchterms" => array(
-                "params" => array(
-                    "start_date" => "2020-01-09",
-                    "end_date" => "2020-01-15",
-                    "realm" => "Jobs",
-                    "limit" => 24,
-                    "start" => 0,
-                    "params" => "{\"resource\":[\"1\"]}"
-                )
-            ),
-            "results" => array(
-                array(
-                    'resource' => 'pozidriv',
-                    'name' => 'blah',
-                    "jobid" => 42520494,
-                    "text" => "pozidriv-5138",
-                    "dtype" => "jobid",
-                    "local_job_id" => "5138"
-                )
-            )
-        );
+        $input = ["text" => "Typing in <script>alert(1)</script>", "searchterms" => ["params" => ["start_date" => "2020-01-09", "end_date" => "2020-01-15", "realm" => "Jobs", "limit" => 24, "start" => 0, "params" => "{\"resource\":[\"1\"]}"]], "results" => [['resource' => 'pozidriv', 'name' => 'blah', "jobid" => 42_520_494, "text" => "pozidriv-5138", "dtype" => "jobid", "local_job_id" => "5138"]]];
 
         $this->xdmodhelper->authenticate('cd');
-        $response = $this->xdmodhelper->post(self::ENDPOINT . 'search/history', array('realm' => 'Jobs'), array('data' => json_encode($input)));
+        $response = $this->xdmodhelper->post(self::ENDPOINT . 'search/history', ['realm' => 'Jobs'], ['data' => json_encode($input)]);
 
         $this->assertEquals(200, $response[1]['http_code']);
         $result = $response[0];
@@ -494,7 +349,7 @@ class JobViewerTest extends BaseTest
 
         // update existing search
         $input['text'] = 'Updated';
-        $response = $this->xdmodhelper->post(self::ENDPOINT . 'search/history/' . $recordId, array('realm' => 'Jobs'), array('data' => json_encode($input)));
+        $response = $this->xdmodhelper->post(self::ENDPOINT . 'search/history/' . $recordId, ['realm' => 'Jobs'], ['data' => json_encode($input)]);
 
         $this->assertEquals(200, $response[1]['http_code']);
         $result = $response[0];
@@ -504,39 +359,34 @@ class JobViewerTest extends BaseTest
         $this->assertEquals('Updated', $result['results']['text']);
 
         // remove the dummy saved search.
-        $response = $this->xdmodhelper->delete(self::ENDPOINT . 'search/history/' . $recordId, array('realm' => 'Jobs'));
+        $response = $this->xdmodhelper->delete(self::ENDPOINT . 'search/history/' . $recordId, ['realm' => 'Jobs']);
 
         $this->assertEquals(200, $response[1]['http_code']);
         $result = $response[0];
         $this->assertTrue($result['success']);
     }
 
-    public function testJobMetadata() {
+    public function testJobMetadata(): void {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $queryparams = array(
-            'realm' => 'Jobs',
-            'params' => json_encode(
-                array(
-                    'resource_id' => 5,
-                    'local_job_id' => 6112282
-                )
-            )
-        );
+        $queryparams = ['realm' => 'Jobs', 'params' => json_encode(
+            ['resource_id' => 5, 'local_job_id' => 6_112_282]
+        )];
         $this->xdmodhelper->authenticate('cd');
         $jobparams = $this->validateSingleJobSearch($queryparams, false);
-        $searchparams = array(
+        $searchparams = [
             'realm' => 'Jobs',
-            'recordid' => '-1', // this parameter is not acutally used for anything but needs to be present :-(
-            $jobparams['dtype'] => $jobparams[$jobparams['dtype']]
-        );
+            'recordid' => '-1',
+            // this parameter is not acutally used for anything but needs to be present :-(
+            $jobparams['dtype'] => $jobparams[$jobparams['dtype']],
+        ];
 
         $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/history', $searchparams);
 
-        $types = array();
+        $types = [];
 
         foreach($result[0]['results'] as $datum) {
             $this->assertArrayHasKey('dtype', $datum);
@@ -545,9 +395,7 @@ class JobViewerTest extends BaseTest
             $types[] = $datum['text'];
         }
 
-        $expectedTypes = array(
-            'Accounting data'
-        );
+        $expectedTypes = ['Accounting data'];
 
         $this->assertEquals($expectedTypes, $types);
     }

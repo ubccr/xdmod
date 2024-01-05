@@ -2,10 +2,7 @@
 
 	// Operation: user_auth->update_pass
 	
-   $params = array(
-      'rid' => RESTRICTION_RID,
-      'password' => RESTRICTION_PASSWORD
-   );
+   $params = ['rid' => RESTRICTION_RID, 'password' => RESTRICTION_PASSWORD];
 
 	$isValid = xd_security\secureCheck($params, 'POST');
 	

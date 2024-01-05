@@ -6,7 +6,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class Common
 {
-    protected $request = null;
     /*
         Contents of $request may include the following (and lots of other stuff)
         
@@ -41,8 +40,8 @@ class Common
             'legend'
     */
 
-    public function __construct($request) {
-        $this->request = $request;
+    public function __construct(protected $request)
+    {
     }
 
     protected function checkDateParameters()
@@ -78,26 +77,21 @@ class Common
             );
         }
 
-        return array(
-            $this->request['start_date'],
-            $this->request['end_date'],
-            mktime(
-                $start_date_parsed['hour'],
-                $start_date_parsed['minute'],
-                $start_date_parsed['second'],
-                $start_date_parsed['month'],
-                $start_date_parsed['day'],
-                $start_date_parsed['year']
-            ),
-            mktime(
-                23,
-                59,
-                59,
-                $end_date_parsed['month'],
-                $end_date_parsed['day'],
-                $end_date_parsed['year']
-            )
-        );
+        return [$this->request['start_date'], $this->request['end_date'], mktime(
+            $start_date_parsed['hour'],
+            $start_date_parsed['minute'],
+            $start_date_parsed['second'],
+            $start_date_parsed['month'],
+            $start_date_parsed['day'],
+            $start_date_parsed['year']
+        ), mktime(
+            23,
+            59,
+            59,
+            $end_date_parsed['month'],
+            $end_date_parsed['day'],
+            $end_date_parsed['year']
+        )];
     }
 
     protected function getShowTitle()
@@ -243,17 +237,15 @@ class Common
 
     protected function getSortInfo()
     {
-        $sortInfo = array();
+        $sortInfo = [];
 
         if (isset($this->request['sort']) && $this->request['sort'] != '') {
-            $sortRec = array();
+            $sortRec = [];
 
             $sortRec['column_name'] = $this->request['sort'];
 
             $sortRec['direction']
-                = isset($this->request['dir'])
-                ? $this->request['dir']
-                : 'asc';
+                = $this->request['dir'] ?? 'asc';
 
             $sortInfo[] = $sortRec;
         }
@@ -297,10 +289,7 @@ class Common
 
             \xd_charting\processForThumbnail($returnData);
 
-            $result = array(
-                "headers" => array( "Content-Type" => "image/png"),
-                "results" => \xd_charting\exportHighchart($returnData, '148', '69', 2, 'png')
-            );
+            $result = ["headers" => ["Content-Type" => "image/png"], "results" => \xd_charting\exportHighchart($returnData, '148', '69', 2, 'png')];
 
             return $result;
         }
@@ -310,10 +299,7 @@ class Common
 
             \xd_charting\processForReport($returnData);
 
-            $result = array( 
-                "headers" => array( "Content-Type" => "image/png"),
-                "results" => \xd_charting\exportHighchart($returnData, $width, $height, $scale, 'png')
-            );
+            $result = ["headers" => ["Content-Type" => "image/png"], "results" => \xd_charting\exportHighchart($returnData, $width, $height, $scale, 'png')];
 
             return $result;
         }
@@ -322,51 +308,34 @@ class Common
         {
             if (is_null($fileMeta))
             {
-                $fileMeta = array(
-                    'title' => $filename
-                );
+                $fileMeta = ['title' => $filename];
             }
 
-            $result = array(
-                "headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename),
-                "results" => \xd_charting\exportHighchart($returnData['data'][0], $width, $height, $scale, $format, null, $fileMeta)
-            );
+            $result = ["headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename), "results" => \xd_charting\exportHighchart($returnData['data'][0], $width, $height, $scale, $format, null, $fileMeta)];
 
             return $result;
         }
         elseif($format === 'png_inline')
         {
-            $result = array(
-                "headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename),
-                "results" => 'data:image/png;base64,'.base64_encode(\xd_charting\exportHighchart($returnData['data'][0], $width, $height, $scale, 'png'))
-            );
+            $result = ["headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename), "results" => 'data:image/png;base64,'.base64_encode(\xd_charting\exportHighchart($returnData['data'][0], $width, $height, $scale, 'png'))];
             return $result;
 
         }
         elseif($format === 'svg_inline')
         {
-            $result = array(
-                "headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename),
-                "results" => 'data:image/svg+xml;base64,' . base64_encode(
-                    \xd_charting\exportHighchart( $returnData['data'][0], $width, $height, $scale, 'svg'))
-                );
+            $result = ["headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename), "results" => 'data:image/svg+xml;base64,' . base64_encode(
+                \xd_charting\exportHighchart( $returnData['data'][0], $width, $height, $scale, 'svg'))];
 
             return $result;
         }
         elseif ($format === 'hc_jsonstore' ) {
 
-            $result = array(
-                "headers" => \DataWarehouse\ExportBuilder::getHeader( $format ),
-                "results" => json_encode($returnData)
-            );
+            $result = ["headers" => \DataWarehouse\ExportBuilder::getHeader( $format ), "results" => json_encode($returnData)];
 
             return $result;
         }
         elseif ($format === '_internal') {
-            $result = array(
-                'headers' => \DataWarehouse\ExportBuilder::getHeader( 'hc_jsonstore' ),
-                'results' => $returnData,
-            );
+            $result = ['headers' => \DataWarehouse\ExportBuilder::getHeader( 'hc_jsonstore' ), 'results' => $returnData];
             return $result;
         }
 

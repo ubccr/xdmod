@@ -17,7 +17,7 @@ class AdminUserSetup extends SetupItem
     /**
      * @inheritdoc
      */
-    public function handle()
+    public function handle(): void
     {
         $this->console->displaySectionHeader('Create Admin User');
 
@@ -38,7 +38,7 @@ class AdminUserSetup extends SetupItem
                 '',
 
                 $lastName,
-                array(ROLE_ID_MANAGER, ROLE_ID_USER),
+                [ROLE_ID_MANAGER, ROLE_ID_USER],
                 ROLE_ID_MANAGER,
                 null,
                 -1

@@ -24,7 +24,6 @@ class MySQLHelper
     /**
      * Factory method.
      *
-     * @param MySQLDB $db
      *
      * @return MySQLHelper
      */
@@ -35,8 +34,6 @@ class MySQLHelper
 
     /**
      * Constructor.
-     *
-     * @param MySQLDB $db
      */
     protected function __construct(MySQLDB $db)
     {
@@ -46,10 +43,8 @@ class MySQLHelper
 
     /**
      * Set the logger.
-     *
-     * @param LoggerInterface $logger
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -79,7 +74,7 @@ class MySQLHelper
      *
      * @param string $tableName
      */
-    public function dropTable($tableName)
+    public function dropTable($tableName): void
     {
         $sql = 'DROP TABLE ' . $this->db->getHandle()->quote($tableName);
 
@@ -113,11 +108,11 @@ class MySQLHelper
     public function createTable(
         $tableName,
         array $columnDefs,
-        array $keyDefs = array()
-    ) {
+        array $keyDefs = []
+    ): void {
 
-        $columnSql = array();
-        $keySql    = array();
+        $columnSql = [];
+        $keySql    = [];
 
         foreach ($columnDefs as $col) {
             $def = $col['name'] . ' ' . $col['type'];
@@ -199,14 +194,11 @@ class MySQLHelper
         $schemaName = $this->db->_db_name;
 
         // Check if the schema name is prepended to the table name.
-        if (strpos($tableName, '.') !== false) {
-            list($schemaName, $tableName) = explode('.', $tableName, 2);
+        if (str_contains($tableName, '.')) {
+            [$schemaName, $tableName] = explode('.', $tableName, 2);
         }
 
-        list($row) = $this->db->query($sql, array(
-            'schema_name' => $schemaName,
-            'table_name'  => $tableName,
-        ));
+        [$row] = $this->db->query($sql, ['schema_name' => $schemaName, 'table_name'  => $tableName]);
 
         return $row['count'] > 0;
     }
@@ -220,28 +212,12 @@ class MySQLHelper
      */
     public function executeStatement($stmt)
     {
-        $this->logger->info(array(
-            'message'   => 'Executing SQL statement',
-            'host'      => $this->db->_db_host,
-            'port'      => $this->db->_db_port,
-            'username'  => $this->db->_db_username,
-            'database'  => $this->db->_db_name,
-            'statement' => $stmt,
-        ));
+        $this->logger->info(['message'   => 'Executing SQL statement', 'host'      => $this->db->_db_host, 'port'      => $this->db->_db_port, 'username'  => $this->db->_db_username, 'database'  => $this->db->_db_name, 'statement' => $stmt]);
 
         $optionsFile = static::createPasswordFile($this->db->_db_password);
 
         // --defaults-extra-file must be the first argument.
-        $args = array(
-            '--defaults-extra-file=' . $optionsFile,
-            '-ss',
-            '--local-infile',
-            '-h', $this->db->_db_host,
-            '-P', $this->db->_db_port,
-            '-u', $this->db->_db_username,
-            $this->db->_db_name,
-            '-e', $stmt,
-        );
+        $args = ['--defaults-extra-file=' . $optionsFile, '-ss', '--local-infile', '-h', $this->db->_db_host, '-P', $this->db->_db_port, '-u', $this->db->_db_username, $this->db->_db_name, '-e', $stmt];
 
         $output = $this->executeCommand($args);
 
@@ -259,25 +235,12 @@ class MySQLHelper
      */
     public function executeFile($file)
     {
-        $this->logger->info(array(
-            'message'  => 'Executing SQL file',
-            'host'     => $this->db->_db_host,
-            'port'     => $this->db->_db_port,
-            'username' => $this->db->_db_username,
-            'database' => $this->db->_db_name,
-            'file'     => $file,
-        ));
+        $this->logger->info(['message'  => 'Executing SQL file', 'host'     => $this->db->_db_host, 'port'     => $this->db->_db_port, 'username' => $this->db->_db_username, 'database' => $this->db->_db_name, 'file'     => $file]);
 
         $optionsFile = static::createPasswordFile($this->db->_db_password);
 
         // --defaults-extra-file must be the first argument.
-        $args = array(
-            '--defaults-extra-file=' . $optionsFile,
-            '-h', $this->db->_db_host,
-            '-P', $this->db->_db_port,
-            '-u', $this->db->_db_username,
-            $this->db->_db_name,
-        );
+        $args = ['--defaults-extra-file=' . $optionsFile, '-h', $this->db->_db_host, '-P', $this->db->_db_port, '-u', $this->db->_db_username, $this->db->_db_name];
 
         $output = $this->executeCommand($args, $file);
 
@@ -358,7 +321,7 @@ class MySQLHelper
         $username,
         $password,
         $dbName
-    ) {
+    ): void {
         $stmt = "CREATE DATABASE $dbName";
 
         static::staticExecuteStatement(
@@ -386,7 +349,7 @@ class MySQLHelper
         $username,
         $password,
         $dbName
-    ) {
+    ): void {
         $stmt = "DROP DATABASE $dbName";
 
         static::staticExecuteStatement(
@@ -418,7 +381,7 @@ class MySQLHelper
         $localHost,
         $dbUsername,
         $dbPassword
-    ) {
+    ): void {
         /**
          *  The privileges are listed out instead of ALL so that the user
          *  created cannot administrate users or database tasks.
@@ -463,7 +426,7 @@ class MySQLHelper
         $localHost,
         $dbUsername,
         $dbPassword
-    ) {
+    ): void {
         $stmt = "GRANT ALL ON $dbName.* TO '$dbUsername'@'$localHost'"
             . " IDENTIFIED BY '$dbPassword'";
 
@@ -498,13 +461,7 @@ class MySQLHelper
         $dbName,
         $stmt
     ) {
-        $args = array(
-            '-ss',
-            '--local-infile',
-            '-h', $host,
-            '-P', $port,
-            '-u', $username,
-        );
+        $args = ['-ss', '--local-infile', '-h', $host, '-P', $port, '-u', $username];
 
         if ($password !== '') {
             $optionsFile = static::createPasswordFile($password);
@@ -548,11 +505,7 @@ class MySQLHelper
         $dbName,
         $file
     ) {
-        $args = array(
-            '-h', $host,
-            '-P', $port,
-            '-u', $username,
-        );
+        $args = ['-h', $host, '-P', $port, '-u', $username];
 
         if ($password !== '') {
             $optionsFile = static::createPasswordFile($password);
@@ -590,7 +543,7 @@ class MySQLHelper
             $command .= ' <' . escapeshellarg($input);
         }
 
-        $output    = array();
+        $output    = [];
         $returnVar = 0;
         $tmpHome = xd_utilities\createTemporaryDirectory('mysql-helper-');
 

@@ -13,9 +13,9 @@ use XDUser;
 
 class AclsTest extends BaseTest
 {
-    const GET_QUERY_DESCRIPTERS = 'getQueryDescripters';
-    const HAS_DATA_ACCESS = 'hasDataAccess';
-    const DEBUG_MSG = <<<TXT
+    public const GET_QUERY_DESCRIPTERS = 'getQueryDescripters';
+    public const HAS_DATA_ACCESS = 'hasDataAccess';
+    public const DEBUG_MSG = <<<TXT
 
 -----------------------------------------
 AclsTest - %s
@@ -30,7 +30,7 @@ User:            %s
     Acls::%s:  %s
 
 TXT;
-    const CHECK_DATA_ACCESS_DEBUG_MSG = <<<TXT
+    public const CHECK_DATA_ACCESS_DEBUG_MSG = <<<TXT
 
 -------------------------------------
 From:      %s
@@ -46,24 +46,16 @@ TXT;
      *
      * @var String[]
      */
-    private static $PROPERTY_NAMES = array(
-        '_realm_name',
-        '_group_by_name',
-        '_default_statisticname',
-        '_order_id',
-        '_show_menu',
-        '_disable_menu'
-    );
+    private static $PROPERTY_NAMES = ['_realm_name', '_group_by_name', '_default_statisticname', '_order_id', '_show_menu', '_disable_menu'];
 
     /**
      * Tests that the Acls::hasDataAccess function operates the same as aRole::hasDataAccess. Also
      * checks that MetricExplorer::checkDataAccess returns what we would expect.
      *
      * @dataProvider provideHasDataAccess
-     * @param array $options
      * @throws \Exception
      */
-    public function testHasDataAccess(array $options)
+    public function testHasDataAccess(array $options): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -111,7 +103,7 @@ TXT;
                         "Expected MetricExplorer::checkDataAccess to be empty."
                     );
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 // then the user isn't authorized *shrug*.
             }
 
@@ -165,10 +157,9 @@ TXT;
      *
      * @dataProvider provideGetQueryDescripters
      *
-     * @param array $options
      * @throws \Exception if there is a problem retrieving the user.
      */
-    public function testGetQueryDescripters(array $options)
+    public function testGetQueryDescripters(array $options): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -239,13 +230,12 @@ TXT;
     /**
      * Extracts the data that is pertinent for testing the output of `getQueryDescripters`
      *
-     * @param mixed $queryDescripters
      * @return array
      * @throws \ReflectionException
      */
-    private function extractDataFrom($queryDescripters)
+    private function extractDataFrom(mixed $queryDescripters)
     {
-        $results = array();
+        $results = [];
 
         if (is_array($queryDescripters)) {
             foreach ($queryDescripters as $queryDescripter) {
@@ -265,13 +255,12 @@ TXT;
     /**
      * Extracts the pertinent testing information from a single QueryDescripter object.
      *
-     * @param QueryDescripter $queryDescripter
      * @return array
      * @throws \ReflectionException
      */
     private function extractFromQueryDescripter(QueryDescripter $queryDescripter)
     {
-        $results = array();
+        $results = [];
         $ref = new \ReflectionClass($queryDescripter);
         $properties = $ref->getProperties();
         foreach ($properties as $property) {
@@ -290,83 +279,18 @@ TXT;
      */
     public function provideGetQueryDescripters()
     {
-        $groups = array(
-            'fieldofscience',
-            'gpucount',
-            'jobsize',
-            'jobwalltime',
-            'nodecount',
-            'none',
-            'nsfdirectorate',
-            'parentscience',
-            'person',
-            'pi',
-            'qos',
-            'queue',
-            'resource',
-            'resource_type',
-            'username',
-        );
+        $groups = ['fieldofscience', 'gpucount', 'jobsize', 'jobwalltime', 'nodecount', 'none', 'nsfdirectorate', 'parentscience', 'person', 'pi', 'qos', 'queue', 'resource', 'resource_type', 'username'];
 
-        $stats = array(
-            null,
-            'active_person_count',
-            'active_pi_count',
-            'active_resource_count',
-            'avg_cpu_hours',
-            'avg_gpu_hours',
-            'avg_job_size_weighted_by_cpu_hours',
-            'avg_job_size_weighted_by_gpu_hours',
-            'avg_node_hours',
-            'avg_processors',
-            'avg_waitduration_hours',
-            'avg_wallduration_hours',
-            'expansion_factor',
-            'job_count',
-            'max_processors',
-            'min_processors',
-            'normalized_avg_processors',
-            'running_job_count',
-            'started_job_count',
-            'submitted_job_count',
-            'total_cpu_hours',
-            'total_gpu_hours',
-            'total_node_hours',
-            'total_waitduration_hours',
-            'total_wallduration_hours',
-            'utilization'
-        );
+        $stats = [null, 'active_person_count', 'active_pi_count', 'active_resource_count', 'avg_cpu_hours', 'avg_gpu_hours', 'avg_job_size_weighted_by_cpu_hours', 'avg_job_size_weighted_by_gpu_hours', 'avg_node_hours', 'avg_processors', 'avg_waitduration_hours', 'avg_wallduration_hours', 'expansion_factor', 'job_count', 'max_processors', 'min_processors', 'normalized_avg_processors', 'running_job_count', 'started_job_count', 'submitted_job_count', 'total_cpu_hours', 'total_gpu_hours', 'total_node_hours', 'total_waitduration_hours', 'total_wallduration_hours', 'utilization'];
 
-        $base = array(
-            'username' => array('principal'),
-            'realm' => array('jobs'),
-            'group_by' => $groups,
-            'statistic' => $stats,
-        );
+        $base = ['username' => ['principal'], 'realm' => ['jobs'], 'group_by' => $groups, 'statistic' => $stats];
 
-        $testdata = array(
-            array(
-                array(
-                    "username" => "principal",
-                    "realm" => "jobs",
-                    "group_by" => null,
-                    "statistic" => null,
-                    "expected" => JSON::loadFile($this->getTestFiles()->getFile('acls', 'get_query_descripters-jobs'))
-                )
-            )
-        );
+        $testdata = [[["username" => "principal", "realm" => "jobs", "group_by" => null, "statistic" => null, "expected" => JSON::loadFile($this->getTestFiles()->getFile('acls', 'get_query_descripters-jobs'))]]];
 
         foreach(Utilities::getCombinations($base) as $settings)
         {
-            $settings['expected'] = array(
-                "_realm_name" => 'Jobs',
-                "_group_by_name" => $settings['group_by'],
-                "_default_statisticname" => isset($settings['statistic']) ? $settings['statistic'] : 'all',
-                "_order_id" => 0,
-                "_show_menu" => true,
-                "_disable_menu" => false
-            );
-            $testdata[] = array($settings);
+            $settings['expected'] = ["_realm_name" => 'Jobs', "_group_by_name" => $settings['group_by'], "_default_statisticname" => $settings['statistic'] ?? 'all', "_order_id" => 0, "_show_menu" => true, "_disable_menu" => false];
+            $testdata[] = [$settings];
         }
 
         return $testdata;
@@ -379,10 +303,9 @@ TXT;
      *
      * @dataProvider provideTestAclsGetDisabledMenus
      *
-     * @param array $options
      * @throws \Exception
      */
-    public function testAclsGetDisabledMenus(array $options)
+    public function testAclsGetDisabledMenus(array $options): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -392,7 +315,7 @@ TXT;
         $realm = $options['realm'];
 
         $user = XDUser::getUserByUserName($username);
-        $actual = Acls::getDisabledMenus($user, array($realm));
+        $actual = Acls::getDisabledMenus($user, [$realm]);
 
         $fileName = "get_disabled_menus-" . (str_replace(' ', '_', strtolower($username)));
         $expectedFile = $this->getTestFiles()->getFile('acls', $fileName);

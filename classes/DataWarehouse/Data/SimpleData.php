@@ -4,7 +4,7 @@ namespace DataWarehouse\Data;
 
 /**
  * This class represents one data column as one returned
- * from a database query. This is an array of numbers or 
+ * from a database query. This is an array of numbers or
  * values, potentially with error bars and with labels.
  *
  * TODO: support statistic and group by? Perhaps just in timeseries?
@@ -20,20 +20,20 @@ class SimpleData extends \Common\Identity
     // JMS: not yet in use. TODO, maybe.
     protected $_type;
 
-    protected $_values = array();
-    protected $_errors = array();
+    protected $_values = [];
+    protected $_errors = [];
 
     /**
-     * order_ids and ids: 
-     * only available in case the data is a dimension and 
+     * order_ids and ids:
+     * only available in case the data is a dimension and
      * not a stat (metric).
      */
-    protected $_order_ids = array();
-    protected $_ids = array();
+    protected $_order_ids = [];
+    protected $_ids = [];
 
     // JMS: knowledge of statistic and group by belongs with query
     // in the SimpleDataset class.
-    //protected $statisticObject; 
+    //protected $statisticObject;
     //protected $groupByObject;
     // TODO: consider that groupby should live in SimpleTimeseriesDataset
     // instead of SimpleTimeseriesData class?
@@ -42,8 +42,8 @@ class SimpleData extends \Common\Identity
     // JMS TODO: consider replacing this or renaming to 'label'
     // and why do we have an array of x_ids??
     //    x_ids: enable drilldown inside of pie charts. Please don't ask.
-    protected $_x_ids = array();
-    protected $_x_values = array();
+    protected $_x_ids = [];
+    protected $_x_values = [];
 
     /**
      * _unit: A string indicating contents of the column
@@ -55,9 +55,9 @@ class SimpleData extends \Common\Identity
     protected $_errorsCount;
     protected $_valuesCount;
 
-    // derived from Query class 
+    // derived from Query class
     protected $_statistic;
-    protected $_group_by; 
+    protected $_group_by;
 
     // ----------- public functions ------------- //
 
@@ -66,9 +66,9 @@ class SimpleData extends \Common\Identity
         parent::__construct($name);
     }
 
-    // Helper function for debugging 
+    // Helper function for debugging
     // JMS April 2015
-    public function __toString() {
+    public function __toString(): string {
         $st = isset($this->_statistic) ? $this->getStatistic()->getId() : null;
 
         return "Data Name: {$this->getName()}\n"
@@ -85,12 +85,12 @@ class SimpleData extends \Common\Identity
             . "X Values Count: " . count( $this->getXValues() ). "\n"
             . "X Ids: " . implode(',', $this->getXIds()) . "\n"
             . "X Ids Count: " . count( $this->getXIds() ). "\n";
-    } // __toString() 
+    } // __toString()
 
     /**
-     *  truncate() 
+     *  truncate()
      *
-     * Truncate the dataset in PHP. 
+     * Truncate the dataset in PHP.
      * No computation is done with the errors beyond $limit (set to 0).
      * We have no short labels in SimpleData model as of now.
      * Weights are unused.
@@ -99,12 +99,12 @@ class SimpleData extends \Common\Identity
      *      index upper limit of data to display.
      * @param bool $showAverageOfOthers
      */
-    public function truncate($limit, $showAverageOfOthers = false)
+    public function truncate($limit, $showAverageOfOthers = false): void
     {
         $stat = $this->getStatistic()->getId();
 
-        $isMin = strpos($stat, 'min_') !== false;
-        $isMax = strpos($stat, 'max_') !== false;
+        $isMin = str_contains($stat, 'min_');
+        $isMax = str_contains($stat, 'max_');
 
         // use the accessor to determine the count of values in the present
         // SimpleData object.
@@ -210,13 +210,13 @@ class SimpleData extends \Common\Identity
         }
 
         foreach ($this->values as $value) {
-            if ($value != NoValue) {
+            if ($value != \NOVALUE) {
                 $min = min($min,$value);
                 $max = max($max,$value);
             }
         }
 
-        return array($min, $max);
+        return [$min, $max];
     }
 
     public function getValues()
@@ -242,7 +242,7 @@ class SimpleData extends \Common\Identity
         */
 
         throw new \Exception(
-            get_class($this) . ":getValue( idx = $idx ) not found"
+            static::class . ":getValue( idx = $idx ) not found"
         );
     }
 
@@ -258,7 +258,7 @@ class SimpleData extends \Common\Identity
         }
 
         throw new \Exception(
-            get_class($this) . ":getError( idx = $idx ) not found"
+            static::class . ":getError( idx = $idx ) not found"
         );
     }
 
@@ -275,7 +275,7 @@ class SimpleData extends \Common\Identity
         }
 
         throw new \Exception(
-            get_class($this) . ":getXId( idx = $idx ) not found"
+            static::class . ":getXId( idx = $idx ) not found"
         );
     }
 
@@ -291,7 +291,7 @@ class SimpleData extends \Common\Identity
         }
 
         throw new \Exception(
-            get_class($this) . ":getXValue( idx = $idx ) not found"
+            static::class . ":getXValue( idx = $idx ) not found"
         );
     }
 
@@ -312,7 +312,7 @@ class SimpleData extends \Common\Identity
         }
 
         throw new \Exception(
-            get_class($this) . ":getOrderId( idx = $idx ) not found"
+            static::class . ":getOrderId( idx = $idx ) not found"
         );
     }
 
@@ -328,7 +328,7 @@ class SimpleData extends \Common\Identity
         }
 
         throw new \Exception(
-            get_class($this) . ":getId( idx = $idx ) not found"
+            static::class . ":getId( idx = $idx ) not found"
         );
     }
 
@@ -339,53 +339,53 @@ class SimpleData extends \Common\Identity
 
     public function getGroupBy()
     {
-        return $this->_group_by; 
+        return $this->_group_by;
     }
 
 
     // ----------- mutators ------------- //
 
-    public function setValues($values)
+    public function setValues($values): void
     {
         $this->_values = $values;
     }
 
-    public function setErrors($errors)
+    public function setErrors($errors): void
     {
         $this->_errors = $errors;
     }
 
-    public function setXIds($ids)
+    public function setXIds($ids): void
     {
         $this->_x_ids = $ids;
     }
 
-    public function setXValues($v)
+    public function setXValues($v): void
     {
         $this->_x_values = $v;
     }
 
-    public function setUnit($unit)
+    public function setUnit($unit): void
     {
         $this->_unit = $unit;
     }
 
-    public function setOrderIds($order_ids)
+    public function setOrderIds($order_ids): void
     {
         $this->_order_ids = $order_ids;
     }
 
-    public function setIds($ids)
+    public function setIds($ids): void
     {
         $this->_ids = $ids;
     }
 
-    public function setStatistic($stat)
+    public function setStatistic($stat): void
     {
         $this->_statistic= $stat;
     }
 
-    public function setGroupBy($gp)
+    public function setGroupBy($gp): void
     {
         $this->_group_by= $gp;
     }

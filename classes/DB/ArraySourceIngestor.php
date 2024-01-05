@@ -5,28 +5,18 @@
  */
 class ArraySourceIngestor implements Ingestor
 {
-	protected $_dest_db = null;
+	protected $_logger;
 
-	protected $_source_data;
-	protected $_dest_insert_statement = null;
-
-    protected $_logger;
-
-	function __construct($dest_db, $source_data, $dest_insert_statement)
+	function __construct(protected $_dest_db, protected $_source_data, protected $_dest_insert_statement)
 	{
-		$this->_dest_db =  $dest_db;
-
-		$this->_source_data = $source_data;
-		$this->_dest_insert_statement = $dest_insert_statement;
-
-        $this->_logger = Log::singleton('null');
+		$this->_logger = Log::singleton('null');
 	}
 
 	function __destruct()
 	{
 	}
 
-	public function ingest()
+	public function ingest(): void
 	{
 	    $time_start = microtime(true);
 
@@ -51,11 +41,11 @@ class ArraySourceIngestor implements Ingestor
 		$time_end = microtime(true);
 		$time = $time_end - $time_start;
 
-		print(get_class($this).": Values Affected: $rowsAffected, Source Rows: $sourceRows  (Time Taken: ".number_format($time,2)." s) <br />\n");
+		print(static::class.": Values Affected: $rowsAffected, Source Rows: $sourceRows  (Time Taken: ".number_format($time,2)." s) <br />\n");
 
 	}
 
-    public function setLogger(\Psr\Log\LoggerInterface $logger)
+    public function setLogger(\Psr\Log\LoggerInterface $logger): void
     {
         $this->_logger = $logger;
     }

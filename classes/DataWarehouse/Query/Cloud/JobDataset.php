@@ -14,13 +14,13 @@ use Exception;
   */
 class JobDataset extends \DataWarehouse\Query\RawQuery
 {
-    private $documentation = array();
+    private $documentation = [];
 
     public function __construct(
         array $parameters,
         $stat = "all"
     ) {
-        parent::__construct('Cloud', 'modw_cloud', 'cloudfact_by_day', array());
+        parent::__construct('Cloud', 'modw_cloud', 'cloudfact_by_day', []);
 
         $this->setDistinct(true);
         $config = RawStatisticsConfiguration::factory();
@@ -129,7 +129,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
     /**
      * helper function to join the data table to another table
      */
-    private function joinTo($othertable, $joinkey, $otherkey, $colalias, $idcol = "id")
+    private function joinTo($othertable, $joinkey, $otherkey, $colalias, $idcol = "id"): void
     {
         $this->addTable($othertable);
         $this->addWhereCondition(new WhereCondition(new TableField($this->getDataTable(), $joinkey), '=', new TableField($othertable, $idcol)));

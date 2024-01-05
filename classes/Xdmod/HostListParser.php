@@ -25,7 +25,7 @@ class HostListParser
      *
      * @var int
      */
-    const MAX_SIZE = 65536;
+    public const MAX_SIZE = 65536;
 
     /**
      * Logger object.
@@ -54,7 +54,7 @@ class HostListParser
      *
      * @param LoggerInterface $logger The logger instance.
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -71,12 +71,12 @@ class HostListParser
         $this->logger->debug("Expanding host list '$hostList'");
 
         // Hosts that have been parsed.
-        $hosts = array();
+        $hosts = [];
         // If the host list does not contain brackets it is sufficient
         // to split the host list string on commas.
         $hostListContainsBrackets
-            = strpos($hostList, '[') !== false
-            || strpos($hostList, ']') !== false;
+            = str_contains($hostList, '[')
+            || str_contains($hostList, ']');
 
         if (!$hostListContainsBrackets) {
             $hosts = explode(',', $hostList);
@@ -134,9 +134,7 @@ class HostListParser
         // incase of an empty hostlist or a hostlist that has some spaces
         // around the name, trim them and filter out anything that is empty
         $hosts = array_map('trim', $hosts);
-        return array_filter($hosts, function ($value) {
-            return '' !== $value;
-        });
+        return array_filter($hosts, fn($value) => '' !== $value);
     }
 
     /**
@@ -152,19 +150,19 @@ class HostListParser
 
         // Base case for recursive expansion.
         if ($part === '') {
-            return array('');
+            return [''];
         }
 
         if (!preg_match('/^([^,\[]*)(\[[^\]]*\])?(.*)$/', $part, $matches)) {
             throw new Exception("Bad host list '$part'");
         }
 
-        list(, $prefix, $rangeList, $rest) = $matches;
+        [, $prefix, $rangeList, $rest] = $matches;
 
         $restExpanded = $this->expandPart($rest);
 
         if ($rangeList === '') {
-            $expanded = array($prefix);
+            $expanded = [$prefix];
         } else {
 
             // Remove "[" and "]".
@@ -192,7 +190,7 @@ class HostListParser
     {
         $this->logger->debug("Expanding range list '$rangeList'");
 
-        $results = array();
+        $results = [];
 
         foreach (explode(',', $rangeList) as $range) {
             $results = array_merge(
@@ -220,7 +218,7 @@ class HostListParser
 
         // Check for a single number.
         if (preg_match('/^[0-9]+$/', $range)) {
-            return array($prefix . $range);
+            return [$prefix . $range];
         }
 
         // Split low-high.
@@ -228,7 +226,7 @@ class HostListParser
             throw new Exception("Bad range '$range'");
         }
 
-        list(, $low, $high) = $matches;
+        [, $low, $high] = $matches;
 
         $width = strlen($low);
 
@@ -244,7 +242,7 @@ class HostListParser
             throw new Exception('Results too large');
         }
 
-        $results = array();
+        $results = [];
 
         // Use the width for consistent padding.
         $format = "%s%0{$width}d";
@@ -267,7 +265,7 @@ class HostListParser
      */
     private function crossProduct(array $arr1, array $arr2)
     {
-        $product = array();
+        $product = [];
 
         foreach ($arr1 as $e1) {
             foreach ($arr2 as $e2) {

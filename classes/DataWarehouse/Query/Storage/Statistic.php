@@ -11,21 +11,19 @@ namespace DataWarehouse\Query\Storage;
 class Statistic extends \DataWarehouse\Query\Statistic
 {
 
+    // @codingStandardsIgnoreLine
     /**
-     * @var string|null
+     * @param string|null $info
      */
-    private $_info; // @codingStandardsIgnoreLine
-
     public function __construct(
         $formula,
         $aliasname,
         $label,
         $unit,
         $decimals = 1,
-        $info = null
+        private $_info = null
     ) {
         parent::__construct($formula, $aliasname, $label, $unit, $decimals);
-        $this->_info = $info;
     }
 
     public function getWeightStatName()

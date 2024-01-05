@@ -54,10 +54,7 @@ if ($argc == 3) {
     }
 }
 
-$conf = array(
-    'file'         => false,
-    'emailSubject' => 'Report Scheduler',
-);
+$conf = ['file'         => false, 'emailSubject' => 'Report Scheduler'];
 
 $conf['emailSubject'] .= APPLICATION_ENV == 'dev' ? ' [Dev]' : '';
 
@@ -66,10 +63,7 @@ $logger = Log::factory('ReportScheduler', $conf);
 // =====================================================================
 
 // NOTE: "process_start_time" is needed for log summary.
-$logger->notice(array(
-    'message'            => 'Report scheduler start',
-    'process_start_time' => date('Y-m-d H:i:s'),
-));
+$logger->notice(['message'            => 'Report scheduler start', 'process_start_time' => date('Y-m-d H:i:s')]);
 
 $active_frequencies = getActiveFrequencies(true);
 
@@ -90,10 +84,7 @@ foreach ($active_frequencies as $frequency) {
         } catch (Exception $e) {
             $msg = "Failed to get user for id = {$details['user_id']}: "
                 . $e->getMessage();
-            $logger->err(array(
-                'message'    => $msg,
-                'stacktrace' => $e->getTraceAsString(),
-            ));
+            $logger->err(['message'    => $msg, 'stacktrace' => $e->getTraceAsString()]);
             continue;
         }
 
@@ -121,10 +112,7 @@ foreach ($active_frequencies as $frequency) {
             } catch(Exception $e) {
                 $msg = "Error Preparing report on " . gethostname() . " {$details['report_id']}: "
                     . $e->getMessage();
-                $logger->err(array(
-                    'message'    => $msg,
-                    'stacktrace' => $e->getTraceAsString(),
-                ));
+                $logger->err(['message'    => $msg, 'stacktrace' => $e->getTraceAsString()]);
             }
 
             if (isset($working_dir) && $working_dir != '/' && $working_dir != getcwd()) {
@@ -135,10 +123,7 @@ foreach ($active_frequencies as $frequency) {
 }
 
 // NOTE: "process_end_time" is needed for log summary.
-$logger->notice(array(
-    'message'          => 'Report scheduler end',
-    'process_end_time' => date('Y-m-d H:i:s'),
-));
+$logger->notice(['message'          => 'Report scheduler end', 'process_end_time' => date('Y-m-d H:i:s')]);
 
 exit;
 
@@ -159,13 +144,7 @@ function getActiveFrequencies($verbose = false)
     //             (Examples: 1999 or 2003).
     $time = date('l w n j Y');
 
-    list(
-        $formal_day_of_week,
-        $day_of_week,
-        $month_index,
-        $day_of_month,
-        $year
-    ) = explode(' ', $time);
+    [$formal_day_of_week, $day_of_week, $month_index, $day_of_month, $year] = explode(' ', $time);
 
     if ($verbose) {
         $logger->info('Current Date');
@@ -175,7 +154,7 @@ function getActiveFrequencies($verbose = false)
         $logger->info("Day Of Week:  $day_of_week ($formal_day_of_week)");
     }
 
-    $activeFrequencies = array();
+    $activeFrequencies = [];
 
     // Daily (always active)
     $activeFrequencies[] = 'Daily';
@@ -191,7 +170,7 @@ function getActiveFrequencies($verbose = false)
     }
 
     // Quarterly (1 = January, 4 = April, 7 = July, 10 = October)
-    $quarter_start_months = array(1, 4, 7, 10);
+    $quarter_start_months = [1, 4, 7, 10];
 
     // First of the month and the month denotes the start of a quarter
     if ($day_of_month == 3 && in_array($month_index, $quarter_start_months)) {
@@ -199,7 +178,7 @@ function getActiveFrequencies($verbose = false)
     }
 
     // Semi-annually (1 = January, 7 = July)
-    $semi_annual_start_months = array(1, 7);
+    $semi_annual_start_months = [1, 7];
 
     // First of the month and the month denotes the start of a new 6-month
     // block

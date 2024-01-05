@@ -1,7 +1,7 @@
 <?php
-require_once dirname(__FILE__).'/../../configuration/linker.php';
+require_once __DIR__.'/../../configuration/linker.php';
 
-$returnData = array();
+$returnData = [];
 
 try
 {
@@ -35,12 +35,7 @@ try
     );
     $results = $query->execute();
 
-    $returnData =  array(
-        'totalCount' => 1,
-        'message' =>'',
-        'data' => array($results),
-        'success' => true
-    );
+    $returnData =  ['totalCount' => 1, 'message' =>'', 'data' => [$results], 'success' => true];
 
 }
 catch(Exception $ex) {

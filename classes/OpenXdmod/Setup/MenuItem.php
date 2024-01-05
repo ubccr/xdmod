@@ -12,23 +12,6 @@ class MenuItem
 {
 
     /**
-     * The string that should be used to trigger the item.
-     *
-     * This is typically a number or a single letter (e.g. "q" for
-     * quit).
-     *
-     * @var string
-     */
-    protected $trigger;
-
-    /**
-     * Menu item text label.
-     *
-     * @var string
-     */
-    protected $label;
-
-    /**
      * Menu item handler.
      *
      * @var SetupItem
@@ -42,10 +25,17 @@ class MenuItem
      * @param string $label The description of the item.
      * @param SetupItem $handler The corresponding setup item.
      */
-    public function __construct($trigger, $label, SetupItem $handler)
+    public function __construct(/**
+     * The string that should be used to trigger the item.
+     *
+     * This is typically a number or a single letter (e.g. "q" for
+     * quit).
+     */
+    protected $trigger, /**
+     * Menu item text label.
+     */
+    protected $label, SetupItem $handler)
     {
-        $this->trigger = $trigger;
-        $this->label   = $label;
         $this->handler = $handler;
     }
 

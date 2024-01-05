@@ -9,7 +9,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
 {
     private static $helper;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
         self::$helper = new XdmodTestHelper();
@@ -18,7 +18,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideGetSearchHistory
      */
-    public function testGetSearchHistory($id, $role, $input, $output)
+    public function testGetSearchHistory($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,
@@ -94,7 +94,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideCreateSearchHistory
      */
-    public function testCreateSearchHistory($id, $role, $input, $output)
+    public function testCreateSearchHistory($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,
@@ -157,7 +157,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideGetHistoryById
      */
-    public function testGetHistoryById($id, $role, $input, $output)
+    public function testGetHistoryById($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,
@@ -188,7 +188,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideUpdateHistory
      */
-    public function testUpdateHistory($id, $role, $input, $output)
+    public function testUpdateHistory($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,
@@ -227,7 +227,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideDeleteHistory
      */
-    public function testDeleteHistory($id, $role, $input, $output)
+    public function testDeleteHistory($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,
@@ -258,7 +258,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideDeleteAllHistory
      */
-    public function testDeleteAllHistory($id, $role, $input, $output)
+    public function testDeleteAllHistory($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,
@@ -289,7 +289,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideSearchJobs
      */
-    public function testSearchJobs($id, $role, $input, $output)
+    public function testSearchJobs($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,
@@ -386,7 +386,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideSearchJobsByPeers
      */
-    public function testSearchJobsByPeers($id, $role, $input, $output)
+    public function testSearchJobsByPeers($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,
@@ -436,7 +436,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideSearchJobsByTimeseries
      */
-    public function testSearchJobsByTimeseries($id, $role, $input, $output)
+    public function testSearchJobsByTimeseries($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,
@@ -515,38 +515,23 @@ class WarehouseControllerProviderTest extends TokenAuthTest
      * settings. This helper function generates a valid set of parameters for the
      * endpoint.
      */
-    protected function getAggDataParameterGenerator($configOverrides = array())
+    protected function getAggDataParameterGenerator($configOverrides = [])
     {
-        $config = array(
-            'realm' => 'Jobs',
-            'group_by' => 'person',
-            'statistics' => array('job_count', 'total_cpu_hours'),
-            'aggregation_unit' => 'day',
-            'start_date' => '2016-12-01',
-            'end_date' => '2017-01-01',
-            'order_by' => array(
-                'field' => 'job_count',
-                'dirn' => 'asc'
-            )
-        );
+        $config = ['realm' => 'Jobs', 'group_by' => 'person', 'statistics' => ['job_count', 'total_cpu_hours'], 'aggregation_unit' => 'day', 'start_date' => '2016-12-01', 'end_date' => '2017-01-01', 'order_by' => ['field' => 'job_count', 'dirn' => 'asc']];
 
         $config = array_merge($config, $configOverrides);
 
-        return array(
-            'start' => 0,
-            'limit' => 10,
-            'config' => json_encode($config)
-        );
+        return ['start' => 0, 'limit' => 10, 'config' => json_encode($config)];
     }
 
     public function aggregateDataAccessControlsProvider()
     {
-        $inputs = array();
+        $inputs = [];
 
-        $inputs[] = array('pub', 401, $this->getAggDataParameterGenerator());
-        $inputs[] = array('cd', 403, $this->getAggDataParameterGenerator(array('statistics' => array('unavaiablestat'))));
-        $inputs[] = array('cd', 403, $this->getAggDataParameterGenerator(array('group_by' => 'turnips')));
-        $inputs[] = array('cd', 403, $this->getAggDataParameterGenerator(array('realm' => 'Agricultural')));
+        $inputs[] = ['pub', 401, $this->getAggDataParameterGenerator()];
+        $inputs[] = ['cd', 403, $this->getAggDataParameterGenerator(['statistics' => ['unavaiablestat']])];
+        $inputs[] = ['cd', 403, $this->getAggDataParameterGenerator(['group_by' => 'turnips'])];
+        $inputs[] = ['cd', 403, $this->getAggDataParameterGenerator(['realm' => 'Agricultural'])];
 
         return $inputs;
     }
@@ -559,7 +544,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $role,
         $input,
         $output
-    ) {
+    ): void {
         parent::authenticateRequestAndValidateJson(
             self::$helper,
             $role,
@@ -605,9 +590,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             $config,
             null,
             'missing_config_',
-            function ($param) {
-                return "Missing mandatory config property $param";
-            }
+            fn($param) => "Missing mandatory config property $param"
         );
         $tests = $this->getAggregateDataMalformedParamTests(
             $tests,
@@ -615,9 +598,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             $config,
             'order_by',
             'missing_config_order_by_',
-            function () {
-                return 'Malformed config property order_by';
-            }
+            fn() => 'Malformed config property order_by'
         );
         return $tests;
     }
@@ -659,7 +640,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      *  @dataProvider aggregateDataAccessControlsProvider
      */
-    public function testGetAggregateDataAccessControls($user, $http_code, $params)
+    public function testGetAggregateDataAccessControls($user, $http_code, $params): void
     {
         if ('pub' !== $user) {
             self::$helper->authenticate($user);
@@ -671,7 +652,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         self::$helper->logout();
     }
 
-    public function testGetAggregateData()
+    public function testGetAggregateData(): void
     {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", parent::$XDMOD_REALMS)) {
@@ -693,13 +674,13 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * Confirm that a filter can be applied to the aggregatedata endpoint
      */
-    public function testGetAggregateWithFilters()
+    public function testGetAggregateWithFilters(): void
     {
         if (!in_array("jobs", parent::$XDMOD_REALMS)) {
             $this->markTestSkipped('This test requires the Jobs realm');
         }
 
-        $params = $this->getAggDataParameterGenerator(array('filters' => array('jobsize' => 1)));
+        $params = $this->getAggDataParameterGenerator(['filters' => ['jobsize' => 1]]);
 
         self::$helper->authenticate('cd');
         $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
@@ -714,7 +695,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideGetDimensions
      */
-    public function testGetDimensions($id, $role, $input, $output)
+    public function testGetDimensions($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,
@@ -745,7 +726,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideGetDimensionValues
      */
-    public function testGetDimensionValues($id, $role, $input, $output)
+    public function testGetDimensionValues($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,
@@ -777,7 +758,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideGetRawData
      */
-    public function testGetRawData($id, $role, $tokenType, $input, $output)
+    public function testGetRawData($id, $role, $tokenType, $input, $output): void
     {
         parent::runTokenAuthTest(
             $role,
@@ -853,7 +834,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             ]
         );
         foreach ($testData as $t) {
-            list($id, $params, $output) = $t;
+            [$id, $params, $output] = $t;
             $tests[] = [
                 $id,
                 'usr',
@@ -872,7 +853,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideTokenAuthTestData
      */
-    public function testGetRawDataLimit($role, $tokenType)
+    public function testGetRawDataLimit($role, $tokenType): void
     {
         parent::runTokenAuthTest(
             $role,
@@ -885,7 +866,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                 'endpoint_type' => 'rest',
                 'authentication_type' => 'token_required'
             ],
-            parent::validateSuccessResponse(function ($body, $assertMessage) {
+            parent::validateSuccessResponse(function ($body, $assertMessage): void {
                 $this->assertGreaterThan(
                     0,
                     $body['data'],

@@ -1,15 +1,15 @@
 <?php
 
-require_once dirname(__FILE__) . '/../../../configuration/linker.php';
+require_once __DIR__ . '/../../../configuration/linker.php';
 
 use CCR\DB;
 use Models\Services\Users;
 
 \xd_security\start_session();
 
-$response = array();
+$response = [];
 
-$operation = isset($_REQUEST['operation']) ? $_REQUEST['operation'] : '';
+$operation = $_REQUEST['operation'] ?? '';
 
 if ($operation == 'logout') {
 
@@ -26,7 +26,7 @@ if ($operation == 'logout') {
 }
 
 
-xd_security\enforceUserRequirements(array(STATUS_LOGGED_IN, STATUS_MANAGER_ROLE), 'xdDashboardUser');
+xd_security\enforceUserRequirements([STATUS_LOGGED_IN, STATUS_MANAGER_ROLE], 'xdDashboardUser');
 
 // =====================================================
 
@@ -58,11 +58,11 @@ switch ($operation) {
         $id = \xd_security\assertParameterSet('id');
         $comments = \xd_security\assertParameterSet('comments');
 
-        $results = $pdo->query("SELECT id FROM AccountRequests WHERE id=:id", array('id' => $id));
+        $results = $pdo->query("SELECT id FROM AccountRequests WHERE id=:id", ['id' => $id]);
 
         if (count($results) == 1) {
 
-            $pdo->execute("UPDATE AccountRequests SET comments=:comments WHERE id=:id", array('comments' => $comments, 'id' => $id));
+            $pdo->execute("UPDATE AccountRequests SET comments=:comments WHERE id=:id", ['comments' => $comments, 'id' => $id]);
 
             $response['success'] = true;
 
@@ -94,10 +94,10 @@ switch ($operation) {
         $group_filter = \xd_security\assertParameterSet('group_filter');
         $role_filter = \xd_security\assertParameterSet('role_filter');
 
-        $context_filter = isset($_REQUEST['context_filter']) ? $_REQUEST['context_filter'] : '';
+        $context_filter = $_REQUEST['context_filter'] ?? '';
 
         $results = Users::getUsers($group_filter, $role_filter, $context_filter);
-        $filtered = array();
+        $filtered = [];
         foreach ($results as $user) {
             if ($user['username'] !== 'Public User') {
                 $filtered[] = $user;
@@ -193,7 +193,7 @@ switch ($operation) {
         $end_date = $_REQUEST['end_date'];
 
         $response['success'] = true;
-        $resource['response'] = array(array('x' => array(1, 2, 3), 'y' => array(5, 2, 1)));
+        $resource['response'] = [['x' => [1, 2, 3], 'y' => [5, 2, 1]]];
         $resource['count'] = count($response['response']);
 
 

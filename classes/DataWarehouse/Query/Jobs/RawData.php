@@ -22,7 +22,7 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
         $endDate,
         $groupById = null,
         $statisticId = null,
-        array $parameters = array(),
+        array $parameters = [],
         LoggerInterface $logger = null
     ) {
         $realmId = 'Jobs';

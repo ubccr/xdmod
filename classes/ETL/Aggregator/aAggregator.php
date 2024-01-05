@@ -34,7 +34,7 @@ abstract class aAggregator extends aRdbmsDestinationAction
 
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
-        $requiredKeys = array("definition_file");
+        $requiredKeys = ["definition_file"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
         parent::__construct($options, $etlConfig, $logger);
@@ -72,7 +72,7 @@ abstract class aAggregator extends aRdbmsDestinationAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function execute(EtlOverseerOptions $etlOverseerOptions)
+    public function execute(EtlOverseerOptions $etlOverseerOptions): void
     {
         $this->initialize($etlOverseerOptions);
 
@@ -87,7 +87,7 @@ abstract class aAggregator extends aRdbmsDestinationAction
             $this->logger->info("Breaking ETL period into " . count($datePeriodChunkList) . " chunks");
         } else {
             // Generate an array containing a single tuple
-            $datePeriodChunkList = array(array( $this->currentStartDate, $this->currentEndDate ));
+            $datePeriodChunkList = [[$this->currentStartDate, $this->currentEndDate]];
         }
 
         $numDateIntervals = count($datePeriodChunkList);
@@ -103,9 +103,9 @@ abstract class aAggregator extends aRdbmsDestinationAction
             $this->logger->info(
                 "Process date interval ($intervalNum/$numDateIntervals) "
                 . "(start: "
-                . ( null === $this->currentStartDate ? "none" : $this->currentStartDate )
+                . ( $this->currentStartDate ?? "none" )
                 . ", end: "
-                . ( null === $this->currentEndDate ? "none" : $this->currentEndDate )
+                . ( $this->currentEndDate ?? "none" )
                 . ")"
             );
 
@@ -168,13 +168,7 @@ abstract class aAggregator extends aRdbmsDestinationAction
 
         // NOTE: This is needed for the log summary.
         $totalEndTime = microtime(true);
-        $this->logger->notice(array(
-                                  "message"        => "end",
-                                  'action'         => (string) $this,
-                                  'start_time'     => $totalStartTime,
-                                  'end_time'       => $totalEndTime,
-                                  'elapsed_time'   => round(($totalEndTime - $totalStartTime)/60, 3) . "m"
-                                  ));
+        $this->logger->notice(["message"        => "end", 'action'         => (string) $this, 'start_time'     => $totalStartTime, 'end_time'       => $totalEndTime, 'elapsed_time'   => round(($totalEndTime - $totalStartTime)/60, 3) . "m"]);
 
     }  // execute()
 

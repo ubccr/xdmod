@@ -4,7 +4,7 @@
       XDMoD User Manual (Entry Point)
    */
    
-   require_once dirname(__FILE__).'/../configuration/linker.php';
+   require_once __DIR__.'/../configuration/linker.php';
 
    $user_manual_address = xd_utilities\getConfiguration('general', 'user_manual');
    

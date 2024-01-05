@@ -23,7 +23,7 @@ class XDStatistics
      *                     timeframe defined by aggregation_type
      * @throws Exception if there is a problem retrieving data from the db.
      */
-    public static function getUserVisitStats($aggregation_type = 'month', $user_types = array())
+    public static function getUserVisitStats($aggregation_type = 'month', $user_types = [])
     {
 
         $db = DB::factory('database');
@@ -37,9 +37,7 @@ class XDStatistics
         $whereClause = '1 = 1';
         if (!empty($user_types)) {
             $inValues = array_map(
-                function ($value) use ($db) {
-                    return $db->quote($value);
-                },
+                fn($value) => $db->quote($value),
                 $user_types
             );
             $whereClause = 'ud.user_type IN (' . implode(',', $inValues) . ')';

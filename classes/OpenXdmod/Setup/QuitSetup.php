@@ -14,7 +14,7 @@ class QuitSetup extends SetupItem
     /**
      * @inheritdoc
      */
-    public function handle()
+    public function handle(): void
     {
         exit;
     }

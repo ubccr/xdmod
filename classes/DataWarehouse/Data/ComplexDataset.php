@@ -12,7 +12,7 @@ use Exception;
  */
 class ComplexDataset
 {
-    protected $_dataDescripters = array();
+    protected $_dataDescripters = [];
 
     protected $_totalX;
 
@@ -56,17 +56,17 @@ class ComplexDataset
         $user
     ) {
         // JMS: please improve this when possible.
-        if ( !in_array($query_type, array('aggregate','timeseries') ) ) {
+        if ( !in_array($query_type, ['aggregate', 'timeseries'] ) ) {
             throw new \Exception(
-                get_class($this)." unsupported query_type found: ".$query_type
+                static::class." unsupported query_type found: ".$query_type
             );
         }
 
-        $globalFilterDescriptions = array();
+        $globalFilterDescriptions = [];
         //$yAxisArray  = array();
-        $metrics     = array();
-        $dimensions  = array();
-        $dataSources = array();
+        $metrics     = [];
+        $dimensions  = [];
+        $dataSources = [];
 
         foreach ($data_series as $data_description_index => $data_description) {
 
@@ -76,7 +76,7 @@ class ComplexDataset
                 $stat = $realm->getStatisticObject($data_description->metric);
                 $statLabel = $stat->getName();
                 $metrics[$statLabel] = $stat->getHtmlDescription();
-            } catch (\Exception $ex) {
+            } catch (\Exception) {
                 continue;
             }
 
@@ -146,13 +146,13 @@ class ComplexDataset
 
         } // foreach ($data_series as $data_description_index => $data_description)
 
-        return array(
+        return [
             $dimensions,
             $metrics,
             //$yAxisArray,
             $globalFilterDescriptions,
-            $dataSources
-        );
+            $dataSources,
+        ];
     } // function init()
 
     // --------------------------------------------------------------
@@ -170,16 +170,13 @@ class ComplexDataset
 
         $datasetClassname
             = $query_type == "aggregate"
-            ? '\DataWarehouse\Data\SimpleDataset'
+            ? \DataWarehouse\Data\SimpleDataset::class
             : '\DataWarehouse\Data\SimpleTimeseriesDataset';
 
         // Create the resulting Simple*Dataset; add to $this->_dataDescripters[]
         $dataset = new $datasetClassname($query);
 
-        $this->_dataDescripters[] = (object) array(
-            'data_description' => $data_description,
-            'dataset'          => $dataset,
-        );
+        $this->_dataDescripters[] = (object) ['data_description' => $data_description, 'dataset'          => $dataset];
     } // function addDataset()
 
     // --------------------------------------------------------------
@@ -191,7 +188,7 @@ class ComplexDataset
 
         if (!isset($this->_xAxisDataObject) )  {
             throw new \Exception(
-                get_class($this)." _xAxisDataObject not set; _totalX=". $this->_totalX
+                static::class." _xAxisDataObject not set; _totalX=". $this->_totalX
             );
         }
         return $this->_totalX;
@@ -207,7 +204,7 @@ class ComplexDataset
         // TODO JMS note: I may want to be able to return 0 here..
         if (empty($this->_dataDescripters) )  {
             throw new \Exception(
-                get_class($this)." _dataDescripters array is empty"
+                static::class." _dataDescripters array is empty"
             );
         }
         return count($this->_dataDescripters);
@@ -241,7 +238,7 @@ class ComplexDataset
         $data_description,
         $global_filters
     ) {
-        $groupedRoleParameters = array();
+        $groupedRoleParameters = [];
         // set global filters for dataset
         if (!$data_description->ignore_global) {
             foreach ($global_filters->data as $global_filter) {
@@ -255,7 +252,7 @@ class ComplexDataset
                         ])
                     ) {
                         $groupedRoleParameters[$global_filter->dimension_id]
-                            = array();
+                            = [];
                     }
 
                     $groupedRoleParameters[$global_filter->dimension_id][]
@@ -288,12 +285,12 @@ class ComplexDataset
 
         // init() should be called before this function.
         if (!isset($this->_dataDescripters) )  {
-            throw new \Exception(get_class($this)." _dataDescripters not set");
+            throw new \Exception(static::class." _dataDescripters not set");
         }
 
         if (!isset($this->_xAxisDataObject) || $force_reexec === true) {
-            $names = array();
-            $tempXDataObject = array();
+            $names = [];
+            $tempXDataObject = [];
             $sort_type = 'none';
 
             foreach ($this->_dataDescripters as $dataDescripterAndDataset) {
@@ -328,11 +325,13 @@ class ComplexDataset
                         $order = $subXAxisObject->getOrderId($index);
                         $value = $yAxisDataObject->getValue($index);
 
-                        $tempXDataObject[$label] = array(
-                            'label' => $label, // x value from x axis obj
-                            'order' => $order, // order id from x axis obj
-                            'value' => $value, // y value
-                        );
+                        $tempXDataObject[$label] = [
+                            'label' => $label,
+                            // x value from x axis obj
+                            'order' => $order,
+                            // order id from x axis obj
+                            'value' => $value,
+                        ];
                     } // if (!isset ... )
                 } // foreach $subXAxisObject
             } // foreach ($this->_dataDescripters ... )
@@ -377,8 +376,8 @@ class ComplexDataset
     protected function sortTempXArray($sort_type, &$tempXDataObject) {
 
         // arrays are keyed by x value, from x axis obj;
-        $values = array(); // y values
-        $orders = array(); // order id from x axis obj
+        $values = []; // y values
+        $orders = []; // order id from x axis obj
 
         foreach ($tempXDataObject as $key => $vArray) {
             $values[$key] = $vArray['value'];
@@ -419,7 +418,7 @@ class ComplexDataset
         } // switch
 
         // now retrieve the x values reflecting the proper sort
-        $labels = array();
+        $labels = [];
         foreach ( $tempXDataObject as $value) {
             $labels[] = $value['label'];
         }
@@ -455,7 +454,7 @@ class ComplexDataset
     ) {
         $this->getXAxis(true, $limit, $offset);
 
-        $yAxisArray = array();
+        $yAxisArray = [];
 
         // For each item on the _dataDescripters array, generate an axisId (name)
         // and push the dataset onto a yAxisArray. If shared y axis, push onto
@@ -478,19 +477,19 @@ class ComplexDataset
             }
 
             if (!isset($yAxisArray[$axisId])) {
-                $yAxisArray[$axisId] = array();
+                $yAxisArray[$axisId] = [];
             }
 
             $yAxisArray[$axisId][] = $dataDescripterAndDataset;
         } // foreach _dataDescripter ... => dataDescripterAndDataset
 
-        $returnYAxis = array();
+        $returnYAxis = [];
         foreach ( array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions)
         {
 
             // build up a default class structure and accumulate values inside it:
             $yAxisObject = new \stdClass();
-            $yAxisObject->series = array();
+            $yAxisObject->series = [];
             $yAxisObject->decimals = 0;
             $yAxisObject->std_err = false;
             $yAxisObject->value_labels = false;
@@ -628,16 +627,8 @@ class ComplexDataset
                     $semDecimals = $semStatisticObject->getPrecision();
                 }
 
-                $yAxisObject->series[] = array(
-                    'yAxisDataObject'       => $yAxisDataObject,
-                    'data_description'      => $dataDescripterAndDataset
-                                               ->data_description,
-                    'decimals'              => $decimals,
-                    'semDecimals'           => isset($semDecimals)
-                                             ? $semDecimals
-                                             : 0,
-                    'filterParametersTitle' => $filterParametersTitle
-                );
+                $yAxisObject->series[] = ['yAxisDataObject'       => $yAxisDataObject, 'data_description'      => $dataDescripterAndDataset
+                                           ->data_description, 'decimals'              => $decimals, 'semDecimals'           => $semDecimals ?? 0, 'filterParametersTitle' => $filterParametersTitle];
             } // foreach ($yAxisDataDescriptions as $dataDescripterAndDataset) {
 
             $returnYAxis[$yAxisIndex] = $yAxisObject;

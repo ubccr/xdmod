@@ -16,12 +16,12 @@ use ETL\Configuration\EtlConfiguration;
 use ETL\DbModel\Table;
 use ETL\DbModel\AggregationTable;
 
-$supportedFormats = array("json", "sql");
+$supportedFormats = ["json", "sql"];
 
 // ==========================================================================================
 // Script options with defaults
 
-$scriptOptions = array(
+$scriptOptions = [
     // ETL configuration file
     'config-file'       => CONFIG_DIR . '/etl/etl.json',
     // Endpoint (defined in the ETL config) to use when querying tables
@@ -40,25 +40,13 @@ $scriptOptions = array(
     'table-config'      => null,
     // Key name that the table definition will be included under
     'table-key'         => null,
-    'verbosity'         => Log::NOTICE
-);
+    'verbosity'         => Log::NOTICE,
+];
 
 // ==========================================================================================
 // Process command line arguments
 
-$options = array(
-    'h'   => 'help',
-    'c:'  => 'config-file:',
-    'd:'  => 'discover-table:',
-    'f:'  => 'output-file:',
-    'e:'  => 'endpoint:',
-    'i'   => 'include-schema',
-    'k:'  => 'table-key:',
-    'o:'  => 'operation:',
-    't:'  => 'table-config:',
-    'v:'  => 'verbosity:',
-    'x:'  => 'output-format:'
-);
+$options = ['h'   => 'help', 'c:'  => 'config-file:', 'd:'  => 'discover-table:', 'f:'  => 'output-file:', 'e:'  => 'endpoint:', 'i'   => 'include-schema', 'k:'  => 'table-key:', 'o:'  => 'operation:', 't:'  => 'table-config:', 'v:'  => 'verbosity:', 'x:'  => 'output-format:'];
 
 $args = getopt(implode('', array_keys($options)), $options);
 
@@ -150,10 +138,7 @@ foreach ($args as $arg => $value) {
 // ------------------------------------------------------------------------------------------
 // Set up the logger
 
-$conf = array(
-    'emailSubject' => gethostname() . ': XDMOD: Data Warehouse: Federated ETL Log',
-    'mail' => false
-);
+$conf = ['emailSubject' => gethostname() . ': XDMOD: Data Warehouse: Federated ETL Log', 'mail' => false];
 
 if ( null !== $scriptOptions['verbosity'] ) {
     $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
@@ -300,7 +285,7 @@ exit(0);
  * Display usage text and exit with error status.
  */
 
-function usage_and_exit($msg = null)
+function usage_and_exit($msg = null): void
 {
     global $argv, $scriptOptions, $supportedFormats;
 

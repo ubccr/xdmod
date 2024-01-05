@@ -2,7 +2,7 @@
 
 use CCR\Log;
 
-$baseDir = dirname(dirname(__FILE__));
+$baseDir = dirname(__FILE__, 2);
 
 require_once($baseDir . "/vendor/autoload.php");
 
@@ -19,12 +19,12 @@ if (isset($linkerConfig['include_dirs'])) {
 }
 
 // Register a custom autoloader for XDMoD components.
-function xdmodAutoload($className)
+function xdmodAutoload($className): void
 {
     $pathList = explode(":", ini_get('include_path'));
 
    // if class does not have a namespace
-    if(strpos($className, '\\') === false) {
+    if(!str_contains($className, '\\')) {
         $includeFile = $className.".php";
         foreach ($pathList as $path) {
             if (is_readable("$path/$includeFile")) {
@@ -34,7 +34,7 @@ function xdmodAutoload($className)
         }
     } else {
         // convert namespace to full file path
-        $class = dirname(__FILE__) . '/../classes/'
+        $class = __DIR__ . '/../classes/'
          . str_replace('\\', '/', $className) . '.php';
         if (is_readable("$class")) {
             require_once($class);
@@ -48,7 +48,7 @@ class HttpCodeMessages
 {
     // HTTP 1.1 messages from: http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
 
-    public static $messages = array(
+    public static $messages = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         200 => 'OK',
@@ -89,8 +89,8 @@ class HttpCodeMessages
         502 => 'Bad Gateway',
         503 => 'Service Unavailable',
         504 => 'Gateway Timeout',
-        505 => 'HTTP Version Not Supported'
-    );
+        505 => 'HTTP Version Not Supported',
+    ];
 };
 
 // Global Exception Handler (Uncaught exceptions will be logged) ------------------------------
@@ -110,26 +110,21 @@ function handle_uncaught_exception($exception)
 {
     $logfile = LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile');
 
-    $logConf = array(
-        'file' => $logfile,
-        'mail' => false,
-        'db' => false,
-        'console' => false
-    );
+    $logConf = ['file' => $logfile, 'mail' => false, 'db' => false, 'console' => false];
 
     $logger = Log::singleton('exception', $logConf);
 
-    $logger->err(array( 'message' => 'Exception Code: '.$exception->getCode()));
-    $logger->err(array( 'message' => 'Message: '.$exception->getMessage()));
-    $logger->err(array( 'message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')'));
+    $logger->err(['message' => 'Exception Code: '.$exception->getCode()]);
+    $logger->err(['message' => 'Message: '.$exception->getMessage()]);
+    $logger->err(['message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')']);
 
-    $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
+    $stringTrace = ($exception::class == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
 
-    $logger->err(array('message' => "Trace:\n".$stringTrace."\n-------------------------------------------------------"));
+    $logger->err(['message' => "Trace:\n".$stringTrace."\n-------------------------------------------------------"]);
 
    // If working in a server context, build headers to output.
     $httpCode = 500;
-    $headers = array();
+    $headers = [];
     $isServerContext = isset($_SERVER['SERVER_PROTOCOL']);
     if ($isServerContext) {
         $uncheckedExceptionHttpCode = null;
@@ -154,15 +149,10 @@ function handle_uncaught_exception($exception)
         $headers['Content-Type'] = 'application/json';
     }
 
-    return array(
-      'content' => $content,
-      'isServerContext' => $isServerContext,
-      'headers' => $headers,
-      'httpCode' => $httpCode,
-    );
+    return ['content' => $content, 'isServerContext' => $isServerContext, 'headers' => $headers, 'httpCode' => $httpCode];
 } // handle_uncaught_exception
 
-function global_uncaught_exception_handler($exception)
+function global_uncaught_exception_handler($exception): void
 {
     // Perform logging and output building for the exception.
     $exceptionOutput = handle_uncaught_exception($exception);

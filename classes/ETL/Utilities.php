@@ -26,7 +26,7 @@ class Utilities
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function setEtlConfig(EtlConfiguration $config)
+    public static function setEtlConfig(EtlConfiguration $config): void
     {
         self::$etlConfig = $config;
     }  // setEtlConfig
@@ -86,22 +86,22 @@ class Utilities
     public static function processMacro($string, stdClass $config)
     {
         if ( null === self::$etlConfig ) {
-            $msg = __CLASS__ . ": ETL configuration object not set";
+            $msg = self::class . ": ETL configuration object not set";
             throw new Exception($msg);
         }
 
         $paths = self::$etlConfig->getPaths();
 
         if ( ! isset($paths->macro_dir) ) {
-            $msg = __CLASS__ . ": ETL configuration paths.macro_dir is not set";
+            $msg = self::class . ": ETL configuration paths.macro_dir is not set";
             throw new Exception($msg);
         } elseif ( ! is_dir($paths->macro_dir) ) {
-            $msg = __CLASS__ . ": ETL configuration paths.macro_dir '{$paths->macro_dir}' is not a directory";
+            $msg = self::class . ": ETL configuration paths.macro_dir '{$paths->macro_dir}' is not a directory";
             throw new Exception($msg);
         }
 
-        $requiredProperties = array("name", "file");
-        $missingProperties = array();
+        $requiredProperties = ["name", "file"];
+        $missingProperties = [];
 
         // Verify requred options
 
@@ -112,7 +112,7 @@ class Utilities
         }
 
         if ( 0 != count($missingProperties) ) {
-            $msg = __CLASS__ . ": Required properties not provided: " . implode(", ", $missingProperties);
+            $msg = self::class . ": Required properties not provided: " . implode(", ", $missingProperties);
             throw new Exception($msg);
         }
 
@@ -120,7 +120,7 @@ class Utilities
 
         $filename = $paths->macro_dir . "/" . $config->file;
         if ( ! is_file($filename) ) {
-            $msg = __CLASS__ . ": Cannot load macro file '$filename'";
+            $msg = self::class . ": Cannot load macro file '$filename'";
             throw new Exception($msg);
         } elseif ( 0 == filesize($filename) ) {
             // No use processing an empty macro
@@ -128,16 +128,16 @@ class Utilities
         }
 
         if ( false === ($macro = @file_get_contents($filename)) ) {
-            $msg = __CLASS__ . ": Error reading macro file '$filename'";
+            $msg = self::class . ": Error reading macro file '$filename'";
             throw new Exception($msg);
         }
 
         // Strip comments from macro
 
-        $stripped = array();
+        $stripped = [];
 
         foreach ( explode("\n", $macro) as $line ) {
-            if ( 0 === strpos($line, "--") || 0 === strpos($line, "#") ) {
+            if ( str_starts_with($line, "--") || str_starts_with($line, "#") ) {
                 continue;
             }
             $stripped[] = $line;
@@ -156,7 +156,7 @@ class Utilities
         }
 
         $vs->clear();
-        $vs->add(array($config->name => $macro));
+        $vs->add([$config->name => $macro]);
         $string = $vs->substitute($string);
 
         return $string;
@@ -195,9 +195,7 @@ class Utilities
     public static function createPdoBindVarsFromArrayKeys(array $source)
     {
         return array_map(
-            function ($key) {
-                return ":$key";
-            },
+            fn($key) => ":$key",
             array_keys($source)
         );
     }  // createPdoBindVarsFromArrayKeys()
@@ -218,7 +216,7 @@ class Utilities
 
     public static function quoteVariables(array $variables, VariableStore $variableStore, \ETL\DataEndpoint\iDataEndpoint $endpoint)
     {
-        $localVariableMap = array();
+        $localVariableMap = [];
 
         foreach ( $variables as $var ) {
             if ( isset($variableStore->$var) ) {
@@ -229,7 +227,7 @@ class Utilities
         return $localVariableMap;
     }  // quoteVariables()
 
-    public static function runEtlPipeline(array $pipelines, $logger, array $params = array(), $module = 'xdmod')
+    public static function runEtlPipeline(array $pipelines, $logger, array $params = [], $module = 'xdmod'): void
     {
         $logger->debug(
             sprintf(
@@ -239,7 +237,7 @@ class Utilities
             )
         );
 
-        $configOptions = array('default_module_name' => $module);
+        $configOptions = ['default_module_name' => $module];
         if( array_key_exists('variable-overrides', $params) ){
             $configOptions['config_variables'] = $params['variable-overrides'];
         }
@@ -256,10 +254,7 @@ class Utilities
         self::setEtlConfig($etlConfig);
 
         $scriptOptions = array_merge(
-            array(
-                'default-module-name' => $module,
-                'process-sections' => $pipelines,
-            ),
+            ['default-module-name' => $module, 'process-sections' => $pipelines],
             $params
         );
         $logger->debug(

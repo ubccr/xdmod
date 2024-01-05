@@ -17,9 +17,9 @@ class ColorGenerator
     // is a fixed map of dataset name -> dataset color. If the number of 
     // datasets is above the threshold, then a simple first-come first-served 
     // mapping is used. 
-    const COLOR_MAP_THRESHOLD = 64;
+    public const COLOR_MAP_THRESHOLD = 64;
 
-    private $colors = array();
+    private $colors = [];
     private $color_idx = NULL;
     private $limit_color = NULL;
     private $mode = NULL;
@@ -36,7 +36,7 @@ class ColorGenerator
                                 $useShortNames=null,
                                 $configColor=null ) 
     {
-        $this->colors = array();
+        $this->colors = [];
         $this->color_idx = NULL;
         $this->limit_color = $this::COLOR_MAP_THRESHOLD;
 
@@ -45,7 +45,7 @@ class ColorGenerator
         // if configColor is null, color idx is 0
         $this->setConfigColor( $configColor );
     }
-    
+
     // ---------------------------------------------------------
     // getConfigColor() 
     // 
@@ -67,7 +67,7 @@ class ColorGenerator
     // if user has selected a starting color for the dataseries, 
     // set it as the initial color for the plot.
     // ---------------------------------------------------------
-    public function setConfigColor( $configColor ) 
+    public function setConfigColor( $configColor ): void
     {
         // if configColor is null, color idx is 0
         if (is_null($configColor)) 
@@ -110,13 +110,13 @@ class ColorGenerator
             }
         }
     }
-        
+
     // ---------------------------------------------------------
     // build_roundrobinmapping()
     //
     // color_idx is set in constructor based on user selection
     // ---------------------------------------------------------
-    private function build_roundrobinmapping()
+    private function build_roundrobinmapping(): void
     {
         $this->mode = "ROUND_ROBIN";
         $this->colors = \DataWarehouse\Visualization::getColors(NULL, 0, false);
@@ -127,7 +127,7 @@ class ColorGenerator
     //
     // For fixed number of values in dataset. Not presently in use.
     // ---------------------------------------------------------
-    private function build_fixedmapping(&$datanamevalues, $limit, $useShortNames )
+    private function build_fixedmapping(&$datanamevalues, $limit, $useShortNames ): void
     {
         $this->mode = "FIXED_MAP";
 
@@ -142,8 +142,8 @@ class ColorGenerator
 
         $colors = \DataWarehouse\Visualization::getColors($color_count, 0, false);
 
-        $datalabels = array();
-        $dataoveralls = array();
+        $datalabels = [];
+        $dataoveralls = [];
 
 
         foreach($datanamevalues as $key => $row)

@@ -47,12 +47,12 @@ class EtlOverseerOptions extends \CCR\Loggable
     // An array of resource ids that will be the only resources that actions supporting inclusion
     // will be operating on. An empty list or null implies all resources. NOTE: This is mutually
     // exclusive with $excludeResourceCodes
-    private $includeOnlyResourceCodes = array();
+    private $includeOnlyResourceCodes = [];
 
     // An array of resource ids that will be excluded from supporting action execution. An empty
     // list implies no resources will be excluded. NOTE: This is mutually exclusive with
     // $includeOnlyResourceCodes
-    private $excludeResourceCodes = array();
+    private $excludeResourceCodes = [];
 
     // Directory where lock files are stored
     private $lockDir = null;
@@ -64,16 +64,16 @@ class EtlOverseerOptions extends \CCR\Loggable
     private $defaultModuleName = null;
 
     // A mapping of resource codes to resource ids.
-    private $resourceCodeToIdMap = array();
+    private $resourceCodeToIdMap = [];
 
     // SQL query used to populate the resource code to resource id map
     private $resourcecodeToIdMapSql = null;
 
     // A list of all requested section names
-    private $sectionNames = array();
+    private $sectionNames = [];
 
     // A list of all requested action names
-    private $actionNames = array();
+    private $actionNames = [];
 
     // Perform all operations except execution of the actions
     private $dryrun = false;
@@ -85,15 +85,15 @@ class EtlOverseerOptions extends \CCR\Loggable
     // end_date, resources, etc. These keys identify the supported restrictions and are used to set
     // them for a query.
 
-    const RESTRICT_START_DATE = 'start_date';
-    const RESTRICT_END_DATE = 'end_date';
-    const RESTRICT_NUMBER_OF_DAYS = 'number_of_days';
-    const RESTRICT_LAST_MODIFIED_START_DATE = 'last_modified_start_date';
-    const RESTRICT_LAST_MODIFIED_END_DATE = 'last_modified_end_date';
-    const RESTRICT_INCLUDE_ONLY_RESOURCES = 'include_only_resource_codes';
-    const RESTRICT_EXCLUDE_RESOURCES = 'exclude_resource_codes';
+    public const RESTRICT_START_DATE = 'start_date';
+    public const RESTRICT_END_DATE = 'end_date';
+    public const RESTRICT_NUMBER_OF_DAYS = 'number_of_days';
+    public const RESTRICT_LAST_MODIFIED_START_DATE = 'last_modified_start_date';
+    public const RESTRICT_LAST_MODIFIED_END_DATE = 'last_modified_end_date';
+    public const RESTRICT_INCLUDE_ONLY_RESOURCES = 'include_only_resource_codes';
+    public const RESTRICT_EXCLUDE_RESOURCES = 'exclude_resource_codes';
 
-    protected $supportedOverseerRestrictions = array();
+    protected $supportedOverseerRestrictions = [];
 
     /* ------------------------------------------------------------------------------------------
      * Constructor. We are using an array for options because the list with optional parameters was
@@ -191,7 +191,7 @@ class EtlOverseerOptions extends \CCR\Loggable
 
         $r = new \ReflectionClass($this);
         foreach ( $r->getConstants() as $const => $value ) {
-            if ( 0 === strpos($const, 'RESTRICT_') ) {
+            if ( str_starts_with($const, 'RESTRICT_') ) {
                 $this->supportedOverseerRestrictions[] = $value;
             }
         }
@@ -314,7 +314,7 @@ class EtlOverseerOptions extends \CCR\Loggable
             $this->startDate = null;
         } else {
             if ( false === ($ts = strtotime($date)) ) {
-                $msg = get_class($this) . ": Could not parse start date '$date'";
+                $msg = static::class . ": Could not parse start date '$date'";
                 throw new Exception($msg);
             }
 
@@ -351,7 +351,7 @@ class EtlOverseerOptions extends \CCR\Loggable
             $this->endDate = null;
         } else {
             if ( false === ($ts = strtotime($date)) ) {
-                $msg = get_class($this) . ": Could not parse end date '$date'";
+                $msg = static::class . ": Could not parse end date '$date'";
                 throw new Exception($msg);
             }
 
@@ -419,7 +419,7 @@ class EtlOverseerOptions extends \CCR\Loggable
         if ( null === $date ) {
             $this->lastModifiedStartDate = null;
         } elseif ( false === ( $ts = strtotime($date)) ) {
-            $msg = get_class($this) . ": Could not parse last modified start date '$date'";
+            $msg = static::class . ": Could not parse last modified start date '$date'";
             throw new Exception($msg);
         } else {
             $this->lastModifiedStartDate = date("Y-m-d H:i:s", $ts);
@@ -454,7 +454,7 @@ class EtlOverseerOptions extends \CCR\Loggable
         if ( null === $date ) {
             $this->lastModifiedEndDate = null;
         } elseif ( false === ( $ts = strtotime($date)) ) {
-            $msg = get_class($this) . ": Could not parse last modified start date '$date'";
+            $msg = static::class . ": Could not parse last modified start date '$date'";
             throw new Exception($msg);
         } else {
             $this->lastModifiedEndDate = date("Y-m-d H:i:s", $ts);
@@ -504,7 +504,7 @@ class EtlOverseerOptions extends \CCR\Loggable
 
     public function getDatePeriod()
     {
-        return array($this->startDate, $this->endDate);
+        return [$this->startDate, $this->endDate];
     }
 
     /* ------------------------------------------------------------------------------------------
@@ -529,7 +529,7 @@ class EtlOverseerOptions extends \CCR\Loggable
     public function setChunkSizeDays($days)
     {
         if ( ! (null === $days || is_numeric($days) ) ) {
-            $msg = get_class($this) . ": Chunk size must be NULL or numeric";
+            $msg = static::class . ": Chunk size must be NULL or numeric";
             throw new Exception($msg);
         }
         $this->etlIntervalChunkSizeDays = $days;
@@ -635,7 +635,7 @@ class EtlOverseerOptions extends \CCR\Loggable
         $origFlag = $flag;
         $flag = \xd_utilities\filter_var($flag, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if ( null === $flag ) {
-            $msg = get_class($this) . ": Force flag is not a boolean: '$origFlag'";
+            $msg = static::class . ": Force flag is not a boolean: '$origFlag'";
             throw new Exception($msg);
         }
         $this->forceOperation = $flag;
@@ -666,7 +666,7 @@ class EtlOverseerOptions extends \CCR\Loggable
         $origFlag = $flag;
         $flag = \xd_utilities\filter_var($flag, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if ( null === $flag ) {
-            $msg = get_class($this) . ": Dryrun flag is not a boolean: '$origFlag'";
+            $msg = static::class . ": Dryrun flag is not a boolean: '$origFlag'";
             throw new Exception($msg);
         }
         $this->dryrun = $flag;
@@ -697,7 +697,7 @@ class EtlOverseerOptions extends \CCR\Loggable
         $origFlag = $flag;
         $flag = \xd_utilities\filter_var($flag, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         if ( null === $flag ) {
-            $msg = get_class($this) . ": Verbose flag is not a boolean: '$origFlag'";
+            $msg = static::class . ": Verbose flag is not a boolean: '$origFlag'";
             throw new Exception($msg);
         }
         $this->verbose = $flag;
@@ -785,7 +785,7 @@ class EtlOverseerOptions extends \CCR\Loggable
      */
 
     public function mapResourceCodesToIds(array $codes) {
-        $resourceIdList = array();
+        $resourceIdList = [];
 
         foreach ( $codes as $code ) {
             if ( false === ($resourceId = $this->getResourceIdFromCode($code)) ) {
@@ -822,9 +822,9 @@ class EtlOverseerOptions extends \CCR\Loggable
     public function setIncludeOnlyResourceCodes($codes)
     {
         if ( null === $codes ) {
-            $this->includeOnlyResourceCodes = array();
+            $this->includeOnlyResourceCodes = [];
         } else {
-            $this->includeOnlyResourceCodes = ( ! is_array($codes) ? array($codes) : $codes );
+            $this->includeOnlyResourceCodes = ( ! is_array($codes) ? [$codes] : $codes );
         }
         return $this;
     }  // setIncludeOnlyResourceCodes()
@@ -852,9 +852,9 @@ class EtlOverseerOptions extends \CCR\Loggable
     public function setExcludeResourceCodes($codes)
     {
         if ( null === $codes ) {
-            $this->excludeResourceCodes = array();
+            $this->excludeResourceCodes = [];
         } else {
-            $this->excludeResourceCodes = ( ! is_array($codes) ? array($codes) : $codes );
+            $this->excludeResourceCodes = ( ! is_array($codes) ? [$codes] : $codes );
         }
         return $this;
     }  // setExcludeResourceCodes()
@@ -880,7 +880,7 @@ class EtlOverseerOptions extends \CCR\Loggable
 
     public function setActionNames($names)
     {
-        $this->actionNames = ( ! is_array($names) ? array($names) : $names );
+        $this->actionNames = ( ! is_array($names) ? [$names] : $names );
         return $this;
     }  // setActionNames()
 
@@ -905,7 +905,7 @@ class EtlOverseerOptions extends \CCR\Loggable
 
     public function setSectionNames($names)
     {
-        $this->sectionNames = ( ! is_array($names) ? array($names) : $names );
+        $this->sectionNames = ( ! is_array($names) ? [$names] : $names );
         return $this;
     }  // setSectionNames()
 
@@ -922,19 +922,19 @@ class EtlOverseerOptions extends \CCR\Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    private function generateEtlChunkList()
+    private function generateEtlChunkList(): void
     {
         if ( null === $this->etlIntervalChunkSizeDays ) {
-            $this->etlPeriodChunkList = array(array($this->startDate, $this->endDate));
+            $this->etlPeriodChunkList = [[$this->startDate, $this->endDate]];
             return;
         } elseif ( null === $this->startDate || null === $this->endDate ) {
             $this->logger->warning("Cannot chunk open-ended date interval, ignoring chunk option.");
-            $this->etlPeriodChunkList = array(array($this->startDate, $this->endDate));
+            $this->etlPeriodChunkList = [[$this->startDate, $this->endDate]];
             return;
         }
 
         // Handle daylight savings time!!!!! Off my an hour
-        $chunkList = array();
+        $chunkList = [];
         $startTs = strtotime($this->startDate);
         $currentEndTs = strtotime($this->endDate);
         $secondsPerChunk = (60 * 60 * 24) * $this->etlIntervalChunkSizeDays;
@@ -948,7 +948,7 @@ class EtlOverseerOptions extends \CCR\Loggable
             $currentEndTs -= $decrementSeconds;
             // When printing the start date, round up 1 second unless this is the last interval.
             $intervalStart = date('Y-m-d H:i:s', $currentEndTs + ( $currentEndTs == $startTs ? 0 : 1 ) );
-            $chunkList[] = array($intervalStart, $intervalEnd);
+            $chunkList[] = [$intervalStart, $intervalEnd];
         }
 
         $this->etlPeriodChunkList = $chunkList;

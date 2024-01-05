@@ -12,7 +12,7 @@ ini_set('max_execution_time', 300);
 $logger = new \CCR\RequestLogger();
 
 $user = \xd_security\detectUser(
-    array(XDUser::INTERNAL_USER, XDUser::PUBLIC_USER)
+    [XDUser::INTERNAL_USER, XDUser::PUBLIC_USER]
 );
 
 $m = new \DataWarehouse\Access\MetricExplorer($_REQUEST);

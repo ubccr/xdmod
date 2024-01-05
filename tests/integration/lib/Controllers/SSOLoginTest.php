@@ -16,7 +16,7 @@ class SSOLoginTest extends BaseUserAdminTest
      *
      * @var string
      */
-    const INCLUDE_DEFAULT_SSO = 'include_default_sso';
+    public const INCLUDE_DEFAULT_SSO = 'include_default_sso';
 
     /**
      * Key to use when providing / retrieving the value that indicates whether or not a user is
@@ -24,14 +24,14 @@ class SSOLoginTest extends BaseUserAdminTest
      *
      * @var string
      */
-    const REMOVE_USER = 'remove_user';
+    public const REMOVE_USER = 'remove_user';
 
     /**
      * Key to use when retrieving the username ( 'itname' ) value from SSO properties.
      *
      * @var string
      */
-    const SSO_USERNAME = 'itname';
+    public const SSO_USERNAME = 'itname';
 
     /**
      * Key to use when providing / retrieving the value that indicates whether or not a user should
@@ -39,40 +39,40 @@ class SSOLoginTest extends BaseUserAdminTest
      *
      * @var string
      */
-    const STICKY = 'sticky';
+    public const STICKY = 'sticky';
 
     /**
      * Key to use when providing / retrieving the value that must match the Users organization_id.
      *
      * @var string
      */
-    const EXPECTED_ORG = 'expected_org';
+    public const EXPECTED_ORG = 'expected_org';
 
     /**
      * Key to use when providing / retrieving the set of acls a user is to be updated with.
      * @var string
      */
-    const SET_ACLS = 'acls';
+    public const SET_ACLS = 'acls';
 
     /**
      * Key to use when providing / retrieving the set of acls a user is expected to have after
      * they have logged in.
      * @var string
      */
-    const EXPECTED_ACLS = 'expected_acls';
+    public const EXPECTED_ACLS = 'expected_acls';
 
     /**
      * Key to use when providing / retrieving the info to use when creating a new person.
      * @var string
      */
-    const CREATE_PERSON = 'create_person';
+    public const CREATE_PERSON = 'create_person';
 
     /**
      * Key to use when providing / retrieving the info to be used when creating a new system_account
      * record.
      * @var string
      */
-    const CREATE_SYSTEM_ACCOUNT = 'create_system_account';
+    public const CREATE_SYSTEM_ACCOUNT = 'create_system_account';
 
     /**
      * Key to use when providing / retrieving the information to be used in removing a person.
@@ -80,7 +80,7 @@ class SSOLoginTest extends BaseUserAdminTest
      *
      * @var string
      */
-    const REMOVE_PERSON = 'remove_person';
+    public const REMOVE_PERSON = 'remove_person';
 
     /**
      * Key to use when providing / retrieving information to be used in removing a system_account.
@@ -88,7 +88,7 @@ class SSOLoginTest extends BaseUserAdminTest
      *
      * @var string
      */
-    const REMOVE_SYSTEM_ACCOUNT = 'remove_system_account';
+    public const REMOVE_SYSTEM_ACCOUNT = 'remove_system_account';
 
     /**
      * Key to use when providing / retrieving information to be used when setting the current users
@@ -96,7 +96,7 @@ class SSOLoginTest extends BaseUserAdminTest
      *
      * @var string
      */
-    const SET_ORGANIZATION = 'set_organization';
+    public const SET_ORGANIZATION = 'set_organization';
 
     /**
      * used to test that SSO logins work correctly and the correct user information
@@ -104,7 +104,7 @@ class SSOLoginTest extends BaseUserAdminTest
      *
      * @dataProvider loginsProvider
      */
-    public function testLogin($ssoSettings, $expected, $testOptions = array())
+    public function testLogin($ssoSettings, $expected, $testOptions = []): void
     {
         $helper = new XdmodTestHelper();
         $peopleHelper = new PeopleHelper();
@@ -152,17 +152,13 @@ class SSOLoginTest extends BaseUserAdminTest
             $userId = $this->retrieveUserId($username, SSO_USER_TYPE);
             $properties = $this->retrieveUserProperties(
                 $userId,
-                array(
-                    'email_address',
-                    'assigned_user_id',
-                    'institution'
-                )
+                ['email_address', 'assigned_user_id', 'institution']
             );
 
             $this->updateUser(
                 $userId,
                 $properties['email_address'],
-                array('usr' => array()),
+                ['usr' => []],
                 $properties['assigned_user_id'],
                 $properties['institution'],
                 SSO_USER_TYPE,
@@ -176,7 +172,7 @@ class SSOLoginTest extends BaseUserAdminTest
         $response = $helper->get('index.php');
         $this->assertEquals(200, $response[1]['http_code']);
 
-        $matches = array();
+        $matches = [];
         preg_match_all('/^(CCR\.xdmod.[a-zA-Z_\.]*) = ([^=;]*);?$/m', $response[0], $matches);
         $jsvariables = array_combine($matches[1], $matches[2]);
 
@@ -193,11 +189,7 @@ class SSOLoginTest extends BaseUserAdminTest
             $userId = $this->retrieveUserId($username, SSO_USER_TYPE);
             $properties = $this->retrieveUserProperties(
                 $userId,
-                array(
-                    'email_address',
-                    'assigned_user_id',
-                    'institution'
-                )
+                ['email_address', 'assigned_user_id', 'institution']
             );
             $this->updateUser(
                 $userId,
@@ -214,11 +206,7 @@ class SSOLoginTest extends BaseUserAdminTest
             $userId = $this->retrieveUserId($username, SSO_USER_TYPE);
             $properties = $this->retrieveUserProperties(
                 $userId,
-                array(
-                    'email_address',
-                    'assigned_user_id',
-                    'acls'
-                )
+                ['email_address', 'assigned_user_id', 'acls']
             );
 
             $this->updateUser(
@@ -237,9 +225,7 @@ class SSOLoginTest extends BaseUserAdminTest
             $userId = $this->retrieveUserId($username, SSO_USER_TYPE);
             $actualOrganization = $this->retrieveUserProperties(
                 $userId,
-                array(
-                    'institution'
-                )
+                ['institution']
             );
             $this->assertEquals($expectedOrg, $actualOrganization, "Expected $expectedOrg == $actualOrganization.");
         }
@@ -249,9 +235,7 @@ class SSOLoginTest extends BaseUserAdminTest
             $userId = $this->retrieveUserId($username, SSO_USER_TYPE);
             $actualAcls = $this->retrieveUserProperties(
                 $userId,
-                array(
-                    'acls'
-                )
+                ['acls']
             );
             $this->assertEquals(array_keys($expectedAcls), array_keys($actualAcls), "Expected Acls !== Actual Acls");
         }
@@ -272,783 +256,73 @@ class SSOLoginTest extends BaseUserAdminTest
 
     public function loginsProvider()
     {
-        return array(
+        return [
             // 0 NU1: New User Test 1
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => 1,
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'Screwdriver', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => 1, self::REMOVE_USER => true]],
             // 1 NU2: New User Test 2
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => -1,
-                    self::REMOVE_USER => true
-                )
-            ),
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => -1, self::REMOVE_USER => true]],
             // 2 NU3: New User Test 3
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'alpsw',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Alpine',
-                    'lastName' => 'Swift',
-                    'email' => 'alpsw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => 1,
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'alpsw', 'orgId' => 'UB CCR', 'firstName' => 'Alpine', 'lastName' => 'Swift', 'email' => 'alpsw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Alpine Swift"', 'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => 1, self::REMOVE_USER => true]],
             // 3 EU1: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => -1
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => -1]],
             // 4 EU1
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'alpsw',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::STICKY => true,
-                    self::EXPECTED_ORG => -1,
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'alpsw', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::STICKY => true, self::EXPECTED_ORG => -1, self::REMOVE_USER => true]],
             // 5 E02: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => -1
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => -1]],
             // 6 E02
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => -1,
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => -1, self::REMOVE_USER => true]],
             // 7 E03: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::SET_ACLS => array('usr' => array(), 'cd' => array()),
-                    self::EXPECTED_ORG => -1
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::SET_ACLS => ['usr' => [], 'cd' => []], self::EXPECTED_ORG => -1]],
             // 8 E03
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'alpsw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ACLS => array('usr' => array()),
-                    self::EXPECTED_ORG => 1,
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'Screwdriver', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'alpsw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ACLS => ['usr' => []], self::EXPECTED_ORG => 1, self::REMOVE_USER => true]],
             // 9 E04: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => -1
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => -1]],
             // 10 E04
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'alpsw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ACLS => array('usr' => array()),
-                    self::EXPECTED_ORG => 1,
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'Screwdriver', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'alpsw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ACLS => ['usr' => []], self::EXPECTED_ORG => 1, self::REMOVE_USER => true]],
             // 11 E05: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => -1
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => -1]],
             // 12 E05
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'alpsw',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'alpsw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ACLS => array('usr' => array()),
-                    self::EXPECTED_ORG => 1,
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'alpsw', 'orgId' => 'Screwdriver', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'alpsw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ACLS => ['usr' => []], self::EXPECTED_ORG => 1, self::REMOVE_USER => true]],
             // 13 E06: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => -1,
-                    self::CREATE_PERSON => array(
-                        'organization_id' => -1,
-                        'nsfstatuscode_id' => 0,
-                        'first_name' => 'Testy',
-                        'last_name' => 'Person',
-                        'long_name' => 'Person, Testy',
-                        'short_name' => 'Person, T',
-                    ),
-                    self::CREATE_SYSTEM_ACCOUNT => array(
-                        'person_long_name' => 'Person, Testy',
-                        'resource_id' => 5,
-                        'username' => 'teper'
-                    )
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => -1, self::CREATE_PERSON => ['organization_id' => -1, 'nsfstatuscode_id' => 0, 'first_name' => 'Testy', 'last_name' => 'Person', 'long_name' => 'Person, Testy', 'short_name' => 'Person, T'], self::CREATE_SYSTEM_ACCOUNT => ['person_long_name' => 'Person, Testy', 'resource_id' => 5, 'username' => 'teper']]],
             // 14 E06
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'teper',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctestersonw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Person, Testy"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ACLS => array('usr' => array()),
-                    self::EXPECTED_ORG => -1,
-                    self::REMOVE_PERSON => 'Person, Testy',
-                    self::REMOVE_SYSTEM_ACCOUNT => 'teper',
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'teper', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctestersonw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Person, Testy"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ACLS => ['usr' => []], self::EXPECTED_ORG => -1, self::REMOVE_PERSON => 'Person, Testy', self::REMOVE_SYSTEM_ACCOUNT => 'teper', self::REMOVE_USER => true]],
             // 15 E07: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => -1,
-                    self::SET_ACLS => array('usr' => array(), 'cd' => array()),
-
-                    self::CREATE_PERSON => array(
-                        'organization_id' => -1,
-                        'nsfstatuscode_id' => 0,
-                        'first_name' => 'Testy',
-                        'last_name' => 'Person',
-                        'long_name' => 'Person, Testy',
-                        'short_name' => 'Person, T',
-                    ),
-                    self::CREATE_SYSTEM_ACCOUNT => array(
-                        'person_long_name' => 'Person, Testy',
-                        'resource_id' => 5,
-                        'username' => 'teper'
-                    )
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => -1, self::SET_ACLS => ['usr' => [], 'cd' => []], self::CREATE_PERSON => ['organization_id' => -1, 'nsfstatuscode_id' => 0, 'first_name' => 'Testy', 'last_name' => 'Person', 'long_name' => 'Person, Testy', 'short_name' => 'Person, T'], self::CREATE_SYSTEM_ACCOUNT => ['person_long_name' => 'Person, Testy', 'resource_id' => 5, 'username' => 'teper']]],
             // 16 E07
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'teper',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctestersonw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Person, Testy"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ACLS => array('usr' => array()),
-                    self::EXPECTED_ORG => 1,
-                    self::REMOVE_PERSON => 'Person, Testy',
-                    self::REMOVE_SYSTEM_ACCOUNT => 'teper',
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'teper', 'orgId' => 'Screwdriver', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctestersonw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Person, Testy"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ACLS => ['usr' => []], self::EXPECTED_ORG => 1, self::REMOVE_PERSON => 'Person, Testy', self::REMOVE_SYSTEM_ACCOUNT => 'teper', self::REMOVE_USER => true]],
             // 17 E08: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => -1,
-                    self::CREATE_PERSON => array(
-                        'organization_id' => -1,
-                        'nsfstatuscode_id' => 0,
-                        'first_name' => 'Testy',
-                        'last_name' => 'Person',
-                        'long_name' => 'Person, Testy',
-                        'short_name' => 'Person, T',
-                    ),
-                    self::CREATE_SYSTEM_ACCOUNT => array(
-                        'person_long_name' => 'Person, Testy',
-                        'resource_id' => 5,
-                        'username' => 'teper'
-                    )
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Unknown, Unknown"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => -1, self::CREATE_PERSON => ['organization_id' => -1, 'nsfstatuscode_id' => 0, 'first_name' => 'Testy', 'last_name' => 'Person', 'long_name' => 'Person, Testy', 'short_name' => 'Person, T'], self::CREATE_SYSTEM_ACCOUNT => ['person_long_name' => 'Person, Testy', 'resource_id' => 5, 'username' => 'teper']]],
             // 18 E08
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'teper',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctestersonw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Person, Testy"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ACLS => array('usr' => array()),
-                    self::EXPECTED_ORG => 1,
-                    self::REMOVE_PERSON => 'Person, Testy',
-                    self::REMOVE_SYSTEM_ACCOUNT => 'teper',
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'teper', 'orgId' => 'Screwdriver', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctestersonw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Person, Testy"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ACLS => ['usr' => []], self::EXPECTED_ORG => 1, self::REMOVE_PERSON => 'Person, Testy', self::REMOVE_SYSTEM_ACCOUNT => 'teper', self::REMOVE_USER => true]],
             // 19 E09: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'teper',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Person, Testy"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => -1,
-                    self::CREATE_PERSON => array(
-                        'organization_id' => -1,
-                        'nsfstatuscode_id' => 0,
-                        'first_name' => 'Testy',
-                        'last_name' => 'Person',
-                        'long_name' => 'Person, Testy',
-                        'short_name' => 'Person, T',
-                    ),
-                    self::CREATE_SYSTEM_ACCOUNT => array(
-                        'person_long_name' => 'Person, Testy',
-                        'resource_id' => 5,
-                        'username' => 'teper'
-                    )
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'teper', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Person, Testy"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => -1, self::CREATE_PERSON => ['organization_id' => -1, 'nsfstatuscode_id' => 0, 'first_name' => 'Testy', 'last_name' => 'Person', 'long_name' => 'Person, Testy', 'short_name' => 'Person, T'], self::CREATE_SYSTEM_ACCOUNT => ['person_long_name' => 'Person, Testy', 'resource_id' => 5, 'username' => 'teper']]],
             // 20 E09
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'UB CCR',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctestersonw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Person, Testy"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => -1,
-                    self::REMOVE_PERSON => 'Person, Testy',
-                    self::REMOVE_SYSTEM_ACCOUNT => 'teper',
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'UB CCR', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctestersonw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Person, Testy"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => -1, self::REMOVE_PERSON => 'Person, Testy', self::REMOVE_SYSTEM_ACCOUNT => 'teper', self::REMOVE_USER => true]],
             // 21 E10: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'teper',
-                    'orgId' => 'testy',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Person, Testy"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => -1,
-                    self::SET_ACLS => array('usr' => array(), 'cd' => array()),
-                    self::CREATE_PERSON => array(
-                        'organization_id' => -1,
-                        'nsfstatuscode_id' => 0,
-                        'first_name' => 'Testy',
-                        'last_name' => 'Person',
-                        'long_name' => 'Person, Testy',
-                        'short_name' => 'Person, T',
-                    ),
-                    self::CREATE_SYSTEM_ACCOUNT => array(
-                        'person_long_name' => 'Person, Testy',
-                        'resource_id' => 5,
-                        'username' => 'teper'
-                    )
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'teper', 'orgId' => 'testy', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Person, Testy"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => -1, self::SET_ACLS => ['usr' => [], 'cd' => []], self::CREATE_PERSON => ['organization_id' => -1, 'nsfstatuscode_id' => 0, 'first_name' => 'Testy', 'last_name' => 'Person', 'long_name' => 'Person, Testy', 'short_name' => 'Person, T'], self::CREATE_SYSTEM_ACCOUNT => ['person_long_name' => 'Person, Testy', 'resource_id' => 5, 'username' => 'teper']]],
             // 22 E10
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctestersonw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Person, Testy"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => 1,
-                    self::EXPECTED_ACLS => array('usr' => array()),
-                    self::REMOVE_PERSON => 'Person, Testy',
-                    self::REMOVE_SYSTEM_ACCOUNT => 'teper',
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'Screwdriver', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctestersonw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Person, Testy"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => 1, self::EXPECTED_ACLS => ['usr' => []], self::REMOVE_PERSON => 'Person, Testy', self::REMOVE_SYSTEM_ACCOUNT => 'teper', self::REMOVE_USER => true]],
             // 23 E11: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'teper',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctesterson@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Person, Testy"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => 1,
-                    self::CREATE_PERSON => array(
-                        'organization_id' => -1,
-                        'nsfstatuscode_id' => 0,
-                        'first_name' => 'Testy',
-                        'last_name' => 'Person',
-                        'long_name' => 'Person, Testy',
-                        'short_name' => 'Person, T',
-                    ),
-                    self::CREATE_SYSTEM_ACCOUNT => array(
-                        'person_long_name' => 'Person, Testy',
-                        'resource_id' => 5,
-                        'username' => 'teper'
-                    )
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'teper', 'orgId' => 'Screwdriver', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctesterson@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Person, Testy"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => 1, self::CREATE_PERSON => ['organization_id' => -1, 'nsfstatuscode_id' => 0, 'first_name' => 'Testy', 'last_name' => 'Person', 'long_name' => 'Person, Testy', 'short_name' => 'Person, T'], self::CREATE_SYSTEM_ACCOUNT => ['person_long_name' => 'Person, Testy', 'resource_id' => 5, 'username' => 'teper']]],
             // 24 E11
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'testy',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctestersonw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Testy McTesterson"',
-                    'CCR.xdmod.ui.mappedPName' => '"Person, Testy"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => 1,
-                    self::REMOVE_PERSON => 'Person, Testy',
-                    self::REMOVE_SYSTEM_ACCOUNT => 'teper',
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'testy', 'orgId' => 'Screwdriver', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctestersonw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Testy McTesterson"', 'CCR.xdmod.ui.mappedPName' => '"Person, Testy"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => 1, self::REMOVE_PERSON => 'Person, Testy', self::REMOVE_SYSTEM_ACCOUNT => 'teper', self::REMOVE_USER => true]],
             // 25 E12: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'alpsw',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Alpine',
-                    'lastName' => 'Swift',
-                    'email' => 'alpsw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => 1
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'alpsw', 'orgId' => 'Screwdriver', 'firstName' => 'Alpine', 'lastName' => 'Swift', 'email' => 'alpsw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Alpine Swift"', 'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => 1]],
             // 26 E12
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'alpsw',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctestersonw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => 1,
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'alpsw', 'orgId' => 'Screwdriver', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctestersonw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Alpine Swift"', 'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => 1, self::REMOVE_USER => true]],
             // 27 E13: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'alpsw',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Alpine',
-                    'lastName' => 'Swift',
-                    'email' => 'alpsw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::SET_ORGANIZATION => 2,
-                    self::SET_ACLS => array('usr' => array(), 'cd' => array()),
-                    self::EXPECTED_ORG => 2
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'alpsw', 'orgId' => 'Screwdriver', 'firstName' => 'Alpine', 'lastName' => 'Swift', 'email' => 'alpsw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Alpine Swift"', 'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::SET_ORGANIZATION => 2, self::SET_ACLS => ['usr' => [], 'cd' => []], self::EXPECTED_ORG => 2]],
             // 28 E13
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'alpsw',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctestersonw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => 1,
-                    self::EXPECTED_ACLS => array('usr' => array()),
-                    self::REMOVE_USER => true
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'alpsw', 'orgId' => 'Screwdriver', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctestersonw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Alpine Swift"', 'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => 1, self::EXPECTED_ACLS => ['usr' => []], self::REMOVE_USER => true]],
             // 29 E14: User Creation
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'alpsw',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Alpine',
-                    'lastName' => 'Swift',
-                    'email' => 'alpsw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::SET_ORGANIZATION => 2,
-                    self::EXPECTED_ORG => 2
-                )
-            ),
-
+            [['itname' => 'testy', 'system_username' => 'alpsw', 'orgId' => 'Screwdriver', 'firstName' => 'Alpine', 'lastName' => 'Swift', 'email' => 'alpsw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Alpine Swift"', 'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::SET_ORGANIZATION => 2, self::EXPECTED_ORG => 2]],
             // 30 E14
-            array(
-                array(
-                    'itname' => 'testy',
-                    'system_username' => 'alpsw',
-                    'orgId' => 'Screwdriver',
-                    'firstName' => 'Testy',
-                    'lastName' => 'McTesterson',
-                    'email' => 'tmctestersonw@example.com'
-                ),
-                array(
-                    'CCR.xdmod.ui.username' => "'testy'",
-                    'CCR.xdmod.ui.fullName' => '"Alpine Swift"',
-                    'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"',
-                    'CCR.xdmod.org_name' => '"Screwdriver"'
-                ),
-                array(
-                    self::EXPECTED_ORG => 1,
-                    self::REMOVE_USER => true
-                )
-            ),
-        );
+            [['itname' => 'testy', 'system_username' => 'alpsw', 'orgId' => 'Screwdriver', 'firstName' => 'Testy', 'lastName' => 'McTesterson', 'email' => 'tmctestersonw@example.com'], ['CCR.xdmod.ui.username' => "'testy'", 'CCR.xdmod.ui.fullName' => '"Alpine Swift"', 'CCR.xdmod.ui.mappedPName' => '"Swift, Alpine"', 'CCR.xdmod.org_name' => '"Screwdriver"'], [self::EXPECTED_ORG => 1, self::REMOVE_USER => true]],
+        ];
     }
 
-    public function createSystemAccount($personLongName, $resourceId, $username)
+    public function createSystemAccount($personLongName, $resourceId, $username): void
     {
         $query = <<<SQL
 INSERT INTO modw.systemaccount(person_id, resource_id, username, ts) 
@@ -1059,22 +333,16 @@ SELECT
     NOW() as ts
 FROM modw.person p WHERE p.long_name = :person_long_name
 SQL;
-        $params = array(
-            ':person_long_name' => $personLongName,
-            ':resource_id'=> $resourceId,
-            ':username' => $username
-        );
+        $params = [':person_long_name' => $personLongName, ':resource_id'=> $resourceId, ':username' => $username];
 
         $db = DB::factory('database');
         $db->execute($query, $params);
     }
 
-    public function removeSystemAccount($username)
+    public function removeSystemAccount($username): void
     {
         $query = "DELETE FROM modw.systemaccount WHERE username = :username";
-        $params = array(
-            ':username' => $username
-        );
+        $params = [':username' => $username];
         $db = DB::factory('database');
         $db->execute($query, $params);
     }

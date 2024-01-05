@@ -6,7 +6,7 @@ use XDUser;
 
 class UserHelper
 {
-    const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@test.com";
+    public const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@test.com";
 
     /**
      * A helper function that takes care of some of the default values for instantiating an XDUser.
@@ -36,9 +36,9 @@ class UserHelper
         $organizationId = null,
         $personId = null
     ) {
-        $acls = isset($acls) ? $acls : array(ROLE_ID_USER);
-        $primaryRole = isset($primaryRole) ? $primaryRole : ROLE_ID_USER;
-        $emailAddress = isset($email) ? $email : "$username" . self::DEFAULT_EMAIL_ADDRESS_SUFFIX;
+        $acls ??= [ROLE_ID_USER];
+        $primaryRole ??= ROLE_ID_USER;
+        $emailAddress = $email ?? "$username" . self::DEFAULT_EMAIL_ADDRESS_SUFFIX;
 
         return new XDUser($username, $password, $emailAddress, $firstName, $middleName, $lastName, $acls, $primaryRole, $organizationId, $personId);
     }

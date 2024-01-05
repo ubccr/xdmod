@@ -30,9 +30,7 @@ FROM modw.organization unk
 WHERE unk.id = -1
 ORDER BY id DESC
 SQL;
-        $params = array(
-            ':organization_id' => $organizationId
-        );
+        $params = [':organization_id' => $organizationId];
 
         $db = DB::factory('database');
 
@@ -55,7 +53,7 @@ SQL;
         $db = DB::factory('database');
         $rows = $db->query(
             "SELECT o.id FROM modw.organization o WHERE o.name = :organization_name;",
-            array(':organization_name' => $organizationName)
+            [':organization_name' => $organizationName]
         );
         return !empty($rows) ? $rows[0]['id'] : -1;
     }
@@ -72,7 +70,7 @@ SQL;
         $db = DB::factory('database');
         $rows = $db->query(
             "SELECT o.abbrev FROM modw.organization o WHERE o.id = :organization_id",
-            array(':organization_id' => $organizationId)
+            [':organization_id' => $organizationId]
         );
 
         return $rows[0]['abbrev'];
@@ -90,9 +88,7 @@ SQL;
         $db = DB::factory('database');
         $rows = $db->query(
             "SELECT p.organization_id FROM modw.person p WHERE p.id = :person_id",
-            array(
-                ':person_id' => $personId
-            )
+            [':person_id' => $personId]
         );
 
         return count($rows) > 0 ? $rows[0]['organization_id'] : -1;

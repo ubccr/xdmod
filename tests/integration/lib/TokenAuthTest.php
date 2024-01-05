@@ -15,7 +15,7 @@ abstract class TokenAuthTest extends BaseTest
     /**
      * HTTP path for endpoint that creates, reads, and deletes API tokens.
      */
-    const TOKEN_CRD_ENDPOINT = 'rest/users/current/api/token';
+    public const TOKEN_CRD_ENDPOINT = 'rest/users/current/api/token';
 
     /**
      * Valid, expired, and revoked tokens for any of the non-public base roles
@@ -248,7 +248,7 @@ abstract class TokenAuthTest extends BaseTest
      * invalidated them, e.g.,
      * Controllers\UserControllerProviderTest::testAPITokensCRD().
      */
-    public static function nullifyTokens()
+    public static function nullifyTokens(): void
     {
         self::$tokens = null;
     }
@@ -337,7 +337,7 @@ abstract class TokenAuthTest extends BaseTest
      * @throws Exception if there is an error establishing the database
      *                   connection or executing the SQL statement.
      */
-    private static function expireToken($role)
+    private static function expireToken($role): void
     {
         self::updateTokenExpirationDate(
             self::$userIds[$role],
@@ -352,7 +352,7 @@ abstract class TokenAuthTest extends BaseTest
      * @throws Exception if there is an error establishing the database
      *                   connection or executing the SQL statement.
      */
-    private static function unexpireToken($role)
+    private static function unexpireToken($role): void
     {
         self::updateTokenExpirationDate(
             self::$userIds[$role],
@@ -369,7 +369,7 @@ abstract class TokenAuthTest extends BaseTest
      * @throws Exception if there is an error establishing the database
      *                   connection or executing the SQL statement.
      */
-    private static function updateTokenExpirationDate($userId, $newDate)
+    private static function updateTokenExpirationDate($userId, $newDate): void
     {
         // We need to directly access the database as we do not have an
         // endpoint for expiring/unexpiring a token.

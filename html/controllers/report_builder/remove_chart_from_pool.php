@@ -6,8 +6,8 @@
 
       $rm = new XDReportManager($user);
 
-      $returnData = array();
-      $returnData['dropped_entries'] = array();
+      $returnData = [];
+      $returnData['dropped_entries'] = [];
 
       foreach ($_POST as $k => $v) {
 
@@ -19,7 +19,7 @@
             
                 $module_id = $m[1];
             
-                if (!isset($returnData['dropped_entries'][$module_id])) $returnData['dropped_entries'][$module_id] = array();
+                if (!isset($returnData['dropped_entries'][$module_id])) $returnData['dropped_entries'][$module_id] = [];
                 $returnData['dropped_entries'][$module_id][] = $v;
             }
               

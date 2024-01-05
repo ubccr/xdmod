@@ -6,17 +6,13 @@
 			
 	$resourceProviders = $xda->enumerateResourceProviders();
 			
-   $providers = array();
+   $providers = [];
 
    //$providers[] = array('id' => '-1', 'organization' => 'No Service Provider');
    
 	foreach($resourceProviders as $provider) {
 
-		$providers[] = array(
-                        'id' => $provider['id'], 
-                        'organization' => $provider['organization'].' ('.$provider['name'].')',
-                        'include' => false
-		                );
+		$providers[] = ['id' => $provider['id'], 'organization' => $provider['organization'].' ('.$provider['name'].')', 'include' => false];
 		           
 	}
 

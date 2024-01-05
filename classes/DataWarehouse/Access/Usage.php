@@ -29,17 +29,17 @@ class Usage extends Common
     /**
      * The default width of a Usage chart.
      */
-    const DEFAULT_WIDTH = 740;
+    public const DEFAULT_WIDTH = 740;
 
     /**
      * The default height of a Usage chart.
      */
-    const DEFAULT_HEIGHT = 345;
+    public const DEFAULT_HEIGHT = 345;
 
     /**
      * The default scale of a Usage chart.
      */
-    const DEFAULT_SCALE = 1.0;
+    public const DEFAULT_SCALE = 1.0;
 
     /**
      * return the metadata about the summary charts for a given realm & group_by. The
@@ -47,7 +47,7 @@ class Usage extends Common
      */
     private function getSummaryCharts(XDUser $user) {
 
-        $usageCharts = array();
+        $usageCharts = [];
 
         $requestedRealms = array_map('trim', explode(',', $this->request['realm']));
         foreach ($requestedRealms as $usageRealm) {
@@ -57,7 +57,7 @@ class Usage extends Common
 
             $usageGroupByObject = $realm->getGroupByObject($usageGroupBy);
 
-            $usageSubnotes = array();
+            $usageSubnotes = [];
             if ($usageGroupBy === 'resource' || array_key_exists('resource', $this->request)) {
                 $usageSubnotes[] = '* Resources marked with asterisk do not provide processor'
                     . ' counts per job when submitting to the '
@@ -66,26 +66,7 @@ class Usage extends Common
                     . ' Size and CPU Consumption';
             }
             $datasetType = \xd_utilities\array_get($this->request, 'dataset_type', $usageGroupByObject->getDefaultDatasetType());
-            $usageChartSettings = array(
-                'dataset_type' => $datasetType,
-                'display_type' => \xd_utilities\array_get($this->request, 'display_type', $usageGroupByObject->getDefaultDisplayType($datasetType)),
-                'combine_type' => \xd_utilities\array_get($this->request, 'combine_type', $usageGroupByObject->getDefaultCombineMethod()),
-                'show_legend' => \xd_utilities\array_get($this->request, 'show_legend', $usageGroupByObject->getDefaultShowLegend()),
-                'show_guide_lines' => \xd_utilities\array_get($this->request, 'show_guide_lines', $usageGroupByObject->getDefaultShowGuideLines()),
-                'log_scale' => \xd_utilities\array_get($this->request, 'log_scale', $usageGroupByObject->getDefaultLogScale()),
-                'limit' => \xd_utilities\array_get($this->request, 'limit', $usageGroupByObject->getDefaultLimit()),
-                'offset' => \xd_utilities\array_get($this->request, 'offset', $usageGroupByObject->getDefaultOffset()),
-                'show_trend_line' => \xd_utilities\array_get($this->request, 'show_trend_line', $usageGroupByObject->getDefaultShowTrendLine()),
-                'show_error_bars' => \xd_utilities\array_get($this->request, 'show_error_bars', $usageGroupByObject->getDefaultShowErrorBars()),
-                'show_aggregate_labels' => \xd_utilities\array_get($this->request, 'show_aggregate_labels', $usageGroupByObject->getDefaultShowAggregateLabels()),
-                'show_error_labels' => \xd_utilities\array_get($this->request, 'show_error_labels', $usageGroupByObject->getDefaultShowErrorLabels()),
-                'hide_tooltip' => \xd_utilities\array_get($this->request, 'hide_tooltip', false),
-                'enable_errors' => 'n',
-                'thumbnail' => 'y',
-                'enable_trend_line' => \xd_utilities\array_get($this->request, 'enable_trend_line', $usageGroupByObject->getDefaultEnableTrendLine()),
-                'realm' => $usageRealm,
-                'group_by' => $usageGroupBy
-            );
+            $usageChartSettings = ['dataset_type' => $datasetType, 'display_type' => \xd_utilities\array_get($this->request, 'display_type', $usageGroupByObject->getDefaultDisplayType($datasetType)), 'combine_type' => \xd_utilities\array_get($this->request, 'combine_type', $usageGroupByObject->getDefaultCombineMethod()), 'show_legend' => \xd_utilities\array_get($this->request, 'show_legend', $usageGroupByObject->getDefaultShowLegend()), 'show_guide_lines' => \xd_utilities\array_get($this->request, 'show_guide_lines', $usageGroupByObject->getDefaultShowGuideLines()), 'log_scale' => \xd_utilities\array_get($this->request, 'log_scale', $usageGroupByObject->getDefaultLogScale()), 'limit' => \xd_utilities\array_get($this->request, 'limit', $usageGroupByObject->getDefaultLimit()), 'offset' => \xd_utilities\array_get($this->request, 'offset', $usageGroupByObject->getDefaultOffset()), 'show_trend_line' => \xd_utilities\array_get($this->request, 'show_trend_line', $usageGroupByObject->getDefaultShowTrendLine()), 'show_error_bars' => \xd_utilities\array_get($this->request, 'show_error_bars', $usageGroupByObject->getDefaultShowErrorBars()), 'show_aggregate_labels' => \xd_utilities\array_get($this->request, 'show_aggregate_labels', $usageGroupByObject->getDefaultShowAggregateLabels()), 'show_error_labels' => \xd_utilities\array_get($this->request, 'show_error_labels', $usageGroupByObject->getDefaultShowErrorLabels()), 'hide_tooltip' => \xd_utilities\array_get($this->request, 'hide_tooltip', false), 'enable_errors' => 'n', 'thumbnail' => 'y', 'enable_trend_line' => \xd_utilities\array_get($this->request, 'enable_trend_line', $usageGroupByObject->getDefaultEnableTrendLine()), 'realm' => $usageRealm, 'group_by' => $usageGroupBy];
 
             $userStatistics = Acls::getPermittedStatistics($user, $usageRealm, $usageGroupBy);
 
@@ -113,31 +94,15 @@ class Usage extends Common
                 }
                 $statUsageChartSettings['statistic'] = $userStatistic;
 
-                $usageChart = array(
-                        'hc_jsonstore' => array('title' => array('text' => '')),
-                        'id' => "statistic_${usageRealm}_${usageGroupBy}_${userStatistic}",
-                        'short_title' => $statsClass->getName(),
-                        'random_id' => 'chart_' . mt_rand(),
-                        'subnotes' => $usageSubnotes,
-                        'group_description' => $usageGroupByObject->getHtmlNameAndDescription(),
-                        'description' => $statsClass->getHtmlNameAndDescription(),
-                        'chart_settings' => json_encode($statUsageChartSettings),
-                );
+                $usageChart = ['hc_jsonstore' => ['title' => ['text' => '']], 'id' => "statistic_${usageRealm}_${usageGroupBy}_${userStatistic}", 'short_title' => $statsClass->getName(), 'random_id' => 'chart_' . mt_rand(), 'subnotes' => $usageSubnotes, 'group_description' => $usageGroupByObject->getHtmlNameAndDescription(), 'description' => $statsClass->getHtmlNameAndDescription(), 'chart_settings' => json_encode($statUsageChartSettings)];
 
                 $usageCharts[] = $usageChart;
             }
         }
 
-        usort($usageCharts, function ($a, $b) {
-            return strcmp($a['short_title'], $b['short_title']);
-        });
+        usort($usageCharts, fn($a, $b) => strcmp($a['short_title'], $b['short_title']));
 
-        $data = array(
-            'success' => true,
-            'message' => 'success',
-            'totalCount' => count($usageCharts),
-            'data' => $usageCharts
-        );
+        $data = ['success' => true, 'message' => 'success', 'totalCount' => count($usageCharts), 'data' => $usageCharts];
 
         return $this->exportImage($data, null, null, null, 'hc_jsonstore', null);
     }
@@ -166,7 +131,7 @@ class Usage extends Common
         $requestedRealms = array_map('trim', explode(',', $this->request['realm']));
 
         // For each realm requested, get the requested charts.
-        $usageCharts = array();
+        $usageCharts = [];
         foreach ($requestedRealms as $usageRealm) {
             // Set the realm on the request object for functions that look
             // at the request directly.
@@ -213,41 +178,7 @@ class Usage extends Common
                 && !$isSingleMetricQuery
                 && $isJsonStoreExport
             ) {
-                return array(
-                    'headers' => \DataWarehouse\ExportBuilder::getHeader($usageFormat),
-                    'results' => json_encode(array(
-                        "metaData" => array(
-                            "totalProperty" => "total",
-                            "root" => "records",
-                            "id" => "id",
-                            "fields" => array(
-                                array(
-                                    "name" => 'Message',
-                                    "type" => 'string',
-                                ),
-                            ),
-                        ),
-                        "success" => true,
-                        "message" => 'Datasheet view is not available for timeseries. Turn off timeseries or use the Export button to get the data.',
-                        "total" => 1,
-                        "records" => array(
-                            array(
-                                'Message' => 'Datasheet view is not available for timeseries. Turn off timeseries or use the Export button to get the data.',
-                            ),
-                        ),
-                        "columns" => array(
-                            array(
-                                "header" => 'Error Message',
-                                "width" => 600,
-                                "dataIndex" => 'Message',
-                                "sortable" => true,
-                                'editable' => false,
-                                'align' => 'left',
-                                'renderer' => "CCR.xdmod.ui.stringRenderer",
-                            ),
-                        ),
-                    )),
-                );
+                return ['headers' => \DataWarehouse\ExportBuilder::getHeader($usageFormat), 'results' => json_encode(["metaData" => ["totalProperty" => "total", "root" => "records", "id" => "id", "fields" => [["name" => 'Message', "type" => 'string']]], "success" => true, "message" => 'Datasheet view is not available for timeseries. Turn off timeseries or use the Export button to get the data.', "total" => 1, "records" => [['Message' => 'Datasheet view is not available for timeseries. Turn off timeseries or use the Export button to get the data.']], "columns" => [["header" => 'Error Message', "width" => 600, "dataIndex" => 'Message', "sortable" => true, 'editable' => false, 'align' => 'left', 'renderer' => "CCR.xdmod.ui.stringRenderer"]]])];
             }
 
             // Convert the request options to a set of Metric Explorer requests.
@@ -257,7 +188,7 @@ class Usage extends Common
             //
             // If the request was for aggregate charts and any statistic can't
             // be provided in that form, quietly change its chart to timeseries.
-            $meRequests = array();
+            $meRequests = [];
             $userStatistics = Acls::getPermittedStatistics($user, $usageRealm, $usageGroupBy);
             if ($isSingleMetricQuery) {
                 if (!$usageIsTimeseries) {
@@ -265,11 +196,7 @@ class Usage extends Common
                     if (!$userStatisticObject->usesTimePeriodTablesForAggregate()) {
                         throw new BadRequestHttpException(
                             json_encode(
-                                array(
-                                    'statistic' => $userStatisticObject->getName(),
-                                    'instructions' =>  'Try again as timeseries',
-                                    'description' => 'Aggregate View not supported'
-                                )
+                                ['statistic' => $userStatisticObject->getName(), 'instructions' =>  'Try again as timeseries', 'description' => 'Aggregate View not supported']
                             )
                         );
                     }
@@ -293,15 +220,7 @@ class Usage extends Common
                         // and not all statistics can be provided as aggregates,
                         // return a failure response.
                         if ($isTextExport) {
-                            return array(
-                                'results' => json_encode(array(
-                                    'success' => false,
-                                    'message' => "Aggregate data not available for all metrics. Change to timeseries and try again.",
-                                    'totalCount' => 0,
-                                    $chartsKey => array(),
-                                )),
-                                'headers' => array(),
-                            );
+                            return ['results' => json_encode(['success' => false, 'message' => "Aggregate data not available for all metrics. Change to timeseries and try again.", 'totalCount' => 0, $chartsKey => []]), 'headers' => []];
                         }
 
                         $statisticRequest['dataset_type'] = 'timeseries';
@@ -346,11 +265,11 @@ class Usage extends Common
                     $usageIsTimeseries
                 );
 
-                $meRequests = array($firstMeRequest);
+                $meRequests = [$firstMeRequest];
             }
 
             // Run the Metric Explorer chart generator on each request.
-            $meResponses = array();
+            $meResponses = [];
             foreach ($meRequests as $meRequest) {
                 $meGenerator = new MetricExplorer($meRequest);
                 $meResponses[] = $meGenerator->get_data($user);
@@ -358,15 +277,7 @@ class Usage extends Common
 
             // If no charts were generated, return a failure response.
             if (empty($meResponses)) {
-                return array(
-                    'results' => json_encode(array(
-                        'success' => false,
-                        'message' => 'No charts could be generated using the given parameters.',
-                        'totalCount' => 0,
-                        $chartsKey => array(),
-                    )),
-                    'headers' => array(),
-                );
+                return ['results' => json_encode(['success' => false, 'message' => 'No charts could be generated using the given parameters.', 'totalCount' => 0, $chartsKey => []]), 'headers' => []];
             }
 
             // If this is a text export, perform special handling of the response.
@@ -384,7 +295,7 @@ class Usage extends Common
                     $combinedResult = null;
                     $combinedResultColumns = null;
                     $combinedResultFields = null;
-                    $combinedResultRecords = array();
+                    $combinedResultRecords = [];
                     $combinedResultFirstColumn = null;
                     $combinedResultRestricted = false;
                     foreach ($meResponse['results'] as $meJsonResult) {
@@ -393,7 +304,7 @@ class Usage extends Common
                             $combinedResultFirstColumn = $meResult['metaData']['fields'][0]['name'];
                         }
 
-                        if ($meResult['records'] == array(array('Message' => 'Dataset is empty'))) {
+                        if ($meResult['records'] == [['Message' => 'Dataset is empty']]) {
                             $emptyResultFound = true;
                             continue;
                         }
@@ -435,15 +346,10 @@ class Usage extends Common
                         if ($emptyResultFound) {
                             $failureResults = reset($meResponse['results']);
                         } else {
-                            $failureResults = json_encode(array(
-                                'success' => false,
-                            ));
+                            $failureResults = json_encode(['success' => false]);
                         }
 
-                        return array(
-                            'headers' => $meResponse['headers'],
-                            'results' => $failureResults,
-                        );
+                        return ['headers' => $meResponse['headers'], 'results' => $failureResults];
                     }
 
                     if ($meRequestIsTimeseries) {
@@ -456,10 +362,10 @@ class Usage extends Common
                         $combinedResultFields = array_slice($combinedResultFields, 0, 1);
                         $combinedResultColumns = array_slice($combinedResultColumns, 0, 1);
 
-                        $timeseriesFields = array();
+                        $timeseriesFields = [];
                         $nextFieldNameIndex = 0;
-                        $timeseriesColumns = array();
-                        $timeseriesRecords = array();
+                        $timeseriesColumns = [];
+                        $timeseriesRecords = [];
                         foreach ($combinedResultRecords as $resultRecord) {
                             $resultRecordDimension = $resultRecord[$timeseriesGroupByColumnName];
 
@@ -480,10 +386,7 @@ class Usage extends Common
                             }
 
                             $timeseriesRecordTime = $resultRecord[$combinedResultFirstColumn];
-                            $timeseriesRecord = array(
-                                $combinedResultFirstColumn => $timeseriesRecordTime,
-                                $timeseriesDimensionColumnName => $resultRecord[$valueColumnName],
-                            );
+                            $timeseriesRecord = [$combinedResultFirstColumn => $timeseriesRecordTime, $timeseriesDimensionColumnName => $resultRecord[$valueColumnName]];
 
                             if (array_key_exists($timeseriesRecordTime, $timeseriesRecords)) {
                                 $timeseriesRecords[$timeseriesRecordTime] = array_merge(
@@ -509,9 +412,7 @@ class Usage extends Common
                     // Sort the value columns by title.
                     $combinedResultKeyColumns = array_slice($combinedResultColumns, 0, 1);
                     $combinedResultValueColumns = array_slice($combinedResultColumns, 1);
-                    usort($combinedResultValueColumns, function ($a, $b) {
-                        return strcmp($a['header'], $b['header']);
-                    });
+                    usort($combinedResultValueColumns, fn($a, $b) => strcmp($a['header'], $b['header']));
                     $combinedResultColumns = array_merge(
                         $combinedResultKeyColumns,
                         $combinedResultValueColumns
@@ -527,7 +428,7 @@ class Usage extends Common
                     $jsonStoreMessage = '<ul>';
                     $jsonStoreMessage .= '<li>' . $usageGroupByObject->getHtmlNameAndDescription() . '</li>';
 
-                    $jsonStoreMessageMetricDescriptions = array();
+                    $jsonStoreMessageMetricDescriptions = [];
                     foreach ($meRequest['data_series_unencoded'] as $meRequestDataSeries) {
                         $jsonStoreMessageMetricDescriptions[] = sprintf(
                             '<li>%s</li>',
@@ -560,10 +461,7 @@ class Usage extends Common
                         }
                     }
 
-                    $combinedResult['metaData']['sortInfo'] = array(
-                        'field' => $sortField,
-                        'direction' => $sortDirection,
-                    );
+                    $combinedResult['metaData']['sortInfo'] = ['field' => $sortField, 'direction' => $sortDirection];
 
                     // Set the results to the combined result.
                     $meResponse['results'] = json_encode($combinedResult);
@@ -585,25 +483,9 @@ class Usage extends Common
             $showTitle = \xd_utilities\array_get($this->request, 'show_title', 'y');
 
             // Generate the chart settings that will be returned with each chart.
-            $usageChartSettings = array(
-                'dataset_type' =>           \xd_utilities\array_get($this->request, 'dataset_type', $usageGroupByObject->getDefaultDatasetType()),
-                'display_type' =>           \xd_utilities\array_get($this->request, 'display_type', $usageGroupByObject->getDefaultDisplayType($usageGroupByObject->getDefaultDatasetType())),
-                'combine_type' =>           \xd_utilities\array_get($this->request, 'combine_type', $usageGroupByObject->getDefaultCombineMethod()),
-                'show_legend' =>            \xd_utilities\array_get($this->request, 'show_legend', $usageGroupByObject->getDefaultShowLegend()),
-                'show_guide_lines' =>       \xd_utilities\array_get($this->request, 'show_guide_lines', $usageGroupByObject->getDefaultShowGuideLines()),
-                'log_scale' =>              \xd_utilities\array_get($this->request, 'log_scale', $usageGroupByObject->getDefaultLogScale()),
-                'limit' =>                  \xd_utilities\array_get($this->request, 'limit', $usageGroupByObject->getDefaultLimit()),
-                'offset' =>                 \xd_utilities\array_get($this->request, 'offset', $usageGroupByObject->getDefaultOffset()),
-                'show_trend_line' =>        \xd_utilities\array_get($this->request, 'show_trend_line', $usageGroupByObject->getDefaultShowTrendLine()),
-                'show_error_bars' =>        \xd_utilities\array_get($this->request, 'show_error_bars', $usageGroupByObject->getDefaultShowErrorBars()),
-                'show_aggregate_labels' =>  \xd_utilities\array_get($this->request, 'show_aggregate_labels', $usageGroupByObject->getDefaultShowAggregateLabels()),
-                'show_error_labels' =>      \xd_utilities\array_get($this->request, 'show_error_labels', $usageGroupByObject->getDefaultShowErrorLabels()),
-                'hide_tooltip' =>           \xd_utilities\array_get($this->request, 'hide_tooltip', false),
-                'enable_errors' =>          'n',
-                'enable_trend_line' =>      \xd_utilities\array_get($this->request, 'enable_trend_line', $usageGroupByObject->getDefaultEnableTrendLine()),
-            );
+            $usageChartSettings = ['dataset_type' =>           \xd_utilities\array_get($this->request, 'dataset_type', $usageGroupByObject->getDefaultDatasetType()), 'display_type' =>           \xd_utilities\array_get($this->request, 'display_type', $usageGroupByObject->getDefaultDisplayType($usageGroupByObject->getDefaultDatasetType())), 'combine_type' =>           \xd_utilities\array_get($this->request, 'combine_type', $usageGroupByObject->getDefaultCombineMethod()), 'show_legend' =>            \xd_utilities\array_get($this->request, 'show_legend', $usageGroupByObject->getDefaultShowLegend()), 'show_guide_lines' =>       \xd_utilities\array_get($this->request, 'show_guide_lines', $usageGroupByObject->getDefaultShowGuideLines()), 'log_scale' =>              \xd_utilities\array_get($this->request, 'log_scale', $usageGroupByObject->getDefaultLogScale()), 'limit' =>                  \xd_utilities\array_get($this->request, 'limit', $usageGroupByObject->getDefaultLimit()), 'offset' =>                 \xd_utilities\array_get($this->request, 'offset', $usageGroupByObject->getDefaultOffset()), 'show_trend_line' =>        \xd_utilities\array_get($this->request, 'show_trend_line', $usageGroupByObject->getDefaultShowTrendLine()), 'show_error_bars' =>        \xd_utilities\array_get($this->request, 'show_error_bars', $usageGroupByObject->getDefaultShowErrorBars()), 'show_aggregate_labels' =>  \xd_utilities\array_get($this->request, 'show_aggregate_labels', $usageGroupByObject->getDefaultShowAggregateLabels()), 'show_error_labels' =>      \xd_utilities\array_get($this->request, 'show_error_labels', $usageGroupByObject->getDefaultShowErrorLabels()), 'hide_tooltip' =>           \xd_utilities\array_get($this->request, 'hide_tooltip', false), 'enable_errors' =>          'n', 'enable_trend_line' =>      \xd_utilities\array_get($this->request, 'enable_trend_line', $usageGroupByObject->getDefaultEnableTrendLine())];
 
-            $usageSubnotes = array();
+            $usageSubnotes = [];
             if ($usageGroupBy === 'resource' || array_key_exists('resource', $this->request)) {
                 $usageSubnotes[] = '* Resources marked with asterisk do not provide processor'
                     . ' counts per job when submitting to the '
@@ -614,10 +496,7 @@ class Usage extends Common
 
             // Generate the title style that will be used for all charts.
             $usageTitleFontSizeInPixels = 16 + $usageFontSize;
-            $usageTitleStyle = array(
-                'color' => '#000000',
-                'fontSize' => "${usageTitleFontSizeInPixels}px",
-            );
+            $usageTitleStyle = ['color' => '#000000', 'fontSize' => "${usageTitleFontSizeInPixels}px"];
 
             // Get the user's report generator chart pool.
             $chartPool = new XDChartPool($user);
@@ -649,11 +528,11 @@ class Usage extends Common
                 $meChart = &$meResponseContent['data'][0];
 
                 // Extract the report generator options.
-                $meReportGeneratorMeta = \xd_utilities\array_extract($meChart, 'reportGeneratorMeta', array());
+                $meReportGeneratorMeta = \xd_utilities\array_extract($meChart, 'reportGeneratorMeta', []);
 
                 // Replace the in-chart descriptions with empty arrays.
-                $meChart['dimensions'] = array();
-                $meChart['metrics'] = array();
+                $meChart['dimensions'] = [];
+                $meChart['metrics'] = [];
 
                 // Grab the dimension and metric and generate a formatted group
                 // and metric description.
@@ -665,7 +544,7 @@ class Usage extends Common
                 //
                 // Because the function doesn't receive a custom title, if any,
                 // from this adapter, the chart's subtitle is placed in the title.
-                $usageChartSubtitle = $usageSubtitle !== null ? $usageSubtitle : $meChart['title']['text'];
+                $usageChartSubtitle = $usageSubtitle ?? $meChart['title']['text'];
 
                 // Generate the title and short title of this chart.
                 $usageChartShortTitle = $meRequestMetric->getName();
@@ -783,7 +662,7 @@ class Usage extends Common
                     && $usageGroupBy !== 'none'
                 ) {
                     $meChartCategories = $meChart['xAxis']['categories'];
-                    $usageChartCategories = array();
+                    $usageChartCategories = [];
                     $currentCategoryRank = $usageOffset + 1;
                     foreach ($meChartCategories as $meChartCategory) {
                         $usageChartCategories[] = "${currentCategoryRank}. ${meChartCategory}";
@@ -804,9 +683,7 @@ class Usage extends Common
                 unset($usageChartArgs['width']);
                 ksort($usageChartArgs);
                 if (array_key_exists('controller_module', $usageChartArgs)) {
-                    $usageChartArgs = array(
-                        'controller_module' => $usageChartArgs['controller_module'],
-                    ) + $usageChartArgs;
+                    $usageChartArgs = ['controller_module' => $usageChartArgs['controller_module']] + $usageChartArgs;
                 }
                 $usageChartArgsStr = urldecode(http_build_query($usageChartArgs));
 
@@ -820,9 +697,7 @@ class Usage extends Common
                 );
                 $drillTargets = $queryDescripter->getDrillTargets($meRequestMetric->getHiddenGroupBys());
                 $drillDowns = array_map(
-                    function ($drillTarget) {
-                        return explode('-', $drillTarget, 2);
-                    },
+                    fn($drillTarget) => explode('-', $drillTarget, 2),
                     $drillTargets
                 );
 
@@ -844,7 +719,7 @@ class Usage extends Common
                     $user,
                     &$primaryDataSeriesRank,
                     $chartSortedByValue
-                ) {
+                ): void {
                     // Determine the type of this data series.
                     $isTrendLineSeries = \xd_utilities\string_begins_with($meDataSeries['name'], 'Trend Line: ');
                     $isStdErrSeries = \xd_utilities\array_get($meDataSeries, 'type') === 'errorbar';
@@ -904,7 +779,7 @@ class Usage extends Common
                     if (!$isTrendLineSeries && !$thumbnailRequested) {
                         $meDataSeries['drilldown']['drilldowns'] = $drillDowns;
                         $meDataSeries['drilldown']['realm'] = $usageRealm;
-                        $meDataSeries['drilldown']['groupUnit'] = array($usageGroupBy, $usageGroupByObject->getName());
+                        $meDataSeries['drilldown']['groupUnit'] = [$usageGroupBy, $usageGroupByObject->getName()];
                     }
 
                     // Set properties that are different.
@@ -929,7 +804,7 @@ class Usage extends Common
                 }
 
                 // Create a Usage-style chart.
-                $usageChart = array(
+                $usageChart = [
                     'hc_jsonstore' => $meChart,
                     'query_time' => '',
                     'query_string' => '',
@@ -937,11 +812,10 @@ class Usage extends Common
                     'params_title' => html_entity_decode($usageChartSubtitle),
                     'comments' => 'comments',
                     'chart_args' => $usageChartArgsStr,
-                    'reportGeneratorMeta' => array(
-                        'included_in_report' => $usageChartInPool ? 'y' : 'n',
-                    ),
+                    'reportGeneratorMeta' => ['included_in_report' => $usageChartInPool ? 'y' : 'n'],
                     'short_title' => $usageChartShortTitle,
-                    'random_id' => 'chart_' . mt_rand(), //TODO: Use a definitively-unique ID for inserting chart HTML tags.
+                    'random_id' => 'chart_' . mt_rand(),
+                    //TODO: Use a definitively-unique ID for inserting chart HTML tags.
                     'subnotes' => $usageSubnotes,
                     'group_description' => $usageChartDimensionDescription,
                     'description' => $usageChartMetricDescription,
@@ -955,7 +829,7 @@ class Usage extends Common
                     'final_width' => $usageWidth,
                     'final_height' => $usageHeight - 4,
                     'sort_type' => $meRequest['data_series_unencoded'][0]['sort_type'],
-                );
+                ];
                 foreach ($meReportGeneratorMeta as $reportKey => $reportValue) {
                     if (
                         $reportKey === 'included_in_report'
@@ -973,9 +847,7 @@ class Usage extends Common
         }
 
         // Sort the results by short title.
-        usort($usageCharts, function ($a, $b) {
-            return strcmp($a['short_title'], $b['short_title']);
-        });
+        usort($usageCharts, fn($a, $b) => strcmp($a['short_title'], $b['short_title']));
 
         // Get the format to return the results in.
         if ($usageFormat === 'session_variable') {
@@ -997,27 +869,16 @@ class Usage extends Common
         // Return the results in a response-like array.
         if ($usageFormat !== 'hc_jsonstore') {
             $chartsKey = 'data';
-            $usageCharts = array_map(function ($usageChart) {
-                return $usageChart['hc_jsonstore'];
-            }, $usageCharts);
+            $usageCharts = array_map(fn($usageChart) => $usageChart['hc_jsonstore'], $usageCharts);
         }
         return $this->exportImage(
-            array(
-                'success' => true,
-                'message' => 'success',
-                'totalCount' => count($usageCharts),
-                $chartsKey => $usageCharts,
-            ),
+            ['success' => true, 'message' => 'success', 'totalCount' => count($usageCharts), $chartsKey => $usageCharts],
             $usageWidth,
             $usageHeight,
             \xd_utilities\array_get($this->request, 'scale', self::DEFAULT_SCALE),
             $usageFormat,
             $usageFileName,
-            array(
-                'author' => $user->getFormalName(),
-                'subject' => ($usageIsTimeseries ? 'Timeseries' : 'Aggregate') . ' data for period ' . $this->request['start_date'] . ' -> ' . $this->request['end_date'],
-                'title' => $usageFileNameTitle
-            )
+            ['author' => $user->getFormalName(), 'subject' => ($usageIsTimeseries ? 'Timeseries' : 'Aggregate') . ' data for period ' . $this->request['start_date'] . ' -> ' . $this->request['end_date'], 'title' => $usageFileNameTitle]
         );
     }
 
@@ -1038,25 +899,7 @@ class Usage extends Common
     private function convertChartRequest(array $usageRequest, $useGivenFormat) {
         // Start with a Metric Explorer request pre-filled with defaults
         // not present in Usage requests.
-        $meRequest = array(
-            'show_title' => true,
-            'show_filters' => true,
-            'format' => '_internal',
-            'show_remainder' => true,
-            'data_series' => array(
-                array(
-                    'id' => lcg_value(),
-                    'x_axis' => false,
-                    'has_std_err' => 'y',
-                    'filters' => array(
-                        'data' => array(),
-                        'total' => 0,
-                    ),
-                    'ignore_global' => false,
-                    'long_legend' => true,
-                ),
-            ),
-        );
+        $meRequest = ['show_title' => true, 'show_filters' => true, 'format' => '_internal', 'show_remainder' => true, 'data_series' => [['id' => lcg_value(), 'x_axis' => false, 'has_std_err' => 'y', 'filters' => ['data' => [], 'total' => 0], 'ignore_global' => false, 'long_legend' => true]]];
 
         // Set some convenience references.
         $meRequestDataOptions = &$meRequest['data_series'][0];
@@ -1093,7 +936,7 @@ class Usage extends Common
 
         // Create global filters from any Usage drilldowns.
 
-        $meFilters = array();
+        $meFilters = [];
         $realm = Realm::factory($usageRealm);
         $realmGroupByIds = $realm->getGroupByIds();
 
@@ -1109,34 +952,19 @@ class Usage extends Common
                     $translatedValues = $this->translateFilterValue($usageFilterType, $usageFilterValue);
 
                     foreach($translatedValues as $translatedValue) {
-                        $meFilters[] = array(
-                            'id' => "$usageFilterType=$translatedValue",
-                            'value_id' => $translatedValue,
-                            'dimension_id' => $usageFilterType,
-                            'realms' => array($usageRealm),
-                            'checked' => true,
-                        );
+                        $meFilters[] = ['id' => "$usageFilterType=$translatedValue", 'value_id' => $translatedValue, 'dimension_id' => $usageFilterType, 'realms' => [$usageRealm], 'checked' => true];
                     }
                 }
             }
 
             // handles '<dimension>' properties
             if (in_array($usageKey, $realmGroupByIds)) {
-                $meFilters[] = array(
-                    'id' => "$usageKey=$usageValue",
-                    'value_id' => $usageValue,
-                    'dimension_id' => $usageKey,
-                    'realms' => array($usageRealm),
-                    'checked' => true,
-                );
+                $meFilters[] = ['id' => "$usageKey=$usageValue", 'value_id' => $usageValue, 'dimension_id' => $usageKey, 'realms' => [$usageRealm], 'checked' => true];
             }
         }
 
         // Store the global filters in the Metric Explorer request.
-        $meRequest['global_filters'] = array(
-            'data' => $meFilters,
-            'total' => count($meFilters),
-        );
+        $meRequest['global_filters'] = ['data' => $meFilters, 'total' => count($meFilters)];
 
         // Get the sort order from the defaults for the requested group by
         // and metric.
@@ -1152,17 +980,11 @@ class Usage extends Common
             $sortMechanism = $usageMetricObject->getSortOrder();
         }
 
-        switch ($sortMechanism) {
-            case SORT_ASC:
-                $sortOrder = 'value_asc';
-                break;
-            case SORT_DESC:
-                $sortOrder = 'value_desc';
-                break;
-            default:
-                $sortOrder = 'label_asc';
-                break;
-        }
+        $sortOrder = match ($sortMechanism) {
+            SORT_ASC => 'value_asc',
+            SORT_DESC => 'value_desc',
+            default => 'label_asc',
+        };
         $meRequestDataOptions['sort_type'] = $sortOrder;
 
         // Use the given format, if enabled.
@@ -1196,7 +1018,7 @@ class Usage extends Common
 
         // Convert any array parameters to JSON and URL encode them.
         // Also, store the original arrays as differently-named parameters.
-        $unencodedMeRequestParams = array();
+        $unencodedMeRequestParams = [];
         foreach ($meRequest as $meRequestKey => $meRequestValue) {
             if (!is_array($meRequestValue)) {
                 continue;
@@ -1279,7 +1101,7 @@ class Usage extends Common
             $db = DB::factory('database');
 
             $stmt = $db->prepare($query);
-            $stmt->execute(array(':value' => $value));
+            $stmt->execute([':value' => $value]);
 
             $rows = $stmt->fetchAll(PDO::FETCH_COLUMN, 0);
 
@@ -1292,6 +1114,6 @@ class Usage extends Common
             throw new Exception(sprintf("Invalid value detected for filter '%s': %s", $usageFilterType, $usageFilterValue));
         }
 
-        return array($usageFilterValue);
+        return [$usageFilterValue];
     }
 }

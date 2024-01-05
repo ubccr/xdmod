@@ -10,7 +10,7 @@ $user = \Models\Services\Tokens::authenticateToken();
 // If token authentication failed then fall back to the standard session-based
 // authentication method.
 if ($user === null) {
-    $user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
+    $user = \xd_security\detectUser([\XDUser::PUBLIC_USER]);
 }
 
 $start = microtime(true);

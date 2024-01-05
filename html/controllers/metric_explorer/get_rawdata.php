@@ -10,7 +10,7 @@ ini_set('max_execution_time', 300);
 
 $logger = new \CCR\RequestLogger();
 
-$returnData = array();
+$returnData = [];
 
 $start = microtime(true);
 try {
@@ -22,13 +22,11 @@ try {
     $format = \DataWarehouse\ExportBuilder::getFormat(
         $_REQUEST,
         'jsonstore',
-        array(
-            'jsonstore'
-        )
+        ['jsonstore']
     );
 
     $user = \xd_security\detectUser(
-        array(XDUser::INTERNAL_USER, XDUser::PUBLIC_USER)
+        [XDUser::INTERNAL_USER, XDUser::PUBLIC_USER]
     );
 
     $inline = getInline();
@@ -40,7 +38,7 @@ try {
 
     $showContextMenu = getShowContextMenu();
 
-    list($start_date, $end_date, $start_ts, $end_ts) = checkDateParameters();
+    [$start_date, $end_date, $start_ts, $end_ts] = checkDateParameters();
 
     if ($start_ts > $end_ts) {
         throw new Exception(
@@ -55,14 +53,14 @@ try {
         $time_period = TimeAggregationUnit::deriveAggregationUnitName(getAggregationUnit(), $start_date, $end_date);
         $time_point = $_REQUEST['datapoint'] / 1000;
 
-        list($start_date, $end_date) = TimeAggregationUnit::getRawTimePeriod($time_point, $time_period);
+        [$start_date, $end_date] = TimeAggregationUnit::getRawTimePeriod($time_point, $time_period);
     }
 
     $title = getTitle();
 
     $global_filters = getGlobalFilters();
 
-    $dataset_classname = '\DataWarehouse\Data\SimpleDataset';
+    $dataset_classname = \DataWarehouse\Data\SimpleDataset::class;
 
     $filename
         = 'xdmod_'
@@ -108,10 +106,10 @@ try {
             $end_date,
             null,
             $data_description->metric,
-            array()
+            []
         );
 
-        $groupedRoleParameters = array();
+        $groupedRoleParameters = [];
         foreach ($global_filters->data as $global_filter) {
             if ($global_filter->checked == 1) {
                 if (
@@ -120,7 +118,7 @@ try {
                 )
                 ) {
                     $groupedRoleParameters[$global_filter->dimension_id]
-                        = array();
+                        = [];
                 }
 
                 $groupedRoleParameters[$global_filter->dimension_id][]
@@ -139,14 +137,14 @@ try {
         // DEFINE: that we're going to be sending back json.
         header('Content-type: application/json');
 
-        $filterOpts = array('options' => array('default' => null, 'min_range' => 0));
+        $filterOpts = ['options' => ['default' => null, 'min_range' => 0]];
 
         $limit = filter_input(INPUT_POST, 'limit', FILTER_VALIDATE_INT, $filterOpts);
         $offset = filter_input(INPUT_POST, 'start', FILTER_VALIDATE_INT, $filterOpts);
 
         $totalCount  = $dataset->getTotalPossibleCount();
 
-        $ret = array();
+        $ret = [];
 
         // As a small optimization only compute the total count the first time (ie when the offset is 0)
         if($offset === null or $offset == 0) {
@@ -157,7 +155,7 @@ try {
                 $end_date,
                 null,
                 $data_description->metric,
-                array()
+                []
             );
             $privquery->setRoleParameters($groupedRoleParameters);
             $privquery->setFilters($data_description->filters);

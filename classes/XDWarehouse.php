@@ -63,12 +63,12 @@ class XDWarehouse
         }
 
         if (!isset($start) || !isset($limit)) {
-            return array(0, array());
+            return [0, []];
         }
 
         // Filter Logic
 
-        $filterElements = array();
+        $filterElements = [];
 
         if ($piFilter == true)   {
 
@@ -183,7 +183,7 @@ class XDWarehouse
                 break;
         }
 
-        return array($recordCountQuery[0]['total_records'], $usersQuery);
+        return [$recordCountQuery[0]['total_records'], $usersQuery];
     }
 
     /**
@@ -204,10 +204,7 @@ SQL;
 
         $rows = $this->_pdo->query(
             $query,
-            array(
-                ':id' => $institution_id,
-                ':unknown_organization_id' => -1
-            )
+            [':id' => $institution_id, ':unknown_organization_id' => -1]
 
         );
 
@@ -229,7 +226,7 @@ SQL;
                 FROM person
                 WHERE id = :id
             ",
-            array('id' => $person_id)
+            ['id' => $person_id]
         );
 
         if (count($nameQuery) == 0){ return NO_MAPPING; }
@@ -279,13 +276,10 @@ SQL;
             "SELECT id, description FROM fieldofscience ORDER BY description"
         );
 
-        $fields = array();
+        $fields = [];
 
         foreach ($fos_entries as $fos) {
-            $fields[] = array(
-                'field_id'    => $fos['id'],
-                'field_label' => $fos['description'],
-            );
+            $fields[] = ['field_id'    => $fos['id'], 'field_label' => $fos['description']];
         }
 
         return $fields;
@@ -324,17 +318,11 @@ SQL;
     {
 
         // key => SQL expression
-        $priorityCriteria = array(
-            'last_name'  => 'p.last_name',
-            'first_name' => 'p.first_name',
-        );
+        $priorityCriteria = ['last_name'  => 'p.last_name', 'first_name' => 'p.first_name'];
 
         // These are not used in the SQL query.  They are only used to
         // check if the user is an exact match.
-        $secondaryCriteria = array(
-            'email_address',
-            'organization',
-        );
+        $secondaryCriteria = ['email_address', 'organization'];
 
         // All possible keys that may be in the search criteria.
         $criteriaKeys = array_merge(
@@ -342,8 +330,8 @@ SQL;
             $secondaryCriteria
         );
 
-        $clauses  = array();
-        $bindVals = array();
+        $clauses  = [];
+        $bindVals = [];
 
         foreach ($priorityCriteria as $key => $sqlExpr) {
             if (isset($searchCrit[$key])) {
@@ -372,7 +360,7 @@ SQL;
 
         $results = $this->_pdo->query($sql, $bindVals);
 
-        $users = array();
+        $users = [];
 
         foreach ($results as $user) {
             $exactMatch = true;
@@ -392,7 +380,7 @@ SQL;
             // If an exact match is found, short-circuit the loop and
             // return only a single user.
             if ($exactMatch) {
-                return array($user);
+                return [$user];
             }
 
             $users[] = $user;

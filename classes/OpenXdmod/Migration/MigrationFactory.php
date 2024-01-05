@@ -43,7 +43,7 @@ class MigrationFactory
         $configFilesMigrationName = $ns . '\\' . 'ConfigFilesMigration';
         $databasesMigrationName   = $ns . '\\' . 'DatabasesMigration';
 
-        $migrations = array();
+        $migrations = [];
 
         if ($updateConfigFiles && class_exists($configFilesMigrationName)) {
             $msg = "Using config files migration '$configFilesMigrationName'";

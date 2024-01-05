@@ -4,7 +4,7 @@
  * Globally-defined PHP constants go here...
  */
 
-$currentDir = dirname(__FILE__);
+$currentDir = __DIR__;
 
 /**
  * APPLICATION_ENV can be used to select the correct configuration file

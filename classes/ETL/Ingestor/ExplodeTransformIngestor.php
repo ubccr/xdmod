@@ -35,7 +35,7 @@ class ExplodeTransformIngestor extends pdoIngestor implements iAction
     {
         parent::__construct($options, $etlConfig, $logger);
 
-        $this->verifyRequiredConfigKeys(array('explode_column'), $options);
+        $this->verifyRequiredConfigKeys(['explode_column'], $options);
 
         foreach($options->explode_column as $key => $value) {
             $this->srcKey = $key;
@@ -49,13 +49,11 @@ class ExplodeTransformIngestor extends pdoIngestor implements iAction
      */
     protected function transform(array $srcRecord, &$orderId)
     {
-        $transformedRecord = array();
+        $transformedRecord = [];
         $items = explode(',', $srcRecord[$this->srcKey]);
 
         foreach ($items as $item) {
-            $out = array(
-                $this->destKey => $item
-            );
+            $out = [$this->destKey => $item];
             foreach($srcRecord as $key => $value) {
                 if ($key != $this->destKey && $key != $this->srcKey) {
                     $out[$key] = $value;

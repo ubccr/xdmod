@@ -9,22 +9,9 @@ define('SERVICE_PROVIDER_ID', 1);
 define('DEFAULT_SECRETS_FILE', __DIR__ . '/../testing.json');
 define('DEFAULT_XDMOD_PATH', '/usr/share/xdmod');
 
-$scriptOptions = array(
-    'user-id' => null,
-    'secrets-file' => DEFAULT_SECRETS_FILE,
-    'service-provider-id' => SERVICE_PROVIDER_ID,
-    'create-manager-users' => false,
-    'xdmod-install-path' => DEFAULT_XDMOD_PATH
-);
+$scriptOptions = ['user-id' => null, 'secrets-file' => DEFAULT_SECRETS_FILE, 'service-provider-id' => SERVICE_PROVIDER_ID, 'create-manager-users' => false, 'xdmod-install-path' => DEFAULT_XDMOD_PATH];
 
-$options = array(
-    'd:'  => 'delete-user-id',
-    'h'   => 'help',
-    'm'   => 'create-manager-users',
-    'o:'  => 'service-provider-org:',
-    's:'  => 'secrets-file:',
-    'x:'  => 'xdmod-install-path:'
-);
+$options = ['d:'  => 'delete-user-id', 'h'   => 'help', 'm'   => 'create-manager-users', 'o:'  => 'service-provider-org:', 's:'  => 'secrets-file:', 'x:'  => 'xdmod-install-path:'];
 
 $args = getopt(implode('', array_keys($options)), $options);
 
@@ -34,7 +21,7 @@ foreach ($args as $arg => $value) {
         case 'd':
         case 'delete-user-id':
             // Merge array because long and short options are grouped separately
-            $scriptOptions['user-id'] = filter_var($value, FILTER_VALIDATE_INT, array('flags' => FILTER_NULL_ON_FAILURE));
+            $scriptOptions['user-id'] = filter_var($value, FILTER_VALIDATE_INT, ['flags' => FILTER_NULL_ON_FAILURE]);
             if ( null === $scriptOptions['user-id'] ) {
                 usageAndExit("Invalid user id: '$value'");
             }
@@ -47,7 +34,7 @@ foreach ($args as $arg => $value) {
 
         case 'o':
         case 'service-provider-org':
-            $scriptOptions['service-provider-id'] = filter_var($value, FILTER_VALIDATE_INT, array('flags' => FILTER_NULL_ON_FAILURE));
+            $scriptOptions['service-provider-id'] = filter_var($value, FILTER_VALIDATE_INT, ['flags' => FILTER_NULL_ON_FAILURE]);
             if ( null === $scriptOptions['service-provider-id'] ) {
                 usageAndExit("Invalid organization id: '$value'");
             }
@@ -80,7 +67,7 @@ if ( null !== $scriptOptions['user-id'] ) {
 
 exit(0);
 
-function createUsers(array $options)
+function createUsers(array $options): void
 {
 
     $userlist = json_decode(file_get_contents($options['secrets-file']), true);
@@ -96,10 +83,7 @@ function createUsers(array $options)
             continue;
         }
 
-        $searchCriteria = array(
-            'last_name' => $credentials['surname'],
-            'first_name' => $credentials['givenname']
-        );
+        $searchCriteria = ['last_name' => $credentials['surname'], 'first_name' => $credentials['givenname']];
 
         $users = $xdw->searchUsers($searchCriteria);
 
@@ -121,7 +105,7 @@ function createUsers(array $options)
                 $credentials['givenname'],
                 '',
                 $credentials['surname'],
-                array_unique(array($rolename, 'usr')),
+                array_unique([$rolename, 'usr']),
                 $rolename,
                 $defaultOrganization,
                 $users[0]['person_id']
@@ -135,10 +119,10 @@ function createUsers(array $options)
         }
 
         if ($rolename == 'cd') {
-            $newUser->setOrganizations(array($options['service-provider-id'] => array('active' => true, 'primary' => true)), ROLE_ID_CENTER_DIRECTOR);
+            $newUser->setOrganizations([$options['service-provider-id'] => ['active' => true, 'primary' => true]], ROLE_ID_CENTER_DIRECTOR);
         }
         if ($rolename == 'cs') {
-            $newUser->setOrganizations(array($options['service-provider-id']=> array('active' => true, 'primary' => true)), ROLE_ID_CENTER_STAFF);
+            $newUser->setOrganizations([$options['service-provider-id']=> ['active' => true, 'primary' => true]], ROLE_ID_CENTER_STAFF);
         }
     }
 }
@@ -158,7 +142,7 @@ function deleteUser(array $options)
     return true;
 }
 
-function usageAndExit($msg = null)
+function usageAndExit($msg = null): void
 {
     global $argv;
 

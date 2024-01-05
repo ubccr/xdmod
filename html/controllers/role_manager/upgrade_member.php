@@ -18,10 +18,7 @@ try {
     // Ensure that the user performing this operation is authorized
     if (!$activeUser->hasAcl(ROLE_ID_CENTER_DIRECTOR) || !$activeUser->getAccountStatus()) {
         \xd_controller\returnJSON(
-            array(
-                'success' => false,
-                'message' => 'You are not authorized to perform this action'
-            )
+            ['success' => false, 'message' => 'You are not authorized to perform this action']
         );
     }
 

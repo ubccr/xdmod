@@ -5,15 +5,11 @@ namespace IntegrationTests\TestHarness;
 class TestParameterHelper
 {
 
-    const RAND_REGEX = '/rand\((\\d+)\)/';
+    public const RAND_REGEX = '/rand\((\\d+)\)/';
 
-    const RAND_CHAR_REGEX = '/rand_char\((\\d+)\)/';
+    public const RAND_CHAR_REGEX = '/rand_char\((\\d+)\)/';
 
-    private static $SOURCE = array(
-        0,1,2,3,4,5,6,7,8,9,
-        'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
-    );
+    private static $SOURCE = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
 
 
     /**
@@ -25,16 +21,15 @@ class TestParameterHelper
      *   - rand_char(n)
      *     - generates a string of length n comprised of random characters.
      *     - ex. rand_char(10) - eSmCMOUiUo
-     * @param mixed $param
      * @return mixed
      */
-    public static function processParam($param)
+    public static function processParam(mixed $param)
     {
         if (is_string($param)) {
             if ('null' === $param) {
                 return null;
             }
-            $matches = array();
+            $matches = [];
             preg_match(self::RAND_REGEX, $param, $matches);
             if (count($matches) > 0) {
                 $length = (int) $matches[1];
@@ -53,9 +48,9 @@ class TestParameterHelper
 
     private static function randomChar($length)
     {
-        $result = array();
+        $result = [];
         for ($i = 0; $i < $length; $i++) {
-            $result[] = self::$SOURCE[rand(0, 61)];
+            $result[] = self::$SOURCE[random_int(0, 61)];
         }
 
         return implode('', $result);
@@ -66,7 +61,7 @@ class TestParameterHelper
     {
         $result = '';
         for ($i = 0; $i < $max; $i++) {
-            $result .= rand(0, 9);
+            $result .= random_int(0, 9);
         }
         return (int) $result;
     }

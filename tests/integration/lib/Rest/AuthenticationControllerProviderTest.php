@@ -9,7 +9,7 @@ class AuthenticationControllerProviderTest extends BaseTest
 {
     private static $helper;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$helper = new XdmodTestHelper();
     }
@@ -17,7 +17,7 @@ class AuthenticationControllerProviderTest extends BaseTest
     /**
      * @dataProvider provideGetIdpRedirect
      */
-    public function testGetIdpRedirect($id, $role, $input, $output)
+    public function testGetIdpRedirect($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,

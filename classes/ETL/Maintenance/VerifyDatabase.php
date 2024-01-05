@@ -31,15 +31,10 @@ class VerifyDatabase extends aAction implements iAction
 {
     // Column names extracted from the query, used to verify macro expansions used in the line
     // messages are valid.
-    protected $queryColumnNames = array();
+    protected $queryColumnNames = [];
 
     // Configuration for the optional notification email to be sent
-    protected $emailConfiguration = array(
-        'destination_email' => null,
-        'subject' => null,
-        'header'  => null,
-        'footer'  => null
-    );
+    protected $emailConfiguration = ['destination_email' => null, 'subject' => null, 'header'  => null, 'footer'  => null];
 
     // SQL to execute to perform the verification
     protected $sqlQueryString = null;
@@ -52,7 +47,7 @@ class VerifyDatabase extends aAction implements iAction
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         if ( ! $options instanceof MaintenanceOptions ) {
-            $this->logAndThrowException(__CLASS__ . ": Options is not an instance of MaintenanceOptions");
+            $this->logAndThrowException(self::class . ": Options is not an instance of MaintenanceOptions");
         }
 
         parent::__construct($options, $etlConfig, $logger);
@@ -60,7 +55,7 @@ class VerifyDatabase extends aAction implements iAction
         // Since Maintenance actions are versatile, we can't globally define these requirements in
         // the options file.
 
-        $requiredKeys = array("source", "definition_file");
+        $requiredKeys = ["source", "definition_file"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
     }  // __construct()
@@ -83,13 +78,7 @@ class VerifyDatabase extends aAction implements iAction
 
         parent::initialize($etlOverseerOptions);
 
-        $varsToQuote = array(
-            'START_DATE',
-            'END_DATE',
-            'LAST_MODIFIED',
-            'LAST_MODIFIED_START_DATE',
-            'LAST_MODIFIED_END_DATE'
-        );
+        $varsToQuote = ['START_DATE', 'END_DATE', 'LAST_MODIFIED', 'LAST_MODIFIED_START_DATE', 'LAST_MODIFIED_END_DATE'];
 
         $localVariableMap = \ETL\Utilities::quoteVariables($varsToQuote, $this->variableStore, $this->sourceEndpoint);
         $this->variableStore->add($localVariableMap, true);
@@ -163,7 +152,7 @@ class VerifyDatabase extends aAction implements iAction
         // Unlike the other email config options the subject defaults to the action name rather than NULL.
         $this->emailConfiguration['subject'] =  $this->options->name;
 
-        foreach ( array('subject', 'header', 'footer', 'destination_email') as $option ) {
+        foreach ( ['subject', 'header', 'footer', 'destination_email'] as $option ) {
             if ( ! isset($verifyConfig->response->$option) ) {
                 continue;
             }
@@ -247,7 +236,7 @@ class VerifyDatabase extends aAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function execute(EtlOverseerOptions $etlOverseerOptions)
+    public function execute(EtlOverseerOptions $etlOverseerOptions): void
     {
         $time_start = microtime(true);
         $this->initialize($etlOverseerOptions);
@@ -255,7 +244,7 @@ class VerifyDatabase extends aAction implements iAction
         $this->logger->debug("Executing SQL " . $this->sourceEndpoint . ":\n" . $this->sqlQueryString);
         $verifyConfig = $this->parsedDefinitionFile->verify_database;
         $lineTemplate = $verifyConfig->response->line;
-        $lines = array();
+        $lines = [];
 
         try {
             if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
@@ -273,7 +262,7 @@ class VerifyDatabase extends aAction implements iAction
         } catch ( PDOException $e ) {
             $this->logAndThrowException(
                 "Error executing SQL",
-                array('exception' => $e, 'sql' => $this->sqlQueryString, 'endpoint' => $this->sourceEndpoint)
+                ['exception' => $e, 'sql' => $this->sqlQueryString, 'endpoint' => $this->sourceEndpoint]
             );
         }
 
@@ -289,10 +278,6 @@ class VerifyDatabase extends aAction implements iAction
 
         $time_end = microtime(true);
         $time = $time_end - $time_start;
-        $this->logger->notice(array('action'       => (string) $this,
-                                    'start_time'   => $time_start,
-                                    'end_time'     => $time_end,
-                                    'elapsed_time' => round($time, 5)
-                                  ));
+        $this->logger->notice(['action'       => (string) $this, 'start_time'   => $time_start, 'end_time'     => $time_end, 'elapsed_time' => round($time, 5)]);
     }  // execute()
 }  // class ExecuteSql

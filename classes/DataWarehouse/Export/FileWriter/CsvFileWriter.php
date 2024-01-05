@@ -12,7 +12,7 @@ class CsvFileWriter extends aFileWriter
      *
      * @param array $record
      */
-    public function writeRecord(array $record)
+    public function writeRecord(array $record): void
     {
         if (fputcsv($this->fh, $record) === false) {
             $this->logAndThrowException(

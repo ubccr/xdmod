@@ -2,8 +2,8 @@
 
 # NOTE: Analytics dashboard not yet implemented in Open XDMoD.
 
-require_once(dirname(__FILE__) . '/../../../configuration/linker.php');
+require_once(__DIR__ . '/../../../configuration/linker.php');
 
 if (\xd_utilities\getConfiguration('features', 'xsede') == 'on') {
-    require_once(dirname(__FILE__) . '/xsede.php');
+    require_once(__DIR__ . '/xsede.php');
 }

@@ -42,7 +42,7 @@ use stdClass;
 class XdmodConfiguration extends Configuration
 {
 
-    const EXTENDS_KEYWORD = 'extends';
+    public const EXTENDS_KEYWORD = 'extends';
 
     /**
      * @see Configuration::postMergeTasks()
@@ -82,13 +82,11 @@ class XdmodConfiguration extends Configuration
             }
         }
     } // processExtends
-
     /**
      * This function will handle the `extends` keyword for the provided $source object. This will
      * result in merging properties from the `extends` target into the object that defined the
      * `extends` property. After the processing is done the `extends` property will be removed.
      *
-     * @param stdClass $source
      * @throws Exception
      */
     protected function handleExtendsFor(stdClass $source)
@@ -113,9 +111,7 @@ class XdmodConfiguration extends Configuration
             $extenders = array_keys(
                 array_filter(
                     $extends,
-                    function ($key) use ($roots) {
-                        return in_array($key, $roots);
-                    }
+                    fn($key) => in_array($key, $roots)
                 )
             );
 
@@ -158,7 +154,7 @@ class XdmodConfiguration extends Configuration
      */
     protected function findExtends(\stdClass $config, $parentKey = null)
     {
-        $extends = array();
+        $extends = [];
         foreach ($config as $k => $v) {
             if ($k === self::EXTENDS_KEYWORD && $parentKey === null) {
                 $this->logAndThrowException(

@@ -19,12 +19,5 @@
  */
 class Realm extends DBObject
 {
-    protected $PROP_MAP = array(
-        'realm_id'=> 'realmId',
-        'module_id' => 'moduleId',
-        'name' => 'name',
-        'display'=> 'display',
-        'schema_name' => 'schemaName',
-        'table_name' => 'tableName'
-    );
+    protected $PROP_MAP = ['realm_id'=> 'realmId', 'module_id' => 'moduleId', 'name' => 'name', 'display'=> 'display', 'schema_name' => 'schemaName', 'table_name' => 'tableName'];
 }

@@ -15,7 +15,7 @@ use ETL\Utilities;
 abstract class aCloud extends Shredder
 {
 
-    protected $etlPipelines = array();
+    protected $etlPipelines = [];
 
     /**
      * @inheritdoc
@@ -31,7 +31,7 @@ abstract class aCloud extends Shredder
      * Throw an exception if someone tries to shred cloud data using the -i flag instead
      * of using -d
      */
-    public function shredFile($line)
+    public function shredFile($line): void
     {
         throw new Exception('Cloud resources do not support shredding by file. Please use the -d option and specify a directory');
     }
@@ -51,14 +51,11 @@ abstract class aCloud extends Shredder
             return false;
         }
 
-        Utilities::runEtlPipeline(array('jobs-common', 'ingest-organizations', 'ingest-resource-types', 'ingest-resources', 'jobs-cloud-common'), $this->logger);
+        Utilities::runEtlPipeline(['jobs-common', 'ingest-organizations', 'ingest-resource-types', 'ingest-resources', 'jobs-cloud-common'], $this->logger);
         Utilities::runEtlPipeline(
             $this->etlPipelines,
             $this->logger,
-            array(
-              'include-only-resource-codes' => $this->resource,
-              'variable-overrides' => ['CLOUD_EVENT_LOG_DIRECTORY' => $directory]
-            )
+            ['include-only-resource-codes' => $this->resource, 'variable-overrides' => ['CLOUD_EVENT_LOG_DIRECTORY' => $directory]]
         );
     }
 

@@ -6,13 +6,10 @@ $xda = new XDAdmin();
 
 $userTypes = $xda->enumerateUserTypes();
 
-$userTypeEntries = array();
+$userTypeEntries = [];
 
 foreach ($userTypes as $type) {
-    $userTypeEntries[] = array(
-        'id'   => $type['id'],
-        'type' => $type['type'],
-    );
+    $userTypeEntries[] = ['id'   => $type['id'], 'type' => $type['type']];
 }
 
 $returnData['success']    = true;

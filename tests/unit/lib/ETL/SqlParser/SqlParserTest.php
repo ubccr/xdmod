@@ -12,16 +12,16 @@ use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\aAction;
 
-class SqlParserTest extends \PHPUnit_Framework_TestCase
+class SqlParserTest extends \PHPUnit\Framework\TestCase
 {
     // Re-use existing input files
-    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
+    public const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
+    public const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
 
-    const TMPDIR = '/tmp/xdmod-etl-sqlparser-test';
+    public const TMPDIR = '/tmp/xdmod-etl-sqlparser-test';
     private static $defaultModuleName = null;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         // Query the configuration file for the default module name
 
@@ -30,7 +30,7 @@ class SqlParserTest extends \PHPUnit_Framework_TestCase
             if (isset($etlConfigOptions['default_module_name'])) {
                 self::$defaultModuleName = $etlConfigOptions['default_module_name'];
             }
-        } catch ( Exception $e ) {
+        } catch ( Exception ) {
             // Simply ignore the exception if there is no [etl] section in the config file
         }
     }
@@ -42,7 +42,7 @@ class SqlParserTest extends \PHPUnit_Framework_TestCase
      * @return nothing
      */
 
-    public function testSqlParser()
+    public function testSqlParser(): void
     {
         // Use existing test files from the EtlConfigurationTest
 
@@ -62,7 +62,7 @@ class SqlParserTest extends \PHPUnit_Framework_TestCase
             self::TMPDIR . '/xdmod_etl_config_8.0.0.json',
             self::TMPDIR,
             null,
-            array('default_module_name' => self::$defaultModuleName)
+            ['default_module_name' => self::$defaultModuleName]
         );
         // The "TableManagement" action is defined in etl.d/maintenance.json
         $action = aAction::factory($etlConfig, 'xdmod.maintenance.TableManagement');
@@ -75,17 +75,13 @@ CASE
   ELSE COALESCE(o.amie_name, o.organization_abbrev) || ' - ' || o.organization_name
 END AS long_name
 FROM acct.organizations o, acct.resources r
-WHERE o.organization_id = r.organization_id   
+WHERE o.organization_id = r.organization_id
 AND r.resource_type_id IS NOT NULL
 AND r.resource_type_id NOT IN (4, 11)
 ORDER BY long_name
 SQL;
         $generatedColumnNames = $action->getSqlColumnNames($sql);
-        $expectedColumnNames = array(
-            'organization_id',
-            'short_name',
-            'long_name'
-        );
+        $expectedColumnNames = ['organization_id', 'short_name', 'long_name'];
 
         // Cleanup
 

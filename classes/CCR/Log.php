@@ -18,46 +18,28 @@ use xd_utilities;
 class Log
 {
 
-    const LINE_FORMAT = "%datetime% [%level_name%] %message%\n";
-    const TIME_FORMAT = 'Y-m-d H:i:s';
+    public const LINE_FORMAT = "%datetime% [%level_name%] %message%\n";
+    public const TIME_FORMAT = 'Y-m-d H:i:s';
 
-    const EMERG   = 0;
-    const ALERT   = 1;
-    const CRIT    = 2;
-    const ERR     = 3;
-    const WARNING = 4;
-    const NOTICE  = 5;
-    const INFO    = 6;
-    const DEBUG   = 7;
+    public const EMERG   = 0;
+    public const ALERT   = 1;
+    public const CRIT    = 2;
+    public const ERR     = 3;
+    public const WARNING = 4;
+    public const NOTICE  = 5;
+    public const INFO    = 6;
+    public const DEBUG   = 7;
 
-    private static $logLevels = array(
-        self::EMERG => \Monolog\Logger::EMERGENCY,
-        self::ALERT => \Monolog\Logger::ALERT,
-        self::CRIT => \Monolog\Logger::CRITICAL,
-        self::ERR => \Monolog\Logger::ERROR,
-        self::WARNING => \Monolog\Logger::WARNING,
-        self::NOTICE => \Monolog\Logger::NOTICE,
-        self::INFO => \Monolog\Logger::INFO,
-        self::DEBUG => \Monolog\Logger::DEBUG
-    );
+    private static $logLevels = [self::EMERG => \Monolog\Logger::EMERGENCY, self::ALERT => \Monolog\Logger::ALERT, self::CRIT => \Monolog\Logger::CRITICAL, self::ERR => \Monolog\Logger::ERROR, self::WARNING => \Monolog\Logger::WARNING, self::NOTICE => \Monolog\Logger::NOTICE, self::INFO => \Monolog\Logger::INFO, self::DEBUG => \Monolog\Logger::DEBUG];
 
-    private static $flippedLogLevels = array(
-        \Monolog\Logger::EMERGENCY => self::EMERG,
-        \Monolog\Logger::ALERT => self::ALERT,
-        \Monolog\Logger::CRITICAL => self::CRIT,
-        \Monolog\Logger::ERROR => self::ERR,
-        \Monolog\Logger::WARNING => self::WARNING,
-        \Monolog\Logger::NOTICE => self::NOTICE,
-        \Monolog\Logger::INFO => self::INFO,
-        \Monolog\Logger::DEBUG => self::DEBUG
-    );
+    private static $flippedLogLevels = [\Monolog\Logger::EMERGENCY => self::EMERG, \Monolog\Logger::ALERT => self::ALERT, \Monolog\Logger::CRITICAL => self::CRIT, \Monolog\Logger::ERROR => self::ERR, \Monolog\Logger::WARNING => self::WARNING, \Monolog\Logger::NOTICE => self::NOTICE, \Monolog\Logger::INFO => self::INFO, \Monolog\Logger::DEBUG => self::DEBUG];
 
     /**
      * Holds the loggers instantiated as singletons.
      *
      * @var array => [ <string> => <LoggerInterface>]
      */
-    private static $loggers = array();
+    private static $loggers = [];
 
     /**
      * Private constructor for factory pattern.
@@ -96,22 +78,16 @@ class Log
      */
     public static function factory(
         $ident = 'xdmod-logger',
-        array $conf = array()
+        array $conf = []
     ) {
-        $conf['lineFormat']
-            = isset($conf['lineFormat'])
-            ? $conf['lineFormat']
-            : self::LINE_FORMAT;
+        $conf['lineFormat'] ??= self::LINE_FORMAT;
 
-        $conf['timeFormat']
-            = isset($conf['timeFormat'])
-            ? $conf['timeFormat']
-            :self::TIME_FORMAT;
+        $conf['timeFormat'] ??= self::TIME_FORMAT;
 
         $logger = self::getLogger($ident, $conf);
 
         // Catch fatal errors and log them.
-        register_shutdown_function(function () use ($logger) {
+        register_shutdown_function(function () use ($logger): void {
             $e = error_get_last();
 
             $mask = E_WARNING | E_NOTICE | E_USER_WARNING | E_USER_NOTICE
@@ -119,12 +95,7 @@ class Log
 
             if ($e !== null && ($e['type'] & $mask) == 0) {
                 $logger->crit(
-                    array(
-                        'message' => $e['message'],
-                        'file'    => $e['file'],
-                        'line'    => $e['line'],
-                        'type'    => $e['type'],
-                    )
+                    ['message' => $e['message'], 'file'    => $e['file'], 'line'    => $e['line'], 'type'    => $e['type']]
                 );
             }
 
@@ -143,7 +114,7 @@ class Log
      *
      * @throws Exception            If there is a problem instantiating the requested log handlers.
      */
-    public static function singleton($ident, array $config = array('null' => array()))
+    public static function singleton($ident, array $config = ['null' => []])
     {
         if (!array_key_exists($ident, self::$loggers)) {
             self::$loggers[$ident] = self::factory($ident, $config);
@@ -164,12 +135,7 @@ class Log
      */
     protected static function getLogger($ident, array $conf)
     {
-        $loggerTypes = array(
-            'console',
-            'file',
-            'db',
-            'mail'
-        );
+        $loggerTypes = ['console', 'file', 'db', 'mail'];
 
         $logger = new Logger($ident);
 
@@ -187,7 +153,7 @@ class Log
             }
 
             $loggerAccessor = 'get' . ucfirst($type) . 'Handler';
-            $handler = call_user_func(array(get_called_class(), $loggerAccessor), $ident, $conf);
+            $handler = call_user_func([static::class, $loggerAccessor], $ident, $conf);
 
             $logger->pushHandler($handler);
         }
@@ -214,9 +180,7 @@ class Log
     protected static function getConsoleHandler($ident, array $conf)
     {
         $consoleLogLevel
-            = isset($conf['consoleLogLevel'])
-            ? $conf['consoleLogLevel']
-            : self::getDefaultLogLevel('console');
+            = $conf['consoleLogLevel'] ?? self::getDefaultLogLevel('console');
 
         $handler = new StreamHandler('php://stdout', self::convertToMonologLevel($consoleLogLevel));
         $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
@@ -244,17 +208,13 @@ class Log
     protected static function getFileHandler($ident, array $conf)
     {
         $fileLogLevel
-            = isset($conf['fileLogLevel'])
-            ? $conf['fileLogLevel']
-            : self::getDefaultLogLevel('file');
+            = $conf['fileLogLevel'] ?? self::getDefaultLogLevel('file');
 
         $file
-            = isset($conf['file'])
-            ? $conf['file']
-            : LOG_DIR . '/' . strtolower(preg_replace('/\W/', '_', $ident))
+            = $conf['file'] ?? LOG_DIR . '/' . strtolower(preg_replace('/\W/', '_', $ident))
             . '.log';
 
-        $filePermission = isset($conf['mode']) ? $conf['mode'] : 0660;
+        $filePermission = $conf['mode'] ?? 0660;
 
         $handler = new StreamHandler($file, self::convertToMonologLevel($fileLogLevel), true, $filePermission);
         $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
@@ -279,9 +239,7 @@ class Log
     protected static function getDbHandler($ident, array $conf)
     {
         $dbLogLevel
-            = isset($conf['dbLogLevel'])
-            ? $conf['dbLogLevel']
-            : self::getDefaultLogLevel('db');
+            = $conf['dbLogLevel'] ?? self::getDefaultLogLevel('db');
 
         return new CCRDBHandler(null, null, null, self::convertToMonologLevel($dbLogLevel));
     }
@@ -306,24 +264,16 @@ class Log
     protected static function getMailHandler($ident, array $conf)
     {
         $mailLogLevel
-            = isset($conf['mailLogLevel'])
-            ? $conf['mailLogLevel']
-            : self::getDefaultLogLevel('mail');
+            = $conf['mailLogLevel'] ?? self::getDefaultLogLevel('mail');
 
         $from
-            = isset($conf['emailFrom'])
-            ? $conf['emailFrom']
-            : self::getConfiguration('email_from');
+            = $conf['emailFrom'] ?? self::getConfiguration('email_from');
 
         $to
-            = isset($conf['emailTo'])
-            ? $conf['emailTo']
-            : self::getConfiguration('email_to');
+            = $conf['emailTo'] ?? self::getConfiguration('email_to');
 
         $subject
-            = isset($conf['emailSubject'])
-            ? $conf['emailSubject']
-            : self::getConfiguration('email_subject');
+            = $conf['emailSubject'] ?? self::getConfiguration('email_subject');
 
         $maxColumnWidth = array_key_exists('maxColumnWidth', $conf) ? $conf['maxColumnWidth'] : 70;
 
@@ -355,8 +305,8 @@ class Log
 
         try {
             $levelName = self::getConfiguration($option);
-            $level = constant(get_class() . '::' . strtoupper($levelName));
-        } catch (Exception $e) {
+            $level = constant(self::class . '::' . strtoupper($levelName));
+        } catch (Exception) {
             $level = self::WARNING;
         }
 

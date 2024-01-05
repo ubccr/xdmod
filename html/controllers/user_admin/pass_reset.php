@@ -4,7 +4,7 @@ use CCR\MailWrapper;
 
 // Operation: user_admin->pass_reset
 
-$params = array('uid' => RESTRICTION_UID);
+$params = ['uid' => RESTRICTION_UID];
 
 $isValid = xd_security\secureCheck($params, 'POST');
 
@@ -41,15 +41,7 @@ try {
 
     MailWrapper::sendTemplate(
         'password_reset',
-        array(
-            'first_name'           => $user_to_email->getFirstName(),
-            'username'             => $userName,
-            'reset_url'            => $resetUrl,
-            'expiration'           => strftime("%c %Z", explode('|', $rid)[1]),
-            'maintainer_signature' => MailWrapper::getMaintainerSignature(),
-            'subject'              => "$page_title: Password Reset",
-            'toAddress'            => $user_to_email->getEmailAddress()
-        )
+        ['first_name'           => $user_to_email->getFirstName(), 'username'             => $userName, 'reset_url'            => $resetUrl, 'expiration'           => strftime("%c %Z", explode('|', $rid)[1]), 'maintainer_signature' => MailWrapper::getMaintainerSignature(), 'subject'              => "$page_title: Password Reset", 'toAddress'            => $user_to_email->getEmailAddress()]
     );
 
     $returnData['success'] = true;

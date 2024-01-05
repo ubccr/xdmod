@@ -23,7 +23,7 @@ class Aggregator extends Loggable
      *
      * If $realmName has not been set for this aggregator, this will do nothing.
      */
-    public function updateFilters()
+    public function updateFilters(): void
     {
         if (empty($this->realmName)) {
             return;

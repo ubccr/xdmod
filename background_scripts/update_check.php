@@ -11,10 +11,7 @@ require_once __DIR__ . '/../configuration/linker.php';
 use CCR\Log;
 use Xdmod\Version;
 
-$conf = array(
-    'file' => false,
-    'mail' => false,
-);
+$conf = ['file' => false, 'mail' => false];
 $logger = Log::factory('update-check', $conf);
 
 try {
@@ -27,7 +24,7 @@ try {
     exit(1);
 }
 
-function main()
+function main(): void
 {
     global $logger;
 

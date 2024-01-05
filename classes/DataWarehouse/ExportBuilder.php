@@ -49,88 +49,14 @@ class ExportBuilder
      *
      * @var array
      */
-    public static $supported_formats = array(
-        'xls' => array(
-            'render_as'   => 'application/vnd.ms-excel',
-            'destination' => 'attachment',
-        ) ,
-        'xml' => array(
-            'render_as'   => 'text/xml',
-            'destination' => 'attachment',
-        ) ,
-        'png' => array(
-            'render_as'   => 'image/png',
-            'destination' => 'attachment',
-        ) ,
-        'png_inline' => array(
-            'render_as'   => 'image/png',
-            'destination' => 'inline',
-        ) ,
-        'svg_inline' => array(
-            'render_as'   => 'image/svg+xml',
-            'destination' => 'inline',
-        ) ,
-        'eps' => array(
-            'render_as'   => 'image/eps',
-            'destination' => 'attachment',
-        ) ,
-        'pdf' => array(
-            'render_as'   => 'application/pdf',
-            'destination' => 'attachment'
-        ),
-        'svg' => array(
-            'render_as'   => 'image/svg+xml',
-            'destination' => 'attachment',
-        ) ,
-        'csv' => array(
-            'render_as'   => 'application/xls',
-            'destination' => 'attachment',
-        ) ,
-        'jsonstore' => array(
-            'render_as'   => 'text/plain',
-            'destination' => 'inline',
-        ) ,
-        'hc_jsonstore' => array(
-            'render_as'   => 'text/plain',
-            'destination' => 'inline',
-        ) ,
-        'json' => array(
-            'render_as'   => 'application/json',
-            'destination' => 'inline',
-        ) ,
-        'session_variable' => array(
-            'render_as'   => 'text/plain',
-            'destination' => 'inline',
-        ) ,
-        'params' => array(
-            'render_as'   => 'text/plain',
-            'destination' => 'inline',
-        ) ,
-        'img_tag' => array(
-            'render_as'   => 'text/html',
-            'destination' => 'inline',
-        ) ,
-        'html' => array(
-            'render_as'   => 'text/html',
-            'destination' => 'inline',
-        ) ,
-        '_internal' => array(
-            'render_as' => 'text/plain',
-            'destination' => 'inline',
-        ) ,
-    );
+    public static $supported_formats = ['xls' => ['render_as'   => 'application/vnd.ms-excel', 'destination' => 'attachment'], 'xml' => ['render_as'   => 'text/xml', 'destination' => 'attachment'], 'png' => ['render_as'   => 'image/png', 'destination' => 'attachment'], 'png_inline' => ['render_as'   => 'image/png', 'destination' => 'inline'], 'svg_inline' => ['render_as'   => 'image/svg+xml', 'destination' => 'inline'], 'eps' => ['render_as'   => 'image/eps', 'destination' => 'attachment'], 'pdf' => ['render_as'   => 'application/pdf', 'destination' => 'attachment'], 'svg' => ['render_as'   => 'image/svg+xml', 'destination' => 'attachment'], 'csv' => ['render_as'   => 'application/xls', 'destination' => 'attachment'], 'jsonstore' => ['render_as'   => 'text/plain', 'destination' => 'inline'], 'hc_jsonstore' => ['render_as'   => 'text/plain', 'destination' => 'inline'], 'json' => ['render_as'   => 'application/json', 'destination' => 'inline'], 'session_variable' => ['render_as'   => 'text/plain', 'destination' => 'inline'], 'params' => ['render_as'   => 'text/plain', 'destination' => 'inline'], 'img_tag' => ['render_as'   => 'text/html', 'destination' => 'inline'], 'html' => ['render_as'   => 'text/html', 'destination' => 'inline'], '_internal' => ['render_as' => 'text/plain', 'destination' => 'inline']];
 
     /**
      * Supported dataset action formats.
      *
      * @var array
      */
-    public static $dataset_action_formats = array(
-        'json',
-        'xml',
-        'xls',
-        'csv'
-    );
+    public static $dataset_action_formats = ['json', 'xml', 'xls', 'csv'];
 
     /**
      * Determine the default format given an array of formats.
@@ -141,7 +67,7 @@ class ExportBuilder
      *
      * @throws Exception If no default format is found.
      */
-    public static function getDefault(array $arr = array())
+    public static function getDefault(array $arr = [])
     {
         $count = count($arr);
 
@@ -168,28 +94,12 @@ class ExportBuilder
         $filename = 'data'
     ) {
         $filename = str_replace(
-            array(
-                ' ',
-                '/',
-                '\\',
-                '?',
-                '%',
-                '*',
-                ':',
-                '|',
-                '"',
-                '<',
-                '>',
-                '.',
-                '\n',
-                '\t',
-                '\r',
-            ),
+            [' ', '/', '\\', '?', '%', '*', ':', '|', '"', '<', '>', '.', '\n', '\t', '\r'],
             '_',
             $filename
         );
 
-        $headers = array();
+        $headers = [];
 
         if (isset(static::$supported_formats[$format])) {
             $headers['Content-type'] = static::$supported_formats[$format]['render_as'];
@@ -217,7 +127,7 @@ class ExportBuilder
         $format,
         $forceInline = false,
         $filename = 'data'
-    ) {
+    ): void {
         $headers = static::getHeader($format, $forceInline, $filename);
 
         error_log('Writing headers');
@@ -240,7 +150,7 @@ class ExportBuilder
     public static function getFormat(
         array $request,
         $default = 'jsonstore',
-        array $formats_subset = array()
+        array $formats_subset = []
     ) {
         $format = $default;
 
@@ -274,7 +184,7 @@ class ExportBuilder
      * @return array(headers => array of http headers, results => the encoded data to send)
      */
     public static function export(
-        array $exportedDatas = array(),
+        array $exportedDatas,
         $format,
         $inline = true,
         $filename = 'data'
@@ -297,7 +207,7 @@ class ExportBuilder
      * @return array(headers => array of http headers, results => the encoded data to send)
      */
     private static function exportCsv(
-        array $exportedDatas = array(),
+        array $exportedDatas = [],
         $inline = true,
         $filename = 'data'
     ) {
@@ -315,9 +225,7 @@ class ExportBuilder
             $restrictedByRoles = \xd_utilities\array_get($exportedData, 'restrictedByRoles', false);
 
             $parameters
-                = isset($exportedData['title2'])
-                ? $exportedData['title2']
-                : array();
+                = $exportedData['title2'] ?? [];
 
             fputcsv($fp, array_keys($title));
             fputcsv($fp, $title);
@@ -331,29 +239,26 @@ class ExportBuilder
             }
 
             if ($restrictedByRoles) {
-                fputcsv($fp, array($exportedData['roleRestrictionsMessage']));
+                fputcsv($fp, [$exportedData['roleRestrictionsMessage']]);
             }
 
             fputcsv($fp, array_keys($duration));
             fputcsv($fp, $duration);
-            fputcsv($fp, array('---------'));
+            fputcsv($fp, ['---------']);
             fputcsv($fp, $headers);
 
             foreach ($rows as $row) {
                 fputcsv($fp, $row);
             }
 
-            fputcsv($fp, array('---------'));
+            fputcsv($fp, ['---------']);
         }
 
         rewind($fp);
         $csv = stream_get_contents($fp);
         fclose($fp);
 
-        return array(
-            "headers" => self::getHeader('csv', $inline, $filename),
-            "results" => $csv
-        );
+        return ["headers" => self::getHeader('csv', $inline, $filename), "results" => $csv];
     }
 
     /**
@@ -369,7 +274,7 @@ class ExportBuilder
      * @return array(headers => array of http headers, results => the encoded data to send)
      */
     private static function exportXls(
-        array $exportedDatas = array(),
+        array $exportedDatas = [],
         $inline = true,
         $filename = 'data'
     ) {
@@ -383,9 +288,7 @@ class ExportBuilder
             $restrictedByRoles = \xd_utilities\array_get($exportedData, 'restrictedByRoles', false);
 
             $parameters
-                = isset($exportedData['title2'])
-                ? $exportedData['title2']
-                : array();
+                = $exportedData['title2'] ?? [];
 
             fputcsv($fp, array_keys($title));
             fputcsv($fp, $title);
@@ -399,29 +302,26 @@ class ExportBuilder
             }
 
             if ($restrictedByRoles) {
-                fputcsv($fp, array($exportedData['roleRestrictionsMessage']));
+                fputcsv($fp, [$exportedData['roleRestrictionsMessage']]);
             }
 
             fputcsv($fp, array_keys($duration));
             fputcsv($fp, $duration);
-            fputcsv($fp, array('---------'));
+            fputcsv($fp, ['---------']);
             fputcsv($fp, $headers);
 
             foreach ($rows as $row) {
                 fputcsv($fp, $row);
             }
 
-            fputcsv($fp, array('---------'));
+            fputcsv($fp, ['---------']);
         }
 
         rewind($fp);
         $xls = stream_get_contents($fp);
         fclose($fp);
 
-        return array(
-            "headers" => self::getHeader('xls', $inline, $filename),
-            "results" => $xls
-        );
+        return ["headers" => self::getHeader('xls', $inline, $filename), "results" => $xls];
     }
 
     /**
@@ -435,7 +335,7 @@ class ExportBuilder
      * @return array(headers => array of http headers, results => the encoded data to send)
      */
     private static function exportXml(
-        array $exportedDatas = array(),
+        array $exportedDatas = [],
         $inline = true,
         $filename = 'data'
     ) {
@@ -452,9 +352,7 @@ class ExportBuilder
             $restrictedByRoles = \xd_utilities\array_get($exportedData, 'restrictedByRoles', false);
 
             $parameters
-                = isset($exportedData['title2'])
-                ? $exportedData['title2']
-                : array();
+                = $exportedData['title2'] ?? [];
 
             $xml->startElement('header');
 
@@ -549,10 +447,7 @@ class ExportBuilder
 
         $xml->endDocument();
 
-        return array(
-            "headers" => self::getHeader('xml', $inline, $filename),
-            "results" => $xml->outputMemory(true)
-        );
+        return ["headers" => self::getHeader('xml', $inline, $filename), "results" => $xml->outputMemory(true)];
     }
 
     /**
@@ -566,11 +461,11 @@ class ExportBuilder
      * @return array(headers => array of http headers, results => the encoded data to send)
      */
     private static function exportJson(
-        array $exportedDatas = array(),
+        array $exportedDatas = [],
         $inline = true,
         $filename = 'data'
     ) {
-        $returnData = array();
+        $returnData = [];
 
         foreach ($exportedDatas as $exportedData) {
             $headers  = $exportedData['headers'];
@@ -581,27 +476,14 @@ class ExportBuilder
             $roleRestrictionsMessage = \xd_utilities\array_get($exportedData, 'roleRestrictionsMessage', '');
 
             $parameters
-                = isset($exportedData['title2'])
-                ? $exportedData['title2']
-                : array();
+                = $exportedData['title2'] ?? [];
 
             foreach ($exportedDatas as $exportedData) {
-                $returnData[] = array(
-                    'title'      => $title,
-                    'parameters' => $parameters,
-                    'duration'   => json_encode($duration),
-                    'headers'    => json_encode($headers),
-                    'rows'       => json_encode($rows),
-                    'restrictedByRoles' => $restrictedByRoles,
-                    'roleRestrictionsMessage' => $roleRestrictionsMessage,
-                );
+                $returnData[] = ['title'      => $title, 'parameters' => $parameters, 'duration'   => json_encode($duration), 'headers'    => json_encode($headers), 'rows'       => json_encode($rows), 'restrictedByRoles' => $restrictedByRoles, 'roleRestrictionsMessage' => $roleRestrictionsMessage];
             }
         }
 
-        return array(
-            "headers" => self::getHeader('json', $inline, $filename),
-            "results" => json_encode($returnData)
-        );
+        return ["headers" => self::getHeader('json', $inline, $filename), "results" => json_encode($returnData)];
     }
 
     /**

@@ -86,5 +86,5 @@ interface iComplexDataRecords
      * @throws Exception If the source field was invalid
      */
 
-    public function evaluateComplexSourceField($sourceField, $record, $invalidReferenceValue = null);
+    public function evaluateComplexSourceField($sourceField, mixed $record, $invalidReferenceValue = null);
 }

@@ -10,7 +10,7 @@ use CCR\Loggable;
 class FileWriterFactory extends Loggable
 {
     // Constants used in log messages.
-    const LOG_MODULE = 'data-warehouse-export';
+    public const LOG_MODULE = 'data-warehouse-export';
 
     /**
      * Create a file writer for the given format and file.

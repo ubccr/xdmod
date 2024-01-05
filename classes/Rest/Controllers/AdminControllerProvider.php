@@ -15,23 +15,21 @@ use Rest\Utilities\Authentication;
  */
 class AdminControllerProvider extends BaseControllerProvider
 {
-    public function setupRoutes(Application $app, ControllerCollection $controller)
+    public function setupRoutes(Application $app, ControllerCollection $controller): void
     {
         $root = $this->prefix;
-        $class = get_class($this);
+        $class = static::class;
 
         $controller->post("$root/reset_user_tour_viewed", "$class::resetUserTourViewed");
     }
 
     /**
-     * @param Request $request
-     * @param Application $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Exception
      */
     public function resetUserTourViewed(Request $request, Application $app)
     {
-        $this->authorize($request, array('mgr'));
+        $this->authorize($request, ['mgr']);
         $viewedTour = $this->getIntParam($request, 'viewedTour', true);
         $selected_user = XDUser::getUserByID($this->getIntParam($request, 'uid', true));
 
@@ -47,11 +45,7 @@ class AdminControllerProvider extends BaseControllerProvider
         $storage->upsert(0, ['viewedTour' => $viewedTour]);
 
         return $app->json(
-            array(
-                'success' => true,
-                'total' => 1,
-                'message' => 'This user will be now be prompted to view the New User Tour the next time they visit XDMoD'
-            )
+            ['success' => true, 'total' => 1, 'message' => 'This user will be now be prompted to view the New User Tour the next time they visit XDMoD']
         );
     }
 }

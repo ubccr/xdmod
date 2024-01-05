@@ -11,11 +11,7 @@ try {
 
     $users = $xdw->searchUsers(json_decode($_REQUEST['search_crit'], true));
 
-    $returnData = array(
-        'success' => true,
-        'data'    => $users,
-        'total'   => count($users),
-    );
+    $returnData = ['success' => true, 'data'    => $users, 'total'   => count($users)];
 
     xd_controller\returnJSON($returnData);
 } catch (Exception $e) {

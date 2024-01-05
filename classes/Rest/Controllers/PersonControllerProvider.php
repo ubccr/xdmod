@@ -19,11 +19,11 @@ use Rest\Utilities\Authentication;
  */
 class PersonControllerProvider extends BaseControllerProvider
 {
-    public function setupRoutes(Application $app, ControllerCollection $controller)
+    public function setupRoutes(Application $app, ControllerCollection $controller): void
     {
         $root = $this->prefix;
-        $class = get_class($this);
-        $conversions = '\Rest\Utilities\Conversions';
+        $class = static::class;
+        $conversions = \Rest\Utilities\Conversions::class;
 
         $controller
             ->get("$root/{id}/organization", "$class::getOrganizationForPerson")
@@ -32,8 +32,6 @@ class PersonControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * @param Request $request
-     * @param Application $app
      * @param $id
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \Exception
@@ -41,15 +39,10 @@ class PersonControllerProvider extends BaseControllerProvider
     public function getOrganizationForPerson(Request $request, Application $app, $id)
     {
         // Ensure that this route is only authorized for users with the 'mgr' role.
-        $this->authorize($request, array('mgr'));
+        $this->authorize($request, ['mgr']);
 
         return $app->json(
-            array(
-                'success' => true,
-                'results' => array(
-                    'id' => Organizations::getOrganizationIdForPerson($id)
-                )
-            )
+            ['success' => true, 'results' => ['id' => Organizations::getOrganizationIdForPerson($id)]]
         );
     }
 }

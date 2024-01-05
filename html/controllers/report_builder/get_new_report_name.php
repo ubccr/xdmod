@@ -6,7 +6,7 @@
    	
    	$rm = new XDReportManager($user);
    	
-   	$response = array();
+   	$response = [];
    	
    	$response['success'] = true;
    	$response['report_name']  = $rm->generateUniqueName();

@@ -23,12 +23,6 @@ class Statistic extends \CCR\Loggable implements iStatistic
     protected $moduleName = null;
 
     /**
-     * @var string The short identifier. Must be unique among all statistics across all realms.
-     */
-
-    protected $id = null;
-
-    /**
      * @var string The display name.
      */
 
@@ -147,28 +141,22 @@ class Statistic extends \CCR\Loggable implements iStatistic
      * This constructor is meant to be called by factory() but it cannot be made private because we
      * extend Loggable, which has a public constructor.
      *
-     * @param string $shortName The short name for this statistic
+     * @param string $id The short name for this statistic
      * @param stdClass $config An object contaning the configuration specificaiton.
      * @param Realm $realm Realm object that this GroupBy will belong to.
      * @param LoggerInterface|null $logger A Monolog Logger instance that will be utilized during processing.
      */
-
-    public function __construct($shortName, \stdClass $config, Realm $realm, LoggerInterface $logger = null)
+    public function __construct(protected $id, \stdClass $config, Realm $realm, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
-
-        // The __toString() method needs these to be set and logAndThrowException() calls
-        // __toString() so assign these at the top.
-
-        $this->id = $shortName;
         $this->realm = $realm;
         $this->moduleName = $realm->getModuleName();
 
-        if ( empty($shortName) ) {
+        if ( empty($id) ) {
             $this->logger->logAndThrowException('Statistic short name not provided');
-        } elseif ( ! is_string($shortName) ) {
+        } elseif ( ! is_string($id) ) {
             $this->logger->logAndThrowException(
-                sprintf('Statistic short name must be a string, %s provided: %s', $shortName, gettype($shortName))
+                sprintf('Statistic short name must be a string, %s provided: %s', $id, gettype($id))
             );
         } elseif ( null === $config ) {
             $this->logger->logAndThrowException('No Statistic configuration provided');
@@ -176,12 +164,8 @@ class Statistic extends \CCR\Loggable implements iStatistic
 
         // Verify the types of the various configuration options
 
-        $messages = array();
-        $configTypes = array(
-            'description_html' => 'string',
-            'name' => 'string',
-            'unit' => 'string'
-        );
+        $messages = [];
+        $configTypes = ['description_html' => 'string', 'name' => 'string', 'unit' => 'string'];
 
         if ( ! \xd_utilities\verify_object_property_types($config, $configTypes, $messages) ) {
             $this->logAndThrowException(
@@ -193,20 +177,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
         // defined. We are treating them as optional only to verify their types and will verify
         // their presense later.
 
-        $optionalConfigTypes = array(
-            'additional_where_condition' => 'array',
-            'aggregate_formula' => 'string',
-            'data_sort_order' => 'string',
-            'disabled' => 'bool',
-            'formula' => 'string',
-            'module' => 'string',
-            'order' => 'int',
-            'precision' => 'int',
-            'show_in_catalog' => 'bool',
-            'timeseries_formula' => 'string',
-            'use_timeseries_aggregate_tables' => 'bool',
-            'weight_statistic_id' => 'string'
-        );
+        $optionalConfigTypes = ['additional_where_condition' => 'array', 'aggregate_formula' => 'string', 'data_sort_order' => 'string', 'disabled' => 'bool', 'formula' => 'string', 'module' => 'string', 'order' => 'int', 'precision' => 'int', 'show_in_catalog' => 'bool', 'timeseries_formula' => 'string', 'use_timeseries_aggregate_tables' => 'bool', 'weight_statistic_id' => 'string'];
 
         if ( ! \xd_utilities\verify_object_property_types($config, $optionalConfigTypes, $messages, true) ) {
             $this->logAndThrowException(
@@ -296,10 +267,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
         }
 
         $this->variableStore = new VariableStore(
-            array(
-                'STATISTIC_ID' => $this->id,
-                'WEIGHT_STATISTIC_ID' => $this->weightStatisticId
-            ),
+            ['STATISTIC_ID' => $this->id, 'WEIGHT_STATISTIC_ID' => $this->weightStatisticId],
             $logger
         );
     }
@@ -329,7 +297,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
     public function getName($includeUnit = true)
     {
         // Include the unit if the unit is not found in the statistic name
-        if ( $includeUnit && false === strpos($this->name, $this->unit) ) {
+        if ( $includeUnit && !str_contains($this->name, $this->unit) ) {
             return $this->realm->getVariableStore()->substitute(sprintf("%s (%s)", $this->name, $this->unit));
         } else {
             return $this->realm->getVariableStore()->substitute($this->name);
@@ -408,17 +376,9 @@ class Statistic extends \CCR\Loggable implements iStatistic
      * @see iStatistic::setSortOrder()
      */
 
-    public function setSortOrder($sortOrder = SORT_DESC)
+    public function setSortOrder($sortOrder = SORT_DESC): void
     {
-        $validSortOrders = array(
-            SORT_ASC,
-            SORT_DESC,
-            SORT_REGULAR,
-            SORT_NUMERIC,
-            SORT_STRING,
-            SORT_LOCALE_STRING,
-            SORT_NATURAL
-        );
+        $validSortOrders = [SORT_ASC, SORT_DESC, SORT_REGULAR, SORT_NUMERIC, SORT_STRING, SORT_LOCALE_STRING, SORT_NATURAL];
 
         if ( null !== $sortOrder && ! in_array($sortOrder, $validSortOrders) ) {
             $this->logAndThrowException(sprintf("Invalid sort option: %d", $sortOrder));
@@ -463,7 +423,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
         if ( null === $this->additionalWhereConditionDefinition ) {
             return null;
         } else {
-            list($leftCol, $operation, $rightCol) = $this->additionalWhereConditionDefinition;
+            [$leftCol, $operation, $rightCol] = $this->additionalWhereConditionDefinition;
             return new \DataWarehouse\Query\Model\WhereCondition($leftCol, $operation, $rightCol);
         }
     }
@@ -508,7 +468,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
      * @see iStatistic::__toString()
      */
 
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf("%s->Statistic(id=%s, formula=%s)", $this->realm, $this->id, $this->formula);
     }

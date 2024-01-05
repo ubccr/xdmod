@@ -8,7 +8,7 @@ function getSelectedDimensionIds()
         isset($_REQUEST['selectedDimensionIds'])
             && $_REQUEST['selectedDimensionIds'] != ''
         ? explode(',', $_REQUEST['selectedDimensionIds'])
-        : array();
+        : [];
 }
 
 function getSelectedMetricIds()
@@ -17,15 +17,13 @@ function getSelectedMetricIds()
         isset($_REQUEST['selectedMetricIds'])
             && $_REQUEST['selectedMetricIds'] != ''
         ? explode(',', $_REQUEST['selectedMetricIds'])
-        : array();
+        : [];
 }
 
 function getAggregationUnit()
 {
     return
-        isset($_REQUEST['aggregation_unit'])
-        ? $_REQUEST['aggregation_unit']
-        : 'auto';
+        $_REQUEST['aggregation_unit'] ?? 'auto';
 }
 
 function getTimeseries()
@@ -56,7 +54,7 @@ function getDataSeries()
     ) {
         $v = $_REQUEST['data_series']['data'];
 
-        $ret = array();
+        $ret = [];
         foreach ($v as $x) {
             $y = (object)$x;
 
@@ -133,7 +131,7 @@ function getSelectedFilterIds()
         isset($_REQUEST['selectedFilterIds'])
             && $_REQUEST['selectedFilterIds'] != ''
         ? explode(',', $_REQUEST['selectedFilterIds'])
-        : array();
+        : [];
 }
 
 function getGlobalFilters()
@@ -142,13 +140,13 @@ function getGlobalFilters()
         !isset($_REQUEST['global_filters'])
         || empty($_REQUEST['global_filters'])
     ) {
-        return (object)array('data' => array(), 'total' => 0);
+        return (object)['data' => [], 'total' => 0];
     }
 
     if (is_array($_REQUEST['global_filters'])) {
         $v = $_REQUEST['global_filters']['data'];
 
-        $ret = (object)array('data' => array(), 'total' => 0);
+        $ret = (object)['data' => [], 'total' => 0];
 
         foreach ($v as $x) {
             $ret->data[] = (object)$x;
@@ -175,7 +173,7 @@ function getShowContextMenu()
 function getXAxis()
 {
     if (!isset($_REQUEST['x_axis']) || empty($_REQUEST['x_axis'])) {
-        return array();
+        return [];
     }
 
     if (is_array($_REQUEST['x_axis'])) {
@@ -199,7 +197,7 @@ function getXAxis()
 function getYAxis()
 {
     if (!isset($_REQUEST['y_axis']) || empty($_REQUEST['y_axis'])) {
-        return array();
+        return [];
     }
 
     if (is_array($_REQUEST['y_axis'])) {
@@ -223,7 +221,7 @@ function getYAxis()
 function getLegend()
 {
     if (!isset($_REQUEST['legend']) || empty($_REQUEST['legend'])) {
-        return array();
+        return [];
     }
 
     if (is_array($_REQUEST['legend'])) {

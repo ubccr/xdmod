@@ -27,25 +27,22 @@ class DataEndpointOptions extends aOptions
     {
         // Override aOptions::$requiredOptions to a subset that make sense for a data endpoint.
 
-        $this->requiredOptions = array("name", "factory", "type");
+        $this->requiredOptions = ["name", "factory", "type"];
 
         // Add options with local overriding current
 
-        $localOptions = array(
+        $localOptions = [
             // Name of the factory class for creating objects of this type to be set by the extending
             // class. ** Must include the namespace of the factory. **
-            "factory" => "\\ETL\\DataEndpoint",
-
+            "factory" => \ETL\DataEndpoint::class,
             // Endpoint type (see aDataEndpoint)
             "type" => null,
-
             // Database schema
             "schema" => null,
-
             // By default, we don't want to create database schemas that don't exist. This should be
             // done for destinations but not sources.
-            "create_schema_if_not_exists" => false
-        );
+            "create_schema_if_not_exists" => false,
+        ];
 
         $this->options = array_merge($this->options, $localOptions);
 
@@ -70,7 +67,7 @@ class DataEndpointOptions extends aOptions
 
             case 'paths':
                 if ( ! is_object($value) ) {
-                    $msg = get_class($this) . ": paths must be an object";
+                    $msg = static::class . ": paths must be an object";
                     throw new Exception($msg);
                 }
                 break;

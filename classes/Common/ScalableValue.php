@@ -8,24 +8,22 @@ namespace Common;
 * This class holds two values, one the original double and the other is the scaled value.
 * 
 */
-class ScalableValue
+class ScalableValue implements \Stringable
 {
     private $_value;
     private $_scaled_value;
-	private $_scale_exponent;
 
-    public function __construct($value = 0, $scale = 1.0, $scale_exponent = 1.0)
+    public function __construct($value = 0, $scale = 1.0, private $_scale_exponent = 1.0)
     {
-		$this->_scale_exponent = $scale_exponent;
-        $this->set($value, $scale);
+		$this->set($value, $scale);
     }
 
-    public function set($value = 0, $scale = 1.0)
+    public function set($value = 0, $scale = 1.0): void
     {	
         $this->_value = $value;
 		if($scale < 1)
 		{
-        	$this->_scaled_value = $value * pow($scale,$this->_scale_exponent);
+        	$this->_scaled_value = $value * $scale ** $this->_scale_exponent;
 		}else
 		{
 			$this->_scaled_value = $value * $scale;
@@ -38,7 +36,7 @@ class ScalableValue
         else return $this->_value;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
         return "value: {$this->get(false)}, scaled: {$this->get(true)}";
     }

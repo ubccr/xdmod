@@ -18,7 +18,7 @@ class RealmManagerTest extends BaseTest
     /**
      * Test artifacts path.
      */
-    const TEST_GROUP = 'component/export/realm_manager';
+    public const TEST_GROUP = 'component/export/realm_manager';
 
     /**
      * @var \DataWarehouse\Export\RealmManager
@@ -46,7 +46,7 @@ class RealmManagerTest extends BaseTest
 
     /**
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         parent::setUpBeforeClass();
 
@@ -65,7 +65,7 @@ class RealmManagerTest extends BaseTest
      * Only includes the relevant properties from the realm that are used by
      * the realm manager class.
      *
-     * @param \Model\Realm $realm
+     * @param \Models\Realm $realm
      * @return array
      */
     private function convertRealmToArray(Realm $realm)
@@ -82,15 +82,16 @@ class RealmManagerTest extends BaseTest
      * @covers ::getRealms
      * @dataProvider getRealmsProvider
      */
-    public function testGetRealms($realms)
+    public function testGetRealms($realms): void
     {
+        $actual = array_map(
+            fn($realm) => ['name' => $realm->getDisplay(), 'display' => $realm->getDisplay()],
+            self::$realmManager->getRealms()
+        );
         $this->assertEquals(
             $realms,
-            array_map(
-                [$this, 'convertRealmToArray'],
-                self::$realmManager->getRealms()
-            ),
-            'getRealms returns expected realms'
+            $actual,
+            sprintf('Expected: %s. Received: %s', json_encode($realms), json_encode($actual))
         );
     }
 
@@ -100,15 +101,17 @@ class RealmManagerTest extends BaseTest
      * @covers ::getRealmsForUser
      * @dataProvider getRealmsForUserProvider
      */
-    public function testGetRealmsForUser($role, $realms)
+    public function testGetRealmsForUser($role, $realms): void
     {
+        $actual = array_map(
+            fn($realm) => ['name' => $realm->getDisplay(), 'display' => $realm->getDisplay()],
+            self::$realmManager->getRealmsForUser(self::$users[$role])
+        );
+
         $this->assertEquals(
             $realms,
-            array_map(
-                [$this, 'convertRealmToArray'],
-                self::$realmManager->getRealmsForUser(self::$users[$role])
-            ),
-            "getRealmsForUser returns expected realms for role $role"
+            $actual,
+            sprintf("getRealmsForUser returns expected realms for role $role. Expected: %s, Received: %s", json_encode($realms), json_encode($actual))
         );
     }
 
@@ -118,7 +121,7 @@ class RealmManagerTest extends BaseTest
      * @covers ::getRawDataQueryClass
      * @dataProvider getRawDataQueryClassProvider
      */
-    public function testGetRawDataQueryClassProvider($realmName, $queryClassName)
+    public function testGetRawDataQueryClassProvider($realmName, $queryClassName): void
     {
         $this->assertEquals(
             $queryClassName,

@@ -13,12 +13,10 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
     {
         $job = $this->lookupJob($user, $jobid);
         if ($job == null) {
-            return array();
+            return [];
         }
 
-        return array(
-            \DataWarehouse\Query\RawQueryTypes::ACCOUNTING => true
-        );
+        return [\DataWarehouse\Query\RawQueryTypes::ACCOUNTING => true];
     }
 
     /**
@@ -26,7 +24,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
      */
     public function getJobSummary(XDUser $user, $jobid)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -34,7 +32,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
      */
     public function getJobExecutableInfo(XDUser $user, $jobid)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -42,7 +40,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
      */
     public function getJobTimeseriesMetaData(XDUser $user, $jobid)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -50,7 +48,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
      */
     public function getJobTimeseriesMetricMeta(XDUser $user, $jobid, $tsid)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -58,7 +56,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
      */
     public function getJobTimeseriesMetricNodeMeta(XDUser $user, $jobid, $tsid, $nodeid)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -66,7 +64,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
      */
     public function getJobTimeseriesData(XDUser $user, $jobid, $tsid, $nodeid, $cpuid)
     {
-        return array();
+        return [];
     }
 
     /**
@@ -80,7 +78,7 @@ class JobMetadata implements \DataWarehouse\Query\iJobMetadata
      */
     private function lookupJob(XDUser $user, $jobid)
     {
-        $query = new \DataWarehouse\Query\Jobs\JobDataset(array('primary_key' => $jobid));
+        $query = new \DataWarehouse\Query\Jobs\JobDataset(['primary_key' => $jobid]);
         $query->setMultipleRoleParameters($user->getAllRoles(), $user);
         $stmt = $query->getRawStatement(1, 0);
 

@@ -16,12 +16,12 @@ class Tokens
     /**
      * This is the key that will be used when adding an API Token to a request's headers.
      */
-    const HEADER_KEY = 'Bearer';
+    public const HEADER_KEY = 'Bearer';
 
     /**
      * This is the delimiter that's used when returning a newly created API token to the user.
      */
-    const DELIMITER = '.';
+    public const DELIMITER = '.';
 
     /**
      * Perform token authentication for the provided $userId & $token combo. If the authentication is successful, an
@@ -50,7 +50,7 @@ class Tokens
         WHERE u.id = :user_id and u.account_is_active = 1
 SQL;
 
-        $row = $db->query($query, array(':user_id' => $userId));
+        $row = $db->query($query, [':user_id' => $userId]);
 
         if (count($row) === 0) {
             throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
@@ -105,7 +105,7 @@ SQL;
 
         try {
             return Tokens::authenticate($userId, $token);
-        } catch (Exception $e) {
+        } catch (Exception) {
             // and again, same as above.
             return null;
         }
@@ -125,7 +125,7 @@ SQL;
         $headers = getallheaders();
         if (!empty($headers['Authorization'])) {
             $authorizationHeader = $headers['Authorization'];
-            if (is_string($authorizationHeader) && strpos($authorizationHeader, Tokens::HEADER_KEY) !== false) {
+            if (is_string($authorizationHeader) && str_contains($authorizationHeader, Tokens::HEADER_KEY)) {
                 // The format for including the token in the header is slightly different then when included as a get or
                 // post parameter. Here the value will be in the form: `Bearer <token>`
                 return substr(

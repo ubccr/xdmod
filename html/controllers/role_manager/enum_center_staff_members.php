@@ -8,7 +8,7 @@ try {
 
     $members = Users::getUsersAssociatedWithCenter($activeUser->getUserID());
 
-    $returnData = array();
+    $returnData = [];
 
     $returnData['success'] = true;
     $returnData['count'] = count($members);

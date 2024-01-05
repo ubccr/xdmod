@@ -27,39 +27,32 @@ try {
 /**
  * Main function.
  */
-function main()
+function main(): void
 {
     global $argv, $debug, $config, $logger;
 
-    $opts = array(
-        array('h', 'help'),
-
+    $opts = [
+        ['h', 'help'],
         // Logging options.
-        array('q', 'quiet'),
-        array('v', 'verbose'),
-        array('',  'debug'),
-
-        array('',  'module:'),
-
-        array('',  'run-tests'),
-        array('',  'clone'),
-        array('',  'branch:'),
-        array('',  'skip-assets'),
-    );
+        ['q', 'quiet'],
+        ['v', 'verbose'],
+        ['', 'debug'],
+        ['', 'module:'],
+        ['', 'run-tests'],
+        ['', 'clone'],
+        ['', 'branch:'],
+        ['', 'skip-assets'],
+    ];
 
     $shortOptions = implode(
         '',
         array_map(
-            function ($opt) {
-                return $opt[0];
-            },
+            fn($opt) => $opt[0],
             $opts
         )
     );
     $longOptions = array_map(
-        function ($opt) {
-            return $opt[1];
-        },
+        fn($opt) => $opt[1],
         $opts
     );
 
@@ -126,19 +119,14 @@ function main()
         $logLevel = Log::NOTICE;
     }
 
-    $conf = array(
-        'file'            => false,
-        'mail'            => false,
-        'db'              => false,
-        'consoleLogLevel' => $logLevel,
-    );
+    $conf = ['file'            => false, 'mail'            => false, 'db'              => false, 'consoleLogLevel' => $logLevel];
 
     $logger = Log::factory('xdmod-packager', $conf);
 
     $cmd = implode(' ', array_map('escapeshellarg', $argv));
     $logger->info("Command: $cmd");
     $logger->debug(array_merge(
-        array('message' => 'Parsed args'),
+        ['message' => 'Parsed args'],
         $args
     ));
 
@@ -175,12 +163,12 @@ function getLogger()
     global $logger;
 
     if (!isset($logger)) {
-        $logger = Log::singleton('console', '', 'xdmod-packager');
+        $logger = Log::singleton('console', '');
     }
 
     return $logger;
 }
 
-function displayHelpText()
+function displayHelpText(): void
 {
 }

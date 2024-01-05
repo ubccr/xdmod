@@ -6,15 +6,11 @@
       
       $rm = new XDReportManager($user);
    		
-      \xd_security\assertParametersSet(array(
-         'report_id',
-         'token',
-         'charts_per_page'
-      ));
+      \xd_security\assertParametersSet(['report_id', 'token', 'charts_per_page']);
 
       $data = $rm->getPreviewData($_POST['report_id'], $_POST['token'], $_POST['charts_per_page']);
       
-      $returnData = array();
+      $returnData = [];
       
       $returnData['report_id'] = $_POST['report_id'];
       $returnData['success'] = true;

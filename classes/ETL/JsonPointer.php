@@ -21,7 +21,7 @@ class JsonPointer
      * @var string
      */
 
-    const LAST_ARRAY_ELEMENT_CHAR = '-';
+    public const LAST_ARRAY_ELEMENT_CHAR = '-';
 
     /**
      * A JSON pointer must start with this character or be be an empty string.
@@ -29,7 +29,7 @@ class JsonPointer
      * @var string
      */
 
-    const POINTER_CHAR = '/';
+    public const POINTER_CHAR = '/';
 
     /**
      * An object extending Loggable that can be used to log error messages.
@@ -56,7 +56,7 @@ class JsonPointer
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function setLoggable(Loggable $loggable = null)
+    public static function setLoggable(Loggable $loggable = null): void
     {
         self::$loggable = $loggable;
     }  // loggable()
@@ -79,7 +79,7 @@ class JsonPointer
             return false;
         }
 
-        if ( '' !== $pointer && 0 !== strpos($pointer, self::POINTER_CHAR) ) {
+        if ( '' !== $pointer && !str_starts_with($pointer, self::POINTER_CHAR) ) {
             return false;
         }
 
@@ -122,7 +122,7 @@ class JsonPointer
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function extractFragment($json, $pointer)
+    public static function extractFragment(mixed $json, $pointer)
     {
         // Based in part on https://github.com/raphaelstolt/php-jsonpointer
         // Replace with this package once we support PHP 5.4
@@ -158,11 +158,11 @@ class JsonPointer
 
         // Convert encoded characters (see https://tools.ietf.org/html/rfc6901#section-3)
 
-        $parts = array();
+        $parts = [];
         array_filter(
             $pointerParts,
             function ($p) use (&$parts) {
-                return $parts[] = str_replace(array('~1', '~0'), array('/', '~'), $p);
+                return $parts[] = str_replace(['~1', '~0'], ['/', '~'], $p);
             }
         );
 

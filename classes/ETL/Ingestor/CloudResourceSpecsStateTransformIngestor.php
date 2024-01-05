@@ -40,30 +40,21 @@ class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iA
         $this->resetInstance();
     }
 
-    private function initInstance($srcRecord)
+    private function initInstance($srcRecord): void
     {
         // Since we only get information for when a configuration changes we assume a configuration has an end date
         // of today unless we have a row that tells us otherwise
-        $default_end_time = isset($this->_end_time) ? $this->_end_time : date('Y-m-d') . ' 23:59:59';
+        $default_end_time = $this->_end_time ?? date('Y-m-d') . ' 23:59:59';
 
-        $this->_instance_state = array(
-            'resource_id' => $srcRecord['resource_id'],
-            'host_id' => $srcRecord['host_id'],
-            'vcpus' => $srcRecord['vcpus'],
-            'memory_mb' => $srcRecord['memory_mb'],
-            'start_date_ts' => strtotime($srcRecord['fact_date'] . " 00:00:00"),
-            'end_date_ts' => strtotime($default_end_time),
-            'start_day_id' => date('Y', strtotime($srcRecord['fact_date'])) * 100000 + date('z', strtotime($srcRecord['fact_date'])) + 1,
-            'end_day_id' => date('Y', strtotime($default_end_time)) * 100000 + date('z', strtotime($default_end_time)) + 1
-        );
+        $this->_instance_state = ['resource_id' => $srcRecord['resource_id'], 'host_id' => $srcRecord['host_id'], 'vcpus' => $srcRecord['vcpus'], 'memory_mb' => $srcRecord['memory_mb'], 'start_date_ts' => strtotime($srcRecord['fact_date'] . " 00:00:00"), 'end_date_ts' => strtotime($default_end_time), 'start_day_id' => date('Y', strtotime($srcRecord['fact_date'])) * 100000 + date('z', strtotime($srcRecord['fact_date'])) + 1, 'end_day_id' => date('Y', strtotime($default_end_time)) * 100000 + date('z', strtotime($default_end_time)) + 1];
     }
 
-    private function resetInstance()
+    private function resetInstance(): void
     {
         $this->_instance_state = null;
     }
 
-    private function updateInstance($srcRecord)
+    private function updateInstance($srcRecord): void
     {
         // The -1 is to make sure we use the last second of the previous day
         $end_date_timestamp = strtotime($srcRecord['fact_date'] . " 00:00:00") - 1;
@@ -81,21 +72,21 @@ class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iA
         // We want to just flush when we hit the dummy row
         if ($srcRecord['fact_date'] === 0) {
             if (isset($this->_instance_state)) {
-                return array($this->_instance_state);
+                return [$this->_instance_state];
             } else {
-                return array();
+                return [];
             }
         }
 
         if ($this->_instance_state === null) {
             if($srcRecord['vcpus'] == -1 && $srcRecord['memory_mb'] == -1) {
-                return array();
+                return [];
             }
 
             $this->initInstance($srcRecord);
         }
 
-        $transformedRecord = array();
+        $transformedRecord = [];
 
         if (($this->_instance_state['host_id'] != $srcRecord['host_id']) || ($this->_instance_state['resource_id'] != $srcRecord['resource_id']) || ($this->_instance_state['vcpus'] != $srcRecord['vcpus'] || $this->_instance_state['memory_mb'] != $srcRecord['memory_mb'])) {
 

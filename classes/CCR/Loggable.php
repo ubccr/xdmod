@@ -14,7 +14,7 @@ use PDOException;
 use ETL\DataEndpoint\iDataEndpoint;
 use Psr\Log\LoggerInterface;
 
-class Loggable
+class Loggable implements \Stringable
 {
     /**
      * @var LoggerInterface
@@ -43,7 +43,7 @@ class Loggable
 
     public function setLogger(LoggerInterface $logger = null)
     {
-        $this->logger = ( null === $logger ? Log::singleton('null') : $logger );
+        $this->logger = ( $logger ?? Log::singleton('null') );
         return $this;
     }
 
@@ -71,7 +71,7 @@ class Loggable
     {
         $backtrace = debug_backtrace();
         $caller = next($backtrace);
-        return array($caller['file'], $caller['line']);
+        return [$caller['file'], $caller['line']];
     }
 
     /**
@@ -91,9 +91,9 @@ class Loggable
      * @throws Exception
      */
 
-    public function logAndThrowException($message, array $options = null)
+    public function logAndThrowException($message, array $options = null): void
     {
-        $logMessage = array();
+        $logMessage = [];
         $message = "{$this}: " . ( is_string($message) ? $message : "" );
         $logLevel = Log::ERR;
         $exceptionProvided = false;
@@ -152,9 +152,9 @@ class Loggable
      * @return A string representation of the endpoint
      */
 
-    public function __toString()
+    public function __toString(): string
     {
-        return "(" . get_class($this) . ")";
+        return "(" . static::class . ")";
     }
 
     /**

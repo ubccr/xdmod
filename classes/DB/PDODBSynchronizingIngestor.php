@@ -27,20 +27,6 @@ class PDODBSynchronizingIngestor implements Ingestor
     protected $srcDb;
 
     /**
-     * Source query to produce data to be inserted.
-     *
-     * @var string
-     */
-    protected $srcQuery;
-
-    /**
-     * Destination table name.
-     *
-     * @var string
-     */
-    protected $destTable;
-
-    /**
      * Columns that uniquely identify a row being ingested.
      *
      * This can contain a single primary key or multiple columns that
@@ -79,15 +65,21 @@ class PDODBSynchronizingIngestor implements Ingestor
     public function __construct(
         PDODB $destDb,
         PDODB $srcDb,
-        $srcQuery,
-        $destTable,
+        /**
+         * Source query to produce data to be inserted.
+         */
+        protected $srcQuery,
+        /**
+         * Destination table name.
+         */
+        protected $destTable,
         $uniqColumns,
         array $insertColumns
     ) {
         if (is_array($uniqColumns)) {
             $this->uniqColumns = $uniqColumns;
         } else {
-            $this->uniqColumns = array($uniqColumns);
+            $this->uniqColumns = [$uniqColumns];
         }
 
         foreach ($this->uniqColumns as $column) {
@@ -99,8 +91,6 @@ class PDODBSynchronizingIngestor implements Ingestor
 
         $this->destDb        = $destDb;
         $this->srcDb         = $srcDb;
-        $this->srcQuery      = $srcQuery;
-        $this->destTable     = $destTable;
         $this->insertColumns = $insertColumns;
 
         $this->logger = Log::singleton('null');
@@ -109,9 +99,9 @@ class PDODBSynchronizingIngestor implements Ingestor
     /**
      * Perform the ingestion.
      */
-    public function ingest()
+    public function ingest(): void
     {
-        $this->logger->info('Started ingestion for class: ' . get_class($this));
+        $this->logger->info('Started ingestion for class: ' . static::class);
 
         $timeStart = microtime();
 
@@ -145,7 +135,7 @@ class PDODBSynchronizingIngestor implements Ingestor
             }
 
             $insertData = array_map(
-                function ($column) use ($row) { return $row[$column]; },
+                fn($column) => $row[$column],
                 $columns
             );
 
@@ -159,14 +149,7 @@ class PDODBSynchronizingIngestor implements Ingestor
         $time = $timeEnd - $timeStart;
 
         // NOTE: This is needed for the log summary.
-        $this->logger->notice(array(
-            'message'           => 'Finished ingestion',
-            'class'             => get_class($this),
-            'start_time'        => $timeStart,
-            'end_time'          => $timeEnd,
-            'records_examined'  => $sourceRows,
-            'records_loaded'    => $insertedRows,
-        ));
+        $this->logger->notice(['message'           => 'Finished ingestion', 'class'             => static::class, 'start_time'        => $timeStart, 'end_time'          => $timeEnd, 'records_examined'  => $sourceRows, 'records_loaded'    => $insertedRows]);
     }
 
     /**
@@ -174,7 +157,7 @@ class PDODBSynchronizingIngestor implements Ingestor
      *
      * @param LoggerInterface $logger
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -197,7 +180,7 @@ class PDODBSynchronizingIngestor implements Ingestor
 
         $rows = $this->destDb->query($sql);
 
-        $keys = array_map(array($this, 'getKeyFromRow'), $rows);
+        $keys = array_map([$this, 'getKeyFromRow'], $rows);
 
         return $keys;
     }
@@ -221,16 +204,12 @@ class PDODBSynchronizingIngestor implements Ingestor
         // all CHAR, VARCHAR, and TEXT values in MySQL are compared
         // without regard to any trailing spaces.
         $keyValues = array_map(
-            function ($column) use ($row) {
-                return strtolower(trim($row[$column]));
-            },
+            fn($column) => strtolower(trim($row[$column])),
             $columns
         );
 
         $escapedKeyValues = array_map(
-            function ($key) {
-                return str_replace('-', '\-', $key);
-            },
+            fn($key) => str_replace('-', '\-', $key),
             $keyValues
         );
 

@@ -16,49 +16,37 @@ use ETL\EtlConfigurationOptions;
 use ETL\Table\Table;
 use ETL\Table\AggregationTable;
 
-$supportedFormats = array("json", "sql");
+$supportedFormats = ["json", "sql"];
 
 // ==========================================================================================
 // Script options with defaults
 
-$scriptOptions = array(
-  // ETL configuration file
-  'config-file'       => NULL,
-  // Endpoint (defined in the ETL config) to use when querying tables
-  'endpoint'          => "utility",
-  // Table to use in discovery mode, needed for alter statement
-  'discover-table'    => NULL,
-  // TRUE to include the schema name in tables and triggers
-  'include-schema'    => FALSE,
-  // Operation to perform
-  'operation'         => NULL,
-  // Output file
-  'output-file'       => NULL,
-  // Output format (json or sql)
-  'output-format'     => 'json',
-  // Succinct or verbose mode
-  'succinct-mode'     => FALSE,
-  // Table definition file
-  'table-config'      => NULL,
-  'verbosity'         => Log::NOTICE
-  );
+$scriptOptions = [
+    // ETL configuration file
+    'config-file'       => NULL,
+    // Endpoint (defined in the ETL config) to use when querying tables
+    'endpoint'          => "utility",
+    // Table to use in discovery mode, needed for alter statement
+    'discover-table'    => NULL,
+    // TRUE to include the schema name in tables and triggers
+    'include-schema'    => FALSE,
+    // Operation to perform
+    'operation'         => NULL,
+    // Output file
+    'output-file'       => NULL,
+    // Output format (json or sql)
+    'output-format'     => 'json',
+    // Succinct or verbose mode
+    'succinct-mode'     => FALSE,
+    // Table definition file
+    'table-config'      => NULL,
+    'verbosity'         => Log::NOTICE,
+];
 
 // ==========================================================================================
 // Process command line arguments
 
-$options = array(
-  'h'   => 'help',
-  'c:'  => 'config-file:',
-  'd:'  => 'discover-table:',
-  'f:'  => 'output-file:',
-  'e:'  => 'endpoint:',
-  'i'   => 'include-schema',
-  'o:'  => 'operation:',
-  's'   => 'succinct',
-  't:'  => 'table-config:',
-  'v:'  => 'verbosity:',
-  'x:'  => 'output-format:'
-  );
+$options = ['h'   => 'help', 'c:'  => 'config-file:', 'd:'  => 'discover-table:', 'f:'  => 'output-file:', 'e:'  => 'endpoint:', 'i'   => 'include-schema', 'o:'  => 'operation:', 's'   => 'succinct', 't:'  => 'table-config:', 'v:'  => 'verbosity:', 'x:'  => 'output-format:'];
 
 $args = getopt(implode('', array_keys($options)), $options);
 
@@ -147,10 +135,7 @@ foreach ($args as $arg => $value) {
 // ------------------------------------------------------------------------------------------
 // Set up the logger
 
-$conf = array(
-  'emailSubject' => gethostname() . ': XDMOD: Data Warehouse: Federated ETL Log',
-  'mail' => FALSE
-  );
+$conf = ['emailSubject' => gethostname() . ': XDMOD: Data Warehouse: Federated ETL Log', 'mail' => FALSE];
 
 if ( NULL !== $scriptOptions['verbosity'] ) $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
 
@@ -268,7 +253,7 @@ exit(0);
  * Display usage text and exit with error status.
  */
 
-function usage_and_exit($msg = null)
+function usage_and_exit($msg = null): void
 {
   global $argv, $scriptOptions, $supportedFormats;
 

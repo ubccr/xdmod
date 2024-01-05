@@ -15,20 +15,16 @@ class ControllerTest extends BaseTest
      */
     protected $helper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->helper = new XdmodTestHelper(__DIR__ . '/../../../');
     }
 
-    public function testEnumExistingUsers()
+    public function testEnumExistingUsers(): void
     {
         $this->helper->authenticateDashboard('mgr');
 
-        $params = array(
-            'operation' => 'enum_existing_users',
-            'group_filter' => 'all',
-            'role_filter' => 'any'
-        );
+        $params = ['operation' => 'enum_existing_users', 'group_filter' => 'all', 'role_filter' => 'any'];
 
         $response = $this->helper->get('internal_dashboard/controllers/controller.php', $params, null);
 
@@ -68,7 +64,7 @@ class ControllerTest extends BaseTest
         $this->helper->logoutDashboard();
     }
 
-    public function testEnumUserTypes()
+    public function testEnumUserTypes(): void
     {
         $expected = JSON::loadFile(
             parent::getTestFiles()->getFile('controllers', 'enum_user_types-8.0.0')
@@ -76,9 +72,7 @@ class ControllerTest extends BaseTest
 
         $this->helper->authenticateDashboard('mgr');
 
-        $data = array(
-            'operation' => 'enum_user_types'
-        );
+        $data = ['operation' => 'enum_user_types'];
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
 
@@ -100,7 +94,7 @@ class ControllerTest extends BaseTest
         $this->helper->logoutDashboard();
     }
 
-    public function testEnumRoles()
+    public function testEnumRoles(): void
     {
         $expected = JSON::loadFile(
             parent::getTestFiles()->getFile('controllers', 'enum_roles-add_default_center')
@@ -108,9 +102,7 @@ class ControllerTest extends BaseTest
 
         $this->helper->authenticateDashboard('mgr');
 
-        $data = array(
-            'operation' => 'enum_roles'
-        );
+        $data = ['operation' => 'enum_roles'];
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
 
@@ -138,12 +130,12 @@ class ControllerTest extends BaseTest
                         $diff = array_diff_assoc($expectedAcl, $value);
                         array_walk_recursive(
                             $diff,
-                            function ($value, $index, $properties) use (&$success) {
+                            function ($value, $index, $properties) use (&$success): void {
                                 if (!in_array($index, $properties)) {
                                     $success = false;
                                 }
                             },
-                            array('acl_id')
+                            ['acl_id']
                         );
                         return $success;
                     }
@@ -166,7 +158,7 @@ class ControllerTest extends BaseTest
      * @dataProvider listUsersGroupProvider
      * @internal param array $options
      */
-    public function testListUsers(array $options)
+    public function testListUsers(array $options): void
     {
         $this->assertArrayHasKey('user_group', $options);
         $this->assertArrayHasKey('output', $options);
@@ -176,10 +168,7 @@ class ControllerTest extends BaseTest
 
         $this->helper->authenticateDashboard('mgr');
 
-        $data = array(
-            'operation' => 'list_users',
-            'group' => $group
-        );
+        $data = ['operation' => 'list_users', 'group' => $group];
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
 
@@ -208,7 +197,7 @@ class ControllerTest extends BaseTest
         );
     }
 
-    public function testEnumUserTypesAndRoles()
+    public function testEnumUserTypesAndRoles(): void
     {
         $expected = JSON::loadFile(
             parent::getTestFiles()->getFile('controllers', 'enum_user_types_and_roles-update_enum_user_types_and_roles')
@@ -216,9 +205,7 @@ class ControllerTest extends BaseTest
 
         $this->helper->authenticateDashboard('mgr');
 
-        $data = array(
-            'operation' => 'enum_user_types_and_roles'
-        );
+        $data = ['operation' => 'enum_user_types_and_roles'];
 
         $response = $this->helper->post('internal_dashboard/controllers/controller.php', null, $data);
 
@@ -240,22 +227,13 @@ class ControllerTest extends BaseTest
         $this->helper->logoutDashboard();
     }
 
-    public function testSabUserEnumTgUsers()
+    public function testSabUserEnumTgUsers(): void
     {
 
 
         $this->helper->authenticateDashboard('mgr');
 
-        $data = array(
-            'start' => 0,
-            'limit' => 300,
-            'operation' => 'enum_tg_users',
-            'pi_only' => 'n',
-            'search_mode' => 'formal_name',
-            'userManagement' => 'y',
-            'dashboard_mode' => 1,
-            'query' => ''
-        );
+        $data = ['start' => 0, 'limit' => 300, 'operation' => 'enum_tg_users', 'pi_only' => 'n', 'search_mode' => 'formal_name', 'userManagement' => 'y', 'dashboard_mode' => 1, 'query' => ''];
 
         $response = $this->helper->post('controllers/sab_user.php', null, $data);
 
@@ -287,13 +265,11 @@ class ControllerTest extends BaseTest
         $expectedUsers = $expected['users'];
         $actualUsers = $data['users'];
 
-        $notFound = array();
+        $notFound = [];
         foreach($expectedUsers as $key => $expectedUser) {
             $found = array_filter(
                 $actualUsers,
-                function ($value) use ($expectedUser) {
-                    return $expectedUser['person_name'] === $value['person_name'];
-                }
+                fn($value) => $expectedUser['person_name'] === $value['person_name']
             );
             if (empty($found)) {
                 $notFound []= $expectedUser;
@@ -303,22 +279,11 @@ class ControllerTest extends BaseTest
         $this->helper->logoutDashboard();
     }
 
-    public function testCreateUser()
+    public function testCreateUser(): void
     {
         $this->helper->authenticateDashboard('mgr');
 
-        $data = array(
-            'operation' => 'create_user',
-            'account_request_id' => '',
-            'first_name' => 'bob',
-            'last_name' => 'smith',
-            'email_address' => 'bsmith@test.com',
-            'username' => 'bsmith',
-            'acls' => json_encode(array('usr' => array())),
-            'assignment' => 283,
-            'institution' => -1,
-            'user_type' => 1
-        );
+        $data = ['operation' => 'create_user', 'account_request_id' => '', 'first_name' => 'bob', 'last_name' => 'smith', 'email_address' => 'bsmith@test.com', 'username' => 'bsmith', 'acls' => json_encode(['usr' => []]), 'assignment' => 283, 'institution' => -1, 'user_type' => 1];
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
 
@@ -361,7 +326,7 @@ class ControllerTest extends BaseTest
     /**
      * @depends testCreateUser
      */
-    public function testModifyUser()
+    public function testModifyUser(): void
     {
         $this->helper->authenticateDashboard('mgr');
 
@@ -370,27 +335,14 @@ class ControllerTest extends BaseTest
         $user = array_values(
             array_filter(
                 $users,
-                function ($item) {
-                    return isset($item['username']) && $item['username'] === 'bsmith';
-                }
+                fn($item) => isset($item['username']) && $item['username'] === 'bsmith'
             )
         )[0];
         $this->assertNotNull($user, "Unable to find the user that was previously created.");
 
-        $data = array(
-            'operation' => 'update_user',
-            'uid' => $user['id'],
-            'email_address' => $user['email_address'],
-            'acls' => json_encode(
-                array(
-                    'pi' => array(),
-                    'usr' => array()
-                )
-            ),
-            'assigned_user' => 283,
-            'institution' => -1,
-            'user_type' => 1
-        );
+        $data = ['operation' => 'update_user', 'uid' => $user['id'], 'email_address' => $user['email_address'], 'acls' => json_encode(
+            ['pi' => [], 'usr' => []]
+        ), 'assigned_user' => 283, 'institution' => -1, 'user_type' => 1];
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
 
@@ -419,7 +371,7 @@ class ControllerTest extends BaseTest
     /**
      * @depends testModifyUser
      */
-    public function testDeleteUser()
+    public function testDeleteUser(): void
     {
         $this->helper->authenticateDashboard('mgr');
 
@@ -427,18 +379,13 @@ class ControllerTest extends BaseTest
         $user = array_values(
             array_filter(
                 $users,
-                function ($item) {
-                    return isset($item['username']) && $item['username'] === 'bsmith';
-                }
+                fn($item) => isset($item['username']) && $item['username'] === 'bsmith'
             )
         )[0];
         $this->assertNotNull($user, "Unable to find the user that was previously created.");
         $this->assertTrue(isset($user['id']), "Expected the returned user to have an 'id' property.");
 
-        $data = array(
-            'operation' => 'delete_user',
-            'uid' => $user['id']
-        );
+        $data = ['operation' => 'delete_user', 'uid' => $user['id']];
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
 
@@ -461,10 +408,9 @@ class ControllerTest extends BaseTest
     /**
      * @dataProvider provideEnumTargetAddresses
      *
-     * @param array $options
      * @throws \Exception
      */
-    public function testEnumTargetAddresses(array $options)
+    public function testEnumTargetAddresses(array $options): void
     {
         $testData = $options['data'];
         $expected = $options['expected'];
@@ -475,9 +421,7 @@ class ControllerTest extends BaseTest
         $expectedHttpCode = array_key_exists('http_code', $expected) ? $expected['http_code'] : 200;
 
         $data = array_merge(
-            array(
-                'operation' => 'enum_target_addresses'
-            ),
+            ['operation' => 'enum_target_addresses'],
             $testData
         );
 
@@ -493,10 +437,10 @@ class ControllerTest extends BaseTest
         // application/json but do not return valid json. To account for these
         // two cases we just default to attempting to decode the response data
         // and if that fails then just fallback to the full response body as is.
-        try {
-            $actual = json_decode($response[0], true);
-        } catch (\Exception $e) {
+        if (!is_string($response[0])) {
             $actual = $response[0];
+        } else {
+            $actual = json_decode($response[0], true);
         }
 
         $expected = JSON::loadFile($expectedFileName);
@@ -532,12 +476,7 @@ class ControllerTest extends BaseTest
 
     public function listUsers($groupFilter = 'all', $roleFilter = 'any', $contextFilter = '')
     {
-        $data = array(
-            'group_filter' => $groupFilter,
-            'role_filter' => $roleFilter,
-            'context_filter' => $contextFilter,
-            'operation' => 'enum_existing_users'
-        );
+        $data = ['group_filter' => $groupFilter, 'role_filter' => $roleFilter, 'context_filter' => $contextFilter, 'operation' => 'enum_existing_users'];
 
         $response = $this->helper->post('internal_dashboard/controllers/controller.php', null, $data);
         $this->assertTrue(strpos($response[1]['content_type'], 'text/html') >= 0);
@@ -578,18 +517,18 @@ class ControllerTest extends BaseTest
                  * @param array $actualUser expected to be an associative array in the same format as $expectedUser.
                  * @return bool
                  */
-                function ($key, $actualUser) use ($expectedUser) {
+                function (mixed $key, $actualUser) use ($expectedUser) {
                     if ($actualUser['username'] === $expectedUser['username']) {
                         $success = true;
                         $diff = array_diff_assoc($expectedUser, $actualUser);
                         array_walk_recursive(
                             $diff,
-                            function ($value, $index, $properties) use (&$success) {
+                            function ($value, $index, $properties) use (&$success): void {
                                 if (!in_array($index, $properties)) {
                                     $success = false;
                                 }
                             },
-                            array('last_logged_in', 'id', 'email_address')
+                            ['last_logged_in', 'id', 'email_address']
                         );
                         return $success;
                     }

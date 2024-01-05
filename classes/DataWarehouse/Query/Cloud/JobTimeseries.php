@@ -22,10 +22,10 @@ class JobTimeseries
     }
 
     public function get($instance_id) {
-        return array('series' => [
+        return ['series' => [
           'events' => $this->getVolumeEvents($instance_id),
           'vmstates' => $this->getInstanceStates($instance_id)
-        ], 'schema' => []);
+        ], 'schema' => []];
     }
 
     /**

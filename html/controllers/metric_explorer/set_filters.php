@@ -2,17 +2,17 @@
 
 require_once('common.php');
 
-$returnData = array();
+$returnData = [];
 
 try
 {
-	
+
 	$user = \xd_security\getLoggedInUser();
-	
+
 	$userProfile = $user->getProfile();
 	$userProfile->setValue('filters',$_REQUEST['filters']);
 	$userProfile->save();
-	
+
 }
 catch(SessionExpiredException $see)
 {

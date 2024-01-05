@@ -7,7 +7,7 @@ use Models\Acl;
 use Models\Services\Centers;
 use Models\Services\Organizations;
 
-$params = array('uid' => RESTRICTION_UID);
+$params = ['uid' => RESTRICTION_UID];
 
 $isValid = xd_security\secureCheck($params, 'POST');
 
@@ -29,14 +29,7 @@ if ($user_to_update == null) {
 
 // -----------------------------
 
-$params = array(
-    'first_name' => RESTRICTION_FIRST_NAME,
-    'last_name' => RESTRICTION_LAST_NAME,
-    'assigned_user' => RESTRICTION_ASSIGNMENT,
-    'is_active' => RESTRICTION_ACTIVE_FLAG,
-    'user_type' => RESTRICTION_GROUP,
-    'institution' => RESTRICTION_INSTITUTION
-);
+$params = ['first_name' => RESTRICTION_FIRST_NAME, 'last_name' => RESTRICTION_LAST_NAME, 'assigned_user' => RESTRICTION_ASSIGNMENT, 'is_active' => RESTRICTION_ACTIVE_FLAG, 'user_type' => RESTRICTION_GROUP, 'institution' => RESTRICTION_INSTITUTION];
 
 \xd_security\assertEmailParameterSet('email_address');
 
@@ -131,7 +124,7 @@ if (!isset($_POST['is_active'])) {
         // Checking for an acl set that only contains feature acls.
         // Feature acls are acls that only provide access to an XDMoD feature and
         // are not used for data access.
-        $aclNames = array();
+        $aclNames = [];
         $featureAcls = Acls::getAclsByTypeName('feature');
         $tabAcls = Acls::getAclsByTypeName('tab');
         $uiOnlyAcls = array_merge($featureAcls, $tabAcls);
@@ -142,7 +135,7 @@ if (!isset($_POST['is_active'])) {
                     $carry [] = $item->getName();
                     return $carry;
                 },
-                array()
+                []
             );
         }
         $diff = array_diff(array_keys($acls), $aclNames);
@@ -151,7 +144,7 @@ if (!isset($_POST['is_active'])) {
             \xd_response\presentError('Please include a non-feature acl ( i.e. User, PI etc. )');
         }
 
-        $user_to_update->setAcls(array());
+        $user_to_update->setAcls([]);
         foreach ($acls as $aclName => $centers) {
             $acl = Acls::getAclByName($aclName);
             $user_to_update->addAcl($acl);
@@ -186,8 +179,8 @@ try {
         if (isset($_POST['acls']) && isset($acls)) {
 
             // clear the organizations first.
-            $user_to_update->setOrganizations(array(), ROLE_ID_CENTER_DIRECTOR);
-            $user_to_update->setOrganizations(array(), ROLE_ID_CENTER_STAFF);
+            $user_to_update->setOrganizations([], ROLE_ID_CENTER_DIRECTOR);
+            $user_to_update->setOrganizations([], ROLE_ID_CENTER_STAFF);
 
             // then add each new one.
             foreach ($acls as $aclName => $centers) {
@@ -196,14 +189,9 @@ try {
                 // should have been ) then we need to call `setOrganizations` so that the
                 // user_acl_group_by_parameters table is updated accordingly.
                 //
-                if (in_array($aclName, array('cd', 'cs')) && isset($_POST['institution'])) {
+                if (in_array($aclName, ['cd', 'cs']) && isset($_POST['institution'])) {
                     $user_to_update->setOrganizations(
-                        array(
-                            $_POST['institution'] => array(
-                                'primary'=> 1,
-                                'active' => 1
-                            )
-                        ),
+                        [$_POST['institution'] => ['primary'=> 1, 'active' => 1]],
                         $aclName
                     );
                 }

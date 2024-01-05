@@ -14,9 +14,9 @@ require_once __DIR__ . '/../../configuration/linker.php';
 \xd_security\start_session();
 session_write_close();
 
-$returnData = array();
+$returnData = [];
 
-$controller = new XDController(array(STATUS_LOGGED_IN, STATUS_MANAGER_ROLE));
+$controller = new XDController([STATUS_LOGGED_IN, STATUS_MANAGER_ROLE]);
 
 $controller->registerOperation('enum_roles');
 $controller->registerOperation('list_users');

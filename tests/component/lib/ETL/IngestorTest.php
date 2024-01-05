@@ -21,17 +21,17 @@ use CCR\DB;
  *    data.
  */
 
-class IngestorTest extends \PHPUnit_Framework_TestCase
+class IngestorTest extends \PHPUnit\Framework\TestCase
 {
-    const TEST_INPUT_DIR = '/tests/artifacts/xdmod/etlv2/configuration/input';
-    const ACTION = 0;   // Run an overseer action
-    const PIPELINE = 1; // Run an overseer pipeline
+    public const TEST_INPUT_DIR = '/tests/artifacts/xdmod/etlv2/configuration/input';
+    public const ACTION = 0;   // Run an overseer action
+    public const PIPELINE = 1; // Run an overseer pipeline
 
     /**
      * 1. Load invalid data and ensure that LOAD DATA INFILE returns appropriate warning messages.
      */
 
-    public function testLoadDataInfileWarnings() {
+    public function testLoadDataInfileWarnings(): void {
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-load-data-infile-warnings');
 
         $this->assertEquals(0, $result['exit_status'], "Exit code");
@@ -48,7 +48,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertRegExp('/\[warning\]/', $line);
+                $this->assertMatchesRegularExpression('/\[warning\]/', $line);
                 $numWarnings++;
             }
         }
@@ -62,7 +62,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
      *    messages.
      */
 
-    public function testSqlWarnings() {
+    public function testSqlWarnings(): void {
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings');
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
@@ -77,7 +77,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
         $numWarnings = 0;
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, '[warning]') ) {
+                if ( str_contains($line, '[warning]') ) {
                     $numWarnings++;
                 }
             }
@@ -91,7 +91,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
      * 3. Insert truncated and out of range data but hide SQL warnings.
      */
 
-    public function testHideSqlWarnings() {
+    public function testHideSqlWarnings(): void {
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warnings=true"');
 
         $this->assertEquals(0, $result['exit_status'], "Exit code");
@@ -100,7 +100,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertNotRegExp('/\[warning\]/', $line);
+                $this->assertMatchesRegularExpression('/\[warning\]/', $line);
             }
         }
 
@@ -112,7 +112,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
      *    warnings for out of range values.
      */
 
-    public function testHideSqlWarningCodes() {
+    public function testHideSqlWarningCodes(): void {
         $result = $this->executeOverseer('xdmod.ingestor-tests.test-sql-warnings', '-o "hide_sql_warning_codes=1366"');
         $this->assertEquals(0, $result['exit_status'], "Exit code");
 
@@ -126,7 +126,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, '[warning]') ) {
+                if ( str_contains($line, '[warning]') ) {
                     $numWarnings++;
                 }
             }
@@ -142,7 +142,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, '[warning]') ) {
+                if ( str_contains($line, '[warning]') ) {
                     $numWarnings++;
                 }
             }
@@ -158,7 +158,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
      *    dat.
      */
 
-    public function testStructuredFileIngestorWithDirectoryScanner() {
+    public function testStructuredFileIngestorWithDirectoryScanner(): void {
         $result = $this->executeOverseer(
             'xdmod.cloud-jobs.GenericRawCloudEventIngestor',
             sprintf('-v notice -d "CLOUD_EVENT_LOG_DIR=%s/generic_cloud_logs"', BASE_DIR . self::TEST_INPUT_DIR)
@@ -173,7 +173,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
      *    without filters. We want to ensure that the file is fully processed each time.
      */
 
-    public function testStructuredFileIngestorWithSameFile() {
+    public function testStructuredFileIngestorWithSameFile(): void {
         $result = $this->executeOverseer(
             'xdmod.structured-file',
             '-v notice',
@@ -188,11 +188,11 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
         // xdmod.structured-file.read-people-3 with 3 record, same file as #2
         // xdmod.structured-file.read-people-4 with 1 record, same file as #1
 
-        $recordsLoaded = array();
+        $recordsLoaded = [];
 
         foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-            if ( false !== strpos($line, '[notice]') ) {
-                $matches = array();
+            if ( str_contains($line, '[notice]') ) {
+                $matches = [];
                 if ( preg_match('/xdmod.structured-file.read-people-([0-9])/', $line, $matches) ) {
                     $number = $matches[1];
                     if ( preg_match('/records_loaded:\s*([0-9]+)/', $line, $matches) ) {
@@ -232,7 +232,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
         );
 
         // Add a verbosity flag if the local options do not already contain one
-        if ( "" == $localOptions || false === strpos($localOptions, '-v') ) {
+        if ( "" == $localOptions || !str_contains($localOptions, '-v') ) {
             $options = sprintf('%s -v warning', $options);
         }
 
@@ -248,15 +248,17 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
     private function executeCommand($command)
     {
-        $pipes = array();
+        $pipes = [];
 
         $process = proc_open(
             $command,
-            array(
-                0 => array('file', '/dev/null', 'r'),  // STDIN
-                1 => array('pipe', 'w'),               // STDOUT
-                2 => array('pipe', 'w'),               // STDERR
-            ),
+            [
+                0 => ['file', '/dev/null', 'r'],
+                // STDIN
+                1 => ['pipe', 'w'],
+                // STDOUT
+                2 => ['pipe', 'w'],
+            ],
             $pipes
         );
 
@@ -278,11 +280,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         $exitStatus = proc_close($process);
 
-        return array(
-            'exit_status' => $exitStatus,
-            'stdout' => $stdout,
-            'stderr' => $stderr,
-        );
+        return ['exit_status' => $exitStatus, 'stdout' => $stdout, 'stderr' => $stderr];
     }
 
     /**
@@ -291,7 +289,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
      * @return Nothing
      */
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $dbh = DB::factory('database');
         $dbh->execute('DROP TABLE IF EXISTS `test`.`load_data_infile_test`');

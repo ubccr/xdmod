@@ -16,7 +16,7 @@ class Oracle extends aRdbmsEndpoint implements iRdbmsEndpoint
      * @const string Defines the name for this endpoint that should be used in configuration files.
      * It also allows us to implement auto-discovery.
      */
-    const ENDPOINT_NAME = 'oracle';
+    public const ENDPOINT_NAME = 'oracle';
 
     /**
      * @see iDataEndpoint::__construct()
@@ -67,7 +67,7 @@ WHERE username = UPPER(:schema)";
             $msg = "Schema name cannot be empty";
             $this->logAndThrowException($msg);
         } else {
-            $schemaName = ( 0 !== strpos($schemaName, $this->systemQuoteChar)
+            $schemaName = ( !str_starts_with($schemaName, $this->systemQuoteChar)
                             ? $this->quoteSystemIdentifier($schemaName)
                             : $schemaName );
         }
@@ -101,10 +101,7 @@ AND table_name = UPPER(:tablename)";
             $schemaName = $this->getSchema();
         }
 
-        $params = array(
-            ":schema" => $schemaName,
-            ":tablename"  => $tableName
-            );
+        $params = [":schema" => $schemaName, ":tablename"  => $tableName];
 
         try {
             $dbh = $this->getHandle();
@@ -115,7 +112,7 @@ AND table_name = UPPER(:tablename)";
         } catch (PDOException $e) {
             $this->logAndThrowException(
                 "Error querying for table '$schemaName'.'$tableName':",
-                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+                ['exception' => $e, 'sql' => $sql, 'endpoint' => $this]
             );
         }
 
@@ -146,8 +143,7 @@ AND table_name = UPPER(:tablename)
 ORDER BY column_id ASC";
 
         $result = null;
-        $params = array(":schema" => $this->getSchema(),
-                        ":tablename"  => $tableName);
+        $params = [":schema" => $this->getSchema(), ":tablename"  => $tableName];
 
         try {
             $dbh = $this->getHandle();
@@ -159,11 +155,11 @@ ORDER BY column_id ASC";
         } catch (PDOException $e) {
             $this->logAndThrowException(
                 "Error retrieving column names from '" . $this->getSchema() . ".'$tableName' ",
-                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+                ['exception' => $e, 'sql' => $sql, 'endpoint' => $this]
             );
         }
 
-        $columnNames = array();
+        $columnNames = [];
 
         foreach ( $result as $row ) {
             $columnNames[] = $row['NAME'];

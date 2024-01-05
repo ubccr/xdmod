@@ -19,32 +19,31 @@ use IntegrationTests\TestHarness\TestFiles;
 
 class EtlConfigurationTest extends BaseTest
 {
-    const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
-    const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
+    public const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
+    public const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
 
-    const TMPDIR = '/tmp/xdmod-etl-configuration-test';
+    public const TMPDIR = '/tmp/xdmod-etl-configuration-test';
 
     private static $defaultModuleName = null;
 
     private $testFiles;
 
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
-        parent::__construct($name, $data, $dataName);
         $this->testFiles = new TestFiles(__DIR__ . '/../../../../');
+        parent::__construct($name, $data, $dataName);
     }
 
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         // Query the configuration file for the default module name
-
         try {
             $etlConfigOptions = \xd_utilities\getConfigurationSection("etl");
             if (isset($etlConfigOptions['default_module_name'])) {
                 self::$defaultModuleName = $etlConfigOptions['default_module_name'];
             }
-        } catch ( Exception $e ) {
+        } catch (Exception) {
             // Simply ignore the exception if there is no [etl] section in the config file
         }
     }
@@ -53,7 +52,7 @@ class EtlConfigurationTest extends BaseTest
      * Test parsing of an XDMoD JSON ETL configuration file including local files.
      */
 
-    public function testConfiguration()
+    public function testConfiguration(): void
     {
         // The test files need to be in the same location that the expected results were
         // generated from or paths stored in the expected result will not match!
@@ -63,12 +62,11 @@ class EtlConfigurationTest extends BaseTest
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/xdmod_etl_config_8.0.0.json', self::TMPDIR . '/xdmod_etl_config_8.0.0.json');
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl_8.0.0.d/maintenance.json', self::TMPDIR . '/etl_8.0.0.d/maintenance.json');
         copy(self::TEST_ARTIFACT_INPUT_PATH . '/etl_8.0.0.d/jobs_cloud.json', self::TMPDIR . '/etl_8.0.0.d/jobs_cloud.json');
-
         $configObj = EtlConfiguration::factory(
             self::TMPDIR . '/xdmod_etl_config_8.0.0.json',
             self::TMPDIR,
             null,
-            array('default_module_name' => self::$defaultModuleName)
+            ['default_module_name' => self::$defaultModuleName]
         );
         $generated = json_decode($configObj->toJson());
 
@@ -89,7 +87,7 @@ class EtlConfigurationTest extends BaseTest
      * Test application of default values and creating/overriding variables on the command line.
      */
 
-    public function testConfigurationVariables()
+    public function testConfigurationVariables(): void
     {
         // The test files need to be in the same location that the expected results were
         // generated from or paths stored in the expected result will not match!
@@ -105,18 +103,15 @@ class EtlConfigurationTest extends BaseTest
             self::TMPDIR . '/etl_8.0.0.d/local_config_with_variables.json'
         );
 
-        $options = array(
-            'config_variables' => array(
-                // Override an existing variable's value
-                'CLI_OVERRIDE'   => 'CommandLineOverride',
-                // Define a variable by substituting this for the value
-                'CLI_SUBSTITUTE' => 'VariableInConfig',
-                // Define a completely new variable
-                'CLI_NEW'        => 'NewCommandLineVariable',
-                'CLOUD_COMMON_DIR' => 'cloud_common'
-            ),
-            'default_module_name' => self::$defaultModuleName
-        );
+        $options = ['config_variables' => [
+            // Override an existing variable's value
+            'CLI_OVERRIDE' => 'CommandLineOverride',
+            // Define a variable by substituting this for the value
+            'CLI_SUBSTITUTE' => 'VariableInConfig',
+            // Define a completely new variable
+            'CLI_NEW' => 'NewCommandLineVariable',
+            'CLOUD_COMMON_DIR' => 'cloud_common',
+        ], 'default_module_name' => self::$defaultModuleName];
         $configObj = EtlConfiguration::factory(
             self::TMPDIR . '/xdmod_etl_config_with_variables_8.0.0.json',
             self::TMPDIR,
@@ -124,7 +119,7 @@ class EtlConfigurationTest extends BaseTest
             $options
         );
         $generated = json_decode($configObj->toJson());
-        $this->filterKeysRecursive(array('key'), $generated);
+        $this->filterKeysRecursive(['key'], $generated);
         $file = self::TEST_ARTIFACT_OUTPUT_PATH . '/xdmod_etl_config_with_variables.json';
         $expected = json_decode(file_get_contents($file));
 
@@ -146,7 +141,7 @@ class EtlConfigurationTest extends BaseTest
      * This Test should be moved to ConfigurationTest.php and the `@depend` removed once
      * https://app.asana.com/0/807629084565719/1101232922862525/f has been addressed.
      * =============================================================================================
-     * @depends testConfigurationVariables
+     * @depends      testConfigurationVariables
      *
      * @dataProvider provideTestXdmodConfiguration
      *
@@ -157,7 +152,7 @@ class EtlConfigurationTest extends BaseTest
      *   - expected: The filename to use when generating or retrieving the expected output.
      * @throws \Exception
      */
-    public function testXdmodConfiguration(array $options)
+    public function testXdmodConfiguration(array $options): void
     {
         $baseDir = dirname($this->testFiles->getFile('configuration', '.', 'input'));
         $baseFile = $this->testFiles->getFile('configuration', $options['base_file'], 'input');
@@ -171,10 +166,7 @@ class EtlConfigurationTest extends BaseTest
                     'configuration',
                     implode(
                         DIRECTORY_SEPARATOR,
-                        array(
-                            '.',
-                            $localDir,
-                            '.')
+                        ['.', $localDir, '.']
                     ),
                     'input'
                 )
@@ -183,9 +175,7 @@ class EtlConfigurationTest extends BaseTest
                 $baseFile,
                 $baseDir,
                 null,
-                array(
-                    'local_config_dir' => $localConfigDir
-                )
+                ['local_config_dir' => $localConfigDir]
             );
         } else {
             $config = XdmodConfiguration::factory(
@@ -226,10 +216,9 @@ class EtlConfigurationTest extends BaseTest
      *
      * @dataProvider provideTestModuleConfiguration
      *
-     * @param array $options
      * @throws \Exception
      */
-    public function testModuleConfiguration(array $options)
+    public function testModuleConfiguration(array $options): void
     {
         $baseDir = dirname($this->testFiles->getFile('configuration', '.', 'input'));
         $baseFile = $this->testFiles->getFile('configuration', $options['base_file'], 'input');
@@ -240,10 +229,7 @@ class EtlConfigurationTest extends BaseTest
                 'configuration',
                 implode(
                     DIRECTORY_SEPARATOR,
-                    array(
-                        '.',
-                        $localDir,
-                        '.')
+                    ['.', $localDir, '.']
                 ),
                 'input'
             )
@@ -253,13 +239,11 @@ class EtlConfigurationTest extends BaseTest
             $baseFile,
             $baseDir,
             null,
-            array(
-                'local_config_dir' => $localConfigDir
-            )
+            ['local_config_dir' => $localConfigDir]
         );
 
         $modules = $options['modules'];
-        foreach($modules as $module) {
+        foreach ($modules as $module) {
             $expectedFileName = sprintf("%s-%s", $options['expected'], $module);
             $expectedFilePath = $this->testFiles->getFile('configuration', $expectedFileName);
 
@@ -296,10 +280,9 @@ class EtlConfigurationTest extends BaseTest
     /**
      * @dataProvider  provideTestToAssocArray
      *
-     * @param array $options
      * @throws \Exception
      */
-    public function testToAssocArray(array $options)
+    public function testToAssocArray(array $options): void
     {
         $baseDir = dirname($this->testFiles->getFile('configuration', '.', 'input'));
         $baseFile = $this->testFiles->getFile('configuration', $options['base_file'], 'input');
@@ -348,11 +331,10 @@ class EtlConfigurationTest extends BaseTest
      *
      * @dataProvider provideTestLocalConfigReadOrder
      *
-     * @param array $options
      *
      * @throws \Exception
      */
-    public function testLocalConfigReadOrder(array $options)
+    public function testLocalConfigReadOrder(array $options): void
     {
         $baseDir = dirname($this->testFiles->getFile('configuration', '.', 'input'));
         $baseFile = $this->testFiles->getFile('configuration', $options['base_file'], 'input');
@@ -363,10 +345,7 @@ class EtlConfigurationTest extends BaseTest
                 'configuration',
                 implode(
                     DIRECTORY_SEPARATOR,
-                    array(
-                        '.',
-                        $localDir,
-                        '.')
+                    ['.', $localDir, '.']
                 ),
                 'input'
             )
@@ -376,9 +355,7 @@ class EtlConfigurationTest extends BaseTest
             $baseFile,
             $baseDir,
             null,
-            array(
-                'local_config_dir' => $localConfigDir
-            )
+            ['local_config_dir' => $localConfigDir]
         );
 
         // Make sure that the actual is pretty-printed for ease of reading.

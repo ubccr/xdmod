@@ -8,14 +8,14 @@ namespace UnitTests\OpenXdmod\Tests\Shredder;
 use CCR\DB\NullDB;
 use Exception;
 use CCR\Log;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use IntegrationTests\TestHarness\TestFiles;
 
 /**
  * Base class for job shredder test classes.
  */
-abstract class JobShredderBaseTestCase extends PHPUnit_Framework_TestCase
+abstract class JobShredderBaseTestCase extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var TestFiles
@@ -35,7 +35,7 @@ abstract class JobShredderBaseTestCase extends PHPUnit_Framework_TestCase
     /**
      * Create a null database and logger.
      */
-    public function setUp()
+    public function setUp(): void
     {
         $this->db = new NullDB();
         $this->logger = Log::singleton('null');
@@ -69,7 +69,7 @@ abstract class JobShredderBaseTestCase extends PHPUnit_Framework_TestCase
             throw new Exception(
                 sprintf(
                     'Class %s must define class constant TEST_GROUP',
-                    get_class($this)
+                    static::class
                 )
             );
         }

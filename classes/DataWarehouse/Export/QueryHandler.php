@@ -35,7 +35,7 @@ use Psr\Log\LoggerInterface;
 class QueryHandler extends Loggable
 {
     // Constants used in log messages.
-    const LOG_MODULE = 'data-warehouse-export';
+    public const LOG_MODULE = 'data-warehouse-export';
 
     /**
      * Database handle.
@@ -102,13 +102,11 @@ class QueryHandler extends Loggable
             // Check for duplicate submitted or available requests for the user.
             $duplicates = array_filter(
                 $this->listUserRequestsByState($userId),
-                function ($request) use ($realm, $startDate, $endDate, $format) {
-                    return ($request['state'] == 'Submitted' || $request['state'] == 'Available')
-                        && $realm == $request['realm']
-                        && $startDate == $request['start_date']
-                        && $endDate == $request['end_date']
-                        && $format == $request['export_file_format'];
-                }
+                fn($request) => ($request['state'] == 'Submitted' || $request['state'] == 'Available')
+                    && $realm == $request['realm']
+                    && $startDate == $request['start_date']
+                    && $endDate == $request['end_date']
+                    && $format == $request['export_file_format']
             );
             if (count($duplicates) > 0) {
                 throw new Exception('Cannot create duplicate request');
@@ -119,13 +117,7 @@ class QueryHandler extends Loggable
                     VALUES
                     (NOW(), :user_id, :realm, :start_date, :end_date, :export_file_format)";
 
-            $params = array(
-                'user_id' => $userId,
-                'realm' => $realm,
-                'start_date' => $startDate,
-                'end_date' => $endDate,
-                'export_file_format' => $format
-            );
+            $params = ['user_id' => $userId, 'realm' => $realm, 'start_date' => $startDate, 'end_date' => $endDate, 'export_file_format' => $format];
 
             $this->logger->info([
                 'module' => self::LOG_MODULE,
@@ -176,7 +168,7 @@ class QueryHandler extends Loggable
                 last_modified
             FROM batch_export_requests
             WHERE id = :id';
-        list($record) = $this->dbh->query($sql, ['id' => $id]);
+        [$record] = $this->dbh->query($sql, ['id' => $id]);
         return $record;
     }
 
@@ -199,7 +191,7 @@ class QueryHandler extends Loggable
             'table' => 'moddb.batch_export_requests',
             'id' => $id
         ]);
-        return $this->dbh->execute($sql, array('id' => $id));
+        return $this->dbh->execute($sql, ['id' => $id]);
     }
 
     /**
@@ -226,10 +218,7 @@ class QueryHandler extends Loggable
                     export_succeeded = 1 " .
                 $this->whereSubmitted . "AND id = :id";
 
-        $params = array(
-            'expires_in_days' => $expires_in_days,
-            'id' => $id
-        );
+        $params = ['expires_in_days' => $expires_in_days, 'id' => $id];
 
         $this->logger->info([
             'module' => self::LOG_MODULE,
@@ -259,7 +248,7 @@ class QueryHandler extends Loggable
             'table' => 'moddb.batch_export_requests',
             'id' => $id
         ]);
-        return $this->dbh->execute($sql, array('id' => $id));
+        return $this->dbh->execute($sql, ['id' => $id]);
     }
 
     /**
@@ -356,7 +345,7 @@ class QueryHandler extends Loggable
             FROM batch_export_requests
             WHERE user_id = :user_id
             ORDER BY requested_datetime, id";
-        return $this->dbh->query($sql, array('user_id' => $userId));
+        return $this->dbh->query($sql, ['user_id' => $userId]);
     }
 
     /**
@@ -387,7 +376,7 @@ class QueryHandler extends Loggable
                $attributes . "'Expired' AS state "   . $fromTable . $this->whereExpired . $userClause . "UNION " .
                $attributes . "'Failed' AS state "    . $fromTable . $this->whereFailed . $userClause . "ORDER BY requested_datetime, id";
 
-        return $this->dbh->query($sql, array('user_id' => $userId));
+        return $this->dbh->query($sql, ['user_id' => $userId]);
     }
 
     /**
@@ -410,7 +399,7 @@ class QueryHandler extends Loggable
             'id' => $id,
             'user_id' => $userId
         ]);
-        return $this->dbh->execute($sql, array('request_id' => $id, 'user_id' => $userId));
+        return $this->dbh->execute($sql, ['request_id' => $id, 'user_id' => $userId]);
     }
 
     /**

@@ -24,7 +24,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      *   keys.
      */
 
-    const FILTER_DELIMITER = '^';
+    public const FILTER_DELIMITER = '^';
 
     /**
      * @var Realm The realm that this GroupBy belongs to.
@@ -37,12 +37,6 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      */
 
     protected $moduleName = null;
-
-    /**
-     * @var string The short identifier.
-     */
-
-    protected $id = null;
 
     /**
      * @var string The display name.
@@ -90,7 +84,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      *   than the attribute or aggregate keys.
      */
 
-    protected $alternateGroupByColumns = array();
+    protected $alternateGroupByColumns = [];
 
     /**
      * @var array An array of objects describing qdditional constraints to be added to the JOIN
@@ -167,28 +161,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      *   "n" are used rather than true and false to ensure that existing code does not break.
      */
 
-    protected $chartOptions = array(
-        'combine_method' => 'stack',
-        'dataset_display_type' => array(
-            'aggregate' => 'h_bar',
-            'timeseries' => 'line'
-        ),
-        'dataset_type' => 'aggregate',
-        'enable_errors' => 'y',
-        'enable_trend_line' => 'y',
-        'limit' => array(
-            'multichart_page' => 3,
-            'default' => 10
-        ),
-        'log_scale' => 'n',
-        'offset' => 0,
-        'show_aggregate_labels' => 'n',
-        'show_error_bars' => 'n',
-        'show_error_labels' => 'n',
-        'show_guide_lines' => 'y',
-        'show_legend' => 'y',
-        'show_trend_line' => 'n'
-    );
+    protected $chartOptions = ['combine_method' => 'stack', 'dataset_display_type' => ['aggregate' => 'h_bar', 'timeseries' => 'line'], 'dataset_type' => 'aggregate', 'enable_errors' => 'y', 'enable_trend_line' => 'y', 'limit' => ['multichart_page' => 3, 'default' => 10], 'log_scale' => 'n', 'offset' => 0, 'show_aggregate_labels' => 'n', 'show_error_bars' => 'n', 'show_error_labels' => 'n', 'show_guide_lines' => 'y', 'show_legend' => 'y', 'show_trend_line' => 'n'];
 
     /**
      * @var array An associative array specifying the chart type to use for a given dataset type
@@ -196,10 +169,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      *   the values are chart types. Note that the chart types are currently specific to HighCharts.
      */
 
-    protected $datasetTypeToChartDisplayTypeMap = array(
-        'aggregate' => 'h_bar',
-        'timeseries' => 'line'
-    );
+    protected $datasetTypeToChartDisplayTypeMap = ['aggregate' => 'h_bar', 'timeseries' => 'line'];
 
     /**
      * @var int PHP order specificaiton to determine how the query should sort results containing
@@ -234,29 +204,23 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      * This constructor is meant to be called by factory() but it cannot be made private because we
      * extend Loggable, which has a public constructor.
      *
-     * @param string $shortName The short name for this statistic
+     * @param string $id The short name for this statistic
      * @param stdClass $config An object contaning the configuration specificaiton.
      * @param Realm $realm Realm object that this GroupBy will belong to.
      * @param LoggerInterface|null $logger A Monolog Logger instance that will be utilized during processing.
      */
-
-    public function __construct($shortName, \stdClass $config, Realm $realm, LoggerInterface $logger = null)
+    public function __construct(protected $id, \stdClass $config, Realm $realm, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
-
-        // The __toString() method needs these to be set and logAndThrowException() calls
-        // __toString() so assign these at the top.
-
-        $this->id = $shortName;
         $this->attributeTableSchema = $realm->getAggregateTableSchema(); // Default to Realm schema
         $this->moduleName = $realm->getModuleName();
         $this->realm = $realm;
 
-        if ( empty($shortName) ) {
+        if ( empty($id) ) {
             $this->logger->logAndThrowException('GroupBy short name not provided');
-        } elseif ( ! is_string($shortName) ) {
+        } elseif ( ! is_string($id) ) {
             $this->logger->logAndThrowException(
-                sprintf('GroupBy short name must be a string, %s provided: %s', $shortName, gettype($shortName))
+                sprintf('GroupBy short name must be a string, %s provided: %s', $id, gettype($id))
             );
         } elseif ( null === $config ) {
             $this->logger->logAndThrowException('No GroupBy configuration provided');
@@ -264,13 +228,8 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
         // Verify the types of the various configuration options
 
-        $messages = array();
-        $configTypes = array(
-            'attribute_to_aggregate_table_key_map' => 'array',
-            'attribute_values_query' => 'object',
-            'description_html' => 'string',
-            'name' => 'string'
-        );
+        $messages = [];
+        $configTypes = ['attribute_to_aggregate_table_key_map' => 'array', 'attribute_values_query' => 'object', 'description_html' => 'string', 'name' => 'string'];
 
         if ( ! \xd_utilities\verify_object_property_types($config, $configTypes, $messages) ) {
             $this->logAndThrowException(
@@ -278,22 +237,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             );
         }
 
-        $optionalConfigTypes = array(
-            'additional_join_constraints' => 'array',
-            'alternate_group_by_columns' => 'array',
-            'attribute_description_query' => 'string',
-            'attribute_filter_map_query' => 'object',
-            'attribute_table_schema' => 'string',
-            'category' => 'string',
-            'chart_options' => 'object',
-            'data_sort_order' => 'string',
-            'disabled' => 'bool',
-            'is_aggregation_unit' => 'bool',
-            'module' => 'string',
-            'order' => 'int',
-            'show_in_catalog' => 'bool',
-            'show_all_dimension_values' => 'bool'
-        );
+        $optionalConfigTypes = ['additional_join_constraints' => 'array', 'alternate_group_by_columns' => 'array', 'attribute_description_query' => 'string', 'attribute_filter_map_query' => 'object', 'attribute_table_schema' => 'string', 'category' => 'string', 'chart_options' => 'object', 'data_sort_order' => 'string', 'disabled' => 'bool', 'is_aggregation_unit' => 'bool', 'module' => 'string', 'order' => 'int', 'show_in_catalog' => 'bool', 'show_all_dimension_values' => 'bool'];
 
         if ( ! \xd_utilities\verify_object_property_types($config, $optionalConfigTypes, $messages, true) ) {
             $this->logAndThrowException(
@@ -327,7 +271,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                     break;
                 case 'attribute_to_aggregate_table_key_map':
                     // Convert an ordered array of objects into an ordered associative array.
-                    $this->attributeToAggregateKeyMap = array();
+                    $this->attributeToAggregateKeyMap = [];
                     foreach ( $value as $obj ) {
                         foreach ( $obj as $k => $v ) {
                             $this->attributeToAggregateKeyMap[$k] = $v;
@@ -375,7 +319,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                                 break;
                             case 'dataset_display_type':
                                 if ( ! is_object($optionValue) ) {
-                                    continue;
+                                    continue 2;
                                 }
                                 foreach ($optionValue as $datasetType => $chartDisplayValue ) {
                                     if ( ! array_key_exists($datasetType, $this->chartOptions[$optionKey]) ) {
@@ -389,7 +333,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                                 break;
                             case 'limit':
                                 if ( ! is_object($optionValue) ) {
-                                    continue;
+                                    continue 2;
                                 }
                                 foreach ($optionValue as $pageType => $limitValue ) {
                                     if ( ! array_key_exists($pageType, $this->chartOptions[$optionKey]) ) {
@@ -507,9 +451,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
                 $valid = array_reduce(
                     $this->alternateGroupByColumns,
-                    function ($item, $carry) {
-                        return $carry && ! empty($item);
-                    },
+                    fn($item, $carry) => $carry && ! empty($item),
                     true
                 );
 
@@ -626,17 +568,9 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      * @see iGroupBy::setSortOrder()
      */
 
-    public function setSortOrder($sortOrder = SORT_DESC)
+    public function setSortOrder($sortOrder = SORT_DESC): void
     {
-        $validSortOrders = array(
-            SORT_ASC,
-            SORT_DESC,
-            SORT_REGULAR,
-            SORT_NUMERIC,
-            SORT_STRING,
-            SORT_LOCALE_STRING,
-            SORT_NATURAL
-        );
+        $validSortOrders = [SORT_ASC, SORT_DESC, SORT_REGULAR, SORT_NUMERIC, SORT_STRING, SORT_LOCALE_STRING, SORT_NATURAL];
 
         if ( null !== $sortOrder && ! in_array($sortOrder, $validSortOrders) ) {
             $this->logAndThrowException(sprintf("Invalid sort option: %d", $sortOrder));
@@ -700,7 +634,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     protected function pullFilterValuesFromRequest(array $request)
     {
-        $filterList = array();
+        $filterList = [];
 
         // Request parameters with "_filter" appended to the short name of this group by may include
         // one or more values to filter on.
@@ -729,8 +663,8 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function generateQueryFiltersFromRequest(array $request)
     {
-        $filterList = array();
-        $aggregateFilters = array();
+        $filterList = [];
+        $aggregateFilters = [];
         $requestFilters = $this->pullFilterValuesFromRequest($request);
 
         if ( ($this->isAggregationUnit && 'none' == $this->id) || 0 == count($requestFilters) ) {
@@ -746,7 +680,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // for each of the key columns and align the values with the approprite aggregate key based
         // on the order specified in the attribute_to_aggregate_table_key_map.
 
-        $db = DB::factory('datawarehouse');
+        $db = DB::factory('datawarehouse', false);
 
         foreach ( $requestFilters as $filterValues ) {
             $list = explode(self::FILTER_DELIMITER, $filterValues);
@@ -786,8 +720,8 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function generateQueryParameterLabelsFromRequest(array $request)
     {
-        $labelList = array();
-        $attributeKeyFilters = array();
+        $labelList = [];
+        $attributeKeyFilters = [];
         $query = null;
 
         $requestFilters = $this->pullFilterValuesFromRequest($request);
@@ -813,7 +747,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // Construct the where conditions for each key column. We will add these to the query or
         // replace the placeholder in the attribute description query.
 
-        $whereConditions = array();
+        $whereConditions = [];
         foreach ( $attributeKeyFilters as $attributeKey => $filterValues ) {
             $whereConditions[] = sprintf("%s IN (%s)", $attributeKey, implode(",", $filterValues));
         }
@@ -870,7 +804,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         $stmt->execute();
         $result = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0);
 
-        $labels = array();
+        $labels = [];
         foreach ( $result as $fieldLabel ) {
             $labels[] = $fieldLabel;
         }
@@ -900,7 +834,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      * @see iGroupBy::applyTo()
      */
 
-    public function applyTo(\DataWarehouse\Query\iQuery $query, $multi_group = false)
+    public function applyTo(\DataWarehouse\Query\iQuery $query, $multi_group = false): void
     {
         // Apply this GroupBy to the given Query. Note tha the query may have multiple GroupBys and
         // other SELECT fields, but this essentially translates the following SQL:
@@ -1037,7 +971,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // Note that start_ts is used by SimpleTimeseriesDataset and must be present for aggregation
         // unit group bys such as GroupByDay, GroupByMonth, etc.
 
-        $fieldList = array('short_name', 'name', 'order_id', 'start_ts');
+        $fieldList = ['short_name', 'name', 'order_id', 'start_ts'];
 
         // If we find that there is an aliased column name (alias.column) in the formula, ensure
         // that the aliased table is the attribute table for this group by. Fully qualified
@@ -1106,7 +1040,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             return $formula;
         }
 
-        $matches = array();
+        $matches = [];
         if ( 0 === preg_match_all('/([a-zA-Z0-9$_]+\.)?([a-zA-Z0-9$_]+\.[a-zA-Z0-9$_]+)/', $formula, $matches, PREG_SET_ORDER) ) {
             // The formula did not contain an aliased column name, assume that it is only a column
             // name and add our table alias.
@@ -1126,7 +1060,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
             // We have found a column name that includes an alias. Ensure that the table referenced
             // by the alias is the same as the attribute table for this group by.
-            list($tableAlias, $column) = explode('.', $match[2]);
+            [$tableAlias, $column] = explode('.', $match[2]);
             foreach ( $this->attributeValuesQueryAsStdClass->joins as $joinObj ) {
                 if ( isset($joinObj->alias) && $joinObj->alias == $tableAlias && $joinObj->name != $this->attributeTableName ) {
                     $this->logAndThrowException(
@@ -1160,7 +1094,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      * @see Query::addWhereAndJoin()
      */
 
-    public function addWhereJoin(\DataWarehouse\Query\iQuery $query, $aggregateTableName, $operation, $whereConstraint)
+    public function addWhereJoin(\DataWarehouse\Query\iQuery $query, $aggregateTableName, $operation, $whereConstraint): void
     {
         // Group by none is a special case where this method is a no-op
 
@@ -1168,7 +1102,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             return;
         }
 
-        $attributeKeyConstraints = array();
+        $attributeKeyConstraints = [];
 
         // JOIN with the attribute table in the query
         $query->addTable($this->attributeTableObj);
@@ -1192,7 +1126,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // Normalize the WHERE constraint. We may be able to set this as an array in the parameter
         // list.
 
-        $whereConstraint = ( ! is_array($whereConstraint) ? array($whereConstraint) : $whereConstraint );
+        $whereConstraint = ( ! is_array($whereConstraint) ? [$whereConstraint] : $whereConstraint );
 
         // Add the specified WHERE constraint. Note that to support multi-column keys the individual
         // values of the constraint may be encoded with a delimiter
@@ -1226,7 +1160,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      * @see iGroupBy::addOrder()
      */
 
-    public function addOrder(\DataWarehouse\Query\iQuery $query, $multi_group = false, $direction = 'ASC', $prepend = false)
+    public function addOrder(\DataWarehouse\Query\iQuery $query, $multi_group = false, $direction = 'ASC', $prepend = false): void
     {
         // There can be zero or more order by fields specified in the attribute values query. Add an
         // order by clause for each of them.
@@ -1260,8 +1194,8 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
     public function getAttributeValues(array $restrictions = null)
     {
-        $whereConditions = array();
-        $queryParameters = array();
+        $whereConditions = [];
+        $queryParameters = [];
 
         // Use the attribute values query as a template so we don't modify the original object
         $queryConfig = $this->attributeValuesQuery->toStdClass();
@@ -1269,7 +1203,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // To handle possible ambiguous columns in the attribute values query, be sure to alias the
         // where conditions with the attribute table (first table).
 
-        $alias = (isset($queryConfig->joins[0]->alias) ? $queryConfig->joins[0]->alias : $this->attributeTableName);
+        $alias = ($queryConfig->joins[0]->alias ?? $this->attributeTableName);
 
         if ( isset($restrictions['id']) ) {
             $list = explode(self::FILTER_DELIMITER, $restrictions['id']);
@@ -1323,22 +1257,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     public function getChartSettings($isMultiChartPage = false)
     {
         return json_encode(
-            array(
-                'dataset_type' => $this->getDefaultDatasetType(),
-                'display_type' => $this->getDefaultDisplayType($this->getDefaultDatasetType()),
-                'combine_type' => $this->getDefaultCombineMethod(),
-                'limit' => $this->getDefaultLimit($isMultiChartPage),
-                'offset' => $this->getDefaultOffset(),
-                'log_scale' => $this->getDefaultLogScale(),
-                'show_legend' => $this->getDefaultShowLegend(),
-                'show_trend_line' => $this->getDefaultShowTrendLine(),
-                'show_error_bars' => $this->getDefaultShowErrorBars(),
-                'show_guide_lines' => $this->getDefaultShowGuideLines(),
-                'show_aggregate_labels' => $this->getDefaultShowAggregateLabels(),
-                'show_error_labels' => $this->getDefaultShowErrorLabels(),
-                'enable_errors' => $this->getDefaultEnableErrors(),
-                'enable_trend_line' => $this->getDefaultEnableTrendLine(),
-            )
+            ['dataset_type' => $this->getDefaultDatasetType(), 'display_type' => $this->getDefaultDisplayType($this->getDefaultDatasetType()), 'combine_type' => $this->getDefaultCombineMethod(), 'limit' => $this->getDefaultLimit($isMultiChartPage), 'offset' => $this->getDefaultOffset(), 'log_scale' => $this->getDefaultLogScale(), 'show_legend' => $this->getDefaultShowLegend(), 'show_trend_line' => $this->getDefaultShowTrendLine(), 'show_error_bars' => $this->getDefaultShowErrorBars(), 'show_guide_lines' => $this->getDefaultShowGuideLines(), 'show_aggregate_labels' => $this->getDefaultShowAggregateLabels(), 'show_error_labels' => $this->getDefaultShowErrorLabels(), 'enable_errors' => $this->getDefaultEnableErrors(), 'enable_trend_line' => $this->getDefaultEnableTrendLine()]
         );
     }
 
@@ -1494,7 +1413,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      * @see iGroupBy::__toString()
      */
 
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf('Realm(%s)->GroupBy(id=%s, table=%s)', $this->realm->getId(), $this->id, $this->getAttributeTable());
     }

@@ -44,7 +44,7 @@ abstract class aAction extends aEtlObject
      *   restriction. Individual actions may override ETL overseer restrictions.
      */
 
-    protected $overseerRestrictionOverrides = array();
+    protected $overseerRestrictionOverrides = [];
 
     /**
      * @var VariableStore An object storing a list of key/value pairs mapping a variable name to a
@@ -140,7 +140,7 @@ abstract class aAction extends aEtlObject
         // Set up the default logger
         parent::__construct($logger);
 
-        $requiredKeys = array("name");
+        $requiredKeys = ["name"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
         $this->setName($options->name);
@@ -148,7 +148,7 @@ abstract class aAction extends aEtlObject
         $this->etlConfig = $etlConfig;
         $this->logger->info("Create action " . $this);
 
-        $variableInitializer = ( isset($this->options->variables) ? $this->options->variables : null );
+        $variableInitializer = ( $this->options->variables ?? null );
         $this->variableStore = new VariableStore($variableInitializer, $logger);
 
         if ( isset($this->options->definition_file) ) {
@@ -169,12 +169,10 @@ abstract class aAction extends aEtlObject
             // has already been set by a child constructor leave it alone.
 
             if ( null === $this->parsedDefinitionFile ) {
-                $options = array(
-                    'variable_store' => $this->variableStore
-                );
+                $options = ['variable_store' => $this->variableStore];
                 $this->parsedDefinitionFile = Configuration::factory(
                     $this->definitionFile,
-                    ( isset($this->options->paths->base_dir) ? $this->options->paths->base_dir : null ),
+                    ( $this->options->paths->base_dir ?? null ),
                     $logger,
                     $options
                 );
@@ -200,7 +198,7 @@ abstract class aAction extends aEtlObject
         $etlConfig->initialize();
         $options = $etlConfig->getActionOptions($actionName);
         // We are using the action's own factory method
-        return forward_static_call(array($options->factory, 'factory'), $options, $etlConfig, $logger);
+        return forward_static_call([$options->factory, 'factory'], $options, $etlConfig, $logger);
     }  // factory()
 
     /** -----------------------------------------------------------------------------------------
@@ -226,7 +224,7 @@ abstract class aAction extends aEtlObject
         // Set up the start and end dates, which may be null if not provided. Actions that
         // support chunking of the date period can override these.
 
-        list($startDate, $endDate) = $this->etlOverseerOptions->getDatePeriod();
+        [$startDate, $endDate] = $this->etlOverseerOptions->getDatePeriod();
         $this->currentStartDate = $startDate;
         $this->currentEndDate = $endDate;
 
@@ -241,7 +239,7 @@ abstract class aAction extends aEtlObject
 
     public function getClass()
     {
-        return get_class($this);
+        return static::class;
     }  // getClass()
 
     /** -----------------------------------------------------------------------------------------
@@ -339,7 +337,7 @@ abstract class aAction extends aEtlObject
 
     protected function setOverseerRestrictionOverrides()
     {
-        $this->overseerRestrictionOverrides = array();
+        $this->overseerRestrictionOverrides = [];
 
         if ( isset($this->options->include_only_resource_codes) && is_array($this->options->include_only_resource_codes) ) {
             $this->overseerRestrictionOverrides[EtlOverseerOptions::RESTRICT_INCLUDE_ONLY_RESOURCES] = $this->options->include_only_resource_codes;
@@ -435,7 +433,7 @@ abstract class aAction extends aEtlObject
                     "Cannot set ETL macro DW_ETL_LOG_RECIPIENT - XDMoD configuration option general.debug_recipient is not set or is empty."
                 );
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $this->logAndThrowException("'general' section not defined in XDMoD configuration");
         }
 

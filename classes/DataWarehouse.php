@@ -43,7 +43,7 @@ class DataWarehouse
 	 * @function destroy()
 	 * @access public
 	 */
-    public function destroy()
+    public function destroy(): void
     {
         if(self::$db !== null)
         {
@@ -108,12 +108,12 @@ class DataWarehouse
 	 * Used by: Allocations tab controller, html/controllers/ui_data/allocations.php
 	 *
 	 ************************************************************/
-    public static function getAllocations($config = array())
+    public static function getAllocations($config = [])
     {
 
         $person_id = $config['person_id'];
-        $showActive = isset($config['show_active']) ? $config['show_active'] : true;
-        $allocation_id = isset($config['allocation_id']) ? $config['allocation_id'] : -1;
+        $showActive = $config['show_active'] ?? true;
+        $allocation_id = $config['allocation_id'] ?? -1;
 
         $pi = "";
 
@@ -157,9 +157,9 @@ class DataWarehouse
         self::connect();
         $results = self::$db->query($query);
 
-        $results_b = array();
+        $results_b = [];
 
-        $charge_allocation_map = array();
+        $charge_allocation_map = [];
 
         // =================================================================================================
 
@@ -174,34 +174,13 @@ class DataWarehouse
             $cn = $r['charge_number'];
 
             if (!isset($charge_allocation_map[$cn])) {
-                $charge_allocation_map[$cn] = array(
-                    'pi' => 0,
-                    'allocation_ids' => array(),
-                    'resources' => array(),
-                    'base' => 0,
-                    'remaining' => 0,
-                    'total_base_formatted' => 0,
-                    'total_remaining_formatted' => 0
-                );
+                $charge_allocation_map[$cn] = ['pi' => 0, 'allocation_ids' => [], 'resources' => [], 'base' => 0, 'remaining' => 0, 'total_base_formatted' => 0, 'total_remaining_formatted' => 0];
             }
 
             $charge_allocation_map[$cn]['pi'] = $r['principalinvestigator_person_id'];
-            $charge_allocation_map[$cn]['allocation_ids'][$r['allocation_id']] = array(
-                'name' => $r['resource_name'],
-                'timeframe' => $r['start'].' to '.$r['end'],
-                'type' => $r['request_type']
-            );
+            $charge_allocation_map[$cn]['allocation_ids'][$r['allocation_id']] = ['name' => $r['resource_name'], 'timeframe' => $r['start'].' to '.$r['end'], 'type' => $r['request_type']];
 
-            $charge_allocation_map[$cn]['resources'][] = array(
-                'allocation_id' => $r['allocation_id'],
-                'resource_name' => $r['resource_name'],
-                'timeframe' => $r['start'].' to '.$r['end'],
-                'type' => $r['request_type'],
-                'base' => $r['base'],
-                'remaining' => $r['remaining'],
-                'base_formatted' => number_format($r['base'], 2),
-                'remaining_formatted' => number_format($r['remaining'], 2)
-            );
+            $charge_allocation_map[$cn]['resources'][] = ['allocation_id' => $r['allocation_id'], 'resource_name' => $r['resource_name'], 'timeframe' => $r['start'].' to '.$r['end'], 'type' => $r['request_type'], 'base' => $r['base'], 'remaining' => $r['remaining'], 'base_formatted' => number_format($r['base'], 2), 'remaining_formatted' => number_format($r['remaining'], 2)];
 
             // General project details =======================================
 
@@ -234,12 +213,12 @@ class DataWarehouse
 				AND FIND_IN_SET(ab.allocation_id, :allocation_ids)
 				ORDER BY ab.person_id";
 
-            $results = self::$db->query($query, array(':allocation_ids' => $allocation_ids));
+            $results = self::$db->query($query, [':allocation_ids' => $allocation_ids]);
 
-            $user_pool = array();
+            $user_pool = [];
 
             // Construct an inverse map (allocation_id to user listing)
-            $inverseMap = array();
+            $inverseMap = [];
 
             foreach ($results as $r) {
 
@@ -250,37 +229,27 @@ class DataWarehouse
 
                 if (!isset($user_pool[$pid])) {
 
-                    $user_pool[$pid] = array(
-                        'name' => $r['last_name'].", ".$r['first_name'],
-                        'is_pi' => ($c['pi'] === $pid),
-                        'total' => 0,
-                        'resources' => array()
-                    );
+                    $user_pool[$pid] = ['name' => $r['last_name'].", ".$r['first_name'], 'is_pi' => ($c['pi'] === $pid), 'total' => 0, 'resources' => []];
 
                 }
 
                 if (!isset($inverseMap[$r['allocation_id']])) {
-                    $inverseMap[$r['allocation_id']] = array();
+                    $inverseMap[$r['allocation_id']] = [];
                 }
 
                 if (number_format($r['used_allocation']) != 0) {
 
                     // Append any utilized resources to the current user, each differentiated by allocation id
 
-                    $user_pool[$pid]['resources'][$r['allocation_id']] = array(
+                    $user_pool[$pid]['resources'][$r['allocation_id']] = [
                         //'allocation_id' => $r['allocation_id'],
                         'name' => $c['allocation_ids'][$r['allocation_id']]['name'],
                         'timeframe' => $c['allocation_ids'][$r['allocation_id']]['timeframe'],
                         'type' => $c['allocation_ids'][$r['allocation_id']]['type'],
-                        'used' => number_format($r['used_allocation'], 2)
-                    );
+                        'used' => number_format($r['used_allocation'], 2),
+                    ];
 
-                    $inverseMap[$r['allocation_id']][] = array(
-                        'name' => $user_pool[$pid]['name'],
-                        'is_pi' => ($c['pi'] === $pid),
-                        'consumption' => $r['used_allocation'],
-                        'used' => number_format($r['used_allocation'], 2)
-                    );
+                    $inverseMap[$r['allocation_id']][] = ['name' => $user_pool[$pid]['name'], 'is_pi' => ($c['pi'] === $pid), 'consumption' => $r['used_allocation'], 'used' => number_format($r['used_allocation'], 2)];
 
                 }
 
@@ -313,9 +282,7 @@ class DataWarehouse
 
                 $v['resources'] = array_values($v['resources']);
 
-                usort($v['resources'], function ($a, $b) {
-                    return strcmp($a['name'], $b['name']);
-                });
+                usort($v['resources'], fn($a, $b) => strcmp($a['name'], $b['name']));
 
             }//foreach
 
@@ -339,9 +306,7 @@ class DataWarehouse
 
             // Sort the resources alphabetically
 
-            usort($c['resources'], function ($a, $b) {
-                return strcmp($a['resource_name'], $b['resource_name']);
-            });
+            usort($c['resources'], fn($a, $b) => strcmp($a['resource_name'], $b['resource_name']));
 
         }//foreach ($charge_allocation_map as &$c)
 
@@ -362,7 +327,7 @@ class DataWarehouse
     public static function getCategories()
     {
         $realmObjects = \Realm\Realm::getRealmObjects();
-        $categories = array();
+        $categories = [];
 
         foreach ( $realmObjects as $realmId => $obj ) {
             if ( ! $obj->showInMetricCatalog() ) {

@@ -19,12 +19,7 @@ class RequestLogger
 
     public function __construct($ident = 'controller.log', $logLevel = \CCR\Log::INFO)
     {
-        $this->logger = Log::factory($ident, array(
-            'console' => false,
-            'file' => false,
-            'mail' => false,
-            'dbLogLevel' => $logLevel
-        ));
+        $this->logger = Log::factory($ident, ['console' => false, 'file' => false, 'mail' => false, 'dbLogLevel' => $logLevel]);
     }
 
     /**
@@ -35,27 +30,11 @@ class RequestLogger
      * @param int $level at which level the log request should be made. Corresponds to \CCR\Log::[EMERG|ALERT|CRIT|ERR|WARNING|NOTICE|INFO|DEBUG]
      * @return void
      */
-    public function log($start, $end, $level = \CCR\Log::INFO)
+    public function log($start, $end, $level = \CCR\Log::INFO): void
     {
         $authInfo = $this->getAuthenticationInfo();
 
-        $retval = array(
-            'message' => 'Route called',
-            'path' => $this->arrayGetOr('REQUEST_URI', $_SERVER),
-            'query' => $this->arrayGetOr('QUERY_STRING', $_SERVER),
-            'referer' => $this->arrayGetOr('HTTP_REFERER', $_SERVER),
-            'elapsed' => $end - $start,
-            'post' => $_POST,
-            'data' => array(
-                'ip' => $this->arrayGetOr('REMOTE_ADDR', $_SERVER),
-                'method' => $this->arrayGetOr('REQUEST_METHOD', $_SERVER),
-                'host' => $this->arrayGetOr('REMOTE_HOST', $_SERVER),
-                'port' => $this->arrayGetOr('REMOTE_PORT', $_SERVER),
-                'username' => $authInfo['username'],
-                'token' => $authInfo['token'],
-                'timestamp' => null
-            )
-        );
+        $retval = ['message' => 'Route called', 'path' => $this->arrayGetOr('REQUEST_URI', $_SERVER), 'query' => $this->arrayGetOr('QUERY_STRING', $_SERVER), 'referer' => $this->arrayGetOr('HTTP_REFERER', $_SERVER), 'elapsed' => $end - $start, 'post' => $_POST, 'data' => ['ip' => $this->arrayGetOr('REMOTE_ADDR', $_SERVER), 'method' => $this->arrayGetOr('REQUEST_METHOD', $_SERVER), 'host' => $this->arrayGetOr('REMOTE_HOST', $_SERVER), 'port' => $this->arrayGetOr('REMOTE_PORT', $_SERVER), 'username' => $authInfo['username'], 'token' => $authInfo['token'], 'timestamp' => null]];
 
         $requestTime = $this->arrayGetOr('REQUEST_TIME', $_SERVER);
         if (isset($requestTime)) {
@@ -93,7 +72,7 @@ class RequestLogger
         $useBasicAuth = false;
         try {
             $useBasicAuth = \xd_utilities\getConfiguration('rest', 'basic_auth') === 'on';
-        } catch (Exception $e) {
+        } catch (Exception) {
         }
 
         # If we're using basic auth, than the username value should be included in the headers.
@@ -111,8 +90,8 @@ class RequestLogger
         }
 
         # Now that we have th username, find where they've hid the token value.
-        $tokenProperties = array(Authentication::_DEFAULT_TOKEN, Authentication::_DEFAULT_AUTH_TOKEN, Authentication::_DEFAULT_COOKIE_TOKEN);
-        $tokenSources = array($_REQUEST, $_COOKIE, $headers);
+        $tokenProperties = [Authentication::_DEFAULT_TOKEN, Authentication::_DEFAULT_AUTH_TOKEN, Authentication::_DEFAULT_COOKIE_TOKEN];
+        $tokenSources = [$_REQUEST, $_COOKIE, $headers];
         foreach ($tokenProperties as $tokenProperty) {
             foreach ($tokenSources as $tokenSource) {
                 $token = array_key_exists($tokenProperty, $tokenSource) ? $tokenSource[$tokenProperty] : null;
@@ -122,9 +101,6 @@ class RequestLogger
             }
         }
 
-        return array(
-            'username' => $username,
-            'token' => $token
-        );
+        return ['username' => $username, 'token' => $token];
     }
 }

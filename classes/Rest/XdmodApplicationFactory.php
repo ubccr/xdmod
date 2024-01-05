@@ -23,7 +23,7 @@ class XdmodApplicationFactory
      *
      * @param string
      */
-    const API_SYMBOL = 'api_version';
+    public const API_SYMBOL = 'api_version';
 
     /**
      * A regex that will be used to define what routes match our
@@ -31,7 +31,7 @@ class XdmodApplicationFactory
      *
      * @param string
      */
-    const API_REGEX = '^v\d+(\.\d+)?$';
+    public const API_REGEX = '^v\d+(\.\d+)?$';
 
     /**
      * The Silex application instance for the XDMoD REST API.
@@ -71,14 +71,7 @@ class XdmodApplicationFactory
         // representing the latest version.
         $app['controllers']->value(self::API_SYMBOL, 'latest');
 
-        $app['logger.db'] = $app->share(function () {
-            return \CCR\Log::factory('rest.logger.db', array(
-                'console' => false,
-                'file' => false,
-                'mail' => false,
-                'dbLogLevel' => \CCR\Log::INFO
-            ));
-        });
+        $app['logger.db'] = $app->share(fn() => \CCR\Log::factory('rest.logger.db', ['console' => false, 'file' => false, 'mail' => false, 'dbLogLevel' => \CCR\Log::INFO]));
 
         $app->before(function (Request $request, Application $app) {
             $request->attributes->set('timing.start', microtime(true));
@@ -86,7 +79,7 @@ class XdmodApplicationFactory
         }, Application::EARLY_EVENT);
 
         // SETUP: a before middleware that detects / starts the query debug mode for a request.
-        $app->before(function (Request $request, Application $app) {
+        $app->before(function (Request $request, Application $app): void {
             if ($request->query->getBoolean('debug')) {
                 PDODB::debugOn();
             }
@@ -95,10 +88,10 @@ class XdmodApplicationFactory
         // SETUP: the authentication Middleware to be run before the route is.
         $app->before("\Rest\Controllers\BaseControllerProvider::authenticate", Application::EARLY_EVENT);
 
-        $app->after(function (Request $request, Response $response, Application $app) {
+        $app->after(function (Request $request, Response $response, Application $app): void {
             $logger = $app['logger.db'];
 
-            $retval = array('message' => "Route called");
+            $retval = ['message' => "Route called"];
 
             $authInfo = Authentication::getAuthenticationInfo($request);
             $method = $request->getMethod();
@@ -106,7 +99,7 @@ class XdmodApplicationFactory
             $port = $request->getPort();
 
             // Extracting any POST variables provided in the Request.
-            $post = array();
+            $post = [];
             foreach($request->request->getIterator() as $key => $value) {
                 $post[$key] = (
                     is_string($value)
@@ -131,15 +124,7 @@ class XdmodApplicationFactory
             $retval['referer'] = $referer;
             $retval['elapsed'] = $elapsed;
             $retval['post'] = $post;
-            $retval['data'] = array(
-                'host' => $host,
-                'port' => $port,
-                'method' => $method,
-                'username' => $authInfo['username'],
-                'ip' => $authInfo['ip'],
-                'token' => $authInfo['token'],
-                'timestamp' => date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME'])
-            );
+            $retval['data'] = ['host' => $host, 'port' => $port, 'method' => $method, 'username' => $authInfo['username'], 'ip' => $authInfo['ip'], 'token' => $authInfo['token'], 'timestamp' => date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME'])];
 
             $logger->info($retval);
 
@@ -147,7 +132,7 @@ class XdmodApplicationFactory
 
         // SETUP: an after middleware that detects the query debug mode and, if true, retrieves
         //        and returns the collected sql queries / params.
-        $app->after(function (Request $request, Response $response, Application $app) {
+        $app->after(function (Request $request, Response $response, Application $app): void {
             $origin = $request->headers->get('Origin');
             if ($origin !== null) {
                 try {
@@ -162,7 +147,7 @@ class XdmodApplicationFactory
                             $response->headers->set('Vary', 'Origin');
                         }
                     }
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     // this catches if the section or config item does not exist
                     // in that case we just carry on
                 }
@@ -208,9 +193,7 @@ class XdmodApplicationFactory
             $prefix = $config['prefix'];
             $ControllerClass = $config['controller'];
             $controller = new $ControllerClass(
-                array(
-                    'prefix' => $prefix
-                )
+                ['prefix' => $prefix]
             );
 
             $app->mount($versionedPathMountPoint, $controller);
@@ -222,7 +205,7 @@ class XdmodApplicationFactory
             if($code == 405 && strtoupper($_SERVER['REQUEST_METHOD']) === 'OPTIONS' && array_key_exists('HTTP_ORIGIN', $_SERVER)){
                 try {
                     $corsDomains = \xd_utilities\getConfiguration('cors', 'domains');
-                } catch (\Exception $cors) {
+                } catch (\Exception) {
                     $corsDomains = null;
                 }
                 if (!empty($corsDomains)){

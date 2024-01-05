@@ -4,20 +4,20 @@ namespace UnitTests\DataWarehouse\Export;
 
 use CCR\Log;
 use DataWarehouse\Export\FileWriter\JsonFileWriter;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use IntegrationTests\TestHarness\TestFiles;
 
 /**
  * Test data warehouse export JSON file writer.
  */
-class JsonFileWriterTest extends PHPUnit_Framework_TestCase
+class JsonFileWriterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test artifacts path.
      * @var string
      */
-    const TEST_GROUP = 'unit/data_warehouse/export/file_writer/json';
+    public const TEST_GROUP = 'unit/data_warehouse/export/file_writer/json';
 
     /**
      * @var LoggerInterface
@@ -27,7 +27,7 @@ class JsonFileWriterTest extends PHPUnit_Framework_TestCase
     /**
      * Create logger.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$logger = Log::singleton('null');
     }
@@ -48,7 +48,7 @@ class JsonFileWriterTest extends PHPUnit_Framework_TestCase
      *
      * @dataProvider writeRecordsProvider
      */
-    public function testWriteRecords(array $records, $fileContents)
+    public function testWriteRecords(array $records, $fileContents): void
     {
         $file = tempnam(sys_get_temp_dir(), 'dw-export-test-');
         $fileWriter = new JsonFileWriter($file, self::$logger);

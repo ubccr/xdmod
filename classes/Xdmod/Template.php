@@ -15,24 +15,6 @@ class Template
 {
 
     /**
-     * The name of the template.
-     *
-     * @var string
-     */
-    protected $name;
-
-    /**
-     * The package the template belongs to.
-     *
-     * If null, then the template is part of the main Open XDMoD
-     * distribution.  Otherwise, this is the name of the Open XDMoD
-     * subpackage (i.e. appkernels, supremm).
-     *
-     * @var null|string
-     */
-    protected $pkg;
-
-    /**
      * Template file path.
      *
      * @var string
@@ -49,14 +31,22 @@ class Template
     /**
      * Constructor.
      *
-     * @param string $templateName The name of the template.
+     * @param string $name The name of the template.
      * @param string $pkg The package the config file belongs to.
      */
-    public function __construct($templateName, $pkg = null)
+    public function __construct(/**
+     * The name of the template.
+     */
+    protected $name, /**
+     * The package the template belongs to.
+     *
+     * If null, then the template is part of the main Open XDMoD
+     * distribution.  Otherwise, this is the name of the Open XDMoD
+     * subpackage (i.e. appkernels, supremm).
+     */
+    protected $pkg = null)
     {
-        $this->name     = $templateName;
-        $this->pkg      = $pkg;
-        $this->filePath = static::getTemplatePath($templateName, $pkg);
+        $this->filePath = static::getTemplatePath($name, $pkg);
         $this->resetContents();
     }
 
@@ -83,7 +73,7 @@ class Template
     /**
      * Reset the contents of the template.
      */
-    public function resetContents()
+    public function resetContents(): void
     {
         if (!is_file($this->filePath)) {
             throw new Exception("Template '{$this->filePath}' is not a file");
@@ -103,7 +93,7 @@ class Template
      * @param array $items Array of key/value pairs to apply to the
      *     template contents.
      */
-    public function apply(array $items)
+    public function apply(array $items): void
     {
         foreach ($items as $param => $value) {
             if(is_string($param) && is_string($value)) {
@@ -121,7 +111,7 @@ class Template
      *
      * @param string $destPath Destination file path.
      */
-    public function saveTo($destPath)
+    public function saveTo($destPath): void
     {
         $byteCount = file_put_contents($destPath, $this->contents);
 

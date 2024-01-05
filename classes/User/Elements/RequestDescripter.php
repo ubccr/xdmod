@@ -2,31 +2,19 @@
 
 namespace User\Elements;
 
-class RequestDescripter
+class RequestDescripter implements \Stringable
 {
 
-    private $_request;
-    private $_ignore_keys;
     private $_request_keys;
 
     /**
-     * @param array $ignore_keys An array of elements to ignore when
+     * @param array $_ignore_keys An array of elements to ignore when
      *                           building the chart identifier
      */
     public function __construct(
-        array $request = array(),
-        array $ignore_keys = array(
-            "_dc",
-            "scale",
-            "show_title",
-            "show_gradient",
-            "width",
-            "height"
-        )
+        private array $_request = [],
+        private array $_ignore_keys = ["_dc", "scale", "show_title", "show_gradient", "width", "height"]
     ) {
-        $this->_request     = $request;
-        $this->_ignore_keys = $ignore_keys;
-
         $this->_request_keys = array_diff(
             array_keys($this->_request),
             $this->_ignore_keys
@@ -55,9 +43,9 @@ class RequestDescripter
         return true;
     }
 
-    public function __toString()
+    public function __toString(): string
     {
-        $kvs = array();
+        $kvs = [];
 
         foreach ($this->_request_keys as $key) {
             if ($key != "controller_module") {
@@ -89,19 +77,19 @@ class RequestDescripter
     {
         $arr = explode('&', $s);
 
-        $ret = array();
+        $ret = [];
 
         foreach ($arr as $a) {
 
             // To account for the input string containing a trailing '&'
             if (empty($a)) { continue; }
 
-            list($key, $value) = explode('=', $a, 2);
+            [$key, $value] = explode('=', $a, 2);
 
-            if (strlen($key) > 2 && substr($key, -2) === '[]') {
+            if (strlen($key) > 2 && str_ends_with($key, '[]')) {
                 $key = substr($key, 0, -2);
                 if (!isset($ret[$key])) {
-                    $ret[$key] = array();
+                    $ret[$key] = [];
                 }
                 $ret[$key][] = $value;
             } else {

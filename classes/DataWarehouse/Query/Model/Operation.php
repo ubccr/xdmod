@@ -1,15 +1,13 @@
 <?php
 namespace DataWarehouse\Query\Model;
 
-class Operation
+class Operation implements \Stringable
 {
-    private $_operation_code;
-    public function __construct($op)
+    public function __construct(private $_operation_code)
     {
-        $this->_operation_code = $op;
     }
-    public function __toString()
+    public function __toString(): string
     {
-        return $this->_operation_code;
+        return (string) $this->_operation_code;
     }
 }

@@ -27,7 +27,7 @@ if (preg_match('/index.php(\/+)/i', $url)) {
     exit;
 }
 
-require_once dirname(__FILE__) . '/../configuration/linker.php';
+require_once __DIR__ . '/../configuration/linker.php';
 
 \xd_security\start_session();
 
@@ -61,7 +61,7 @@ if ($userLoggedIn) {
     {
         if (isset($_SERVER['HTTP_REFERER'])) {
 
-            $pos = strpos($_SERVER['HTTP_REFERER'], $referrer);
+            $pos = strpos($_SERVER['HTTP_REFERER'], (string) $referrer);
 
             if ($pos !== false && $pos == 0) {
                 return true;
@@ -242,7 +242,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
         $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
             $carry [] = $item->getName();
             return $carry;
-        }, array());
+        }, []);
 
         if (count($realms) === 0) {
             $code = <<<JS
@@ -267,7 +267,7 @@ JS;
         $tech_support_url = false;
         try {
             $tech_support_url = xd_utilities\getConfiguration('general', 'tech_support_url');
-        } catch (exception $ex) {
+        } catch (exception) {
         }
         print 'CCR.xdmod.support_url = ' . json_encode($tech_support_url) . ";\n";
 
@@ -294,9 +294,7 @@ JS;
         $rawRealmConfig = \DataWarehouse\Access\RawData::getRawDataRealms($user);
 
         $rawDataRealms = array_map(
-            function ($item) {
-                return $item['name'];
-            },
+            fn($item) => $item['name'],
             $rawRealmConfig
         );
 
@@ -304,7 +302,7 @@ JS;
 
         try {
             print "CCR.xdmod.ui.disabledMenus = " . json_encode(Acls::getDisabledMenus($user, $realms)) . ";\n";
-        } catch (Exception $e) {
+        } catch (Exception) {
             print "CCR.xdmod.ui.disabledMenus = [];\n";
         }
 
@@ -325,14 +323,14 @@ JS;
                     $captchaSiteKey = '';
                 }
             }
-        } catch (exception $ex) {
+        } catch (exception) {
         }
         print "CCR.xdmod.captcha_sitekey = '" . $captchaSiteKey . "';\n";
         if (!$userLoggedIn) {
             $auth = null;
             try {
                 $auth = new Authentication\SAML\XDSamlAuthentication();
-            } catch (InvalidArgumentException $ex) {
+            } catch (InvalidArgumentException) {
                 // This will catch when a configuration directory does not exist if it is set in the environment level
             }
             if ($auth && $auth->isSamlConfigured()) {
@@ -343,7 +341,7 @@ JS;
                         xd_utilities\getConfiguration('sso', 'show_local_login'),
                         FILTER_VALIDATE_BOOLEAN
                     );
-                } catch (exception $ex) {
+                } catch (exception) {
                 }
 
                 $ssoDirectLink = false;
@@ -352,7 +350,7 @@ JS;
                         xd_utilities\getConfiguration('sso', 'direct_link'),
                         FILTER_VALIDATE_BOOLEAN
                     );
-                } catch (exception $ex) {
+                } catch (exception) {
                 }
 
                 print "CCR.xdmod.isSSOConfigured = true;\n";
@@ -369,7 +367,7 @@ JS;
 
         $features = xd_utilities\getConfigurationSection('features');
         // Convert array values to boolean
-        array_walk($features, function (&$v) {
+        array_walk($features, function (&$v): void {
             $v = ($v == 'on');
         });
 
@@ -530,7 +528,7 @@ JS;
         <script type="text/javascript" src="gui/lib/groupdataview.js"></script>
         <script type="text/javascript" src="gui/lib/groupcombo.js"></script>
     <?php endif; ?>
-    <?php endif; ?>
+<?php endif; ?>
 
     <?php
     xd_utilities\checkForCenterLogo();
@@ -539,7 +537,7 @@ JS;
     <script type="text/javascript" src="gui/js/Viewer.js"></script>
 
     <?php
-    require_once dirname(__FILE__) . '/gaq.php';
+    require_once __DIR__ . '/gaq.php';
     ?>
 
     <?php echo \OpenXdmod\Assets::generateAssetTags('portal'); ?>

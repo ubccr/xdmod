@@ -34,37 +34,28 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
 {
     // Properties required by this class. These will be merged with other required
     // properties up the call chain. See @Entity::$requiredProperties
-    private $localRequiredProperties = array(
-        'columns'
-    );
+    private $localRequiredProperties = ['columns'];
 
     // Properties provided by this class. These will be merged with other properties up
     // the call chain. See @Entity::$properties
-    private $localProperties = array(
+    private $localProperties = [
         // Optional table comment
         'comment'  => null,
-
         // Optional table engine
         'engine'   => null,
-
         // Optional table default character set
         'charset'  => null,
-
         // Optional table collation
         'collation' => null,
-
         // Associative array where the keys are column names and the values are Column objects
-        'columns'  => array(),
-
+        'columns'  => [],
         // Associative array where the keys are index names and the values are Index objects
-        'indexes'  => array(),
-
+        'indexes'  => [],
         // Associative array where the keys are foreign key constraint names and the values are ForeignKeyConstraint objects
-        'foreign_key_constraints'  => array(),
-
+        'foreign_key_constraints'  => [],
         // Associative array where the keys are trigger names and the values are Trigger objects
-        'triggers' => array(),
-    );
+        'triggers' => [],
+    ];
 
     /* ------------------------------------------------------------------------------------------
      * @see iEntity::__construct()
@@ -83,7 +74,7 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
      * ------------------------------------------------------------------------------------------
      */
 
-    public function initialize(stdClass $config)
+    public function initialize(stdClass $config): void
     {
         // The table object only cares about the table definition but there may be other configuration keys present. Only continue on with the table definition.
 
@@ -242,7 +233,7 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
                 sprintf(
                     '%s expected object implementing iRdbmsEndpoint, got %s',
                     __FUNCTION__,
-                    ( is_object($endpoint) ? get_class($endpoint) : gettype($endpoint) )
+                    ( get_debug_type($endpoint) )
                 )
             );
         }
@@ -255,16 +246,15 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
 
         // If a schema was specified in the table name use it, otherwise use the default schema
 
-        if ( false === strpos($source, ".") ) {
+        if ( !str_contains($source, ".") ) {
             $schemaName = $endpoint->getSchema();
             $qualifiedTableName = sprintf('%s.%s', $schemaName, $source);
         } else {
             $qualifiedTableName = $source;
-            list($schemaName, $source) = explode(".", $source);
+            [$schemaName, $source] = explode(".", $source);
         }
 
-        $params = array(':schema'    => $schemaName,
-                        ':tablename' => $source);
+        $params = [':schema'    => $schemaName, ':tablename' => $source];
 
         $this->logger->debug("Discover table '$qualifiedTableName'");
 
@@ -468,7 +458,7 @@ ORDER BY trigger_name ASC";
         if ( array_key_exists($item->name, $this->columns) && ! $overwriteDuplicates ) {
             $this->logAndThrowException(
                 sprintf("Cannot add duplicate column '%s'", $item->name),
-                array('log_level' => Log::WARNING)
+                ['log_level' => Log::WARNING]
             );
         }
 
@@ -694,29 +684,29 @@ ORDER BY trigger_name ASC";
         // can occur when creating aggregation tables that contain a "year" column and an
         // ${AGGREGATION_UNIT} column with an aggregation unit of "year".
 
-        $columnCreateList = array();
+        $columnCreateList = [];
         foreach ( $this->columns as $name => $column ) {
             $columnCreateList[$name] = $column->getSql($includeSchema);
         }
 
-        $indexCreateList = array();
+        $indexCreateList = [];
         foreach ( $this->indexes as $name => $index ) {
             $indexCreateList[$name] = $index->getSql($includeSchema);
         }
 
-        $foreignKeyConstraintCreateList = array();
+        $foreignKeyConstraintCreateList = [];
         foreach ( $this->foreign_key_constraints as $name => $constraint ) {
             $foreignKeyConstraintCreateList[$name] = $constraint->getSql($includeSchema);
         }
 
-        $triggerCreateList = array();
+        $triggerCreateList = [];
         foreach ( $this->triggers as $name => $trigger ) {
             $triggerCreateList[$name] = $trigger->getSql($includeSchema);
         }
 
         $tableName = ( $includeSchema ? $this->getFullName() : $this->getName(true) );
 
-        $sqlList = array();
+        $sqlList = [];
         $sqlList[] = "CREATE TABLE IF NOT EXISTS $tableName (\n" .
             "  " . implode(",\n  ", $columnCreateList) .
             ( 0 != count($indexCreateList) ? ",\n  " . implode(",\n  ", $indexCreateList) : "" ) .
@@ -750,16 +740,16 @@ ORDER BY trigger_name ASC";
                 sprintf(
                     '%s expected Table object, got %s',
                     __FUNCTION__,
-                    ( is_object($destination) ? get_class($destination) : gettype($destination) )
+                    ( get_debug_type($destination) )
                 )
             );
         }
 
         // Track modifications to be made
-        $alterList = array();
-        $changeList = array();
-        $triggerList = array();
-        $foreignKeyList = array();
+        $alterList = [];
+        $changeList = [];
+        $triggerList = [];
+        $foreignKeyList = [];
 
         // --------------------------------------------------------------------------------
         // Process columns
@@ -795,7 +785,7 @@ ORDER BY trigger_name ASC";
         // Columns to be dropped, added, or renamed
         $dropColNames = array_diff($currentColNames, $destColNames);
         $addColNames = array_diff($destColNames, $currentColNames);
-        $renameColNames = array();
+        $renameColNames = [];
 
         // Find the column names that are the same between the current and destination tables,
         // ordering the array based on the columns in the current table (1st argument).
@@ -1028,7 +1018,7 @@ ORDER BY trigger_name ASC";
 
         $tableName = ( $includeSchema ? $this->getFullName() : $this->getName(true) );
 
-        $sqlList = array();
+        $sqlList = [];
         if ( 0 != count($alterList) ) {
             $sqlList[] = sprintf("ALTER TABLE %s\n%s;", $tableName, implode(",\n", $alterList));
         }
@@ -1083,7 +1073,7 @@ ORDER BY trigger_name ASC";
     public function __set($property, $value)
     {
         // If we are not setting a property that is a special case, just call the main setter
-        $specialCaseProperties = array('columns', 'indexes', 'foreign_key_constraints', 'triggers', 'schema');
+        $specialCaseProperties = ['columns', 'indexes', 'foreign_key_constraints', 'triggers', 'schema'];
 
         if ( ! in_array($property, $specialCaseProperties) ) {
             parent::__set($property, $value);
@@ -1098,7 +1088,7 @@ ORDER BY trigger_name ASC";
 
         switch ($property) {
             case 'columns':
-                $this->properties[$property] = array();
+                $this->properties[$property] = [];
                 // Clear the array no matter what, that way NULL is handled properly.
                 if ( null !== $value ) {
                     foreach ( $value as $item ) {
@@ -1111,7 +1101,7 @@ ORDER BY trigger_name ASC";
                 break;
 
             case 'indexes':
-                $this->properties[$property] = array();
+                $this->properties[$property] = [];
                 // Clear the array no matter what, that way NULL is handled properly.
                 if ( null !== $value ) {
                     foreach ( $value as $item ) {
@@ -1124,7 +1114,7 @@ ORDER BY trigger_name ASC";
                 break;
 
             case 'foreign_key_constraints':
-                $this->properties[$property] = array();
+                $this->properties[$property] = [];
                 // Clear the array no matter what, that way NULL is handled properly.
                 if ( null !== $value ) {
                     foreach ( $value as $item ) {
@@ -1145,7 +1135,7 @@ ORDER BY trigger_name ASC";
                 break;
 
             case 'triggers':
-                $this->properties[$property] = array();
+                $this->properties[$property] = [];
                 // Clear the array no matter what, that way NULL is handled properly.
                 if ( null !== $value ) {
                     foreach ( $value as $item ) {

@@ -23,22 +23,18 @@ class AggregationTable extends Table
 {
     // Properties required by this class. These will be merged with other required
     // properties up the call chain. See @Entity::$requiredProperties
-    private $localRequiredProperties = array(
-        'table_prefix'
-    );
+    private $localRequiredProperties = ['table_prefix'];
 
     // Properties provided by this class. These will be merged with other properties up
     // the call chain. See @Entity::$properties
-    private $localProperties = array(
+    private $localProperties = [
         // Current aggregation unit to use when generating the SQL to populate the table
         'aggregation_unit'  => null,
-
         // Table prefix used to generate the name along with the aggregation unit
         'table_prefix'   => null,
-
         // Query object for populating the table with data
-        'query'  => null
-    );
+        'query'  => null,
+    ];
 
     /* ------------------------------------------------------------------------------------------
      * @see iEntity::__construct()
@@ -57,7 +53,7 @@ class AggregationTable extends Table
      * ------------------------------------------------------------------------------------------
      */
 
-    public function initialize(stdClass $config)
+    public function initialize(stdClass $config): void
     {
         // Aggregation table definition files may include the query used to populate the
         // aggregation table.
@@ -128,9 +124,9 @@ class AggregationTable extends Table
     {
         // Save the JSON representation for columns, indexes, triggers
 
-        $columnJson = array();
-        $indexJson = array();
-        $triggerJson = array();
+        $columnJson = [];
+        $indexJson = [];
+        $triggerJson = [];
 
         foreach ( $this->columns as $column ) {
             $columnJson[] = $column->toStdClass();
@@ -147,9 +143,9 @@ class AggregationTable extends Table
 
         $newTable = clone $this;
         // We can't set columns to null because it is a required column
-        $newTable->columns = array();
-        $newTable->indexes = array();
-        $newTable->triggers = array();
+        $newTable->columns = [];
+        $newTable->indexes = [];
+        $newTable->triggers = [];
 
         foreach ( $columnJson as $def ) {
             foreach ( $def as $key => &$value ) {
@@ -204,7 +200,7 @@ class AggregationTable extends Table
     public function __set($property, $value)
     {
         // If we are not setting a property that is a special case, just call the main setter
-        $specialCaseProperties = array('aggregation_unit', 'query');
+        $specialCaseProperties = ['aggregation_unit', 'query'];
 
         if ( ! in_array($property, $specialCaseProperties) ) {
             parent::__set($property, $value);

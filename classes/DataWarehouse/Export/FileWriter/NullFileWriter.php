@@ -25,7 +25,7 @@ class NullFileWriter extends aFileWriter
     /**
      * Don't close anything.
      */
-    public function close()
+    public function close(): void
     {
     }
 
@@ -34,7 +34,7 @@ class NullFileWriter extends aFileWriter
      *
      * @param array $record
      */
-    public function writeRecord(array $record)
+    public function writeRecord(array $record): void
     {
     }
 }

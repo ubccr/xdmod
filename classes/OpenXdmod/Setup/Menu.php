@@ -12,13 +12,6 @@ class Menu
 {
 
     /**
-     * Menu title.
-     *
-     * @var null|string
-     */
-    protected $title;
-
-    /**
      * Menu items.
      *
      * @var MenuItem[]
@@ -39,21 +32,23 @@ class Menu
      * @param Console $console The console used to display the menu.
      * @param string $title The menu's title.
      */
-    public function __construct(array $items, Console $console, $title = null)
+    public function __construct(array $items, Console $console, /**
+     * Menu title.
+     */
+    protected $title = null)
     {
         $this->items   = $items;
         $this->console = $console;
-        $this->title   = $title;
     }
 
     /**
      * Display the menu.
      */
-    public function display()
+    public function display(): void
     {
-        $this->console->displaySectionHeader($this->title, false);
+        $this->console->displaySectionHeader($this->title);
 
-        $triggerSet = array();
+        $triggerSet = [];
 
         foreach ($this->items as $item) {
             $trigger = $item->getTrigger();

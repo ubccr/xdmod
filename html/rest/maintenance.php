@@ -1,6 +1,6 @@
 <?php
 
-   $response = array();
+   $response = [];
    
    $response['success'] = false;
    

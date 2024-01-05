@@ -24,13 +24,13 @@ class ExternalProcess extends \php_user_filter
      * @const string Filter name, used when registering the stream filter.
      */
 
-    const NAME = 'xdmod.external_process';
+    public const NAME = 'xdmod.external_process';
 
     /**
      * @const integer Number of bytes to read and write to the application pipes at once
      */
 
-    const READ_SIZE = 1024;
+    public const READ_SIZE = 1024;
 
     /**
      * @var string The name of the filter, populated by PHP
@@ -151,7 +151,7 @@ class ExternalProcess extends \php_user_filter
         // Verify parameters
 
         if ( ! is_object($this->params) || ! isset($this->params->path) ) {
-            fwrite(STDERR, __CLASS__ . ": Path parameter not set\n");
+            fwrite(STDERR, self::class . ": Path parameter not set\n");
             return false;
         }
 
@@ -187,11 +187,7 @@ class ExternalProcess extends \php_user_filter
 
         $this->filterResource = @proc_open(
             $this->command,
-            array(
-                0 => array('pipe', 'r'),
-                1 => array('pipe', 'w'),
-                2 => array('pipe', 'w')
-            ),
+            [0 => ['pipe', 'r'], 1 => ['pipe', 'w'], 2 => ['pipe', 'w']],
             $this->pipes
         );
 
@@ -219,7 +215,7 @@ class ExternalProcess extends \php_user_filter
      * Cleanup after the filter is closed.
      */
 
-    public function onClose()
+    public function onClose(): void
     {
         if ($this->pipes[0]) {
             fclose($this->pipes[0]);
@@ -249,7 +245,7 @@ class ExternalProcess extends \php_user_filter
      * @param string $message The log message
      */
 
-    private function logError($message)
+    private function logError($message): void
     {
         if ( isset($this->params->logger) ) {
             $this->params->logger->err($message);

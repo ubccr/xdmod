@@ -77,7 +77,7 @@ class TimeseriesQuery extends Query implements iQuery
         $endDate,
         $groupById = null,
         $statisticId = null,
-        array $parameters = array(),
+        array $parameters = [],
         LoggerInterface $logger = null
     ) {
         parent::__construct(
@@ -139,43 +139,23 @@ class TimeseriesQuery extends Query implements iQuery
      * @param stdClass $data_description Data description object that includes the sort information.
      * @return void
      */
-    public function addOrderByAndSetSortInfo($data_description)
+    public function addOrderByAndSetSortInfo($data_description): void
     {
         switch ($data_description->sort_type) {
             case 'value_asc':
-                $this->sortInfo = array(
-                    array(
-                        'column_name' => $data_description->metric,
-                        'direction' => 'asc'
-                    )
-                );
+                $this->sortInfo = [['column_name' => $data_description->metric, 'direction' => 'asc']];
                 break;
 
             case 'value_desc':
-                $this->sortInfo = array(
-                    array(
-                        'column_name' => $data_description->metric,
-                        'direction' => 'desc'
-                    )
-                );
+                $this->sortInfo = [['column_name' => $data_description->metric, 'direction' => 'desc']];
                 break;
 
             case 'label_asc':
-                $this->sortInfo = array(
-                    array(
-                        'column_name' => $data_description->group_by,
-                        'direction' => 'asc'
-                    )
-                );
+                $this->sortInfo = [['column_name' => $data_description->group_by, 'direction' => 'asc']];
                 break;
 
             case 'label_desc':
-                $this->sortInfo = array(
-                    array(
-                        'column_name' => $data_description->group_by,
-                        'direction' => 'desc'
-                    )
-                );
+                $this->sortInfo = [['column_name' => $data_description->group_by, 'direction' => 'desc']];
                 break;
         }
     }
@@ -207,7 +187,7 @@ class TimeseriesQuery extends Query implements iQuery
 
         $select_order_by = $this->getSelectOrderBy();
 
-        $select_group_by = array();
+        $select_group_by = [];
 
         foreach ($groups as $group) {
             $select_group_by[] = $group->getQualifiedName(false);
@@ -251,9 +231,7 @@ SQL;
         $queryConfig = $dateIdsQuery->toStdClass();
         $idFormula = $dateIdsQuery->getRecord('id');
 
-        $whereConditions = array(
-            sprintf('%s BETWEEN %s AND %s', $idFormula, $this->_min_date_id, $this->_max_date_id)
-        );
+        $whereConditions = [sprintf('%s BETWEEN %s AND %s', $idFormula, $this->_min_date_id, $this->_max_date_id)];
 
         if ( ! isset($queryConfig->where) || ! is_array($queryConfig->where) ) {
             $queryConfig->where = $whereConditions;
@@ -270,7 +248,7 @@ SQL;
 
     }
 
-    public function execute($limit = 10000000)
+    public function execute($limit = 10_000_000)
     {
         $dateIdsQuery = "select id,
                             {$this->aggregationUnitName}_start_ts,
@@ -286,10 +264,10 @@ SQL;
 
         $dateIdsResults = DB::factory($this->_db_profile)->query($dateIdsQuery);
 
-        $empty_data         = array();
-        $empty_data_weights = array();
-        $data_labels        = array();
-        $period_id_lookup   = array();
+        $empty_data         = [];
+        $empty_data_weights = [];
+        $data_labels        = [];
+        $period_id_lookup   = [];
 
         $index = 0;
 
@@ -325,20 +303,20 @@ SQL;
         );
 
         $useWeights
-            =  strpos($stat, 'avg_')             !== false
-            || strpos($stat, 'count')            !== false
-            || strpos($stat, 'utilization')      !== false
-            || strpos($stat, 'rate')             !== false
-            || strpos($stat, 'expansion_factor') !== false;
+            =  str_contains($stat, 'avg_')
+            || str_contains($stat, 'count')
+            || str_contains($stat, 'utilization')
+            || str_contains($stat, 'rate')
+            || str_contains($stat, 'expansion_factor');
 
-        $isMin = strpos($stat, 'min_') !== false;
-        $isMax = strpos($stat, 'max_') !== false;
+        $isMin = str_contains($stat, 'min_');
+        $isMax = str_contains($stat, 'max_');
 
-        $group_info           = array();
-        $group_to_weight      = array();
-        $group_to_value       = array();
-        $group_to_id          = array();
-        $group_to_short_label = array();
+        $group_info           = [];
+        $group_to_weight      = [];
+        $group_to_value       = [];
+        $group_to_id          = [];
+        $group_to_short_label = [];
 
         while ($result = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
             if (isset($group_to_value[$result['name']])) {
@@ -388,14 +366,7 @@ SQL;
             $group_to_short_label[$result['name']] = $result['short_name'];
             $group_to_id[$result['name']] = $result['id'];
 
-            $group_info[$result['name']] = array(
-                'id'     => $group_to_id[$result['name']],
-                'name'   => $result['name'],
-                'value'  => $group_to_value[$result['name']],
-                'weight' => isset($group_to_weight[$result['name']])
-                          ? $group_to_weight[$result['name']]
-                          : 1,
-            );
+            $group_info[$result['name']] = ['id'     => $group_to_id[$result['name']], 'name'   => $result['name'], 'value'  => $group_to_value[$result['name']], 'weight' => $group_to_weight[$result['name']] ?? 1];
         }
 
         if ($useWeights) {
@@ -409,8 +380,8 @@ SQL;
         if (isset($sort_option)) {
             $sort_option = $this->_main_stat_field->getSortOrder();
 
-            $datanames  = array();
-            $datavalues = array();
+            $datanames  = [];
+            $datavalues = [];
 
             foreach ($group_info as $key => $row) {
                 $datanames[$key]  = $row['name'];
@@ -427,10 +398,10 @@ SQL;
         }
 
         // groups sorted by value => id
-        $sorted_group_to_id = array();
-        $sorted_group_to_short_label = array();
+        $sorted_group_to_id = [];
+        $sorted_group_to_short_label = [];
 
-        $data_by_group = array();
+        $data_by_group = [];
 
         foreach ($group_info as $gi) {
             $data_by_group[$gi['name']] = $empty_data;
@@ -459,9 +430,7 @@ SQL;
                 : $result[$stat_weight];
 
             $data_by_group[$result['name'] . '-sem'][$period_id_lookup[$result["{$this->aggregationUnitName}_id"]]]
-                = isset($result[$sem_name])
-                ? $result[$sem_name]
-                : 0;
+                = $result[$sem_name] ?? 0;
         }
 
         $data_by_group['query_string'] = $query_string;

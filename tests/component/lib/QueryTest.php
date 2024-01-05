@@ -14,7 +14,7 @@ class AggregateTest extends BaseTest
     /**
      * @dataProvider QueryDataProvider
      */
-    public function testGetDurrationResult($period, $start, $end, $groupby, $expected)
+    public function testGetDurrationResult($period, $start, $end, $groupby, $expected): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {

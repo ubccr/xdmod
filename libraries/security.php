@@ -9,7 +9,7 @@ namespace xd_security;
  * Wrapper for the session_start that ensures that the secure
  * cookie flag is set for the session cookie.
  */
-function start_session()
+function start_session(): void
 {
     $cParams = session_get_cookie_params();
     session_set_cookie_params(
@@ -26,7 +26,7 @@ function start_session()
  *
  * @return \XDUser
  */
-function detectUser($failover_methods = array())
+function detectUser($failover_methods = [])
 {
 
     // - Attempt to get a logged in user
@@ -34,7 +34,7 @@ function detectUser($failover_methods = array())
     //   determine the next kind of user to fetch
     try {
         $user = getLoggedInUser();
-    } catch (\Exception $e) {
+    } catch (\Exception) {
         if (count($failover_methods) == 0) {
             // Previously: Exception with 'Session Expired', No Logged In User code
             throw new \SessionExpiredException(); 
@@ -55,7 +55,7 @@ function detectUser($failover_methods = array())
             case \XDUser::INTERNAL_USER:
                 try {
                     return getInternalUser();
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     if (
                         isset($failover_methods[1])
                         && $failover_methods[1] == \XDUser::PUBLIC_USER
@@ -100,10 +100,7 @@ function assertDashboardUserLoggedIn()
         //       which would allow this block to be removed.
         throw $see;
     } catch (\Exception $e) {
-        \xd_controller\returnJSON(array(
-            'success' => false,
-            'status'  => $e->getMessage(),
-        ));
+        \xd_controller\returnJSON(['success' => false, 'status'  => $e->getMessage()]);
         exit;
     }
 }
@@ -188,9 +185,9 @@ function getInternalUser()
  * @param array $requirements
  * @param string $session_variable
  */
-function enforceUserRequirements($requirements, $session_variable = 'xdUser')
+function enforceUserRequirements($requirements, $session_variable = 'xdUser'): void
 {
-    $returnData = array();
+    $returnData = [];
 
     if (in_array(STATUS_LOGGED_IN, $requirements)) {
         if (!isset($_SESSION[$session_variable])) {
@@ -204,7 +201,7 @@ function enforceUserRequirements($requirements, $session_variable = 'xdUser')
             $returnData['success']    = false;
             $returnData['totalCount'] = 0;
             $returnData['message']    = 'user_does_not_exist';
-            $returnData['data']       = array();
+            $returnData['data']       = [];
             \xd_controller\returnJSON($returnData);
         }
 
@@ -221,7 +218,7 @@ function enforceUserRequirements($requirements, $session_variable = 'xdUser')
                 $returnData['success']    = false;
                 $returnData['totalCount'] = 0;
                 $returnData['message']    = 'not_sab_member';
-                $returnData['data']       = array();
+                $returnData['data']       = [];
                 \xd_controller\returnJSON($returnData);
             }
         }
@@ -232,7 +229,7 @@ function enforceUserRequirements($requirements, $session_variable = 'xdUser')
                 $returnData['success']    = false;
                 $returnData['totalCount'] = 0;
                 $returnData['message']    = 'not_a_manager';
-                $returnData['data']       = array();
+                $returnData['data']       = [];
                 \xd_controller\returnJSON($returnData);
             }
         }
@@ -243,7 +240,7 @@ function enforceUserRequirements($requirements, $session_variable = 'xdUser')
                 $returnData['success']    = false;
                 $returnData['totalCount'] = 0;
                 $returnData['message']    = 'not_a_center_director';
-                $returnData['data']       = array();
+                $returnData['data']       = [];
                 \xd_controller\returnJSON($returnData);
             }
         }
@@ -300,7 +297,7 @@ function secureCheck(&$required_params, $m, $enforce_all = true)
 /**
  * @param array $requiredParams
  */
-function assertParametersSet($requiredParams = array())
+function assertParametersSet($requiredParams = []): void
 {
     foreach ($requiredParams as $k => $v) {
         if (!is_int($k)) {

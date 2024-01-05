@@ -75,12 +75,7 @@ class CCRDBHandler extends AbstractProcessingHandler
     {
         $sql = sprintf("INSERT INTO %s.%s (id, logtime, ident, priority, message) VALUES(:id, NOW(), :ident, :priority, :message)", $this->schema, $this->table);
 
-        $this->db->execute($sql, array(
-            ':id' => $this->getNextId(),
-            ':ident' => $record['channel'],
-            ':priority' => Log::convertToCCRLevel($record['level']),
-            ':message' => $record['message']
-        ));
+        $this->db->execute($sql, [':id' => $this->getNextId(), ':ident' => $record['channel'], ':priority' => Log::convertToCCRLevel($record['level']), ':message' => $record['message']]);
     }
 
     /**
@@ -111,7 +106,7 @@ class CCRDBHandler extends AbstractProcessingHandler
             }
         }
 
-        $stmt = $this->db->query('SELECT LAST_INSERT_ID() as id', array(), true);
+        $stmt = $this->db->query('SELECT LAST_INSERT_ID() as id', [], true);
         $stmt->execute();
         $id = $stmt->fetchAll(\PDO::FETCH_COLUMN, 0)[0];
 

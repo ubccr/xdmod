@@ -8,12 +8,12 @@ abstract class XDException extends \Exception
 	/**
 	 * The message used by this exception if none is provided.
 	 */
-    const defaultMessage = 'Unknown XDMoD Exception Occurred';
+    public const defaultMessage = 'Unknown XDMoD Exception Occurred';
 
     /**
      * The code used by this exception if none is provided.
      */
-    const defaultCode = XDError::UnknownXdmodException;
+    public const defaultCode = XDError::UnknownXdmodException;
 
     /**
      * An array of data related to the exception that occurred to be used
@@ -23,7 +23,7 @@ abstract class XDException extends \Exception
      *
      * @var array
      */
-    public $errorData = array();
+    public $errorData = [];
 
     /**
      * An HTTP status code to use when this exception is thrown.
@@ -47,7 +47,7 @@ abstract class XDException extends \Exception
      *
      * @var array
      */
-    public $headers = array();
+    public $headers = [];
 
     public function __construct($message = self::defaultMessage, $code = self::defaultCode, Exception $previous = null)
 	{

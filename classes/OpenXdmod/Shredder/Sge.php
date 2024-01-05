@@ -30,82 +30,7 @@ class Sge extends Shredder
      *
      * @var array
      */
-    protected static $columnNames = array(
-        'clustername',
-        'qname',
-        'hostname',
-        'groupname',
-        'owner',
-        'job_name',
-        'job_number',
-        'account',
-        'priority',
-        'submission_time',
-        'start_time',
-        'end_time',
-        'failed',
-        'exit_status',
-        'ru_wallclock',
-        'ru_utime',
-        'ru_stime',
-        'ru_maxrss',
-        'ru_ixrss',
-        'ru_ismrss',
-        'ru_idrss',
-        'ru_isrss',
-        'ru_minflt',
-        'ru_majflt',
-        'ru_nswap',
-        'ru_inblock',
-        'ru_oublock',
-        'ru_msgsnd',
-        'ru_msgrcv',
-        'ru_nsignals',
-        'ru_nvcsw',
-        'ru_nivcsw',
-        'project',
-        'department',
-        'granted_pe',
-        'slots',
-        'task_number',
-        'cpu',
-        'mem',
-        'io',
-        'category',
-        'iow',
-        'pe_taskid',
-        'maxvmem',
-        'arid',
-        'ar_submission_time',
-        'resource_list_arch',
-        'resource_list_qname',
-        'resource_list_hostname',
-        'resource_list_notify',
-        'resource_list_calendar',
-        'resource_list_min_cpu_interval',
-        'resource_list_tmpdir',
-        'resource_list_seq_no',
-        'resource_list_s_rt',
-        'resource_list_h_rt',
-        'resource_list_s_cpu',
-        'resource_list_h_cpu',
-        'resource_list_s_data',
-        'resource_list_h_data',
-        'resource_list_s_stack',
-        'resource_list_h_stack',
-        'resource_list_s_core',
-        'resource_list_h_core',
-        'resource_list_s_rss',
-        'resource_list_h_rss',
-        'resource_list_slots',
-        'resource_list_s_vmem',
-        'resource_list_h_vmem',
-        'resource_list_s_fsize',
-        'resource_list_h_fsize',
-        'resource_list_num_proc',
-        'resource_list_mem_free',
-        'resource_list_gpu',
-    );
+    protected static $columnNames = ['clustername', 'qname', 'hostname', 'groupname', 'owner', 'job_name', 'job_number', 'account', 'priority', 'submission_time', 'start_time', 'end_time', 'failed', 'exit_status', 'ru_wallclock', 'ru_utime', 'ru_stime', 'ru_maxrss', 'ru_ixrss', 'ru_ismrss', 'ru_idrss', 'ru_isrss', 'ru_minflt', 'ru_majflt', 'ru_nswap', 'ru_inblock', 'ru_oublock', 'ru_msgsnd', 'ru_msgrcv', 'ru_nsignals', 'ru_nvcsw', 'ru_nivcsw', 'project', 'department', 'granted_pe', 'slots', 'task_number', 'cpu', 'mem', 'io', 'category', 'iow', 'pe_taskid', 'maxvmem', 'arid', 'ar_submission_time', 'resource_list_arch', 'resource_list_qname', 'resource_list_hostname', 'resource_list_notify', 'resource_list_calendar', 'resource_list_min_cpu_interval', 'resource_list_tmpdir', 'resource_list_seq_no', 'resource_list_s_rt', 'resource_list_h_rt', 'resource_list_s_cpu', 'resource_list_h_cpu', 'resource_list_s_data', 'resource_list_h_data', 'resource_list_s_stack', 'resource_list_h_stack', 'resource_list_s_core', 'resource_list_h_core', 'resource_list_s_rss', 'resource_list_h_rss', 'resource_list_slots', 'resource_list_s_vmem', 'resource_list_h_vmem', 'resource_list_s_fsize', 'resource_list_h_fsize', 'resource_list_num_proc', 'resource_list_mem_free', 'resource_list_gpu'];
 
     /**
      * Entries in the accouting log file.
@@ -116,53 +41,7 @@ class Sge extends Shredder
      *
      * @var array
      */
-    protected static $entryNames = array(
-        'qname',
-        'hostname',
-        'groupname',
-        'owner',
-        'job_name',
-        'job_number',
-        'account',
-        'priority',
-        'submission_time',
-        'start_time',
-        'end_time',
-        'failed',
-        'exit_status',
-        'ru_wallclock',
-        'ru_utime',
-        'ru_stime',
-        'ru_maxrss',
-        'ru_ixrss',
-        'ru_ismrss',
-        'ru_idrss',
-        'ru_isrss',
-        'ru_minflt',
-        'ru_majflt',
-        'ru_nswap',
-        'ru_inblock',
-        'ru_oublock',
-        'ru_msgsnd',
-        'ru_msgrcv',
-        'ru_nsignals',
-        'ru_nvcsw',
-        'ru_nivcsw',
-        'project',
-        'department',
-        'granted_pe',
-        'slots',
-        'task_number',
-        'cpu',
-        'mem',
-        'io',
-        'category',
-        'iow',
-        'pe_taskid',
-        'maxvmem',
-        'arid',
-        'ar_submission_time',
-    );
+    protected static $entryNames = ['qname', 'hostname', 'groupname', 'owner', 'job_name', 'job_number', 'account', 'priority', 'submission_time', 'start_time', 'end_time', 'failed', 'exit_status', 'ru_wallclock', 'ru_utime', 'ru_stime', 'ru_maxrss', 'ru_ixrss', 'ru_ismrss', 'ru_idrss', 'ru_isrss', 'ru_minflt', 'ru_majflt', 'ru_nswap', 'ru_inblock', 'ru_oublock', 'ru_msgsnd', 'ru_msgrcv', 'ru_nsignals', 'ru_nvcsw', 'ru_nivcsw', 'project', 'department', 'granted_pe', 'slots', 'task_number', 'cpu', 'mem', 'io', 'category', 'iow', 'pe_taskid', 'maxvmem', 'arid', 'ar_submission_time'];
 
     /**
      * The minimum number of fields that must be present in a line from
@@ -177,116 +56,43 @@ class Sge extends Shredder
      *
      * @var array
      */
-    protected static $resourceAttributes = array(
-        'arch',
-        'qname',
-        'hostname',
-        'notify',
-        'calendar',
-        'min_cpu_interval',
-        'tmpdir',
-        'seq_no',
-        's_rt',
-        'h_rt',
-        's_cpu',
-        'h_cpu',
-        's_data',
-        'h_data',
-        's_stack',
-        'h_stack',
-        's_core',
-        'h_core',
-        's_rss',
-        'h_rss',
-        'slots',
-        's_vmem',
-        'h_vmem',
-        's_fsize',
-        'h_fsize',
-        'num_proc',
-        'mem_free',
-        'gpu',
-    );
+    protected static $resourceAttributes = ['arch', 'qname', 'hostname', 'notify', 'calendar', 'min_cpu_interval', 'tmpdir', 'seq_no', 's_rt', 'h_rt', 's_cpu', 'h_cpu', 's_data', 'h_data', 's_stack', 'h_stack', 's_core', 'h_core', 's_rss', 'h_rss', 'slots', 's_vmem', 'h_vmem', 's_fsize', 'h_fsize', 'num_proc', 'mem_free', 'gpu'];
 
     /**
      * Columns that should be parsed and their expected format.
      *
      * @var array
      */
-    protected static $columnFormats = array(
-        's_data'   => 'memory',
-        'h_data'   => 'memory',
-        's_stack'  => 'memory',
-        'h_stack'  => 'memory',
-        's_core'   => 'memory',
-        'h_core'   => 'memory',
-        's_rss'    => 'memory',
-        'h_rss'    => 'memory',
-        's_vmem'   => 'memory',
-        'h_vmem'   => 'memory',
-        's_fsize'  => 'memory',
-        'h_fsize'  => 'memory',
-        'mem_free' => 'memory',
-    );
+    protected static $columnFormats = ['s_data'   => 'memory', 'h_data'   => 'memory', 's_stack'  => 'memory', 'h_stack'  => 'memory', 's_core'   => 'memory', 'h_core'   => 'memory', 's_rss'    => 'memory', 'h_rss'    => 'memory', 's_vmem'   => 'memory', 'h_vmem'   => 'memory', 's_fsize'  => 'memory', 'h_fsize'  => 'memory', 'mem_free' => 'memory'];
 
     /**
      * Mapping from generic job table to PBS specific job table.
      *
      * @var array
      */
-    protected static $columnMap = array(
-        'date_key'        => 'FROM_UNIXTIME(MAX(end_time))',
-        'job_id'          => 'job_number',
-        'job_array_index' => 'task_number',
-        'job_id_raw'      => 'job_number',
-        'job_name'        => 'job_name',
-        'resource_name'   => 'clustername',
-        'queue_name'      => 'qname',
-        'user_name'       => 'owner',
-        'group_name'      => 'groupname',
-        'account_name'    => 'account',
-        'project_name'    => 'project',
-        'pi_name'         => 'groupname',
-        'start_time'      => 'MIN(start_time)',
-        'end_time'        => 'MAX(end_time)',
-        'submission_time' => 'MIN(submission_time)',
-        'wall_time'       => 'GREATEST(CAST(end_time AS SIGNED) - CAST(start_time AS SIGNED), 0)',
-        'wait_time'       => 'GREATEST(CAST(start_time AS SIGNED) - CAST(submission_time AS SIGNED), 0)',
-        'node_count'      => 'COUNT(DISTINCT hostname)',
-        'cpu_count'       => 'GREATEST(COALESCE(slots, 1), COALESCE(resource_list_num_proc, 1))',
-        'gpu_count'       => 'MAX(COALESCE(resource_list_gpu, 0))',
-        'node_list'       => 'GROUP_CONCAT(hostname)',
-    );
+    protected static $columnMap = ['date_key'        => 'FROM_UNIXTIME(MAX(end_time))', 'job_id'          => 'job_number', 'job_array_index' => 'task_number', 'job_id_raw'      => 'job_number', 'job_name'        => 'job_name', 'resource_name'   => 'clustername', 'queue_name'      => 'qname', 'user_name'       => 'owner', 'group_name'      => 'groupname', 'account_name'    => 'account', 'project_name'    => 'project', 'pi_name'         => 'groupname', 'start_time'      => 'MIN(start_time)', 'end_time'        => 'MAX(end_time)', 'submission_time' => 'MIN(submission_time)', 'wall_time'       => 'GREATEST(CAST(end_time AS SIGNED) - CAST(start_time AS SIGNED), 0)', 'wait_time'       => 'GREATEST(CAST(start_time AS SIGNED) - CAST(submission_time AS SIGNED), 0)', 'node_count'      => 'COUNT(DISTINCT hostname)', 'cpu_count'       => 'GREATEST(COALESCE(slots, 1), COALESCE(resource_list_num_proc, 1))', 'gpu_count'       => 'MAX(COALESCE(resource_list_gpu, 0))', 'node_list'       => 'GROUP_CONCAT(hostname)'];
 
     /**
      * @inheritdoc
      */
-    protected static $dataMap = array(
-        'job_id'          => 'job_number',
-        'start_time'      => 'start_time',
-        'end_time'        => 'end_time',
-        'submission_time' => 'submission_time',
-        'walltime'        => 'ru_wallclock',
-    );
+    protected static $dataMap = ['job_id'          => 'job_number', 'start_time'      => 'start_time', 'end_time'        => 'end_time', 'submission_time' => 'submission_time', 'walltime'        => 'ru_wallclock'];
 
     /**
      * Numeric fields that may also contain the value "NONE".
      *
      * @var array
      */
-    protected static $mixedTypeFields = array(
-        'pe_taskid',
-    );
+    protected static $mixedTypeFields = ['pe_taskid'];
 
     /**
      * @inheritdoc
      */
-    public function shredLine($line)
+    public function shredLine($line): void
     {
         $this->logger->debug("Shredding line '$line'");
 
         // Ignore comments.
-        if (substr($line, 0, 1) == '#') {
+        if (str_starts_with($line, '#')) {
             return;
         }
 
@@ -320,7 +126,7 @@ class Sge extends Shredder
             return;
         }
 
-        $job = array();
+        $job = [];
 
         // Map numeric $entries array into a associative array.
         foreach (self::$entryNames as $index => $name) {
@@ -366,21 +172,19 @@ class Sge extends Shredder
     /**
      * Returns an array of resource attributes and values.
      *
-     * @param array $job
      * @param string $category
-     *
      * @return array
      */
     protected function getResourceLists(array $job, $category)
     {
         if ($category == '' || $category == 'NONE') {
-            return array();
+            return [];
         }
 
         // Split on flags, but don't remove the flags.
         $parts = preg_split('/\s+?(?=-\w+)/', $category);
 
-        $resourceLists = array();
+        $resourceLists = [];
 
         foreach ($parts as $part) {
             $flagAndValue = preg_split('/\s+/', $part, 2);
@@ -415,10 +219,10 @@ class Sge extends Shredder
     {
         $options = explode(',', $optionString);
 
-        $resources = array();
+        $resources = [];
 
         foreach ($options as $option) {
-            list($key, $value) = explode('=', $option, 2);
+            [$key, $value] = explode('=', $option, 2);
 
             if (!in_array($key, self::$resourceAttributes)) {
                 $this->logger->debug("Unknown resource attribute: '$key'");
@@ -457,9 +261,9 @@ class Sge extends Shredder
      */
     private function parseParallelEnvironmentOptions($optionString)
     {
-        list($env, $slots) = preg_split('/\s+/', $optionString);
+        [$env, $slots] = preg_split('/\s+/', $optionString);
 
-        return array('resource_list_slots' => $slots);
+        return ['resource_list_slots' => $slots];
     }
 
     /**
@@ -482,7 +286,7 @@ class Sge extends Shredder
             }
 
             // SGE uses bytes by default.
-            $unit = isset($matches[2]) ? $matches[2] : 'b';
+            $unit = $matches[2] ?? 'b';
 
             return $this->scaleMemory($quantity, $unit);
         } else {
@@ -502,38 +306,18 @@ class Sge extends Shredder
     {
         $this->logger->debug("Scaling memory '$quantity', '$unit'");
 
-        switch ($unit) {
-            case 'b':
-                $bytes = $quantity;
-                break;
-            case 'k':
-                $bytes = $quantity * 1000;
-                break;
-            case 'K':
-                $bytes = $quantity * 1024;
-                break;
-            case 'm':
-                $bytes = $quantity * 1000 * 1000;
-                break;
-            case 'M':
-                $bytes = $quantity * 1024 * 1024;
-                break;
-            case 'g':
-                $bytes = $quantity * 1000 * 1000 * 1000;
-                break;
-            case 'G':
-                $bytes = $quantity * 1024 * 1024 * 1024;
-                break;
-            case 't':
-                $bytes = $quantity * 1000 * 1000 * 1000 * 1000;
-                break;
-            case 'T':
-                $bytes = $quantity * 1024 * 1024 * 1024 * 1024;
-                break;
-            default:
-                throw new Exception("Unknown memory unit: '$unit'");
-                break;
-        }
+        $bytes = match ($unit) {
+            'b' => $quantity,
+            'k' => $quantity * 1000,
+            'K' => $quantity * 1024,
+            'm' => $quantity * 1000 * 1000,
+            'M' => $quantity * 1024 * 1024,
+            'g' => $quantity * 1000 * 1000 * 1000,
+            'G' => $quantity * 1024 * 1024 * 1024,
+            't' => $quantity * 1000 * 1000 * 1000 * 1000,
+            'T' => $quantity * 1024 * 1024 * 1024 * 1024,
+            default => throw new Exception("Unknown memory unit: '$unit'"),
+        };
 
         return (int)floor($bytes / 1024);
     }

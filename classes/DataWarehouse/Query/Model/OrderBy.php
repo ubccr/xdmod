@@ -1,16 +1,12 @@
 <?php
 namespace DataWarehouse\Query\Model;
 
-class OrderBy
+class OrderBy implements \Stringable
 {
     protected $_field;
-    protected $_order;
-    protected $_column_name;
-    public function __construct(\DataWarehouse\Query\Model\Field $field, $order, $columnName)
+    public function __construct(\DataWarehouse\Query\Model\Field $field, protected $_order, protected $_column_name)
     {
         $this->_field = $field;
-        $this->_order = $order;
-        $this->_column_name = $columnName;
     }
 
     public function getOrder()
@@ -25,7 +21,7 @@ class OrderBy
     {
         return $this->_column_name;
     }
-    public function __toString()
+    public function __toString(): string
     {
         return sprintf("%s %s", $this->_field, $this->_order);
     }

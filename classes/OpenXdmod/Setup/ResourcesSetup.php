@@ -49,23 +49,19 @@ class ResourcesSetup extends SubMenuSetupItem
     {
         parent::__construct($console);
 
-        $items = array(
-            new MenuItem(
-                '1',
-                'Add a new resource',
-                new AddResourceSetup($this->console, $this)
-            ),
-            new MenuItem(
-                '2',
-                'List entered resources',
-                new ListResourcesSetup($this->console, $this)
-            ),
-            new MenuItem(
-                's',
-                'Save (and return to main menu)',
-                new SubMenuSaveSetup($this->console, $this)
-            ),
-        );
+        $items = [new MenuItem(
+            '1',
+            'Add a new resource',
+            new AddResourceSetup($this->console, $this)
+        ), new MenuItem(
+            '2',
+            'List entered resources',
+            new ListResourcesSetup($this->console, $this)
+        ), new MenuItem(
+            's',
+            'Save (and return to main menu)',
+            new SubMenuSaveSetup($this->console, $this)
+        )];
 
         $this->menu = new Menu($items, $this->console, 'Resources Setup');
     }
@@ -73,7 +69,7 @@ class ResourcesSetup extends SubMenuSetupItem
     /**
      * @inheritdoc
      */
-    public function handle()
+    public function handle(): void
     {
         $this->quit = false;
 
@@ -108,17 +104,15 @@ class ResourcesSetup extends SubMenuSetupItem
     /**
      * Quit this setup step at the next opportunity.
      */
-    public function quit()
+    public function quit(): void
     {
         $this->quit = true;
     }
 
     /**
      * Add a resource to the current list.
-     *
-     * @param array $resource
      */
-    public function addResource(array $resource)
+    public function addResource(array $resource): void
     {
         // Look up the resource type id for the string that was entered
 
@@ -142,23 +136,9 @@ class ResourcesSetup extends SubMenuSetupItem
             }
         }
 
-        $this->resources[] = array(
-            'resource'                  => $resource['resource'],
-            'resource_type'             => $typeAbbrev,
-            'name'                      => $resource['name'],
-            'resource_allocation_type'  => $resourceAllocationTypeAbbrev
-        );
+        $this->resources[] = ['resource'                  => $resource['resource'], 'resource_type'             => $typeAbbrev, 'name'                      => $resource['name'], 'resource_allocation_type'  => $resourceAllocationTypeAbbrev];
 
-        $this->resourceSpecs[] = array(
-            'resource'            => $resource['resource'],
-            'start_date'          => $resource['start_date'],
-            'cpu_node_count'      => $resource['cpu_node_count'],
-            'cpu_processor_count' => $resource['cpu_processor_count'],
-            'cpu_ppn'             => $resource['cpu_ppn'],
-            'gpu_node_count'      => $resource['gpu_node_count'],
-            'gpu_processor_count' => $resource['gpu_processor_count'],
-            'gpu_ppn'             => $resource['gpu_ppn']
-        );
+        $this->resourceSpecs[] = ['resource'            => $resource['resource'], 'start_date'          => $resource['start_date'], 'cpu_node_count'      => $resource['cpu_node_count'], 'cpu_processor_count' => $resource['cpu_processor_count'], 'cpu_ppn'             => $resource['cpu_ppn'], 'gpu_node_count'      => $resource['gpu_node_count'], 'gpu_processor_count' => $resource['gpu_processor_count'], 'gpu_ppn'             => $resource['gpu_ppn']];
     }
 
     /**
@@ -169,7 +149,7 @@ class ResourcesSetup extends SubMenuSetupItem
      * realm specific resources in the list then remove the roles file for that
      * realm and run the ACL actions.
      */
-    public function save()
+    public function save(): void
     {
         $this->saveJsonConfig($this->resources,     'resources');
         $this->saveJsonConfig($this->resourceSpecs, 'resource_specs');

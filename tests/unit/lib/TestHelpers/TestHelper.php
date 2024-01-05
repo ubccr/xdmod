@@ -18,7 +18,7 @@ class TestHelper
      * @param  string $methodName    The name of the method to unlock.
      * @return ReflectionMethod      A reflection of the unlocked method.
      */
-    public static function unlockMethod($classOrObject, $methodName)
+    public static function unlockMethod(mixed $classOrObject, $methodName)
     {
         $reflection = new \ReflectionClass($classOrObject);
         $method = $reflection->getMethod($methodName);

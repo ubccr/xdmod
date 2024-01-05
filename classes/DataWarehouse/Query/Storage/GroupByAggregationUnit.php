@@ -24,7 +24,7 @@ abstract class GroupByAggregationUnit extends GroupBy
         $multiGroup = false,
         $dir = 'ASC',
         $prepend = false
-    ) {
+    ): void {
         $orderField = new OrderBy(
             new TableField(
                 $query->getDataTable(),
@@ -52,11 +52,11 @@ abstract class GroupByAggregationUnit extends GroupBy
 
     public function pullQueryParameters(&$request)
     {
-        return array();
+        return [];
     }
 
     public function pullQueryParameterDescriptions(&$request)
     {
-        return array();
+        return [];
     }
 }

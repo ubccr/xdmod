@@ -6,18 +6,18 @@ use CCR\DB;
 use CCR\Loggable;
 use Exception;
 use PDOException;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 
 /**
  * Test various cases for exceptions thrown by Loggable::logAndThrowException()
  */
 
-class LogAndThrowExceptionTest extends PHPUnit_Framework_TestCase
+class LogAndThrowExceptionTest extends \PHPUnit\Framework\TestCase
 {
     private $db;
     private $loggable;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->db = DB::factory('datawarehouse');
         $this->loggable = new Loggable();
@@ -27,7 +27,7 @@ class LogAndThrowExceptionTest extends PHPUnit_Framework_TestCase
      * Test #1: Provide only a log/exception message.
      */
 
-    public function testNoExceptionCode()
+    public function testNoExceptionCode(): void
     {
         $msg = "No Code";
         $expectedMsg = (string) $this->loggable . ": $msg";
@@ -43,14 +43,14 @@ class LogAndThrowExceptionTest extends PHPUnit_Framework_TestCase
      * Test #2: Provide a log/exception message and an exception with the same message and a code.
      */
 
-    public function testExceptionCode()
+    public function testExceptionCode(): void
     {
         $msg = "Code = 10";
         $expectedMsg = (string) $this->loggable . ": $msg Exception: '$msg'";
         try {
             $this->loggable->logAndThrowException(
                 $msg,
-                array('exception' => new Exception($msg, 10))
+                ['exception' => new Exception($msg, 10)]
             );
         } catch ( Exception $e ) {
             $this->assertEquals($expectedMsg, $e->getMessage());
@@ -65,7 +65,7 @@ class LogAndThrowExceptionTest extends PHPUnit_Framework_TestCase
      *   See https://dev.mysql.com/doc/refman/5.5/en/error-messages-server.html
      */
 
-    public function testPdoException()
+    public function testPdoException(): void
     {
         $sql = sprintf("SELECT count(*) FROM %s;", uniqid('modw.table_does_not_exist_'));
         try {
@@ -75,10 +75,7 @@ class LogAndThrowExceptionTest extends PHPUnit_Framework_TestCase
                 $this->assertEquals('42S02', $p->getCode(), 'Inner testPdoException');
                 $this->loggable->logAndThrowException(
                     $p->getMessage(),
-                    array(
-                        'exception' => $p,
-                        'sql' => $sql
-                    )
+                    ['exception' => $p, 'sql' => $sql]
                 );
             }
         } catch ( Exception $e ) {

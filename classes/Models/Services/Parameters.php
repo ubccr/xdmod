@@ -25,7 +25,7 @@ class Parameters
      */
     public static function getParameters(\XDUser $user, $aclName)
     {
-        $parameters = array();
+        $parameters = [];
 
         $db = DB::factory('database');
 
@@ -60,10 +60,7 @@ WHERE u.id = :user_id AND
 SQL;
         $results = $db->query(
             $sql,
-            array(
-                ':user_id' => $user->getUserID(),
-                ':acl_name' => $aclName
-            )
+            [':user_id' => $user->getUserID(), ':acl_name' => $aclName]
         );
 
         foreach($results as $row) {

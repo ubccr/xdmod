@@ -39,38 +39,27 @@ class CloudInstanceTypeStateIngestor extends pdoIngestor implements iAction
         $this->resetInstance();
     }
 
-    private function initInstance($srcRecord)
+    private function initInstance($srcRecord): void
     {
         // Since we only get information for when a configuration changes we assume a configuration has an end date
         // of today unless we have a row that tells us otherwise
-        $default_end_time = isset($this->_end_time) ? $this->_end_time : date('Y-m-d') . ' 23:59:59';
+        $default_end_time = $this->_end_time ?? date('Y-m-d') . ' 23:59:59';
 
-        $this->_instance_type_state = array(
-            'resource_id' => $srcRecord['resource_id'],
-            'instance_type_id' => $srcRecord['instance_type_id'],
-            'instance_type' => $srcRecord['instance_type'],
-            'display' => $srcRecord['display'],
-            'description' => $srcRecord['description'],
-            'memory_mb' => $srcRecord['memory_mb'],
-            'num_cores' => $srcRecord['num_cores'],
-            'disk_gb' => $srcRecord['disk_gb'],
-            'start_time' => $srcRecord['start_time'],
-            'end_time' => strtotime($default_end_time)
-        );
+        $this->_instance_type_state = ['resource_id' => $srcRecord['resource_id'], 'instance_type_id' => $srcRecord['instance_type_id'], 'instance_type' => $srcRecord['instance_type'], 'display' => $srcRecord['display'], 'description' => $srcRecord['description'], 'memory_mb' => $srcRecord['memory_mb'], 'num_cores' => $srcRecord['num_cores'], 'disk_gb' => $srcRecord['disk_gb'], 'start_time' => $srcRecord['start_time'], 'end_time' => strtotime($default_end_time)];
     }
 
-    private function resetInstance()
+    private function resetInstance(): void
     {
         $this->_instance_state = null;
     }
 
-    private function setInstanceTypeEndTime($srcRecord)
+    private function setInstanceTypeEndTime($srcRecord): void
     {
         $end_date_timestamp = $srcRecord['start_time'] - 1;
         $this->_instance_type_state['end_time'] = $end_date_timestamp;
     }
 
-    private function setInstanceTypeId($srcRecord)
+    private function setInstanceTypeId($srcRecord): void
     {
         $this->_instance_type_state['instance_type_id'] = $srcRecord['instance_type_id'];
     }
@@ -83,9 +72,9 @@ class CloudInstanceTypeStateIngestor extends pdoIngestor implements iAction
         // We want to just flush when we hit the dummy row
         if ($srcRecord['start_time'] === 0) {
             if (isset($this->_instance_type_state)) {
-                return array($this->_instance_type_state);
+                return [$this->_instance_type_state];
             } else {
-                return array();
+                return [];
             }
         }
 
@@ -93,7 +82,7 @@ class CloudInstanceTypeStateIngestor extends pdoIngestor implements iAction
             $this->initInstance($srcRecord);
         }
 
-        $transformedRecord = array();
+        $transformedRecord = [];
 
         if (($this->_instance_type_state['instance_type'] != $srcRecord['instance_type']) || ($this->_instance_type_state['resource_id'] != $srcRecord['resource_id'])) {
             // When the instance type or resource ID changes the existing data in $this->_instance_type_state is saved in a

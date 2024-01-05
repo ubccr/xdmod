@@ -8,17 +8,17 @@ namespace UnitTests\OpenXdmod\Tests\Config;
 /**
  * JSON config file test class.
  */
-class JsonTest extends \PHPUnit_Framework_TestCase
+class JsonTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
      * Test that all the JSON configuration files are formatted
      * properly.
      */
-    public function testJsonDecoding()
+    public function testJsonDecoding(): void
     {
-        $modulePath = BASE_DIR . '/open_xdmod/modules/xdmod';
-        $pattern = $modulePath . '/configuration/*.json';
+        #$modulePath = BASE_DIR . '/open_xdmod/modules/xdmod';
+        $pattern = BASE_DIR . '/configuration/*.json';
         $jsonFiles = glob($pattern);
         sort($jsonFiles);
 

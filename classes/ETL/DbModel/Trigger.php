@@ -20,16 +20,11 @@ class Trigger extends SchemaEntity implements iEntity
 {
     // Properties required by this class. These will be merged with other required
     // properties up the call chain. See @Entity::$requiredProperties
-    private $localRequiredProperties = array(
-        'time',
-        'event',
-        'table',
-        'body'
-    );
+    private $localRequiredProperties = ['time', 'event', 'table', 'body'];
 
     // Properties provided by this class. These will be merged with other properties up
     // the call chain. See @Entity::$properties
-    private $localProperties = array(
+    private $localProperties = [
         // The time that the trigger is fired (before, after)
         'time'    => null,
         // The event that the trigger is fired on (insert, update, delete)
@@ -39,8 +34,8 @@ class Trigger extends SchemaEntity implements iEntity
         // The body of the trigger
         'body'    => null,
         // The trigger definer for ACL purposes
-        'definer' => null
-    );
+        'definer' => null,
+    ];
 
     /* ------------------------------------------------------------------------------------------
      * @see iEntity::__construct()
@@ -80,7 +75,7 @@ class Trigger extends SchemaEntity implements iEntity
                 }
 
                 // Normalize property values to lowercase to match MySQL behavior
-                if ( in_array($property, array('time', 'event')) ) {
+                if ( in_array($property, ['time', 'event']) ) {
                     $value = strtoupper($value);
                 } elseif ( 'body' == $property && 0 !== stripos($value, "BEGIN") ) {
                     $value = sprintf("BEGIN\n%s\nEND", $value);
@@ -149,7 +144,7 @@ class Trigger extends SchemaEntity implements iEntity
         $name = ( $includeSchema ? $this->getFullName() : $this->getName(true) );
         $tableName = ( null !== $this->schema && $includeSchema ? $this->quote($this->schema) . "." : "" ) .
             $this->quote($this->table);
-        $parts = array();
+        $parts = [];
         $parts[] = "CREATE";
         if ( null !== $this->definer ) {
             $parts[] = "DEFINER = " . $this->definer;

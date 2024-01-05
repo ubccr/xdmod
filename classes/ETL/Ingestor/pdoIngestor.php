@@ -67,7 +67,7 @@ class pdoIngestor extends aIngestor
      * ------------------------------------------------------------------------------------------
      */
 
-    const MAX_QUERY_ATTEMPTS = 3;
+    public const MAX_QUERY_ATTEMPTS = 3;
 
     /** -----------------------------------------------------------------------------------------
      * Write a log message after processing this many source records
@@ -76,7 +76,7 @@ class pdoIngestor extends aIngestor
      * ------------------------------------------------------------------------------------------
      */
 
-    const NUM_RECORDS_PER_LOG_MSG = 100000;
+    public const NUM_RECORDS_PER_LOG_MSG = 100000;
 
     /** -----------------------------------------------------------------------------------------
      * Maximum number of records to import in one LOAD DATA IN FILE
@@ -218,7 +218,7 @@ class pdoIngestor extends aIngestor
             $this->logAndThrowException(
                 sprintf(
                     "Utility endpoint %s does not implement ETL\\DataEndpoint\\iRdbmsEndpoint",
-                    get_class($this->utilityEndpoint)
+                    $this->utilityEndpoint::class
                 )
             );
         }
@@ -227,7 +227,7 @@ class pdoIngestor extends aIngestor
             $this->logAndThrowException(
                 sprintf(
                     "Source endpoint %s does not implement ETL\\DataEndpoint\\iRdbmsEndpoint",
-                    get_class($this->sourceEndpoint)
+                    $this->sourceEndpoint::class
                 )
             );
         }
@@ -346,7 +346,7 @@ class pdoIngestor extends aIngestor
         // If the source query is un-buffered we need to perform the count beforehand because all
         // results may not be available immediately after the query.
 
-        $this->logger->info(sprintf("%s: Querying %s", get_class($this), $this->sourceEndpoint));
+        $this->logger->info(sprintf("%s: Querying %s", static::class, $this->sourceEndpoint));
 
         // Execute the source query. If we are unable to connect, continue to attempt up the
         // MAX_QUERY_ATTEMPTS
@@ -373,7 +373,7 @@ class pdoIngestor extends aIngestor
                 if ( $srcStatement->errorCode() != "40001" ) {
                     $this->logAndThrowException(
                         "Error querying source",
-                        array('exception' => $e, 'sql' => $this->sourceQueryString, 'endpoint' => $this->sourceEndpoint)
+                        ['exception' => $e, 'sql' => $this->sourceQueryString, 'endpoint' => $this->sourceEndpoint]
                     );
                 } elseif ( $n_attempts > self::MAX_QUERY_ATTEMPTS ) {
                     $this->logAndThrowException(
@@ -382,7 +382,7 @@ class pdoIngestor extends aIngestor
                 }
 
                 $this->logger->info(
-                    get_class($this)
+                    static::class
                     . ': Query was cancelled by server with error '
                     . $srcStatement->errorCode() . '. Retries left = ' . (self::MAX_QUERY_ATTEMPTS - $n_attempts)
                 );
@@ -495,7 +495,7 @@ class pdoIngestor extends aIngestor
         // guarantee the order.
 
         $firstFieldMap = current($this->destinationFieldMappings);
-        $destColumnList = array();
+        $destColumnList = [];
         foreach ( $this->sourceRecordFields as $sourceField ) {
             if ( array_key_exists($sourceField, $firstFieldMap) ) {
                 $destColumnList[] = $sourceField;
@@ -517,9 +517,7 @@ class pdoIngestor extends aIngestor
             $destColumnList = $this->quoteIdentifierNames($destColumnList);
             $destColumns = implode(',', $destColumnList);
             $updateColumnList = array_map(
-                function ($s) {
-                    return "$s=VALUES($s)";
-                },
+                fn($s) => "$s=VALUES($s)",
                 $destColumnList
             );
             $updateColumns = implode(',', $updateColumnList);
@@ -540,12 +538,12 @@ class pdoIngestor extends aIngestor
         catch (Exception $e) {
             $this->logAndThrowException(
                 $e->getMessage(),
-                array('exception' => $e)
+                ['exception' => $e]
             );
         }
 
         $this->logger->info(
-            sprintf('%s: Processed %s records', get_class($this), number_format($totalRecordsProcessed))
+            sprintf('%s: Processed %s records', static::class, number_format($totalRecordsProcessed))
         );
 
         // Display any warnings returned by the SQL
@@ -577,9 +575,9 @@ class pdoIngestor extends aIngestor
         // Set up one infile and output file descriptor for each destination
 
         $ingestStart = microtime(true);
-        $infileList = array();
-        $outFdList = array();
-        $loadStatementList = array();
+        $infileList = [];
+        $outFdList = [];
+        $loadStatementList = [];
         $numDestinationTables = count($this->etlDestinationTableList);
 
         // Iterate over the destination field mappings rather than the destination table list because it
@@ -596,7 +594,7 @@ class pdoIngestor extends aIngestor
 
             $infileName = tempnam(
                 sys_get_temp_dir(),
-                sprintf('%s.data.ts_%s.%s', $etlTable->getFullName(false), time(), rand())
+                sprintf('%s.data.ts_%s.%s', $etlTable->getFullName(false), time(), random_int(0, mt_getrandmax()))
             );
 
             $this->logger->debug("Using temporary file '$infileName' for destination table key '$etlTableKey'");
@@ -629,9 +627,7 @@ class pdoIngestor extends aIngestor
                 $destColumnList = $this->quoteIdentifierNames($destColumnList);
                 $destColumns = implode(',', $destColumnList);
                 $updateColumnList = array_map(
-                    function ($s) {
-                        return "$s=VALUES($s)";
-                    },
+                    fn($s) => "$s=VALUES($s)",
                     $destColumnList
                 );
                 $updateColumns = implode(',', $updateColumnList);
@@ -722,7 +718,7 @@ class pdoIngestor extends aIngestor
 
             if ( $newTimeout > $currentTimeout ) {
                 $sql = sprintf('SET SESSION net_write_timeout = %d', $newTimeout);
-                $this->executeSqlList(array($sql), $this->sourceEndpoint);
+                $this->executeSqlList([$sql], $this->sourceEndpoint);
             }
         }
 
@@ -819,7 +815,7 @@ class pdoIngestor extends aIngestor
                     // select ...
                     // show profile
 
-                    $destRecord = array();
+                    $destRecord = [];
 
                     foreach ($destinationFields as $tableDestField => $sourceQueryField) {
                         $destRecord[$tableDestField] = $record[$sourceQueryField];
@@ -836,7 +832,7 @@ class pdoIngestor extends aIngestor
 
                 if (0 == $totalRecordsProcessed % self::NUM_RECORDS_PER_LOG_MSG) {
                     $this->logger->info(
-                        sprintf('%s: Processed %s records', get_class($this), number_format($totalRecordsProcessed))
+                        sprintf('%s: Processed %s records', static::class, number_format($totalRecordsProcessed))
                     );
                 }
 
@@ -868,10 +864,7 @@ class pdoIngestor extends aIngestor
                         catch (Exception $e) {
                             $this->logAndThrowException(
                                 $e->getMessage(),
-                                array(
-                                    'exception' => $e,
-                                    'sql' => $loadStatement
-                                )
+                                ['exception' => $e, 'sql' => $loadStatement]
                             );
                         }
                     }  // foreach ( $loadStatementList as $etlTableKey => $loadStatement )
@@ -912,10 +905,7 @@ class pdoIngestor extends aIngestor
                 catch (Exception $e) {
                     $this->logAndThrowException(
                         $e->getMessage(),
-                        array(
-                            'exception' => $e,
-                            'sql' => $loadStatement
-                        )
+                        ['exception' => $e, 'sql' => $loadStatement]
                     );
                 }
 
@@ -939,7 +929,7 @@ class pdoIngestor extends aIngestor
         $this->logger->info(
             sprintf(
                 '%s: Processed %s records (%s source records) in %ds',
-                get_class($this),
+                static::class,
                 number_format($totalRecordsProcessed),
                 number_format($numSourceRecordsProcessed),
                 microtime(true) - $ingestStart
@@ -985,21 +975,21 @@ class pdoIngestor extends aIngestor
                 $value = '\N';
             } elseif ( '' === $value ) {
                 $value = $this->stringEnclosure . '' . $this->stringEnclosure;
-            } elseif (strpos($value, $this->lineSeparator) !== false
-                || strpos($value, $this->fieldSeparator) !== false
-                || strpos($value, $this->stringEnclosure) !== false
-                || strpos($value, $this->escapeChar) !== false) {
+            } elseif (str_contains($value, $this->lineSeparator)
+                || str_contains($value, $this->fieldSeparator)
+                || str_contains($value, $this->stringEnclosure)
+                || str_contains($value, $this->escapeChar)) {
                 // if the string contains any special characters it is enclosed in the stringEnclosure
                 // occurences of the stringEnclosure and the escape character are escaped
 
-                $search = array($this->escapeChar, $this->stringEnclosure);
-                $replace = array($this->escapeChar . $this->escapeChar, $this->escapeChar . $this->stringEnclosure);
+                $search = [$this->escapeChar, $this->stringEnclosure];
+                $replace = [$this->escapeChar . $this->escapeChar, $this->escapeChar . $this->stringEnclosure];
 
                 $value = $this->stringEnclosure . str_replace($search, $replace, $value) . $this->stringEnclosure;
             }
         }
 
-        return array($srcRecord);
+        return [$srcRecord];
 
     }  // transform()
 
@@ -1033,7 +1023,7 @@ class pdoIngestor extends aIngestor
                 . $reflector->class . '::' . $reflector->name . '()'
             );
             return false;
-        } catch ( \ReflectionException $e ) {
+        } catch ( \ReflectionException ) {
             // Do nothing, transform() has not been overriden.
         }
 

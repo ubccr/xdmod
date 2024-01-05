@@ -15,7 +15,7 @@ class Mysql extends aRdbmsEndpoint implements iRdbmsEndpoint
      * It also allows us to implement auto-discovery.
      */
 
-    const ENDPOINT_NAME = 'mysql';
+    public const ENDPOINT_NAME = 'mysql';
 
     /**
      * @see iDataEndpoint::__construct()
@@ -36,11 +36,11 @@ class Mysql extends aRdbmsEndpoint implements iRdbmsEndpoint
 
     public function isSameServer(iDataEndpoint $cmp)
     {
-        $comparisonValues = array("hostname", "port");
+        $comparisonValues = ["hostname", "port"];
 
         // Interrogate the source and destination connections and compare host/port information
 
-        $criteria = array();
+        $criteria = [];
         foreach ( $comparisonValues as $value ) {
             $criteria[] = "Variable_name = '$value'";
         }
@@ -49,12 +49,12 @@ class Mysql extends aRdbmsEndpoint implements iRdbmsEndpoint
         $sourceResult = $this->getHandle()->query($sql);
         $destinationResult = $cmp->getHandle()->query($sql);
 
-        $sourceInfo = array();
+        $sourceInfo = [];
         foreach ( $sourceResult as $row ) {
             $sourceInfo[ $row['Variable_name'] ] = $row['Value'];
         }
 
-        $destinationInfo = array();
+        $destinationInfo = [];
         foreach ( $destinationResult as $row ) {
             $destinationInfo[ $row['Variable_name'] ] = $row['Value'];
         }
@@ -97,7 +97,7 @@ WHERE schema_name = :schema";
             $msg = "Schema name cannot be empty";
             $this->logAndThrowException($msg);
         } else {
-            $schemaName = ( 0 !== strpos($schemaName, $this->systemQuoteChar)
+            $schemaName = ( !str_starts_with($schemaName, $this->systemQuoteChar)
                             ? $this->quoteSystemIdentifier($schemaName)
                             : $schemaName );
         }
@@ -111,7 +111,7 @@ WHERE schema_name = :schema";
         } catch (\PdoException $e) {
             $this->logAndThrowException(
                 "Error creating schema '$schemaName'",
-                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+                ['exception' => $e, 'sql' => $sql, 'endpoint' => $this]
             );
         }
 

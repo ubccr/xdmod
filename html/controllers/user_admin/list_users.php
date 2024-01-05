@@ -10,20 +10,13 @@ $xda = new XDAdmin();
 
 $userListing = $xda->getUserListing($_POST['group']);
 
-$users = array();
+$users = [];
 
 foreach ($userListing as $currentUser) {
 
     $userData = explode(';', $currentUser['username']);
     if ($userData[0] !== 'Public User') {
-        $userEntry = array(
-            'id' => $currentUser['id'],
-            'username' => $userData[0],
-            'first_name' => $currentUser['first_name'],
-            'last_name' => $currentUser['last_name'],
-            'account_is_active' => $currentUser['account_is_active'],
-            'last_logged_in' => parseMicrotime($currentUser['last_logged_in'])
-        );
+        $userEntry = ['id' => $currentUser['id'], 'username' => $userData[0], 'first_name' => $currentUser['first_name'], 'last_name' => $currentUser['last_name'], 'account_is_active' => $currentUser['account_is_active'], 'last_logged_in' => parseMicrotime($currentUser['last_logged_in'])];
 
         $users[] = $userEntry;
     }

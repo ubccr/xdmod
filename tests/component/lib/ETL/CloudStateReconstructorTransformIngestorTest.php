@@ -13,86 +13,27 @@ use ETL\Configuration\EtlConfiguration;
  * Test Cloud State FSM
  */
 
-class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_TestCase
+class CloudStateReconstructorTransformIngestorTest extends \PHPUnit\Framework\TestCase
 {
-    private $event_start_res01 = array(
-        "resource_id" => 12,
-        "instance_id" => 2343,
-        "event_time_ts" => "1517936941.000000",
-        "event_type_id" => 2,
-        "start_event_id" => -1,
-        "end_time_ts" => -1,
-        "end_event_id" => -1
-    );
+    private $event_start_res01 = ["resource_id" => 12, "instance_id" => 2343, "event_time_ts" => "1517936941.000000", "event_type_id" => 2, "start_event_id" => -1, "end_time_ts" => -1, "end_event_id" => -1];
 
-    private $event_end_res01 = array(
-        "resource_id" => 12,
-        "instance_id" => 2343,
-        "event_time_ts" => "1518026941.000000",
-        "event_type_id" => 4,
-        "start_event_id" => -1,
-        "end_time_ts" => -1,
-        "end_event_id" => -1
-    );
+    private $event_end_res01 = ["resource_id" => 12, "instance_id" => 2343, "event_time_ts" => "1518026941.000000", "event_type_id" => 4, "start_event_id" => -1, "end_time_ts" => -1, "end_event_id" => -1];
 
-    private $event_end_res02 = array(
-        "resource_id" => 13,
-        "instance_id" => 2343,
-        "event_time_ts" => "1518026941.000000",
-        "event_type_id" => 4,
-        "start_event_id" => -1,
-        "end_time_ts" => -1,
-        "end_event_id" => -1
-    );
+    private $event_end_res02 = ["resource_id" => 13, "instance_id" => 2343, "event_time_ts" => "1518026941.000000", "event_type_id" => 4, "start_event_id" => -1, "end_time_ts" => -1, "end_event_id" => -1];
 
-    private $event_transform_res01 = array(
-        "resource_id" => 12,
-        "instance_id" => 2343,
-        "start_time_ts" => "1517936941.000000",
-        "start_event_id" => 2,
-        "end_time_ts" => "1518026941.000000",
-        "end_event_id" => 4
-    );
+    private $event_transform_res01 = ["resource_id" => 12, "instance_id" => 2343, "start_time_ts" => "1517936941.000000", "start_event_id" => 2, "end_time_ts" => "1518026941.000000", "end_event_id" => 4];
 
-    private $event_err_res01 = array(
-        "resource_id" => 12,
-        "instance_id" => -1,
-        "event_time_ts" => "1517936941.000000",
-        "event_type_id" => 29,
-        "start_event_id" => -1,
-        "end_time_ts" => -1,
-        "end_event_id" => -1
-    );
+    private $event_err_res01 = ["resource_id" => 12, "instance_id" => -1, "event_time_ts" => "1517936941.000000", "event_type_id" => 29, "start_event_id" => -1, "end_time_ts" => -1, "end_event_id" => -1];
 
-    private $event_zero = array(
-        "resource_id" => 12,
-        "instance_id" => 0,
-        "event_time_ts" => 0,
-        "event_type_id" => 0,
-        "start_event_id" => 0,
-        "end_time_ts" => 0,
-        "end_event_id" => 0
-    );
+    private $event_zero = ["resource_id" => 12, "instance_id" => 0, "event_time_ts" => 0, "event_type_id" => 0, "start_event_id" => 0, "end_time_ts" => 0, "end_event_id" => 0];
 
-    private $event_flush = array(
-        "resource_id" => 12,
-        "instance_id" => 2343,
-        "start_time_ts" => "1517936941.000000",
-        "start_event_id" => 2,
-        "end_time_ts" => "1517936941.000000",
-        "end_event_id" => 4
-    );
+    private $event_flush = ["resource_id" => 12, "instance_id" => 2343, "start_time_ts" => "1517936941.000000", "start_event_id" => 2, "end_time_ts" => "1517936941.000000", "end_event_id" => 4];
 
-    private $options_array = array(
-        "name" => "cloud-state-action",
-        "class" => "CloudStateReconstructorTransformIngestor",
-        "destination" => "modw_test",
-        "definition_file" => ""
-    );
+    private $options_array = ["name" => "cloud-state-action", "class" => "CloudStateReconstructorTransformIngestor", "destination" => "modw_test", "definition_file" => ""];
 
     private $fsm;
 
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         $configFile = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/xdmod_etl_config_8.0.0.json');
 
@@ -103,10 +44,11 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
         $conf = EtlConfiguration::factory($configFile);
 
         $this->fsm = new CloudStateReconstructorTransformIngestor($options, $conf);
+        parent::__construct($name, $data, $dataName);
     }
 
     // happy path
-    public function testValidStartEnd()
+    public function testValidStartEnd(): void
     {
         $this->fsm->transformHelper($this->event_start_res01);
         $event = $this->fsm->transformHelper($this->event_end_res01);
@@ -115,19 +57,19 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
     }
 
     // what happens when we hit an invalid start event
-    public function testInvalidStart()
+    public function testInvalidStart(): void
     {
-        $this->assertEquals(array(), $this->fsm->transformHelper($this->event_err_res01));
+        $this->assertEquals([], $this->fsm->transformHelper($this->event_err_res01));
     }
 
     // what happens when we hit the dummy row
-    public function testZeroEvent()
+    public function testZeroEvent(): void
     {
-        $this->assertEquals(array(), $this->fsm->transformHelper($this->event_zero));
+        $this->assertEquals([], $this->fsm->transformHelper($this->event_zero));
     }
 
     // what happens when we hit a valid start event and then the dummy row
-    public function testValidAndZeroEvent()
+    public function testValidAndZeroEvent(): void
     {
         $this->fsm->transformHelper($this->event_start_res01);
         $event = $this->fsm->transformHelper($this->event_zero);
@@ -136,7 +78,7 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
     }
 
     // what happens when you hit a valid end event from another resource
-    public function testTwoResourceEvents()
+    public function testTwoResourceEvents(): void
     {
         $this->fsm->transformHelper($this->event_start_res01);
         $event = $this->fsm->transformHelper($this->event_end_res02);

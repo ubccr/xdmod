@@ -3,19 +3,20 @@
 namespace UnitTests\DataWarehouse\Export;
 
 use DataWarehouse\Export\FileWriter\FileWriterFactory;
-use PHPUnit_Framework_TestCase;
+use Exception;
+use \PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\TestFiles;
 
 /**
  * Test data warehouse export file.
  */
-class FileWriterTest extends PHPUnit_Framework_TestCase
+class FileWriterTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test artifacts path.
      * @var string
      */
-    const TEST_GROUP = 'unit/data_warehouse/export/file_writer/factory';
+    public const TEST_GROUP = 'unit/data_warehouse/export/file_writer/factory';
 
     /**
      * @var \DataWarehouse\Export\FileWriter\FileWriterFactory
@@ -30,7 +31,7 @@ class FileWriterTest extends PHPUnit_Framework_TestCase
     /**
      * Create file writer factory.
      */
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$fileWriterFactory = new FileWriterFactory();
     }
@@ -51,21 +52,23 @@ class FileWriterTest extends PHPUnit_Framework_TestCase
      *
      * @dataProvider fileWriterCreationProvider
      */
-    public function testFileWriterCreation($format, $className)
+    public function testFileWriterCreation($format, $className): void
     {
         $fileWriter = self::$fileWriterFactory->createFileWriter($format, '/dev/null');
-        $this->assertInstanceOf('\DataWarehouse\Export\FileWriter\iFileWriter', $fileWriter, 'File writer implements iFileWriter interface');
+        $this->assertInstanceOf(\DataWarehouse\Export\FileWriter\iFileWriter::class, $fileWriter, 'File writer implements iFileWriter interface');
         $this->assertInstanceOf($className, $fileWriter);
     }
 
     /**
      * Test creating an invalid file writer format.
      *
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp /Unsupported format/
+     *
+     *
      */
-    public function testFileWriterFactoryException()
+    public function testFileWriterFactoryException(): void
     {
+        $this->expectExceptionMessageMatches("/Unsupported format/");
+        $this->expectException(Exception::class);
         self::$fileWriterFactory->createFileWriter('foo', '/dev/null');
     }
 

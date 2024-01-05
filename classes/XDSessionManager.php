@@ -78,15 +78,7 @@ class XDSessionManager
             )
         ";
 
-        $pdo->execute($record_query, array(
-            ':session_token' => $session_token,
-            ':session_id'    => $session_id,
-            ':user_id'       => $user_id,
-            ':ip_address'    => $ip_address,
-            ':user_agent'    => $user_agent,
-            ':init_time'     => $init_time,
-            ':last_active'   => $init_time,
-        ));
+        $pdo->execute($record_query, [':session_token' => $session_token, ':session_id'    => $session_id, ':user_id'       => $user_id, ':ip_address'    => $ip_address, ':user_agent'    => $user_agent, ':init_time'     => $init_time, ':last_active'   => $init_time]);
 
         $_SESSION['xdInit'] = $init_time;
         $_SESSION['xdUser'] = $user_id;
@@ -101,7 +93,7 @@ class XDSessionManager
      *
      * @param string $token User's session token.
      */
-    public static function logoutUser($token = "")
+    public static function logoutUser($token = ""): void
     {
         if (session_status() === PHP_SESSION_NONE) {
             \xd_security\start_session();
@@ -125,12 +117,7 @@ class XDSessionManager
                     AND init_time = :init_time
             ";
             $pdo = DB::factory('database');
-            $pdo->execute($logout_query, array(
-                ':session_token' => $token,
-                ':session_id' => $session_id,
-                ':ip_address' => $ip_address,
-                ':init_time' => $_SESSION['xdInit'],
-            ));
+            $pdo->execute($logout_query, [':session_token' => $token, ':session_id' => $session_id, ':ip_address' => $ip_address, ':init_time' => $_SESSION['xdInit']]);
         }
 
         // Drop the session so that any REST calls requiring
@@ -141,7 +128,7 @@ class XDSessionManager
         try {
             $auth = new Authentication\SAML\XDSamlAuthentication();
             $auth->logout();
-        } catch (InvalidArgumentException $ex) {
+        } catch (InvalidArgumentException) {
           // This will catch when apache or nginx have been set up
           // to to have an alternate saml configuration directory
           // that does not exist, so we ignore it as saml isnt set
@@ -156,7 +143,7 @@ class XDSessionManager
      */
     private static function getMicrotime()
     {
-        list($usec, $sec) = explode(' ', microtime());
+        [$usec, $sec] = explode(' ', microtime());
         return $usec + $sec;
     }
 }

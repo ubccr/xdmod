@@ -62,7 +62,7 @@ class Shredder
      *
      * @var array
      */
-    protected static $columnMap = array();
+    protected static $columnMap = [];
 
     /**
      * Logger object.
@@ -125,14 +125,14 @@ class Shredder
      *
      * @var array
      */
-    protected static $dataMap = array();
+    protected static $dataMap = [];
 
     /**
      * Data from jobs that contain errors.
      *
      * @var array
      */
-    protected $jobErrors = array();
+    protected $jobErrors = [];
 
     /**
      * Protected constructor to enforce factory pattern.
@@ -144,7 +144,7 @@ class Shredder
         $this->db     = $db;
         $this->logger = Log::singleton('null');
 
-        $classPath = explode('\\', strtolower(get_class($this)));
+        $classPath = explode('\\', strtolower(static::class));
         $this->format = $classPath[count($classPath) - 1];
 
         $tableName   = static::$tableName;
@@ -185,7 +185,7 @@ class Shredder
      *
      * @param LoggerInterface $logger a Monolog Logger instance.
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -195,7 +195,7 @@ class Shredder
      *
      * @param string $hostFilter host regex filter.
      */
-    public function setHostFilter($hostFilter)
+    public function setHostFilter($hostFilter): void
     {
         $this->logger->debug("Setting host filter to '$hostFilter'");
 
@@ -260,7 +260,7 @@ class Shredder
      *
      * @param string $resource The name of the resource.
      */
-    public function setResource($resource)
+    public function setResource($resource): void
     {
         $this->logger->debug("Setting resource to '$resource'");
 
@@ -299,7 +299,7 @@ class Shredder
      *
      * @param string $columnName
      */
-    public function setPiColumn($columnName)
+    public function setPiColumn($columnName): void
     {
         static::$columnMap['pi_name'] = $columnName;
     }
@@ -348,10 +348,10 @@ class Shredder
     {
         $files = scandir($dir);
 
-        $paths = array();
+        $paths = [];
 
         foreach ($files as $file) {
-            if (strpos($file, '.') === 0) {
+            if (str_starts_with($file, '.')) {
                 $this->logger->debug("Skipping hidden file '$file'");
                 continue;
             }
@@ -421,12 +421,7 @@ class Shredder
                     // Ignore duplicate key errors.
                     if ($e->getCode() == 23000) {
                         $msg = 'Skipping duplicate data: ' . $e->getMessage();
-                        $this->logger->debug(array(
-                            'message'     => $msg,
-                            'file'        => $file,
-                            'line_number' => $lineNumber,
-                            'line'        => $line,
-                        ));
+                        $this->logger->debug(['message'     => $msg, 'file'        => $file, 'line_number' => $lineNumber, 'line'        => $line]);
                         $duplicateCount++;
                         continue;
                     } else {
@@ -478,7 +473,7 @@ class Shredder
      *
      * @param string $line A single line from a log file.
      */
-    public function shredLine($line)
+    public function shredLine($line): void
     {
         throw new Exception('Shredder subclass must implement shredLine');
     }
@@ -523,7 +518,7 @@ class Shredder
     /**
      * Truncate the shredder data table.
      */
-    public function truncate()
+    public function truncate(): void
     {
         $tableName = static::$tableName;
         $this->logger->info("Truncating table '$tableName'");
@@ -563,11 +558,11 @@ class Shredder
         $ingestor = new PDODBMultiIngestor(
             $this->db,
             $this->db,
-            array(),
             $sourceQuery,
             'shredded_job',
+            [],
             $insertFields,
-            array(),
+            [],
             $deleteStatement
         );
 
@@ -586,7 +581,7 @@ class Shredder
      */
     protected function getIngestorQuery($ingestAll)
     {
-        $columns = array();
+        $columns = [];
 
         foreach (static::$columnMap as $key => $value) {
             if ($key === $value) {
@@ -636,7 +631,7 @@ class Shredder
             FROM shredded_job
         ";
 
-        $params = array();
+        $params = [];
 
         if ($this->hasResource()) {
             $sql .= ' WHERE resource_name = :resource';
@@ -646,7 +641,7 @@ class Shredder
         $this->logger->info('Querying for maximum end date');
         $this->logger->debug('Query: ' . $sql);
 
-        list($row) = $this->db->query($sql, $params);
+        [$row] = $this->db->query($sql, $params);
 
         return $row['max_date'];
     }
@@ -668,7 +663,7 @@ class Shredder
             FROM shredded_job
         ";
 
-        $params = array();
+        $params = [];
 
         if ($this->hasResource()) {
             $sql .= ' WHERE resource_name = :resource';
@@ -678,7 +673,7 @@ class Shredder
         $this->logger->info('Querying for maximum end datetime');
         $this->logger->debug('Query: ' . $sql);
 
-        list($row) = $this->db->query($sql, $params);
+        [$row] = $this->db->query($sql, $params);
 
         return $row['max_datetime'];
     }
@@ -691,19 +686,11 @@ class Shredder
      */
     protected function checkJobData($input, array &$data)
     {
-        $keys = array(
-            'job_id',
-            'start_time',
-            'end_time',
-            'submission_time',
-            'walltime',
-            'nodes',
-            'cpus',
-        );
+        $keys = ['job_id', 'start_time', 'end_time', 'submission_time', 'walltime', 'nodes', 'cpus'];
 
         // Create array with the generic keys used in $dataMap.
         $dataMap = static::$dataMap;
-        $mappedData = array();
+        $mappedData = [];
         foreach ($keys as $key) {
             if (isset($dataMap[$key])) {
                 if (!array_key_exists($dataMap[$key], $data)) {
@@ -716,10 +703,10 @@ class Shredder
             }
         }
 
-        $errorMessages = array();
+        $errorMessages = [];
 
         if (isset($dataMap['start_time']) && isset($dataMap['end_time'])) {
-            list($valid, $messages) = $this->checkJobTimes(
+            [$valid, $messages] = $this->checkJobTimes(
                 $mappedData['start_time'],
                 $mappedData['end_time'],
                 $mappedData['walltime']
@@ -736,18 +723,14 @@ class Shredder
                     );
 
                     if ($times !== null) {
-                        list(
-                            $data[$dataMap['start_time']],
-                            $data[$dataMap['end_time']],
-                            $data[$dataMap['walltime']]
-                        ) = $times;
+                        [$data[$dataMap['start_time']], $data[$dataMap['end_time']], $data[$dataMap['walltime']]] = $times;
                     }
                 }
             }
         }
 
         if (isset($dataMap['nodes']) && isset($dataMap['cpus'])) {
-            list($valid, $messages) = $this->checkNodesAndCpus(
+            [$valid, $messages] = $this->checkNodesAndCpus(
                 $mappedData['nodes'],
                 $mappedData['cpus']
             );
@@ -757,11 +740,7 @@ class Shredder
         }
 
         if (count($errorMessages) > 0) {
-            $this->logJobError(array(
-                'job_id'   => $mappedData['job_id'],
-                'input'    => $input,
-                'messages' => $errorMessages,
-            ));
+            $this->logJobError(['job_id'   => $mappedData['job_id'], 'input'    => $input, 'messages' => $errorMessages]);
         }
     }
 
@@ -779,13 +758,9 @@ class Shredder
     protected function checkJobTimes($startTime, $endTime, $walltime)
     {
         $valid = true;
-        $errorMessages = array();
+        $errorMessages = [];
 
-        $valueForTime = array(
-            'start time' => $startTime,
-            'end time'   => $endTime,
-            'wall time'  => $walltime,
-        );
+        $valueForTime = ['start time' => $startTime, 'end time'   => $endTime, 'wall time'  => $walltime];
         foreach ($valueForTime as $time => $value) {
             if ($value === null) {
                 $this->logger->debug("Missing $time.");
@@ -824,7 +799,7 @@ class Shredder
             $valid = false;
         }
 
-        return array($valid, $errorMessages);
+        return [$valid, $errorMessages];
     }
 
     /**
@@ -839,11 +814,7 @@ class Shredder
      */
     protected function fixJobTimes($startTime, $endTime, $walltime)
     {
-        $this->logger->debug('Attempting to fix job times.', array(
-            'start_time' => $startTime,
-            'end_time'   => $endTime,
-            'walltime'   => $walltime,
-        ));
+        $this->logger->debug('Attempting to fix job times.', ['start_time' => $startTime, 'end_time'   => $endTime, 'walltime'   => $walltime]);
 
         // Must have at least two of the three values to determine the
         // third.
@@ -853,12 +824,7 @@ class Shredder
         if ($walltime === null) { $invalidCount++; }
 
         if ($invalidCount > 1) {
-            $this->logger->err(array(
-                'message'    => 'Failed to correct job times',
-                'start_time' => $startTime,
-                'end_time'   => $endTime,
-                'walltime'   => $walltime,
-            ));
+            $this->logger->err(['message'    => 'Failed to correct job times', 'start_time' => $startTime, 'end_time'   => $endTime, 'walltime'   => $walltime]);
 
             return null;
         }
@@ -886,7 +852,7 @@ class Shredder
             $this->logger->debug("Setting start time to $startTime");
         }
 
-        return array($startTime, $endTime, $walltime);
+        return [$startTime, $endTime, $walltime];
     }
 
     /**
@@ -902,7 +868,7 @@ class Shredder
     protected function checkNodesAndCpus($nodes, $cpus)
     {
         $valid = true;
-        $errorMessages = array();
+        $errorMessages = [];
 
         if ($nodes == 0) {
             $this->logger->debug('Found 0 node count.');
@@ -923,7 +889,7 @@ class Shredder
             $valid = false;
         }
 
-        return array($valid, $errorMessages);
+        return [$valid, $errorMessages];
     }
 
     /**
@@ -936,10 +902,7 @@ class Shredder
      */
     protected function fixNodesAndCpus($nodes, $cpus)
     {
-        $this->logger->debug('Attempting to node and cpu counts.', array(
-            'nodes' => $nodes,
-            'cpus'  => $cpus,
-        ));
+        $this->logger->debug('Attempting to node and cpu counts.', ['nodes' => $nodes, 'cpus'  => $cpus]);
 
         if ($nodes == 0 && $cpus == 0) {
             $nodes = 1;
@@ -953,13 +916,11 @@ class Shredder
             $this->logger->debug("Setting cpu count to $cpus");
         }
 
-        return array($nodes, $cpus);
+        return [$nodes, $cpus];
     }
 
     /**
      * Log a job data error.
-     *
-     * @param array $jobInfo
      */
     protected function logJobError(array $jobInfo)
     {
@@ -981,7 +942,7 @@ class Shredder
      *
      * @param string $file The path of a file to write to.
      */
-    public function writeJobErrors($file)
+    public function writeJobErrors($file): void
     {
         $this->logger->debug("Opening file '$file'");
         $fh = fopen($file, 'w+');
@@ -1043,10 +1004,7 @@ class Shredder
 
         $file = implode(
             DIRECTORY_SEPARATOR,
-            array(
-                CONFIG_DIR,
-                'resources.json'
-            )
+            [CONFIG_DIR, 'resources.json']
         );
 
         throw new Exception("No config found for '$name' in '$file'");

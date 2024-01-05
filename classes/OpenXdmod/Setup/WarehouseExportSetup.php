@@ -17,7 +17,7 @@ class WarehouseExportSetup extends SetupItem
      *
      * @see \OpenXdmod\Setup\SetupItem::handle()
      */
-    public function handle()
+    public function handle(): void
     {
         $this->console->displaySectionHeader('Data Warehouse Batch Export');
         $newSettings = $this->promptForSettings($this->loadIniConfig('portal_settings'));
@@ -102,7 +102,7 @@ MSG
      *
      * @param string $dir Path of the export directory.
      */
-    private function checkExportDirectory($dir)
+    private function checkExportDirectory($dir): void
     {
         // Desired attributes.
         $desiredPerms = 0570;

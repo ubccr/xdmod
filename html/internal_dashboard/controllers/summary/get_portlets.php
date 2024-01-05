@@ -13,13 +13,13 @@ try {
         CONFIG_DIR
     );
 
-    $portlets = array();
+    $portlets = [];
 
     foreach ($config['portlets'] as $portlet) {
 
         // Add an empty config if none is found.
         if (!isset($portlet['config'])) {
-            $portlet['config'] = array();
+            $portlet['config'] = [];
         }
 
         $portlets[] = $portlet;
@@ -31,31 +31,15 @@ try {
 
         if ($logSummary->getProcessStartRowId() === null) { continue; }
 
-        $portlets[] = array(
-            'class'  => 'XDMoD.Log.SummaryPortlet',
-            'config' => array(
-                'ident' => $log['ident'],
-                'title' => $log['title'],
-                'linkPath' => array(
-                    'log-tab-panel',
-                    $log['ident'] . '-log-panel',
-                ),
-            ),
-        );
+        $portlets[] = ['class'  => 'XDMoD.Log.SummaryPortlet', 'config' => ['ident' => $log['ident'], 'title' => $log['title'], 'linkPath' => ['log-tab-panel', $log['ident'] . '-log-panel']]];
     }
 
-    $returnData = array(
-        'success'  => true,
-        'response' => $portlets,
-    );
+    $returnData = ['success'  => true, 'response' => $portlets];
 
     $returnData['count'] = count($returnData['response']);
 
 } catch (Exception $e) {
-    $returnData = array(
-        'success' => false,
-        'message' => $e->getMessage(),
-    );
+    $returnData = ['success' => false, 'message' => $e->getMessage()];
 }
 
 echo json_encode($returnData);

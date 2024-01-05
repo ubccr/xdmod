@@ -4,12 +4,12 @@
    // they should not need to subsequently log into the Dashboard via the prompt.
    // The logic below allows for automatic log-on.
    
-   require_once dirname(__FILE__).'/../../configuration/linker.php';
+   require_once __DIR__.'/../../configuration/linker.php';
 
    \xd_security\start_session();
-   xd_security\enforceUserRequirements(array(STATUS_LOGGED_IN, STATUS_MANAGER_ROLE));
+   xd_security\enforceUserRequirements([STATUS_LOGGED_IN, STATUS_MANAGER_ROLE]);
    
-   $response = array('action' => 'dashboard_launch');
+   $response = ['action' => 'dashboard_launch'];
    
    try {
    
@@ -33,7 +33,7 @@
       //       which would allow this block to be removed.
       throw $see;
    }
-   catch(Exception $e) {
+   catch(Exception) {
       
       unset($_SESSION['xdDashboardUser']);
       $response['success'] = false;

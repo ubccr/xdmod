@@ -30,14 +30,14 @@
 class DBObject
 {
 
-    protected $PROP_MAP = array();
+    protected $PROP_MAP = [];
 
     /**
      * Default Constructor
      *
      * @param array $options the options used to configure this instance.
      **/
-    public function __construct($options = array())
+    public function __construct($options = [])
     {
         $properties = $this->PROP_MAP;
 

@@ -4,12 +4,10 @@ namespace DataWarehouse\Data;
 
 class RawDataset
 {
-    private $query;
     private $query_results;
 
-    public function __construct(&$query, $user)
+    public function __construct(private $query, $user)
     {
-        $this->query = $query;
         $this->query_results = null;
         $this->userType = $user->getUserType();
     }
@@ -23,7 +21,7 @@ class RawDataset
         return $tmpdate->format("Y-m-d\TH:i:s T");
     }
 
-    private function fetchResults()
+    private function fetchResults(): void
     {
         if ($this->query_results === null) {
             $stmt = $this->query->getRawStatement();
@@ -48,14 +46,14 @@ class RawDataset
         $this->fetchResults();
 
         if (count($this->query_results) == 0) {
-            return array();
+            return [];
         }
 
         $docs = $this->query->getColumnDocumentation();
 
-        $output = array();
+        $output = [];
 
-        $redactlist = array();
+        $redactlist = [];
 
         foreach ($this->query_results[0] as $key => $value) {
 
@@ -74,7 +72,7 @@ class RawDataset
                 }
                 $kdoc = $docs[$key]['documentation'];
                 $hname = $docs[$key]['name'];
-                $group = isset($docs[$key]['group']) ? $docs[$key]['group'] : 'Other';
+                $group = $docs[$key]['group'] ?? 'Other';
             } else {
                 $units = 'TODO';
                 $kdoc =  'TODO';
@@ -105,20 +103,13 @@ class RawDataset
                 $value = "&lt;REDACTED&gt;";
             }
 
-            $output[] = array(
-                'key' => $hname,
-                'value' => $value,
-                'error' => $errorMsg,
-                'units' => $units,
-                'group' => $group,
-                'documentation' => $kdoc
-            );
+            $output[] = ['key' => $hname, 'value' => $value, 'error' => $errorMsg, 'units' => $units, 'group' => $group, 'documentation' => $kdoc];
         }
 
         if (count($redactlist) > 0) {
             foreach ($output as &$datum) {
                 foreach ($redactlist as $redact) {
-                    if (false !== strpos($datum['value'], $redact)) {
+                    if (str_contains($datum['value'], $redact)) {
                         $datum['value'] = '&lt;REDACTED&gt;';
                         break;
                     }

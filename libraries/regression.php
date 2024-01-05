@@ -41,7 +41,7 @@ function linear_regression($x, $y) {
   $b = ($y_sum - ($m * $x_sum)) / $n;
   
   // calcuate r = coeff of correlation
-  $den = (sqrt(($n * ($xx_sum)) - pow($x_sum, 2)) * sqrt(($n * $yy_sum) - pow($y_sum, 2)));
+  $den = (sqrt(($n * ($xx_sum)) - $x_sum ** 2) * sqrt(($n * $yy_sum) - $y_sum ** 2));
   if($den != 0)  
   {
     $r = (($n * $xy_sum) - ($x_sum * $y_sum)) / $den;
@@ -58,9 +58,9 @@ function linear_regression($x, $y) {
   {
     $r = 0.0;
   }
-  $r_squared = pow($r,2);
+  $r_squared = $r ** 2;
 
   // return result
-  return array($m, $b, $r, $r_squared);
+  return [$m, $b, $r, $r_squared];
 
 }

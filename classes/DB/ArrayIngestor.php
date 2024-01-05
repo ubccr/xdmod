@@ -11,40 +11,36 @@ class ArrayIngestor implements Ingestor
 {
     protected $_dest_db = null;
 
-    protected $_source_data = array();
-    protected $_insert_table = null;
+    protected $_source_data = [];
     protected $_insert_fields = null;
 
-    protected $_post_ingest_update_statements = array();
-    protected $_delete_statement = null;
+    protected $_post_ingest_update_statements = [];
     protected $_count_statement = null;
 
     protected $_logger = null;
 
     function __construct(
         iDatabase $dest_db,
-        array $source_data = array(),
-        $insert_table,
-        array $insert_fields = array(),
-        array $post_ingest_update_statements = array(),
-        $delete_statement = null,
+        protected $_insert_table,
+        array $source_data = [],
+        array $insert_fields = [],
+        array $post_ingest_update_statements = [],
+        protected $_delete_statement = null,
         $count_statement = null
     ) {
         $this->_dest_db =  $dest_db;
 
         $this->_source_data   = $source_data;
-        $this->_insert_table  = $insert_table;
         $this->_insert_fields = $insert_fields;
 
         $this->_post_ingest_update_statements = $post_ingest_update_statements;
-        $this->_delete_statement              = $delete_statement;
 
         $this->_logger = Log::singleton('xdconsole');
     }
 
-    public function ingest()
+    public function ingest(): void
     {
-        $this->_logger->info('Started ingestion for class: ' . get_class($this));
+        $this->_logger->info('Started ingestion for class: ' . static::class);
 
         $time_start = microtime(true);
 
@@ -75,11 +71,7 @@ class ArrayIngestor implements Ingestor
             try {
                 $destStatementPrepared->execute($srcRow);
             } catch (PDOException $e) {
-                $this->_logger->err(array(
-                    'message'    => $e->getMessage(),
-                    'stacktrace' => $e->getTraceAsString(),
-                    'source_row' => json_encode($srcRow),
-                ));
+                $this->_logger->err(['message'    => $e->getMessage(), 'stacktrace' => $e->getTraceAsString(), 'source_row' => json_encode($srcRow)]);
             }
             $rowsAffected += $destStatementPrepared->rowCount();
         }
@@ -89,10 +81,7 @@ class ArrayIngestor implements Ingestor
                 $this->_logger->debug("Post ingest update: $updateStatement");
                 $this->_dest_db->handle()->prepare($updateStatement)->execute();
             } catch (PDOException $e) {
-                $this->_logger->err(array(
-                    'message'    => $e->getMessage(),
-                    'stacktrace' => $e->getTraceAsString(),
-                ));
+                $this->_logger->err(['message'    => $e->getMessage(), 'stacktrace' => $e->getTraceAsString()]);
                 $this->_dest_db->handle()->rollback();
                 return;
             }
@@ -103,18 +92,10 @@ class ArrayIngestor implements Ingestor
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->_logger->notice(array(
-            'message'          => 'Finished ingestion',
-            'class'            => get_class($this),
-            'records_examined' => $sourceRows,
-            'records_loaded'   => $rowsAffected,
-            'start_time'       => $time_start,
-            'end_time'         => $time_end,
-            'duration'         => number_format($time, 2) . ' s',
-        ));
+        $this->_logger->notice(['message'          => 'Finished ingestion', 'class'            => static::class, 'records_examined' => $sourceRows, 'records_loaded'   => $rowsAffected, 'start_time'       => $time_start, 'end_time'         => $time_end, 'duration'         => number_format($time, 2) . ' s']);
     }
 
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->_logger = $logger;
     }

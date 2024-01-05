@@ -12,11 +12,7 @@ try {
         \xd_response\presentError('user_does_not_exist');
     }
 
-    $returnData = array(
-        'success' => true,
-        'message' => '',
-        'eligible' => true
-    );
+    $returnData = ['success' => true, 'message' => '', 'eligible' => true];
 
     $activeUser = \xd_security\getLoggedInUser();
     $organization = $activeUser->getActiveOrganization();

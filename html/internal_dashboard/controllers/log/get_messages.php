@@ -16,8 +16,8 @@ try {
         FROM log_table
     ';
 
-    $clauses = array();
-    $params = array();
+    $clauses = [];
+    $params = [];
 
     if (isset($_REQUEST['ident'])) {
         $clauses[] = 'ident = ?';
@@ -26,7 +26,7 @@ try {
 
     if (isset($_REQUEST['logLevels']) && is_array($_REQUEST['logLevels'])) {
         $clauses[] = 'priority IN (' . implode(',',
-            array_pad(array(), count($_REQUEST['logLevels']), '?')) . ')';
+            array_pad([], count($_REQUEST['logLevels']), '?')) . ')';
         $params = array_merge($params, $_REQUEST['logLevels']);
     }
 
@@ -72,10 +72,7 @@ try {
         );
     }
 
-    $returnData = array(
-        'success'  => true,
-        'response' => $pdo->query($sql, $params),
-    );
+    $returnData = ['success'  => true, 'response' => $pdo->query($sql, $params)];
 
     $sql = 'SELECT COUNT(*) AS count FROM log_table';
 
@@ -83,15 +80,12 @@ try {
         $sql .= ' WHERE ' . implode(' AND ', $clauses);
     }
 
-    list($countRow) = $pdo->query($sql, $params);
+    [$countRow] = $pdo->query($sql, $params);
 
     $returnData['count'] = $countRow['count'];
 
 } catch (Exception $e) {
-    $returnData = array(
-        'success' => false,
-        'message' => $e->getMessage(),
-    );
+    $returnData = ['success' => false, 'message' => $e->getMessage()];
 }
 
 echo json_encode($returnData);

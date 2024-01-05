@@ -47,12 +47,9 @@ class ReportBuilderTest extends BaseTest
      */
     protected $verbose;
 
-    private static $DEFAULT_EXPECTED = array(
-        'content_type' => 'application/json',
-        'http_code' => 200
-    );
+    private static $DEFAULT_EXPECTED = ['content_type' => 'application/json', 'http_code' => 200];
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->verbose = getenv('TEST_VERBOSE');
         if (!isset($this->verbose)) {
@@ -63,49 +60,27 @@ class ReportBuilderTest extends BaseTest
 
     public function provideDlReportInputValidation()
     {
-        $tests = array();
+        $tests = [];
 
-        $params = array(
-            'operation' => 'download_report',
-            'report_loc' => '/etc/shadow',
-            'format' => 'pdf'
-        );
-        $response =  array(
-            'success' => false,
-            'message' => 'Invalid filename'
-        );
+        $params = ['operation' => 'download_report', 'report_loc' => '/etc/shadow', 'format' => 'pdf'];
+        $response =  ['success' => false, 'message' => 'Invalid filename'];
 
-        $tests[] = array($params, $response);
+        $tests[] = [$params, $response];
 
-        $params = array(
-            'operation' => 'download_report',
-            'report_loc' => '3-1614908275-PVe1U',
-            'format' => 'rar'
-        );
+        $params = ['operation' => 'download_report', 'report_loc' => '3-1614908275-PVe1U', 'format' => 'rar'];
         $response = 'Invalid format specified';
 
-        $tests[] = array($params, $response);
+        $tests[] = [$params, $response];
 
-        $params = array(
-            'operation' => 'download_report'
-        );
-        $response = array(
-            'success' => false,
-            'message' => '\'report_loc\' not specified.'
-        );
+        $params = ['operation' => 'download_report'];
+        $response = ['success' => false, 'message' => '\'report_loc\' not specified.'];
 
-        $tests[] = array($params, $response);
+        $tests[] = [$params, $response];
 
-        $params = array(
-            'operation' => 'download_report',
-            'report_loc' => '322323323232'
-        );
-        $response = array(
-            'success' => false,
-            'message' => '\'format\' not specified.'
-        );
+        $params = ['operation' => 'download_report', 'report_loc' => '322323323232'];
+        $response = ['success' => false, 'message' => '\'format\' not specified.'];
 
-        $tests[] = array($params, $response);
+        $tests[] = [$params, $response];
 
         return $tests;
     }
@@ -115,7 +90,7 @@ class ReportBuilderTest extends BaseTest
      * Checks that input validation is performed on the dowload_report
      * endpoint
      */
-    public function testDownloadReportInputValidation($params, $expected)
+    public function testDownloadReportInputValidation($params, $expected): void
     {
         $this->helper->authenticate('usr');
         $data = $this->helper->get('/controllers/report_builder.php', $params);
@@ -139,10 +114,9 @@ class ReportBuilderTest extends BaseTest
 
     /**
      * @dataProvider provideEnumAvailableCharts
-     * @param array $options
      * @throws \Exception
      */
-    public function testEnumAvailableCharts(array $options)
+    public function testEnumAvailableCharts(array $options): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -152,19 +126,14 @@ class ReportBuilderTest extends BaseTest
         $operation = 'enum_available_charts';
 
         $user = $options['user'];
-        $expected = isset($options['expected']) ? $options['expected'] : self::$DEFAULT_EXPECTED;
-        $output = isset($options['output']) ? $options['output'] : array(
-            'name' => $user . "_$operation",
-            'extension' => '.json'
-        );
+        $expected = $options['expected'] ?? self::$DEFAULT_EXPECTED;
+        $output = $options['output'] ?? ['name' => $user . "_$operation", 'extension' => '.json'];
 
         if ($user !== 'pub') {
             $this->helper->authenticate($user);
         }
 
-        $params = array(
-            'operation' => $operation
-        );
+        $params = ['operation' => $operation];
 
         $response = $this->helper->post("/controllers/report_builder.php", null, $params);
 
@@ -200,10 +169,9 @@ class ReportBuilderTest extends BaseTest
 
     /**
      * @dataProvider provideEnumReports
-     * @param array $options
      * @throws \Exception
      */
-    public function testEnumReports(array $options)
+    public function testEnumReports(array $options): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -213,19 +181,14 @@ class ReportBuilderTest extends BaseTest
         $operation = 'enum_reports';
 
         $user = $options['user'];
-        $expected = isset($options['expected']) ? $options['expected'] : self::$DEFAULT_EXPECTED;
-        $output = isset($options['output']) ? $options['output'] : array(
-            'name' => $user . "_$operation",
-            'extension' => '.json'
-        );
+        $expected = $options['expected'] ?? self::$DEFAULT_EXPECTED;
+        $output = $options['output'] ?? ['name' => $user . "_$operation", 'extension' => '.json'];
 
         if ($user !== 'pub') {
             $this->helper->authenticate($user);
         }
 
-        $params = array(
-            'operation' => $operation
-        );
+        $params = ['operation' => $operation];
 
         $response = $this->helper->post("/controllers/report_builder.php", null, $params);
 
@@ -262,10 +225,9 @@ class ReportBuilderTest extends BaseTest
 
     /**
      * @dataProvider provideCreateReport
-     * @param array $options
      * @throws \Exception
      */
-    public function testCreateReport(array $options)
+    public function testCreateReport(array $options): void
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -282,10 +244,10 @@ class ReportBuilderTest extends BaseTest
 
         $this->log("Logged in as $user");
 
-        $chartParams = array();
+        $chartParams = [];
 
         foreach ($charts as $chart) {
-            $chartParams = array();
+            $chartParams = [];
             $this->log("Creating Chart...");
 
             // create the chart...
@@ -307,7 +269,7 @@ class ReportBuilderTest extends BaseTest
                 $this->assertArrayHasKey('chart_id', $queuedChart);
 
                 // Retrieve the start and end date values
-                list($startDate, $endDate) = explode(' to ', $queuedChart['chart_date_description']);
+                [$startDate, $endDate] = explode(' to ', $queuedChart['chart_date_description']);
 
                 // This property contains the: type, ref#, insertion rank and
                 // token ( if present ).
@@ -315,9 +277,9 @@ class ReportBuilderTest extends BaseTest
                 $paramString = substr($thumbnailLink, strpos($thumbnailLink, '?') + 1, strlen($thumbnailLink) - strpos($thumbnailLink, '?'));
 
                 $params = explode('&', $paramString);
-                $results = array();
+                $results = [];
                 foreach ($params as $param) {
-                    list($key, $value) = explode('=', $param);
+                    [$key, $value] = explode('=', $param);
 
                     // Don't include empty tokens.
                     if ($key === 'token' && empty($value)) {
@@ -327,12 +289,7 @@ class ReportBuilderTest extends BaseTest
                 }
 
                 // save the chartParams off so we can use 'um later
-                $chartParams[] = array(
-                    'params' => $results,
-                    'chart_id' => $queuedChart['chart_id'],
-                    'start_date' => $startDate,
-                    'end_date' => $endDate
-                );
+                $chartParams[] = ['params' => $results, 'chart_id' => $queuedChart['chart_id'], 'start_date' => $startDate, 'end_date' => $endDate];
 
                 // render the chart image so that a temp file is created on the backend.
                 $this->reportImageRenderer($results);
@@ -396,10 +353,9 @@ class ReportBuilderTest extends BaseTest
      * @dataProvider provideCreateChart
      *
      *
-     * @param array $options
      * @throws \Exception
      */
-    public function testCreateChart(array $options)
+    public function testCreateChart(array $options): void
     {
         $user = $options['user'];
         $chart = $options['chart'];
@@ -440,10 +396,9 @@ class ReportBuilderTest extends BaseTest
 
     /**
      * @dataProvider provideEnumTemplates
-     * @param array $options
      * @throws \Exception
      */
-    public function testEnumTemplates(array $options)
+    public function testEnumTemplates(array $options): void
     {
 
         $user = $options['user'];
@@ -459,10 +414,10 @@ class ReportBuilderTest extends BaseTest
         $response = $this->helper->post(
             '/controllers/report_builder.php',
             null,
-            array('operation' => 'enum_templates')
+            ['operation' => 'enum_templates']
         );
 
-        list($content, $curlinfo) = $response;
+        [$content, $curlinfo] = $response;
 
         $this->assertEquals($expectedHttpCode, $curlinfo['http_code']);
         $this->assertEquals($expectedContentType, $curlinfo['content_type']);
@@ -492,11 +447,10 @@ class ReportBuilderTest extends BaseTest
     /**
      * Create the chart specified by the provided $data.
      *
-     * @param array $data
      * @param array $expected
      * @return mixed
      */
-    private function createChart(array $data, $expected = array())
+    private function createChart(array $data, $expected = [])
     {
         $operation = 'add_to_queue';
 
@@ -511,10 +465,7 @@ class ReportBuilderTest extends BaseTest
         }
 
         if (!array_key_exists('response', $expected)) {
-            $expected['response'] = array(
-                'success' => true,
-                'action' => $action
-            );
+            $expected['response'] = ['success' => true, 'action' => $action];
         }
 
         return $this->processChartAction($data, $expected);
@@ -523,11 +474,10 @@ class ReportBuilderTest extends BaseTest
     /**
      * Remove the chart specified by the provided $data parameter.
      *
-     * @param array $data
      * @param array $expected
      * @return mixed
      */
-    private function removeChart(array $data, $expected = array())
+    private function removeChart(array $data, $expected = [])
     {
         $operation = 'remove_from_queue';
         if ((isset($data['operation']) && $data['operation'] !== $operation) ||
@@ -541,10 +491,7 @@ class ReportBuilderTest extends BaseTest
         }
 
         if (!array_key_exists('response', $expected)) {
-            $expected['response'] = array(
-                'success' => true,
-                'action' => $action
-            );
+            $expected['response'] = ['success' => true, 'action' => $action];
         }
 
         return $this->processChartAction($data, $expected);
@@ -554,8 +501,6 @@ class ReportBuilderTest extends BaseTest
      * A generic helper function that does the heavy lifting for both add and
      * remove Chart.
      *
-     * @param array $data
-     * @param array $expected
      * @return mixed
      */
     private function processChartAction(array $data, array $expected)
@@ -588,7 +533,6 @@ class ReportBuilderTest extends BaseTest
     /**
      * Creates the report identified by the contents of $data.
      *
-     * @param array $data
      * @return mixed
      */
     private function createReport(array $data)
@@ -628,10 +572,7 @@ class ReportBuilderTest extends BaseTest
     private function removeReportById($reportId)
     {
         $operation = 'remove_report_by_id';
-        $data = array(
-            'operation' => $operation,
-            'selected_report' => $reportId
-        );
+        $data = ['operation' => $operation, 'selected_report' => $reportId];
 
         $response = $this->helper->post('/controllers/report_builder.php', null, $data);
 
@@ -661,9 +602,7 @@ class ReportBuilderTest extends BaseTest
      */
     private function getNewReportName()
     {
-        $data = array(
-            'operation' => 'get_new_report_name'
-        );
+        $data = ['operation' => 'get_new_report_name'];
 
         $response = $this->helper->post('/controllers/report_builder.php', null, $data);
 
@@ -707,9 +646,7 @@ class ReportBuilderTest extends BaseTest
      */
     private function enumAvailableCharts()
     {
-        $data = array(
-            'operation' => 'enum_available_charts'
-        );
+        $data = ['operation' => 'enum_available_charts'];
         $response = $this->helper->post('/controllers/report_builder.php', null, $data);
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
@@ -727,10 +664,8 @@ class ReportBuilderTest extends BaseTest
 
     /**
      * Renders the report image ( chart ) identified by the contents of $params.
-     *
-     * @param array $params
      */
-    private function reportImageRenderer(array $params)
+    private function reportImageRenderer(array $params): void
     {
         $response = $this->helper->get('/report_image_renderer.php', $params);
 
@@ -741,7 +676,7 @@ class ReportBuilderTest extends BaseTest
         $this->assertEquals(200, $response[1]['http_code']);
     }
 
-    private function log($msg)
+    private function log($msg): void
     {
         if ($this->verbose) {
             echo "$msg\n";

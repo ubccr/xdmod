@@ -20,17 +20,11 @@ class Index extends NamedEntity implements iEntity
 {
     // Properties required by this class. These will be merged with other required
     // properties up the call chain. See @Entity::$requiredProperties
-    private $localRequiredProperties = array(
-        'columns'
-    );
+    private $localRequiredProperties = ['columns'];
 
     // Properties provided by this class. These will be merged with other properties up
     // the call chain. See @Entity::$properties
-    private $localProperties = array(
-        'columns'   => array(),
-        'type'      => null,
-        'is_unique' => null
-    );
+    private $localProperties = ['columns'   => [], 'type'      => null, 'is_unique' => null];
 
     /* ------------------------------------------------------------------------------------------
      * @see iEntity::__construct()
@@ -49,7 +43,7 @@ class Index extends NamedEntity implements iEntity
      * ------------------------------------------------------------------------------------------
      */
 
-    public function initialize(stdClass $config)
+    public function initialize(stdClass $config): void
     {
         // Local verifications
 
@@ -111,7 +105,7 @@ class Index extends NamedEntity implements iEntity
 
                 // Normalize property values to lowercase to match MySQL behavior
 
-                $normalizedValues = array();
+                $normalizedValues = [];
                 foreach ( $value as $column ) {
                     $normalizedValues[] = strtolower($column);
                 }
@@ -222,7 +216,7 @@ class Index extends NamedEntity implements iEntity
         // return the essentials of the definition and let the Table class figure out the appropriate
         // way to put them together.
 
-        $parts = array();
+        $parts = [];
         if ( null !== $this->name && "PRIMARY" == $this->name ) {
             $parts[] = "PRIMARY KEY";
         } else {
@@ -235,7 +229,7 @@ class Index extends NamedEntity implements iEntity
             $parts[] = "USING " . $this->type;
         }
 
-        $parts[] = "(" . implode(", ", array_map(array($this, 'quote'), $this->columns)) . ")";
+        $parts[] = "(" . implode(", ", array_map([$this, 'quote'], $this->columns)) . ")";
 
         return implode(" ", $parts);
 

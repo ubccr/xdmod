@@ -30,7 +30,7 @@ abstract class ConfigFilesMigration extends Migration
      *
      * @var array
      */
-    protected $modulePortalSettingsPaths = array();
+    protected $modulePortalSettingsPaths = [];
 
     /**
      * @inheritdoc
@@ -59,7 +59,7 @@ abstract class ConfigFilesMigration extends Migration
             // checking for the existence of the corresponding template.
             try {
                 $template = new Template('portal_settings', $moduleName);
-            } catch (Exception $e) {
+            } catch (Exception) {
                 continue;
             }
 
@@ -76,7 +76,7 @@ abstract class ConfigFilesMigration extends Migration
      * @param array $changes Values that should be changed in
      *     portal_settings.ini.
      */
-    protected function writePortalSettingsFile(array $changes = array())
+    protected function writePortalSettingsFile(array $changes = [])
     {
         $this->writeModulePortalSettingsFile('xdmod', $changes);
     }
@@ -88,13 +88,11 @@ abstract class ConfigFilesMigration extends Migration
      *     value is an array of values that should be changed in the
      *     portal_settings.d file for that module.
      */
-    protected function writeModulePortalSettingsFiles(array $changes = array())
+    protected function writeModulePortalSettingsFiles(array $changes = [])
     {
         foreach ($this->modulePortalSettingsPaths as $moduleName => $file) {
             $moduleChanges
-                = isset($changes[$moduleName])
-                ? $changes[$moduleName]
-                : array();
+                = $changes[$moduleName] ?? [];
             $this->writeModulePortalSettingsFile($moduleName, $moduleChanges);
         }
     }
@@ -118,7 +116,7 @@ abstract class ConfigFilesMigration extends Migration
      */
     protected function writeModulePortalSettingsFile(
         $moduleName,
-        array $changes = array()
+        array $changes = []
     ) {
         $portalSettingsPath
             = $moduleName === 'xdmod'
@@ -132,7 +130,7 @@ abstract class ConfigFilesMigration extends Migration
             throw new Exception($msg);
         }
 
-        $settings = array();
+        $settings = [];
 
         // Store all the current key/value pairs from the current
         // portal_settings file.
@@ -182,10 +180,7 @@ abstract class ConfigFilesMigration extends Migration
 
         $file = implode(
             DIRECTORY_SEPARATOR,
-            array(
-                $this->config->getBaseDir(),
-                "$name.json"
-            )
+            [$this->config->getBaseDir(), "$name.json"]
         );
 
         if (file_put_contents($file, $json) === false) {
@@ -244,10 +239,7 @@ abstract class ConfigFilesMigration extends Migration
     {
         $file = implode(
             DIRECTORY_SEPARATOR,
-            array(
-                $this->config->getBaseDir(),
-                "$name.json"
-            )
+            [$this->config->getBaseDir(), "$name.json"]
         );
 
         if (!is_writable($file)) {

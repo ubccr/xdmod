@@ -15,7 +15,7 @@ if ($user === null) {
 
 $roles = $user->getAllRoles(true);
 
-$roleDescriptors = array();
+$roleDescriptors = [];
 foreach ($roles as $activeRole) {
     $shortRole = $activeRole;
     $us_pos = strpos($shortRole, '_');
@@ -35,7 +35,7 @@ foreach ($roles as $activeRole) {
     {
         $db = \CCR\DB::factory('database');
         $db->execute('create table if not exists dw_desc_cache (role char(5), response mediumtext, index (role) ) ');
-        $cachedResults = $db->query('select response from dw_desc_cache where role=:role', array('role' => $shortRole));
+        $cachedResults = $db->query('select response from dw_desc_cache where role=:role', ['role' => $shortRole]);
         if(count($cachedResults) > 0)
         {
             $roleDescriptors[$shortRole] = unserialize($cachedResults[0]['response']);
@@ -46,8 +46,8 @@ foreach ($roles as $activeRole) {
     // If the cache was not used or was not useful, get descriptors from code.
     if (!$cache_data_found)
     {
-        $realms = array();
-        $groupByObjects = array();
+        $realms = [];
+        $groupByObjects = [];
 
         $realmObjects = Realms::getRealmObjectsForUser($user);
         $query_descripter_realms = Acls::getQueryDescripters($user);
@@ -58,16 +58,11 @@ foreach ($roles as $activeRole) {
             if ($category === null) {
                 continue;
             }
-            $seenstats = array();
+            $seenstats = [];
 
             $realmObject = $realmObjects[$query_descripter_realm];
             $realmDisplay = $realmObject->getDisplay();
-            $realms[$query_descripter_realm] = array(
-                'text' => $query_descripter_realm,
-                'category' => $realmDisplay,
-                'dimensions' => array(),
-                'metrics' => array(),
-            );
+            $realms[$query_descripter_realm] = ['text' => $query_descripter_realm, 'category' => $realmDisplay, 'dimensions' => [], 'metrics' => []];
             foreach($query_descripter_groups as $query_descripter_group) {
                 foreach ($query_descripter_group as $query_descripter) {
                     if ($query_descripter->getDisableMenu()) {
@@ -78,13 +73,8 @@ foreach ($roles as $activeRole) {
                     $group_by_object = $query_descripter->getGroupByInstance();
                     $permittedStatistics = $group_by_object->getRealm()->getStatisticIds();
 
-                    $groupByObjects[$query_descripter_realm . '_' . $groupByName] = array(
-                        'object' => $group_by_object,
-                        'permittedStats' => $permittedStatistics);
-                    $realms[$query_descripter_realm]['dimensions'][$groupByName] = array(
-                        'text' => $groupByName == 'none' ? 'None' : $group_by_object->getName(),
-                        'info' => $group_by_object->getHtmlDescription()
-                    );
+                    $groupByObjects[$query_descripter_realm . '_' . $groupByName] = ['object' => $group_by_object, 'permittedStats' => $permittedStatistics];
+                    $realms[$query_descripter_realm]['dimensions'][$groupByName] = ['text' => $groupByName == 'none' ? 'None' : $group_by_object->getName(), 'info' => $group_by_object->getHtmlDescription()];
 
                     $stats = array_diff($permittedStatistics, $seenstats);
                     if (empty($stats)) {
@@ -102,50 +92,40 @@ foreach ($roles as $activeRole) {
                             $realm_group_by_statistic
                         );
                         $realms[$query_descripter_realm]['metrics'][$realm_group_by_statistic] =
-                            array(
-                                'text' => $statistic_object->getName(),
-                                'info' => $statistic_object->getHtmlDescription(),
-                                'std_err' => in_array($semStatId, $permittedStatistics),
-                                'hidden_groupbys' => $statistic_object->getHiddenGroupBys()
-                            );
+                            ['text' => $statistic_object->getName(), 'info' => $statistic_object->getHtmlDescription(), 'std_err' => in_array($semStatId, $permittedStatistics), 'hidden_groupbys' => $statistic_object->getHiddenGroupBys()];
                         $seenstats[] = $realm_group_by_statistic;
                     }
                 }
             }
-            $texts = array();
+            $texts = [];
             foreach($realms[$query_descripter_realm]['metrics'] as $key => $row)
             {
                 $texts[$key] = $row['text'];
             }
             array_multisort($texts, SORT_ASC, $realms[$query_descripter_realm]['metrics']);
         }
-        $texts = array();
+        $texts = [];
         foreach($realms as $key => $row)
         {
             $texts[$key] = $row['text'];
         }
         array_multisort($texts, SORT_ASC, $realms);
 
-        $roleDescriptors[$shortRole] = array('totalCount'=> 1, 'data' => array(array( 'realms' => $realms)));
+        $roleDescriptors[$shortRole] = ['totalCount'=> 1, 'data' => [['realms' => $realms]]];
 
         // Cache the results if the cache is enabled.
         if ($cache_enabled)
         {
-            $db->execute('insert into dw_desc_cache (role, response) values (:role, :response)', array('role' =>$shortRole, 'response' => serialize($roleDescriptors[$shortRole])));
+            $db->execute('insert into dw_desc_cache (role, response) values (:role, :response)', ['role' =>$shortRole, 'response' => serialize($roleDescriptors[$shortRole])]);
         }
     }
 }
 
-$combinedRealmDescriptors = array();
+$combinedRealmDescriptors = [];
 foreach ($roleDescriptors as $roleDescriptor) {
     foreach ($roleDescriptor['data'][0]['realms'] as $realm => $realmDescriptor) {
         if (!isset($combinedRealmDescriptors[$realm])) {
-            $combinedRealmDescriptors[$realm] = array(
-                'metrics' => array(),
-                'dimensions' => array(),
-                'text' => $realmDescriptor['text'],
-                'category' => $realmDescriptor['category'],
-            );
+            $combinedRealmDescriptors[$realm] = ['metrics' => [], 'dimensions' => [], 'text' => $realmDescriptor['text'], 'category' => $realmDescriptor['category']];
         }
 
         $combinedRealmDescriptors[$realm]['metrics'] += $realmDescriptor['metrics'];
@@ -153,11 +133,4 @@ foreach ($roleDescriptors as $roleDescriptor) {
     }
 }
 
-xd_controller\returnJSON(array(
-    'totalCount' => 1,
-    'data' => array(
-        array(
-            'realms' => $combinedRealmDescriptors,
-        ),
-    ),
-));
+xd_controller\returnJSON(['totalCount' => 1, 'data' => [['realms' => $combinedRealmDescriptors]]]);

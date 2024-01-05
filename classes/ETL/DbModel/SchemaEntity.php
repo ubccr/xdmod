@@ -19,13 +19,11 @@ class SchemaEntity extends NamedEntity
 {
     // Properties required by this class. These will be merged with other required
     // properties up the call chain. See @Entity::$requiredProperties
-    private $localRequiredProperties = array();
+    private $localRequiredProperties = [];
 
     // Properties provided by this class. These will be merged with other properties up
     // the call chain. See @Entity::$properties
-    private $localProperties = array(
-        'schema' => null
-    );
+    private $localProperties = ['schema' => null];
 
     /* ------------------------------------------------------------------------------------------
      * @see iEntity::__construct()

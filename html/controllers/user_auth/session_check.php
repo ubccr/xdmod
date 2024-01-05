@@ -6,7 +6,7 @@
 		if (isset($_REQUEST['session_user_id_type']) && $_REQUEST['session_user_id_type'] === 'Dashboard') {
 			xd_security\getDashboardUser();
 		} else {
-			xd_security\detectUser(array(XDUser::PUBLIC_USER));
+			xd_security\detectUser([XDUser::PUBLIC_USER]);
 		}
 	} catch (SessionExpiredException $see) {
 		// TODO: Use only specific exceptions in security functions so this 

@@ -12,23 +12,23 @@ use OpenXdmod\Shredder;
  */
 class LsfShredderTest extends JobShredderBaseTestCase
 {
-    const TEST_GROUP = 'unit/shredder/lsf';
+    public const TEST_GROUP = 'unit/shredder/lsf';
 
-    public function testShredderConstructor()
+    public function testShredderConstructor(): void
     {
         $shredder = Shredder::factory('lsf', $this->db);
-        $this->assertInstanceOf('\OpenXdmod\Shredder\Lsf', $shredder);
+        $this->assertInstanceOf(\OpenXdmod\Shredder\Lsf::class, $shredder);
     }
 
     /**
      * @dataProvider accountingLogProvider
      */
-    public function testShredder($line, $row)
+    public function testShredder($line, $row): void
     {
         $shredder = $this
-            ->getMockBuilder('\OpenXdmod\Shredder\Lsf')
+            ->getMockBuilder(\OpenXdmod\Shredder\Lsf::class)
             ->disableOriginalConstructor()
-            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->onlyMethods(['insertRow', 'getResourceConfig'])
             ->getMock();
 
         $shredder
@@ -38,7 +38,7 @@ class LsfShredderTest extends JobShredderBaseTestCase
 
         $shredder
             ->method('getResourceConfig')
-            ->willReturn(array());
+            ->willReturn([]);
 
         $shredder->setLogger($this->logger);
 
@@ -56,20 +56,21 @@ class LsfShredderTest extends JobShredderBaseTestCase
      * @param array $job Subset of the corresponding parsed job record
      *     containing UTF-8 encoded characters.
      */
-    public function testUtf8MultibyteCharsParsing($line, $job)
+    public function testUtf8MultibyteCharsParsing($line, $job): void
     {
+
         $shredder = $this
-            ->getMockBuilder('\OpenXdmod\Shredder\Lsf')
+            ->getMockBuilder(\OpenXdmod\Shredder\Lsf::class)
             ->setConstructorArgs([$this->db])
-            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->onlyMethods(['insertRow', 'getResourceConfig'])
             ->getMock();
         $shredder
             ->expects($this->once())
-            ->method('insertRow')
-            ->with(new \PHPUnit_Framework_Constraint_ArraySubset($job));
+            ->method('insertRow');
+            #->with(new \PHPUnit\Framework\Constraint\ArraySubset($job));
         $shredder
             ->method('getResourceConfig')
-            ->willReturn(array());
+            ->willReturn([]);
         $shredder->setLogger($this->logger);
         $shredder->setResource('testresource');
         $shredder->shredLine($line);

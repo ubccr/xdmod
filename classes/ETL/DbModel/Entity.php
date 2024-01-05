@@ -57,17 +57,17 @@ class Entity extends Loggable
     // The list of required properties for this model. If extending classes define their
     // own required properties they should merge them in the constructor by calling
     // Entity::mergeProperties($localRequiredProperties).
-    protected $requiredProperties = array();
+    protected $requiredProperties = [];
 
     // Associative array of valid (property, initial value) pairs. Properties may be set
     // via __set(), initialize() or a custom method. . If extending classes define their
     // own properties they should merge them in the constructor by calling
     // Entity::mergeProperties($localProperties).
-    protected $properties = array();
+    protected $properties = [];
 
     // Associative array of valid (property, initial value) pairs. This contains the
     // original default values.
-    private $defaultPropertyValues = array();
+    private $defaultPropertyValues = [];
 
     // Character used to quote system identifiers. Mysql uses a backtick while postgres
     // and oracle use a single quote.
@@ -105,7 +105,7 @@ class Entity extends Loggable
             if ( is_object($config) ) {
                 if ( ! $config instanceof stdClass ) {
                     $this->logAndThrowException(
-                        sprintf("Config must be a stdClass object, '%s' given", get_class($config))
+                        sprintf("Config must be a stdClass object, '%s' given", $config::class)
                     );
                 }
                 $this->initialize($config);
@@ -173,7 +173,7 @@ class Entity extends Loggable
 
     protected function verifyRequiredProperties(stdClass $config)
     {
-        $missing = array();
+        $missing = [];
 
         foreach ( $this->requiredProperties as $required ) {
             if ( ! isset($config->$required) ) {
@@ -269,8 +269,8 @@ class Entity extends Loggable
     {
         // Don't quote the identifier if it's already been quoted
 
-        if (0 === strpos($identifier, $this->systemQuoteChar)
-            && (strlen($identifier) - 1) === strrpos($identifier, $this->systemQuoteChar) ) {
+        if (str_starts_with($identifier, $this->systemQuoteChar)
+            && (strlen($identifier) - 1) === strrpos($identifier, (string) $this->systemQuoteChar) ) {
             return $identifier;
         } else {
             return $this->systemQuoteChar . $identifier . $this->systemQuoteChar;
@@ -332,13 +332,11 @@ class Entity extends Loggable
 
             $treatAsObject = array_reduce(
                 array_keys($value),
-                function ($carry, $item) {
-                    return (is_string($item) && $carry);
-                },
+                fn($carry, $item) => is_string($item) && $carry,
                 true
             );
 
-            $a = array();
+            $a = [];
             foreach ( $value as $k => $item ) {
                 $a[$k] = $this->_toStdClass($item);
             }
@@ -407,7 +405,7 @@ class Entity extends Loggable
      */
     protected function logCompareFailure($property, $srcValue, $compareValue, $name = null)
     {
-        $classParts = explode('\\', get_class($this));
+        $classParts = explode('\\', static::class);
         $this->logger->debug(
             sprintf(
                 // '%s%s: comparison for "%s" failed ("%s" != "%s")',
@@ -415,8 +413,8 @@ class Entity extends Loggable
                 array_pop($classParts),  // Strip the namespace from the class name
                 (null !== $name ? ' ' . $name : ''),
                 $property,
-                (null === $srcValue ? 'null' : $srcValue),
-                (null === $compareValue ? 'null' : $compareValue)
+                ($srcValue ?? 'null'),
+                ($compareValue ?? 'null')
             )
         );
     }
@@ -449,7 +447,7 @@ class Entity extends Loggable
             $this->properties[$property] = $this->filterAndVerifyValue($property, $value);
         } else {
             $this->logger->warning(
-                sprintf("%s: Attempt to set unsupported property: '%s' with value '%s'", get_class($this), $property, print_r($value, true))
+                sprintf("%s: Attempt to set unsupported property: '%s' with value '%s'", static::class, $property, print_r($value, true))
             );
         }
     }  // __set()
@@ -469,7 +467,7 @@ class Entity extends Loggable
             return $this->properties[$property];
         } else {
             $this->logger->warning(
-                sprintf("%s: Attempt to access unsupported property: '%s'", get_class($this), $property)
+                sprintf("%s: Attempt to access unsupported property: '%s'", static::class, $property)
             );
         }
 
@@ -495,8 +493,8 @@ class Entity extends Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __toString()
+    public function __toString(): string
     {
-        return get_class($this);
+        return static::class;
     }  // __toString()
 }  // class Entity

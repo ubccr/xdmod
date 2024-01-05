@@ -34,12 +34,12 @@ class AddResourceSetup extends SetupItem
     /**
      * @inheritdoc
      */
-    public function handle()
+    public function handle(): void
     {
-        $typeOptions = array();
+        $typeOptions = [];
         $typeDescriptionText = "";
         $availableTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
-        $resourceAllocationTypeOptions = array();
+        $resourceAllocationTypeOptions = [];
         $resourceAllocationTypeDescriptionText = "";
         $availableResourceAllocationTypes = XdmodConfiguration::assocArrayFactory('resource_allocation_types.json', CONFIG_DIR)['resource_allocation_types'];
         $gpu_nodes = 0;
@@ -121,19 +121,7 @@ EOT
         }
 
         $this->parent->addResource(
-            array(
-                'resource'   => $resource,
-                'name'       => $name,
-                'type'       => $type,
-                'resource_allocation_type'    => $resource_allocation_type,
-                'cpu_processor_count' => (int)$cpus,
-                'cpu_node_count'      => (int)$nodes,
-                'cpu_ppn'             => (int)$ppn,
-                'gpu_processor_count' => (int)$gpus,
-                'gpu_node_count'      => (int)$gpu_nodes,
-                'gpu_ppn'             => (int)$gpu_ppn,
-                'start_date'          => $resource_start_date
-            )
+            ['resource'   => $resource, 'name'       => $name, 'type'       => $type, 'resource_allocation_type'    => $resource_allocation_type, 'cpu_processor_count' => (int)$cpus, 'cpu_node_count'      => (int)$nodes, 'cpu_ppn'             => (int)$ppn, 'gpu_processor_count' => (int)$gpus, 'gpu_node_count'      => (int)$gpu_nodes, 'gpu_ppn'             => (int)$gpu_ppn, 'start_date'          => $resource_start_date]
         );
     }
 

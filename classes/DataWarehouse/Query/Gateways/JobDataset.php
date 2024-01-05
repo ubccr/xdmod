@@ -14,13 +14,13 @@ use Exception;
   */
 class JobDataset extends \DataWarehouse\Query\RawQuery
 {
-    private $documentation = array();
+    private $documentation = [];
 
     public function __construct(
         array $parameters,
         $stat = "all"
     ) {
-        parent::__construct('Gateways', 'modw_gateways', 'gatewayfact_by_day', array());
+        parent::__construct('Gateways', 'modw_gateways', 'gatewayfact_by_day', []);
 
         // The same fact table row may correspond to multiple rows in the
         // aggregate table (e.g. a job that runs over two days).
@@ -55,7 +55,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
         if (isset($parameters['primary_key'])) {
             $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'job_id'), "=", $parameters['primary_key']));
         } elseif (isset($parameters['job_identifier'])) {
-            $matches = array();
+            $matches = [];
             if (preg_match('/^(\d+)(?:[\[_](\d+)\]?)?$/', $parameters['job_identifier'], $matches)) {
                 $this->addPdoWhereCondition(new WhereCondition(new TableField($factTable, 'resource_id'), '=', $parameters['resource_id']));
                 if (isset($matches[2])) {
@@ -140,7 +140,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
     /**
      * helper function to join the data table to another table
      */
-    private function joinTo($othertable, $joinkey, $otherkey, $colalias, $idcol = "id")
+    private function joinTo($othertable, $joinkey, $otherkey, $colalias, $idcol = "id"): void
     {
         $this->addTable($othertable);
         $this->addWhereCondition(new WhereCondition(new TableField($this->getDataTable(), $joinkey), '=', new TableField($othertable, $idcol)));

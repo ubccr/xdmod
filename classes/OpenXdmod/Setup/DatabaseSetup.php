@@ -20,13 +20,9 @@ class DatabaseSetup extends DatabaseSetupItem
     /**
      * @inheritdoc
      */
-    public function handle()
+    public function handle(): void
     {
-        $conf = array(
-            'console' => true,
-            'consoleLogLevel' => Log::WARNING,
-            'db'=> false
-        );
+        $conf = ['console' => true, 'consoleLogLevel' => Log::WARNING, 'db'=> false];
 
         $logger = Log::factory('xdmod-setup', $conf);
 
@@ -64,8 +60,8 @@ EOT
         );
 
         while (
-               strpos($settings['db_pass'], "'") !== false
-            || strpos($settings['db_pass'], '"') !== false
+               str_contains($settings['db_pass'], "'")
+            || str_contains($settings['db_pass'], '"')
         ) {
             $this->console->displayMessage('Invalid password!');
             $settings['db_pass'] = $this->console->silentPrompt(
@@ -91,15 +87,7 @@ EOT
         );
 
         try {
-            $databases = array(
-                'mod_shredder',
-                'mod_hpcdb',
-                'moddb',
-                'modw',
-                'modw_aggregates',
-                'modw_filters',
-                'mod_logger',
-            );
+            $databases = ['mod_shredder', 'mod_hpcdb', 'moddb', 'modw', 'modw_aggregates', 'modw_filters', 'mod_logger'];
 
             $this->createDatabases(
                 $adminUsername,
@@ -122,13 +110,7 @@ EOT
         }
 
         // Copy DB info to each section.
-        $db_sections = array(
-            'logger',
-            'database',
-            'datawarehouse',
-            'shredder',
-            'hpcdb',
-        );
+        $db_sections = ['logger', 'database', 'datawarehouse', 'shredder', 'hpcdb'];
 
         foreach ($db_sections as $section) {
             $settings[$section . '_host'] = $settings['db_host'];
@@ -142,28 +124,14 @@ EOT
         /**
          *  ETLv2 database bootstrap start
          */
-        Utilities::runEtlPipeline(array(
-            'xdb-bootstrap',
-            'jobs-xdw-bootstrap',
-            'xdw-bootstrap-storage',
-            'shredder-bootstrap',
-            'staging-bootstrap',
-            'hpcdb-bootstrap',
-            'acls-xdmod-management',
-            'logger-bootstrap'
-        ), $logger);
+        Utilities::runEtlPipeline(['xdb-bootstrap', 'jobs-xdw-bootstrap', 'xdw-bootstrap-storage', 'shredder-bootstrap', 'staging-bootstrap', 'hpcdb-bootstrap', 'acls-xdmod-management', 'logger-bootstrap'], $logger);
 
 
-        $aggregationUnits = array(
-            'day',
-            'month',
-            'quarter',
-            'year'
-        );
+        $aggregationUnits = ['day', 'month', 'quarter', 'year'];
 
         foreach ($aggregationUnits as $aggUnit) {
             $tpg = TimePeriodGenerator::getGeneratorForUnit($aggUnit);
-            $tpg->generateMainTable(DB::factory('datawarehouse'), new \DateTime('2000-01-01'), new \DateTime('2038-01-18'));
+            $tpg->generateMainTable(DB::factory('datawarehouse'));
         }
 
         passthru(BIN_DIR . '/acl-config', $aclstatus);

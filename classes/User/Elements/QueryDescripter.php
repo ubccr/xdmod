@@ -16,35 +16,6 @@ class QueryDescripter
     private $_realm_name;
 
     /**
-     * @var string
-     */
-    private $_group_by_name;
-
-    /**
-     * The name of the default statistic or "all".
-     *
-     * @var string
-     */
-    private $_default_statisticname;
-
-    /**
-     * @var string
-     */
-    private $_default_aggregation_unit_name;
-
-    /**
-     * Either "aggregate" or "timeseries".
-     *
-     * @var string
-     */
-    private $_default_query_type;
-
-    /**
-     * @var int
-     */
-    private $_order_id;
-
-    /**
      * @var bool
      */
     private $_show_menu;
@@ -54,28 +25,36 @@ class QueryDescripter
      */
     private $_disable_menu;
 
+    /**
+     * @param string $group_by_name
+     * @param string $default_statisticname
+     * @param string $default_aggregation_unit_name
+     * @param string $default_query_type
+     * @param int $order_id
+     */
     public function __construct(
         $realm_name,
-        $group_by_name,
-        array $drill_target_group_bys = array(),
-        $default_statisticname = 'all',
-        $default_aggregation_unit_name = 'auto',
-        $default_query_type = 'aggregate',
-        $order_id = 0
+        private $_group_by_name,
+        array $drill_target_group_bys = [],
+        /**
+         * The name of the default statistic or "all".
+         */
+        private $_default_statisticname = 'all',
+        private $_default_aggregation_unit_name = 'auto',
+        /**
+         * Either "aggregate" or "timeseries".
+         */
+        private $_default_query_type = 'aggregate',
+        private $_order_id = 0
     ) {
 
         $this->realm = \Realm\Realm::factory($realm_name);
         $this->_realm_name = $this->realm->getId();
-        $this->_group_by_name   = $group_by_name;
-        $this->_default_statisticname         = $default_statisticname;
-        $this->_default_aggregation_unit_name = $default_aggregation_unit_name;
-        $this->_default_query_type            = $default_query_type;
-        $this->_order_id = $order_id;
         $this->_show_menu    = true;
         $this->_disable_menu = false;
     }
 
-    public function getDrillTargets($hiddenGroupBys = array())
+    public function getDrillTargets($hiddenGroupBys = [])
     {
         return $this->realm->getDrillTargets(
             $this->_group_by_name,
@@ -158,7 +137,7 @@ class QueryDescripter
         $end_date,
         $statistic_name,
         $aggregation_unit_name = 'auto',
-        array $parameters = array()
+        array $parameters = []
     ) {
         return new AggregateQuery(
             $this->realm,
@@ -176,7 +155,7 @@ class QueryDescripter
         $end_date,
         $statistic_name,
         $aggregation_unit_name = 'auto',
-        array $parameters = array()
+        array $parameters = []
     ) {
         return new TimeseriesQuery(
             $this->realm,
@@ -193,11 +172,11 @@ class QueryDescripter
         $start_date,
         $end_date,
         $aggregation_unit_name = 'auto',
-        array $parameters = array(),
+        array $parameters = [],
         $query_type = 'aggregate'
     ) {
-        $queries    = array();
-        $statistics = array();
+        $queries    = [];
+        $statistics = [];
 
         if ($this->getDefaultStatisticName() == 'all') {
             $tmp_statistics = $this->getPermittedStatistics();
@@ -240,7 +219,7 @@ class QueryDescripter
      * */
     public function getStatisticsClasses(array $statslist)
     {
-        $results = array();
+        $results = [];
 
         foreach($statslist as $statname)
         {
@@ -277,7 +256,7 @@ class QueryDescripter
 
     public function pullQueryParameters(&$request)
     {
-        $parameters = array();
+        $parameters = [];
         $groupByObjects = $this->realm->getGroupByObjects();
 
         foreach ( $groupByObjects as $obj ) {
@@ -303,7 +282,7 @@ class QueryDescripter
 
     public function pullQueryParameterDescriptions(&$request)
     {
-        $labels = array();
+        $labels = [];
         $groupByObjects = $this->realm->getGroupByObjects();
 
         foreach ( $groupByObjects as $obj ) {
@@ -323,7 +302,7 @@ class QueryDescripter
         return $this->_default_statisticname;
     }
 
-    public function setDefaultStatisticName($stat)
+    public function setDefaultStatisticName($stat): void
     {
         $this->_default_statisticname = $stat;
     }

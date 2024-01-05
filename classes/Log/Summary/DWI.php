@@ -18,9 +18,6 @@ extends Summary
      * @var array
      */
 
-    protected $recordCountKeys = array(
-        'records_examined',
-        'records_loaded'
-    );
+    protected $recordCountKeys = ['records_examined', 'records_loaded'];
 
 }  // class DWI

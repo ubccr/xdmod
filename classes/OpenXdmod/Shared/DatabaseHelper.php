@@ -30,7 +30,7 @@ class DatabaseHelper
         array $settings,
         array $databases,
         Console $console = null
-    ) {
+    ): void {
         if ($console === null) {
             $console = Console::factory();
         }
@@ -70,7 +70,7 @@ class DatabaseHelper
                 $drop = $console->prompt(
                     'Drop and recreate database?',
                     'no',
-                    array('yes', 'no')
+                    ['yes', 'no']
                 );
                 if ($drop == 'yes') {
                     $console->displayMessage(
@@ -125,10 +125,9 @@ class DatabaseHelper
     /**
      * Import database files.
      *
-     * @param array $settings
      * @param string $db The database name.
      */
-    private static function mysqlImportData(array $settings, $db)
+    private static function mysqlImportData(array $settings, $db): void
     {
         $schemaPath = BASE_DIR . "/db/schema/$db.sql";
 

@@ -36,8 +36,8 @@ class ActionState extends Loggable implements iActionState
     private $metadata = null;
 
     // List of properties supported by this state object.
-    private $properties = array();
-    
+    private $properties = [];
+
     // Guard against E_NOTICE for returning null by reference from __get()
     private $nullGuard = null;
 
@@ -80,7 +80,7 @@ class ActionState extends Loggable implements iActionState
     public function getKey() {
         return $this->key;
     }  // getKey()
-            
+
     /* ------------------------------------------------------------------------------------------
      * @see iActionState::setKey()
      * ------------------------------------------------------------------------------------------
@@ -178,7 +178,7 @@ class ActionState extends Loggable implements iActionState
      */
 
     public function __sleep() {
-        return array_diff(array_keys(get_object_vars($this)), array('logger'));
+        return array_diff(array_keys(get_object_vars($this)), ['logger']);
     }  // __unset()
 
         /* ------------------------------------------------------------------------------------------
@@ -188,7 +188,7 @@ class ActionState extends Loggable implements iActionState
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __toString() {
+    public function __toString(): string {
         $str = "Key: {$this->key}\n" .
             "Metadata: " . print_r($this->metadata, true) .
             "Properties: " . print_r($this->properties, true);

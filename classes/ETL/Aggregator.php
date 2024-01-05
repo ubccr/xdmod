@@ -52,7 +52,7 @@ class Aggregator
         // If the class name does not include a namespace designation, use the namespace from the
         // aggregator configuration or the default namespace if not specified.
 
-        if ( false === strstr($className, '\\') ) {
+        if ( !str_contains($className, '\\') ) {
             if ( $options->namespace ) {
                 $className = $options->namespace .
                     ( strpos($options->namespace, '\\') != strlen($options->namespace) - 1 ? "\\" : "" ) .
@@ -65,7 +65,7 @@ class Aggregator
         if ( class_exists($className) ) {
             $aggregator = new $className($options, $etlConfig, $logger);
         } else {
-            $msg = __CLASS__ . ": Error creating aggregator '{$options->name}', class '$className' not found";
+            $msg = self::class . ": Error creating aggregator '{$options->name}', class '$className' not found";
             if ( null !== $logger ) {
                 $logger->err($msg);
             }
@@ -73,7 +73,7 @@ class Aggregator
         }
 
         if ( ! $aggregator instanceof iAction ) {
-            $msg = __CLASS__ . ": $className does not implenment action interface iAction";
+            $msg = self::class . ": $className does not implenment action interface iAction";
             if ( null !== $logger ) {
                 $logger->err($msg);
             }

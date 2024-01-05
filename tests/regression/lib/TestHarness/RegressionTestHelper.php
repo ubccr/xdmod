@@ -6,6 +6,7 @@ use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
 use IntegrationTests\TokenAuthTest;
+use PHPUnit\Framework\SkippedTestError;
 
 /**
  * Everything you need to test for regressions.
@@ -183,7 +184,7 @@ class RegressionTestHelper extends XdmodTestHelper
     /**
      * Output messages generated during tests.
      */
-    public function outputMessages()
+    public function outputMessages(): void
     {
         if (count($this->messages)) {
             print_r(
@@ -203,7 +204,7 @@ class RegressionTestHelper extends XdmodTestHelper
      * @see XdmodTestHelper::authenticate()
      * @param string $userrole The user's role.
      */
-    public function authenticate($userrole = null)
+    public function authenticate($userrole = null): void
     {
         if ($userrole === null) {
             $userrole = self::getEnvUserrole();
@@ -234,38 +235,9 @@ class RegressionTestHelper extends XdmodTestHelper
     ) {
         $userrole = self::getEnvUserrole();
 
-        $reference = array(
-            'public_user' => ($userrole === 'public') ? 'true' : 'false',
-            'start_date' => $startDate,
-            'end_date' => $endDate,
-            'timeframe_label' => '2016',
-            'scale' => '1',
-            'aggregation_unit' => 'Auto',
-            'dataset_type' => 'aggregate',
-            'thumbnail' => 'n',
-            'query_group' => 'po_usage',
-            'display_type' => 'line',
-            'combine_type' => 'side',
-            'limit' => '10',
-            'offset' => '0',
-            'log_scale' => 'n',
-            'show_guide_lines' => 'y',
-            'show_trend_line' => 'y',
-            'show_percent_alloc' => 'n',
-            'show_error_bars' => 'y',
-            'show_aggregate_labels' => 'n',
-            'show_error_labels' => 'n',
-            'show_title' => 'y',
-            'width' => '916',
-            'height' => '484',
-            'legend_type' => 'bottom_center',
-            'font_size' => '3',
-            'inline' => 'n',
-            'operation' => 'get_data',
-            'format' => 'csv'
-        );
+        $reference = ['public_user' => ($userrole === 'public') ? 'true' : 'false', 'start_date' => $startDate, 'end_date' => $endDate, 'timeframe_label' => '2016', 'scale' => '1', 'aggregation_unit' => 'Auto', 'dataset_type' => 'aggregate', 'thumbnail' => 'n', 'query_group' => 'po_usage', 'display_type' => 'line', 'combine_type' => 'side', 'limit' => '10', 'offset' => '0', 'log_scale' => 'n', 'show_guide_lines' => 'y', 'show_trend_line' => 'y', 'show_percent_alloc' => 'n', 'show_error_bars' => 'y', 'show_aggregate_labels' => 'n', 'show_error_labels' => 'n', 'show_title' => 'y', 'width' => '916', 'height' => '484', 'legend_type' => 'bottom_center', 'font_size' => '3', 'inline' => 'n', 'operation' => 'get_data', 'format' => 'csv'];
 
-        $testData = array();
+        $testData = [];
         foreach (Utilities::getCombinations($allSettings) as $settings) {
             $testReqData = $reference;
             foreach ($settings as $key => $value) {
@@ -293,12 +265,7 @@ class RegressionTestHelper extends XdmodTestHelper
                 self::$expectedEndpoint
             );
 
-            $testData[$fullName . '-' . $userrole] = array(
-                $testName,
-                $testReqData,
-                $expectedFilename,
-                $userrole
-            );
+            $testData[$fullName . '-' . $userrole] = [$testName, $testReqData, $expectedFilename, $userrole];
         }
 
         if (getenv('REG_TEST_ALL') === '1') {
@@ -343,9 +310,9 @@ class RegressionTestHelper extends XdmodTestHelper
      * @param string $expectedFile Path to file containing expected output.
      * @param string $userRole User role used during test.
      * @return boolean True if CSV export returned expected data.
-     * @throws PHPUnit_Framework_SkippedTestError If the test is skipped.
-     * @throws PHPUnit_Framework_IncompleteTestError If the test is incomplete.
-     * @throws PHPUnit_Framework_ExpectationFailedException If the test failed.
+     * @throws \PHPUnit\Framework\SkippedTestError If the test is skipped.
+     * @throws \PHPUnit\Framework\IncompleteTestError If the test is incomplete.
+     * @throws \PHPUnit\Framework\ExpectationFailedException If the test failed.
      */
     public function checkCsvExport($testName, $input, $expectedFile, $userRole)
     {
@@ -354,10 +321,10 @@ class RegressionTestHelper extends XdmodTestHelper
         $fullTestName = $testName . $datasetType . '-' . $aggUnit . '-' . $userRole;
 
         if (in_array($testName, self::$skip)) {
-            throw new \PHPUnit_Framework_SkippedTestError($fullTestName . ' intentionally skipped');
+            throw new SkippedTestError($fullTestName . ' intentionally skipped');
         }
 
-        list($csvdata, $curldata) = self::post('/controllers/user_interface.php', null, $input);
+        [$csvdata, $curldata] = self::post('/controllers/user_interface.php', null, $input);
         if (!empty(self::$timingOutputDir)) {
             $time_data = $fullTestName . "," . $curldata['total_time'] . "," . $curldata['starttransfer_time'] . "\n";
             $outputCSV = self::$timingOutputDir . "timings.csv";
@@ -368,7 +335,7 @@ class RegressionTestHelper extends XdmodTestHelper
         // more robust way for public user not having access to pass.
         if (gettype($csvdata) === "array") {
             if ($csvdata['message'] == 'Session Expired') {
-                throw new \PHPUnit_Framework_IncompleteTestError($fullTestName . ' user session expired...');
+                throw new \PHPUnit\Framework\IncompleteTestError($fullTestName . ' user session expired...');
             }
             $csvdata = json_encode($csvdata, JSON_PRETTY_PRINT) . "\n";
         }
@@ -392,7 +359,7 @@ class RegressionTestHelper extends XdmodTestHelper
                             return true;
                         }
                     }
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     // go ahead and ignore as this is just for json data and will fail w/ actual csv data.
                 }
             }
@@ -412,7 +379,7 @@ class RegressionTestHelper extends XdmodTestHelper
                 return true;
             }
 
-            throw new \PHPUnit_Framework_ExpectationFailedException(
+            throw new \PHPUnit\Framework\ExpectationFailedException(
                 sprintf(
                     "%d assertions failed:\n\t%s",
                     count($failures),
@@ -446,7 +413,7 @@ class RegressionTestHelper extends XdmodTestHelper
      * @param string|null $referenceFileName name of the reference file.
      * @return bool true if the reference file exists and already contains the
      *              specified data.
-     * @throws \PHPUnit_Framework_SkippedTestError if the reference file does
+     * @throws \PHPUnit\Framework\SkippedTestError if the reference file does
      *                                             not exist or does not
      *                                             already contain the
      *                                             specified data.
@@ -487,7 +454,7 @@ class RegressionTestHelper extends XdmodTestHelper
             [$outputDir, $outputFileName]
         );
         file_put_contents($outputFile, $data);
-        throw new \PHPUnit_Framework_SkippedTestError(
+        throw new \PHPUnit\Framework\SkippedTestError(
             "Created Expected output for $fullTestName"
         );
     }
@@ -567,13 +534,13 @@ class RegressionTestHelper extends XdmodTestHelper
      *                   it.
      * @return bool true if the test artifact file already exists and
      *              contains the response body from the HTTP request.
-     * @throws \PHPUnit_Framework_SkippedTestError if REG_TEST_USER_ROLE is
+     * @throws \PHPUnit\Framework\SkippedTestError if REG_TEST_USER_ROLE is
      *                                             not set or if
      *                                             REG_TEST_FORCE_GENERATION is
      *                                             set and the test artifact
      *                                             file was successfully
      *                                             created.
-     * @throws \PHPUnit_Framework_ExpectationFailedException
+     * @throws \PHPUnit\Framework\ExpectationFailedException
      *                                             if REG_TEST_FORCE_GENERATION
      *                                             is not set and the HTTP
      *                                             response body does not match
@@ -584,7 +551,7 @@ class RegressionTestHelper extends XdmodTestHelper
     {
         $role = self::getEnvUserrole();
         if ('public' === $role) {
-            throw new \PHPUnit_Framework_SkippedTestError(
+            throw new \PHPUnit\Framework\SkippedTestError(
                 'Raw data test cannot be performed with public user.'
             );
         }
@@ -636,7 +603,7 @@ class RegressionTestHelper extends XdmodTestHelper
                 json_decode($expected, true),
                 json_decode($data, true)
             );
-            throw new \PHPUnit_Framework_ExpectationFailedException(
+            throw new \PHPUnit\Framework\ExpectationFailedException(
                 sprintf(
                     (
                         "%d difference"
@@ -667,9 +634,9 @@ class RegressionTestHelper extends XdmodTestHelper
     private static function compareJsonData(
         array &$differences,
         $path,
-        $expected,
-        $actual
-    ) {
+        mixed $expected,
+        mixed $actual
+    ): void {
         if (is_array($expected) && is_array($actual)) {
             self::compareJsonArrays($differences, $path, $expected, $actual);
         } elseif (is_array($expected) && !is_array($actual)) {
@@ -700,7 +667,7 @@ class RegressionTestHelper extends XdmodTestHelper
         $path,
         array $expected,
         array $actual
-    ) {
+    ): void {
         foreach ($expected as $key => $value) {
             if (!array_key_exists($key, $actual)) {
                 $differences[] = (
@@ -874,7 +841,7 @@ class RegressionTestHelper extends XdmodTestHelper
     {
         array_walk(
             $csv,
-            function (&$a) use ($csv) {
+            function (&$a) use ($csv): void {
                 $a = array_combine($csv[0], $a);
             }
         );

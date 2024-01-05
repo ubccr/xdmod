@@ -26,25 +26,21 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
 
     // An associative array where they keys are fully qualified action names and the values
     // instantiated action objects. These are populated upon verification.
-    private $standaloneActions = array();
+    private $standaloneActions = [];
 
     // A multi-dimensional associative array where they keys are section names and the values are
     // associative arrays where they keys are fully qualified action names and the values.  These are
     // populated upon verification.
-    private $sectionActions = array();
-
-    // Overseer options for this invocation
-    private $etlOverseerOptions = null;
+    private $sectionActions = [];
 
     /* ------------------------------------------------------------------------------------------
      * @see iEtlOverseer::__construct()
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct(EtlOverseerOptions $options, LoggerInterface $logger = null)
+    public function __construct(private EtlOverseerOptions $etlOverseerOptions, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
-        $this->etlOverseerOptions = $options;
     }  // __construct()
 
     /* ------------------------------------------------------------------------------------------
@@ -63,7 +59,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
         // prior to executing the actions. The actions are not instantiated at this point because we
         // need to verify the endpoints first.
 
-        $usedEndpointKeys = array();
+        $usedEndpointKeys = [];
 
         foreach ( $this->etlOverseerOptions->getActionNames() as $actionName ) {
             $options = $etlConfig->getActionOptions($actionName);
@@ -100,7 +96,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
 
         $usedEndpointKeys = array_unique($usedEndpointKeys);
 
-        $messages = array();
+        $messages = [];
 
         foreach ( $usedEndpointKeys as $endpointKey ) {
             if ( false === ($endpoint = $etlConfig->getDataEndpoint($endpointKey)) ) {
@@ -119,7 +115,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
         }  // foreach ( $config->getDataEndpoints() as $endpoint )
 
         if ( 0 != count($messages) ) {
-            $msg = get_class($this) . ": Error verifying data endpoints:\n" . implode(",\n", $messages);
+            $msg = static::class . ": Error verifying data endpoints:\n" . implode(",\n", $messages);
             throw new Exception($msg);
         }
 
@@ -137,7 +133,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
     public function verifyActions(
         EtlConfiguration $etlConfig,
         array $actionNameList,
-        array $actionObjectList = array(),
+        array $actionObjectList = [],
         $sectionName = null,
         $verifyDisabled = false
     ) {
@@ -145,7 +141,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
             return $actionObjectList;
         }
 
-        $messages = array();
+        $messages = [];
 
         foreach ( $actionNameList as $actionName ) {
 
@@ -210,20 +206,20 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
     public function verifySections(
         EtlConfiguration $etlConfig,
         array $sectionNameList,
-        array $sectionActionObjectList = array(),
+        array $sectionActionObjectList = [],
         $verifyDisabled = false
     ) {
         if ( 0 == count($sectionNameList) ) {
             return $sectionActionObjectList;
         }
 
-        $messages = array();
+        $messages = [];
 
         foreach ( $sectionNameList as $sectionName ) {
             $actionNameList = $etlConfig->getSectionActionNames($sectionName);
             $actionObjectList = ( array_key_exists($sectionName, $sectionActionObjectList)
                                       ? $sectionActionObjectList[$sectionName]
-                                      : array() );
+                                      : [] );
             try {
                 $sectionActionObjectList[$sectionName] = $this->verifyActions(
                     $etlConfig,
@@ -261,7 +257,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
             return;
         }
 
-        $map = array();
+        $map = [];
 
         try {
             $sql = $this->etlOverseerOptions->getResourceCodeToIdMapSql();
@@ -292,7 +288,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
 
     protected function verifyResourceCodes($codeList)
     {
-        $missing = array();
+        $missing = [];
         $map = $this->etlOverseerOptions->getResourceCodeToIdMap();
         foreach ( $codeList as $code ) {
             if ( ! array_key_exists($code, $map) ) {
@@ -312,7 +308,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
      * ------------------------------------------------------------------------------------------
      */
 
-    public function execute(EtlConfiguration $etlConfig)
+    public function execute(EtlConfiguration $etlConfig): void
     {
         // If resource codes were specified on the command line we will need to load the map of
         // codes to database ids. If no codes were specified, actions may have specified them so we
@@ -355,7 +351,7 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
         $sectionNames = $this->etlOverseerOptions->getSectionNames();
 
         if ( count($sectionNames) > 0 ) {
-            $missing = array();
+            $missing = [];
 
             foreach ( $sectionNames as $sectionName ) {
                 if ( ! $etlConfig->sectionExists($sectionName) ) {
@@ -396,16 +392,12 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
         $uniqueActionList = array_unique(
             array_reduce(
                 $this->sectionActions,
-                function ($carry, $item) {
-                    return array_merge($carry, $item);
-                },
+                fn($carry, $item) => array_merge($carry, $item),
                 $this->standaloneActions
             )
         );
         $actionNameList = array_map(
-            function ($obj) {
-                return $obj->getName();
-            },
+            fn($obj) => $obj->getName(),
             $uniqueActionList
         );
 
@@ -455,15 +447,9 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
      */
 
      // @codingStandardsIgnoreLine
-    private function _execute($actionName, iAction $actionObj)
+    private function _execute($actionName, iAction $actionObj): void
     {
-        $this->logger->info(array(
-                                'message'     => 'start',
-                                'action_name' => $actionName,
-                                'action'      => $actionObj,
-                                'start_date'  => $this->etlOverseerOptions->getStartDate(),
-                                'end_date'    => $this->etlOverseerOptions->getEndDate(),
-                                ));
+        $this->logger->info(['message'     => 'start', 'action_name' => $actionName, 'action'      => $actionObj, 'start_date'  => $this->etlOverseerOptions->getStartDate(), 'end_date'    => $this->etlOverseerOptions->getEndDate()]);
 
         // Execute the action using the overseer options including date, resource ids, etc.  If this
         // action should halt the ETL process on an exception re-throw the exception, otherwise log it
@@ -483,10 +469,6 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
             }
         }
 
-        $this->logger->info(array(
-                                'message'    => 'end',
-                                'action_name' => $actionName,
-                                'action'     => $actionObj
-                                ));
+        $this->logger->info(['message'    => 'end', 'action_name' => $actionName, 'action'     => $actionObj]);
     }  // _execute()
 }  // class EtlOverseer

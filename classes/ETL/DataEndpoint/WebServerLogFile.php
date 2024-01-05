@@ -21,22 +21,22 @@ use ETL\DataEndpoint\DataEndpointOptions;
 
 class WebServerLogFile extends aStructuredFile implements iStructuredFile
 {
-    const CACHE_SIZE = 1000;
+    public const CACHE_SIZE = 1000;
 
     private $web_parser = null;
 
     private $ua_parser = null;
-    private $ua_parser_cache = array();
+    private $ua_parser_cache = [];
 
     private $geoip_lookup = null;
-    private $geoip_cache = array();
+    private $geoip_cache = [];
 
     /**
      * @const string Defines the name for this endpoint that should be used in configuration files.
      * It also allows us to implement auto-discovery.
      */
 
-    const ENDPOINT_NAME = 'webserverlog';
+    public const ENDPOINT_NAME = 'webserverlog';
 
     /**
      * @see iDataEndpoint::__construct()
@@ -76,12 +76,12 @@ class WebServerLogFile extends aStructuredFile implements iStructuredFile
                 $result->{"subdivision"} = $geoip->mostSpecificSubdivision->isoCode;
                 $result->{"country"} = $geoip->country->isoCode;
             }
-            catch (\GeoIp2\Exception\AddressNotFoundException $e) {
+            catch (\GeoIp2\Exception\AddressNotFoundException) {
                 $result->{"city"} = 'unknown';
                 $result->{"subdivision"} = 'unknown';
                 $result->{"country"} = 'unknown';
             }
-            catch (\InvalidArgumentException $e) {
+            catch (\InvalidArgumentException) {
                 // leave at the default value of 'N/A'
             }
 
@@ -138,7 +138,7 @@ class WebServerLogFile extends aStructuredFile implements iStructuredFile
 
             $this->recordList[] = $decoded;
 
-        } catch (\Kassner\LogParser\FormatException $e) {
+        } catch (\Kassner\LogParser\FormatException) {
             // ignore failed lines
             $this->logger->debug("Skip " . $data);
         }

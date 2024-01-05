@@ -7,11 +7,11 @@ class PDODBUnbufferedMultiIngestor Extends PDODBMultiIngestor
     public function __construct(
         PDODB $dest_db,
         PDODB $source_db,
-        array $pre_ingest_update_statements = array(),
         $source_query,
         $insert_table,
-        array $insert_fields = array(),
-        array $post_ingest_update_statements = array(),
+        array $pre_ingest_update_statements = [],
+        array $insert_fields = [],
+        array $post_ingest_update_statements = [],
         $delete_statement = null,
         $count_statement = null
     ) {
@@ -40,9 +40,9 @@ class PDODBUnbufferedMultiIngestor Extends PDODBMultiIngestor
         parent::__construct(
             $dest_db,
             $source_db,
-            $pre_ingest_update_statements,
             $source_query,
             $insert_table,
+            $pre_ingest_update_statements,
             $insert_fields,
             $post_ingest_update_statements,
             $delete_statement,
@@ -50,7 +50,7 @@ class PDODBUnbufferedMultiIngestor Extends PDODBMultiIngestor
         );
     }
 
-    public function ingest()
+    public function ingest(): void
     {
         $pdo = $this->_source_db->handle();
         $buffered = $pdo->getAttribute( PDO::MYSQL_ATTR_USE_BUFFERED_QUERY);

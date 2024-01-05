@@ -9,7 +9,7 @@ class AdminControllerProviderTest extends BaseTest
 {
     private static $helper;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$helper = new XdmodTestHelper();
     }
@@ -17,7 +17,7 @@ class AdminControllerProviderTest extends BaseTest
     /**
      * @dataProvider provideResetUserTourViewed
      */
-    public function testResetUserTourViewed($id, $role, $input, $output)
+    public function testResetUserTourViewed($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             self::$helper,

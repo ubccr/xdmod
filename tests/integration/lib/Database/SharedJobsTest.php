@@ -4,7 +4,7 @@ namespace IntegrationTests\Database;
 
 use CCR\DB;
 use CCR\Json;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 use IntegrationTests\BaseTest;
 use Configuration\XdmodConfiguration;
 
@@ -14,7 +14,7 @@ use Configuration\XdmodConfiguration;
 class SharedJobsTest extends BaseDatabaseTest
 {
 
-    public function testResourcesSharedJobsValues()
+    public function testResourcesSharedJobsValues(): void
     {
         $actualSQLQuery = 'SELECT code, shared_jobs FROM modw.resourcefact ORDER BY code';
         $expectedFileName = 'shared_jobs';

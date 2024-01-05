@@ -31,11 +31,11 @@ class MaintenanceOptions extends aOptions
     {
         // Add options with local overriding current
 
-        $localOptions = array(
+        $localOptions = [
             // Name of the factory class for creating objects of this type. ** Must include the namespace of
             // the factory **
-            "factory" => "\\ETL\\Maintenance"
-        );
+            "factory" => \ETL\Maintenance::class,
+        ];
 
         $this->options = array_merge($this->options, $localOptions);
 
@@ -62,23 +62,23 @@ class MaintenanceOptions extends aOptions
                 $origValue = $value;
                 $value = \xd_utilities\filter_var($value, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
                 if ( null === $value ) {
-                    $msg = get_class($this) . ": '$property' must be a boolean (type = " . gettype($origValue) . ")";
+                    $msg = static::class . ": '$property' must be a boolean (type = " . gettype($origValue) . ")";
                     throw new Exception($msg);
                 }
                 break;
 
             case 'paths':
                 if ( ! is_object($value) ) {
-                    $msg = get_class($this) . ": paths must be an object";
+                    $msg = static::class . ": paths must be an object";
                     throw new Exception($msg);
                 }
                 break;
 
             case 'aggregation_units':
-                $value = ( is_array($value) ? $value : array($value) );
+                $value = ( is_array($value) ? $value : [$value] );
                 foreach ( $value as $v ) {
                     if ( ! is_string($v) ) {
-                        $msg = get_class($this) . ": '$property' must be a string or array of strings (type = " . gettype($v) . ")";
+                        $msg = static::class . ": '$property' must be a string or array of strings (type = " . gettype($v) . ")";
                         throw new Exception($msg);
                     }
                 }

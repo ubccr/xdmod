@@ -7,7 +7,7 @@ use Configuration\XdmodConfiguration;
 
 class Tabs
 {
-    const DEFAULT_ACL_HIERARCHY = 'acl_hierarchy';
+    public const DEFAULT_ACL_HIERARCHY = 'acl_hierarchy';
 
     private function __construct()
     {
@@ -20,7 +20,7 @@ class Tabs
         if (!isset($userId)) {
             throw new \Exception('User must be saved first.');
         }
-        $results = array();
+        $results = [];
 
         $db = DB::factory('database');
 
@@ -53,10 +53,7 @@ SELECT nh.tab, nh.acl FROM (
     AND ah.acl_hierarchy_id IS NULL
 ) nh;
 SQL;
-        $rows = $db->query($query, array(
-            ':user_id' => $userId,
-            ':acl_hierarchy_name' => self::DEFAULT_ACL_HIERARCHY
-        ));
+        $rows = $db->query($query, [':user_id' => $userId, ':acl_hierarchy_name' => self::DEFAULT_ACL_HIERARCHY]);
 
         $aclConfig = XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);
         $acls = $aclConfig['roles'];
@@ -77,7 +74,7 @@ SQL;
                         }
                         return $carry;
                     },
-                    array()
+                    []
                 );
                 if (count($tabs) > 0) {
                     $results = array_merge($results, $tabs);

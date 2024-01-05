@@ -29,9 +29,9 @@ use ETL\Utilities;
 
 // Allow initialization of some options from the configuration file
 
-$scriptOptions = array(
+$scriptOptions = [
     // List of individual actions to execute
-    'actions'           => array(),
+    'actions'           => [],
     // Base path for relative file locations
     'base-dir'          => null,
     // ETL configuration file
@@ -43,7 +43,7 @@ $scriptOptions = array(
     // Force operation
     'force'             => false,
     // Groups to run
-    'groups'            => array(),
+    'groups'            => [],
     // Chunk size (in days) for breaking up the process
     'chunk-size-days'   => null,
     // Default module name if not specified in a configuration file
@@ -73,22 +73,22 @@ $scriptOptions = array(
     // Previous number of days to ingest
     'number-of-days'    => null,
     // List of options to add to or override individual action options
-    'option-overrides'  => array(),
+    'option-overrides'  => [],
     // Act on only these resources (empty array is all resources)
-    'include-only-resource-codes' => array(),
+    'include-only-resource-codes' => [],
     // Exclude these resources (empty array excludes no resources)
-    'exclude-resource-codes' => array(),
+    'exclude-resource-codes' => [],
     // List of sections to process (e.g., ingestors, aggregators)
-    'process-sections'  => array(),
+    'process-sections'  => [],
     // SQL query to use when generating the resource code map
     'resource-code-map-sql' => null,
     // ETL start date
     'start-date'        => null,
     // Variables defined on the command line
-    'variable-overrides' => array(),
+    'variable-overrides' => [],
     // Log verbosity
-    'verbosity'         => Log::NOTICE
-);
+    'verbosity'         => Log::NOTICE,
+];
 
 // Override defaults with values from the configuration file, if there are any
 
@@ -122,30 +122,7 @@ $showList = false;
 // ==========================================================================================
 // Process command line arguments
 
-$options = array(
-    'h'   => 'help',
-    'a:'  => 'action:',
-    'b:'  => 'base-dir:',
-    'c:'  => 'config-file:',
-    'd:'  => 'define:',
-    'e:'  => 'end-date:',
-    'f'   => 'force',
-    'g:'  => 'group:',
-    'k:'  => 'chunk-size:',
-    'l:'  => 'list:',
-    'm:'  => 'last-modified-start-date:',
-    'n:'  => 'number-of-days:',
-    'o:'  => 'option:',
-    'p:'  => 'process-section:',
-    'r:'  => 'only-resource-codes:',
-    's:'  => 'start-date:',
-    't'   => 'dryrun',
-    'v:'  => 'verbosity:',
-    'x:'  => 'exclude-resource-codes:',
-    'y:'  => 'last-modified-end-date:',
-    ''    => 'lock-dir',
-    ''    => 'lock-file-prefix'
-    );
+$options = ['h'   => 'help', 'a:'  => 'action:', 'b:'  => 'base-dir:', 'c:'  => 'config-file:', 'd:'  => 'define:', 'e:'  => 'end-date:', 'f'   => 'force', 'g:'  => 'group:', 'k:'  => 'chunk-size:', 'l:'  => 'list:', 'm:'  => 'last-modified-start-date:', 'n:'  => 'number-of-days:', 'o:'  => 'option:', 'p:'  => 'process-section:', 'r:'  => 'only-resource-codes:', 's:'  => 'start-date:', 't'   => 'dryrun', 'v:'  => 'verbosity:', 'x:'  => 'exclude-resource-codes:', 'y:'  => 'last-modified-end-date:', ''    => 'lock-dir', ''    => 'lock-file-prefix'];
 
 $args = getopt(implode('', array_keys($options)), $options);
 
@@ -157,7 +134,7 @@ foreach ($args as $arg => $value) {
             // Merge array because long and short options are grouped separately
             $scriptOptions['actions'] = array_merge(
                 $scriptOptions['actions'],
-                ( is_array($value) ? $value : array($value) )
+                ( is_array($value) ? $value : [$value] )
             );
             break;
 
@@ -203,7 +180,7 @@ foreach ($args as $arg => $value) {
 
         case 'd':
         case 'define':
-            $value = ( is_array($value) ? $value : array($value) );
+            $value = ( is_array($value) ? $value : [$value] );
             foreach ( $value as $variable ) {
                 $parts = explode("=", $variable);
                 if ( 2 != count($parts) ) {
@@ -233,13 +210,13 @@ foreach ($args as $arg => $value) {
 
         case 'g':
         case 'group':
-            $scriptOptions['groups'] = ( is_array($value) ? $value : array($value) );
+            $scriptOptions['groups'] = ( is_array($value) ? $value : [$value] );
             break;
 
         case 'l':
         case 'list':
             $showList = true;
-            $value = ( is_array($value) ? $value : array($value) );
+            $value = ( is_array($value) ? $value : [$value] );
             foreach ( $value as $type ) {
                 $key = "list-" . $type;
                 $scriptOptions[$key] = true;
@@ -264,7 +241,7 @@ foreach ($args as $arg => $value) {
 
         case 'o':
         case 'option':
-            $value = ( is_array($value) ? $value : array($value) );
+            $value = ( is_array($value) ? $value : [$value] );
             foreach ( $value as $option ) {
                 $parts = explode("=", $option);
                 if ( 2 != count($parts) ) {
@@ -279,7 +256,7 @@ foreach ($args as $arg => $value) {
             // Merge array because long and short options are grouped separately
             $scriptOptions['include-only-resource-codes'] = array_merge(
                 $scriptOptions['include-only-resource-codes'],
-                ( is_array($value) ? $value : array($value) )
+                ( is_array($value) ? $value : [$value] )
             );
             break;
 
@@ -288,7 +265,7 @@ foreach ($args as $arg => $value) {
             // Merge array because long and short options are grouped separately
             $scriptOptions['process-sections'] = array_merge(
                 $scriptOptions['process-sections'],
-                ( is_array($value) ? $value : array($value) )
+                ( is_array($value) ? $value : [$value] )
             );
             break;
 
@@ -329,7 +306,7 @@ foreach ($args as $arg => $value) {
             // Merge array because long and short options are grouped separately
             $scriptOptions['exclude-resource-codes'] = array_merge(
                 $scriptOptions['exclude-resource-codes'],
-                ( is_array($value) ? $value : array($value) )
+                ( is_array($value) ? $value : [$value] )
             );
             break;
 
@@ -370,9 +347,9 @@ $parsedArgs = array_keys($args);
 foreach ( $argv as $index => $arg ) {
     $opt = null;
 
-    if ( 0 === strpos($arg, "--") ) {
+    if ( str_starts_with($arg, "--") ) {
         $opt = substr($arg, 2);
-    } elseif ( 0 === strpos($arg, "-") ) {
+    } elseif ( str_starts_with($arg, "-") ) {
         $opt = substr($arg, 1);
     }
     if ( null !== $opt && ! in_array($opt, $parsedArgs) ) {
@@ -383,10 +360,7 @@ foreach ( $argv as $index => $arg ) {
 // ------------------------------------------------------------------------------------------
 // Set up the logger
 
-$conf = array(
-    'emailSubject' => gethostname() . ': XDMOD: Data Warehouse: Federated ETL Log',
-    'mail' => false
-);
+$conf = ['emailSubject' => gethostname() . ': XDMOD: Data Warehouse: Federated ETL Log', 'mail' => false];
 
 if ( null !== $scriptOptions['verbosity'] ) {
     $conf['consoleLogLevel'] = $scriptOptions['verbosity'];
@@ -410,10 +384,7 @@ if ( $scriptOptions['dryrun']) {
 }
 
 if ( ! $showList)  {
-    $logger->notice(array(
-        'message'            => 'dw_extract_transform_load start',
-        'process_start_time' => date('Y-m-d H:i:s'),
-    ));
+    $logger->notice(['message'            => 'dw_extract_transform_load start', 'process_start_time' => date('Y-m-d H:i:s')]);
 }
 
 try {
@@ -432,11 +403,7 @@ try {
         $scriptOptions['config-file'],
         $scriptOptions['base-dir'],
         $logger,
-        array(
-            'option_overrides'   => $scriptOptions['option-overrides'],
-            'config_variables' => $scriptOptions['variable-overrides'],
-            'default_module_name' => $scriptOptions['default-module-name']
-        )
+        ['option_overrides'   => $scriptOptions['option-overrides'], 'config_variables' => $scriptOptions['variable-overrides'], 'default_module_name' => $scriptOptions['default-module-name']]
     );
     $etlConfig->setLogger($logger);
 } catch ( Exception $e ) {
@@ -462,9 +429,7 @@ $utilitySchema = $utilityEndpoint->getSchema();
 
 $listOptions = array_filter(
     array_keys($scriptOptions),
-    function ($key) {
-        return "list-" == substr($key, 0, 5);
-    }
+    fn($key) => str_starts_with($key, "list-")
 );
 
 if ( $showList ) {
@@ -483,11 +448,11 @@ if ( $showList ) {
                         sprintf("%s%s%s", $e->getMessage(), PHP_EOL, $e->getTraceAsString())
                     );
                 }
-                $headings = array("Resource Code","Start Date","End Date");
+                $headings = ["Resource Code", "Start Date", "End Date"];
                 print implode(LIST_SEPARATOR, $headings) . "\n";
 
                 foreach ( $result as $row ) {
-                    $fields = array($row['code'], $row['start_date'], $row['end_date']);
+                    $fields = [$row['code'], $row['start_date'], $row['end_date']];
                     print implode(LIST_SEPARATOR, $fields) . "\n";
                 }
                 break;
@@ -504,14 +469,14 @@ if ( $showList ) {
             case 'list-actions':
                 $sectionNames = $etlConfig->getSectionNames();
                 sort($sectionNames);
-                $headings = array("Action","Status","Description");
+                $headings = ["Action", "Status", "Description"];
                 print implode(LIST_SEPARATOR, $headings) . "\n";
 
                 foreach ( $sectionNames as $sectionName ) {
                     $actions = $etlConfig->getConfiguredActionNames($sectionName);
                     foreach ( $actions as $actionName ) {
                         $options = $etlConfig->getActionOptions($actionName, $sectionName);
-                        $fields = array($actionName, ( $options->enabled ? "enabled" : "disabled"), $options->description);
+                        $fields = [$actionName, ( $options->enabled ? "enabled" : "disabled"), $options->description];
                         print implode(LIST_SEPARATOR, $fields) . "\n";
                     }
                 }
@@ -519,8 +484,8 @@ if ( $showList ) {
 
             case 'list-endpoint-types':
                 \ETL\DataEndpoint::discover(false, $logger);
-                $endpointInfo = \ETL\DataEndpoint::getDataEndpointInfo(false, $logger);
-                $headings = array("Name", "Class");
+                $endpointInfo = \ETL\DataEndpoint::getDataEndpointInfo();
+                $headings = ["Name", "Class"];
                 print implode(LIST_SEPARATOR, $headings) . "\n";
                 ksort($endpointInfo);
                 foreach ( $endpointInfo as $name => $class) {
@@ -531,7 +496,7 @@ if ( $showList ) {
             case 'list-configured-endpoints':
                 $endpoints = $etlConfig->getDataEndpoints();
 
-                $endpointSummary = array();
+                $endpointSummary = [];
                 foreach ( $endpoints as $endpoint ) {
                     $endpointSummary[0][] = $endpoint->getType();
                     $endpointSummary[1][] = $endpoint->getName();
@@ -541,16 +506,11 @@ if ( $showList ) {
                 }
                 array_multisort($endpointSummary[0], $endpointSummary[1], $endpointSummary[2], $endpointSummary[3]);
 
-                $headings = array("Type","Name","Key","Description");
+                $headings = ["Type", "Name", "Key", "Description"];
                 print implode(LIST_SEPARATOR, $headings) . "\n";
 
                 for ($i=0; $i < count($endpointSummary[0]); $i++) {
-                    $a = array(
-                        $endpointSummary[0][$i],
-                        $endpointSummary[1][$i],
-                        $endpointSummary[2][$i],
-                        $endpointSummary[3][$i]
-                    );
+                    $a = [$endpointSummary[0][$i], $endpointSummary[1][$i], $endpointSummary[2][$i], $endpointSummary[3][$i]];
                     print implode(LIST_SEPARATOR, $a) . "\n";
                 }
                 break;
@@ -563,11 +523,11 @@ if ( $showList ) {
                 // Remove the "list-" prefix to get the section name
                 $sectionName = substr($opt, 5);
                 if ( false !== ($actions = $etlConfig->getConfiguredActionNames($sectionName)) ) {
-                    $headings = array("Action","Status","Description");
+                    $headings = ["Action", "Status", "Description"];
                     print implode(LIST_SEPARATOR, $headings) . "\n";
                     foreach ( $actions as $actionName ) {
                         $options = $etlConfig->getActionOptions($actionName, $sectionName);
-                        $fields = array($actionName, $sectionName, ( $options->enabled ? "enabled" : "disabled"), $options->description);
+                        $fields = [$actionName, $sectionName, ( $options->enabled ? "enabled" : "disabled"), $options->description];
                         print implode(LIST_SEPARATOR, $fields) . "\n";
                     }
                 } else {
@@ -588,8 +548,7 @@ $overseerOptions->setResourceCodeToIdMapSql(sprintf("SELECT id, code from %s.res
 if ( count($scriptOptions['process-sections']) == 0 &&
      count($scriptOptions['actions']) == 0 ) {
     $logger->notice("No actions or sections requested, exiting.");
-    $logger->notice(array('message'          => 'dw_extract_transform_load end',
-                          'process_end_time' => date('Y-m-d H:i:s') ));
+    $logger->notice(['message'          => 'dw_extract_transform_load end', 'process_end_time' => date('Y-m-d H:i:s')]);
     exit(0);
 }
 
@@ -600,7 +559,7 @@ $overseer = new EtlOverseer($overseerOptions, $logger);
 if ( ! ($overseer instanceof iEtlOverseer ) )
 {
     log_error_and_exit(
-        sprintf("EtlOverseer (%s) is not an instance of iEtlOverseer", get_class($overseer))
+        sprintf("EtlOverseer (%s) is not an instance of iEtlOverseer", $overseer::class)
     );
 }
 
@@ -614,8 +573,7 @@ try {
 
 // NOTE: "process_end_time" is needed for log summary."
 
-$logger->notice(array('message'          => 'dw_extract_transform_load end',
-                      'process_end_time' => date('Y-m-d H:i:s') ));
+$logger->notice(['message'          => 'dw_extract_transform_load end', 'process_end_time' => date('Y-m-d H:i:s')]);
 
 exit(0);
 
@@ -625,7 +583,7 @@ exit(0);
  * Log an error message and exit with a status indicating an error.
  */
 
-function log_error_and_exit($msg)
+function log_error_and_exit($msg): void
 {
     global $logger;
     $logger->err($msg);
@@ -637,7 +595,7 @@ function log_error_and_exit($msg)
  * Display usage text and exit with error status.
  */
 
-function usage_and_exit($msg = null)
+function usage_and_exit($msg = null): void
 {
     global $argv, $scriptOptions;
 

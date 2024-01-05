@@ -2,15 +2,8 @@
 
 namespace DataWarehouse\Query\Model;
 
-class Field
+class Field implements \Stringable
 {
-
-    /**
-     * The field definition.
-     *
-     * @var string
-     */
-    protected $_def;
 
     /**
      * The field alias.
@@ -22,12 +15,14 @@ class Field
     /**
      * Construct the field.
      *
-     * @param string $field_def A SQL expression defining the field
+     * @param string $_def A SQL expression defining the field
      * @param string $aliasname An optional alias for the field.
      */
-    public function __construct($field_def, $aliasname = '')
+    public function __construct(/**
+     * The field definition.
+     */
+    protected $_def, $aliasname = '')
     {
-        $this->_def   = $field_def;
         $this->_alias = new \DataWarehouse\Query\Model\Alias($aliasname);
     }
 
@@ -78,7 +73,7 @@ class Field
      *
      * @return string
      */
-    public function __toString()
+    public function __toString(): string
     {
         return $this->_def;
     }

@@ -2,10 +2,7 @@
 
 	// Operation: chart_pool->remove_from_queue
 	
-   \xd_security\assertParametersSet(array(
-		'chart_id' => RESTRICTION_CHART_TYPE, 
-		'module'   => RESTRICTION_CHART_MODULE
-   ));
+   \xd_security\assertParametersSet(['chart_id' => RESTRICTION_CHART_TYPE, 'module'   => RESTRICTION_CHART_MODULE]);
    
 	// -----------------------------
 

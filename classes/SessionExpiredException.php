@@ -10,12 +10,12 @@ class SessionExpiredException extends UserException
 	/**
 	 * The message used by this exception if none is provided.
 	 */
-	const defaultMessage = 'Session Expired';
+	public const defaultMessage = 'Session Expired';
 
 	/**
      * The code used by this exception if none is provided.
      */
-	const defaultCode = XDError::SessionExpired;
+	public const defaultCode = XDError::SessionExpired;
 
     public function __construct($message = self::defaultMessage, $code = self::defaultCode, Exception $previous = null)
 	{

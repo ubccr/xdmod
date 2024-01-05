@@ -4,28 +4,18 @@
 
 use Models\Services\Acls;
 
-$params = array(
-    'start'       => RESTRICTION_NUMERIC_POS,
-    'limit'       => RESTRICTION_NUMERIC_POS,
-    'search_mode' => RESTRICTION_SEARCH_MODE,
-    'pi_only'     => RESTRICTION_YES_NO
-);
+$params = ['start'       => RESTRICTION_NUMERIC_POS, 'limit'       => RESTRICTION_NUMERIC_POS, 'search_mode' => RESTRICTION_SEARCH_MODE, 'pi_only'     => RESTRICTION_YES_NO];
 
 $isValid = xd_security\secureCheck($params, 'POST');
 
 if (!$isValid) {
-    $returnData = array(
-        'success'          =>  false,
-        'status'           => 'invalid_params_specified',
-        'message'          => 'invalid_params_specified',
-        'total_user_count' => 0,
-    );
+    $returnData = ['success'          =>  false, 'status'           => 'invalid_params_specified', 'message'          => 'invalid_params_specified', 'total_user_count' => 0];
     xd_controller\returnJSON($returnData);
 };
 
 $xdw = new XDWarehouse();
 
-$name_filter = (isset($_POST['query'])) ? $_POST['query'] : NULL;
+$name_filter = $_POST['query'] ?? NULL;
 $use_pi_filter = ($_POST['pi_only'] == 'y');
 
 // Determine if the user accessing the controller is a Campus Champion
@@ -57,7 +47,7 @@ if ($_POST['search_mode'] == 'username') {
     $searchMethod = USERNAME_SEARCH;
 }
 
-list($userCount, $users) = $xdw->enumerateGridUsers(
+[$userCount, $users] = $xdw->enumerateGridUsers(
     $searchMethod,
     $_POST['start'],
     $_POST['limit'],
@@ -68,7 +58,7 @@ list($userCount, $users) = $xdw->enumerateGridUsers(
 
 $entry_id = 0;
 
-$userEntries = array();
+$userEntries = [];
 
 foreach ($users as $currentUser) {
     $entry_id++;
@@ -87,19 +77,9 @@ foreach ($users as $currentUser) {
         $personID = $currentUser['id'] . ';' . $currentUser['absusername'];
     }
 
-    $userEntries[] = array(
-        'id'          => $entry_id,
-        'person_id'   => $personID,
-        'person_name' => $personName
-    );
+    $userEntries[] = ['id'          => $entry_id, 'person_id'   => $personID, 'person_name' => $personName];
 }
 
-$returnData = array(
-    'success'          =>  true,
-    'status'           => 'success',
-    'message'          => 'success',
-    'total_user_count' => $userCount,
-    'users'            => $userEntries,
-);
+$returnData = ['success'          =>  true, 'status'           => 'success', 'message'          => 'success', 'total_user_count' => $userCount, 'users'            => $userEntries];
 
 xd_controller\returnJSON($returnData);

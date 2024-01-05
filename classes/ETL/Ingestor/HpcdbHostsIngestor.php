@@ -22,7 +22,7 @@ class HpcdbHostsIngestor extends pdoIngestor implements iAction
     public function transform(array $srcRecord, &$orderId)
     {
         $srcRecord = parent::transform($srcRecord, $orderId);
-        $transformedRecord = array();
+        $transformedRecord = [];
         /**
          * call HostListParser to expand host names and updates
          * this record to be able to be turned into something that
@@ -37,13 +37,7 @@ class HpcdbHostsIngestor extends pdoIngestor implements iAction
             if(!empty($host)){
                 $order_id++;
                 $orderId++;
-                $transformedRecord[] = array(
-                    "job_id" => $srcRecord[0]['job_id'],
-                    "resource_id" => $srcRecord[0]['resource_id'],
-                    "hostnames" => $host,
-                    "order_id" => $order_id,
-                    "host_id" => (-1 * $order_id)
-                );
+                $transformedRecord[] = ["job_id" => $srcRecord[0]['job_id'], "resource_id" => $srcRecord[0]['resource_id'], "hostnames" => $host, "order_id" => $order_id, "host_id" => (-1 * $order_id)];
             }
         }
         return $transformedRecord;

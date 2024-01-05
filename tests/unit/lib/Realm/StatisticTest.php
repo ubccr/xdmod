@@ -6,31 +6,24 @@
 namespace UnitTests\Realm;
 
 use CCR\Log as Logger;
+use Exception;
 use Realm\Realm;
 
-class StatisticTest extends \PHPUnit_Framework_TestCase
+class StatisticTest extends \PHPUnit\Framework\TestCase
 {
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Logger::EMERG
-        );
+        $conf = ['file' => false, 'db' => false, 'mail' => false, 'consoleLogLevel' => Logger::EMERG];
         self::$logger = Logger::factory('PHPUnit', $conf);
 
         // In order to use a non-standard location for datawarehouse.json we must manually
         // initialize the Realm class.
 
-        $options = (object) array(
-            'config_file_name' => 'datawarehouse.json',
-            'config_base_dir'  => realpath('../artifacts/xdmod/realm')
-        );
+        $options = (object) ['config_file_name' => 'datawarehouse.json', 'config_base_dir'  => realpath('../artifacts/xdmod/realm')];
 
         \Realm\Realm::initialize(self::$logger, $options);
     }
@@ -38,11 +31,12 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
     /**
      * (1) Invalid realm name.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testInvalidStatistic()
+    public function testInvalidStatistic(): void
     {
+        $this->expectException(Exception::class);
         $realm = Realm::factory('Jobs', self::$logger);
         $realm->getStatisticObject('DoesNotExist');
     }
@@ -51,7 +45,7 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
      * (2) Test checking to see if a statistic exists.
      */
 
-    public function testStatisticExists()
+    public function testStatisticExists(): void
     {
         $realm = Realm::factory('Jobs', self::$logger);
 
@@ -71,31 +65,24 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
      * (3) Test various sorting methods on the statistic objects.
      */
 
-    public function testGetStatisticObjectList()
+    public function testGetStatisticObjectList(): void
     {
         $realm = Realm::factory('Jobs', self::$logger);
         $objectList = $realm->getStatisticObjects();
-        $generated = array();
+        $generated = [];
         foreach ( $objectList as $id => $obj ) {
             $generated[$id] = $obj->getName(false);
         }
-        $expected = array(
-            'job_count' => sprintf('%s Number of Jobs Ended', ORGANIZATION_NAME),
-            'running_job_count' => sprintf('%s Number of Running Jobs', ORGANIZATION_NAME)
-        );
+        $expected = ['job_count' => sprintf('%s Number of Jobs Ended', ORGANIZATION_NAME), 'running_job_count' => sprintf('%s Number of Running Jobs', ORGANIZATION_NAME)];
         $this->assertEquals($expected, $generated, "getStatisticObjects('Jobs')");
 
         $realm = Realm::factory('Cloud', self::$logger);
         $objectList = $realm->getStatisticObjects(Realm::SORT_ON_SHORT_ID);
-        $generated = array();
+        $generated = [];
         foreach ( $objectList as $id => $obj ) {
             $generated[$id] = $obj->getName(false);
         }
-        $expected = array(
-            'alternate_statistic_class' => 'Alternate Statistic Class Example',
-            'core_time' => 'CPU Hours: Total',
-            'cloud_num_sessions_running' => sprintf('%s Number of Active Sessions', ORGANIZATION_NAME)
-        );
+        $expected = ['alternate_statistic_class' => 'Alternate Statistic Class Example', 'core_time' => 'CPU Hours: Total', 'cloud_num_sessions_running' => sprintf('%s Number of Active Sessions', ORGANIZATION_NAME)];
         $this->assertEquals($expected, $generated, "getStatisticObjects('Cloud'), SORT_ON_SHORT_ID");
     }
 
@@ -103,7 +90,7 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
      * (4) Test retrieval of the statistic object.
      */
 
-    public function testGetStatisticObject()
+    public function testGetStatisticObject(): void
     {
         $realm = Realm::factory('Cloud', self::$logger);
         $obj = $realm->getStatisticObject('cloud_num_sessions_running');
@@ -128,11 +115,12 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
     /**
      * (5) Test retrieval of a disabled statistic.
      *
-     * @expectedException Exception
+     *
      */
 
-    public function testGetDisabledStatisticObject()
+    public function testGetDisabledStatisticObject(): void
     {
+        $this->expectException(Exception::class);
         $realm = Realm::factory('Cloud', self::$logger);
         $realm->getStatisticObject('disabled_core_time');
     }
@@ -141,7 +129,7 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
      * (7) Test statistic metadata.
      */
 
-    public function testStatisticMetadata()
+    public function testStatisticMetadata(): void
     {
         $realm = Realm::factory('Jobs', self::$logger);
         $obj = $realm->getStatisticObject('job_count');
@@ -220,7 +208,7 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
      * (8) Test convienece of adding realm to statistic id.
      */
 
-    public function testAddRealmToStatisticId()
+    public function testAddRealmToStatisticId(): void
     {
         $realm = Realm::factory('Jobs', self::$logger);
 
@@ -235,7 +223,7 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
      * simply tests that the infrastructure attempts to instantiate the specified class.
      */
 
-    public function testAlternateStatisticClass()
+    public function testAlternateStatisticClass(): void
     {
         $realm = Realm::factory('Cloud', self::$logger);
         try {

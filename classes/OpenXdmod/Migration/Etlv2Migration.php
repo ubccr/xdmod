@@ -21,21 +21,19 @@ class Etlv2Migration extends Migration
     /**
      * @inheritdoc
      */
-    public function execute()
+    public function execute(): void
     {
         $etlConfig = EtlConfiguration::factory(
             CONFIG_DIR . '/etl/etl.json',
             null,
             $this->logger,
-            array('default_module_name' => 'xdmod')
+            ['default_module_name' => 'xdmod']
         );
         Utilities::setEtlConfig($etlConfig);
 
         $sectionFilter = 'migration-' . str_replace('.', '_', $this->currentVersion) . '-' . str_replace('.', '_', $this->newVersion);
 
-        $scriptOptions = array(
-            'process-sections' => array()
-        );
+        $scriptOptions = ['process-sections' => []];
 
         foreach($etlConfig->getSectionNames() as $sectionName) {
             if (strpos($sectionName, $sectionFilter) === (strlen($sectionName) - strlen($sectionFilter))) {

@@ -61,7 +61,7 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
 
         // Check for required properties
 
-        $requiredKeys = array("schema", "config");
+        $requiredKeys = ["schema", "config"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
         $this->schema = $options->schema;
@@ -79,7 +79,7 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
             if ( array_key_exists("user", $section) ) {
                 $this->username = $section["user"];
             }
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $msg = "Database '{$this->config}' not defined in configuration";
             $this->logAndThrowException($msg);
         }
@@ -97,7 +97,7 @@ abstract class aRdbmsEndpoint extends aDataEndpoint
         $this->key = md5(
             implode(
                 $this->keySeparator,
-                array($this->type, $this->config, $this->schema, $this->createSchemaIfNotExists)
+                [$this->type, $this->config, $this->schema, $this->createSchemaIfNotExists]
             )
         );
     }
@@ -220,10 +220,7 @@ AND table_name = :tablename";
         }
 
         $result = null;
-        $params = array(
-            ":schema" => $schemaName,
-            ":tablename"  => $tableName
-            );
+        $params = [":schema" => $schemaName, ":tablename"  => $tableName];
 
         try {
             $dbh = $this->getHandle();
@@ -234,7 +231,7 @@ AND table_name = :tablename";
         } catch (PDOException $e) {
             $this->logAndThrowException(
                 "Error querying for table '$schemaName'.'$tableName':",
-                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+                ['exception' => $e, 'sql' => $sql, 'endpoint' => $this]
             );
         }
 
@@ -264,8 +261,7 @@ ORDER BY ordinal_position ASC";
             $schemaName = $this->getSchema();
         }
 
-        $params = array(":schema" => $schemaName,
-                        ":tablename"  => $tableName);
+        $params = [":schema" => $schemaName, ":tablename"  => $tableName];
         $result = null;
 
         try {
@@ -278,11 +274,11 @@ ORDER BY ordinal_position ASC";
         } catch (PDOException $e) {
             $this->logAndThrowException(
                 "Error retrieving column names from '$schemaName'.'$tableName' ",
-                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+                ['exception' => $e, 'sql' => $sql, 'endpoint' => $this]
             );
         }
 
-        $columnNames = array();
+        $columnNames = [];
         foreach ( $result as $row ) {
             $columnNames[] = $row['name'];
         }
@@ -306,7 +302,7 @@ ORDER BY ordinal_position ASC";
      * @throw Exception If tehre was an errir querying the database
      */
 
-    protected function executeSchemaExistsQuery($sql, $schemaName = null, array $sqlParameters = array())
+    protected function executeSchemaExistsQuery($sql, $schemaName = null, array $sqlParameters = [])
     {
         if ( null === $schemaName ) {
             $schemaName = $this->getSchema();
@@ -315,7 +311,7 @@ ORDER BY ordinal_position ASC";
             $this->logAndThrowException($msg);
         }
 
-        $localSqlParameters = array(":schema" => $schemaName);
+        $localSqlParameters = [":schema" => $schemaName];
         $localSqlParameters = array_merge($localSqlParameters, $sqlParameters);
 
         try {
@@ -327,7 +323,7 @@ ORDER BY ordinal_position ASC";
         } catch (\PdoException $e) {
             $this->logAndThrowException(
                 "Error querying for schema '$schemaName'",
-                array('exception' => $e, 'sql' => $sql, 'endpoint' => $this)
+                ['exception' => $e, 'sql' => $sql, 'endpoint' => $this]
             );
         }
 
@@ -338,9 +334,9 @@ ORDER BY ordinal_position ASC";
      * @see aDataEndpoint::__toString()
      */
 
-    public function __toString()
+    public function __toString(): string
     {
-        return "('" . $this->name . "', class=" . get_class($this) . ", config={$this->config}, schema={$this->schema}" .
+        return "('" . $this->name . "', class=" . static::class . ", config={$this->config}, schema={$this->schema}" .
             (null !== $this->hostname ? ", host={$this->hostname}" : "" ) .
             (null !== $this->port ? ":{$this->port}" : "" ) .
             (null !== $this->username ? ", user={$this->username}" : "" ) .

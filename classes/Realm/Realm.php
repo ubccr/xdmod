@@ -120,14 +120,14 @@ class Realm extends \CCR\Loggable implements iRealm
      * identifier and the value is the object.
      */
 
-    protected $groupBys = array();
+    protected $groupBys = [];
 
     /**
      * @var array An associative array of one or more Statistic objects where the key is the short
      * identifier and the value is the object.
      */
 
-    protected $statistics = array();
+    protected $statistics = [];
 
     /**
      * @var Configuration Parsed Configuration object for datawarehouse.json
@@ -160,10 +160,10 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::factory()
      */
 
-    public static function initialize(LoggerInterface $logger = null, \stdClass $options = null)
+    public static function initialize(LoggerInterface $logger = null, \stdClass $options = null): void
     {
-        $filename = ( isset($options->config_file_name) ? $options->config_file_name : 'datawarehouse.json' );
-        $configDir = ( isset($options->config_base_dir) ? $options->config_base_dir : CONFIG_DIR );
+        $filename = ( $options->config_file_name ?? 'datawarehouse.json' );
+        $configDir = ( $options->config_base_dir ?? CONFIG_DIR );
 
         // When using a non-standard configuration file location we always re-load the configuration
         // class. Otherwise, tests that reference different locations or artifacts will fail
@@ -271,9 +271,7 @@ class Realm extends \CCR\Loggable implements iRealm
             case self::SORT_ON_NAME:
                 uasort(
                     $configList,
-                    function ($a, $b) {
-                        return strcmp($a->name, $b->name);
-                    }
+                    fn($a, $b) => strcmp($a->name, $b->name)
                 );
                 break;
 
@@ -282,8 +280,8 @@ class Realm extends \CCR\Loggable implements iRealm
                     $configList,
                     function ($a, $b) {
                         // Order is optional so default to 0 if the order is not specified
-                        $orderA = ( isset($a->order) ? $a->order : 0 );
-                        $orderB = ( isset($b->order) ? $b->order : 0 );
+                        $orderA = ( $a->order ?? 0 );
+                        $orderB = ( $b->order ?? 0 );
 
                         if ( $orderA < $orderB ) {
                             return -1;
@@ -321,7 +319,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
     private static function getSortedNameList(\stdClass $configObj, $order)
     {
-        $list = array();
+        $list = [];
 
         $sorted = self::sortConfig($configObj, $order);
         foreach ( $sorted as $shortName => $config ) {
@@ -359,7 +357,7 @@ class Realm extends \CCR\Loggable implements iRealm
         Realm $realmObj = null,
         LoggerInterface $logger = null
     ) {
-        $list = array();
+        $list = [];
         $sorted = self::sortConfig($configObj, $order);
 
         foreach ( $sorted as $shortName => $config ) {
@@ -384,7 +382,7 @@ class Realm extends \CCR\Loggable implements iRealm
                     throw new \Exception($msg);
                 }
                 $factoryClassName = $configObj->class;
-            } elseif ( false === strpos($factoryClassName, '\\')  && 'static' != $factoryClassName ) {
+            } elseif ( !str_contains($factoryClassName, '\\')  && 'static' != $factoryClassName ) {
                 $factoryClassName = sprintf('\\%s\\%s', __NAMESPACE__, $factoryClassName);
             }
 
@@ -428,15 +426,8 @@ class Realm extends \CCR\Loggable implements iRealm
 
         // Verify the types of the various configuration options
 
-        $messages = array();
-        $configTypes = array(
-            'aggregate_schema' => 'string',
-            'aggregate_table_prefix' => 'string',
-            'datasource' => 'string',
-            'group_bys' => 'object',
-            'name' => 'string',
-            'statistics' => 'object'
-        );
+        $messages = [];
+        $configTypes = ['aggregate_schema' => 'string', 'aggregate_table_prefix' => 'string', 'datasource' => 'string', 'group_bys' => 'object', 'name' => 'string', 'statistics' => 'object'];
 
         if ( ! \xd_utilities\verify_object_property_types($specification, $configTypes, $messages) ) {
             $this->logAndThrowException(
@@ -444,15 +435,7 @@ class Realm extends \CCR\Loggable implements iRealm
             );
         }
 
-        $optionalConfigTypes = array(
-            'aggregate_table_alias' => 'string',
-            'category' => 'string',
-            'disabled' => 'bool',
-            'min_aggregation_unit' => 'string',
-            'module' => 'string',
-            'order' => 'int',
-            'show_in_catalog' => 'bool'
-        );
+        $optionalConfigTypes = ['aggregate_table_alias' => 'string', 'category' => 'string', 'disabled' => 'bool', 'min_aggregation_unit' => 'string', 'module' => 'string', 'order' => 'int', 'show_in_catalog' => 'bool'];
 
         if ( ! \xd_utilities\verify_object_property_types($specification, $optionalConfigTypes, $messages, true) ) {
             $this->logAndThrowException(
@@ -511,18 +494,7 @@ class Realm extends \CCR\Loggable implements iRealm
         }
 
         $this->variableStore = new VariableStore(
-            array(
-                'ORGANIZATION_NAME' => ORGANIZATION_NAME,
-                'ORGANIZATION_NAME_ABBREV' => ORGANIZATION_NAME_ABBREV,
-                'REALM_ID' => $this->id,
-                'REALM_NAME' => $this->name,
-                'HIERARCHY_TOP_LEVEL_LABEL' => HIERARCHY_TOP_LEVEL_LABEL,
-                'HIERARCHY_TOP_LEVEL_INFO' => HIERARCHY_TOP_LEVEL_INFO,
-                'HIERARCHY_MIDDLE_LEVEL_LABEL' => HIERARCHY_MIDDLE_LEVEL_LABEL,
-                'HIERARCHY_MIDDLE_LEVEL_INFO' => HIERARCHY_MIDDLE_LEVEL_INFO,
-                'HIERARCHY_BOTTOM_LEVEL_LABEL' => HIERARCHY_BOTTOM_LEVEL_LABEL,
-                'HIERARCHY_BOTTOM_LEVEL_INFO' => HIERARCHY_BOTTOM_LEVEL_INFO
-            ),
+            ['ORGANIZATION_NAME' => ORGANIZATION_NAME, 'ORGANIZATION_NAME_ABBREV' => ORGANIZATION_NAME_ABBREV, 'REALM_ID' => $this->id, 'REALM_NAME' => $this->name, 'HIERARCHY_TOP_LEVEL_LABEL' => HIERARCHY_TOP_LEVEL_LABEL, 'HIERARCHY_TOP_LEVEL_INFO' => HIERARCHY_TOP_LEVEL_INFO, 'HIERARCHY_MIDDLE_LEVEL_LABEL' => HIERARCHY_MIDDLE_LEVEL_LABEL, 'HIERARCHY_MIDDLE_LEVEL_INFO' => HIERARCHY_MIDDLE_LEVEL_INFO, 'HIERARCHY_BOTTOM_LEVEL_LABEL' => HIERARCHY_BOTTOM_LEVEL_LABEL, 'HIERARCHY_BOTTOM_LEVEL_INFO' => HIERARCHY_BOTTOM_LEVEL_INFO],
             $logger
         );
     }
@@ -707,8 +679,8 @@ class Realm extends \CCR\Loggable implements iRealm
         }
 
         $config = $this->groupByConfigs->$shortName;
-        $className = (isset($config->class) ? $config->class : 'GroupBy');
-        if ( false === strpos($className, '\\') ) {
+        $className = ($config->class ?? 'GroupBy');
+        if ( !str_contains($className, '\\') ) {
             $className = sprintf('\\%s\\%s', __NAMESPACE__, $className);
         }
 
@@ -735,8 +707,8 @@ class Realm extends \CCR\Loggable implements iRealm
         }
 
         $config = $this->statisticConfigs->$shortName;
-        $className = (isset($config->class) ? $config->class : 'Statistic');
-        if ( false === strpos($className, '\\') ) {
+        $className = ($config->class ?? 'Statistic');
+        if ( !str_contains($className, '\\') ) {
             $className = sprintf('\\%s\\%s', __NAMESPACE__, $className);
         }
 
@@ -799,9 +771,9 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::getDrillTargets()
      */
 
-    public function getDrillTargets($groupById, $hiddenGroupBys = array(), $order = self::SORT_ON_ORDER)
+    public function getDrillTargets($groupById, $hiddenGroupBys = [], $order = self::SORT_ON_ORDER)
     {
-        $drillTargets = array();
+        $drillTargets = [];
         $groupByObjects = $this->getGroupByObjects($order);
 
         foreach ( $groupByObjects as $gId => $groupByObj ) {
@@ -819,8 +791,8 @@ class Realm extends \CCR\Loggable implements iRealm
      * @see iRealm::__toString()
      */
 
-    public function __toString()
+    public function __toString(): string
     {
-        return sprintf('%s(%s)', get_class($this), $this->id);
+        return sprintf('%s(%s)', static::class, $this->id);
     }
 }

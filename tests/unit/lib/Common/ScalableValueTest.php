@@ -10,22 +10,22 @@ namespace UnitTests\Common;
 *
 */
 
-class ScalableValueTest extends \PHPUnit_Framework_TestCase
+class ScalableValueTest extends \PHPUnit\Framework\TestCase
 {
     private $_scalableValue;
-    public function setUp()
+    public function setUp(): void
     {
         $this->_scalableValue = new \Common\ScalableValue(10, .5, .2);
     }
 
-    public function tearDown()
+    public function tearDown(): void
     {
         $this->_scalableValue = null;
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $this->assertEquals($this->_scalableValue->get(false), 10, "This should pass" );
-        $this->assertEquals($this->_scalableValue->get(true), 10 * pow(.5, .2), "This should pass" );
+        $this->assertEquals($this->_scalableValue->get(true), 10 * .5 ** .2, "This should pass" );
     }
 }

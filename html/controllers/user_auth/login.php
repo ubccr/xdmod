@@ -2,7 +2,7 @@
 
 	// Operation: user_auth->login
 	
-	$params = array('username' => RESTRICTION_USERNAME, 'password' => RESTRICTION_PASSWORD);
+	$params = ['username' => RESTRICTION_USERNAME, 'password' => RESTRICTION_PASSWORD];
 	
 	$isValid = xd_security\secureCheck($params, 'POST');
 	

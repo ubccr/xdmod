@@ -31,23 +31,7 @@ class Lsf extends Shredder
       *
       * @var array
       */
-    protected static $columnNames = array(
-        'job_id',
-        'idx',
-        'job_name',
-        'resource_name',
-        'queue',
-        'user_name',
-        'project_name',
-        'submit_time',
-        'start_time',
-        'event_time',
-        'num_processors',
-        'num_ex_hosts',
-        'exit_status',
-        'exit_info',
-        'node_list',
-    );
+    protected static $columnNames = ['job_id', 'idx', 'job_name', 'resource_name', 'queue', 'user_name', 'project_name', 'submit_time', 'start_time', 'event_time', 'num_processors', 'num_ex_hosts', 'exit_status', 'exit_info', 'node_list'];
 
     /**
      * The column names stored as array keys.
@@ -66,7 +50,7 @@ class Lsf extends Shredder
      *
      * @var array
      */
-    protected static $fieldNames = array(
+    protected static $fieldNames = [
         'event_type',
         'version_number',
         'event_time',
@@ -90,22 +74,18 @@ class Lsf extends Shredder
         'out_file',
         'err_file',
         'job_file',
-
         // Number of "asked_hosts" fields is the value from the
         // "num_asked_hosts" field.
         'num_asked_hosts',
         'asked_hosts',
-
         // Number of "exec_hosts" fields is the value from the
         // "num_ex_hosts" field.
         'num_ex_hosts',
         'exec_hosts',
-
         'j_status',
         'host_factor',
         'job_name',
         'command',
-
         // Resource usage from getrusage.
         'ru_utime',
         'ru_stime',
@@ -126,7 +106,6 @@ class Lsf extends Shredder
         'ru_nvcsw',
         'ru_nivcsw',
         'ru_exutime',
-
         'mail_user',
         'project_name',
         'exit_status',
@@ -157,20 +136,16 @@ class Lsf extends Shredder
         'last_resize_time',
         'rsv_id_2',
         'job_description',
-
         // Assuming this field will be zero.
         'submit_ext_num',
-
         'options3',
         'bsub_w',
-
         // Assuming this field will be zero.
         'num_host_rusage',
-
         'effective_res_req',
         'total_provisional_time',
         'run_time',
-    );
+    ];
 
     /**
      * @var integer
@@ -180,7 +155,7 @@ class Lsf extends Shredder
     /**
      * @inheritdoc
      */
-    protected static $columnMap = array(
+    protected static $columnMap = [
         'date_key'        => 'DATE(FROM_UNIXTIME(event_time))',
         'job_id'          => 'job_id',
         'job_id_raw'      => 'job_id',
@@ -199,7 +174,6 @@ class Lsf extends Shredder
         'node_count'      => 'num_ex_hosts',
         'cpu_count'       => 'num_processors',
         'node_list'       => 'node_list',
-
         // Both the exit code and exit state are integers in LSF
         // accounting logs.  These values are converted to strings
         // because other resource managers do not use integers.  A colon
@@ -208,20 +182,12 @@ class Lsf extends Shredder
         // ingestion process.
         'exit_code'       => 'CONCAT(CAST(exit_status AS CHAR), \':\')',
         'exit_state'      => 'CONCAT(CAST(exit_info AS CHAR), \':\')',
-    );
+    ];
 
     /**
      * @inheritdoc
      */
-    protected static $dataMap = array(
-        'job_id'          => 'job_id',
-        'start_time'      => 'start_time',
-        'end_time'        => 'event_time',
-        'submission_time' => 'submit_time',
-        'walltime'        => 'walltime',
-        'nodes'           => 'num_ex_hosts',
-        'cpus'            => 'num_processors',
-    );
+    protected static $dataMap = ['job_id'          => 'job_id', 'start_time'      => 'start_time', 'end_time'        => 'event_time', 'submission_time' => 'submit_time', 'walltime'        => 'walltime', 'nodes'           => 'num_ex_hosts', 'cpus'            => 'num_processors'];
 
     /**
      * @inheritdoc
@@ -237,7 +203,7 @@ class Lsf extends Shredder
     /**
      * @inheritdoc
      */
-    public function shredLine($line)
+    public function shredLine($line): void
     {
         $this->logger->debug("Shredding line '$line'");
 
@@ -246,10 +212,7 @@ class Lsf extends Shredder
         $firstSpacePos = strpos($line, ' ');
 
         if ($firstSpacePos === false) {
-            $this->logger->err(array(
-                'message' => 'Unexpected lsb.acct format',
-                'line'    => $line,
-            ));
+            $this->logger->err(['message' => 'Unexpected lsb.acct format', 'line'    => $line]);
             return;
         }
 
@@ -297,12 +260,7 @@ class Lsf extends Shredder
             = ($job['ru_utime'] > 0 ? $job['ru_utime'] : 0)
             + ($job['ru_stime'] > 0 ? $job['ru_stime'] : 0);
 
-        $this->logger->debug(array(
-            'message'  => 'Estimating walltime with data from rusage',
-            'ru_utime' => $job['ru_utime'],
-            'ru_stime' => $job['ru_stime'],
-            'walltime' => $job['walltime'],
-        ));
+        $this->logger->debug(['message'  => 'Estimating walltime with data from rusage', 'ru_utime' => $job['ru_utime'], 'ru_stime' => $job['ru_stime'], 'walltime' => $job['walltime']]);
 
         $job['resource_name'] = $this->getResource();
 
@@ -327,7 +285,7 @@ class Lsf extends Shredder
 
         $fieldCount = count($fields);
 
-        $job = array();
+        $job = [];
 
         $fieldIdx = 0;
         $fieldNameIdx = 0;
@@ -361,7 +319,7 @@ class Lsf extends Shredder
                 // Determine the last index to include in the array.
                 $maxIdx = $fieldIdx + $fields[$fieldIdx];
 
-                $fieldArray = array();
+                $fieldArray = [];
 
                 while ($fieldIdx < $maxIdx) {
                     $fieldIdx++;
@@ -416,7 +374,7 @@ class Lsf extends Shredder
         );
 
         $this->logger->debug(array_merge(
-            array('message' => 'Column values: '),
+            ['message' => 'Column values: '],
             $columnValues
         ));
 

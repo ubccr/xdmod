@@ -4,15 +4,9 @@ use CCR\MailWrapper;
 
 // Operation: mailer->contact
 
-$response = array();
+$response = [];
 
-\xd_security\assertParametersSet(array(
-  'name'              => RESTRICTION_FIRST_NAME,
-  'message'           => RESTRICTION_NON_EMPTY,
-  'username'          => RESTRICTION_NON_EMPTY,
-  'token'             => RESTRICTION_NON_EMPTY,
-  'timestamp'         => RESTRICTION_NON_EMPTY
-));
+\xd_security\assertParametersSet(['name'              => RESTRICTION_FIRST_NAME, 'message'           => RESTRICTION_NON_EMPTY, 'username'          => RESTRICTION_NON_EMPTY, 'token'             => RESTRICTION_NON_EMPTY, 'timestamp'         => RESTRICTION_NON_EMPTY]);
 
 \xd_security\assertEmailParameterSet('email');
 
@@ -27,7 +21,7 @@ if ($user_is_public) {
   try {
     \xd_security\getLoggedInUser();
     $user_logged_in = true;
-  } catch (Exception $e) {}
+  } catch (Exception) {}
 
   if ($user_logged_in) {
     \xd_response\presentError("Client claims to be public user but is logged in.");
@@ -42,7 +36,7 @@ if ($user_is_public) {
 // ----------------------------------------------------------
 
 $user_info = $user_is_public ? 'Public Visitor' : "Username:     ".$_POST['username'];
-$reason = isset($_POST['reason']) ? $_POST['reason'] : 'contact';
+$reason = $_POST['reason'] ?? 'contact';
 
 // ----------------------------------------------------------
 
@@ -71,13 +65,7 @@ $message .="$user_info\n\n  Token:        {$_POST['token']}\n  Timestamp:    $ti
 
 try {
     //Original sender's e-mail must be in the 'fromAddress' field for the XDMoD Request Tracker to function
-    MailWrapper::sendMail(array(
-        'body'         => $message,
-        'subject'      => $subject,
-        'toAddress'    => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
-        'fromAddress'  => $_POST['email'],
-        'fromName'     => $_POST['name']
-        )
+    MailWrapper::sendMail(['body'         => $message, 'subject'      => $subject, 'toAddress'    => \xd_utilities\getConfiguration('general', 'contact_page_recipient'), 'fromAddress'  => $_POST['email'], 'fromName'     => $_POST['name']]
     );
 }
 catch (Exception $e) {
@@ -98,11 +86,7 @@ $message
 // -------------------
 
 try {
-    MailWrapper::sendMail(array(
-        'body'      => $message,
-        'subject'   => "Thank you for your $message_type.",
-        'toAddress' => $_POST['email']
-        )
+    MailWrapper::sendMail(['body'      => $message, 'subject'   => "Thank you for your $message_type.", 'toAddress' => $_POST['email']]
     );
 }
 catch (Exception $e) {

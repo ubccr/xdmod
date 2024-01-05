@@ -9,30 +9,22 @@ namespace ComponentTests\Query;
 use CCR\Log as Logger;
 use DataWarehouse\Query\AggregateQuery;
 
-class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
+class TimeseriesQueryTest extends \PHPUnit\Framework\TestCase
 {
 
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
-        $conf = array(
-            'file' => false,
-            'db' => false,
-            'mail' => false,
-            'consoleLogLevel' => Logger::EMERG
-        );
+        $conf = ['file' => false, 'db' => false, 'mail' => false, 'consoleLogLevel' => Logger::EMERG];
         self::$logger = Logger::factory('PHPUnit', $conf);
 
         // In order to use a non-standard location for datawarehouse.json we must manually
         // initialize the Realm class.
 
-        $options = (object) array(
-            'config_file_name' => 'datawarehouse.json',
-            'config_base_dir'  => realpath('../artifacts/xdmod/realm')
-        );
+        $options = (object) ['config_file_name' => 'datawarehouse.json', 'config_base_dir'  => realpath('../artifacts/xdmod/realm')];
 
         \Realm\Realm::initialize(self::$logger, $options);
     }
@@ -44,7 +36,7 @@ class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
      * query in the HAVING clause via the SimpleTimeseriesDataIterator.
      */
 
-    public function testTimeseriesQuery()
+    public function testTimeseriesQuery(): void
     {
         $query = new \DataWarehouse\Query\TimeseriesQuery(
             'Jobs',
@@ -53,17 +45,13 @@ class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
             '2017-01-31',
             null,
             null,
-            array(),
+            [],
             self::$logger
         );
 
         // Simulate HighChartTimeseries2 configure
 
-        $data_description = (object) array(
-            'sort_type' => 'value_desc',
-            'group_by' => 'person',
-            'metric' => 'job_count'
-        );
+        $data_description = (object) ['sort_type' => 'value_desc', 'group_by' => 'person', 'metric' => 'job_count'];
 
         $query->addGroupBy($data_description->group_by);
         $query->addStat($data_description->metric);

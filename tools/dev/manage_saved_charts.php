@@ -23,37 +23,11 @@
 
 // Process arguments
 
-$scriptOptions = array(
-    'destination' => null,
-    'dryrun' => false,
-    'legend-orig' => null,
-    'legend-new' => null,
-    'list' => null,
-    'operation' => null,
-    'source' => null,
-    'user' => null,
-    'verbose' => false,
-    'xdmod-root' => null
-);
+$scriptOptions = ['destination' => null, 'dryrun' => false, 'legend-orig' => null, 'legend-new' => null, 'list' => null, 'operation' => null, 'source' => null, 'user' => null, 'verbose' => false, 'xdmod-root' => null];
 
-$supportedOperations = array(
-    'copy-filters',
-    'force-update-legend'
-);
+$supportedOperations = ['copy-filters', 'force-update-legend'];
 
-$options = array(
-    'a:' => 'legend-orig:',
-    'b:' => 'legend-new:',
-    'd:' => 'destination:',
-    'h'  => 'help',
-    'l:' => 'list:',
-    'o:' => 'operation:',
-    'r:' => 'xdmod-root:',
-    's:' => 'source:',
-    't'  => 'dry-run',
-    'u:' => 'user:',
-    'v'  => 'verbose'
-);
+$options = ['a:' => 'legend-orig:', 'b:' => 'legend-new:', 'd:' => 'destination:', 'h'  => 'help', 'l:' => 'list:', 'o:' => 'operation:', 'r:' => 'xdmod-root:', 's:' => 'source:', 't'  => 'dry-run', 'u:' => 'user:', 'v'  => 'verbose'];
 
 $args = getopt(implode('', array_keys($options)), $options);
 
@@ -179,7 +153,7 @@ if (
     && ! isset($scriptOptions['source'])
     && 'chart-config-as-json' == $scriptOptions['list']
    ) {
-    $parts = array();
+    $parts = [];
     foreach ( $charts['data'] as $chart ) {
         $parts[] = sprintf("\"%s\": %s", $chart['name'], $chart['config']);
     }
@@ -190,7 +164,7 @@ if (
 // Loop over all of the charts and extract any information that we will need to perform operations.
 // Wile we are looping, display any requested information.
 
-$chartInfoList = array();
+$chartInfoList = [];
 foreach ( $charts['data'] as $chartIndex => $chart ) {
     if ( ! isset($chart['name']) ) {
         print sprintf("Chart name not set for index %s, skipping.", $chartIndex) . PHP_EOL;
@@ -202,11 +176,7 @@ foreach ( $charts['data'] as $chartIndex => $chart ) {
 
     // Store the chart and series indexes for verification during operations
 
-    $chartInfoList[$chartIndex] = array(
-        'name'    => $chart['name'],
-        'config'  => $config,
-        'series'  => array()
-    );
+    $chartInfoList[$chartIndex] = ['name'    => $chart['name'], 'config'  => $config, 'series'  => []];
 
     foreach ( $config['data_series']['data'] as $seriesIndex => $series ) {
         $chartInfoList[$chartIndex]['series'][$seriesIndex] = generateSeriesName($series);
@@ -327,9 +297,7 @@ if ( isset($scriptOptions['operation']) ) {
             }
 
             if ( ! $updatedLegend ) {
-                $destChartConfig['legend'][ $scriptOptions['legend-orig'] ] = array(
-                    'title' => $scriptOptions['legend-new']
-                );
+                $destChartConfig['legend'][ $scriptOptions['legend-orig'] ] = ['title' => $scriptOptions['legend-new']];
                 if ( $scriptOptions['verbose'] ) {
                     print sprintf(
                         "Adding new legend override '%s' => '%s'",
@@ -401,19 +369,16 @@ if ( isset($scriptOptions['operation']) ) {
             $filtersToAdd = array_udiff(
                 $sourceFilterList,
                 $destFilterList,
-                function (array $a, array $b) {
+                fn(array $a, array $b) =>
                     // If your compare function is not really comparing (ie. returns 0 if elements
                     // are equals, 1 otherwise), you will receive an unexpected result.
-                    return strcmp(generateFilterName($a), generateFilterName($b));
-                }
+                    strcmp(generateFilterName($a), generateFilterName($b))
             );
 
             if ( $scriptOptions['verbose'] && count($filtersToAdd) > 0 ) {
                 $filterNames = array_reduce(
                     $filtersToAdd,
-                    function ($carry, array $filter) {
-                        return $carry . PHP_EOL . generateFilterName($filter);
-                    },
+                    fn($carry, array $filter) => $carry . PHP_EOL . generateFilterName($filter),
                     ''
                 );
                 print sprintf("Adding %d filters:%s", count($filtersToAdd), $filterNames) . PHP_EOL;
@@ -500,7 +465,7 @@ exit(0);
  * Display usage text and exit with error status.
  */
 
-function usage_and_exit($msg = null)
+function usage_and_exit($msg = null): void
 {
     global $argv, $scriptOptions;
 

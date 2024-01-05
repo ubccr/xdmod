@@ -81,7 +81,7 @@ abstract class aUrlTransformer extends Loggable
 
         if ( empty($this->parsedUrl['path']) ) {
             $this->logAndThrowException(
-                sprintf("(%s) Unable to extract path from URL: %s", get_class($this), $url)
+                sprintf("(%s) Unable to extract path from URL: %s", static::class, $url)
             );
         }
 
@@ -89,7 +89,7 @@ abstract class aUrlTransformer extends Loggable
 
         // $path = $this->qualifyPath($this->parsedUrl['path'], $config);
         $this->logger->debug(
-            sprintf("(%s) Resolved reference '%s' to '%s'", get_class($this), $this->parsedUrl['path'], $path)
+            sprintf("(%s) Resolved reference '%s' to '%s'", static::class, $this->parsedUrl['path'], $path)
         );
 
         // If no scheme was provided, default to the file scheme.

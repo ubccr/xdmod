@@ -7,7 +7,7 @@ use Configuration\XdmodConfiguration;
 class ConfigurationFileEndpoint extends JsonFile implements iStructuredFile, iComplexDataRecords
 {
 
-    const ENDPOINT_NAME = 'configurationfile';
+    public const ENDPOINT_NAME = 'configurationfile';
 
     public function parse()
     {

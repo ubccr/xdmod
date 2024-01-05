@@ -2,38 +2,13 @@
 
 use \DataWarehouse\Access\ReportGenerator;
 
-$filters = array(
-    'phase' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => '/^create|update$/')
-    ),
-    'report_id' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_ID_REGEX)
-    ),
-    'report_format' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_FORMATS_REGEX . 'i')
-    ),
-    'charts_per_page' => array(
-        'filter' => FILTER_VALIDATE_INT,
-        'options' => array('min_range' => 1)
-    ),
-    'report_schedule' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_SCHEDULE_REGEX)
-    ),
-    'report_delivery' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_DELIVERY_REGEX)
-    )
-);
+$filters = ['phase' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => '/^create|update$/']], 'report_id' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_ID_REGEX]], 'report_format' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_FORMATS_REGEX . 'i']], 'charts_per_page' => ['filter' => FILTER_VALIDATE_INT, 'options' => ['min_range' => 1]], 'report_schedule' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_SCHEDULE_REGEX]], 'report_delivery' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_DELIVERY_REGEX]]];
 
 try {
     $user = \xd_security\getLoggedInUser();
     $rm = new XDReportManager($user);
     $post = filter_input_array(INPUT_POST, $filters);
-    $map = array();
+    $map = [];
 
     \xd_security\assertParameterSet('phase');
 
@@ -85,7 +60,7 @@ try {
         if (preg_match('/chart_data_(\d+)/', $k, $m) > 0) {
             $order = $m[1];
 
-            list($chart_id, $chart_title, $chart_drill_details, $chart_date_description, $timeframe_type, $entry_type) = explode(';', $v);
+            [$chart_id, $chart_title, $chart_drill_details, $chart_date_description, $timeframe_type, $entry_type] = explode(';', $v);
 
             $chart_title = str_replace('%3B', ';', $chart_title);
             $chart_drill_details = str_replace('%3B', ';', $chart_drill_details);
@@ -100,10 +75,10 @@ try {
                 $cache_ref = filter_var(
                     $_POST[$cache_ref_variable],
                     FILTER_VALIDATE_REGEXP,
-                    array('options' => array('regexp' => ReportGenerator::CHART_CACHEREF_REGEX))
+                    ['options' => ['regexp' => ReportGenerator::CHART_CACHEREF_REGEX]]
                 );
 
-                list($start_date, $end_date, $ref, $rank) = explode(';', $cache_ref);
+                [$start_date, $end_date, $ref, $rank] = explode(';', $cache_ref);
 
                 $location = sys_get_temp_dir() . "/{$ref}_{$rank}_{$start_date}_{$end_date}.png";
 
@@ -112,10 +87,7 @@ try {
                 // report_image_renderer.php, but is not in Firefox.
                 // See Mantis 0001336
                 if (!is_file($location)) {
-                    $insertion_rank = array(
-                        'rank' => $rank,
-                        'did'  => '',
-                    );
+                    $insertion_rank = ['rank' => $rank, 'did'  => ''];
                     $cached_blob = $start_date . ',' . $end_date . ';'
                         .  $rm->generateChartBlob('volatile', $insertion_rank, $start_date, $end_date);
                 } else {
@@ -132,10 +104,7 @@ try {
                 }
 
                 if ($chart_id_found == false) {
-                    $map[] = array(
-                        'chart_id' => $chart_id,
-                        'image_data' => $cached_blob
-                    );
+                    $map[] = ['chart_id' => $chart_id, 'image_data' => $cached_blob];
                 }
             }
 

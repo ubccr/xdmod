@@ -18,7 +18,7 @@ use stdClass;
 class ModuleTransformer extends Loggable implements iConfigFileKeyTransformer
 {
 
-    const KEY = 'module';
+    public const KEY = 'module';
 
     public function __construct(LoggerInterface $logger = null)
     {
@@ -30,7 +30,7 @@ class ModuleTransformer extends Loggable implements iConfigFileKeyTransformer
         return self::KEY === $key;
     }
 
-    public function transform(&$key, &$value, stdClass $obj, Configuration $config)
+    public function transform(&$key, &$value, stdClass $obj, Configuration $config): void
     {
         if ($config instanceof ModuleConfiguration ) {
             $currentModule = $config->getModule();

@@ -68,7 +68,7 @@ class SimpleDatabaseIngestor extends pdoIngestor implements iAction
             // and the destination table columns. Construct the columns using "AS".
 
             if ( is_object($this->parsedDefinitionFile->source_columns) ) {
-                $optionalColumnNames = array();
+                $optionalColumnNames = [];
                 foreach ($this->parsedDefinitionFile->source_columns as $dest => $src) {
                     $optionalColumnNames[] = "$src AS $dest";
                 }
@@ -80,7 +80,7 @@ class SimpleDatabaseIngestor extends pdoIngestor implements iAction
 
         $columns = ( isset($this->parsedDefinitionFile->source_columns) ? $optionalColumnNames : $sourceColumnNames );
 
-        $destColumnNames = array();
+        $destColumnNames = [];
 
         $sourceQuery = "SELECT " . implode(", ", $columns) . " FROM $sourceTable";
 

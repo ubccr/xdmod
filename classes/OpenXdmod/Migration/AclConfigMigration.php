@@ -13,12 +13,12 @@ class AclConfigMigration extends Migration
     /**
      * @inheritdoc
      */
-    public function execute()
+    public function execute(): void
     {
         $cmd = BIN_DIR . '/acl-config';
 
         $output = shell_exec($cmd);
-        $hadError = strpos($output, 'error') !== false;
+        $hadError = str_contains($output, 'error');
 
         if ($hadError) {
             $this->logger->err($output);

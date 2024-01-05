@@ -2,27 +2,19 @@
 
 namespace UnitTests\DataWarehouse;
 
-class VisualizationTest extends \PHPUnit_Framework_TestCase
+class VisualizationTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         // Cut and pasted from the colors1.json file.
-        $this->expected = array(
-            0xFFFFFF, 0x1199FF, 0xDB4230, 0x4E665D, 0xF4A221, 0x66FF00, 0x33ABAB, 0xA88D95,
-            0x789ABC, 0xFF99CC, 0x00CCFF, 0xFFBC71, 0xA57E81, 0x8D4DFF, 0xFF6666, 0xCC99FF,
-            0x2F7ED8, 0x0D233A, 0x8BBC21, 0x910000, 0x1AADCE, 0x492970, 0xF28F43, 0x77A1E5,
-            0x3366FF, 0xFF6600, 0x808000, 0xCC99FF, 0x008080, 0xCC6600, 0x9999FF, 0x99FF99,
-            0x969696, 0xFF00FF, 0xFFCC00, 0x666699, 0x00FFFF, 0x00CCFF, 0x993366, 0x3AAAAA,
-            0xC0C0C0, 0xFF99CC, 0xFFCC99, 0xCCFFCC, 0xCCFFFF, 0x99CCFF, 0x339966, 0xFF9966,
-            0x69BBED, 0x33FF33, 0x6666FF, 0xFF66FF, 0x99ABAB, 0xAB8722, 0xAB6565, 0x990099,
-            0x999900, 0xCC3300, 0x669999, 0x993333, 0x339966, 0xC42525, 0xA6C96A, 0x111111);
+        $this->expected = [0xFFFFFF, 0x1199FF, 0xDB4230, 0x4E665D, 0xF4A221, 0x66FF00, 0x33ABAB, 0xA88D95, 0x789ABC, 0xFF99CC, 0x00CCFF, 0xFFBC71, 0xA57E81, 0x8D4DFF, 0xFF6666, 0xCC99FF, 0x2F7ED8, 0x0D233A, 0x8BBC21, 0x910000, 0x1AADCE, 0x492970, 0xF28F43, 0x77A1E5, 0x3366FF, 0xFF6600, 0x808000, 0xCC99FF, 0x008080, 0xCC6600, 0x9999FF, 0x99FF99, 0x969696, 0xFF00FF, 0xFFCC00, 0x666699, 0x00FFFF, 0x00CCFF, 0x993366, 0x3AAAAA, 0xC0C0C0, 0xFF99CC, 0xFFCC99, 0xCCFFCC, 0xCCFFFF, 0x99CCFF, 0x339966, 0xFF9966, 0x69BBED, 0x33FF33, 0x6666FF, 0xFF66FF, 0x99ABAB, 0xAB8722, 0xAB6565, 0x990099, 0x999900, 0xCC3300, 0x669999, 0x993333, 0x339966, 0xC42525, 0xA6C96A, 0x111111];
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
     }
 
-    
-    public function testGetLotsOfColours()
+
+    public function testGetLotsOfColours(): void
     {
         $count = 65;
 
@@ -31,25 +23,25 @@ class VisualizationTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(count($v), 65);
     }
 
-    public function testGetFewColours()
+    public function testGetFewColours(): void
     {
         $v = \DataWarehouse\Visualization::getColors(6);
         $this->assertEquals($v, $this->expected);
     }
 
-    public function testGetSomeColours()
+    public function testGetSomeColours(): void
     {
         $v = \DataWarehouse\Visualization::getColors(64);
         $this->assertEquals($v, $this->expected);
     }
 
-    public function testNullCount()
+    public function testNullCount(): void
     {
         $v = \DataWarehouse\Visualization::getColors(null);
         $this->assertEquals($v, $this->expected);
     }
 
-    public function testNoWhite()
+    public function testNoWhite(): void
     {
         $ncolours = 10;
 
@@ -58,7 +50,7 @@ class VisualizationTest extends \PHPUnit_Framework_TestCase
         $this->assertGreaterThanOrEqual($ncolours, count($v));
     }
 
-    public function testArraySizes()
+    public function testArraySizes(): void
     {
         for($i = 0; $i < 300; $i++)
         {

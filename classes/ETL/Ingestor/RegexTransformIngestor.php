@@ -54,7 +54,7 @@ class RegexTransformIngestor extends pdoIngestor implements iAction
     {
         parent::__construct($options, $etlConfig, $logger);
 
-        $this->verifyRequiredConfigKeys(array('regex_config', 'regex_column'), $options);
+        $this->verifyRequiredConfigKeys(['regex_config', 'regex_column'], $options);
 
         foreach($options->regex_column as $key => $value) {
             $this->srcKey = $key;
@@ -73,7 +73,7 @@ class RegexTransformIngestor extends pdoIngestor implements iAction
      */
     protected function transform(array $srcRecord, &$orderId)
     {
-        $transformedRecord = array();
+        $transformedRecord = [];
 
         $res = preg_filter($this->patterns, $this->replacements, $srcRecord[$this->srcKey]);
 

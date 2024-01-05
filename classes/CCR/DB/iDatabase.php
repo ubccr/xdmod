@@ -67,7 +67,7 @@ interface iDatabase
      * ------------------------------------------------------------------------------------------
      */
 
-    public function query($query, array $params = array(), $returnStatement = false);
+    public function query($query, array $params = [], $returnStatement = false);
 
     /* ------------------------------------------------------------------------------------------
      * Execute an SQL statement and return the number of rows affected.
@@ -85,7 +85,7 @@ interface iDatabase
      * ------------------------------------------------------------------------------------------
      */
 
-    public function execute($query, array $params = array());
+    public function execute($query, array $params = []);
 
     /* ------------------------------------------------------------------------------------------
      * Prepare a query for execution and return the prepared statement.
@@ -115,7 +115,7 @@ interface iDatabase
      * ------------------------------------------------------------------------------------------
      */
 
-    public function insert($statement, $params = array());
+    public function insert($statement, $params = []);
 
     /* ------------------------------------------------------------------------------------------
      * Return the number of rows in a table.

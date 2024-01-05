@@ -27,7 +27,7 @@ interface iConfiguration extends \Iterator
      * @return array the results of the instantiated configuration objects `toAssocArray` function.
      */
 
-    public static function assocArrayFactory($filename, $baseDir = null, LoggerInterface $logger = null, array $options = array());
+    public static function assocArrayFactory($filename, $baseDir = null, LoggerInterface $logger = null, array $options = []);
 
     /**
      * A helper function that instantiates, initializes, and returns a Configuration object.
@@ -40,7 +40,7 @@ interface iConfiguration extends \Iterator
      * @return Configuration an initialized instance of Configuration.
      */
 
-    public static function factory($filename, $baseDir = null, LoggerInterface $logger = null, array $options = array());
+    public static function factory($filename, $baseDir = null, LoggerInterface $logger = null, array $options = []);
 
     /**
      * Enable the object cache.
@@ -81,7 +81,7 @@ interface iConfiguration extends \Iterator
      *     be modified to use the VariableStore.
      */
 
-    public function __construct($filename, $baseDir = null, LoggerInterface $logger = null, array $options = array());
+    public function __construct($filename, $baseDir = null, LoggerInterface $logger = null, array $options = []);
 
     /**
      * Initialize the configuration objecton.

@@ -2,27 +2,7 @@
 
 use \DataWarehouse\Access\ReportGenerator;
 
-$filters = array(
-    'build_only' => array(
-        'filter' => FILTER_VALIDATE_BOOLEAN
-    ),
-    'report_id' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_ID_REGEX)
-    ),
-    'start_date' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_DATE_REGEX)
-    ),
-    'end_date' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_DATE_REGEX)
-    ),
-    'export_format' => array(
-        'filter' => FILTER_VALIDATE_REGEXP,
-        'options' => array('regexp' => ReportGenerator::REPORT_FORMATS_REGEX)
-    )
-);
+$filters = ['build_only' => ['filter' => FILTER_VALIDATE_BOOLEAN], 'report_id' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_ID_REGEX]], 'start_date' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_DATE_REGEX]], 'end_date' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_DATE_REGEX]], 'export_format' => ['filter' => FILTER_VALIDATE_REGEXP, 'options' => ['regexp' => ReportGenerator::REPORT_FORMATS_REGEX]]];
 
    try {
 
@@ -55,7 +35,7 @@ $filters = array(
       
       try {
             
-         $build_response = $rm->buildReport($report_id, $export_format, $start_date, $end_date);
+         $build_response = $rm->buildReport($report_id, $export_format);
          
          $working_dir = $build_response['template_path'];
          $report_filename = $build_response['report_file'];

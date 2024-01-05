@@ -51,7 +51,7 @@ class Assets
     {
         $config = static::getConfiguration();
 
-        $files = array();
+        $files = [];
 
         foreach ($config as $module => $sections) {
 

@@ -49,14 +49,11 @@ abstract class aDataEndpoint extends aEtlObject
     {
         parent::__construct($logger);
 
-        $requiredKeys = array("name", "type");
+        $requiredKeys = ["name", "type"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
-        $messages = array();
-        $propertyTypes = array(
-            'name' => 'string',
-            'type' => 'string'
-        );
+        $messages = [];
+        $propertyTypes = ['name' => 'string', 'type' => 'string'];
 
         if ( ! \xd_utilities\verify_object_property_types($options, $propertyTypes, $messages, true) ) {
             $this->logAndThrowException("Error verifying options: " . implode(", ", $messages));
@@ -90,7 +87,7 @@ abstract class aDataEndpoint extends aEtlObject
 
     public function getHandle()
     {
-        return ( null !== $this->handle ? $this->handle : $this->connect() );
+        return ( $this->handle ?? $this->connect() );
     }
 
     /**
@@ -127,7 +124,7 @@ abstract class aDataEndpoint extends aEtlObject
 
     protected function generateUniqueKey()
     {
-        $this->key = sprintf("%s-%d", get_class($this), self::$currentUniqueKeyIndex++);
+        $this->key = sprintf("%s-%d", static::class, self::$currentUniqueKeyIndex++);
     }
 
     /**

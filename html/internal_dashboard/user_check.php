@@ -28,7 +28,7 @@ if (!isset($_SESSION['xdDashboardUser'])){
 // Retrieve user data.
 try {
     $user = XDUser::getUserByID($_SESSION['xdDashboardUser']);
-} catch(Exception $e) {
+} catch(Exception) {
     denyWithMessage('There was a problem initializing your account.');
     exit;
 }
@@ -54,7 +54,7 @@ if ($user->isManager() == false) {
  *
  * @param string $message
  */
-function denyWithMessage($message)
+function denyWithMessage($message): void
 {
     $reject_response = $message;
 

@@ -2,21 +2,16 @@
 
 namespace UnitTests\DataWarehouse;
 
-class ExportBuilderTest extends \PHPUnit_Framework_TestCase
+use Exception;
+
+class ExportBuilderTest extends \PHPUnit\Framework\TestCase
 {
-    public function __construct()
-    {
-        $this->_dummydata = array(array(
-            'headers' => array('Column1', 'Column2'),
-            'duration' => array( 'start' => '2014-01-01', 'end' => '2015-01-01'),
-            'title' =>  array('title' => 'Title'),
-            'title2' => array('parameters' => array('param1=value1') ),
-            'rows' => array(array('Column1' => 'value1', 'Column2' => 'value2'))
-        ));
-    }
+
+    private $_dummydata = [['headers' => ['Column1', 'Column2'], 'duration' => ['start' => '2014-01-01', 'end' => '2015-01-01'], 'title' =>  ['title' => 'Title'], 'title2' => ['parameters' => ['param1=value1']], 'rows' => [['Column1' => 'value1', 'Column2' => 'value2']]]];
 
     private function exportHelper($format, $inline, $filename)
     {
+
         $result = \DataWarehouse\ExportBuilder::export($this->_dummydata, $format, $inline, $filename);
 
         $this->assertArrayHasKey('headers', $result);
@@ -30,8 +25,7 @@ class ExportBuilderTest extends \PHPUnit_Framework_TestCase
         return $result;
     }
 
-    public function testExportJson() {
-
+    public function testExportJson(): void {
         $result = $this->exportHelper('json', true, 'filename');
 
         $this->assertEquals('application/json', $result['headers']['Content-type']);
@@ -44,7 +38,7 @@ class ExportBuilderTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public function testExportXml() {
+    public function testExportXml(): void {
 
         $result = $this->exportHelper('xml', true, 'filename');
 
@@ -52,12 +46,12 @@ class ExportBuilderTest extends \PHPUnit_Framework_TestCase
 
         $parsedxml = simplexml_load_string($result['results']);
 
-        $this->assertObjectHasAttribute('rows', $parsedxml);
+        $this->assertObjectHasProperty('rows', $parsedxml);
         $this->assertEquals('value1', $parsedxml->rows[0]->row->cell[0]->value);
         $this->assertEquals('value2', $parsedxml->rows[0]->row->cell[1]->value);
     }
 
-    public function testExportXls() {
+    public function testExportXls(): void {
 
         $result = $this->exportHelper('xls', false, 'filename');
 
@@ -81,7 +75,7 @@ EOF;
         $this->assertEquals($expected, $result['results']);
     }
 
-    public function testExportCsv() {
+    public function testExportCsv(): void {
 
         $result = $this->exportHelper('csv', false, 'filename');
 
@@ -105,12 +99,10 @@ EOF;
         $this->assertEquals($expected, $result['results']);
     }
 
-     /**
-      * @expectedException        Exception
-      * @expectedExceptionMessage Unsupported export format bananas
-      */
-    public function testExportBananas()
+    public function testExportBananas(): void
     {
+        $this->expectExceptionMessage("Unsupported export format bananas");
+        $this->expectException(Exception::class);
         $this->exportHelper('bananas', false, 'yes we have no bananas');
     }
 }

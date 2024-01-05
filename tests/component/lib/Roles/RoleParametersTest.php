@@ -29,17 +29,14 @@ class RoleParametersTest extends BaseTest
      * RoleParametersTest constructor.
      *
      * @param null $name
-     * @param array $data
      * @param string $dataName
-     *
      * @throws \Exception if there is a problem retrieving a db connection.
      */
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    public function __construct($name = null, array $data = [], $dataName = '')
     {
-        parent::__construct($name, $data, $dataName);
-
         $this->peopleHelper = new PeopleHelper();
         $this->organizationHelper = new OrganizationHelper();
+        parent::__construct($name, $data, $dataName);
     }
 
 
@@ -64,7 +61,7 @@ class RoleParametersTest extends BaseTest
      *
      * @throws \Exception if unable to retrieve the user identified by $username.
      */
-    public function testGetParametersForExistingUsers(array $options)
+    public function testGetParametersForExistingUsers(array $options): void
     {
         $username = $options['username'];
         $roleName = $options['role_name'];
@@ -108,27 +105,19 @@ class RoleParametersTest extends BaseTest
     /**
      * This function converts from human readable values to system unique id's.
      *
-     * @param array $expected
      * @return array
      * @throws \Exception if there is a problem converting any of the provided values.
      */
     public function convertForComparison(array $expected)
     {
-        $results = array();
+        $results = [];
 
         foreach ($expected as $type => $value) {
-            switch ($type) {
-                case 'pi':
-                case 'person':
-                    $results[$type] = $this->peopleHelper->getPersonIdByLongName($value);
-                    break;
-                case 'provider':
-                    $results[$type] = $this->organizationHelper->getIdByLongName($value);
-                    break;
-                default:
-                    $results[$type] = $value;
-                    break;
-            }
+            $results[$type] = match ($type) {
+                'pi', 'person' => $this->peopleHelper->getPersonIdByLongName($value),
+                'provider' => $this->organizationHelper->getIdByLongName($value),
+                default => $value,
+            };
         }
 
         return $results;
@@ -156,7 +145,7 @@ class RoleParametersTest extends BaseTest
      * @param array $options $options that drive the processing / interpretation of the test instances.
      * @throws \Exception
      */
-    public function testGetParametersForDynamicUsers(array $options)
+    public function testGetParametersForDynamicUsers(array $options): void
     {
         $username = $options['username'];
         $firstName = $options['first_name'];
@@ -165,12 +154,12 @@ class RoleParametersTest extends BaseTest
         $acls = $options['acls'];
         $primaryAcl = $options['primary_role'];
         $expectedAcls = $options['expected'];
-        $organizationId = isset($options['organization_id']) ? $options['organization_id'] : null;
-        $personId = isset($options['person_id']) ? $options['person_id'] : null;
+        $organizationId = $options['organization_id'] ?? null;
+        $personId = $options['person_id'] ?? null;
 
         // note: the order here is important due to the way that setting a users
         // organization works. The last one in wins, which needs to be the most privileged overall.
-        $centerAcls = array_intersect(array('cs', 'cd'), $acls);
+        $centerAcls = array_intersect(['cs', 'cd'], $acls);
 
         // We declare $user here so that we can get at it in the catch blocks.
         $user = null;
@@ -199,7 +188,7 @@ class RoleParametersTest extends BaseTest
             foreach ($centerAcls as $centerAcl) {
                 if (isset($organizationId)) {
                     $user->setOrganizations(
-                        array($organizationId => array('active' => 1, 'primary' => 1)),
+                        [$organizationId => ['active' => 1, 'primary' => 1]],
                         $centerAcl
                     );
                 }
@@ -215,7 +204,7 @@ class RoleParametersTest extends BaseTest
             if (isset($user)) {
                 try {
                     $user->removeUser();
-                } catch (\Exception $e) {
+                } catch (\Exception) {
                     echo sprintf(
                         "\nUnable to remove user after exception [%s]. Please remove manually\n",
                         $username
@@ -289,15 +278,14 @@ class RoleParametersTest extends BaseTest
         /**
          * Generates all combinations of the elements contained within $data.
          *
-         * @param array $data
          * @return array
          */
         function allCombinations(array $data)
         {
-            $results = array(array());
+            $results = [[]];
             foreach ($data as $element) {
                 foreach ($results as $combination) {
-                    array_push($results, array_merge(array($element), $combination));
+                    array_push($results, array_merge([$element], $combination));
                 }
             }
             return $results;
@@ -308,15 +296,13 @@ class RoleParametersTest extends BaseTest
          * It is required that $acls be ordered most privileged -> least privileged for this
          * function to work properly
          *
-         * @param array $acls
-         * @param array $userAcls
          * @return mixed|null
          */
         function mostPrivileged(array $acls, array $userAcls)
         {
             $intersection = array_intersect($acls, $userAcls);
             $first = array_shift($intersection);
-            return isset($first) ? $first : null;
+            return $first ?? null;
         }
 
         // retrieve the options that will drive the input generation.
@@ -340,7 +326,7 @@ class RoleParametersTest extends BaseTest
         // Acls that require a user to have an associated center.
         $aclsThatRequireCenter = $inputOptions['center_acls'];
 
-        $aclsThatRequirePi = array('pi');
+        $aclsThatRequirePi = ['pi'];
 
         $organizationLongName = $inputOptions['organization_long_name'];
         $organizationId = $this->organizationHelper->getIdByLongName($organizationLongName);
@@ -360,13 +346,11 @@ class RoleParametersTest extends BaseTest
         $aclCombos = array_values(
             array_filter(
                 allCombinations($baseAcls),
-                function (array $value) {
-                    return count($value) > 0;
-                }
+                fn(array $value) => count($value) > 0
             )
         );
 
-        $testCases = array();
+        $testCases = [];
 
         foreach ($aclCombos as $acls) {
 
@@ -379,27 +363,20 @@ class RoleParametersTest extends BaseTest
                 $username = "user-$aclId";
                 $mostPrivileged = mostPrivileged($baseAcls, $acls);
 
-                $testCase = array(
-                    'username' => $username,
-                    'first_name' => 'A',
-                    'middle_name' => 'Test',
-                    'last_name' => "User - $aclId",
-                    'acls' => $acls,
-                    'primary_role' => $mostPrivileged,
-                );
+                $testCase = ['username' => $username, 'first_name' => 'A', 'middle_name' => 'Test', 'last_name' => "User - $aclId", 'acls' => $acls, 'primary_role' => $mostPrivileged];
 
                 // We need to generate the expected results for this test case and include the
                 // information that the user will require.
-                $expected = array();
+                $expected = [];
                 foreach ($acls as $acl) {
                     if (in_array($acl, $aclsThatRequireCenter)) {
                         if (!isset($expected[$acl])) {
-                            $expected[$acl] = array();
+                            $expected[$acl] = [];
                         }
 
                         $expected[$acl] = array_merge(
                             $expected[$acl],
-                            array('provider' => $organizationId)
+                            ['provider' => $organizationId]
                         );
 
                         $testCase['organization_id'] = $organizationId;
@@ -407,12 +384,12 @@ class RoleParametersTest extends BaseTest
 
                     if (in_array($acl, $aclsThatRequirePerson)) {
                         if (!isset($expected[$acl])) {
-                            $expected[$acl] = array();
+                            $expected[$acl] = [];
                         }
                         $personId = $this->peopleHelper->getPersonIdByLongName($aclPersons[$mostPrivileged]);
                         $expected[$acl] = array_merge(
                             $expected[$acl],
-                            array('person' => $personId)
+                            ['person' => $personId]
                         );
 
                         $testCase['person_id'] = $personId;
@@ -420,14 +397,14 @@ class RoleParametersTest extends BaseTest
 
                     if (in_array($acl, $aclsThatRequirePi)) {
                         if (!isset($expected[$acl])) {
-                            $expected[$acl] = array();
+                            $expected[$acl] = [];
                         }
                         $personLongName = $aclPersons[$mostPrivileged];
                         $personId = $this->peopleHelper->getPersonIdByLongName($personLongName);
 
                         $expected[$acl] = array_merge(
                             $expected[$acl],
-                            array('pi' => $personId)
+                            ['pi' => $personId]
                         );
 
                         $testCase['person_id'] = $personId;
@@ -436,14 +413,14 @@ class RoleParametersTest extends BaseTest
                     // Feature acls don't have any parameters and return an empty array.
                     if (in_array($acl, $featureAcls)) {
                         if (!isset($expected[$acl])) {
-                            $expected[$acl] = array();
+                            $expected[$acl] = [];
                         }
                     }
                 }
 
                 $testCase['expected'] = $expected;
 
-                $testCases[] = array($testCase);
+                $testCases[] = [$testCase];
             }
         }
         return $testCases;
@@ -453,13 +430,8 @@ class RoleParametersTest extends BaseTest
     /**
      * A helper function that logs useful debug information.
      *
-     * @param array $expected
-     * @param array $expectedContents
-     * @param array $actual
-     * @param array $actualContents
      * @param string $username
      * @param string $roleClass
-     * @param \XDUser $user
      * @param boolean $testEquality
      */
     protected function debug(array $expected, array $expectedContents, array $actual, array $actualContents, $username, $roleClass, \XDUser $user, $testEquality)
@@ -472,24 +444,7 @@ class RoleParametersTest extends BaseTest
         echo sprintf(
             implode(
                 "\n",
-                array(
-                    "\nUser: $username Role: $roleClass",
-                    "",
-                    "\t{ organization_id: %s, person_id: %s, pi_id: %s }",
-                    "",
-                    "\t\$role->getParameters:              %s",
-                    "\tParameters::getParameters:         %s",
-                    "",
-                    "\tExpected \$role->getParameters:     %s",
-                    "\tExpected Parameters::getParamters: %s",
-                    "",
-                    "\t\$role->getParameters equals:        %s",
-                    "\tParameters::getParameters equals:   %s",
-                    "",
-                    "\tTesting for equality: %s",
-                    "\tActual == Expected:   %s",
-                    "***********************************************************"
-                )
+                ["\nUser: $username Role: $roleClass", "", "\t{ organization_id: %s, person_id: %s, pi_id: %s }", "", "\t\$role->getParameters:              %s", "\tParameters::getParameters:         %s", "", "\tExpected \$role->getParameters:     %s", "\tExpected Parameters::getParamters: %s", "", "\t\$role->getParameters equals:        %s", "\tParameters::getParameters equals:   %s", "", "\tTesting for equality: %s", "\tActual == Expected:   %s", "***********************************************************"]
             ),
             $user->getOrganizationID(),
             $user->getPersonID(),

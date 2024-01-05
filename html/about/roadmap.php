@@ -24,17 +24,17 @@ require_once __DIR__ . '/../../configuration/linker.php';
  *
  * @return mixed
  **/
-function getConfigValue($section, $key, $default=null)
+function getConfigValue($section, $key, mixed $default=null)
 {
     try {
         $result = xd_utilities\getConfiguration($section, $key);
-    } catch(\Exception $e) {
+    } catch(\Exception) {
         $result = $default;
     }
     return $result;
 }
 
-$result = array();
+$result = [];
 
 $url = getConfigValue('roadmap', 'url');
 $header = getConfigValue('roadmap', 'header', '');
@@ -58,4 +58,4 @@ if (!empty($url)) {
       </div>
 EOT;
 }
-echo implode($result);
+echo implode('', $result);

@@ -31,9 +31,9 @@ use Psr\Log\LoggerInterface;
 class ExecuteSql extends aAction implements iAction
 {
     // Delimiter for SQL scripts that contain multiple statements
-    const DEFAULT_MULTI_STATEMENT_DELIMITER = '//';
+    public const DEFAULT_MULTI_STATEMENT_DELIMITER = '//';
 
-    const SQL_COMMENT_STRING = '--';
+    public const SQL_COMMENT_STRING = '--';
 
     /* ------------------------------------------------------------------------------------------
      * @see aAction::__construct()
@@ -43,11 +43,11 @@ class ExecuteSql extends aAction implements iAction
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
         if ( ! $options instanceof MaintenanceOptions ) {
-            $msg = __CLASS__ . ": Options is not an instance of MaintenanceOptions";
+            $msg = self::class . ": Options is not an instance of MaintenanceOptions";
             $this->logAndThrowException($msg);
         }
 
-        $requiredKeys = array("sql_file_list");
+        $requiredKeys = ["sql_file_list"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
         parent::__construct($options, $etlConfig, $logger);
@@ -55,14 +55,14 @@ class ExecuteSql extends aAction implements iAction
         // The SQL file list must be provided and be an array
 
         if ( ! is_string($options->sql_file_list) && ! is_array($options->sql_file_list) ) {
-            $msg = __CLASS__ . ": file_list must be a string or an array";
+            $msg = self::class . ": file_list must be a string or an array";
             $this->logAndThrowException($msg);
         }
 
         // Undocumented behavior: Normalize a single file string/object list to an array
 
         if ( is_string($options->sql_file_list) || is_object($options->sql_file_list) ) {
-            $options->sql_file_list = array($options->sql_file_list);
+            $options->sql_file_list = [$options->sql_file_list];
         }
 
     }  // __construct()
@@ -133,13 +133,7 @@ class ExecuteSql extends aAction implements iAction
 
         // The SQL statements expect these variables to be quoted if they exist
 
-        $varsToQuote = array(
-            'START_DATE',
-            'END_DATE',
-            'LAST_MODIFIED',
-            'LAST_MODIFIED_START_DATE',
-            'LAST_MODIFIED_END_DATE'
-        );
+        $varsToQuote = ['START_DATE', 'END_DATE', 'LAST_MODIFIED', 'LAST_MODIFIED_START_DATE', 'LAST_MODIFIED_END_DATE'];
 
         $localVariableMap = Utilities::quoteVariables($varsToQuote, $this->variableStore, $this->destinationEndpoint);
         $this->variableStore->add($localVariableMap, true);
@@ -175,7 +169,7 @@ class ExecuteSql extends aAction implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function execute(EtlOverseerOptions $etlOverseerOptions)
+    public function execute(EtlOverseerOptions $etlOverseerOptions): void
     {
         $time_start = microtime(true);
         $this->initialize($etlOverseerOptions);
@@ -221,12 +215,12 @@ class ExecuteSql extends aAction implements iAction
 
                 // Remove comments from the SQL before executing for clarity.
 
-                $commentPatterns = array(
+                $commentPatterns = [
                     // Hash-style comments
                     '/^\s*#.*[\r\n]+/m',
                     // Standard SQL comments.
-                    '/^\s*-- ?.*[\r\n]+/m'
-                    );
+                    '/^\s*-- ?.*[\r\n]+/m',
+                ];
                 $sql = preg_replace($commentPatterns, "", $sql);
 
                 // Skip delimiter and use statements
@@ -240,31 +234,19 @@ class ExecuteSql extends aAction implements iAction
                 $statementPosition = ($numStatementsProcessed + 1);
                 $statementPositionDisplay = "( $statementPosition / $numSqlStatements)";
                 try {
-                    $this->logger->info(array(
-                        "message" => "Executing statement " . $statementPositionDisplay,
-                        "action" => (string) $this . '-sql-' . $statementPosition,
-                        "endpoint" => $this->destinationEndpoint,
-                        "sql" => $sql
-                    ));
+                    $this->logger->info(["message" => "Executing statement " . $statementPositionDisplay, "action" => (string) $this . '-sql-' . $statementPosition, "endpoint" => $this->destinationEndpoint, "sql" => $sql]);
                     if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                         $numRowsAffected = $this->destinationEndpoint->getHandle()->execute($sql);
                     }
                 } catch ( PDOException $e ) {
                     $this->logAndThrowException(
                         "Error executing SQL",
-                        array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->sourceEndpoint)
+                        ['exception' => $e, 'sql' => $sql, 'endpoint' => $this->sourceEndpoint]
                     );
                 }
 
                 $endTime = microtime(true);
-                $this->logger->info(array(
-                    "message" => "Finished executing statement " . $statementPositionDisplay,
-                    "action" => (string) $this . '-sql-' . $statementPosition,
-                    "rows" =>  $numRowsAffected,
-                    "start_time" => $sqlStartTime,
-                    "end_time" => $endTime,
-                    "elapsed_time" => $endTime - $sqlStartTime
-                ));
+                $this->logger->info(["message" => "Finished executing statement " . $statementPositionDisplay, "action" => (string) $this . '-sql-' . $statementPosition, "rows" =>  $numRowsAffected, "start_time" => $sqlStartTime, "end_time" => $endTime, "elapsed_time" => $endTime - $sqlStartTime]);
 
                 $numStatementsProcessed++;
 
@@ -277,10 +259,6 @@ class ExecuteSql extends aAction implements iAction
 
         $time_end = microtime(true);
         $time = $time_end - $time_start;
-        $this->logger->notice(array('action'       => (string) $this,
-                                    'start_time'   => $time_start,
-                                    'end_time'     => $time_end,
-                                    'elapsed_time' => round($time, 5)
-                                  ));
+        $this->logger->notice(['action'       => (string) $this, 'start_time'   => $time_start, 'end_time'     => $time_end, 'elapsed_time' => round($time, 5)]);
     }  // execute()
 }  // class ExecuteSql

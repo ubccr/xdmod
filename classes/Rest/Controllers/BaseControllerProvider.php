@@ -29,13 +29,13 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 abstract class BaseControllerProvider implements ControllerProviderInterface
 {
 
-    const _USER = '_request_user';
-    const _REQUIREMENTS = 'requirements';
-    const _URL_GENERATOR = 'url_generator';
+    public const _USER = '_request_user';
+    public const _REQUIREMENTS = 'requirements';
+    public const _URL_GENERATOR = 'url_generator';
 
-    const KEY_PREFIX = 'prefix';
+    public const KEY_PREFIX = 'prefix';
 
-    const EXCEPTION_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure.';
+    public const EXCEPTION_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure.';
 
     protected $prefix;
 
@@ -43,7 +43,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * BaseControllerProvider constructor.
      * @param array $params
      */
-    public function __construct(array $params = array())
+    public function __construct(array $params = [])
     {
         if (isset($params[self::KEY_PREFIX])) {
             $this->prefix = $params[self::KEY_PREFIX];
@@ -91,15 +91,12 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * ControllerProvider may require or provide. It defaults to a no-op
      * function if not overridden by a child class.
      *
-     * @param Application $app
-     * @param ControllerCollection $controller
      * @return null
      */
-    public function setupDefaultValues(Application $app, ControllerCollection $controller)
+    public function setupDefaultValues(Application $app, ControllerCollection $controller): void
     {
         // NO-OP UNLESS OVERRIDDEN
     } // setupDefaultValues
-
     /**
      * This function is responsible for setting up any global conversions that may be
      * required by this ControllerProvider to function. A conversion
@@ -110,15 +107,12 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *     // do something with int $id here....
      * })->convert('id', function($id) { return (int) $id; });
      *
-     * @param Application $app
-     * @param ControllerCollection $controller
      * @return null
      */
-    public function setupConversions(Application $app, ControllerCollection $controller)
+    public function setupConversions(Application $app, ControllerCollection $controller): void
     {
         // NO-OP UNLESS OVERRIDDEN
     } //setupConversions
-
     /**
      * This function is responsible for setting up any global middleware that is particular
      * to this ControllerProvider. Middleware can be thought of as functions that
@@ -128,15 +122,12 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * normal execution of a route by returning a 'Response' object. In this case, the
      * next Middleware will not be run nor will the route callback.
      *
-     * @param Application $app
-     * @param ControllerCollection $controller
      * @return null
      */
-    public function setupMiddleware(Application $app, ControllerCollection $controller)
+    public function setupMiddleware(Application $app, ControllerCollection $controller): void
     {
         // NO-OP UNLESS OVERRIDDEN
     } // setupMiddleware
-
     /**
      * This function is responsible for setting up any global assertions that
      * this ControllerProvider will need during it's lifecycle. An assertion
@@ -152,11 +143,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *  ( 0-9 ). If the route does not conform to this regex then it does not
      *  match.
      *
-     * @param Application $app
-     * @param ControllerCollection $controller
      * @return null
      */
-    public function setupAssertions(Application $app, ControllerCollection $controller)
+    public function setupAssertions(Application $app, ControllerCollection $controller): void
     {
         // NO-OP UNLESS OVERRIDDEN
     } // setupAssertions
@@ -175,7 +164,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *
      * @throws Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      */
-    public static function authenticate(Request $request, Application $app)
+    public static function authenticate(Request $request, Application $app): void
     {
         // If the user has already been found, skip this search.
         if ($request->attributes->has(BaseControllerProvider::_USER)) {
@@ -209,7 +198,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * @throws  Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      *          Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
      */
-    public function authorize(Request $request, array $requirements = array())
+    public function authorize(Request $request, array $requirements = [])
     {
 
         $user = $this->getUserFromRequest($request);
@@ -269,7 +258,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                                 or if the parameter value is not valid
      *                                 according to the given filter.
      */
-    private function getParam(Request $request, $name, $mandatory, $default, $filterId, $filterOptions, $expectedValueType)
+    private function getParam(Request $request, $name, $mandatory, mixed $default, $filterId, mixed $filterOptions, $expectedValueType)
     {
         // Attempt to extract the parameter value from the request.
         $value = $request->get($name, null);
@@ -329,7 +318,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                                 or if the parameter value could not be
      *                                 converted to an integer.
      */
-    protected function getIntParam(Request $request, $name, $mandatory = false, $default = null)
+    protected function getIntParam(Request $request, $name, $mandatory = false, mixed $default = null)
     {
         return $this->getParam(
             $request,
@@ -337,11 +326,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             $mandatory,
             $default,
             FILTER_VALIDATE_INT,
-            array(
-                "options" => array(
-                    "default" => null,
-                ),
-            ),
+            ["options" => ["default" => null]],
             "integer"
         );
     }
@@ -366,7 +351,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                                 or if the parameter value could not be
      *                                 converted to a float.
      */
-    protected function getFloatParam(Request $request, $name, $mandatory = false, $default = null)
+    protected function getFloatParam(Request $request, $name, $mandatory = false, mixed $default = null)
     {
         return $this->getParam(
             $request,
@@ -374,11 +359,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             $mandatory,
             $default,
             FILTER_VALIDATE_FLOAT,
-            array(
-                "options" => array(
-                    "default" => null,
-                ),
-            ),
+            ["options" => ["default" => null]],
             "float"
         );
     }
@@ -401,7 +382,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * @throws BadRequestHttpException If the parameter was not available
      *                                 and the parameter was deemed mandatory.
      */
-    protected function getStringParam(Request $request, $name, $mandatory = false, $default = null)
+    protected function getStringParam(Request $request, $name, $mandatory = false, mixed $default = null)
     {
         return $this->getParam(
             $request,
@@ -409,7 +390,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             $mandatory,
             $default,
             FILTER_DEFAULT,
-            array(),
+            [],
             "string"
         );
     }
@@ -434,7 +415,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                                 or if the parameter value could not be
      *                                 converted to a boolean.
      */
-    protected function getBooleanParam(Request $request, $name, $mandatory = false, $default = null)
+    protected function getBooleanParam(Request $request, $name, $mandatory = false, mixed $default = null)
     {
         return $this->getParam(
             $request,
@@ -442,35 +423,31 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             $mandatory,
             $default,
             FILTER_CALLBACK,
-            array(
-                "options" => function ($value) {
-                    // Run the found parameter value through a boolean filter.
-                    $filteredValue = filter_var(
-                        $value,
-                        FILTER_VALIDATE_BOOLEAN,
-                        array(
-                            "flags" => FILTER_NULL_ON_FAILURE,
-                        )
-                    );
+            ["options" => function ($value) {
+                // Run the found parameter value through a boolean filter.
+                $filteredValue = filter_var(
+                    $value,
+                    FILTER_VALIDATE_BOOLEAN,
+                    ["flags" => FILTER_NULL_ON_FAILURE]
+                );
 
-                    // If the filter converted the string, return the boolean.
-                    if ($filteredValue !== null) {
-                        return $filteredValue;
-                    }
+                // If the filter converted the string, return the boolean.
+                if ($filteredValue !== null) {
+                    return $filteredValue;
+                }
 
-                    // Check the value against 'y' for true and 'n' for false.
-                    $lowercaseValue = strtolower($value);
-                    if ($lowercaseValue === 'y') {
-                        return true;
-                    }
-                    if ($lowercaseValue === 'n') {
-                        return false;
-                    }
+                // Check the value against 'y' for true and 'n' for false.
+                $lowercaseValue = strtolower($value);
+                if ($lowercaseValue === 'y') {
+                    return true;
+                }
+                if ($lowercaseValue === 'n') {
+                    return false;
+                }
 
-                    // Return null if all conversion attempts failed.
-                    return null;
-                },
-            ),
+                // Return null if all conversion attempts failed.
+                return null;
+            }],
             "boolean"
         );
     }
@@ -496,7 +473,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                                 or if the parameter value could not be
      *                                 converted to a DateTime.
      */
-    protected function getDateTimeFromUnixParam(Request $request, $name, $mandatory = false, $default = null)
+    protected function getDateTimeFromUnixParam(Request $request, $name, $mandatory = false, mixed $default = null)
     {
         return $this->getParam(
             $request,
@@ -504,15 +481,13 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             $mandatory,
             $default,
             FILTER_CALLBACK,
-            array(
-                "options" => function ($value) {
-                    $value_dt = DateTime::createFromFormat('U', $value);
-                    if ($value_dt === false) {
-                        return null;
-                    }
-                    return $value_dt;
-                },
-            ),
+            ["options" => function ($value) {
+                $value_dt = DateTime::createFromFormat('U', $value);
+                if ($value_dt === false) {
+                    return null;
+                }
+                return $value_dt;
+            }],
             "Unix timestamp"
         );
     }
@@ -542,7 +517,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         Request $request,
         $name,
         $mandatory = false,
-        $default = null
+        mixed $default = null
     ) {
         return $this->getParam(
             $request,
@@ -617,7 +592,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         $response = new Response(
             $content,
             Response::HTTP_OK,
-            array('Content-Type' => $mimetype)
+            ['Content-Type' => $mimetype]
         );
         $response->headers->set(
             'Content-Disposition',
@@ -635,7 +610,6 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * property is defined by the provided 'selector'. If the 'id' does not
      * exist than a default can be supplied, otherwise null will be returned.
      *
-     * @param array $values
      * @param string $selector
      * @param null $default
      * @return null
@@ -646,7 +620,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             return null;
         }
 
-        $idSelector = isset($values[$selector]) ? $values[$selector] : null;
+        $idSelector = $values[$selector] ?? null;
 
         return isset($idSelector) && isset($values[$idSelector]) ? $values[$idSelector] : $default;
     }
@@ -656,10 +630,8 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * blob for storage in the database.
      *
      * @param string                                    $message A general message
-     * @param \Symfony\Component\HttpFoundation\Request $request
      * @param boolean                                   $includeParams if set to
      * TRUE include the GET and POST parameters in the log message.
-     *
      * @return array An associative array containing the message, request path, and a block of
      *  supplemental data including host, port, method, ip address, get & post parameters, etc.
      *
@@ -677,10 +649,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *
      * ------------------------------------------------------------------------------------------
      */
-
     public function formatLogMesssage($message, Request $request, $includeParams = false)
     {
-        $retval = array('message' => $message);
+        $retval = ['message' => $message];
 
         $authInfo = Authentication::getAuthenticationInfo($request);
         $method = $request->getMethod();
@@ -688,15 +659,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         $port = $request->getPort();
         $retval['path'] = $request->getPathInfo();
 
-        $retval['data'] = array(
-            'host' => $host,
-            'port' => $port,
-            'method' => $method,
-            'username' => $authInfo['username'],
-            'ip' => $authInfo['ip'],
-            'token' => $authInfo['token'],
-            'timestamp' => date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME'])
-        );
+        $retval['data'] = ['host' => $host, 'port' => $port, 'method' => $method, 'username' => $authInfo['username'], 'ip' => $authInfo['ip'], 'token' => $authInfo['token'], 'timestamp' => date("Y-m-d H:i:s", $_SERVER['REQUEST_TIME'])];
 
         if ($includeParams) {
             $retval['data']['get'] = $request->query->all();
@@ -766,7 +729,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         // NOTE: While we prefer token's to be pulled from the 'Authorization' header, we also support a fallback lookup
         // to the request's query params.
         $authorizationHeader = $request->headers->get('Authorization');
-        if (empty($authorizationHeader) || strpos($authorizationHeader, Tokens::HEADER_KEY) === false) {
+        if (empty($authorizationHeader) || !str_contains($authorizationHeader, Tokens::HEADER_KEY)) {
             $rawToken = $request->get(Tokens::HEADER_KEY);
         } else {
             $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1);

@@ -8,19 +8,20 @@ namespace UnitTests\ETL\DbModel;
 use CCR\Log;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Table;
-use PHPUnit_Framework_TestCase;
+use Exception;
+use \PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\TestFiles;
 use stdClass;
 
-class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
+class ForeignKeyConstraintTest extends \PHPUnit\Framework\TestCase
 {
-    const TEST_GROUP = 'unit/etl/db-model/foreign-key-constraint';
+    public const TEST_GROUP = 'unit/etl/db-model/foreign-key-constraint';
 
     private static $logger;
 
     private $testFiles;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$logger = Log::singleton('null');
     }
@@ -36,11 +37,13 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
     /**
      * Test foreign key constraint initialization error.
      *
-     * @expectedException Exception
-     * @expectedExceptionMessage "columns" must be an array
+     *
+     *
      */
-    public function testForeignKeyConstraintInitializationError()
+    public function testForeignKeyConstraintInitializationError(): void
     {
+        $this->expectExceptionMessage("\"columns\" must be an array");
+        $this->expectException(Exception::class);
         $config = (object) [
             'name' => 'initialize_error',
             'columns' => [
@@ -76,7 +79,7 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
      *
      * @dataProvider verificationProvider
      */
-    public function testVerification(stdClass $config)
+    public function testVerification(stdClass $config): void
     {
         $table = new Table($config, '`', self::$logger);
         $this->assertTrue($table->verify());
@@ -86,10 +89,11 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
      * Test that the given configuration does not result in a valid table.
      *
      * @dataProvider verificationFailureProvider
-     * @expectedException Exception
+     *
      */
-    public function testVerificationFailure(stdClass $config)
+    public function testVerificationFailure(stdClass $config): void
     {
+        $this->expectException(Exception::class);
         $table = new Table($config, '`', self::$logger);
         $table->verify();
     }
@@ -102,7 +106,7 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
     public function testCreateTable(
         stdClass $tableConfig,
         array $expectedSql
-    ) {
+    ): void {
         $table = new Table($tableConfig, '`', self::$logger);
         $sql = $table->getSql();
 
@@ -131,7 +135,7 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
         stdClass $fk1Config,
         stdClass $fk2Config,
         array $expectedSql
-    ) {
+    ): void {
         $origTable = new Table($tableConfig, '`', self::$logger);
         $origTable->addForeignKeyConstraint($fk1Config);
 
@@ -158,7 +162,7 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
     /**
      * Test comparison of foreign key constraints.
      */
-    public function testCompare()
+    public function testCompare(): void
     {
         $fk1 = new ForeignKeyConstraint((object) [
             'schema' => 'my_schema',
@@ -208,7 +212,7 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
     /**
      * Test inheriting of schema from table.
      */
-    public function testSchemaInheritance()
+    public function testSchemaInheritance(): void
     {
         $schemaName = 'my_schema';
         $config = (object) [
@@ -244,7 +248,6 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
     /**
      * Convert associative arrays to stdClass recursively.
      *
-     * @param array $obj
      * @param stdClass
      */
     private function arrayToStdClass(array $obj)
@@ -284,9 +287,7 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
     private function loadTestData($name)
     {
         return array_map(
-            function ($inputData) {
-                return array_map(array($this, 'arrayToStdClass'), $inputData);
-            },
+            fn($inputData) => array_map([$this, 'arrayToStdClass'], $inputData),
             $this->getTestFiles()->loadJsonFile(self::TEST_GROUP, $name)
         );
     }

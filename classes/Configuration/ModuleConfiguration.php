@@ -113,7 +113,7 @@ class ModuleConfiguration extends XdmodConfiguration
      */
     protected $annotatedConfig = null;
 
-    public function __construct($filename, $baseDir = null, LoggerInterface $logger = null, array $options = array())
+    public function __construct($filename, $baseDir = null, LoggerInterface $logger = null, array $options = [])
     {
         parent::__construct($filename, $baseDir, $logger, $options);
 
@@ -226,19 +226,14 @@ class ModuleConfiguration extends XdmodConfiguration
 
             $this->annotatedConfig = $this->recursivelyAnnotate(
                 $transformedCopy,
-                array(
-                    'modules' => array($this->module)
-                )
+                ['modules' => [$this->module]]
             );
         }
     } // processAnnotated
-
     /**
      * Provides the ability to recursively annotate $source with the properties contained in
      * $annotations.
      *
-     * @param stdClass $source
-     * @param array $annotations
      * @return stdClass the annotated $source
      * @throws Exception
      */
@@ -277,12 +272,10 @@ class ModuleConfiguration extends XdmodConfiguration
 
         return $source;
     } // recursivelyAnnotate
-
     /**
      * Helper function that determines whether or not $array contains an object. It is assumed that
      * array contents are homogeneous.
      *
-     * @param array $array
      * @return bool
      */
     private function hasObjects(array $array)
@@ -307,9 +300,7 @@ class ModuleConfiguration extends XdmodConfiguration
      */
     public function filterByModule($module)
     {
-        $metadata = array(
-            'modules' => array($module)
-        );
+        $metadata = ['modules' => [$module]];
 
         return $this->filterByMetaData($metadata);
     }
@@ -319,7 +310,6 @@ class ModuleConfiguration extends XdmodConfiguration
      * provided $metadata. Once the filtering is complete, the keys that were used to filter $source
      * will be removed.
      *
-     * @param array $metadata
      * @param stdClass|null $source
      * @param bool $stripMetadata
      * @return mixed
@@ -343,11 +333,9 @@ class ModuleConfiguration extends XdmodConfiguration
 
         return $result;
     } // filterByMetaData
-
     /**
      * This function will recursively filter $source based on the provided $metadata.
      *
-     * @param array $metadata
      * @param $source
      * @return mixed|null
      */
@@ -395,12 +383,10 @@ class ModuleConfiguration extends XdmodConfiguration
 
         return $source;
     } // performRecursiveFilter
-
     /**
      * Recursively strip the provided $properties from $source.
      *
      * @param $source
-     * @param array $properties
      * @return mixed
      */
     protected function recursiveStripProperties($source, array $properties)
@@ -432,7 +418,7 @@ class ModuleConfiguration extends XdmodConfiguration
      *
      * @param $module
      */
-    public function setModule($module)
+    public function setModule($module): void
     {
         $this->module = $module;
     } // setModule

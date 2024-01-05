@@ -4,12 +4,12 @@
 
 	// --------------------------------
 
-	function createElement(&$dom, &$node, $elementText, $text) {
-					
+	function createElement(&$dom, &$node, $elementText, $text): void {
+
 		$elementNode = $dom->createElement($elementText);
 		$node->appendChild($elementNode);
-			
+
 		$textNode = $dom->createTextNode($text);
 		$elementNode->appendChild($textNode);
-		
+
 	}//createElement

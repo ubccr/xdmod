@@ -10,15 +10,14 @@ use Models\Services\Organizations;
 
 $creator = \xd_security\assertDashboardUserLoggedIn();
 
-\xd_security\assertParametersSet(array(
+\xd_security\assertParametersSet([
     'username'      => RESTRICTION_USERNAME,
     'first_name'    => RESTRICTION_FIRST_NAME,
     'last_name'     => RESTRICTION_LAST_NAME,
-  //  'assignment'    => RESTRICTION_ASSIGNMENT,
+    //  'assignment'    => RESTRICTION_ASSIGNMENT,
     'user_type'     => RESTRICTION_GROUP,
-    'institution'   => RESTRICTION_INSTITUTION
-
-));
+    'institution'   => RESTRICTION_INSTITUTION,
+]);
 
 \xd_security\assertEmailParameterSet('email_address');
 
@@ -32,7 +31,7 @@ if (isset($_POST['acls'])) {
     // Checking for an acl set that only contains feature acls.
     // Feature acls are acls that only provide access to an XDMoD feature and
     // are not used for data access.
-    $aclNames = array();
+    $aclNames = [];
     $featureAcls = Acls::getAclsByTypeName('feature');
     $tabAcls = Acls::getAclsByTypeName('tab');
     $uiOnlyAcls = array_merge($featureAcls, $tabAcls);
@@ -43,7 +42,7 @@ if (isset($_POST['acls'])) {
                 $carry []= $item->getName();
                 return $carry;
             },
-            array()
+            []
         );
     }
     $diff = array_diff(array_keys($acls), $aclNames);
@@ -77,7 +76,7 @@ try {
         ROLE_ID_USER,
         $_POST['institution'],
         $_POST['assignment'],
-        array(),
+        [],
         $sticky
     );
     $newuser->setUserType($_POST['user_type']);
@@ -88,14 +87,9 @@ try {
         // 'center' acls. If they have and if an 'institution' has been provided ( it should have
         // been ) then we need to call `setOrganizations` so that the user_acl_group_by_parameters
         // table is updated accordingly.
-        if (in_array($acl, array('cd', 'cs')) && isset($_POST['institution'])) {
+        if (in_array($acl, ['cd', 'cs']) && isset($_POST['institution'])) {
             $newuser->setOrganizations(
-                array(
-                    $_POST['institution'] => array(
-                        'primary'=> 1,
-                        'active' => 1
-                    )
-                ),
+                [$_POST['institution'] => ['primary'=> 1, 'active' => 1]],
                 $acl
             );
         }
@@ -125,11 +119,7 @@ try {
     $message .= $site_address."user_manual\n\n";
     $message .= "The XDMoD Team";
 
-    MailWrapper::sendMail(array(
-        'body'      => $message,
-        'subject'   => "$page_title: Account Created",
-        'toAddress' => $_POST['email_address']
-        )
+    MailWrapper::sendMail(['body'      => $message, 'subject'   => "$page_title: Account Created", 'toAddress' => $_POST['email_address']]
     );
 }
 catch (Exception $e) {

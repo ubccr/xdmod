@@ -28,7 +28,7 @@ abstract class aIngestor extends aRdbmsDestinationAction
 
     public function __construct(aOptions $options, EtlConfiguration $etlConfig, LoggerInterface $logger = null)
     {
-        $requiredKeys = array("definition_file");
+        $requiredKeys = ["definition_file"];
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
         parent::__construct($options, $etlConfig, $logger);
@@ -66,7 +66,7 @@ abstract class aIngestor extends aRdbmsDestinationAction
      * ------------------------------------------------------------------------------------------
      */
 
-    public function execute(EtlOverseerOptions $etlOverseerOptions)
+    public function execute(EtlOverseerOptions $etlOverseerOptions): void
     {
         $inDryrunMode = $this->getEtlOverseerOptions()->isDryrun();
 
@@ -94,7 +94,7 @@ abstract class aIngestor extends aRdbmsDestinationAction
             } else {
                 // Generate an array containing a single tuple. This may be (null, null)
                 // if no start/end date was provided.
-                $datePeriodChunkList = array(array( $this->currentStartDate, $this->currentEndDate ));
+                $datePeriodChunkList = [[$this->currentStartDate, $this->currentEndDate]];
             }
 
             $numDateIntervals = count($datePeriodChunkList);
@@ -110,9 +110,9 @@ abstract class aIngestor extends aRdbmsDestinationAction
                 $this->logger->info(
                     "Process date interval ($intervalNum/$numDateIntervals) "
                     . "(start: "
-                    . ( null === $this->currentStartDate ? "none" : $this->currentStartDate )
+                    . ( $this->currentStartDate ?? "none" )
                     . ", end: "
-                    . ( null === $this->currentEndDate ? "none" : $this->currentEndDate )
+                    . ( $this->currentEndDate ?? "none" )
                     . ")"
                 );
 
@@ -138,21 +138,14 @@ abstract class aIngestor extends aRdbmsDestinationAction
 
         $message = sprintf(
             '%s: Rows Processed: %d records (Time Taken: %01.2f s)',
-            get_class($this),
+            static::class,
             $totalRecordsProcessed,
             $time
         );
         $this->logger->info($message);
 
         // NOTE: This is needed for the log summary.
-        $this->logger->notice(array(
-                                  'action'           => (string) $this,
-                                  'start_time'       => $time_start,
-                                  'end_time'         => $time_end,
-                                  'elapsed_time'     => round($time, 5),
-                                  'records_examined' => $totalRecordsProcessed,
-                                  'records_loaded'   => $totalRecordsProcessed
-                                  ));
+        $this->logger->notice(['action'           => (string) $this, 'start_time'       => $time_start, 'end_time'         => $time_end, 'elapsed_time'     => round($time, 5), 'records_examined' => $totalRecordsProcessed, 'records_loaded'   => $totalRecordsProcessed]);
     }  // execute()
 
     /* ------------------------------------------------------------------------------------------

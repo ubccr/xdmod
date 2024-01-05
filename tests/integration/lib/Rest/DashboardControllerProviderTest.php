@@ -11,7 +11,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
     /**
      * @dataProvider provideSetLayout
      */
-    public function testSetLayout($id, $role, $input, $output)
+    public function testSetLayout($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             $this->helper,
@@ -43,10 +43,9 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
      *
      * @dataProvider provideTestGetStatistics
      *
-     * @param array $options
      * @throws \Exception
      */
-    public function testGetStatistics(array $options)
+    public function testGetStatistics(array $options): void
     {
         //TODO: Needs further integration for other realms.
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -57,7 +56,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
         $startDate = \xd_utilities\array_get($options, 'start_date', '2016-12-22');
         $endDate = \xd_utilities\array_get($options, 'end_date', '2017-01-01');
 
-        $params = array();
+        $params = [];
         if ($startDate !== "null") {
             $params['start_date'] = $startDate;
         }
@@ -78,18 +77,14 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
         $expected = \xd_utilities\array_get(
             $options,
             'expected',
-            array(
-                'file' => $defaultExpectedFile,
-                'http_code' => 200,
-                'content_type' => 'application/json'
-            )
+            ['file' => $defaultExpectedFile, 'http_code' => 200, 'content_type' => 'application/json']
         );
         $expectedHttpCode = \xd_utilities\array_get($expected, 'http_code', 200);
         $expectedContentType = \xd_utilities\array_get($expected, 'content_type', 'application/json');
 
         $this->validateResponse($response, $expectedHttpCode, $expectedContentType);
 
-        $actual = $this->recursivelyFilter($response[0], array('query_string', 'query_time'));
+        $actual = $this->recursivelyFilter($response[0], ['query_string', 'query_time']);
 
         $expectedFileName = \xd_utilities\array_get($expected, 'file', $defaultExpectedFile);
         $expectedFilePath = $this->getTestFiles()->getFile('rest', $expectedFileName);
@@ -106,7 +101,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
                 // Collect the `fieldName` => `numberType` for each of the items we expect to be
                 // present in the `data` section. This will let us detect when we have a `float` and
                 // include a delta for the equality test.
-                $expectedTypes = array();
+                $expectedTypes = [];
                 foreach ($expected['formats'] as $format) {
                     foreach ($format['items'] as $item) {
                         $expectedTypes[$item['fieldName']] = $item['numberType'];
@@ -114,7 +109,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
                 }
 
                 // These attributes can just straight up be checked for equality.
-                $equalAttributes = array('totalCount', 'success', 'message', 'formats');
+                $equalAttributes = ['totalCount', 'success', 'message', 'formats'];
                 foreach ($equalAttributes as $attribute) {
                     $this->assertEquals($expected[$attribute], $actual[$attribute]);
                 }
@@ -129,7 +124,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
                     $this->assertArrayHasKey($fieldName, $actualData);
 
                     if ((array_key_exists($fieldName, $expectedTypes) && $expectedTypes[$fieldName] === 'float') ||
-                        strpos($fieldName, 'sem_') !== false) {
+                        str_contains($fieldName, 'sem_')) {
                         // Make sure that the values we are validating are in the correct format.
                         $expectedValue = (float)$value[0];
                         $actualValue = (float)$actualData[$fieldName][0];
@@ -160,7 +155,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
         $role,
         $input,
         $output
-    ) {
+    ): void {
         parent::requestAndValidateJson($this->helper, $input, $output);
     }
 
@@ -201,7 +196,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
     /**
      * @dataProvider provideSetViewedUserTour
      */
-    public function testSetViewedUserTour($id, $role, $input, $output)
+    public function testSetViewedUserTour($id, $role, $input, $output): void
     {
         parent::authenticateRequestAndValidateJson(
             $this->helper,
