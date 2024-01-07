@@ -766,9 +766,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     '</g>' + '</svg>' + CCR.xdmod.ui.AddDataPanel.line_types[z][1] + '</span>' +
                     '</div>',
 
-                value: CCR.xdmod.ui.AddDataPanel.line_types[z][0],
+                value: CCR.xdmod.ui.AddDataPanel.line_types[z][2],
                 xtype: 'menucheckitem',
-                checked: record.get('line_type') === CCR.xdmod.ui.AddDataPanel.line_types[z][0],
+                checked: (record.get('line_type') === CCR.xdmod.ui.AddDataPanel.line_types[z][2]) || record.get('line_type') === 'Solid',
                 handler: function( /*b*/ ) {
                     XDMoD.TrackEvent('Metric Explorer', 'Clicked on Line Type option in data series context menu', Ext.encode({
                         datasetId: datasetId,
@@ -961,12 +961,15 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 }
                 var store = Ext.StoreMgr.lookup('hchart_store_metric_explorer');
                 
-                let pontSelected;
-                point.data.seriesData.forEach((seriesObj) => {
-                    if (seriesObj.y === point.y) {
-                        pointSelected = seriesObj.x;
-                    }
-                });
+                let pontSelected = point.x;
+
+                if (point.data.seriesData) {
+                    point.data.seriesData.forEach((seriesObj) => {
+                        if (seriesObj.y === point.y) {
+                            pointSelected = seriesObj.x;
+                        }
+                    });
+                }
 
                 menu.addItem({
                     text: 'Show raw data',
@@ -1685,7 +1688,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         var originalTitle = axis.otitle;
         var defaultTitle = axis.dtitle;
         var minField = new Ext.form.NumberField({
-            value: axis.autorangeoptions.minallowed,
+            value: axis.range[0],
             listeners: {
                 specialkey: function(field, e) {
                     if (e.getKey() == e.ENTER) {
@@ -1698,7 +1701,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             }
         });
         var maxField = new Ext.form.NumberField({
-            value: axis.autorangeoptions.maxallowed,
+            value: axis.range[1],
             listeners: {
                 specialkey: function(field, e) {
                     if (e.getKey() == e.ENTER) {
@@ -6309,7 +6312,13 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         function onResize(t, adjWidth, adjHeight, rawWidth, rawHeight) {
             this.maximizeScale.call(this);
-            Plotly.relayout('plotly-panel' + this.id, { width: adjWidth, height: adjHeight });
+            const infoLayerDiv = document.getElementsByClassName('infolayer');
+            const credits = infoLayerDiv[infoLayerDiv.length-1].getElementsByClassName('annotation')[0];
+            if (credits) {
+                Plotly.relayout('plotly-panel' + this.id, { width: adjWidth, height: adjHeight, 'annotations[0].yshift': (adjHeight * -1) * 0.75 });
+            } else {
+                Plotly.relayout('plotly-panel' + this.id, { width: adjWidth, height: adjHeight });
+            }
         } //onResize
 
         // ---------------------------------------------------------

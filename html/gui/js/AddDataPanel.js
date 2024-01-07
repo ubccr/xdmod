@@ -22,16 +22,16 @@ Ext.apply(CCR.xdmod.ui.AddDataPanel, {
     ],
     line_types: [
         ['Solid', 'Solid', ''],
-        ['ShortDash', 'ShortDash', '6,2'],
-        ['ShortDot', 'ShortDot', '2,2'],
-        ['ShortDashDot', 'ShortDashDot', '6,2,2,2'],
-        ['ShortDashDotDot', 'ShortDashDotDot', '6,2,2,2,2,2'],
-        ['Dot', 'Dot', '2,6'],
-        ['Dash', 'Dash', '8,6'],
-        ['LongDash', 'LongDash', '16,6'],
-        ['DashDot', 'DashDot', '8,6,2,6'],
-        ['LongDashDot', 'LongDashDot', '16,6,2,6'],
-        ['LongDashDotDot', 'LongDashDotDot', '16,6,2,6,2,6']
+        ['ShortDash', 'ShortDash', '6px,2px'],
+        ['ShortDot', 'ShortDot', '2px,2px'],
+        ['ShortDashDot', 'ShortDashDot', '6px,2px,2px,2px'],
+        ['ShortDashDotDot', 'ShortDashDotDot', '6px,2px,2px,2px,2px,2px'],
+        ['Dot', 'Dot', '2px,6px'],
+        ['Dash', 'Dash', '8px,6px'],
+        ['LongDash', 'LongDash', '16px,6px'],
+        ['DashDot', 'DashDot', '8px,6px,2px,6px'],
+        ['LongDashDot', 'LongDashDot', '16px,6px,2px,6px'],
+        ['LongDashDotDot', 'LongDashDotDot', '16px,6px,2px,6px,2px,6px']
     ],
     line_widths: [
         [1, '1'],

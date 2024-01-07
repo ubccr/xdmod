@@ -283,10 +283,6 @@ class PlotlyTimeseries2 extends Plotly2
 
                     $yAxis = array(
                         'automargin' => true,
-                        'autorangeoptions' => array(
-                            'maxallowed' => $yAxisMax,
-                            'minallowed' => $yAxisMin
-                        ),
                         'cliponaxis' => false,
                         'layer' => 'below traces',
                         'title' => '<b>' . $yAxisLabel . '</b>', 
@@ -593,11 +589,10 @@ class PlotlyTimeseries2 extends Plotly2
                                 'color' => $data_description->display_type == 'pie'? null: $color,
                                 'dash' => $data_description->line_type,
                                 'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0,
-                                'shape' => ($data_description->display_type == 'spline') ? 'spline' : 'linear' 
+                                'shape' => ($data_description->display_type == 'spline' || $data_description->display_type == 'areaspline') ? 'spline' : 'linear' 
                             ),
                             'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
-                            'hoveron' => $data_description->display_type == 'area' ||
-                                            $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
+                            'hoveron' => $data_description->display_type == 'area' || $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
                             'yaxis' => "y{$yIndex}",
                             'showlegend' => $data_description->display_type != 'pie',
                             'hovertext' => $text,
@@ -610,9 +605,6 @@ class PlotlyTimeseries2 extends Plotly2
                             ),
                             'x' => $xValues,
                             'y' => $yValues,
-                            //'base' => 0.0,
-                            //'width' => 0.4,
-                            //'offset' => 0.1 * $traceIndex,
                             'offsetgroup' => "group{$traceIndex}",
                             'seriesData' => $seriesValues,
                             'visible' => $visible,
@@ -622,6 +614,10 @@ class PlotlyTimeseries2 extends Plotly2
 
                         if ($data_description->display_type == 'areaspline') {
                             $trace['type'] = 'area';
+                        }
+
+                        if ($data_description->value_labels) {
+                            $trace['mode'] .= '+text';
                         }
 
                         if ($this->_swapXY && $data_description->display_type!='pie') {
@@ -681,7 +677,12 @@ class PlotlyTimeseries2 extends Plotly2
                             }
 
                             if ($data_description->combine_type=='side' && $trace['type']=='area'){
-                                $trace['fill'] = $traceIndex == 0 ? 'tozeroy' : 'tonexty';
+                                if ($this->_swapXY) {
+                                    $trace['fill'] = $traceIndex == 0 ? 'tozerox' : 'tonextx';
+                                }
+                                else {
+                                    $trace['fill'] = $traceIndex == 0 ? 'tozeroy' : 'tonexty';
+                                }
                             }
                             elseif($data_description->combine_type=='stack')
                             {
@@ -694,8 +695,8 @@ class PlotlyTimeseries2 extends Plotly2
                             {
                                 $trace['stackgroup'] = 'one';
                                 $trace['stackgaps'] = 'interpolate';
-                                $trace['groupnorm'] = 'percent';
-                                if ($data_description->display_type == 'bar') {
+                                $trace['groupnorm'] = $data_description->display_type;
+                                if ($trace['type'] == 'bar') {
                                     $this->_chart['layout']['barmode'] = 'stack';
                                     $trace['hovertemplate'] = $formattedDataSeriesName . ': <b>%{hovertext}</b> <extra></extra>';
                                     $percentBar = true;

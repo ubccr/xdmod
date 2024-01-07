@@ -908,6 +908,10 @@ class Plotly2
                 {
                     $yAxisMax = $config->max;
                 }
+                if(isset($config->chartType))
+                {
+                    $yAxisType = $config->chartType;
+                }
             }
             if($yAxisLabel == $defaultYAxisLabel)
             {
@@ -917,17 +921,13 @@ class Plotly2
             // populate the yAxis:
             $yAxis = array(
                 'automargin' => true,
-                'autorange' => true,
-                'autorangeoptions' => array(
-                    'maxallowed' => $yAxisMax,
-                    'minallowed' => $yAxisMin
-                ),
                 'cliponaxis' => false,
                 'layer' => 'below traces',
-                'title' => array(
+                'title' => '<b>' . $yAxisLabel . '</b>',
+                /*'title' => array(
                     'text' => '<b>' . $yAxisLabel . '</b>',
                     'standoff' => 5,
-                ),
+                ),*/
                 'titlefont' => array(
                     'size' => (12 + $font_size),
                     'color' => $yAxisColor,
@@ -941,8 +941,9 @@ class Plotly2
                 ),
                 'ticksuffix' => ' ',
                 'index' => $yAxisIndex,
-                'type' => $yAxisObject->log_scale ? 'log' : 'linear',
+                'type' => ($data_description->log_scale || $yAxisType == 'log') ? 'log' : 'linear',
                 'rangemode' => 'tozero',
+                'range' => [$yAxisMin, $yAxisMax],
                 'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 6),
                 'linewidth' => 2 + $font_size / 4,
                 'linecolor' => '#c0d0e0',
@@ -1165,21 +1166,20 @@ class Plotly2
                         'color' => $color,
                         'line' => array(
                             'width' => 1,
-                            'color' => $lineColor
+                            'color' => $lineColor,
                         ),
                     ),
                     'line' => array(
                         'color' => $data_description->display_type == 'pie' ?
                                                         null : $color,
                         'dash' => $data_description->line_type,
-                        'width' => $data_description->display_type !== 'scatter' ?
-                                                        $data_description->line_width + $font_size / 4 : 0,
+                        'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size / 4 : 0,
+                        'shape' => $data_description->display_type == 'spline' || $data_description->display_type == 'areaspline' ? 'spline' : 'linear',
                     ),
                     'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
-                    'mode' => 'lines+markers',
+                    'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
                     'hovertext' => $xValues,
-                    'hoveron'=>  $data_description->display_type == 'area' ||
-                                                        $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
+                    'hoveron'=>  $data_description->display_type == 'area' || $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
                     'hovertemplate' => $tooltip,
                     'showlegend' => true,
                     'text' => $data_description->value_labels ? $text : array(),
@@ -1198,6 +1198,10 @@ class Plotly2
                     'visible' => $visible,
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                 )); // $data_series_desc
+
+                if ($data_description->display_type == 'areaspline') {
+                    $trace['type'] = 'area';
+                }
 
                 if ($data_description->display_type == 'h_bar') {
                     $trace = array_merge($trace, array('orientation' => 'h'));
@@ -1218,7 +1222,7 @@ class Plotly2
                 // set stacking
                 if($data_description->display_type!=='line')
                 {
-                    if ($data_description->display_type=='area' && $traceIndex == 0) {
+                    if ($trace['type']=='area' && $traceIndex == 0) {
                         $hidden_trace = array(
                             'x' => $xValues,
                             'y' => array_fill(0, count($xValues) , 0),
@@ -1233,7 +1237,9 @@ class Plotly2
                             'type' => 'scatter',
                         );
 
-                        $this->_chart['data'][] = $hidden_trace;
+                        if (!$this->_swapXY) {
+                            $this->_chart['data'][] = $hidden_trace;
+                        }
                     }
 
                     if ($trace['type'] == 'bar' && $data_description->display_type != 'h_bar') {
@@ -1241,8 +1247,13 @@ class Plotly2
                         $trace['textangle'] = -90;
                     } 
 
-                    if ($data_description->combine_type=='side' && $data_description->display_type=='area') {
-                        $trace['fill'] = 'tonexty';
+                    if ($data_description->combine_type=='side' && $trace['type']=='area'){
+                        if ($this->_swapXY) {
+                            $trace['fill'] = $traceIndex == 0 ? 'tozerox' : 'tonextx';
+                        }
+                        else {
+                            $trace['fill'] = $traceIndex == 0 ? 'tozeroy' : 'tonexty';
+                        }
                     }
                     elseif($data_description->combine_type=='stack')
                     {
@@ -1259,6 +1270,35 @@ class Plotly2
                     }
                 }
 
+                if ($this->_swapXY && $data_description->display_type!='pie') {
+                    if ($trace['type'] == 'bar') {
+                        $trace = array_merge($trace, array('orientation' => 'h'));
+                        $tmp = $trace['x'];
+                        $trace['x'] = $trace['y'];
+                        $trace['y'] = $tmp;
+                        $trace['hovertemplate'] = '%{hovertext}' . '<br>'. "<span style=\"color:$color\";> ●</span> "
+                                                 . $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
+                        $trace['textangle'] = 0;
+                    } else {
+                        $tmp = $trace['x'];
+                        $trace['x'] = $trace['y'];
+                        $trace['y'] = $tmp;
+                        $trace['hovertemplate'] = null;
+                        //$trace['hovertext'] = $xValues;
+                        $trace['hoverinfo'] = 'text';
+                        //$trace['hovertext'] = $formattedDataSeriesName . $;
+                        //$trace['hovertemplate'] = $formattedDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
+                        //$yAxis['hoverformat'] = '<extra></extra>';
+                    }
+
+                    $tmp = $this->_chart['layout']['xaxis'];
+                    $this->_chart['layout']['xaxis'] = $this->_chart['layout']["yaxis{$yIndex}"];
+                    $this->_chart['layout']["yaxis{$yIndex}"] = $tmp;
+                    $this->_chart['layout']["yaxis{$yIndex}"]['title']['standoff'] = 5;
+                    $this->_chart['layout']["yaxis{$yIndex}"]['autorange'] = 'reversed';
+                    $this->_chart['layout']['xaxis']['type'] = $yAxisObject->log_scale ? 'log' : '-';
+                }
+
                 $this->_chart['data'][] = $trace;
 
                 $this->buildErrorDataSeries(
@@ -1273,7 +1313,7 @@ class Plotly2
                     $zIndex
                 );
 
-                if(!($data_description->display_type == 'pie')) {
+                if(!($data_description->display_type == 'pie') && !$this->_swapXY) {
                     $categoryLabels = array();
                     for ($i = 0; $i < count($xValues); $i++) {
                         if ($data_description->display_type == 'h_bar') {

@@ -77,6 +77,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
 
                     if (this.chartOptions.metricExplorer) {
                         const chartDiv = document.getElementById(this.chartOptions.renderTo);
+                        let summaryDivs = false;
                         let pointClick = false;
                         // Point Menu
                         chartDiv.on('plotly_click', (evt) => {
@@ -89,10 +90,19 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                             }
                         });
                         // Context Menu
-                        const plotAreaDiv = document.getElementsByClassName('xy')[0];
+                        let plotAreaDiv = document.getElementsByClassName('xy');
+                        if (plotAreaDiv.length > 2) {
+                            summaryDivs = true;
+                            // Sub plot div so we need to go back an extra element
+                            plotAreaDiv = document.getElementsByClassName('xy')[plotAreaDiv.length - 2];
+                        } else {
+                            plotAreaDiv = document.getElementsByClassName('xy')[0];
+                        }
                         if (plotAreaDiv.firstChild) {
                             plotAreaDiv.firstChild.addEventListener('click', (event) => {
-                                let hoverDiv = document.getElementsByClassName('hoverlayer')[0];
+                                let hoverDivLayer = document.getElementsByClassName('hoverlayer');
+                                let hoverDiv = summaryDivs ? document.getElementsByClassName('hoverlayer')[hoverDivLayer.length - 1]
+                                                           : document.getElementsByClassName('hoverlayer')[0];
                                 if (!pointClick || (hoverDiv && hoverDiv.children.length === 0)) {
                                     XDMoD.Module.MetricExplorer.chartContextMenu.call(event, false, undefined);
                                 }
@@ -105,27 +115,31 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                             return false;
                         });
                         // Title Menu
-                        const infoDiv = document.getElementsByClassName('infolayer')[0];
+                        const infoLayer = document.getElementsByClassName('infolayer');
+                        const infoDiv = summaryDivs ? document.getElementsByClassName('infolayer')[infoLayer.length - 1]
+                                                    : document.getElementsByClassName('infolayer')[0];
                         if (infoDiv) {
                             if (infoDiv.children.length != 0) {
                                 infoDiv.setAttribute("pointer-events", "all");
-                                const mainTitleDiv = document.getElementsByClassName('g-gtitle')[0];
+                                const mainTitleDiv = infoDiv.getElementsByClassName('g-gtitle')[0];
                                 mainTitleDiv.addEventListener('click', (event) => {
                                     XDMoD.Module.MetricExplorer.titleContextMenu(event);
                                 });
                                 // Axis Menu
-                                const yAxisDiv = document.getElementsByClassName('g-ytitle')[0];
+                                const yAxisDiv = infoDiv.getElementsByClassName('g-ytitle')[0];
                                 yAxisDiv.addEventListener('click', (event) => {
                                     XDMoD.Module.MetricExplorer.yAxisTitleContextMenu(this.chartOptions.layout.yaxis1);
                                     });
-                                const xAxisDiv = document.getElementsByClassName('g-xtitle')[0];
+                                const xAxisDiv = infoDiv.getElementsByClassName('g-xtitle')[0];
                                 xAxisDiv.addEventListener('click', (event) => {
                                     XDMoD.Module.MetricExplorer.xAxisTitleContextMenu(this.chartOptions.layout.xaxis);
                                 });
                             }
                         }
                         // yAxis Ticks
-                        const yAxisTickDiv = document.getElementsByClassName('yaxislayer-below')[0];
+                        const yAxisTickLayer = document.getElementsByClassName('yaxislayer-below');
+                        const yAxisTickDiv = summaryDivs ? document.getElementsByClassName('yaxislayer-below')[yAxisTickLayer.length - 1]
+                                                         : document.getElementsByClassName('yaxislayer-below')[0];
                         if (yAxisTickDiv) {
                             yAxisTickDiv.setAttribute("pointer-events", "all");
                             if (yAxisTickDiv.children && yAxisTickDiv.children.length != 0) {
@@ -138,7 +152,9 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                             }
                         }
                         // xAxis Ticks
-                        const xAxisTickDiv = document.getElementsByClassName('xaxislayer-below')[0];
+                        const xAxisTickLayer = document.getElementsByClassName('xaxislayer-below')
+                        const xAxisTickDiv = summaryDivs ? document.getElementsByClassName('xaxislayer-below')[xAxisTickLayer.length - 1]
+                                                         : document.getElementsByClassName('xaxislayer-below')[0];
                         if (xAxisTickDiv) {
                             xAxisTickDiv.setAttribute("pointer-events", "all");
                             if (xAxisTickDiv.children && xAxisTickDiv.children.length != 0) {
@@ -169,6 +185,9 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
      * @param  {Object} chartOptions (Optional) A set of Plotly options.
      */
     initNewChart: function (chartOptions) {
+        if (this.chart) {
+            Plotly.purge(this.chart.renderTo);
+        }
         var finalChartOptions = {};
         if (chartOptions) {
             jQuery.extend(true, finalChartOptions, this.baseChartOptions, chartOptions);
