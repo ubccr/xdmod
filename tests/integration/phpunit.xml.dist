@@ -1,21 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd"
-         backupGlobals="true"
-         bootstrap="bootstrap.php"
-         cacheTokens="true"
-         colors="true"
-         testSuiteLoaderFile="phpunit/src/Runner/StandardTestSuiteLoader.php"
-         verbose="true">
-    <testsuites>
-        <testsuite name="default">
-            <directory>./lib/</directory>
-            <exclude>./lib/Controllers/SSOLoginTest.php</exclude>
-        </testsuite>
-        <testsuite name="sso">
-            <file>./lib/BaseTest.php</file>
-            <file>./lib/Controllers/BaseUserAdminTest.php</file>
-            <file>./lib/Controllers/SSOLoginTest.php</file>
-        </testsuite>
-    </testsuites>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" backupGlobals="true" bootstrap="bootstrap.php" colors="true" testSuiteLoaderFile="phpunit/src/Runner/StandardTestSuiteLoader.php" verbose="true">
+  <coverage/>
+  <testsuites>
+    <testsuite name="default">
+      <directory>./lib/</directory>
+      <exclude>./lib/Controllers/SSOLoginTest.php</exclude>
+    </testsuite>
+    <testsuite name="sso">
+      <file>./lib/BaseTest.php</file>
+      <file>./lib/Controllers/BaseUserAdminTest.php</file>
+      <file>./lib/Controllers/SSOLoginTest.php</file>
+    </testsuite>
+  </testsuites>
 </phpunit>

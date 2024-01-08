@@ -1,9 +1,9 @@
+<?xml version="1.0"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/8.5/phpunit.xsd"
-         backupGlobals="true"
+         xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd" backupGlobals="true"
          bootstrap="bootstrap.php"
-         cacheTokens="true"
          colors="true"
          testSuiteLoaderFile="phpunit/src/Runner/StandardTestSuiteLoader.php"
          verbose="true">
- </phpunit>
+    <coverage/>
+</phpunit>
