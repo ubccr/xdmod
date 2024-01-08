@@ -7,7 +7,7 @@ version: 2.1
 executors:
   rocky8: &rocky8-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.5.0-x86_64:rockylinux8.5-0.3
+      - image: tools-ext-01.ccr.xdmod.org/xdmod11.0-x86_64:v1.0-php8
 jobs:
   build:
     parameters:
