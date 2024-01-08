@@ -6312,8 +6312,9 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         function onResize(t, adjWidth, adjHeight, rawWidth, rawHeight) {
             this.maximizeScale.call(this);
-            const infoLayerDiv = document.getElementsByClassName('infolayer');
-            const credits = infoLayerDiv[infoLayerDiv.length-1].getElementsByClassName('annotation')[0];
+            const metricDiv = document.getElementById(this.id);
+            const annotationDiv = metricDiv.getElementsByClassName('annotation');
+            const credits = annotationDiv.length != 0 ? annotationDiv : null;
             if (credits) {
                 Plotly.relayout('plotly-panel' + this.id, { width: adjWidth, height: adjHeight, 'annotations[0].yshift': (adjHeight * -1) * 0.75 });
             } else {

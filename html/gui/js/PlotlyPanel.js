@@ -77,7 +77,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
 
                     if (this.chartOptions.metricExplorer) {
                         const chartDiv = document.getElementById(this.chartOptions.renderTo);
-                        let summaryDivs = false;
+                        const metricDiv = document.getElementById(this.id);
                         let pointClick = false;
                         // Point Menu
                         chartDiv.on('plotly_click', (evt) => {
@@ -86,27 +86,23 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                                 pointClick = true;
                                 XDMoD.Module.MetricExplorer.pointContextMenu(point, point.data.datasetId, undefined);
                             } else {
+                                // Edge case where some chart hover labels are active anywhere on plot due to x|y unified hovermode
                                 pointClick = false;
                             }
                         });
                         // Context Menu
-                        let plotAreaDiv = document.getElementsByClassName('xy');
-                        if (plotAreaDiv.length > 2) {
-                            summaryDivs = true;
-                            // Sub plot div so we need to go back an extra element
-                            plotAreaDiv = document.getElementsByClassName('xy')[plotAreaDiv.length - 2];
-                        } else {
-                            plotAreaDiv = document.getElementsByClassName('xy')[0];
-                        }
-                        if (plotAreaDiv.firstChild) {
-                            plotAreaDiv.firstChild.addEventListener('click', (event) => {
-                                let hoverDivLayer = document.getElementsByClassName('hoverlayer');
-                                let hoverDiv = summaryDivs ? document.getElementsByClassName('hoverlayer')[hoverDivLayer.length - 1]
-                                                           : document.getElementsByClassName('hoverlayer')[0];
-                                if (!pointClick || (hoverDiv && hoverDiv.children.length === 0)) {
-                                    XDMoD.Module.MetricExplorer.chartContextMenu.call(event, false, undefined);
-                                }
-                            });
+                        const plotAreaLayer = metricDiv.getElementsByClassName('xy');
+                        if (plotAreaLayer) {
+                            const plotAreaDiv = metricDiv.getElementsByClassName('xy')[0];
+                            if (plotAreaDiv.firstChild) {
+                                plotAreaDiv.firstChild.addEventListener('click', (event) => {
+                                    const hoverDivLayer = metricDiv.getElementsByClassName('hoverlayer');
+                                    const hoverDiv = metricDiv.getElementsByClassName('hoverlayer')[0];
+                                    if (!pointClick || (hoverDiv && hoverDiv.children.length === 0)) {
+                                        XDMoD.Module.MetricExplorer.chartContextMenu.call(event, false, undefined);
+                                    }
+                                });
+                            }
                         }
                         // Legend Menu
                         chartDiv.on('plotly_legendclick', (evt) => {
@@ -114,58 +110,107 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                             XDMoD.Module.MetricExplorer.seriesContextMenu(series, true, series.datasetId);
                             return false;
                         });
+                        // Setup for yAxis Title and Tick events
+                        let yAxes = [];
+                        const layoutKeys = Object.keys(this.chartOptions.layout);
+                        for (let i = 0; i < layoutKeys.length; i++) {
+                            if (layoutKeys[i].startsWith('yaxis')) {
+                                yAxes.push(layoutKeys[i]);
+                            }
+                        }
                         // Title Menu
-                        const infoLayer = document.getElementsByClassName('infolayer');
-                        const infoDiv = summaryDivs ? document.getElementsByClassName('infolayer')[infoLayer.length - 1]
-                                                    : document.getElementsByClassName('infolayer')[0];
-                        if (infoDiv) {
-                            if (infoDiv.children.length != 0) {
-                                infoDiv.setAttribute("pointer-events", "all");
-                                const mainTitleDiv = infoDiv.getElementsByClassName('g-gtitle')[0];
-                                mainTitleDiv.addEventListener('click', (event) => {
-                                    XDMoD.Module.MetricExplorer.titleContextMenu(event);
-                                });
-                                // Axis Menu
-                                const yAxisDiv = infoDiv.getElementsByClassName('g-ytitle')[0];
-                                yAxisDiv.addEventListener('click', (event) => {
-                                    XDMoD.Module.MetricExplorer.yAxisTitleContextMenu(this.chartOptions.layout.yaxis1);
+                        const infoLayer = metricDiv.getElementsByClassName('infolayer');
+                        const titleEvents = (el) => { 
+                            if (el) {
+                                const infoDiv = metricDiv.getElementsByClassName('infolayer')[0];
+                                if (infoDiv.children.length != 0) {
+                                    infoDiv.setAttribute("pointer-events", "all");
+                                    const mainTitleDiv = infoDiv.getElementsByClassName('g-gtitle')[0];
+                                    mainTitleDiv.addEventListener('click', (event) => {
+                                        XDMoD.Module.MetricExplorer.titleContextMenu(event);
                                     });
-                                const xAxisDiv = infoDiv.getElementsByClassName('g-xtitle')[0];
-                                xAxisDiv.addEventListener('click', (event) => {
-                                    XDMoD.Module.MetricExplorer.xAxisTitleContextMenu(this.chartOptions.layout.xaxis);
-                                });
+                                    // Axis Menu
+                                    let yAxisDiv = infoDiv.getElementsByClassName('g-ytitle')[0];
+                                    if (yAxisDiv) {
+                                        for (let i = 0; i < yAxes.length; i++) {
+                                            const yAxis = i != 0 ? 'g-y' + (i+1) + 'title' : 'g-ytitle';
+                                            yAxisDiv = infoDiv.getElementsByClassName(yAxis)[0];
+                                            yAxisDiv.addEventListener('click', (event) => {
+                                                XDMoD.Module.MetricExplorer.yAxisTitleContextMenu(this.chartOptions.layout[yAxes[i]], undefined);
+                                            });
+                                        }
+                                    }
+                                    const xAxisDiv = infoDiv.getElementsByClassName('g-xtitle')[0];
+                                    if (xAxisDiv) {
+                                        xAxisDiv.addEventListener('click', (event) => {
+                                            XDMoD.Module.MetricExplorer.xAxisTitleContextMenu(this.chartOptions.layout.xaxis);
+                                        });
+                                    }
+                                }
                             }
                         }
+                        titleEvents(infoLayer);
                         // yAxis Ticks
-                        const yAxisTickLayer = document.getElementsByClassName('yaxislayer-below');
-                        const yAxisTickDiv = summaryDivs ? document.getElementsByClassName('yaxislayer-below')[yAxisTickLayer.length - 1]
-                                                         : document.getElementsByClassName('yaxislayer-below')[0];
-                        if (yAxisTickDiv) {
-                            yAxisTickDiv.setAttribute("pointer-events", "all");
-                            if (yAxisTickDiv.children && yAxisTickDiv.children.length != 0) {
-                                for (let i = 0; i < yAxisTickDiv.children.length; i++) {
-                                    yAxisTickDiv.children[i].setAttribute("pointer-events", "all");
-                                    yAxisTickDiv.children[i].addEventListener('click', (event) => {
-                                        XDMoD.Module.MetricExplorer.yAxisContextMenu(this.chartOptions.layout.yaxis1, this.chartOptions.data);
-                                    });
+                        const yAxisTickLayer = metricDiv.getElementsByClassName('yaxislayer-below');
+                        const yAxisEvents = (el) => { 
+                            if (el) {
+                                const yAxisTickDiv = metricDiv.getElementsByClassName('yaxislayer-below')[0];
+                                yAxisTickDiv.setAttribute("pointer-events", "all");
+                                if (yAxisTickDiv.children && yAxisTickDiv.children.length != 0) {
+                                    for (let i = 0; i < yAxisTickDiv.children.length; i++) {
+                                        yAxisTickDiv.children[i].setAttribute("pointer-events", "all");
+                                        yAxisTickDiv.children[i].addEventListener('click', (event) => {
+                                            XDMoD.Module.MetricExplorer.yAxisContextMenu(this.chartOptions.layout.yaxis1, this.chartOptions.data);
+                                        });
+                                    }
+                                }
+                                let multipleAxisLayer = metricDiv.getElementsByClassName('overaxes-below');
+                                if (multipleAxisLayer) {
+                                    multipleAxisLayer = multipleAxisLayer[0];
+                                    multipleAxisLayer.setAttribute("pointer-events", "all");
+                                    for (let i = 1; i < yAxes.length; i++) {
+                                        const axisTicks = 'xy' + (i+1) + '-y';
+                                        const multipleAxisTickDiv = multipleAxisLayer.getElementsByClassName(axisTicks)[0];
+                                        if (multipleAxisTickDiv.children && multipleAxisTickDiv.children.length != 0) {
+                                            for (let j = 0; j < multipleAxisTickDiv.children.length; j++) {
+                                                multipleAxisTickDiv.children[j].setAttribute("pointer-events", "all");
+                                                multipleAxisTickDiv.children[j].addEventListener('click', (event) => {
+                                                    XDMoD.Module.MetricExplorer.yAxisContextMenu(this.chartOptions.layout[yAxes[i]], this.chartOptions.data);
+                                                });
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
+                        yAxisEvents(yAxisTickLayer);
                         // xAxis Ticks
-                        const xAxisTickLayer = document.getElementsByClassName('xaxislayer-below')
-                        const xAxisTickDiv = summaryDivs ? document.getElementsByClassName('xaxislayer-below')[xAxisTickLayer.length - 1]
-                                                         : document.getElementsByClassName('xaxislayer-below')[0];
-                        if (xAxisTickDiv) {
-                            xAxisTickDiv.setAttribute("pointer-events", "all");
-                            if (xAxisTickDiv.children && xAxisTickDiv.children.length != 0) {
-                                for (let i = 0; i < xAxisTickDiv.children.length; i++) {
-                                    xAxisTickDiv.children[i].setAttribute("pointer-events", "all");
-                                    xAxisTickDiv.children[i].addEventListener('click', (event) => {
-                                        XDMoD.Module.MetricExplorer.xAxisContextMenu(this.chartOptions.layout.xaxis);
-                                    });
+                        const xAxisTickLayer = metricDiv.getElementsByClassName('xaxislayer-below');
+                        const xAxisEvents = (el) => {
+                            if (el) {
+                                const xAxisTickDiv = metricDiv.getElementsByClassName('xaxislayer-below')[0];
+                                xAxisTickDiv.setAttribute("pointer-events", "all");
+                                if (xAxisTickDiv.children && xAxisTickDiv.children.length != 0) {
+                                    for (let i = 0; i < xAxisTickDiv.children.length; i++) {
+                                        xAxisTickDiv.children[i].setAttribute("pointer-events", "all");
+                                        xAxisTickDiv.children[i].addEventListener('click', (event) => {
+                                            XDMoD.Module.MetricExplorer.xAxisContextMenu(this.chartOptions.layout.xaxis);
+                                        });
+                                    }
                                 }
                             }
                         }
+                        xAxisEvents(xAxisTickLayer);
+
+                        chartDiv.on('plotly_relayout', (evt) => { 
+                            // Axis Titles and Ticks are re-rendered on relayout event so we need to reattach click events
+                            const yAxisTickLayer = metricDiv.getElementsByClassName('yaxislayer-below');
+                            const xAxisTickLayer = metricDiv.getElementsByClassName('xaxislayer-below');
+                            const infoLayer = metricDiv.getElementsByClassName('infolayer');
+                            yAxisEvents(yAxisTickLayer);
+                            xAxisEvents(xAxisTickLayer);
+                            titleEvents(infoLayer);
+                        });
                     }
 
                 }, this);
