@@ -25,6 +25,18 @@ jobs:
       XDMOD_TEST_MODE: << parameters.install-type >>
     steps:
       - run:
+          name: Get PHP8 installed
+          command: |
+            dnf -y module reset php
+            dnf -y module enable php:8.0
+            dnf -y install php php-devel php-pear libzip-devel
+      - run:
+          name: Install latest mongodb php driver
+          command: |
+            > /etc/php.d/40-mongodb.ini
+            yes '' | pecl install mongodb
+            echo “extension=mongodb.so” > /etc/php.d/40-mongodb.ini
+      - run:
           name: Generate OpenSSL Key
           command: openssl genrsa -rand /proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048 > /etc/pki/tls/private/localhost.key
       - run:
