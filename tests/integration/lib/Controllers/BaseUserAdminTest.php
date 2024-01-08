@@ -51,13 +51,13 @@ abstract class BaseUserAdminTest extends BaseTest
      */
     protected $peopleHelper;
 
-    protected function setUp()
+    protected function setup(): void
     {
         $this->helper = new XdmodTestHelper();
         $this->peopleHelper = new PeopleHelper();
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         foreach (self::$newUsers as $username => $userId) {
             try {

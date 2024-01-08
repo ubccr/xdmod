@@ -10,7 +10,7 @@ use Xdmod\PbsResourceParser;
  *
  * @coversDefaultClass PbsResourceParser
  */
-class PbsResourceParserTest extends \PHPUnit_Framework_TestCase
+class PbsResourceParserTest extends \PHPUnit\Framework\TestCase
 {
     /** Tests base directory relative to __DIR__ */
     const TESTS_BASE_REL_DIR = '/../../../..';
@@ -19,7 +19,7 @@ class PbsResourceParserTest extends \PHPUnit_Framework_TestCase
 
     private $parser;
 
-    public function setUp()
+    public function setup(): void
     {
         $this->parser = new PbsResourceParser();
     }

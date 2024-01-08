@@ -511,17 +511,17 @@ class ExportDBTest extends BaseTest
         }
     }
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // setup needed to use NORMAL_USER_USER_NAME or the like
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
 
         // determine initial max id to enable cleanup after testing
         static::$dbh = DB::factory('database');
         static::$maxId = static::$dbh->query('SELECT COALESCE(MAX(id), 0) AS id FROM batch_export_requests')[0]['id'];
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // Reset the batch_export_requests database table to its initial contents
         static::$dbh->execute('DELETE FROM batch_export_requests WHERE id > :id', array('id' => static::$maxId));

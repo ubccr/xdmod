@@ -4,11 +4,11 @@ namespace IntegrationTests\Rest;
 
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
-class ReportThumbnailsTest extends \PHPUnit_Framework_TestCase
+class ReportThumbnailsTest extends \PHPUnit\Framework\TestCase
 {
     protected static $helpers = array();
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         foreach (array('cd', 'cs') as $user) {
             self::$helpers[$user] = new XdmodTestHelper();
@@ -18,7 +18,7 @@ class ReportThumbnailsTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         foreach (self::$helpers as $helper) {
             $helper->logout();

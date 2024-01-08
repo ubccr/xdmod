@@ -23,9 +23,10 @@ class OrganizationHelper
      *
      * @throws \Exception
      */
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         $this->db = DB::factory('database');
+        parent::__construct($name, $data, $dataName);
     }
 
     /**

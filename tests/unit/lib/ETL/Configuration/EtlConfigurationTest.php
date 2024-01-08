@@ -35,7 +35,7 @@ class EtlConfigurationTest extends BaseTest
     }
 
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Query the configuration file for the default module name
 

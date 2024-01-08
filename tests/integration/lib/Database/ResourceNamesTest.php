@@ -5,7 +5,7 @@ namespace IntegrationTests\Database;
 use IntegrationTests\BaseTest;
 use CCR\DB;
 use CCR\Json;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 use Configuration\XdmodConfiguration;
 
 /**
@@ -15,7 +15,7 @@ class ResourceNamesTest extends BaseTest
 {
     private $db;
 
-    public function setUp()
+    public function setup(): void
     {
         $this->db = DB::factory('datawarehouse');
     }
