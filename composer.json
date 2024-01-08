@@ -1,6 +1,6 @@
 {
     "require": {
-        "php": "^5.4 || ^7.2",
+        "php": "^5.4 || ^7.2 || ^8.0",
         "carlo/jquery-base64-file": "^1.0",
         "egulias/email-validator": "^1.2",
         "google/recaptcha": "~1.1",
@@ -23,7 +23,7 @@
         "tildeio/rsvpjs-min-file": "^3.0.18",
         "ubccr/simplesamlphp-module-authglobus": "^1.3",
         "ubccr/simplesamlphp-module-authoidcoauth2": "^1.1",
-        "phpoffice/phpword": "^0.17.0",
+        "phpoffice/phpword": "*",
         "monolog/monolog": "^1.25",
         "plotly/plotly": "^2.24.2",
         "kassner/log-parser": "~1.5",
@@ -32,7 +32,7 @@
         "mongodb/mongodb": "^1.11"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.8",
+        "phpunit/phpunit": "^9.0",
         "ccampbell/chromephp": "^4.1",
         "swaggest/json-schema": "^0.12.41"
     },
