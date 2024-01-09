@@ -1961,15 +1961,15 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             text: 'Reset Range',
             xtype: 'menuitem',
             handler: function(t) {
-                XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom in y axis [' + (axisIndex + 1) + '] title field.');
+                XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Range in y axis [' + (axisIndex + 1) + '] title field.');
                 if (instance.yAxis['original' + axisIndex]) {
                     instance.yAxis['original' + axisIndex].min = 0;
                     instance.yAxis['original' + axisIndex].max = null;
                     instance.yAxis['original' + axisIndex].chartType = 'linear';
                 } else {
                     instance.yAxis['original' + axisIndex] = {
-                        min: newMin,
-                        max: newMax,
+                        min: 0,
+                        max: null,
                         chartType: 'linear'
                     };
                 }
