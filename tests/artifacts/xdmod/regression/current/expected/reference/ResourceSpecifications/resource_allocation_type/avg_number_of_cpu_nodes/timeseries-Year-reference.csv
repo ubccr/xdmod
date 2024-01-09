@@ -3,9 +3,9 @@ title
 parameters
 
 start,end
-2016-12-22,2017-01-01
+2016-12-22,2017-01-07
 ---------
 Year,"[CPU Allocated] Average Number of CPU Nodes Available"
-2016,400.0000
-2017,400.0000
+2016,56.8306
+2017,2198.9041
 ---------

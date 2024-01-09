@@ -61,6 +61,16 @@
                 "nullable": false,
                 "comment": "FACT: Number of gpu cores available for a time period, in seconds"
             },{
+                "name": "cpu_node_time_available",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: Number of cpu nodes available for a time period, in seconds"
+            },{
+                "name": "gpu_node_time_available",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: Number of gpu nodes available for a time period, in seconds"
+            },{
                 "name": "su_available",
                 "type": "int(11) unsigned",
                 "nullable": true,
@@ -96,7 +106,6 @@
                 "nullable": false,
                 "comment": "DIMENSION: The type of resource the resource is"
             }
-
         ],
         "indexes": [
             {

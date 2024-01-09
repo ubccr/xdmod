@@ -1,0 +1,11 @@
+title
+"CPU Node Hours Available"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Month,"[Screwdriver] CPU Node Hours Available"
+2016-12,499200.0000
+2017-01,1571520.0000
+---------

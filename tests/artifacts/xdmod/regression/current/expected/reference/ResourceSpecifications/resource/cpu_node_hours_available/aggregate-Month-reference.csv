@@ -3,12 +3,12 @@ title
 parameters
 
 start,end
-2016-12-22,2017-01-01
+2016-12-22,2017-01-07
 ---------
 Resource,"CPU Node Hours Available"
-robertson,489600
-pozidriv,403200
-phillips,393600
-mortorq,355200
-frearson,345600
+frearson,484800.0000
+robertson,433920.0000
+pozidriv,403200.0000
+phillips,393600.0000
+mortorq,355200.0000
 ---------

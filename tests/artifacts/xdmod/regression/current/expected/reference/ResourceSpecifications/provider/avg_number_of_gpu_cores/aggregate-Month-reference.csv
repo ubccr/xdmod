@@ -1,10 +1,10 @@
 title
-"Average Number of GPU Cores Available: by Service Provider"
+"Average Number of GPU Cores Available (GPU Count): by Service Provider"
 parameters
 
 start,end
-2016-12-22,2017-01-01
+2016-12-22,2017-01-07
 ---------
-"Service Provider","Average Number of GPU Cores Available"
+"Service Provider","Average Number of GPU Cores Available (GPU Count)"
 "screw - Screwdriver",0.0000
 ---------

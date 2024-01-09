@@ -84,7 +84,7 @@
               "tableAlias": "rf",
               "column": "id",
               "group": "Administration",
-              "documentation": "ID of the Resource",
+              "documentation": "The ID of the resource within XDMoD",
               "batchExport": true
           },
           {
@@ -92,7 +92,7 @@
               "tableAlias": "rf",
               "column": "name",
               "group": "Administration",
-              "documentation": "The resource that the specification is for.",
+              "documentation": "The name of the resource",
               "batchExport": true
           },
           {
@@ -100,7 +100,7 @@
               "tableAlias": "rat",
               "column": "resource_allocation_type_description",
               "group": "Administration",
-              "documentation": "How the resource is allocated, such as Node, CPU, or GPU",
+              "documentation": "How the resource is allocated; such as Node, CPU, or GPU",
               "batchExport": true
           },
           {
@@ -108,7 +108,7 @@
               "tableAlias": "rs",
               "column": "start_date_ts",
               "group": "Administration",
-              "documentation": "The start time for a resources specification.",
+              "documentation": "The start time for the resource specification (Unix timestamp, in the XDMoD portal's time zone)",
               "batchExport": true
           },
           {
@@ -116,7 +116,7 @@
               "tableAlias": "rs",
               "column": "end_date_ts",
               "group": "Administration",
-              "documentation": "The end time for a resource specification",
+              "documentation": "The end time for the resource specification (Unix timestamp, in the XDMoD portal's time zone)",
               "batchExport": true
           },
           {
@@ -124,7 +124,7 @@
               "tableAlias": "rs",
               "column": "cpu_processor_count",
               "group": "Administration",
-              "documentation": "The number of CPU's for the resource.",
+              "documentation": "The number of CPUs for the resource.",
               "batchExport": true
           },
           {
@@ -132,7 +132,7 @@
               "tableAlias": "rs",
               "column": "cpu_node_count",
               "group": "Administration",
-              "documentation": "The number of CPU Nodes for the resource",
+              "documentation": "The number of CPU nodes for the resource",
               "batchExport": true
           },
           {
@@ -140,7 +140,7 @@
               "tableAlias": "rs",
               "column": "cpu_processor_count_per_node",
               "group": "Administration",
-              "documentation": "The number of CPU Processors per Node",
+              "documentation": "The number of CPUs per node",
               "batchExport": true
           },
           {
@@ -148,7 +148,7 @@
               "tableAlias": "rs",
               "column": "gpu_processor_count",
               "group": "Requested Resource",
-              "documentation": "The number of GPU's for the resource",
+              "documentation": "The number of GPUs for the resource",
               "batchExport": true
           },
           {
@@ -156,7 +156,7 @@
               "tableAlias": "rs",
               "column": "gpu_node_count",
               "group": "Requested Resource",
-              "documentation": "The number of GPU Nodes for the resource",
+              "documentation": "The number of GPU nodes for the resource",
               "batchExport": true
           },
           {
@@ -164,7 +164,7 @@
               "tableAlias": "rs",
               "column": "gpu_processor_count_per_node",
               "group": "Administration",
-              "documentation": "The number of CPU Processors per Node",
+              "documentation": "The number of GPU's per node",
               "batchExport": true
           },
           {
@@ -172,7 +172,7 @@
               "tableAlias": "rs",
               "column": "su_available_per_day",
               "group": "Administration",
-              "documentation": "The number of SU's available per day",
+              "documentation": "The number of service units (SUs) available per day.",
               "batchExport": true
           },
           {
@@ -180,7 +180,7 @@
               "tableAlias": "rt",
               "column": "description",
               "group": "Administration",
-              "documentation": "The type of this resource",
+              "documentation": "The type of the resource.",
               "batchExport": true
           },
           {
@@ -188,7 +188,7 @@
               "tableAlias": "org",
               "column": "name",
               "group": "Administration",
-              "documentation": "The organization the resource belongs to",
+              "documentation": "The organization to which resource belongs.",
               "batchExport": true
           },
           {
@@ -196,7 +196,7 @@
               "tableAlias": "ra",
               "column": "percent",
               "group": "Administration",
-              "documentation": "The Percent Allocation value for a resource",
+              "documentation": "The percent of the resource that is allocated to ${ORGANIZATION_NAME}.",
               "batchExport": true
           }
         ]

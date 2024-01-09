@@ -61,6 +61,19 @@ class WarehouseRawDataTest extends BaseTest
                     'filters[fieldofscience]' => '59,115',
                     'filters[configuration]' => 'm1.small,m1.medium'
                 ]
+            ],
+            'resourcespecifications' => [
+                'base' => [
+                    'start_date' => '2016-12-21',
+                    'end_date' => '2017-01-07',
+                    'realm' => 'ResourceSpecifications',
+                    'offset' => '0'
+                ],
+                'fields_and_filters' => [
+                    'fields' => 'Resource ID,Resource',
+                    'filters[resource]' => '1,2',
+                    'filters[resource_type]' => '1'
+                ]
             ]
         ];
         return RegressionTestHelper::getRawDataTestParams($realmParams);

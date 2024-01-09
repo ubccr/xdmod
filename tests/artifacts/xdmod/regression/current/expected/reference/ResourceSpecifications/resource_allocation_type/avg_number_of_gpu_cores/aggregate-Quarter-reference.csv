@@ -1,10 +1,10 @@
 title
-"Average Number of GPU Cores Available: by Resource Allocation Type"
+"Average Number of GPU Cores Available (GPU Count): by Resource Allocation Type"
 parameters
 
 start,end
-2016-12-22,2017-01-01
+2016-12-22,2017-01-07
 ---------
-"Resource Allocation Type","Average Number of GPU Cores Available"
+"Resource Allocation Type","Average Number of GPU Cores Available (GPU Count)"
 "CPU Allocated",0.0000
 ---------

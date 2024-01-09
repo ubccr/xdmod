@@ -42,6 +42,7 @@ class MigrationFactory
 
         $configFilesMigrationName = $ns . '\\' . 'ConfigFilesMigration';
         $databasesMigrationName   = $ns . '\\' . 'DatabasesMigration';
+        $etlv2MigrationName   = $ns . '\\' . 'Etlv2Migration';
 
         $migrations = array();
 
@@ -65,7 +66,16 @@ class MigrationFactory
                     $toVersion
                 );
             }
-            $migrations[] = new \OpenXdmod\Migration\Etlv2Migration($fromVersion, $toVersion);
+
+            if (class_exists($etlv2MigrationName)) {
+                $msg = "Using Etlv2Migration migration '$etlv2MigrationName'";
+                $logger->debug($msg);
+
+                $migrations[] = new $etlv2MigrationName(
+                    $fromVersion,
+                    $toVersion
+                );
+            }
         }
 
         $migrations[] = new AclConfigMigration($fromVersion, $toVersion);

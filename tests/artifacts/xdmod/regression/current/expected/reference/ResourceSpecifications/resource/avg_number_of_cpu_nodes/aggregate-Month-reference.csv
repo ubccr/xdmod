@@ -3,12 +3,12 @@ title
 parameters
 
 start,end
-2016-12-22,2017-01-01
+2016-12-22,2017-01-07
 ---------
 Resource,"Average Number of CPU Nodes Available"
-frearson,400.0000
-mortorq,400.0000
-phillips,400.0000
-pozidriv,400.0000
-robertson,400.0000
+robertson,329.0323
+frearson,325.8065
+pozidriv,270.9677
+phillips,264.5161
+mortorq,238.7097
 ---------

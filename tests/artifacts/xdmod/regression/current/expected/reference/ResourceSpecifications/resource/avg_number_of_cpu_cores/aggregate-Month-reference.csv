@@ -1,14 +1,14 @@
 title
-"Average Number of CPU Cores Available: by Resource"
+"Average Number of CPU Cores Available (Core Count): by Resource"
 parameters
 
 start,end
-2016-12-22,2017-01-01
+2016-12-22,2017-01-07
 ---------
-Resource,"Average Number of CPU Cores Available"
-frearson,4000.0000
-mortorq,4000.0000
-phillips,4000.0000
-pozidriv,4000.0000
-robertson,4000.0000
+Resource,"Average Number of CPU Cores Available (Core Count)"
+robertson,3290.3226
+frearson,3258.0645
+pozidriv,2709.6774
+phillips,2645.1613
+mortorq,2387.0968
 ---------

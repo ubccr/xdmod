@@ -3,7 +3,7 @@ title
 parameters
 
 start,end
-2016-12-22,2017-01-01
+2016-12-22,2017-01-07
 ---------
 Year,"[frearson] Average Number of GPU Nodes Available","[mortorq] Average Number of GPU Nodes Available","[phillips] Average Number of GPU Nodes Available","[pozidriv] Average Number of GPU Nodes Available","[robertson] Average Number of GPU Nodes Available"
 2016,0.0000,0.0000,0.0000,0.0000,0.0000

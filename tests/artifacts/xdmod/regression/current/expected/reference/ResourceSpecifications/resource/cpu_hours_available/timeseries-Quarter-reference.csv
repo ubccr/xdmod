@@ -3,9 +3,9 @@ title
 parameters
 
 start,end
-2016-12-22,2017-01-01
+2016-12-22,2017-01-07
 ---------
-Quarter,"[robertson] CPU Hours Available","[pozidriv] CPU Hours Available","[phillips] CPU Hours Available","[mortorq] CPU Hours Available","[frearson] CPU Hours Available"
-"2016 Q4",1920000.0000,1056000.0000,960000.0000,576000.0000,480000.0000
-"2017 Q1",8640000.0000,8640000.0000,8640000.0000,8640000.0000,8640000.0000
+Quarter,"[frearson] CPU Hours Available","[pozidriv] CPU Hours Available","[phillips] CPU Hours Available","[mortorq] CPU Hours Available","[robertson] CPU Hours Available"
+"2016 Q4",480000.0000,1056000.0000,960000.0000,576000.0000,1920000.0000
+"2017 Q1",12864000.0000,8640000.0000,8640000.0000,8640000.0000,6950400.0000
 ---------

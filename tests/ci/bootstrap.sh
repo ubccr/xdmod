@@ -79,6 +79,8 @@ then
 
     expect $BASEDIR/scripts/xdmod-setup-finish.tcl | col -b
 
+    xdmod-update-resource-specs -r frearson --cpu-count=6000 --cpu-node-count=600 --start-date=2017-01-03
+    xdmod-update-resource-specs -r robertson --percent-allocated=80 --start-date=2017-01-03
 
     xdmod-import-csv -t hierarchy -i $REF_DIR/hierarchy.csv
     xdmod-import-csv -t group-to-hierarchy -i $REF_DIR/group-to-hierarchy.csv
@@ -154,4 +156,9 @@ then
         sudo -u xdmod xdmod-ingestor --datatype storage
         sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
     fi
+
+    xdmod-update-resource-specs -r frearson --cpu-count=6000 --cpu-node-count=600 --start-date=2017-01-03
+    xdmod-update-resource-specs -r robertson --percent-allocated=80 --start-date=2017-01-03
+    sudo -u xdmod php /usr/share/xdmod/tools/etl/etl_overseer.php -a xdmod.staging-ingest-common.resource-specs  -a xdmod.hpcdb-ingest-common.resource-allocated -a xdmod.hpcdb-ingest-common.resource-specs -a xdmod.hpcdb-xdw-ingest-common.resource-spec -a xdmod.hpcdb-xdw-ingest-common.resource-allocated
+    sudo -u xdmod xdmod-ingestor --aggregate=resourcespecs --last-modified-start-date="2017-01-01 00:00:00"
 fi

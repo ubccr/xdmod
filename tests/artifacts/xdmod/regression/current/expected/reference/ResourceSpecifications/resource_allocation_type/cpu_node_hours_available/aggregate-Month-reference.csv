@@ -3,8 +3,8 @@ title
 parameters
 
 start,end
-2016-12-22,2017-01-01
+2016-12-22,2017-01-07
 ---------
 "Resource Allocation Type","CPU Node Hours Available"
-"CPU Allocated",1987200
+"CPU Allocated",2070720.0000
 ---------

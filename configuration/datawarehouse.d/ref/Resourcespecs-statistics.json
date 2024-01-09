@@ -1,58 +1,58 @@
 {
     "cpu_hours_available": {
-        "description_html": "The total number of CPU hours available for a time period.",
+        "description_html": "The total number of CPU hours available to be allocated through ${ORGANIZATION_NAME} during a time period.",
         "formula": "COALESCE(SUM(agg.core_time_available),0)/3600.0",
         "name": "CPU Hours Available",
         "precision": 0,
-        "unit": "Hours"
+        "unit": "CPU Hour"
     },
     "gpu_hours_available": {
-        "description_html": "The total number of GPU hours available for a time period.",
+        "description_html": "The total number of GPU hours available to be allocated through ${ORGANIZATION_NAME} during a time period.",
         "formula": "COALESCE(SUM(agg.gpu_time_available),0)/3600.0",
         "name": "GPU Hours Available",
         "precision": 0,
-        "unit": "Hours"
+        "unit": "GPU Hour"
     },
     "cpu_node_hours_available": {
-        "description_html": "The total number of CPU Node hours available for a time period.",
-        "formula": "COALESCE(SUM(agg.cpu_nodes_available), 0) * 24",
+        "description_html": "The total number of CPU Node hours available to be allocated through ${ORGANIZATION_NAME} during a time period.",
+        "formula": "COALESCE(SUM(agg.cpu_node_time_available), 0)/3600.0",
         "name": "CPU Node Hours Available",
         "precision": 0,
-        "unit": "Hours"
+        "unit": "Node Hour"
     },
     "gpu_node_hours_available": {
-        "description_html": "The total number of GPU Node hours available for a selected time period.",
-        "formula": "COALESCE(SUM(agg.gpu_nodes_available), 0) * 24",
+        "description_html": "The total number of GPU Node hours available to be allocated through ${ORGANIZATION_NAME} during a time period.",
+        "formula": "COALESCE(SUM(agg.gpu_node_time_available), 0)/3600.0",
         "name": "GPU Node Hours Available",
         "precision": 0,
-        "unit": "Hours"
+        "unit": "Node Hour"
     },
     "avg_number_of_cpu_nodes": {
-        "description_html": "The average number of CPU Nodes available for a time period.",
-        "formula": "COALESCE(SUM(agg.cpu_nodes_available) / (SUM(agg.wallduration) / 86400), 0)",
+        "description_html": "The average number of CPU nodes available during the days in which the resource was operational during the selected time period. This does not take into account downtimes or outages of resources.",
+        "formula": "COALESCE(SUM(agg.cpu_nodes_available) / ((SELECT SUM(seconds) FROM modw.${AGGREGATION_UNIT}s WHERE FIND_IN_SET(id, GROUP_CONCAT(DISTINCT ${DATE_TABLE_ID_FIELD})) <> 0) / 86400), 0)",
         "name": "Average Number of CPU Nodes Available",
         "precision": 0,
         "unit": "Nodes"
     },
     "avg_number_of_gpu_nodes": {
-        "description_html": "The average number of GPU Nodes available for a time period.",
-        "formula": "COALESCE(SUM(agg.gpu_nodes_available) / (SUM(agg.wallduration) / 86400), 0)",
+        "description_html": "The average number of GPU Nodes available during the days in which the resource was operational during the selected time period. This does not take into account downtimes or outages of resources.",
+        "formula": "COALESCE(SUM(agg.gpu_nodes_available) / ((SELECT SUM(seconds) FROM modw.${AGGREGATION_UNIT}s WHERE FIND_IN_SET(id, GROUP_CONCAT(DISTINCT ${DATE_TABLE_ID_FIELD})) <> 0) / 86400), 0)",
         "name": "Average Number of GPU Nodes Available",
         "precision": 0,
         "unit": "Nodes"
     },
     "avg_number_of_cpu_cores": {
-        "description_html": "The average number of CPU Cores available for a time period.",
-        "formula": "COALESCE(SUM(agg.cpu_cores_available) / (SUM(agg.wallduration) / 86400), 0)",
+        "description_html": "The average number of CPU Cores available during the days in which the resource was operational during the selected time period. This does not take into account downtimes or outages of resources.",
+        "formula": "COALESCE(SUM(agg.cpu_cores_available) / ((SELECT SUM(seconds) FROM modw.${AGGREGATION_UNIT}s WHERE FIND_IN_SET(id, GROUP_CONCAT(DISTINCT ${DATE_TABLE_ID_FIELD})) <> 0) / 86400), 0)",
         "name": "Average Number of CPU Cores Available",
         "precision": 0,
-        "unit": "Cores"
+        "unit": "Core Count"
     },
     "avg_number_of_gpu_cores": {
-        "description_html": "The average number of GPU Cores available for a time period.",
-        "formula": "COALESCE(SUM(agg.gpu_cores_available) / (SUM(agg.wallduration) / 86400), 0)",
+        "description_html": "The average number of GPU Cores available during the days in which the resource was operational during the selected time period. This does not take into account downtimes or outages of resources.",
+        "formula": "COALESCE(SUM(agg.gpu_cores_available) / ((SELECT SUM(seconds) FROM modw.${AGGREGATION_UNIT}s WHERE FIND_IN_SET(id, GROUP_CONCAT(DISTINCT ${DATE_TABLE_ID_FIELD})) <> 0) / 86400), 0)",
         "name": "Average Number of GPU Cores Available",
         "precision": 0,
-        "unit": "Cores"
+        "unit": "GPU Count"
     }
 }

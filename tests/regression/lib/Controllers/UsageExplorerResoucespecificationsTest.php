@@ -58,6 +58,7 @@ class UsageExplorerResourcespecificationsTest extends \PHPUnit_Framework_TestCas
         ];
 
         $groupBys = [
+            'none',
             'resource',
             'resource_type',
             'provider',
@@ -72,6 +73,6 @@ class UsageExplorerResourcespecificationsTest extends \PHPUnit_Framework_TestCas
             'aggregation_unit' => ['Day', 'Month', 'Quarter', 'Year']
         ];
 
-        return RegressionTestHelper::generateTests($settings);
+        return RegressionTestHelper::generateTests($settings, '2016-12-22', '2017-01-07');
     }
 }

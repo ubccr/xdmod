@@ -3,8 +3,8 @@ title
 parameters
 
 start,end
-2016-12-22,2017-01-01
+2016-12-22,2017-01-07
 ---------
 "Resource Type","CPU Node Hours Available"
-"High-performance computing",441600
+"High-performance computing",744000.0000
 ---------

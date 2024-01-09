@@ -1,10 +1,10 @@
 title
-"Average Number of CPU Cores Available: by Resource Type"
+"Average Number of CPU Cores Available (Core Count): by Resource Type"
 parameters
 
 start,end
-2016-12-22,2017-01-01
+2016-12-22,2017-01-07
 ---------
-"Resource Type","Average Number of CPU Cores Available"
-"High-performance computing",4000.0000
+"Resource Type","Average Number of CPU Cores Available (Core Count)"
+"High-performance computing",14290.3226
 ---------

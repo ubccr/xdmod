@@ -1,11 +1,11 @@
 title
-"Average Number of CPU Cores Available: by Resource Allocation Type"
+"Average Number of CPU Cores Available (Core Count): by Resource Allocation Type"
 parameters
 
 start,end
-2016-12-22,2017-01-01
+2016-12-22,2017-01-07
 ---------
-Month,"[CPU Allocated] Average Number of CPU Cores Available"
-2016-12,4000.0000
-2017-01,4000.0000
+Month,"[CPU Allocated] Average Number of CPU Cores Available (Core Count)"
+2016-12,6709.6774
+2017-01,21870.9677
 ---------
