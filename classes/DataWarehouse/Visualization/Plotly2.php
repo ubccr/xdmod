@@ -951,7 +951,7 @@ class Plotly2
                 'overlaying' => $yAxisIndex == 0 ? null : 'y',
             );
 
-            $this->_chart['layout']["{$y}"] = $yAxis;
+            $this->_chart['layout']["{$yAxisName}"] = $yAxis;
 
             // for each of the dataseries on this yAxisObject:
             foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
@@ -1292,7 +1292,7 @@ class Plotly2
                     }
 
                     $tmp = $this->_chart['layout']['xaxis'];
-                    $this->_chart['layout']['xaxis'] = $this->_chart['layout']["{$y}"];
+                    $this->_chart['layout']['xaxis'] = $this->_chart['layout']["{$yAxisName}"];
                     $this->_chart['layout']["{$yAxisName}"] = $tmp;
                     $this->_chart['layout']["{$yAxisName}"]['title']['standoff'] = 5;
                     $this->_chart['layout']["{$yAxisName}"]['autorange'] = 'reversed';

@@ -370,7 +370,7 @@ class PlotlyTimeseries2 extends Plotly2
                         'automargin' => true,
                         'cliponaxis' => false,
                         'layer' => 'below traces',
-                        'ticklen' => 0,
+			            'ticklen' => 0,
                         'title' => array(
                             'text' => '<b>' . $xAxisLabel . '</b>',
                         ),
@@ -384,8 +384,12 @@ class PlotlyTimeseries2 extends Plotly2
                         'tickfont' => array(
                             'size' => (11 + $font_size),
                             'color' => '#606060',
-                        ),
-                        'rangemode' => 'tozero',
+		    	        ),
+		    	        'tickformat' => '%Y-%m-%d',
+			            'tickangle' => -90,
+			            'type' => 'date',
+			            'rangemode' => 'tozero',
+			            'hoverformat' => '%Y-%m-%d',
                         'linewidth' => 2 + $font_size / 4,
                         'linecolor' => '#c0d0e0',
                         'showgrid' => false,
@@ -501,7 +505,7 @@ class PlotlyTimeseries2 extends Plotly2
                             // set up seriesValues
                             foreach($values as $i => $v)
                             {
-                                $xValues[] = date('m-d-Y', $start_ts_array[$i]);
+                                $xValues[] = date('Y-m-d', $start_ts_array[$i]);
                                 $yValues[] = $v;
                                 $text[] = number_format($v, 2, '.', ','); 
                                 $seriesValue = array(
@@ -565,7 +569,6 @@ class PlotlyTimeseries2 extends Plotly2
                         $tooltip = '%{x}' . '<br> <span style="color:' . $color
                             . ';">●</span> ' . $formattedDataSeriesName . ': <b>%{y:,}</b> <extra></extra>';
 
-                        $this->_chart['layout']['xaxis']['hoverformat'] = $tooltip;
                         $tooltip = $lookupDataSeriesName . ': <b>%{y:,.2f}</b> <extra></extra>';
                         if ($traceIndex == 0) {
                             $this->_chart['layout']['hoverlabel']['bordercolor'] = $color;
@@ -644,13 +647,14 @@ class PlotlyTimeseries2 extends Plotly2
                             $trace['hovertemplate'] = $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
                             $xAxis['type'] = $yAxisObject->log_scale ? 'log' : '-';
                             $xAxis['autorange'] = 'reversed';
+                            $xAxis['tickangle'] = 0;
                             $this->_chart['layout']['xaxis'] = $yAxis;
                             $this->_chart['layout']["{$yAxisName}"] = $xAxis;
                         }
 
                         if($data_description->display_type!=='line')
                         {
-
+                            
                             if ($trace['type']=='area' && $traceIndex == 0) {
                                 $hidden_trace = array(
                                     'x' => $xValues,
@@ -665,12 +669,12 @@ class PlotlyTimeseries2 extends Plotly2
                                     'hoverinfo' => 'skip',
                                     'type' => 'scatter',
                                 );
+
                                 if (!$this->_swapXY) {
                                     $this->_chart['data'][] = $hidden_trace;
                                 }
-
                             }
-
+                            
                             if ($trace['type'] == 'bar') {
                                 $trace['textposition'] = 'outside';
                                 $trace['textangle'] = -90;
