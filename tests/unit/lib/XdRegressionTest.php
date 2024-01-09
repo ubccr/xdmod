@@ -42,7 +42,7 @@ class XdRegressionTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEqualsWithDelta(-0.01666666666666666666, $slope, 1.0e-10, '');
         $this->assertEqualsWithDelta(1.1944444444444444, $intersect, 1.0e-10, '');
-        $this->assertEqualsWithDelta(-0.13693063937629155, $correlation,  1.0e-10, '');
+        $this->assertEqualsWithDelta(-0.13693063937629155, $correlation, 1.0e-10, '');
         $this->assertEqualsWithDelta(0.018750000000000006, $r_squared, 1.0e-10, '');
     }
 
