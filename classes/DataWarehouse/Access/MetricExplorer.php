@@ -14,7 +14,7 @@ use DataWarehouse\RoleRestrictionsStringBuilder;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\MissingFilterListTableException;
 use DataWarehouse\Query\Exceptions\UnknownGroupByException;
-use DataWarehouse\Query\Exceptions\BadRequestException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use FilterListHelper;
 use XDUser;
 
@@ -408,7 +408,7 @@ class MetricExplorer extends Common
         $jret = json_decode($ret);
 
         if (!is_array($jret)) {
-            throw new BadRequestException('Invalid data_series specified');
+            throw new BadRequestHttpException('Invalid data_series specified');
         }
 
         foreach ($jret as &$y) {

@@ -1,8 +1,0 @@
-{
-    "$ref-with-overwrite": "user_interface.json",
-    "$overwrite": {
-        "data": {
-            "operation": "get_data"
-        }
-    }
-}

@@ -5,34 +5,26 @@ $dir = __DIR__;
 // Autoloader for test classes.
 spl_autoload_register(
     function ($className) use ($dir) {
-        $classPath
-            = $dir
-            . '/lib/'
-            . str_replace('\\', '/', $className)
-            . '.php';
-
+        // Replace the RegressionTests namespace prefix with the path to the
+        // regression tests lib directory.
+        $classPath = preg_replace(
+            '/RegressionTests\\\\?/',
+            "$dir/lib/",
+            $className
+        );
+        // Replace the IntegrationTests namespace prefix with the path to the
+        // integration tests lib directory.
+        $classPath = preg_replace(
+            '/IntegrationTests\\\\?/',
+            "$dir/../integration/lib/",
+            $classPath
+        );
+        // Replace namespace separators with directory separators.
+        $classPath = str_replace('\\', '/', $classPath) . '.php';
         if (is_readable($classPath)) {
             return require_once $classPath;
-        } else {
-            return false;
         }
-    }
-);
-
-// Autoloader for integration test harness
-spl_autoload_register(
-    function ($className) use ($dir) {
-        $classPath
-            = $dir
-            . '/../integration/lib/'
-            . str_replace('\\', '/', $className)
-            . '.php';
-
-        if (is_readable($classPath)) {
-            return require_once $classPath;
-        } else {
-            return false;
-        }
+        return false;
     }
 );
 

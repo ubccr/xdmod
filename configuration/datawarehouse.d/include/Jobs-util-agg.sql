@@ -3,7 +3,7 @@
         SUM(agg.cpu_time)
         /
         (
-            SELECT SUM( ra.percent * inner_days.hours * rs.processors / 100.0 )
+            SELECT SUM( ra.percent * inner_days.hours * rs.cpu_processor_count / 100.0 )
             FROM modw.resourcespecs rs,
                     modw.resource_allocated ra,
                     modw.days inner_days

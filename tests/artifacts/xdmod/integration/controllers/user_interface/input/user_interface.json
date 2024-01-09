@@ -1,7 +1,0 @@
-{
-    "path": "controllers/user_interface.php",
-    "method": "post",
-    "params": null,
-    "endpoint_type": "controller",
-    "authentication_type": "token_optional"
-}

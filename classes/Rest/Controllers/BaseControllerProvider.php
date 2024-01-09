@@ -284,12 +284,25 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             }
         }
 
+        // If the parameter is an array, throw an exception.
+        $invalidMessage = (
+            "Invalid value for $name. Must be a(n) $expectedValueType."
+        );
+        if (is_array($value)) {
+            throw new BadRequestHttpException($invalidMessage);
+        }
+
         // Run the found parameter value through the given filter.
+        if (array_key_exists('flags', $filterOptions)) {
+            $filterOptions['flags'] |= FILTER_NULL_ON_FAILURE;
+        } else {
+            $filterOptions['flags'] = FILTER_NULL_ON_FAILURE;
+        }
         $value = filter_var($value, $filterId, $filterOptions);
 
         // If the value is invalid, throw an exception.
         if ($value === null) {
-            throw new BadRequestHttpException("Invalid value for $name. Must be a(n) $expectedValueType.");
+            throw new BadRequestHttpException($invalidMessage);
         }
 
         // Return the filtered value.

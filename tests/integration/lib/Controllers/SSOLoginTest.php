@@ -3,6 +3,8 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\DB;
+use IntegrationTests\TestHarness\PeopleHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class SSOLoginTest extends BaseUserAdminTest
 {
@@ -104,8 +106,8 @@ class SSOLoginTest extends BaseUserAdminTest
      */
     public function testLogin($ssoSettings, $expected, $testOptions = array())
     {
-        $helper = new \TestHarness\XdmodTestHelper();
-        $peopleHelper = new \TestHarness\PeopleHelper();
+        $helper = new XdmodTestHelper();
+        $peopleHelper = new PeopleHelper();
 
         $includeDefault = \xd_utilities\array_get($testOptions, self::INCLUDE_DEFAULT_SSO, true);
         $removeUser  = \xd_utilities\array_get($testOptions, self::REMOVE_USER, false);
