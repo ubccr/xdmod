@@ -285,7 +285,9 @@ class PlotlyTimeseries2 extends Plotly2
                         'automargin' => true,
                         'cliponaxis' => false,
                         'layer' => 'below traces',
-                        'title' => '<b>' . $yAxisLabel . '</b>', 
+                        'title' => array(
+                            'text' => '<b>' . $yAxisLabel . '</b>', 
+                        ),
                         'titlefont' => array(
                                 'color'=> $yAxisColor,
                                 'size' => (12 + $font_size),
@@ -306,6 +308,7 @@ class PlotlyTimeseries2 extends Plotly2
                         'linewidth' => 2 + $font_size / 4,
                         'linecolor' => '#c0d0e0',
                         'gridwidth' => $yAxisCount > 1 ?0: 1 + ($font_size/7),
+                        'zeroline' => false,
                     );
 
                     if ($yAxisIndex > 0){
@@ -325,7 +328,7 @@ class PlotlyTimeseries2 extends Plotly2
                         }
                     } 
 
-                    $this->_chart['layout']["yaxis{$yIndex}"] = $yAxis;
+                    $yAxisIndex == 0 ? $this->_chart['layout']["yaxis"] = $yAxis : $this->_chart['layout']["yaxis{$yIndex}"] = $yAxis;
                 } // if($yAxis == null)
 
                 $dataset = new TimeseriesDataset($query);
@@ -369,11 +372,11 @@ class PlotlyTimeseries2 extends Plotly2
                         'ticklen' => 0,
                         'title' => array(
                             'text' => '<b>' . $xAxisLabel . '</b>',
-                            'font' => array(
-                                'color'=> '#000000',
+                        ),
+                        'titlefont' => array(
+                                'color' => '#000000',
                                 'size' => (12 + $font_size),
                                 'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
-                            )
                         ),
                         'otitle' => $originalXAxisLabel,
                         'dtitle' => $defaultXAxisLabel,
@@ -385,6 +388,7 @@ class PlotlyTimeseries2 extends Plotly2
                         'linewidth' => 2 + $font_size / 4,
                         'linecolor' => '#c0d0e0',
                         'showgrid' => false,
+                        'zeroline' => false,
                     );
                      $this->_chart['layout']['xaxis'] = $xAxis;
                 } // if(!isset($xAxis))
@@ -598,7 +602,7 @@ class PlotlyTimeseries2 extends Plotly2
                             'hovertext' => $text,
                             'hovertemplate' => $tooltip,
                             'text' => $data_description->value_labels ? $text : null,
-                            'textposition' => $data_description->display_type == 'pie' || $data_description->display_type == 'bar' ? 'auto' : 'top right',
+                            'textposition' => $data_description->display_type == 'pie' || $data_description->display_type == 'bar' ? 'auto' : ($traceIndex % 2 == 0 ? 'top left' : 'top right'),
                             'textfont' => array(
                                 'color' => $color,
                                 'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
@@ -619,29 +623,24 @@ class PlotlyTimeseries2 extends Plotly2
                         if ($data_description->value_labels) {
                             $trace['mode'] .= '+text';
                         }
-
                         if ($this->_swapXY && $data_description->display_type!='pie') {
+                            $this->_chart['layout']['hovermode'] = 'y unified';
+                            $tmp = $trace['x'];
+                            $trace['x'] = $trace['y'];
+                            $trace['y'] = $tmp;
                             if ($trace['type'] == 'bar') {
                                 $trace = array_merge($trace, array('orientation' => 'h'));
-                                $tmp = $trace['x'];
-                                $trace['x'] = $trace['y'];
-                                $trace['y'] = $tmp;
                                 $trace['hovertemplate'] = '%{hovertext}' . '<br>'. "<span style=\"color:$color\";> ●</span> "
                                                          . $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
                                 $trace['textangle'] = 0;
                             } else {
-                                $tmp = $trace['x'];
-                                $trace['x'] = $trace['y'];
-                                $trace['y'] = $tmp;
                                 $this->_chart['layout']["yaxis{$yIndex}"]['type'] = '-';
-                                $trace['hovertemplate'] = null;
-                                //$trace['hovertext'] = $xValues;
                                 $trace['hoverinfo'] = 'text';
                                 //$trace['hovertext'] = $formattedDataSeriesName . $;
                                 //$trace['hovertemplate'] = $formattedDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
                                 //$yAxis['hoverformat'] = '<extra></extra>';
                             }
-
+                            $trace['hovertemplate'] = $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
                             $xAxis['type'] = $yAxisObject->log_scale ? 'log' : '-';
                             $xAxis['autorange'] = 'reversed';
                             $this->_chart['layout']['xaxis'] = $yAxis;

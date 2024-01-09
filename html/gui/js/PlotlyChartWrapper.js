@@ -4,7 +4,7 @@ Ext.namespace('XDMoD.utils');
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     var baseChartOptions = {};
-
+    let configs = { displayModeBar: false };
     jQuery.extend(true, baseChartOptions, chartOptions);
     if (baseChartOptions.data && baseChartOptions.data.length === 0) {
         let errorConfig = getNoDataErrorConfig();
@@ -27,8 +27,11 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             }
         }
     }
+    if (baseChartOptions.metricExplorer) {
+        configs.showTips = false;
+    }
     // Wait for Plotly promise to fullfil due to race condition from 'resize' listener in PlotlyPanel.js resize listener
-    const chartPromise = Promise.resolve(Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, {displayModeBar: false}));
+    const chartPromise = Promise.resolve(Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, configs));
     let el = Ext.get(baseChartOptions.renderTo);
     el.mask('Loading...');
     chartPromise.then((chart) => {

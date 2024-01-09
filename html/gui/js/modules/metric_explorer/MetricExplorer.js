@@ -264,7 +264,22 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     }
                 },
                 items: [
-                    '<span class="menu-title">Chart Options:</span><br/>',
+                    '<span class="menu-title">Chart Options:</span><br/>', {
+                        xtype: 'menuitem',
+                        text: 'Reset Zoom',
+                        handler: function(t) {
+                            XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
+                            let range = [];
+                            range[0] = instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
+                            range[1] = instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
+                            if (range[0] != 0 || range[1] != null) {
+                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': false });
+                            }
+                            else {
+                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.autorange': true });
+                            }
+                        }
+                    },
                     '-', {
                         xtype: 'menucheckitem',
                         text: 'Aggregate',
@@ -908,6 +923,22 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             }
         }); //menu
         if (series) {
+            menu.addItem({
+                text: 'Reset Zoom',
+                xtype: 'menuitem',
+                handler: function(t) {
+                    XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
+                    let range = [];
+                    range[0] = instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
+                    range[1] = instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
+                    if (range[0] != 0 || range[1] != null) {
+                        Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': false });
+                    }
+                    else {
+                        Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': true });
+                    }
+                }
+            });
             var visibility = Ext.apply({}, record.get('visibility')),
                 originalTitle = series.otitle;
             if (!visibility) {
@@ -1446,7 +1477,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
-        var textContent = event.target.title ? event.target.title.element.textContent : '';
+        var textContent = instance.chartTitleField.getValue();
         var menu = instance.getTextEditMenu(
             textContent,
             'Chart Title',
@@ -1471,8 +1502,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
-        var el = event.target.title.element,
-            menu = new Ext.menu.Menu({
+        var menu = new Ext.menu.Menu({
                 scope: instance,
                 showSeparator: false,
                 ignoreParentClicks: true,
@@ -1508,7 +1538,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             instance = CCR.xdmod.ui.metricExplorer;
         }
         var axisIndex = 0,
-            axisTitle = axis.title,
+            axisTitle = axis.title.text,
             originalTitle = axis.otitle,
             defaultTitle = axis.dtitle,
             durationSelector = instance.getDurationSelector(),
@@ -1584,6 +1614,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         'X Axis [' + (axisIndex + 1) + '] Title',
                         function(text) {
                             if (text !== originalTitle) {
+                                t
                                 XDMoD.TrackEvent('Metric Explorer', 'Pressed enter in x axis title edit field.', Ext.encode({
                                     title: text
                                 }));
@@ -1619,11 +1650,12 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
-        var originalTitle = axis.options.otitle;
-        var axisTitle = axis.options.title.text;
-        var axisIndex = axis.options.index;
+        var originalTitle = axis.otitle;
+        var axisTitle = axis.title.text;
+        let axisTitleText = axisTitle.length != 0 ? axisTitle.substring(3, axisTitle.length-4) : axisTitle;
+        var axisIndex = 0;
         var menu = instance.getTextEditMenu(
-            axisTitle,
+            axisTitleText,
             'X Axis [' + (axisIndex + 1) + '] Title',
             function(text) {
                 XDMoD.TrackEvent('Metric Explorer', 'Pressed enter in x axis [' + (axisIndex + 1) + '] title field.', Ext.encode({
@@ -1652,7 +1684,10 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             instance = CCR.xdmod.ui.metricExplorer;
         }
         var originalTitle = axis.otitle;
-        var axisTitle = axis.title;
+        var axisTitle = axis.title.text;
+        if (axisTitle.length > 0) {
+            axisTitle = axisTitle.substring(3, axisTitle.length-4);
+        }
         var axisIndex = axis.index;
         var menu = instance.getTextEditMenu(
             axisTitle,
@@ -1684,7 +1719,10 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         }
         var handler;
         var axisIndex = axis.index;
-        var axisTitle = axis.title;
+        var axisTitle = axis.title.text;
+        if (axisTitle.length > 0) {
+            axisTitle = axisTitle.substring(3, axisTitle.length-4);
+        }
         var originalTitle = axis.otitle;
         var defaultTitle = axis.dtitle;
         var minField = new Ext.form.NumberField({
@@ -1714,9 +1752,11 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         var yAxisDatasetIds = [];
         for (var s = 0; s < series.length; s++) {
             var se = series[s];
-            let yAxisIndex = Number(se.yaxis.slice(-1));
-            if (yAxisIndex === axisIndex) {
-                yAxisDatasetIds.push(se.datasetId);
+            if (se.yaxis) {
+                let yAxisIndex = Number(se.yaxis.slice(-1));
+                if (yAxisIndex === axisIndex) {
+                    yAxisDatasetIds.push(se.datasetId);
+                }
             }
         }
 
@@ -1914,6 +1954,29 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 }
             });
         }
+        else {
+            menu.addItem('-');
+        }
+        menu.addItem({
+            text: 'Reset Range',
+            xtype: 'menuitem',
+            handler: function(t) {
+                XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom in y axis [' + (axisIndex + 1) + '] title field.');
+                if (instance.yAxis['original' + axisIndex]) {
+                    instance.yAxis['original' + axisIndex].min = 0;
+                    instance.yAxis['original' + axisIndex].max = null;
+                    instance.yAxis['original' + axisIndex].chartType = 'linear';
+                } else {
+                    instance.yAxis['original' + axisIndex] = {
+                        min: newMin,
+                        max: newMax,
+                        chartType: 'linear'
+                    };
+                }
+
+                instance.saveQuery();
+            }
+        });
         menu.addItem({
             xtype: 'panel',
             layout: 'hbox',
@@ -2473,15 +2536,14 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
     },
 
     resetXAxisTitle: function(axis) {
-        var originalTitle = axis.options && axis.options.otitle ? axis.options.otitle : '';
-        var defaultTitle = axis.options && axis.options.dtitle ? axis.options.dtitle : '';
+        var originalTitle = axis && axis.otitle ? axis.otitle : '';
+        var defaultTitle = axis && axis.dtitle ? axis.dtitle : '';
 
         var newTitle = originalTitle === defaultTitle ? '' : originalTitle;
         this.setXAxisTitle(axis, newTitle);
     },
     setXAxisTitle: function(axis, newTitle) {
-        var axisIndex = axis.options.index;
-        var originalTitle = axis.options && axis.options.otitle ? axis.options.otitle : '';
+        var originalTitle = axis && axis.otitle ? axis.otitle : '';
 
         //find old mapping, if one.
         if (this.xAxis[originalTitle]) {
@@ -2491,10 +2553,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 title: newTitle
             };
         }
-
-        axis.target.xAxis[axisIndex].setTitle({
-            text: newTitle
-        });
 
         this.saveQuery();
     },

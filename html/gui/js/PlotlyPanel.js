@@ -160,7 +160,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                                     for (let i = 0; i < yAxisTickDiv.children.length; i++) {
                                         yAxisTickDiv.children[i].setAttribute("pointer-events", "all");
                                         yAxisTickDiv.children[i].addEventListener('click', (event) => {
-                                            XDMoD.Module.MetricExplorer.yAxisContextMenu(this.chartOptions.layout.yaxis1, this.chartOptions.data);
+                                            XDMoD.Module.MetricExplorer.yAxisContextMenu(this.chartOptions.layout.yaxis, this.chartOptions.data);
                                         });
                                     }
                                 }
@@ -210,6 +210,13 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                             yAxisEvents(yAxisTickLayer);
                             xAxisEvents(xAxisTickLayer);
                             titleEvents(infoLayer);
+                        });
+
+                        // Subtitle context menu
+                        chartDiv.on('plotly_clickannotation', (evt) => {
+                            if (evt.annotation.name === 'subtitle') {
+                                XDMoD.Module.MetricExplorer.subtitleContextMenu(evt.event);
+                            }
                         });
                     }
 

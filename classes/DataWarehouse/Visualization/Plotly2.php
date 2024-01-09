@@ -116,8 +116,8 @@ class Plotly2
                     ),
                 ),
                 'annotations' => array(
-                // Credits
                     array(
+                    'name' => 'credits',
                     'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly.',
                     'font' => array(
                         'color' => '#909090',
@@ -133,8 +133,8 @@ class Plotly2
                     'xshift' => 75,
                     'showarrow' => false
                     ),
-                    // Subtitle
                     array(
+                        'name' => 'subtitle',
                         'text' => '',
                         'xref' => 'paper',
                         'yref' => 'paper',
@@ -142,7 +142,8 @@ class Plotly2
                         'yanchor' => 'bottom',
                         'x' => 0.5,
                         'y' => 1.035,
-                        'showarrow' => false
+                        'showarrow' => false,
+                        'captureevents' => true,
                     ),
                 ),
                 'legend' => array(
@@ -162,8 +163,6 @@ class Plotly2
                     ),
                     'namelength' => -1,
                 ),
-                //'bargap' => 0.15,
-                //'bargroupgap' => 0.1,
                 'barmode' => 'group',
                 'images' => array(),
             ),
@@ -684,7 +683,8 @@ class Plotly2
             'cliponaxis' => false,
             'layer' => 'below traces',
             'title' => array(
-                'text' => $xAxisLabel,
+                'text' => '<b>' . $xAxisLabel . '</b>',
+                'standoff' => 5,
             ),
             'titlefont' => array(
                 'size' => (12 + $font_size),
@@ -923,11 +923,10 @@ class Plotly2
                 'automargin' => true,
                 'cliponaxis' => false,
                 'layer' => 'below traces',
-                'title' => '<b>' . $yAxisLabel . '</b>',
-                /*'title' => array(
+                'title' => array(
                     'text' => '<b>' . $yAxisLabel . '</b>',
                     'standoff' => 5,
-                ),*/
+                ),
                 'titlefont' => array(
                     'size' => (12 + $font_size),
                     'color' => $yAxisColor,
@@ -951,7 +950,7 @@ class Plotly2
                 'overlaying' => $yAxisIndex == 0 ? null : 'y',
             );
 
-            $this->_chart['layout']["yaxis{$yIndex}"] = $yAxis;
+            $yAxisIndex == 0 ? $this->_chart['layout']["yaxis"] = $yAxis : $this->_chart['layout']["yaxis{$yIndex}"] = $yAxis;
 
             // for each of the dataseries on this yAxisObject:
             foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
