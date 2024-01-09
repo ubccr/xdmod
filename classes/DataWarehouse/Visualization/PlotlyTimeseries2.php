@@ -280,6 +280,7 @@ class PlotlyTimeseries2 extends Plotly2
                     $yAxisRightBoundStart = 0.825;
                     $yAxisStep = 0.175;
                     $yIndex = $yAxisIndex + 1;
+                    $yAxisName = $yAxisIndex == 0 ? 'yaxis' : "yaxis{$yIndex}";
 
                     $yAxis = array(
                         'automargin' => true,
@@ -328,7 +329,7 @@ class PlotlyTimeseries2 extends Plotly2
                         }
                     } 
 
-                    $yAxisIndex == 0 ? $this->_chart['layout']["yaxis"] = $yAxis : $this->_chart['layout']["yaxis{$yIndex}"] = $yAxis;
+                    $this->_chart['layout']["{$yAxisName}"] = $yAxis;
                 } // if($yAxis == null)
 
                 $dataset = new TimeseriesDataset($query);
@@ -634,7 +635,7 @@ class PlotlyTimeseries2 extends Plotly2
                                                          . $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
                                 $trace['textangle'] = 0;
                             } else {
-                                $this->_chart['layout']["yaxis{$yIndex}"]['type'] = '-';
+                                $this->_chart['layout']["{$yAxisName}"]['type'] = '-';
                                 $trace['hoverinfo'] = 'text';
                                 //$trace['hovertext'] = $formattedDataSeriesName . $;
                                 //$trace['hovertemplate'] = $formattedDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
@@ -644,7 +645,7 @@ class PlotlyTimeseries2 extends Plotly2
                             $xAxis['type'] = $yAxisObject->log_scale ? 'log' : '-';
                             $xAxis['autorange'] = 'reversed';
                             $this->_chart['layout']['xaxis'] = $yAxis;
-                            $this->_chart['layout']["yaxis{$yIndex}"] = $xAxis;
+                            $this->_chart['layout']["{$yAxisName}"] = $xAxis;
                         }
 
                         if($data_description->display_type!=='line')
@@ -699,7 +700,7 @@ class PlotlyTimeseries2 extends Plotly2
                                     $this->_chart['layout']['barmode'] = 'stack';
                                     $trace['hovertemplate'] = $formattedDataSeriesName . ': <b>%{hovertext}</b> <extra></extra>';
                                     $percentBar = true;
-                                    $this->_chart['layout']["yaxis{$yIndex}"]['range'] = [0, 100];
+                                    $this->_chart['layout']["{$yAxisName}"]['range'] = [0, 100];
                                 }
                             }
                         }

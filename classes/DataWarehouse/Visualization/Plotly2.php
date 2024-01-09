@@ -893,6 +893,7 @@ class Plotly2
             $yAxisMin = $first_data_description->log_scale?null:0;
             $yAxisMax = null;
             $yIndex = $yAxisIndex + 1;
+            $yAxisName = $yAxisIndex == 0 ? 'yaxis' : "yaxis{$yIndex}";
             $config = $this->getAxisOverrides($y_axis, $yAxisLabel, $yAxisIndex);
             if($config !== null)
             {
@@ -950,7 +951,7 @@ class Plotly2
                 'overlaying' => $yAxisIndex == 0 ? null : 'y',
             );
 
-            $yAxisIndex == 0 ? $this->_chart['layout']["yaxis"] = $yAxis : $this->_chart['layout']["yaxis{$yIndex}"] = $yAxis;
+            $this->_chart['layout']["{$y}"] = $yAxis;
 
             // for each of the dataseries on this yAxisObject:
             foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
@@ -1210,13 +1211,13 @@ class Plotly2
                     $trace['hovertemplate'] = '%{hovertext}' . '<br>'. "<span style=\"color:$color\";> ●</span> "
                                              . $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>'; 
                     $trace['textangle'] = 0;
-                    $this->_chart['layout']["yaxis{$yIndex}"]['type'] = null; 
+                    $this->_chart['layout']["{$yAxisName}"]['type'] = null; 
                     $tmp = $this->_chart['layout']['xaxis'];
-                    $this->_chart['layout']['xaxis'] = $this->_chart['layout']["yaxis{$yIndex}"];
+                    $this->_chart['layout']['xaxis'] = $this->_chart['layout']["{$yAxisName}"];
                     $this->_chart['layout']['xaxis']['type'] = $yAxisObject->log_scale ? 'log' : 'linear';
-                    $this->_chart['layout']["yaxis{$yIndex}"] = $tmp;
-                    unset($this->_chart['layout']["yaxis{$yIndex}"]['title']['text']);
-                    $this->_chart['layout']["yaxis{$yIndex}"]['autorange'] = 'reversed';
+                    $this->_chart['layout']["{$yAxisName}"] = $tmp;
+                    unset($this->_chart['layout']["{$yAxisName}"]['title']['text']);
+                    $this->_chart['layout']["{$yAxisName}"]['autorange'] = 'reversed';
                 }
                 // set stacking
                 if($data_description->display_type!=='line')
@@ -1291,10 +1292,10 @@ class Plotly2
                     }
 
                     $tmp = $this->_chart['layout']['xaxis'];
-                    $this->_chart['layout']['xaxis'] = $this->_chart['layout']["yaxis{$yIndex}"];
-                    $this->_chart['layout']["yaxis{$yIndex}"] = $tmp;
-                    $this->_chart['layout']["yaxis{$yIndex}"]['title']['standoff'] = 5;
-                    $this->_chart['layout']["yaxis{$yIndex}"]['autorange'] = 'reversed';
+                    $this->_chart['layout']['xaxis'] = $this->_chart['layout']["{$y}"];
+                    $this->_chart['layout']["{$yAxisName}"] = $tmp;
+                    $this->_chart['layout']["{$yAxisName}"]['title']['standoff'] = 5;
+                    $this->_chart['layout']["{$yAxisName}"]['autorange'] = 'reversed';
                     $this->_chart['layout']['xaxis']['type'] = $yAxisObject->log_scale ? 'log' : '-';
                 }
 
@@ -1322,9 +1323,9 @@ class Plotly2
                         }
                     }
                     if ($data_description->display_type == 'h_bar') {
-                        $this->_chart['layout']['yaxis1']['tickmode'] = 'array';
-                        $this->_chart['layout']['yaxis1']['tickvals'] = $xValues;
-                        $this->_chart['layout']['yaxis1']['ticktext'] = $categoryLabels;
+                        $this->_chart['layout']["{$yAxisName}"]['tickmode'] = 'array';
+                        $this->_chart['layout']["{$yAxisName}"]['tickvals'] = $xValues;
+                        $this->_chart['layout']["{$yAxisName}"]['ticktext'] = $categoryLabels;
                     } else {
                         $this->_chart['layout']['xaxis']['tickmode'] = 'array';
                         $this->_chart['layout']['xaxis']['tickvals'] = $xValues;

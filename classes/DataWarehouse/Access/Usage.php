@@ -728,33 +728,33 @@ class Usage extends Common
                 }
 
                 // If there is a y-axis...
-                if (isset($meChart['layout']['yaxis1'])) {
+                if (isset($meChart['layout']['yaxis'])) {
                     // Remove extraneous y-axis properties.
                     //Unset yaxis max but keep min
-                    //$min = $meChart['layout']['yaxis1']['range'][0];
-                    //$meChart['layout']['yaxis1']['range'] = [$min, null];
-                    unset($meChart['layout']['yaxis1']['tick0']);
+                    //$min = $meChart['layout']['yaxis']['range'][0];
+                    //$meChart['layout']['yaxis']['range'] = [$min, null];
+                    unset($meChart['layout']['yaxis']['tick0']);
 
                     // If a thumbnail was requested, remove the y-axis label.
                     if ($thumbnailRequested) {
-                        $meChart['layout']['yaxis1']['title'] = '';
+                        $meChart['layout']['yaxis']['title'] = '';
                     }
 
                     // Fix the x-axis labels to be the same size as the y-axis labels.
                     $meChart['layout']['xaxis']['tickfont']['size'] =
-                        $meChart['layout']['yaxis1']['tickfont']['size'];
+                        $meChart['layout']['yaxis']['tickfont']['size'];
                     // Set the y-axis grid line dash style and color.
                     if ($meRequestIsTimeseries) {
-                        $meChart['layout']['yaxis1']['gridcolor'] = '#c0c0c0';
+                        $meChart['layout']['yaxis']['gridcolor'] = '#c0c0c0';
                     } else {
                         //unset($meChart['layout']['yaxis']['gridLineDashStyle']);
-                        unset($meChart['layout']['yaxis1']['gridcolor']);
+                        unset($meChart['layout']['yaxis']['gridcolor']);
                     }
                     if ($usageChartSettings['show_guide_lines'] === 'n') {
                         if ($usageChartSettings['display_type'] == 'h_bar') {
                             $meChart['layout']['xaxis']['showgrid'] = false;
                         } else {
-                            $meChart['layout']['yaxis1']['showgrid'] = false;
+                            $meChart['layout']['yaxis']['showgrid'] = false;
                         }
                     }
                 }
@@ -766,13 +766,13 @@ class Usage extends Common
                     'value'
                 );
                 if (
-                    (isset($meChart['layout']['xaxis']['ticktext']) || isset($meChart['layout']['yaxis1']['ticktext']))
+                    (isset($meChart['layout']['xaxis']['ticktext']) || isset($meChart['layout']['yaxis']['ticktext']))
                     && $chartSortedByValue
                     && $usageGroupBy !== 'none'
                 ) {
                     $meChartCategories = $meChart['layout']['xaxis']['ticktext'];
-                    if (isset($meChart['layout']['yaxis1']['ticktext'])) {
-                        $meChartCategories = $meChart['layout']['yaxis1']['ticktext'];
+                    if (isset($meChart['layout']['yaxis']['ticktext'])) {
+                        $meChartCategories = $meChart['layout']['yaxis']['ticktext'];
                     }
                     $usageChartCategories = array();
                     $currentCategoryRank = $usageOffset + 1;
@@ -780,8 +780,8 @@ class Usage extends Common
                         $usageChartCategories[] = "${currentCategoryRank}. ${meChartCategory}";
                         $currentCategoryRank++;
                     }
-                    if (isset($meChart['layout']['yaxis1']['ticktext'])) {
-                        $meChart['layout']['yaxis1']['ticktext'] = $usageChartCategories;
+                    if (isset($meChart['layout']['yaxis']['ticktext'])) {
+                        $meChart['layout']['yaxis']['ticktext'] = $usageChartCategories;
                     }
                     else {
                         $meChart['layout']['xaxis']['ticktext'] = $usageChartCategories;
