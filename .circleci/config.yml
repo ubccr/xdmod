@@ -105,8 +105,8 @@ jobs:
             PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
             ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - run:
-          name: Ensure that no unexpected Apache errors were generated
-          command: test ! -e /var/log/php-fpm/www-error.log
+          name: Ensure that no unexpected Apache errors were generated ( We expect PHP Deprecated )
+          command: cat /var/log/php-fpm/www-error.log | grep -v 'PHP Deprecated'; (( "$?" == 1 ))
       - run:
           name: Ensure that no PHP command-line errors were generated
           command: >
