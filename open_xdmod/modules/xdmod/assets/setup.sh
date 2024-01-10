@@ -9,7 +9,7 @@ xdmod_dir="$module_dir/../../.."
 
 echo Installing composer managed dependencies
 cd $xdmod_dir
-composer install --no-dev --no-progress
+composer install --no-dev --no-progress --no-interaction
 
 echo Installing npm managed dependencies
 npm install --production --prefix etl/js
