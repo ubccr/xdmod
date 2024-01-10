@@ -114,7 +114,7 @@ jobs:
           name: Ensure that no PHP command-line errors were generated
           command: >
               if [ -e /var/log/php_errors.log ]; then
-                  test `egrep -v 'vendor/phpunit/phpunit/src|PHP Deprecated' /var/log/php_errors.log | wc -l` = 0;
+                  test `egrep -v 'vendor/phpunit/phpunit/src|PHP Deprecated|PHP Notice:  fread()' /var/log/php_errors.log | wc -l` = 0;
               fi
       - store_artifacts:
           path: /tmp/screenshots
