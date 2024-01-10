@@ -4,6 +4,7 @@ namespace Rest;
 
 use CCR\DB\PDODB;
 use Configuration\XdmodConfiguration;
+use Rest\Controllers\BaseControllerProvider;
 use Rest\Utilities\Authentication;
 use Silex\Application;
 use Silex\Provider\UrlGeneratorServiceProvider;
@@ -101,6 +102,9 @@ class XdmodApplicationFactory
             $retval = array('message' => "Route called");
 
             $authInfo = Authentication::getAuthenticationInfo($request);
+            if (!isset($authInfo['username']) && $request->attributes->has(BaseControllerProvider::_USER)) {
+                $authInfo['username'] = $request->attributes->get(BaseControllerProvider::_USER)->getUsername();
+            }
             $method = $request->getMethod();
             $host = $request->getHost();
             $port = $request->getPort();
