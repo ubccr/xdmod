@@ -95,9 +95,7 @@ jobs:
       - run:
           name: 'Fixup Simplesaml'
           command: |
-            rm -f /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/lib/SimpleSAML/Error/Assertion.php
             sed -i 's/SimpleSAML_Error_Assertion::installHandler();//g' /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www/_include.php
-
       - run:
           name: 'Run SSO Tests'
           command: |
