@@ -53,6 +53,10 @@ jobs:
           command: |
             mkdir ~/phpunit
             mkdir /tmp/screenshots
+      - run:
+          name: 'Fixup Simplesaml'
+          command: |
+            sed -i 's/SimpleSAML_Error_Assertion::installHandler();//g' vendor/simplesamlphp/simplesamlphp/www/_include.php
       - run: ~/bin/buildrpm xdmod
       - run:
           name: Install / Upgrade XDMoD from RPM
@@ -92,10 +96,7 @@ jobs:
             chown root:root -R /usr/local/node-v10.24.1-linux-x64
       - run: pushd ./tests/ui && PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH /usr/local/node-v10.24.1-linux-x64/bin/npm install && popd
       - run: PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
-      - run:
-          name: 'Fixup Simplesaml'
-          command: |
-            sed -i 's/SimpleSAML_Error_Assertion::installHandler();//g' /usr/share/xdmod/vendor/simplesamlphp/simplesamlphp/www/_include.php
+
       - run:
           name: 'Run SSO Tests'
           command: |
