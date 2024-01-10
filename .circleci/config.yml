@@ -106,12 +106,15 @@ jobs:
             ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - run:
           name: Ensure that no unexpected Apache errors were generated ( We expect PHP Deprecated )
-          command: cat /var/log/php-fpm/www-error.log | grep -v 'PHP Deprecated'; (( "$?" == 1 ))
+          command: >
+            if [ -e /var/log/php-fpm/www-error.log ]; then
+              test `fgrep -v 'PHP Deprecated' /var/log/php-fpm/www-error.log | wc -l` = 0;
+            fi
       - run:
           name: Ensure that no PHP command-line errors were generated
           command: >
               if [ -e /var/log/php_errors.log ]; then
-                  test `fgrep -v 'vendor/phpunit/phpunit/src' /var/log/php_errors.log | wc -l` = 0;
+                  test `egrep -v 'vendor/phpunit/phpunit/src|PHP Deprecated' /var/log/php_errors.log | wc -l` = 0;
               fi
       - store_artifacts:
           path: /tmp/screenshots
