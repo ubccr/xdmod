@@ -43,21 +43,21 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
 
         if (isset($parameters['start_date']) && isset($parameters['end_date'])) {
             $startDate = date_parse_from_format('Y-m-d', $parameters['start_date']);
-            $startDateTs = mktime(0, 0, 0, $startDate['month'], $startDate['day'], $startDate['year']);
-
-            if ($startDateTs === false) {
-                throw new Exception('invalid "start_date" query parameter');
-            }
+            $startDateTimestamp = mktime(0, 0, 0, $startDate['month'], $startDate['day'], $startDate['year']);
 
             $endDate = date_parse_from_format('Y-m-d', $parameters['end_date']);
-            $endDateTs = mktime(23, 59, 59, $endDate['month'], $endDate['day'], $endDate['year']);
+            $endDateTimestamp = mktime(23, 59, 59, $endDate['month'], $endDate['day'], $endDate['year']);
 
-            if ($endDateTs === false) {
-                throw new Exception('invalid "end_date" query parameter');
+            if ($startDateTimestamp === false) {
+                throw new Exception('invalid "start_date" query parameter.');
             }
 
-            $startDayId = (date('Y', $startDateTs) * 100000 + date('z', $startDateTs) + 1);
-            $endDayId = (date('Y', $endDateTs) * 100000 + date('z', $endDateTs) + 1);
+            if ($endDateTimestamp === false) {
+                throw new Exception('invalid "end_date" query parameter.');
+            }
+
+            $startDayId = (date('Y', $startDateTimestamp) * 100000 + date('z', $startDateTimestamp) + 1);
+            $endDayId = (date('Y', $endDateTimestamp) * 100000 + date('z', $endDateTimestamp) + 1);
 
             $factEndIdField = new TableField($factTable, 'end_day_id');
             $factStartIdField = new TableField($factTable, 'start_day_id');
