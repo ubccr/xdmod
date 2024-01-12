@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Month,"[frearson] CPU Node Hours Available","[robertson] CPU Node Hours Available","[pozidriv] CPU Node Hours Available","[phillips] CPU Node Hours Available","[mortorq] CPU Node Hours Available"
-2016-12,48000.0000,192000.0000,105600.0000,96000.0000,57600.0000
-2017-01,436800.0000,241920.0000,297600.0000,297600.0000,297600.0000
+Month,"[robertson] CPU Node Hours Available","[pozidriv] CPU Node Hours Available","[phillips] CPU Node Hours Available","[mortorq] CPU Node Hours Available","[frearson] CPU Node Hours Available"
+2016-12,192000.0000,105600.0000,96000.0000,57600.0000,48000.0000
+2017-01,297600.0000,297600.0000,297600.0000,297600.0000,297600.0000
 ---------
