@@ -38,9 +38,6 @@ class RequestLogger
     public function log($start, $end, $level = \CCR\Log::INFO)
     {
         $authInfo = $this->getAuthenticationInfo();
-        if (!isset($authInfo['username']) && $request->attributes->has(BaseControllerProvider::_USER)) {
-            $authInfo['username'] = $request->attributes->get(BaseControllerProvider::_USER)->getUsername();
-        }
         $retval = array(
             'message' => 'Route called',
             'path' => $this->arrayGetOr('REQUEST_URI', $_SERVER),
