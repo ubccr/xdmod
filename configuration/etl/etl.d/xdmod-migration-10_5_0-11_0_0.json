@@ -403,6 +403,30 @@
             "explode_column": {
                 "resourcespecs_id_list": "resourcespec_id"
             }
+        },
+        {
+            "name": "cleanup-log_table",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "description": "Add username values where able and remove escaped characters to make it more readable",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "migration/cleanup_log_table.sql"
+            ],
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_logger"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Database",
+                    "config": "database",
+                    "schema": "mod_logger"
+                }
+            }
         }
     ]
 }
