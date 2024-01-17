@@ -2,7 +2,7 @@
 
 This documentation will only cover the additional steps required to configure XDMoD to use OpenID Connect as an SSO identity
 provider. All the file paths included below assume that an RPM installation has been performed. If you have a source install
-of XDMoD then `/etc/xdmod` can be replaced with `/path/to/your/xdmod/install/etc` 
+of XDMoD then `/etc/xdmod` can be replaced with `/path/to/your/xdmod/install/etc`
 
 You will first need to modify `/etc/xdmod/simplesamlphp/metadata/saml20-idp-remote.php` according to the example below:
 
@@ -55,8 +55,7 @@ $config = array(
     '<<sp-id>>' => array(
         'saml:SP',
         'idp' => '<<idp-remote-entity-id>>'
-        /** Configuration from simplesSAMLphp general configuration **/
-        
+        /** Configuration from simplesSAMLphp general configuration **/        
     ),
     '<<oidc-key-id>>'  => array(
         'authoidcoauth2:OIDCOAuth2',
