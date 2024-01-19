@@ -109,6 +109,10 @@ class WebServerLogFile extends aStructuredFile implements iStructuredFile
         try {
             $decoded = $this->web_parser->parse($data);
 
+            $requestParts = explode(' ', $decoded->request);
+            $decoded->request_method = $requestParts[0];
+            $decoded->request_path = $requestParts[1];
+
             if (property_exists($decoded, 'HeaderUserAgent')) {
                 if (array_key_exists($decoded->HeaderUserAgent, $this->ua_parser_cache)) {
                     $ua_decoded = $this->ua_parser_cache[$decoded->HeaderUserAgent];
