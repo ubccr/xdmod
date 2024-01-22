@@ -1,3 +1,6 @@
+---
+layout: null
+---
 {
     "openapi": "3.0.3",
     "info": {
@@ -17,7 +20,7 @@
             "backgroundColor": "#FFFFFF",
             "altText": ""
         },
-        "version": "10.0.0"
+        "version": "{{ page.sw_version }}"
     },
     "servers": [
         {
@@ -68,7 +71,7 @@
                 "name": "start_date",
                 "in": "query",
                 "required": true,
-                "description": "Start date of requested data",
+                "description": "Start date of requested data in the portal's local time zone in YYYY-MM-DD format.",
                 "schema": {
                     "type": "string",
                     "format": "date"
@@ -78,7 +81,7 @@
                 "name": "end_date",
                 "in": "query",
                 "required": true,
-                "description": "End date of requested data",
+                "description": "End date of requested data in the portal's local time zone in YYYY-MM-DD format.",
                 "schema": {
                     "type": "string",
                     "format": "date"
@@ -3049,7 +3052,7 @@
                                             "results": [],
                                             "data": [],
                                             "message": "Invalid realm.",
-                                            "code": 104
+                                            "code": 0
                                         }
                                     },
                                     "invalid-fields": {
@@ -3061,7 +3064,7 @@
                                             "results": [],
                                             "data": [],
                                             "message": "Invalid fields specified: 'foo', 'bar'.",
-                                            "code": 104
+                                            "code": 0
                                         }
                                     },
                                     "invalid-filter-key": {
@@ -3073,7 +3076,7 @@
                                             "results": [],
                                             "data": [],
                                             "message": "Invalid filter key 'foo'.",
-                                            "code": 104
+                                            "code": 0
                                         }
                                     },
                                     "negative-offset": {
@@ -3085,7 +3088,7 @@
                                             "results": [],
                                             "data": [],
                                             "message": "Offset must be non-negative.",
-                                            "code": 104
+                                            "code": 0
                                         }
                                     }
                                 }

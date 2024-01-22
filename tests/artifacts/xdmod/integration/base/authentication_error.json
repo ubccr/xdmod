@@ -1,9 +1,0 @@
-{
-    "status_code": 401,
-    "body": {
-        "$ref-with-overwrite": "${INTEGRATION_ROOT}/base/error_body.json",
-        "$overwrite": {
-            "message": "An error was encountered while attempting to process the requested authorization procedure."
-        }
-    }
-}

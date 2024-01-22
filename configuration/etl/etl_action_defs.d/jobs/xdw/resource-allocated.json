@@ -7,6 +7,8 @@
             "resource_id": "rf.resource_id",
             "start_date_ts": "COALESCE(raf.start_date_ts, 0)",
             "end_date_ts": "raf.end_date_ts",
+            "start_day_id": "YEAR(FROM_UNIXTIME(raf.start_date_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(raf.start_date_ts))",
+            "end_day_id": "IF(ISNULL(raf.end_date_ts), NULL, YEAR(FROM_UNIXTIME(raf.end_date_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(raf.end_date_ts)))",
             "name": "rf.resource_name",
             "percent": "COALESCE(raf.percent, 100)"
         },

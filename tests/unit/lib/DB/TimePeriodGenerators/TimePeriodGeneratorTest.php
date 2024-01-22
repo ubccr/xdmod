@@ -1,6 +1,8 @@
 <?php
 
-namespace UnitTesting;
+namespace UnitTests\DB\TimePeriodGenerators;
+
+use UnitTests\TestHelpers\TestHelper;
 
 /**
  * Tests for TimePeriodGenerator and its subclasses.
@@ -57,7 +59,7 @@ class TimePeriodGeneratorTest extends \PHPUnit_Framework_TestCase
     private function doGeneratorMethodTest($unit, $methodName, array $inputArgs, $expected)
     {
         $generator = $this->getGenerator($unit);
-        $generatorMethod = \TestHelpers\TestHelper::unlockMethod($generator, $methodName);
+        $generatorMethod = TestHelper::unlockMethod($generator, $methodName);
         $this->assertEquals(
             $expected,
             $generatorMethod->invokeArgs($generator, $inputArgs)

@@ -3,15 +3,12 @@
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
-namespace OpenXdmod\Tests;
+namespace UnitTests\OpenXdmod\Tests;
 
 use Xdmod\HostListParser;
 
 /**
  * HostListParser test class.
- *
- * @package OpenXdmod
- * @subpackage Tests
  */
 class HostListTest extends \PHPUnit_Framework_TestCase
 {

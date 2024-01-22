@@ -1,6 +1,6 @@
 <?php
 
-namespace UnitTesting\DataWarehouse\Query\Model;
+namespace UnitTests\DataWarehouse\Query\Model;
 
 /*
 * @author Amin Ghadersohi

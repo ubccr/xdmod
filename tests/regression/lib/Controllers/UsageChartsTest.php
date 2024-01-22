@@ -2,6 +2,9 @@
 
 namespace RegressionTests\Controllers;
 
+use IntegrationTests\TestHarness\Utilities;
+use IntegrationTests\TestHarness\XdmodTestHelper;
+
 class UsageChartsTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -158,7 +161,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
 
     public function chartSettingsProvider()
     {
-        self::$helper = new \TestHarness\XdmodTestHelper();
+        self::$helper = new XdmodTestHelper();
         self::$helper->authenticate('cd');
 
         $expectedHashes = json_decode(file_get_contents(self::getHashPath()), true);
@@ -237,11 +240,11 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
 
         $output = array();
 
-        foreach(\TestHarness\Utilities::getCombinations($timeseries) as $settings) {
+        foreach(Utilities::getCombinations($timeseries) as $settings) {
             $output[] = $this->genoutput($reference, $settings, $expectedHashes);
         }
 
-        foreach(\TestHarness\Utilities::getCombinations($aggregate) as $settings) {
+        foreach(Utilities::getCombinations($aggregate) as $settings) {
             $output[] = $this->genoutput($reference, $settings, $expectedHashes);
         }
 
@@ -253,11 +256,11 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         $aggregate['show_error_bars'] = array('y', 'n');
         $aggregate['show_error_labels'] = array('y', 'n');
 
-        foreach(\TestHarness\Utilities::getCombinations($timeseries) as $settings) {
+        foreach(Utilities::getCombinations($timeseries) as $settings) {
             $output[] = $this->genoutput($reference, $settings, $expectedHashes);
         }
 
-        foreach(\TestHarness\Utilities::getCombinations($aggregate) as $settings) {
+        foreach(Utilities::getCombinations($aggregate) as $settings) {
             $output[] = $this->genoutput($reference, $settings, $expectedHashes);
         }
         if (getenv('REG_TEST_ALL') === '1') {
