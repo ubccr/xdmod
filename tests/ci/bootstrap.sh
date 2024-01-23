@@ -89,6 +89,12 @@ then
         done
     fi
 
+    # Adding end time for each resource in resourcespecs.json. This is to get consistant results for
+    # the raw data regression tests. The jq command does not do well with overwriting the existing file
+    # so writing to a temp file and the renaming seem to be the best way to go.
+    cat /etc/xdmod/resource_specs.json | jq '[.[] | .["end_date"] += "2020-01-01"]' > /etc/xdmod/resource_specs2.json
+    mv -f /etc/xdmod/resource_specs2.json /etc/xdmod/resource_specs.json
+
     sudo -u xdmod xdmod-ingestor
 
     if [[ "$XDMOD_REALMS" == *"cloud"* ]];
@@ -144,6 +150,12 @@ then
 
     expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
 
+    # Adding end time for each resource in resourcespecs.json. This is to get consistant results for
+    # the raw data regression tests. The jq command does not do well with overwriting the existing file
+    # so writing to a temp file and the renaming seem to be the best way to go.
+    cat /etc/xdmod/resource_specs.json | jq '[.[] | .["end_date"] += "2020-01-01"]' > /etc/xdmod/resource_specs2.json
+    mv -f /etc/xdmod/resource_specs2.json /etc/xdmod/resource_specs.json
+
     if [[ "$XDMOD_REALMS" == *"storage"* ]];
     then
         for storage_dir in $REF_DIR/storage/*; do
@@ -153,4 +165,6 @@ then
         sudo -u xdmod xdmod-ingestor --datatype storage
         sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
     fi
+
+    sudo -u xdmod xdmod-build-filter-lists -r ResourceSpecifications
 fi
