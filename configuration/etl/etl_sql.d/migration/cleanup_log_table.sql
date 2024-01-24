@@ -12,20 +12,39 @@ WHERE
       lt.ident IN ('rest.logger.db', 'controller.log')
   AND lt.priority = 6;
 //
-
-/* backfill for removing extra escaping from log_table, only for rest.logger.db and controller.log. */
-UPDATE mod_logger.log_table lt
-SET
-    message = TRIM(TRAILING '"}' FROM
-                   REPLACE(REPLACE(REPLACE(SUBSTR(message, 13), '\\"', '"'), '\\\\\\/', '/'), '\\/', '/'))
-WHERE
-      ident IN ('rest.logger.db', 'controller.log')
-  AND priority = 6;
-
-//
 /* backfill for removing the extra escaping for the other ident types */
 UPDATE mod_logger.log_table lt
-SET message = REPLACE(REPLACE(REPLACE(REPLACE(message, '\\"', '"'), '\\\\\\/', '/'), '\\/', '/'), '\\\\', '\\')
-WHERE
-      ident NOT IN ('rest.logger.db', 'controller.log')
-  AND priority = 6;
+    JOIN (
+        WITH message_converted      as (SELECT
+                                            id,
+                                            ident,
+                                            priority,
+                                            logtime,
+                                            IF(JSON_EXISTS(message, '$.message') AND
+                                               JSON_VALID(JSON_UNQUOTE(JSON_EXTRACT(message, '$.message'))),
+                                               JSON_REPLACE(message, '$.message', JSON_EXTRACT(
+                                                   REPLACE(JSON_UNQUOTE(JSON_EXTRACT(message, '$.message')), '\\/', '/'), '$')),
+                                               message) as message
+                                        FROM mod_logger.log_table lt WHERE lt.ident IN ('rest.logger.db', 'controller.log') AND lt.priority = 6),
+            /* converts post.config from a json_encoded object to a json object */
+             post_config_converted  AS (SELECT
+                                            id,
+                                            priority,
+                                            ident,
+                                            logtime,
+                                            IF(JSON_EXISTS(message, '$.message.post.config') AND
+                                               JSON_VALID(JSON_UNQUOTE(JSON_EXTRACT(message, '$.message.post.config'))),
+                                               JSON_REPLACE(message, '$.message.post.config', JSON_EXTRACT(
+                                                   JSON_UNQUOTE(JSON_EXTRACT(message, '$.message.post.config')), '$')),
+                                               message) as message
+                                        FROM message_converted),
+             remove_escaped_slashes AS (SELECT
+                                            id,
+                                            ident,
+                                            priority,
+                                            logtime,
+                                            REPLACE(REPLACE(message, '\\/', '/'), '\\"', '"') as message
+                                        FROM post_config_converted)
+        SELECT * FROM remove_escaped_slashes
+    ) as data ON data.id = lt.id
+SET lt.message = data.message;
