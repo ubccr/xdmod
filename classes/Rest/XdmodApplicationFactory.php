@@ -43,6 +43,8 @@ class XdmodApplicationFactory
      */
     private static $instance = null;
 
+    private static $loggingBlacklist = array('password');
+
     /**
      * Create or retrieve a Silex application configured for the XDMoD REST API.
      *
@@ -112,11 +114,13 @@ class XdmodApplicationFactory
             // Extracting any POST variables provided in the Request.
             $post = array();
             foreach($request->request->getIterator() as $key => $value) {
-                $post[$key] = (
+                if (!in_array($key, self::$loggingBlacklist)) {
+                    $post[$key] = (
                     is_string($value)
-                    ? json_decode($value, true)
-                    : null
-                );
+                        ? json_decode($value, true)
+                        : null
+                    );
+                }
             }
 
             // Calculate the amount of time that has elapsed serving this request.
