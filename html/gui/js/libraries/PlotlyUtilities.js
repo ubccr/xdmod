@@ -78,13 +78,13 @@ function getNoDataErrorConfig() {
             source: 'gui/images/report_thumbnail_no_data.png',
             align: 'center',
             xref: 'paper',
-            xanchor: 'top',
-            yanchor: 'bottom',
+            xanchor: 'center',
+            yanchor: 'center',
             yref: 'paper',
             sizex: 1.0,
             sizey: 1.0,
             x: 0.5,
-            y: 0.5,
+            y: 1.0,
         }
         ],
         xaxis: {
@@ -92,6 +92,7 @@ function getNoDataErrorConfig() {
             zeroline: false,
             showgrid: false,
             showline: false,
+
         },
         yaxis: {
             showticklabels: false,
@@ -248,48 +249,43 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
 
     return ret;
 }
-function getClickedPoint(evt) {
+function getClickedPoint(evt, traces) {
     let point;
-    if (evt.points.length > 1) {
-        evt.points.forEach(function (trace) {
-            if (trace.data.type === 'bar') {
-                const points = document.getElementsByClassName('point');
-                for (let i = 0; i < points.length; i++) {
-                    const dimensions = points[i].getBoundingClientRect();
-                    if ('stackgroup' in trace.data) {
-                        if (evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom &&
-                            evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right) {
-                            const pointIndex = evt.points.findIndex((elem) => elem.curveNumber === Math.floor(i/2));
-                            point = evt.points[pointIndex];
-                        }
-                    }
-                    else if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right &&
-                             evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
-                        if (evt.points.length == 2) {
-                            point = evt.points[0];
-                        } else {
-                            const pointIndex = evt.points.findIndex((elem) => elem.curveNumber === Math.floor(i/2));
-                            point = evt.points[pointIndex];
-                        }
-                    }
-
-                }
-            }
-            else {
-                if (evt.event.pointerY > trace.bbox.y0 && evt.event.pointerY < trace.bbox.y1) {
-                    //Might need to add a check for trend line
-                    point = trace;
-                }
-            }
-        });
+    if ((traces && traces.length === 0) || (evt.points && evt.points.length === 0)) {
+        return point;
     }
-    else {
-        if (evt.points && evt.points.length != 0) {
-            point = evt.points[0];
+    for (let i = 0; i < traces.length; i++) {
+        let points = traces[i].getElementsByClassName('points');
+        if (points.length != 0 && points[0].children) {
+            points = points[0].children;
+            for (let j = 0; j < points.length; j++) {
+                const dimensions = points[j].getBoundingClientRect();
+                if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right &&
+                    evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
+                    const pointIndex = evt.points.findIndex((elem) => elem.curveNumber === i);
+                    point = evt.points[pointIndex];
+                    break;
+                }
+            }
+        }
+   }
+    return point;
+}
+
+function getMultiAxisObjects(layout) {
+    let multiAxes = [];
+    const layoutKeys = Object.keys(layout);
+    for (let i = 0; i < layoutKeys.length; i++) {
+        if (layout.swapXY) {
+            if (layoutKeys[i].startsWith('xaxis')) {
+                multiAxes.push(layoutKeys[i]);
+            }
         }
         else {
-            point = null;
+            if (layoutKeys[i].startsWith('yaxis')) {
+                multiAxes.push(layoutKeys[i]);
+            }
         }
     }
-    return point;
+    return multiAxes;
 }

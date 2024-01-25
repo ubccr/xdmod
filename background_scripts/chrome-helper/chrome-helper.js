@@ -20,8 +20,6 @@ const args = require('yargs').argv;
 
     await page.goto('file://' + args['input-file']);
 
-    let svgInnerHtml;
-
     // Chart traces and axis values svg
     let chart = await page.evaluate(() => document.querySelector('.user-select-none.svg-container').children[0].outerHTML);
     // Chart title and axis titles svg
@@ -30,8 +28,22 @@ const args = require('yargs').argv;
     chart = chart.substring(0, chart.length - 6);
     const svg = chart + '' + chartLabels + '</svg>';
     // HTML tags in titles thorw xml not well-formed error
-    svgInnerHtml = svg.replace(/<br>|<b>|<\/b>/gm, '');
-
+    const svgInnerHtml = svg.replace(/<br>|<\/span>|<span|<b>|<\/b>/gm, (str) => {
+        switch (str) {
+            case '<br>':
+                return '&lt;br&gt;';
+            case '<b>':
+                return '&lt;b&gt;';
+            case '</b>':
+                return '&lt;/b&gt;';
+            case '<span':
+                return '&lt;span';
+            case '</span>':
+                return '&lt;/span&gt;';
+            default:
+                return str;
+        }
+    });
     console.log(JSON.stringify(svgInnerHtml));
 
     await browser.close();

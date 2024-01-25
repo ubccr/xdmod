@@ -1492,6 +1492,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                                 var baseChartOptions = {
                                     renderTo: id,
+                                    realmOverview: true,
                                     layout: {
                                         width: CCR.xdmod.ui.thumbWidth * chartThumbScale,
                                         height: CCR.xdmod.ui.thumbHeight * chartThumbScale,
@@ -1517,7 +1518,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 }
                                 jQuery.extend(true, chartOptions, baseChartOptions);
 
-                                chartOptions.layout.annotations = [];
+                                const endIndex = chartOptions.layout.annotations.findIndex((elem) => elem.name === 'data_label');
+                                if (endIndex === -1) {
+                                    chartOptions.layout.annotations = [];
+                                }
+                                chartOptions.layout.annotations.splice(0, endIndex);
 
                                 //Add ellipsis to labels longer than 15 characters
                                 chartOptions.data.forEach((trace, traceIndex) => {
@@ -1532,22 +1537,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                         }
                                         
                                         labels.forEach((label, labelIndex) => {
-                                            /*if (label.length > 35) {
+                                            if (label.length > 20) {
                                                 label = label.substring(0,18) + '...';
                                                 tickText.push(label);
-                                            }*/
-                                            if (label.length > 15) {
-                                                const words = label.split(' ');
-                                                let chars = 0;
-                                                let formattedLabel = '';
-                                                for (const word of words) {
-                                                    chars += word.length;
-                                                    if (chars >= 15) {
-                                                        formattedLabel += '<br> ';
-                                                    }
-                                                    formattedLabel += (word + ' ');
-                                                }
-                                                tickText.push(formattedLabel);
                                             }
                                             else {
                                                 tickText.push(label);
@@ -1555,9 +1547,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                         });
 
                                         if (isSwapXY) {
-                                            chartOptions.layout.yaxis1.tickmode = 'array';
-                                            chartOptions.layout.yaxis1.tickvals = trace.y;
-                                            chartOptions.layout.yaxis1.ticktext = tickText;
+                                            chartOptions.layout.yaxis.tickmode = 'array';
+                                            chartOptions.layout.yaxis.tickvals = trace.y;
+                                            chartOptions.layout.yaxis.ticktext = tickText;
                                         } else {
                                             chartOptions.layout.xaxis.tickmode = 'array';
                                             chartOptions.layout.xaxis.tickvals = trace.x;
@@ -1570,6 +1562,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 chartOptions.credits.enabled = false;
 
                                 this.charts.push(XDMoD.utils.createChart(chartOptions));
+                                chartContainer.unmask();
                             };
 
                             deferStore.load({
@@ -2614,8 +2607,20 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
         function onResize(t, adjWidth, adjHeight, rawWidth, rawHeight) {
 
             maximizeScale.call(this);
-            if (this.chart) {
-                Plotly.relayout(this.chart.chartId, { width: adjWidth, height: adjHeight, 'annotations[0].yshift': (adjHeight * -1) * 0.825 });
+            if (this.chart && this.chartId) {
+                const chartDiv = document.getElementById(this.chartId);
+                const usageDiv = document.getElementById(this.id);
+                if (chartDiv) {
+                    var annotationDiv = usageDiv.getElementsByClassName('annotation');
+                    if (annotationDiv && annotationDiv.length > 2) {
+                        const marginTop = chartDiv._fullLayout.margin.t;
+                        const marginRight = chartDiv._fullLayout.margin.r;
+                        Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight, 'annotations[2].yshift': ((adjHeight - marginTop) * -1), 'annotations[2].xshift': marginRight } );
+                    }
+                    else {
+                        Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
+                    }
+                }
             }
 
         } //onResize
@@ -2746,59 +2751,24 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             chartOptions.exporting.enabled = false;
                             chartOptions.credits.enabled = true;
 
-                            if (chartOptions.data && chartOptions.data.length === 0){
-                                chartOptions.layout = getNoDataErrorConfig();
-                                chartOptions.layout.width = baseChartOptions.layout.width;
-                                chartOptions.layout.height = baseChartOptions.layout.height;
-                                chartOptions.layout.images[0].x = 0.25;
-                            }
-
-                            this.chart = {};
-                            this.chart.chartDiv = XDMoD.utils.createChart(chartOptions);
-                            this.chart.chartId = id;
+                            this.chart = XDMoD.utils.createChart(chartOptions);
+                            this.chartId = id;
                             var chartDiv = document.getElementById(baseChartOptions.renderTo);
 
                             chartDiv.on('plotly_click', (evt) => {
                                 let drillId;
                                 let label;
                                 let point;
-                                if (evt.points.length > 1) {
-                                    evt.points.forEach(function (trace) {
-                                        if (trace.data.type === 'bar') {
-                                            const points = document.getElementsByClassName('point');
-                                            for (let i = 0; i < points.length; i++) {
-                                                const dimensions = points[i].getBoundingClientRect();
-                                                if ('stackgroup' in trace.data) {
-                                                    if (evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom &&
-                                                        evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right) {
-                                                        const pointIndex = evt.points.findIndex((elem) => elem.curveNumber === Math.floor(i/2));
-                                                        point = evt.points[pointIndex];
-                                                    }
-                                                }
-                                                else if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right &&
-                                                         evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right) {
-                                                    if (evt.points.length == 2) {
-                                                        point = evt.points[0];
-                                                    } else {
-                                                        const pointIndex = evt.points.findIndex((elem) => elem.curveNumber === Math.floor(i/2));
-                                                        point = evt.points[pointIndex];
-                                                    }
-                                                }
-
-                                            }
-                                        }
-                                        else {
-                                            if (evt.event.pointerY > trace.bbox.y0 && evt.event.pointerY < trace.bbox.y1) {
-                                                //Might need to add a check for trend line
-                                                point = trace;
-                                            }
-                                        }
-                                    });
+                                const usageDiv = document.getElementById(this.id);
+                                if (evt.points && evt.points.length > 0) {
+                                    if (evt.points[0].data.type === 'pie') {
+                                        point = evt.points[0];    
+                                    }
+                                    else {
+                                        const traces = usageDiv.getElementsByClassName('plot')[0].firstChild.children;
+                                        point = getClickedPoint(evt, traces);
+                                    }
                                 }
-                                else {
-                                    point = evt.points[0];
-                                }
-
                                 if (!point) {
                                     return;
                                 }
@@ -2816,8 +2786,26 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             });
 
                             chartDiv.on('plotly_legendclick', (evt) => {
-                                console.log(evt);
-
+                                const traceIdx = evt.curveNumber;
+                                const stdErrIdx = traceIdx + 1;
+                                if (evt.data[traceIdx].name.startsWith('Std Err:')) {
+                                    if (evt.data[traceIdx].visible != 'legendonly') {
+                                        Plotly.update(baseChartOptions.renderTo, { mode: 'lines' }, {}, traceIdx);
+                                    }
+                                    else if (evt.data[traceIdx-1].visible === 'legendonly') {
+                                        Plotly.update(baseChartOptions.renderTo, { mode: 'markers' }, {}, traceIdx);
+                                    }
+                                }
+                                else if (evt.data.length > stdErrIdx) {
+                                    if (evt.data[stdErrIdx].name.startsWith('Std Err:')) {
+                                        if (evt.data[traceIdx].visible != 'legendonly') {
+                                            Plotly.update(baseChartOptions.renderTo, { mode: 'markers' }, {}, stdErrIdx);
+                                        }
+                                        else {
+                                            Plotly.update(baseChartOptions.renderTo, { mode: 'lines' }, {}, stdErrIdx);
+                                        }
+                                    }
+                                }
                             });
 
                         }, this); //task

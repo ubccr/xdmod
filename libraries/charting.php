@@ -59,7 +59,6 @@ function exportHighchart(
     }
     $template = str_replace('_globalChartOptions_', json_encode($globalChartOptions), $template);
     $template = str_replace('_chartOptions_', json_encode($chartConfig), $template);
-    //throw new \Exception(json_encode($template));
     $svg = getSvgViaChromiumHelper($template, $effectiveWidth, $effectiveHeight);
     switch($format){
         case 'png':

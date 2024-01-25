@@ -170,14 +170,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
         var x, y;
 
-        if (event && event.xAxis && event.yAxis && event.xAxis[0] && event.yAxis[0]) {
-            x = event.xAxis[0].value;
-            y = event.yAxis[0].value;
-        } else {
-            var xy = Ext.EventObject.getXY();
-            x = xy[0];
-            y = xy[1];
-        }
+        var xy = Ext.EventObject.getXY();
+        x = xy[0];
+        y = xy[1];
 
         XDMoD.TrackEvent('Metric Explorer', 'Clicked on chart to access chart context menu', Ext.encode({
             'x': x,
@@ -264,23 +259,8 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     }
                 },
                 items: [
-                    '<span class="menu-title">Chart Options:</span><br/>', {
-                        xtype: 'menuitem',
-                        text: 'Reset Zoom',
-                        handler: function(t) {
-                            XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
-                            let range = [];
-                            range[0] = instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
-                            range[1] = instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
-                            if (range[0] != 0 || range[1] != null) {
-                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': false });
-                            }
-                            else {
-                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.autorange': true });
-                            }
-                        }
-                    },
-                    '-', {
+                    '<span class="menu-title">Chart Options:</span><br/>', 
+                    {
                         xtype: 'menucheckitem',
                         text: 'Aggregate',
                         checked: !instance.timeseries,
@@ -345,6 +325,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                                 instance.datasetStore.each(function(record) {
                                     record.set('log_scale', check);
                                 });
+                                if (check === false) {
+                                    allLogScale = false;
+                                }
                             }
                         }
                     }, {
@@ -455,6 +438,64 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         win.show();
                     }
                 });
+                menu.add({
+                    text: 'View chart layout json',
+                    iconCls: 'chart',
+                    handler: function () {
+                        var win = new Ext.Window({
+                            title: 'Chart Layout Json',
+                            width: 800,
+                            height: 600,
+                            layout: 'fit',
+                            autoScroll: true,
+                            closeAction: 'destroy',
+                            items: [{
+                                autoScroll: true,
+                                html: '<pre>' + Ext.util.Format.htmlEncode(JSON.stringify(instance.plotlyPanel.chartOptions.layout, null, 4)) + '</pre>'
+                            }]
+                        });
+                        win.show();
+                    }
+                });
+                menu.add({
+                    text: 'View chart data json',
+                    iconCls: 'dataset',
+                    handler: function () {
+                        var win = new Ext.Window({
+                            title: 'Chart Data Json',
+                            width: 800,
+                            height: 600,
+                            layout: 'fit',
+                            autoScroll: true,
+                            closeAction: 'destroy',
+                            items: [{
+                                autoScroll: true,
+                                html: '<pre>' + Ext.util.Format.htmlEncode(JSON.stringify(instance.plotlyPanel.chartOptions.data, null, 4)) + '</pre>'
+                            }]
+                        });
+                        win.show();
+                    }
+                });
+            }
+            if (instance.plotlyPanel.chartOptions.layout.zoom) {
+                menu.insert(0, {
+                    text: 'Reset Zoom',
+                    iconCls: 'refresh',
+                    xtype: 'menuitem',
+                    handler: function(t) {
+                        XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
+                        let range = [];
+                        range[0] = instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
+                        range[1] = instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
+                        if (range[0] != 0 || range[1] != null) {
+                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': false });
+                        }
+                        else {
+                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.autorange': true });
+                        }
+                    }
+                });
+                menu.insert(1, '-');
             }
         }
 
@@ -508,7 +549,8 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             drillLabel;
 
         var isRemainder =
-            (series && series.isRemainder);
+            (series && series.isRemainder) ||
+            (point && point.data.drillable && !point.data.drillable[point.pointNumber]);
 
         if (!isRemainder) {
             if (point) {
@@ -923,22 +965,25 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             }
         }); //menu
         if (series) {
-            menu.addItem({
-                text: 'Reset Zoom',
-                xtype: 'menuitem',
-                handler: function(t) {
-                    XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
-                    let range = [];
-                    range[0] = instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
-                    range[1] = instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
-                    if (range[0] != 0 || range[1] != null) {
-                        Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': false });
+            if (instance.plotlyPanel.chartOptions.layout.zoom) {
+                menu.addItem({
+                    text: 'Reset Zoom',
+                    xtype: 'menuitem',
+                    iconCls: 'refresh',
+                    handler: function(t) {
+                        XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
+                        let range = [];
+                        range[0] = instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
+                        range[1] = instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
+                        if (range[0] != 0 || range[1] != null) {
+                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': false });
+                        }
+                        else {
+                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': true });
+                        }
                     }
-                    else {
-                        Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': true });
-                    }
-                }
-            });
+                });
+            }
             var visibility = Ext.apply({}, record.get('visibility')),
                 originalTitle = series.otitle;
             if (!visibility) {
@@ -1340,18 +1385,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         record.set('long_legend', check);
                     }
                 }
-            }, {
-                text: 'Shadow',
-                iconCls: 'shadow',
-
-                xtype: 'menucheckitem',
-                checked: record.get('shadow'),
-                listeners: {
-                    checkchange: function(t, check) {
-                        XDMoD.TrackEvent('Metric Explorer', 'Clicked on Shadow option in data series context menu');
-                        record.set('shadow', check);
-                    }
-                }
             }]
         };
 
@@ -1751,11 +1784,11 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
         var yAxisDatasetIds = [];
         for (var s = 0; s < series.length; s++) {
-            var se = series[s];
-            if (se.yaxis) {
-                let yAxisIndex = Number(se.yaxis.slice(-1));
+            let trace  = series[s];
+            if (trace.yaxis && trace.name != 'gap connector' && trace.name != 'area fix') {
+                let yAxisIndex = Number(trace.yaxis.slice(-1))-1;
                 if (yAxisIndex === axisIndex) {
-                    yAxisDatasetIds.push(se.datasetId);
+                    yAxisDatasetIds.push(trace.datasetId);
                 }
             }
         }
@@ -1787,6 +1820,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 },
                 check: function(t, ch) {
                     t.setValue(ch);
+                    if (ch === false) {
+                        allLogScale = false;
+                    }
                 }
             }
         });
@@ -6372,9 +6408,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             this.maximizeScale.call(this);
             const metricDiv = document.getElementById(this.id);
             const annotationDiv = metricDiv.getElementsByClassName('annotation');
-            const credits = annotationDiv.length != 0 ? annotationDiv : null;
+            const credits = annotationDiv && annotationDiv.length > 2 ? annotationDiv : null;
             if (credits) {
-                Plotly.relayout('plotly-panel' + this.id, { width: adjWidth, height: adjHeight, 'annotations[0].yshift': (adjHeight * -1) * 0.75 });
+                const plotDiv = document.getElementById('plotly-panel' + this.id);
+                const marginTop = plotDiv._fullLayout.margin.t;
+                const marginRight = plotDiv._fullLayout.margin.r;
+                Plotly.relayout('plotly-panel' + this.id, { width: adjWidth, height: adjHeight, 'annotations[2].yshift': ((adjHeight - marginTop) * -1), 'annotations[2].xshift': marginRight });
             } else {
                 Plotly.relayout('plotly-panel' + this.id, { width: adjWidth, height: adjHeight });
             }

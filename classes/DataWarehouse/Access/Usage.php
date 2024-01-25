@@ -626,7 +626,6 @@ class Usage extends Common
             foreach ($meResponses as $meResponseIndex => $meResponse) {
                 // If the response indicates failure, skip this response.
                 $meResponseContent = $meResponse['results'];
-                //throw new \Exception(json_encode($meRequests));
                 if (!$meResponseContent['success']) {
                     continue;
                 }
@@ -666,8 +665,7 @@ class Usage extends Common
                 //
                 // Because the function doesn't receive a custom title, if any,
                 // from this adapter, the chart's subtitle is placed in the title.
-                $usageChartSubtitle = $usageSubtitle !== null ? $usageSubtitle : $meChart['layout']['title']['text'];
-
+                $usageChartSubtitle = $usageSubtitle !== null ? $usageSubtitle : $meChart['layout']['annotations'][0]['text'];
                 // Generate the title and short title of this chart.
                 $usageChartShortTitle = $meRequestMetric->getName();
                 if ($usageTitle !== null) {
@@ -682,18 +680,18 @@ class Usage extends Common
                 // If a thumbnail was requested, do not use an in-chart title or subtitle.
                 // Otherwise, use one.
                 if ($thumbnailRequested) {
-                    $meChart['layout']['title']['text'] = '';
+                    $meChart['layout']['annotations'][0]['text'] = '';
                     $meChart['layout']['annotations'][1]['text'] = '';
-                    $meChart['layout']['thumbtnail'] = true;
+                    $meChart['layout']['thumbnail'] = true;
                 } else {
                     // If a title was provided, display that. Otherwise, use the
                     // generated title.
-                    $meChart['layout']['title']['text'] = $usageChartTitle;
+                    $meChart['layout']['annotations'][0]['text'] = $usageChartTitle;
                     $meChart['layout']['annotations'][1]['text'] = $usageChartSubtitle;
                 }
 
                 // Set the title style.
-                $meChart['layout']['title']['font'] = array_merge($meChart['layout']['title']['font'], $usageTitleStyle);
+                $meChart['layout']['annotations'][0]['font'] = array_merge($meChart['layout']['annotations'][0]['font'], $usageTitleStyle);
 
                 // If the "Show Title" checkbox on the Export Dialog has not been ticked,
                 // do not show a chart title. However, the Metric Explorer promotes the
@@ -707,10 +705,10 @@ class Usage extends Common
                     // changes.
 
                     if ( isset($meChart['layout']['annotations'][1]['text']) && '' != $meChart['layout']['annotations'][1]['text'] ) {
-                        $meChart['layout']['title']['text'] = $meChart['layout']['annotations'][1]['text'];
+                        $meChart['layout']['annotations'][0]['text'] = $meChart['layout']['annotations'][1]['text'];
                         $meChart['layout']['annotations'][1]['text'] = '';
                     } else {
-                        $meChart['layout']['title']['text'] = '';
+                        $meChart['layout']['annotations'][0]['text'] = '';
                     }
                 }
 
@@ -730,12 +728,7 @@ class Usage extends Common
 
                 // If there is a y-axis...
                 if (isset($meChart['layout']['yaxis'])) {
-                    // Remove extraneous y-axis properties.
-                    //Unset yaxis max but keep min
-                    //$min = $meChart['layout']['yaxis']['range'][0];
-                    //$meChart['layout']['yaxis']['range'] = [$min, null];
-                    unset($meChart['layout']['yaxis']['tick0']);
-
+                    unset($meChart['layout']['yaxis']['title']);
                     // If a thumbnail was requested, remove the y-axis label.
                     if ($thumbnailRequested) {
                         $meChart['layout']['yaxis']['title'] = '';
@@ -787,6 +780,7 @@ class Usage extends Common
                     else {
                         $meChart['layout']['xaxis']['ticktext'] = $usageChartCategories;
                     }
+                    //$meChart['data'][0]['hovertext'] = $usageChartCategories;
                 }
 
                 // Generate the chart arguments string for the report generator.
@@ -845,7 +839,8 @@ class Usage extends Common
                     // Determine the type of this data series.
                     $isTrendLineSeries = \xd_utilities\string_begins_with($meDataSeries['name'], 'Trend Line: ');
                     $isStdErrSeries = \xd_utilities\string_begins_with($meDataSeries['name'], 'Std Err: ');
-                    $isPrimaryDataSeries = !($isTrendLineSeries || $isStdErrSeries);
+                    $isNullSeries = $meDataSeries['name'] == 'gap connector';
+                    $isPrimaryDataSeries = !($isTrendLineSeries || $isStdErrSeries || $isNullSeries);
 
                     // If this is a primary data series, increment the rank of the
                     // current primary data series. Further, if this chart is
@@ -871,9 +866,6 @@ class Usage extends Common
                     // If this is the primary data series, modify the data labels
                     // and don't specify the line style. Otherwise, just remove
                     // the data labels.
-                    if ($isPrimaryDataSeries) {
-                        unset($meDataSeries['line']['dash']);
-                    } 
 
                     // If this is the primary data series and the chart is not a
                     // thumbnail, use line markers if and only if the number of
@@ -895,8 +887,8 @@ class Usage extends Common
                                             count($meDataSeries['data']) <= 30 ? 'lines+markers' : 'lines';
                     }
 
-                    if (isset($meDataSeries['text'])) {
-                        $meDataSeries['mode'] .= '+text';
+                    if (isset($meDataSeries['text']) && !$isTrendLineSeries) {
+                        //$meDataSeries['mode'] .= '+text';
                     }
                     // If this is a trend line data series...
                     if ($isTrendLineSeries) {
@@ -982,7 +974,7 @@ class Usage extends Common
         }
 
         // Get the file name to use for the results.
-        $usageFileNameTitle = $usageCharts[0]['hc_jsonstore']['layout']['title']['text'];
+        $usageFileNameTitle = $usageCharts[0]['hc_jsonstore']['layout']['annotations'][0]['text'];
         if (empty($usageFileNameTitle)) {
             $usageFileNameTitle = 'untitled';
         }
