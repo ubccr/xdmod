@@ -107,7 +107,7 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
                         }
 
                         var win; // Window to display the chart
-                        this.tmpHpc = new CCR.xdmod.ui.HighChartPanel({
+                        this.tmpHpc = new CCR.xdmod.ui.PlotlyPanel({
                             chartOptions: {
                                 chart: {
                                     animation: this.public_user === true
@@ -128,14 +128,8 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
 
                                 fields: [
                                     'chart',
-                                    'credits',
-                                    'title',
-                                    'subtitle',
-                                    'xAxis',
-                                    'yAxis',
-                                    'tooltip',
-                                    'legend',
-                                    'series',
+                                    'layout',
+                                    'data',
                                     'dimensions',
                                     'metrics',
                                     'plotOptions',

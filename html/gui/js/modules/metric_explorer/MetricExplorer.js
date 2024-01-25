@@ -439,11 +439,11 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     }
                 });
                 menu.add({
-                    text: 'View chart layout json',
+                    text: 'View Plotly JS chart layout',
                     iconCls: 'chart',
                     handler: function () {
                         var win = new Ext.Window({
-                            title: 'Chart Layout Json',
+                            title: 'Plotly JS Layout Json',
                             width: 800,
                             height: 600,
                             layout: 'fit',
@@ -458,11 +458,11 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     }
                 });
                 menu.add({
-                    text: 'View chart data json',
+                    text: 'View Plotly JS chart data',
                     iconCls: 'dataset',
                     handler: function () {
                         var win = new Ext.Window({
-                            title: 'Chart Data Json',
+                            title: 'Plotly JS Data Json',
                             width: 800,
                             height: 600,
                             layout: 'fit',

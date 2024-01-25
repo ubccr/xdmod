@@ -931,7 +931,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 $this->_chart['layout']['barmode'] = 'overlay';
                                 $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'x unified';
 
-                                if ($data_description->display_type == 'h_bar') {
+                                if ($this->_swapXY) {
                                     $error_trace['error_x'] = $error_trace['error_y'];
                                     $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'y unified';
                                     unset($error_trace['error_y']);
