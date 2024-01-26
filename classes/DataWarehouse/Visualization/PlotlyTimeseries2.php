@@ -104,9 +104,6 @@ class PlotlyTimeseries2 extends Plotly2
         // Keep track of the unique data unit names
         $yUnitNames = array();
 
-        // Keep track of if the user selected percentage bar charts
-        $percentBar = false;
-
         $multiCategory = false;
         foreach($data_series as $data_description_index => $data_description)
         {
@@ -743,13 +740,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 $trace['hovertemplate'] = $formattedDataSeriesName . ': <b>%{hovertext}</b> <extra></extra>';
                                 if ($trace['type'] == 'bar') {
                                     $this->_chart['layout']['barmode'] = 'stack';
-                                    $percentBar = true;
-                                    if ($this->_swapXY) {
-                                        $this->_chart['layout']["{$xAxisName}"]['range'] = [0, 100];
-                                    }
-                                    else {
-                                        $this->_chart['layout']["{$yAxisName}"]['range'] = [0, 100];
-                                    }
+                                    $this->_chart['layout']['barnorm'] = 'percent';
                                 }
                             }
                         }
@@ -1075,20 +1066,6 @@ class PlotlyTimeseries2 extends Plotly2
                 }
             } // foreach(array_values($yAxisArray) as $yAxisIndex
         } // foreach(array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions) (big long effing loop)
-
-        if ($percentBar) {
-            $axis = $this->_swapXY ? 'x' : 'y';
-            $xCount = count($this->_chart['data'][0]["{$axis}"]);
-            for ($i = 0; $i < $xCount; $i++) {
-                $sum = 0;
-                foreach ($this->_chart['data'] as $trace) {
-                    $sum += is_null($trace["{$axis}"][$i]) ? 0 : $trace["{$axis}"][$i];
-                }
-                foreach ($this->_chart['data'] as $traceIndex => $trace) {
-                    $this->_chart['data'][$traceIndex]["{$axis}"][$i] = is_null($trace["{$axis}"][$i]) ? 0 : (($trace["{$axis}"][$i] / $sum) * 100);
-                }
-            }
-        }
 
         if ($this->_showWarnings) {
             $this->addRestrictedDataWarning();

@@ -1303,8 +1303,11 @@ class Plotly2
                     {
                         $trace['stackgroup'] = 'one';
                         $trace['stackgaps'] = 'interpolate';
-                        $this->_chart['layout']['barmode'] = 'relative';
                         $trace['groupnorm'] = 'percent';
+                        if ($trace['type'] == 'bar') {
+                            $this->_chart['layout']['barmode'] = 'stack';
+                            $this->_chart['layout']['barnorm'] = 'percent';
+                        }
                     }
                 }
 
