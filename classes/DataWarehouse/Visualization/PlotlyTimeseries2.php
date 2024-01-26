@@ -625,6 +625,7 @@ class PlotlyTimeseries2 extends Plotly2
                             'y' => $this->_swapXY ? $xValues : $yValues,
                             'offsetgroup' => "group{$traceIndex}",
                             'legendgroup' => $traceIndex,
+                            'legendrank' => ($traceIndex+1),
                             'seriesData' => $seriesValues,
                             'visible' => $visible,
                             'isRemainder' => $isRemainder,
@@ -717,7 +718,12 @@ class PlotlyTimeseries2 extends Plotly2
 
                                 $this->_chart['data'][] = $hidden_trace;
                             }
-                            
+
+                            if ($trace['type'] == 'bar') {
+                                $trace['line']['width'] = 0;
+                                $trace['marker']['line']['width'] = 0;
+                            }       
+ 
                             if ($data_description->combine_type=='side' && $trace['type']=='area'){
                                 if ($this->_swapXY) {
                                     $trace['fill'] = $traceIndex == 0 ? 'tozerox' : 'tozerox';
@@ -838,7 +844,13 @@ class PlotlyTimeseries2 extends Plotly2
                                 }
                             }
                         }
-                        $this->_chart['data'][] = $trace;
+
+                        if ($data_description->combine_type=='stack' || $data_description->combine_type=='percent') {
+                            array_unshift($this->_chart['data'], $trace);
+                        }
+                        else {
+                            $this->_chart['data'][] = $trace;
+                        }
 
                         // REMOVED: Add percent allocated to XSEDE line if the metric
                         // being displayed is XSEDE Utilization.
@@ -976,7 +988,12 @@ class PlotlyTimeseries2 extends Plotly2
 
                             if(!$data_description->log_scale && $data_description->std_err)
                             {
-                                $this->_chart['data'][] = $error_trace;
+                                if ($data_description->combine_type=='stack' || $data_description->combine_type=='percent') {
+                                    array_unshift($this->_chart['data'], $error_trace);
+                                }
+                                else {
+                                    $this->_chart['data'][] = $error_trace;
+                                }
                             }
                         } // if($data_description->std_err == 1 && $data_description->display_type != 'pie')
 
@@ -1056,7 +1073,13 @@ class PlotlyTimeseries2 extends Plotly2
                                     unset($trendline_trace['yaxis']);
                                     $trendline_trace['xaxis'] = "x{$yIndex}";
                                 }
-                                $this->_chart['data'][] = $trendline_trace;
+
+                                if ($data_description->combine_type=='stack' || $data_description->combine_type=='percent') {
+                                    array_unshift($this->_chart['data'], $trendline_trace);
+                                }
+                                else {
+                                    $this->_chart['data'][] = $trendline_trace;
+                                }
                             } // if($new_values_count > 1)
 
                         } // if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )

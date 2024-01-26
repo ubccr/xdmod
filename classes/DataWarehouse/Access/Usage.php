@@ -771,7 +771,13 @@ class Usage extends Common
                     $usageChartCategories = array();
                     $currentCategoryRank = $usageOffset + 1;
                     foreach ($meChartCategories as $meChartCategory) {
-                        $usageChartCategories[] = "${currentCategoryRank}. ${meChartCategory}";
+                        if ($usageChartSettings['combine_type'] == 'stack' || $usageChartSettings['combine_type'] == 'percent') {
+                            $stackRank = count($meChartCategory) - $currentCategoryRank;
+                            $usageChartCategories[] = "${stackRank}. ${meChartCategory}";
+                        }
+                        else {
+                            $usageChartCategories[] = "${currentCategoryRank}. ${meChartCategory}";
+                        }
                         $currentCategoryRank++;
                     }
                     if (isset($meChart['layout']['yaxis']['ticktext'])) {
@@ -818,6 +824,14 @@ class Usage extends Common
                 );
 
                 // For each data series...
+                $traceCount = 1;
+                for ($i = 0; $i < count($meChart['data']); $i++) {
+                    if (!(\xd_utilities\string_begins_with($meChart['data'][$i]['name'], 'Trend Line: ') ||
+                          \xd_utilities\string_begins_with($meChart['data'][$i]['name'], 'Std Err: ') ||
+                          $meChart['data'][$i]['name'] == 'gap connector')) {
+                        $traceCount += 1;
+                    }
+                }
                 $primaryDataSeriesRank = $usageOffset;
 
                 array_walk($meChart['data'], function (
@@ -832,6 +846,7 @@ class Usage extends Common
                     $meRequest,
                     $meRequestMetric,
                     $usageGroupByObject,
+                    $usageChartSettings,
                     $user,
                     &$primaryDataSeriesRank,
                     $chartSortedByValue
@@ -853,13 +868,8 @@ class Usage extends Common
                             && $chartSortedByValue
                             && $usageGroupBy !== 'none'
                         ) {
-                            if ($meDataSeries['type'] == 'area'){ 
-                                $traceIndex = $primaryDataSeriesRank - 1;
-                                $meDataSeries['name'] = "${traceIndex}. " . $meDataSeries['name'];
-                            }
-                            else {
-                                $meDataSeries['name'] = "${primaryDataSeriesRank}. " . $meDataSeries['name'];
-                            }
+                            $rank = $meDataSeries['legendrank'];
+                            $meDataSeries['name'] = "${rank}. " . $meDataSeries['name'];
                         }
                     }
 

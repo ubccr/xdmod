@@ -1240,6 +1240,7 @@ class Plotly2
                     'yaxis' => "y{$yIndex}",
                     'offsetgroup' => "y{$yIndex}",
                     'legendgroup' => $traceIndex,
+                    'legendrank' => ($traceIndex+1),
                     'cursor' => 'pointer',
                     'visible' => $visible,
                     'sort' => false,
@@ -1278,6 +1279,11 @@ class Plotly2
                         }
 
                         $this->_chart['data'][] = $hidden_trace;
+                    }
+
+                    if ($trace['type'] == 'bar' || $trace['type'] == 'pie') {
+                        $trace['line']['width'] = 0;
+                        $trace['marker']['line']['width'] = 0;
                     }
 
                     if ($trace['type'] == 'bar' && $data_description->display_type != 'h_bar') {
@@ -1419,8 +1425,12 @@ class Plotly2
                        $this->_chart['layout']['xaxis']['ticktext'] = $categoryLabels;
                    }
               }
-               
-              $this->_chart['data'][] = $trace;
+              if ($data_description->combine_type=='stack') {
+                  array_unshift($this->_chart['data'], $trace);
+              }
+              else {
+                  $this->_chart['data'][] = $trace;
+              }
 
                 $error_info = $this->buildErrorDataSeries(
                     $trace,
@@ -1615,7 +1625,12 @@ class Plotly2
 
             if(!$data_description->log_scale && $data_description->std_err)
             {
-                $this->_chart['data'][] = $error_trace;
+                if ($data_description->combine_type=='stack') {
+                    array_unshift($this->_chart['data'], $error_trace);
+                }
+                else {
+                    $this->_chart['data'][] = $error_trace;
+                }
             }
 
             return Array('data_labels' => $dataLabels, 'error_labels' => $errorLabels);
