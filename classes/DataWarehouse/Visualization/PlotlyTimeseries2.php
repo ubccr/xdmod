@@ -637,10 +637,22 @@ class PlotlyTimeseries2 extends Plotly2
                         }
 
                         $this->_chart['layout']['xaxis']['dtick'] = $pointInterval;
+                        if (($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') ||
+                            ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
+                            $dateCount = 1;
+                            if (($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
+                                $dateCount *= 12;
+                                $this->_chart['layout']['xaxis']['dtick'] = "M{$dateCount}";
+                            }
+                            else {
+                                $this->_chart['layout']['xaxis']['dtick'] = "M{$dateCount}";
+                            }
+                        }
+ 
                         $this->_chart['layout']['xaxis']['tick0'] = $xValues[0];
 
-                        if ( (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day') && count($xValues) > 7) ||
-                             (($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') && count($xValues) > 12) ){
+                        if ((($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day') && count($xValues) > 7) ||
+                            (($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') && count($xValues) > 12)){
                             $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
                         }
 
