@@ -1519,39 +1519,26 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 }
                                 jQuery.extend(true, chartOptions, baseChartOptions);
 
-                                //Add ellipsis to labels longer than 15 characters
-                                chartOptions.data.forEach((trace, traceIndex) => {
-                                    if (trace.type != 'pie') {
-                                        let isSwapXY = false;
-                                        let labels = trace.x;
-                                        let tickText = [];
+                                let axisLabels;
+                                if (chartOptions) {
+                                    axisLabels = chartOptions.layout.swapXY ? chartOptions.layout.yaxis.ticktext : chartOptions.layout.xaxis.ticktext;
+                                }
 
-                                        if ('orientation' in trace) {
-                                            isSwapXY = true;
-                                            labels = trace.y;
-                                        }
-                                        
-                                        labels.forEach((label, labelIndex) => {
-                                            if (label.length > 20) {
-                                                label = label.substring(0,18) + '...';
-                                                tickText.push(label);
-                                            }
-                                            else {
-                                                tickText.push(label);
-                                            }
-                                        });
-
-                                        if (isSwapXY) {
-                                            chartOptions.layout.yaxis.tickmode = 'array';
-                                            chartOptions.layout.yaxis.tickvals = trace.y;
-                                            chartOptions.layout.yaxis.ticktext = tickText;
-                                        } else {
-                                            chartOptions.layout.xaxis.tickmode = 'array';
-                                            chartOptions.layout.xaxis.tickvals = trace.x;
-                                            chartOptions.layout.xaxis.ticktext = tickText;
+                                if (axisLabels) {
+                                    for (let i = 0; i < axisLabels.length; i++) {
+                                        let label = axisLabels[i];
+                                        if (label.length > 20) {
+                                            label = label.substring(0,18) + '...';
+                                            axisLabels[i] = label;
                                         }
                                     }
-                                });
+                                    if (chartOptions.layout.swapXY) {
+                                        chartOptions.layout.yaxis.ticktext = axisLabels;
+                                    }
+                                    else {
+                                        chartOptions.layout.xaxis.ticktext = axisLabels;
+                                    }
+                                }
 
                                 chartOptions.exporting.enabled = false;
                                 chartOptions.credits.enabled = false;
@@ -2607,10 +2594,26 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 const usageDiv = document.getElementById(this.id);
                 if (chartDiv) {
                     var annotationDiv = usageDiv.getElementsByClassName('annotation');
-                    if (annotationDiv && annotationDiv.length > 2) {
+                    if (annotationDiv && annotationDiv.length > 1) {
                         const marginTop = chartDiv._fullLayout.margin.t;
                         const marginRight = chartDiv._fullLayout.margin.r;
-                        Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight, 'annotations[2].yshift': ((adjHeight - marginTop) * -1), 'annotations[2].xshift': marginRight } );
+                        let update = {
+                            width: adjWidth,
+                            height: adjHeight,
+                        };
+                        if (annotationDiv.length >= 3) {
+                            update['annotations[2].yshift'] = ((adjHeight - marginTop) * -1);
+                            update['annotations[2].xshift'] = marginRight;
+                        }
+                        if (topLegend(this.chartOptions)) {
+                            const legendDiv = usageDiv.getElementsByClassName('legend');
+                            if (legendDiv && legendDiv.firstChild) {
+                               update['annotations[0].yshift'] += legendDiv.firstChild.getBoundingClientRect();
+                               update['annotations[1].yshift'] += legendDiv.firstChild.getBoundingClientRect() - 15;
+                            }
+                        }
+
+                        Plotly.relayout(this.chartId, update);
                     }
                     else {
                         Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
@@ -2748,6 +2751,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                             this.chart = XDMoD.utils.createChart(chartOptions);
                             this.chartId = id;
+                            this.chartOptions = chartOptions;
                             var chartDiv = document.getElementById(baseChartOptions.renderTo);
 
                             chartDiv.on('plotly_click', (evt) => {

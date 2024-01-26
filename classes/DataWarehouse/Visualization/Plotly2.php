@@ -444,10 +444,10 @@ class Plotly2
                 $this->_chart['layout']['legend']['xanchor'] = 'center';
                 $this->_chart['layout']['legend']['yanchor'] = 'top';
                 $this->_chart['layout']['legend']['x'] = 0.5;
-                $this->_chart['layout']['legend']['y'] = 1.0;
+                $this->_chart['layout']['legend']['y'] = 0.95;
                 $this->_chart['layout']['legend']['orientation'] = 'h';
-                $this->_chart['layout']['annotations'][0]['y'] = 0.98;
-                $this->_chart['layout']['annotations'][1]['y'] = 0.95;
+                $this->_chart['layout']['annotations'][0]['y'] = 1.1;
+                $this->_chart['layout']['annotations'][1]['y'] = 1.075;
                 break;
             //case 'bottom_right':
             //break;
@@ -1075,9 +1075,9 @@ class Plotly2
 
                     // Dont add data labels for small pie slices. Plotly will render all labels otherwise,
                     // which causes the margin on pie charts with many slices to break
-                    $sum = array_sum($yValues);
+                    $pieLimit = 12;
                     for ($i = 0; $i < count($xValues); $i++) {
-                        if ((($yValues[$i]/$sum) * 100) > 2.0) {
+                        if ($i < $pieLimit) {
                             $text[] = '<b>' . $xValues[$i] . '</b><br>' . number_format($yValues[$i], 2, '.', ',');
                         }
                         else {
