@@ -444,10 +444,10 @@ class Plotly2
                 $this->_chart['layout']['legend']['xanchor'] = 'center';
                 $this->_chart['layout']['legend']['yanchor'] = 'top';
                 $this->_chart['layout']['legend']['x'] = 0.5;
-                $this->_chart['layout']['legend']['y'] = 0.95;
+                $this->_chart['layout']['legend']['y'] = 0.925;
                 $this->_chart['layout']['legend']['orientation'] = 'h';
-                $this->_chart['layout']['annotations'][0]['y'] = 1.1;
-                $this->_chart['layout']['annotations'][1]['y'] = 1.075;
+                $this->_chart['layout']['annotations'][0]['y'] = 0.99;
+                $this->_chart['layout']['annotations'][1]['y'] = 0.99;
                 break;
             //case 'bottom_right':
             //break;
@@ -963,7 +963,7 @@ class Plotly2
                 'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 6),
                 'linewidth' => 2 + $font_size / 4,
                 'linecolor' => '#c0d0e0',
-                'separatethousands' => $yAxisObject->decimals > 0,
+                'separatethousands' => true,
                 'side' => 'left',
                 'anchor' => 'x',
                 'overlaying' => $yAxisIndex == 0 ? null : 'y',
@@ -1107,7 +1107,7 @@ class Plotly2
                     {
                         $yValues[] = $value;
                         $xValues[] = $yAxisDataObject->getXValue($index);
-                        $text[] = number_format($value, 2, '.', ',');
+                        $text[] = $value;
                         $drillable[] = true;
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
@@ -1179,17 +1179,17 @@ class Plotly2
                 if ($data_description->display_type == 'pie') 
                 {
                     $tooltip = '%{label}' . '<br>' . $lookupDataSeriesName 
-                               . ': %{value:,.2f} <b>(%{percent})</b> <extra></extra>';
+                               . ": %{value:,.{$decimals}f} <b>(%{percent})</b> <extra></extra>";
                 }
                 else
                 {
                     $tooltip = '%{hovertext} <br>' . "<span style=\"color:$color\";> ●</span> " 
-                               . $lookupDataSeriesName . ': <b>%{y:,.2f}</b> <extra></extra>';
+                               . $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
                 }
                 $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
                 if ($yAxisCount > 1) {
                     $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'x unified';
-                    $tooltip = $lookupDataSeriesName . ': <b>%{y:,.2f}</b> <extra></extra>';
+                    $tooltip = $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
                     $this->_chart['layout']["{$yAxisName}"]['showgrid'] = false;
                 }
                 else {
@@ -1323,19 +1323,19 @@ class Plotly2
                     if ($trace['type'] == 'bar') {
                         $trace = array_merge($trace, array('orientation' => 'h'));
                         $trace['hovertemplate'] = '%{hovertext}' . '<br>'. "<span style=\"color:$color\";> ●</span> "
-                            . $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
+                            . $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
                         if ($data_description->std_err) {
-                            $trace['hovertemplate'] = $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
+                            $trace['hovertemplate'] = $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
                         }
                         $trace['textangle'] = 0;
                     } else {
                         if ($this->_chart['layout']['hovermode'] != 'closest') {
                             $this->_chart['layout']['hovermode'] = 'y unified';
-                            $trace['hovertemplate'] = $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
+                            $trace['hovertemplate'] = $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
                         }
                         else {
                             $trace['hovertemplate'] = '%{hovertext} <br>' . "<span style=\"color:$color\";> ●</span> " 
-                               . $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
+                               . $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
  
                         }
                     }
@@ -1461,7 +1461,7 @@ class Plotly2
                             'yref' => 'y',
                             'showarrow' => false,
                             'captureevents' => false,
-                            'text' => isset($yValues[$i]) ? number_format($yValues[$i], 2, '.', ',') : '',
+                            'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
                             'font' => array(
                                 'size' => 10 + $font_size,
                                 'color' => $color,
@@ -1561,9 +1561,9 @@ class Plotly2
                 $v = $yAxisDataObject->getValue($i);
                 $e = $yAxisDataObject->getError($i);
                 $stderr[] = $e;
-                $hoverText[] = number_format($e, 2, '.', ',');
-                $dataLabels[] = number_format($v, 2, '.', ',') . ' [+/- ' . number_format($e, 2, '.', ',') . ']';
-                $errorLabels[] = '+/- ' . number_format($e, 2, '.', ',');;
+                $hoverText[] = number_format($e, $semDecimals, '.', ',');
+                $dataLabels[] = number_format($v, $decimals, '.', ',') . ' [+/- ' . number_format($e, $semDecimals, '.', ',') . ']';
+                $errorLabels[] = '+/- ' . number_format($e, $semDecimals, '.', ',');;
             }
 
             // -- set error dataseries name and visibility --

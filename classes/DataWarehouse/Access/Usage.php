@@ -905,7 +905,7 @@ class Usage extends Common
                     }
 
                     // Set properties that are different.
-                    $meDataSeries['zIndex'] = $meDataSeriesIndex + 2;
+                    $meDataSeries['zIndex'] = $meDataSeries['legendrank'];
 
                     // Remove extraneous properties.
                     unset($meDataSeries['otitle']);

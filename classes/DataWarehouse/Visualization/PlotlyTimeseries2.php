@@ -516,7 +516,7 @@ class PlotlyTimeseries2 extends Plotly2
                             {
                                 $xValues[] = date('Y-m-d', $start_ts_array[$i]);
                                 $yValues[] = $v;
-                                $text[] = number_format($v, 2, '.', ','); 
+                                $text[] = $v; 
                                 $seriesValue = array(
                                     'x' => $start_ts_array[$i]*1000,
                                     'y' => $v,
@@ -575,7 +575,7 @@ class PlotlyTimeseries2 extends Plotly2
                             $visible = $data_description->visibility->{$formattedDataSeriesName};
                         }
 
-                        $tooltip = $lookupDataSeriesName . ': <b>%{y:,.2f}</b> <extra></extra>';
+                        $tooltip = $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
                         $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
                         $data_labels_enabled = $data_description->value_labels || $std_err_labels_enabled;
                         // note that this is governed by XId and XValue in the non-timeseries case!
@@ -648,14 +648,14 @@ class PlotlyTimeseries2 extends Plotly2
                             if ($trace['type'] == 'bar') {
                                 $trace = array_merge($trace, array('orientation' => 'h'));
                                 $trace['hovertemplate'] = '%{hovertext}' . '<br>'. "<span style=\"color:$color\";> ●</span> "
-                                                         . $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
+                                                         . $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
                                 $trace['textangle'] = 0;
                             }
 
                             $this->_chart['layout']['hovermode'] = 'y unified';
                             $trace['xaxis'] = "x{$yIndex}";
                             unset($trace['yaxis']);
-                            $trace['hovertemplate'] = $lookupDataSeriesName . ': <b>%{x:,.2f}</b> <extra></extra>';
+                            $trace['hovertemplate'] = $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
 
                             $xAxis['type'] = $yAxisObject->log_scale ? 'log' : '-';
                             $xAxis['autorange'] = 'reversed';
@@ -801,7 +801,7 @@ class PlotlyTimeseries2 extends Plotly2
                                         'yref' => 'y',
                                         'showarrow' => false,
                                         'captureevents' => false,
-                                        'text' => isset($yValues[$i]) ? number_format($yValues[$i], 2, '.', ',') : '',
+                                        'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
                                         'font' => array(
                                             'size' => 10 + $font_size,
                                             'color' => $color,
@@ -872,9 +872,9 @@ class PlotlyTimeseries2 extends Plotly2
                                 $v = $yAxisDataObject->getValue($i);
                                 $e = $yAxisDataObject->getError($i);
                                 $stderr[] = $e;
-                                $hoverText[] = number_format($e, 2, '.', ',');
-                                $dataLabels[] = number_format($v, 2, '.', ',') . ' [+/- ' . number_format($e, 2, '.', ',') . ']';
-                                $errorLabels[] = '+/- ' . number_format($e, 2, '.', ',');
+                                $hoverText[] = number_format($e, $semDecimals, '.', ',');
+                                $dataLabels[] = number_format($v, $decimals, '.', ',') . ' [+/- ' . number_format($e, $semDecimals, '.', ',') . ']';
+                                $errorLabels[] = '+/- ' . number_format($e, $semDecimals, '.', ',');
                             }
 
                             $dsn = 'Std Err: '.$formattedDataSeriesName;

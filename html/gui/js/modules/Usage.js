@@ -2593,30 +2593,26 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 const chartDiv = document.getElementById(this.chartId);
                 const usageDiv = document.getElementById(this.id);
                 if (chartDiv) {
+                    Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
                     var annotationDiv = usageDiv.getElementsByClassName('annotation');
                     if (annotationDiv && annotationDiv.length > 1) {
                         const marginTop = chartDiv._fullLayout.margin.t;
                         const marginRight = chartDiv._fullLayout.margin.r;
-                        let update = {
-                            width: adjWidth,
-                            height: adjHeight,
-                        };
+                        let update = {};
                         if (annotationDiv.length >= 3) {
                             update['annotations[2].yshift'] = ((adjHeight - marginTop) * -1);
                             update['annotations[2].xshift'] = marginRight;
                         }
                         if (topLegend(this.chartOptions)) {
-                            const legendDiv = usageDiv.getElementsByClassName('legend');
+                            const legendDiv = usageDiv.getElementsByClassName('legend').length != 0 ? usageDiv.getElementsByClassName('legend')[0] : null;
                             if (legendDiv && legendDiv.firstChild) {
-                               update['annotations[0].yshift'] += legendDiv.firstChild.getBoundingClientRect();
-                               update['annotations[1].yshift'] += legendDiv.firstChild.getBoundingClientRect() - 15;
+                                const dimensions = legendDiv.firstChild.getBoundingClientRect();
+                                update['annotations[0].yshift'] = dimensions.height + 30;
+                                update['annotations[1].yshift'] = dimensions.height + 10;
                             }
                         }
 
                         Plotly.relayout(this.chartId, update);
-                    }
-                    else {
-                        Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
                     }
                 }
             }
