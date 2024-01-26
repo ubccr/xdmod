@@ -1425,7 +1425,7 @@ class Plotly2
                        $this->_chart['layout']['xaxis']['ticktext'] = $categoryLabels;
                    }
               }
-              if ($data_description->combine_type=='stack') {
+              if ($data_description->combine_type=='stack' || $data_description->combine_type=='percent') {
                   array_unshift($this->_chart['data'], $trace);
               }
               else {
@@ -1625,7 +1625,7 @@ class Plotly2
 
             if(!$data_description->log_scale && $data_description->std_err)
             {
-                if ($data_description->combine_type=='stack') {
+                if ($data_description->combine_type=='stack' || $data_description->combine_type=='percent') {
                     array_unshift($this->_chart['data'], $error_trace);
                 }
                 else {
