@@ -639,13 +639,11 @@ class PlotlyTimeseries2 extends Plotly2
                         $this->_chart['layout']['xaxis']['dtick'] = $pointInterval;
                         if (($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') ||
                             ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
-                            $dateCount = 1;
                             if (($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
-                                $dateCount *= 12;
-                                $this->_chart['layout']['xaxis']['dtick'] = "M{$dateCount}";
+                                $this->_chart['layout']['xaxis']['dtick'] = "M12";
                             }
                             else {
-                                $this->_chart['layout']['xaxis']['dtick'] = "M{$dateCount}";
+                                $this->_chart['layout']['xaxis']['dtick'] = "M1";
                             }
                         }
  
