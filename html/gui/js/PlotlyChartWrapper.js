@@ -8,6 +8,12 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     let isEmpty = false;
     jQuery.extend(true, baseChartOptions, chartOptions);
 
+    let topLegend = (baseChartOptions) => {
+        return  (baseChartOptions.layout.legend.xanchor == 'center' &&
+                 baseChartOptions.layout.legend.yanchor == 'top'    &&
+                 baseChartOptions.layout.legend.yref != 'paper')
+    }
+
     let adjustTitles = (baseChartOptions) => {
         let subtitle = baseChartOptions.layout.annotations[1];
         const len = subtitle.text.length;
@@ -16,7 +22,9 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
            const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 8));
            baseChartOptions.layout.margin.t += (subtitle_lines.length * 15);
            baseChartOptions.layout.annotations[1].text = subtitle_lines.join('<br />');
-           baseChartOptions.layout.annotations[0].y += (0.05 * subtitle_lines);
+           if (!topLegend(baseChartOptions)) {
+            baseChartOptions.layout.annotations[0].y += (0.05 * subtitle_lines.length);
+           }
         }
     }
 
@@ -48,9 +56,9 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     } else {
         if ('annotations' in baseChartOptions.layout && baseChartOptions.layout.annotations.length != 0) {
             if (baseChartOptions.data[0].type === 'pie') {
-                baseChartOptions.layout.margin.t += 40;
-                baseChartOptions.layout.annotations[0].y = 1.1;
-                baseChartOptions.layout.annotations[1].y = 1.085;
+                baseChartOptions.layout.margin.t += 15;
+                baseChartOptions.layout.annotations[0].y += 0.1;
+                baseChartOptions.layout.annotations[1].y += 0.085;
             }
             adjustTitles(baseChartOptions); 
             // Place credits in bottom right corner

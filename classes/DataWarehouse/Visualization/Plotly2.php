@@ -445,7 +445,8 @@ class Plotly2
                 $this->_chart['layout']['legend']['x'] = 0.5;
                 $this->_chart['layout']['legend']['y'] = 1.0;
                 $this->_chart['layout']['legend']['orientation'] = 'h';
-                $this->_chart['layout']['annotations'][0]['y'] = '1.05';
+                $this->_chart['layout']['annotations'][0]['y'] = 0.98;
+                $this->_chart['layout']['annotations'][1]['y'] = 0.95;
                 break;
             //case 'bottom_right':
             //break;
