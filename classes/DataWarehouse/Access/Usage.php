@@ -824,14 +824,6 @@ class Usage extends Common
                 );
 
                 // For each data series...
-                $traceCount = 1;
-                for ($i = 0; $i < count($meChart['data']); $i++) {
-                    if (!(\xd_utilities\string_begins_with($meChart['data'][$i]['name'], 'Trend Line: ') ||
-                          \xd_utilities\string_begins_with($meChart['data'][$i]['name'], 'Std Err: ') ||
-                          $meChart['data'][$i]['name'] == 'gap connector')) {
-                        $traceCount += 1;
-                    }
-                }
                 $primaryDataSeriesRank = $usageOffset;
 
                 array_walk($meChart['data'], function (
