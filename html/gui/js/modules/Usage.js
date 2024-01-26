@@ -1502,6 +1502,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                             r: 5,
                                             b: 35 
                                         },
+                                        thumbnail: true,
                                     },
                                     exporting: {
                                         enabled: false
@@ -1517,12 +1518,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     chartOptions = chartRecords[0].get('hc_jsonstore');
                                 }
                                 jQuery.extend(true, chartOptions, baseChartOptions);
-
-                                const endIndex = chartOptions.layout.annotations.findIndex((elem) => elem.name === 'data_label');
-                                if (endIndex === -1) {
-                                    chartOptions.layout.annotations = [];
-                                }
-                                chartOptions.layout.annotations.splice(0, endIndex);
 
                                 //Add ellipsis to labels longer than 15 characters
                                 chartOptions.data.forEach((trace, traceIndex) => {

@@ -104,7 +104,6 @@ class MetricExplorer extends Common
         $filename = substr($filename, 0, 250);
 
         $all_data_series = $this->getDataSeries();
-         
         $data_series = array();
 
         // Discard disabled datasets.

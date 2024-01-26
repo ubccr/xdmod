@@ -68,6 +68,14 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         configs.showTips = false;
     }
 
+    if (baseChartOptions.layout.thumbnail && !isEmpty) {
+        const endIndex = baseChartOptions.layout.annotations.findIndex((elem) => elem.name === 'data_label');
+        if (endIndex === -1) {
+            baseChartOptions.layout.annotations = [];
+        }
+        baseChartOptions.layout.annotations.splice(0, endIndex);
+    }
+
     if (baseChartOptions.layout.thumbnail && baseChartOptions.layout.xaxis.type != 'category' && !isEmpty) {
        const axesLabels = getMultiAxisObjects(baseChartOptions.layout);
        if (baseChartOptions.swapXY) {
