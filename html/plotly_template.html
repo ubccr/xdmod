@@ -14,7 +14,6 @@
         <script type="text/javascript" src="_html_dir_/gui/lib/plotly/plotly-2.24.2.min.js"></script>
 
         <script type="text/javascript" src="_html_dir_/gui/js/libraries/PlotlyUtilities.js"></script>
-        <script type="text/javascript" src="_html_dir_/gui/js/CCR.js"></script>
 
     </head>
 
@@ -41,41 +40,37 @@
         // Chart will be fully configured if export call came from non-supremm module tab
         if (inputChartOptions.layout) {
             chartOptions = inputChartOptions;
+            chartOptions.layout['width'] = _width_;
+            chartOptions.layout['height'] = _height_;
             if (chartOptions.layout.annotations && chartOptions.layout.annotations.length > 0) {
                 chartOptions.layout.annotations[2].yshift = (_height_ - chartOptions.layout.margin.t) * -1;
                 chartOptions.layout.annotations[2].xshift = chartOptions.layout.margin.r - 20;
             }
-            // Update chart layout with export settings
-            chartOptions.layout.annotations[0].font['size'] = args.mainTitleFontSize;
-            chartOptions.layout.legend.x = 0.5;
-            chartOptions.layout.legend.y = 0.0;
-            let multiAxes = getMultiAxisObjects(chartOptions.layout);
 
-            for (let i = 0; i < multiAxes.length; i++) {
-                const axis = chartOptions.layout[`${multiAxes[i]}`];
-                if (axis.title && axis.tickfont) {
-                    axis.title.font.size = args.axisTitleFontSize;
-                    axis.tickfont = args.LabelFontSize;
-                }
+            let lineSplit = (s, wrapWidth) => {
+                return s.match(new RegExp(`([^\\n]{1,${wrapWidth}})(?=\\s|$)`, 'g'))
             }
 
-            if (chartOptions.layout.swapXY) {
-                if (chartOptions.layout.yaxis && chartOptions.layout.yaxis.title && chartOptions.layout.yaxis.tickfont) {
-                    chartOptions.layout.yaxis.title.font.size = args.axisTitleFontSize;
-                    chartOptions.layout.yaxis.tickfont.size = args.LabelFontSize;
+            let topLegend = (chartOptions) => {
+                return  (chartOptions.layout.legend.xanchor == 'center' &&
+                         chartOptions.layout.legend.yanchor == 'top'    &&
+                         chartOptions.layout.legend.yref != 'paper')
+            }
+            let adjustTitles = (chartOptions) => {
+                let subtitle = chartOptions.layout.annotations[1];
+                const len = subtitle.text.length;
+                if (len > 0) {
+                   const axWidth = chartOptions.layout.width -  chartOptions.layout.margin.l - chartOptions.layout.margin.r;
+                   const subtitle_lines = lineSplit(subtitle.text, Math.trunc(axWidth / 8));
+                   chartOptions.layout.margin.t += (subtitle_lines.length * 15);
+                   chartOptions.layout.annotations[1].text = subtitle_lines.join('<br />');
+                   if (!topLegend(chartOptions)) {
+                    chartOptions.layout.annotations[0].y += (0.05 * subtitle_lines.length);
+                   }
                 }
             }
-            else {
-                if (chartOptions.layout.xaxis && chartOptions.layout.xaxis.title && chartOptions.layout.xaxis.tickfont) {
-                    chartOptions.layout.xaxis.title.font.size = args.axisTitleFontSize;
-                    chartOptions.layout.xaxis.tickfont.size = args.LabelFontSize;
-                }
-            }
-            // Loop through data to adjust line width
-            for (let i = 0; i < chartOptions.data.length; i++) {
-                chartOptions.data[i]['line']['width'] = args.lineWidth;
-                // Svg legend names clip for some reason so we need to word wrap
-            }
+            adjustTitles(chartOptions);
+
         }
         else {
             chartOptions = generateChartOptions(inputChartOptions, args);

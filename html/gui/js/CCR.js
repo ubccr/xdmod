@@ -1852,7 +1852,6 @@ CCR.xdmod.ui.lineSplit = (s, wrapWidth) => {
     return s.match(new RegExp(`([^\\n]{1,${wrapWidth}})(?=\\s|$)`, 'g'))
 };
 
-
 CCR.isBlank = function (value) {
     return !value || value === 'undefined' || !value.trim() ? true: false;
 };

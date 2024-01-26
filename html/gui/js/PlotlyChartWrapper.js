@@ -2,31 +2,31 @@
 // TODO: Convert label and axis formatters for Plotly
 Ext.namespace('XDMoD.utils');
 
+function topLegend(baseChartOptions) {
+    return  (baseChartOptions.layout.legend.xanchor == 'center' &&
+             baseChartOptions.layout.legend.yanchor == 'top'    &&
+             baseChartOptions.layout.legend.yref != 'paper')
+}
+
+function adjustTitles(baseChartOptions) {
+    let subtitle = baseChartOptions.layout.annotations[1];
+    const len = subtitle.text.length;
+    if (len > 0) {
+       const axWidth = baseChartOptions.layout.width -  baseChartOptions.layout.margin.l - baseChartOptions.layout.margin.r;
+       const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 8));
+       baseChartOptions.layout.margin.t += (subtitle_lines.length * 15);
+       baseChartOptions.layout.annotations[1].text = subtitle_lines.join('<br />');
+       if (!topLegend(baseChartOptions)) {
+        baseChartOptions.layout.annotations[0].y += (0.05 * subtitle_lines.length);
+       }
+    }
+}
+
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     var baseChartOptions = {};
     let configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500};
     let isEmpty = false;
     jQuery.extend(true, baseChartOptions, chartOptions);
-
-    let topLegend = (baseChartOptions) => {
-        return  (baseChartOptions.layout.legend.xanchor == 'center' &&
-                 baseChartOptions.layout.legend.yanchor == 'top'    &&
-                 baseChartOptions.layout.legend.yref != 'paper')
-    }
-
-    let adjustTitles = (baseChartOptions) => {
-        let subtitle = baseChartOptions.layout.annotations[1];
-        const len = subtitle.text.length;
-        if (len > 0) {
-           const axWidth = baseChartOptions.layout.width -  baseChartOptions.layout.margin.l - baseChartOptions.layout.margin.r;
-           const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 8));
-           baseChartOptions.layout.margin.t += (subtitle_lines.length * 15);
-           baseChartOptions.layout.annotations[1].text = subtitle_lines.join('<br />');
-           if (!topLegend(baseChartOptions)) {
-            baseChartOptions.layout.annotations[0].y += (0.05 * subtitle_lines.length);
-           }
-        }
-    }
 
     if (baseChartOptions.data && baseChartOptions.data.length === 0) {
         isEmpty = true;
