@@ -772,7 +772,7 @@ class Usage extends Common
                     $currentCategoryRank = $usageOffset + 1;
                     foreach ($meChartCategories as $meChartCategory) {
                         if ($usageChartSettings['combine_type'] == 'stack' || $usageChartSettings['combine_type'] == 'percent') {
-                            $stackRank = count($meChartCategory) - $currentCategoryRank;
+                            $stackRank = abs(count($meChartCategory) - $currentCategoryRank) + 1;
                             $usageChartCategories[] = "${stackRank}. ${meChartCategory}";
                         }
                         else {

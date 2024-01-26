@@ -173,6 +173,7 @@ class Plotly2
                 ),
                 'hovermode' => $this->_hideTooltip ? false : 'x unified',
                 'hoverlabel' => array(
+                    'align' => 'left',
                     'bgcolor' => 'rgba(255, 255, 255, 0.8)',
                     'font' => array(
                         'color' => '#000000',
