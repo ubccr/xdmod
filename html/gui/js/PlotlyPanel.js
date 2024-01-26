@@ -50,7 +50,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                     if (t.getCount() <= 0) {
                         return;
                     }
-                    this.chartOptions = jQuery.extend(true, {}, this.baseChartOptions, t.getAt(0).data);
+                    this.chartOptions = jQuery.extend(true, {}, t.getAt(0).data, this.baseChartOptions);
                     
                     if (this.chartOptions.layout.annotations[0]) {
                         this.chartOptions.layout.annotations[0].text = this.plotlyTextEncode(this.chartOptions.layout.annotations[0].text);

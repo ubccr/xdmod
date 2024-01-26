@@ -676,7 +676,7 @@ class PlotlyTimeseries2 extends Plotly2
                                                                            max(0 + ($xAxisStep * (ceil($yAxisCount/2) - ceil($yAxisIndex/2))), 0);
                             $yAxis['domain'] = array(0,1);
                             $yAxis['title']['standoff'] = 0;
-                            $yAxis['showgrid'] = false;
+                            $yAxis['showgrid'] = $yAxisCount > 1 ? false : true;
                             $xAxis['domain'] = array($xAxisBottomBoundStart, $xAxisTopBoundStart);
 
                             $this->_chart['layout']["{$xAxisName}"] = $yAxis;

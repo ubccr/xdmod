@@ -3,9 +3,12 @@
 Ext.namespace('XDMoD.utils');
 
 function topLegend(baseChartOptions) {
-    return  (baseChartOptions.layout.legend.xanchor == 'center' &&
-             baseChartOptions.layout.legend.yanchor == 'top'    &&
-             baseChartOptions.layout.legend.yref != 'paper')
+    if (baseChartOptions.layout.legend) {
+        return  (baseChartOptions.layout.legend.xanchor == 'center' &&
+                 baseChartOptions.layout.legend.yanchor == 'top'    &&
+                 baseChartOptions.layout.legend.yref != 'paper')
+    }
+    return false;
 }
 
 function adjustTitles(baseChartOptions) {

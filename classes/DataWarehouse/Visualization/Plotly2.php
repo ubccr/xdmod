@@ -1367,6 +1367,7 @@ class Plotly2
                     $this->_chart['layout']["{$xAxisName}"]['domain'] = array(0,1);
                     $this->_chart['layout']["{$xAxisName}"]['title']['standoff'] = 0;
                     $this->_chart['layout']["{$xAxisName}"]['type'] = $yAxisObject->log_scale ? 'log' : '-';
+                    $this->_chart['layout']["{$xAxisName}"]['showgrid'] =$yAxisCount > 1 ? false : true;
 
                     $this->_chart['layout']['yaxis']['domain'] = array($xAxisBottomBoundStart, $xAxisTopBoundStart);
                     $this->_chart['layout']['yaxis']['autorange'] = 'reversed';
