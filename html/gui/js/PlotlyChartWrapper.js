@@ -28,11 +28,10 @@ function adjustTitles(baseChartOptions) {
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     var baseChartOptions = {};
     let configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500};
-    let isEmpty = false;
     jQuery.extend(true, baseChartOptions, chartOptions);
+    let isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
 
-    if (baseChartOptions.data && baseChartOptions.data.length === 0) {
-        isEmpty = true;
+    if (isEmpty) {
         let errorConfig = getNoDataErrorConfig();
         const width = baseChartOptions.layout.width;
         const height = baseChartOptions.layout.height;

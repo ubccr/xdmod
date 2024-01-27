@@ -92,7 +92,6 @@ class PlotlyTimeseries2 extends Plotly2
 
         // Instantiate the color generator:
         $colorGenerator = new \DataWarehouse\Visualization\ColorGenerator();
-
         $dataSeriesCount  = count($data_series);
         $dataSources = array();
 
@@ -421,10 +420,8 @@ class PlotlyTimeseries2 extends Plotly2
                 $this->_total = max($this->_total, $dataset->getUniqueCount());
 
                 $yAxisDataObjectsArray = $dataset->getDatasets($limit, $offset, $summarizeDataseries);
-
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
                 // @refer HighChart2 line 866
-
                 foreach($yAxisDataObjectsArray as $traceIndex => $yAxisDataObject)
                 {
                     //throw new \Exception(json_encode($yAxisDataObject));
@@ -576,14 +573,15 @@ class PlotlyTimeseries2 extends Plotly2
                         }
 
                         $tooltip = $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
-                        $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
+                        if ($this->_chart['layout']['hovermode'] != 'closest') {
+                            $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
+                        }
                         $data_labels_enabled = $data_description->value_labels || $std_err_labels_enabled;
                         // note that this is governed by XId and XValue in the non-timeseries case!
                         $drilldown = array('id' => $yAxisDataObject->getGroupId(), 'label' => $yAxisDataObject->getGroupName());
                         if ($yAxisCount > 1) {
                             $this->_chart['layout']["{$yAxisName}"]['showgrid'] = false;
                         }
-
                         $trace = array(
                             'name' => $lookupDataSeriesName,
                             'otitle' => $formattedDataSeriesName,
@@ -613,6 +611,17 @@ class PlotlyTimeseries2 extends Plotly2
                             'showlegend' => $data_description->display_type != 'pie',
                             'hovertext' => $text,
                             'hovertemplate' => $tooltip,
+                            'hoverlabel' => array(
+                                'align' => 'left',
+                                'bgcolor' => 'rgba(255, 255, 255, 0.8)',
+                                'bordercolor' => $yAxisColor,
+                                'font' => array(
+                                    'size' => 12.8,
+                                    'color' => '#000000',
+                                    'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                                ),
+                                'namelength' => -1,
+                            ),
                             'text' => array(),
                             'textposition' => 'outside',
                             'textangle' => $data_description->display_type == 'h_bar' ? 0 : -90,

@@ -850,6 +850,7 @@ class Plotly2
 
         $yAxisArray = $this->setAxes($summarizeDataseries, $offset, $x_axis, $font_size);
         $yAxisCount = count($yAxisArray);
+        $legendRank = 1;
 
         // ------------ prepare to plot ------------
 
@@ -993,6 +994,7 @@ class Plotly2
             // for each of the dataseries on this yAxisObject:
             foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
             {
+                $legendRank++;
                 $yAxisDataObject = $yAxisDataObjectAndDescription['yAxisDataObject']; // SimpleData object
                 $data_description = $yAxisDataObjectAndDescription['data_description'];
                 $decimals = $yAxisDataObjectAndDescription['decimals'];
@@ -1242,7 +1244,7 @@ class Plotly2
                     'yaxis' => "y{$yIndex}",
                     'offsetgroup' => "y{$yIndex}",
                     'legendgroup' => $traceIndex,
-                    'legendrank' => ($traceIndex+1),
+                    'legendrank' => $legendRank,
                     'cursor' => 'pointer',
                     'visible' => $visible,
                     'sort' => false,
@@ -1600,6 +1602,14 @@ class Plotly2
                 'isRestrictedByRoles' => $data_description->restrictedByRoles,
             ));
 
+            $error_y = array(
+                'type' => 'data',
+                'array' => $stderr,
+                'arrayminus' => $stderr,
+                'symmetric' => false,
+                'color' => $error_color
+            );
+
             if ($error_trace['type'] == 'area') {
                 $error_trace['fill'] = $trace['fill'];
                 // Referenced https://stackoverflow.com/questions/15202079/convert-hex-color-to-rgb-values-in-php
@@ -1623,7 +1633,7 @@ class Plotly2
                 }
 
                 if ($data_description->combine_type=='side') {
-                    $error_trace['offsetgroup'] = "group{$traceIndex}";
+                    //$error_trace['offsetgroup'] = "group{$traceIndex}";
                     $this->_chart['layout']['barmode'] = 'group';
                 }
                 if ($data_description->combine_type=='stack') {
