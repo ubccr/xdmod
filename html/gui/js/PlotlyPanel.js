@@ -73,8 +73,13 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                             } 
                             else {
                                 let traces = [];
-                                let mainAxisTraces = metricDiv.getElementsByClassName('plot')[0].firstChild.children;
-                                traces.push(...mainAxisTraces);
+                                let mainAxisTraces = metricDiv.getElementsByClassName('plot')[0];
+                                if (mainAxisTraces && mainAxisTraces.children.length != 0) {
+                                    for (let i = 0; i < mainAxisTraces.children.length; i++) {
+                                        traces.push(...mainAxisTraces.children[i].children); 
+                                    }
+                                    
+                                }
                                 let multiAxisTraces = metricDiv.getElementsByClassName('overplot')[0];
                                 if (multiAxisTraces.children && multiAxisTraces.children.length != 0) {
                                     for (let i = 0; i < multiAxisTraces.children.length; i++) {
@@ -83,7 +88,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                                         }
                                     }
                                 }
-                                const point = getClickedPoint(evt, traces);
+                                const point = getClickedPoint(evt, traces, this.chartOptions.layout.stdErr);
                                 if (point) {
                                     pointClick = true;
                                     XDMoD.Module.MetricExplorer.pointContextMenu(point, point.data.datasetId, undefined);

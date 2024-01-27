@@ -249,7 +249,7 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
 
     return ret;
 }
-function getClickedPoint(evt, traces) {
+function getClickedPoint(evt, traces, stdErr = false) {
     let point;
     if ((traces && traces.length === 0) || (evt.points && evt.points.length === 0)) {
         return point;
@@ -262,7 +262,13 @@ function getClickedPoint(evt, traces) {
                 const dimensions = points[j].getBoundingClientRect();
                 if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right &&
                     evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
-                    const pointIndex = evt.points.findIndex((elem) => elem.curveNumber === i);
+                    let pointIndex;
+                    if (stdErr) {
+                        pointIndex = evt.points.findIndex((elem) => elem.curveNumber === (traces.length-i));
+                    }
+                    else {
+                        pointIndex = evt.points.findIndex((elem) => elem.curveNumber === i);
+                    }
                     point = evt.points[pointIndex];
                     break;
                 }

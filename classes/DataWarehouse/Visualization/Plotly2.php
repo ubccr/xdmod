@@ -191,6 +191,7 @@ class Plotly2
                     'l' => 80,
                 ),
                 'swapXY' => $this->_swapXY,
+                'stdErr' => false,
             ),
             'data' => array(),
             'dimensions' => array(),
@@ -1041,6 +1042,7 @@ class Plotly2
 
                 $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
                 $data_labels_enabled = $data_description->value_labels || $std_err_labels_enabled;
+                $this->_chart['layout']['stdErr'] = $data_description->std_err;
                 $trace = array();
                 $drilldown = array();
                 $xValues = array();

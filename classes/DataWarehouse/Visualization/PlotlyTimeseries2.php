@@ -488,6 +488,7 @@ class PlotlyTimeseries2 extends Plotly2
 
                         // --- set up $dataLabelsConfig, $seriesValues, $tooltipConfig ---
                         $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
+                        $this->_chart['layout']['stdErr'] = $data_description->std_err;
                         $tooltipConfig = array();
                         $xValues = array();
                         $yValues = array();
