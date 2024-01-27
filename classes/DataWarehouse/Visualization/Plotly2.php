@@ -1072,8 +1072,7 @@ class Plotly2
                         );
                         
                     } // foreach
-
-                    // Dont add data labels for small pie slices. Plotly will render all labels otherwise,
+                    // Dont add data labels for all pie slices. Plotly will render all labels otherwise,
                     // which causes the margin on pie charts with many slices to break
                     $pieLimit = 12;
                     for ($i = 0; $i < count($xValues); $i++) {
@@ -1087,7 +1086,6 @@ class Plotly2
                     }
 
                     $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';
-
                 }
                 else // ($data_description->display_type !== 'pie')
                 {
