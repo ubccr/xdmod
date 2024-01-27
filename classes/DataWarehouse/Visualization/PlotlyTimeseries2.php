@@ -532,7 +532,7 @@ class PlotlyTimeseries2 extends Plotly2
                             }
                         } // ($data_description->display_type == 'pie')
 
-                        $zIndex = isset($data_description->z_index) ? $data_description->z_index : $data_description_index;
+                        $zIndex = isset($data_description->z_index) ? $data_description->z_index : $traceIndex;
 
                         $areMultipleDataSeries = $dataSeriesCount > 1;
                         $dataSeriesName = $areMultipleDataSeries ? $yAxisDataObject->getName() : $yAxisDataObject->getGroupName();
@@ -752,12 +752,10 @@ class PlotlyTimeseries2 extends Plotly2
                             {
                                 $trace['stackgroup'] = 'one';
                                 $trace['stackgaps'] = 'interpolate';
-                                $trace['groupnorm'] = $data_description->combine_type;
+                                $trace['groupnorm'] = 'percent';
                                 $trace['hovertemplate'] = $formattedDataSeriesName . ': <b>%{hovertext}</b> <extra></extra>';
-                                if ($trace['type'] == 'bar') {
-                                    $this->_chart['layout']['barmode'] = 'stack';
-                                    $this->_chart['layout']['barnorm'] = 'percent';
-                                }
+                                $this->_chart['layout']['barmode'] = 'stack';
+                                $this->_chart['layout']['barnorm'] = 'percent';
                             }
                         }
 
@@ -855,13 +853,7 @@ class PlotlyTimeseries2 extends Plotly2
                             }
                         }
 
-                        if ($data_description->combine_type=='stack' || $data_description->combine_type=='percent') {
-                            array_unshift($this->_chart['data'], $trace);
-                        }
-                        else {
-                            $this->_chart['data'][] = $trace;
-                        }
-
+                        $this->_chart['data'][] = $trace;
                         // REMOVED: Add percent allocated to XSEDE line if the metric
                         // being displayed is XSEDE Utilization.
 
@@ -910,29 +902,46 @@ class PlotlyTimeseries2 extends Plotly2
                                 'name' => $dsn,
                                 'otitle' => $dsn,
                                 'datasetId' => $data_description->id,
-                                'zIndex' => $zIndex,
+                                'zIndex' => $zIndex-1,
                                 'color'=> $error_color,
                                 'marker' => array(
+                                    'color' => $error_color,
+                                    'size' => $trace['marker']['size'],
+                                    'line' => array(
+                                        'width' => 1,
+                                        'color' => $error_color, 
+                                    ),
+                                    'symbol' => $trace['marker']['symbol'],
+                                ),
+                                'line' => array(
                                     'color' => $error_color,
                                 ),
                                 'hovertext' => $hoverText,
                                 'mode' => 'lines',
                                 'hovertemplate' => '<b> +/- ' . '%{hovertext}</b>',
-                                'error_y' => array(
+                                'visible' => $visible,
+                                'showlegend' => true,
+                                'legendgroup' => null,
+                                'connectgaps' => false,
+                                'legendrank' => $trace['legendrank']+1,
+                                'isRestrictedByRoles' => $data_description->restrictedByRoles,
+                            ));
+
+                            $error_y = array(
                                     'type' => 'data',
                                     'array' => $stderr,
                                     'arrayminus' => $stderr,
                                     'symmetric' => false,
                                     'color' => $error_color
-                                ),
-                                'visible' => $visible,
-                                'legendgroup' => null,
-                                'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                            ));
-                            $error_trace['text'] = array();
+                            );
 
                             if ($error_trace['type'] == 'area') {
-                                $error_trace['fill'] = 'toself';
+                                
+                                $error_trace['fill'] = $trace['fill'];
+                                list($r, $g, $b) = sscanf($trace['marker']['color'], '#%02x%02x%02x');
+                                $a = 0.1;
+                                $fillColor = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . $a . ')';
+                                $error_trace['fillcolor'] = $fillColor;
                                 if ($data_description->combine_type=='stack') {
                                     $error_trace['stackgroup'] = 'two';
                                     $error_trace['stackgaps'] = 'interpolate';
@@ -940,14 +949,11 @@ class PlotlyTimeseries2 extends Plotly2
                             }
 
                             if ($trace['type'] == 'bar') {
-                                $error_trace['marker']['color'] = $trace['marker']['color'];
                                 $this->_chart['layout']['barmode'] = 'overlay';
                                 $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'x unified';
 
                                 if ($this->_swapXY) {
-                                    $error_trace['error_x'] = $error_trace['error_y'];
                                     $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'y unified';
-                                    unset($error_trace['error_y']);
                                 }
 
                                 if ($data_description->combine_type=='side') {
@@ -961,6 +967,13 @@ class PlotlyTimeseries2 extends Plotly2
                             }
 
                             $idx = count($this->_chart['data']) - 1;
+
+                            if ($this->_swapXY) {
+                                $this->_chart['data'][$idx]['error_x'] = $error_y;
+                            } else {
+                                $this->_chart['data'][$idx]['error_y'] = $error_y;
+                            }
+
                             if (!$data_description->value_labels && $data_description->std_err_labels) {
                                 if ($trace['type'] == 'bar' && count($data_labels) == 0) {
                                     $this->_chart['data'][$idx]['text'] = $errorLabels; 
@@ -998,12 +1011,7 @@ class PlotlyTimeseries2 extends Plotly2
 
                             if(!$data_description->log_scale && $data_description->std_err)
                             {
-                                if ($data_description->combine_type=='stack' || $data_description->combine_type=='percent') {
-                                    array_unshift($this->_chart['data'], $error_trace);
-                                }
-                                else {
-                                    $this->_chart['data'][] = $error_trace;
-                                }
+                                $this->_chart['data'][] = $error_trace;
                             }
                         } // if($data_description->std_err == 1 && $data_description->display_type != 'pie')
 
@@ -1084,12 +1092,8 @@ class PlotlyTimeseries2 extends Plotly2
                                     $trendline_trace['xaxis'] = "x{$yIndex}";
                                 }
 
-                                if ($data_description->combine_type=='stack' || $data_description->combine_type=='percent') {
-                                    array_unshift($this->_chart['data'], $trendline_trace);
-                                }
-                                else {
-                                    $this->_chart['data'][] = $trendline_trace;
-                                }
+                                $this->_chart['data'][] = $trendline_trace;
+                                //}
                             } // if($new_values_count > 1)
 
                         } // if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
@@ -1103,12 +1107,6 @@ class PlotlyTimeseries2 extends Plotly2
         if ($this->_showWarnings) {
             $this->addRestrictedDataWarning();
         }
-
-        // Adjust Layering
-        // Idea referenced by https://stackoverflow.com/questions/1597736/sort-an-array-of-associative-arrays-by-column-value
-        usort($this->_chart['data'], function($trace1, $trace2) { 
-            return $trace1['zIndex'] <=> $trace2['zIndex'];
-        }); 
 
         if($this->show_filters)
         {

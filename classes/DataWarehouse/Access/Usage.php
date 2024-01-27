@@ -911,7 +911,6 @@ class Usage extends Common
                     unset($meDataSeries['otitle']);
                     unset($meDataSeries['datasetId']);
                     unset($meDataSeries['visible']);
-                    //unset($meDataSeries['events']);
 
                     // Note: keep dataLabels color param set, else we lose some of the pie datalabels
                     // in the Usage chart only.

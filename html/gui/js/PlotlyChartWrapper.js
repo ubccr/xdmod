@@ -79,28 +79,48 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         configs.showTips = false;
     }
 
-    if (baseChartOptions.layout.thumbnail && !isEmpty) {
-        const endIndex = baseChartOptions.layout.annotations.findIndex((elem) => elem.name === 'data_label');
-        if (endIndex === -1) {
-            baseChartOptions.layout.annotations = [];
+    if (!isEmpty) {
+        // Remove titles and credits from thumbnail plots
+        if (baseChartOptions.layout.thumbnail && !isEmpty) {
+            const endIndex = baseChartOptions.layout.annotations.findIndex((elem) => elem.name === 'data_label');
+            if (endIndex === -1) {
+                baseChartOptions.layout.annotations = [];
+            }
+            baseChartOptions.layout.annotations.splice(0, endIndex);
         }
-        baseChartOptions.layout.annotations.splice(0, endIndex);
-    }
+        // Set tickmode to auto for thumbnail plots. Large amount of tick labels for thumbnail plots cause them
+        // to lag.
+        if (baseChartOptions.layout.thumbnail && baseChartOptions.layout.xaxis.type != 'category' && !isEmpty) {
+           const axesLabels = getMultiAxisObjects(baseChartOptions.layout);
+           if (baseChartOptions.swapXY) {
+               baseChartOptions.layout.yaxis.tickmode = 'auto';
+               baseChartOptions.layout.yaxis.nticks = 5;
+           }
+           else {
+               baseChartOptions.layout.xaxis.tickmode = 'auto';
+               baseChartOptions.layout.xaxis.nticks = 5;
+           }
+           for (let i = 0; i < axesLabels.length; i++) {
+               baseChartOptions.layout[axesLabels[i]].nticks = 5;
+           }
+        }
+        // Adjust trace ordering
+        // Referenced https://stackoverflow.com/questions/34852855/combined-comparison-spaceship-operator-in-javascript
+        // for comparison idea
+        baseChartOptions.data.sort((trace1, trace2) => {
+            if (baseChartOptions.layout.barmode != 'group') {
+                return Math.sign(trace2.legendrank - trace1.legendrank);
+            }
+            else {
+                const res = Math.sign(trace1.legendrank - trace2.legendrank);
+                if (trace2.name.startsWith('Std Err:') && res === -1) {
+                    return 1;
+                }
+                return res;
 
-    if (baseChartOptions.layout.thumbnail && baseChartOptions.layout.xaxis.type != 'category' && !isEmpty) {
-       const axesLabels = getMultiAxisObjects(baseChartOptions.layout);
-       if (baseChartOptions.swapXY) {
-           baseChartOptions.layout.yaxis.tickmode = 'auto';
-           baseChartOptions.layout.yaxis.nticks = 5;
-       }
-       else {
-           baseChartOptions.layout.xaxis.tickmode = 'auto';
-           baseChartOptions.layout.xaxis.nticks = 5;
-       }
-       for (let i = 0; i < axesLabels.length; i++) {
-           baseChartOptions.layout[axesLabels[i]].nticks = 5;
-       }
-    }
+            }
+        });
+   }
     
     return Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, configs);
 }

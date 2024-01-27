@@ -1078,7 +1078,7 @@ class Plotly2
                     $pieLimit = 12;
                     for ($i = 0; $i < count($xValues); $i++) {
                         if ($i < $pieLimit) {
-                            $text[] = '<b>' . $xValues[$i] . '</b><br>' . number_format($yValues[$i], 2, '.', ',');
+                            $text[] = '<b>' . $xValues[$i] . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
                         }
                         else {
                             $text[] = '';
@@ -1427,85 +1427,78 @@ class Plotly2
                        $this->_chart['layout']['xaxis']['tickvals'] = $xValues;
                        $this->_chart['layout']['xaxis']['ticktext'] = $categoryLabels;
                    }
-              }
-              if ($data_description->combine_type=='stack' || $data_description->combine_type=='percent') {
-                  array_unshift($this->_chart['data'], $trace);
-              }
-              else {
-                  $this->_chart['data'][] = $trace;
-              }
+               }
 
-                $error_info = $this->buildErrorDataSeries(
-                    $trace,
-                    $data_description,
-                    $legend,
-                    $lineColor,
-                    $yAxisDataObject,
-                    $formattedDataSeriesName,
-                    $yAxisIndex,
-                    $semDecimals,
-                    $zIndex
-                );
-                $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
-                if(($data_description->value_labels || $data_description->std_err_labels) && $data_description->display_type != 'pie') {
-                    for ($i = 0; $i < count($xValues); $i++) {
-                        $yPosition = $yValues[$i];
-                        if ($data_description->log_scale) {
-                            $yPosition = isset($yPosition) ? log10($yPosition) : null;
-                        }
-                        $data_label = array(
-                            'name' => 'data_label',
-                            'x' => $this->_swapXY ? $yPosition : $xValues[$i],
-                            'y' => $this->_swapXY ? $xValues[$i] : $yPosition, 
-                            'xref' => 'x',
-                            'yref' => 'y',
-                            'showarrow' => false,
-                            'captureevents' => false,
-                            'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
-                            'font' => array(
-                                'size' => 10 + $font_size,
-                                'color' => $color,
-                                'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
-                            ),
-                            'textangle' => -90,
-                            'yshift' => $isThumbnail ? 45 : 70,
-                        );
+              $this->_chart['data'][] = $trace;
 
-                        if ($this->_swapXY) {
-                            $data_label['textangle'] = 0;
-                            $data_label['yshift'] = $isThumbnail ? -5 : 0;
-                            $data_label['xshift'] = $isThumbnail ? 35 : 70;
-                        }
+              $error_info = $this->buildErrorDataSeries(
+                  $trace,
+                  $data_description,
+                  $legend,
+                  $lineColor,
+                  $yAxisDataObject,
+                  $formattedDataSeriesName,
+                  $yAxisIndex,
+                  $semDecimals,
+                  $zIndex
+              );
 
-                        if ($data_description->std_err == 1) {
-                            if ($this->_swapXY) {
-                                $data_label['yshift'] = -7;
-                            }
-                            else {
-                                $data_label['xshift'] = -7;
-                            }
-                        }
+              $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
 
-                        if ($data_description->value_labels && $data_description->std_err_labels) {
-                            $data_label['text'] = $error_info['data_labels'][$i];
-                            if ($this->_swapXY) {
-                                $data_label['xshift'] = $isThumbnail ? 60 : 90;
-                            }
-                            else {
-                                $data_label['yshift'] = $isThumbnail ? 60 : 90;
-                            }
-                        }
-                        else if (!$data_description->value_labels && $data_description->std_err_labels) {
-                            $data_label['text'] = $error_info['error_labels'][$i];
-                        }
-                            
+              if(($data_description->value_labels || $data_description->std_err_labels) && $data_description->display_type != 'pie') {
+                  for ($i = 0; $i < count($xValues); $i++) {
+                      $yPosition = $yValues[$i];
+                      if ($data_description->log_scale) {
+                          $yPosition = isset($yPosition) ? log10($yPosition) : null;
+                      }
+                      $data_label = array(
+                          'name' => 'data_label',
+                          'x' => $this->_swapXY ? $yPosition : $xValues[$i],
+                          'y' => $this->_swapXY ? $xValues[$i] : $yPosition, 
+                          'xref' => 'x',
+                          'yref' => 'y',
+                          'showarrow' => false,
+                          'captureevents' => false,
+                          'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
+                          'font' => array(
+                              'size' => 10 + $font_size,
+                              'color' => $color,
+                              'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                          ),
+                          'textangle' => -90,
+                          'yshift' => $isThumbnail ? 45 : 70,
+                      );
+                      if ($this->_swapXY) {
+                        $data_label['textangle'] = 0;
+                        $data_label['yshift'] = $isThumbnail ? -5 : 0;
+                        $data_label['xshift'] = $isThumbnail ? 35 : 70;
+                      }
 
-                        array_push($this->_chart['layout']['annotations'], $data_label);
+                      if ($data_description->std_err == 1) {
+                          if ($this->_swapXY) {
+                              $data_label['yshift'] = -7;
+                          }
+                          else {
+                              $data_label['xshift'] = -7;
+                          }
+                      }
+
+                      if ($data_description->value_labels && $data_description->std_err_labels) {
+                          $data_label['text'] = $error_info['data_labels'][$i];
+                          if ($this->_swapXY) {
+                              $data_label['xshift'] = $isThumbnail ? 60 : 90;
+                          }
+                          else {
+                              $data_label['yshift'] = $isThumbnail ? 60 : 90;
+                          }
+                      }
+                      else if (!$data_description->value_labels && $data_description->std_err_labels) {
+                          $data_label['text'] = $error_info['error_labels'][$i];
+                      }
+
+                      array_push($this->_chart['layout']['annotations'], $data_label);
                     }
                 }
-
-                // build error data series and add it to chart
-
             } // foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
         }
 
@@ -1513,13 +1506,6 @@ class Plotly2
         if ($this->_showWarnings) {
             $this->addRestrictedDataWarning();
         }
-
-        // Adjust Layering
-        // Idea referenced by https://stackoverflow.com/questions/1597736/sort-an-array-of-associative-arrays-by-column-value
-        usort($this->_chart['data'], function($trace1, $trace2) { 
-            return $trace1['zIndex'] <=> $trace2['zIndex'];
-        }); 
-
 
         // set title and subtitle for chart
         $this->setChartTitleSubtitle($font_size);
@@ -1628,12 +1614,7 @@ class Plotly2
 
             if(!$data_description->log_scale && $data_description->std_err)
             {
-                if ($data_description->combine_type=='stack' || $data_description->combine_type=='percent') {
-                    array_unshift($this->_chart['data'], $error_trace);
-                }
-                else {
-                    $this->_chart['data'][] = $error_trace;
-                }
+                $this->_chart['data'][] = $error_trace;
             }
 
             return Array('data_labels' => $dataLabels, 'error_labels' => $errorLabels);
