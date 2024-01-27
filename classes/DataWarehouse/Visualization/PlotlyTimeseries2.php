@@ -902,7 +902,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 'name' => $dsn,
                                 'otitle' => $dsn,
                                 'datasetId' => $data_description->id,
-                                'zIndex' => $zIndex-1,
+                                'zIndex' => $zIndex,
                                 'color'=> $error_color,
                                 'marker' => array(
                                     'color' => $error_color,
