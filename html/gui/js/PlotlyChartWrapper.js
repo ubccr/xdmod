@@ -104,14 +104,14 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
            }
         }
         // Adjust trace ordering
-        // Referenced https://stackoverflow.com/questions/34852855/combined-comparison-spaceship-operator-in-javascript
+        // Referenced https://stackoverflow.com/questions/45741397/javascript-sort-array-of-objects-by-2-properties
         // for comparison idea
         baseChartOptions.data.sort((trace1, trace2) => {
             if (baseChartOptions.layout.barmode != 'group') {
-                return Math.sign(trace2.legendrank - trace1.legendrank);
+                return trace1.zIndex - trace2.zIndex || trace2.legendrank - trace1.legendrank;
             }
             else {
-                const res = Math.sign(trace1.legendrank - trace2.legendrank);
+                const res = trace1.zIndex - trace2.zIndex || trace1.legendrank - trace2.legendrank;
                 if (trace2.name.startsWith('Std Err:') && res === -1) {
                     return 1;
                 }

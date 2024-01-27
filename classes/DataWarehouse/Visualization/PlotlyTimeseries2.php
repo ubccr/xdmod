@@ -158,7 +158,6 @@ class PlotlyTimeseries2 extends Plotly2
         foreach(array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions)
         {
             $yAxis = null;
-
             // === mind you, this is also a big long loop ===
             foreach($yAxisDataDescriptions as $data_description_index => $data_description)
             {
@@ -530,7 +529,7 @@ class PlotlyTimeseries2 extends Plotly2
                             }
                         } // ($data_description->display_type == 'pie')
 
-                        $zIndex = isset($data_description->z_index) ? $data_description->z_index : $traceIndex;
+                        $zIndex = isset($data_description->z_index) ? $data_description->z_index : $data_description_index;
 
                         $areMultipleDataSeries = $dataSeriesCount > 1;
                         $dataSeriesName = $areMultipleDataSeries ? $yAxisDataObject->getName() : $yAxisDataObject->getGroupName();
@@ -769,7 +768,7 @@ class PlotlyTimeseries2 extends Plotly2
                             }
                         }
 
-                        if ($data_description->display_type == 'line') {
+                        if (in_array($yValues, null) && $data_description->display_type == 'line') {
                             $null_trace = array(
                                 'name' => 'gap connector',
                                 'zIndex' => $zIndex,
@@ -784,6 +783,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 'connectgaps' => true,
                                 'hoverinfo' => 'skip',
                                 'legendgroup' => $traceIndex,
+                                'legendgrouprank' => $zIndex,
                                 'type' => 'scatter',
                                 'visible' => $visible,
                                 'yaxis' => "y{$yIndex}",
@@ -910,7 +910,6 @@ class PlotlyTimeseries2 extends Plotly2
                                 'name' => $dsn,
                                 'otitle' => $dsn,
                                 'datasetId' => $data_description->id,
-                                'zIndex' => $zIndex,
                                 'color'=> $error_color,
                                 'marker' => array(
                                     'color' => $error_color,
@@ -1103,6 +1102,8 @@ class PlotlyTimeseries2 extends Plotly2
                                     'y' => $this->_swapXY ? $trendX : $trendY,
                                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                                 );
+
+                                $trendline_trace['legendrank'] = $data_description->std_err ? $traceIndex + 2 : $traceIndex + 1;
 
                                 if ($this->_swapXY) {
                                     unset($trendline_trace['yaxis']);

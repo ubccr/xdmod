@@ -1380,7 +1380,7 @@ class Plotly2
                     unset($this->_chart['layout']['yaxis']['position']);
                 }
 
-               if ($data_description->display_type == 'line') {
+               if (in_array($yValues, null) && $data_description->display_type == 'line') {
                     $null_trace = array(
                         'name' => 'gap connector',
                         'zIndex' => $zIndex,
@@ -1580,7 +1580,6 @@ class Plotly2
                 'name' => $dsn,
                 'otitle' => $dsn,
                 'datasetId' => $data_description->id,
-                'zIndex' => $zIndex,
                 'color'=> $error_color,
                 'marker' => array(
                     'color' => $error_color,
