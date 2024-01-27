@@ -938,6 +938,8 @@ class PlotlyTimeseries2 extends Plotly2
                             if ($error_trace['type'] == 'area') {
                                 
                                 $error_trace['fill'] = $trace['fill'];
+                                // Referenced https://stackoverflow.com/questions/15202079/convert-hex-color-to-rgb-values-in-php
+                                // for idea
                                 list($r, $g, $b) = sscanf($trace['marker']['color'], '#%02x%02x%02x');
                                 $a = 0.1;
                                 $fillColor = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . $a . ')';
