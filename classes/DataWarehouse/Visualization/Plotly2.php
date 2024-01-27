@@ -149,7 +149,7 @@ class Plotly2
                         'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly.',
                         'font' => array(
                             'color' => '#909090',
-                            'size' => 10,
+                            'size' => 9.6,
                             'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
                         ),
                         'xref' => 'paper',
@@ -176,6 +176,7 @@ class Plotly2
                     'align' => 'left',
                     'bgcolor' => 'rgba(255, 255, 255, 0.8)',
                     'font' => array(
+                        'size' => 12.8,
                         'color' => '#000000',
                         'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
                     ),
@@ -430,6 +431,7 @@ class Plotly2
     public function setLegend($legend_location, $font_size = 3)
     {
         $this->_chart['layout']['legend']['font'] = array(
+            'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
             'color' => '#274b6d',
             'size' => (12  + $font_size)
         );
@@ -960,7 +962,7 @@ class Plotly2
                 'type' => ($yAxisObject->log_scale || $yAxisType == 'log') ? 'log' : 'linear',
                 'rangemode' => 'tozero',
                 'range' => [$yAxisMin, $yAxisMax],
-                'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 6),
+                'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 8),
                 'linewidth' => 2 + $font_size / 4,
                 'linecolor' => '#c0d0e0',
                 'separatethousands' => true,
@@ -1203,7 +1205,7 @@ class Plotly2
                     'datasetId' => $data_description->id,
                     'drilldown' => $drilldown,
                     'marker' => array(
-                        'size' => $font_size + 6,
+                        'size' => ($font_size/4 + 5) * 2,
                         'color' => $color,
                         'colors' => $data_description->display_type == 'pie' ? $colors : null,
                         'line' => array(
@@ -1459,7 +1461,7 @@ class Plotly2
                           'captureevents' => false,
                           'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
                           'font' => array(
-                              'size' => 10 + $font_size,
+                              'size' => 11 + $font_size,
                               'color' => $color,
                               'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
                           ),

@@ -728,7 +728,7 @@ class Usage extends Common
 
                 // If there is a y-axis...
                 if (isset($meChart['layout']['yaxis'])) {
-                    unset($meChart['layout']['yaxis']['title']);
+                    //unset($meChart['layout']['yaxis']['title']);
                     // If a thumbnail was requested, remove the y-axis label.
                     if ($thumbnailRequested) {
                         $meChart['layout']['yaxis']['title'] = '';

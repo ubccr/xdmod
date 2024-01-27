@@ -313,7 +313,7 @@ class PlotlyTimeseries2 extends Plotly2
                         'side' => 'left',
                         'anchor' => 'x',
                         'autoshift' => true,
-                        'gridwidth' => $yAxisCount > 1 ?0: 1 + ($font_size/7),
+                        'gridwidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8),
                         'zeroline' => false,
                     );
 
@@ -385,7 +385,7 @@ class PlotlyTimeseries2 extends Plotly2
                         'otitle' => $originalXAxisLabel,
                         'dtitle' => $defaultXAxisLabel,
                         'tickfont' => array(
-                            'size' => (11 + $font_size),
+                            'size' => $this->_swapXY ? (8 + $font_size) : (11 + $font_size),
                             'color' => '#606060',
                         ),
                         'ticksuffix' => ' ',
@@ -592,7 +592,7 @@ class PlotlyTimeseries2 extends Plotly2
                             'cliponaxis' => false,
                             'drilldown' => $drilldown,
                             'marker' => array(
-                                'size' => $font_size + 6,
+                                'size' => ($font_size/4 + 5) * 2,
                                 'color' => $color,
                                 'line' => array(
                                     'width' => 1,
@@ -604,7 +604,7 @@ class PlotlyTimeseries2 extends Plotly2
                             'line' => array(
                                 'color' => $data_description->display_type == 'pie'? null: $color,
                                 'dash' => $data_description->line_type,
-                                'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0,
+                                'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4 : 0,
                                 'shape' => ($data_description->display_type == 'spline' || $data_description->display_type == 'areaspline') ? 'spline' : 'linear' 
                             ),
                             'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
@@ -617,7 +617,7 @@ class PlotlyTimeseries2 extends Plotly2
                             'textposition' => 'outside',
                             'textangle' => $data_description->display_type == 'h_bar' ? 0 : -90,
                             'textfont' => array(
-                                'size' => 8 + $font_size,
+                                'size' => 11 + $font_size,
                                 'color' => $color,
                                 'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
                             ),
@@ -811,7 +811,7 @@ class PlotlyTimeseries2 extends Plotly2
                                         'captureevents' => false,
                                         'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
                                         'font' => array(
-                                            'size' => 10 + $font_size,
+                                            'size' => 11 + $font_size,
                                             'color' => $color,
                                             'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
                                         ),
