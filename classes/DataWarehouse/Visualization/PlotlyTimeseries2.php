@@ -973,11 +973,12 @@ class PlotlyTimeseries2 extends Plotly2
                             }
 
                             $idx = count($this->_chart['data']) - 1;
-
-                            if ($this->_swapXY) {
-                                $this->_chart['data'][$idx]['error_x'] = $error_y;
-                            } else {
-                                $this->_chart['data'][$idx]['error_y'] = $error_y;
+                            if ($data_description->std_err) {
+                                if ($this->_swapXY) {
+                                    $this->_chart['data'][$idx]['error_x'] = $error_y;
+                                } else {
+                                    $this->_chart['data'][$idx]['error_y'] = $error_y;
+                                }
                             }
 
                             if (!$data_description->value_labels && $data_description->std_err_labels) {

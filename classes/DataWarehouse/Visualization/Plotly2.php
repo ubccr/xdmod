@@ -1537,7 +1537,6 @@ class Plotly2
             $stderr = array();
             $dataLabels = array();
             $errorLabels = array();
-            $hoverText = array();
             $errorCount = $yAxisDataObject->getErrorCount();
             for($i = 0; $i < $errorCount; $i++)
             {
@@ -1545,7 +1544,6 @@ class Plotly2
                 $v = $yAxisDataObject->getValue($i);
                 $e = $yAxisDataObject->getError($i);
                 $stderr[] = $e;
-                $hoverText[] = isset($e) ? number_format($e, $semDecimals, '.', ',') : null;
                 $dataLabels[] = isset($e) && isset($v) ? number_format($v, $decimals, '.', ',') . ' [+/- ' . number_format($e, $semDecimals, '.', ',') . ']' : null;
                 $errorLabels[] = isset($e) ? '+/- ' . number_format($e, $semDecimals, '.', ',') : null;
             }
@@ -1571,42 +1569,78 @@ class Plotly2
 
             $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
 
-            $error_trace = $trace;
-
             // create the data series description:
-            $error_trace = array_merge($error_trace, array(
+            $error_trace = array_merge($trace, array(
                 'name' => $dsn,
                 'otitle' => $dsn,
                 'datasetId' => $data_description->id,
                 'zIndex' => $zIndex,
                 'color'=> $error_color,
                 'marker' => array(
-                    'color' => $error_color, 
+                    'color' => $error_color,
+                    'line' => array(
+                        'width' => 1,
+                        'color' => $error_color, 
+                    ),
                 ),
-                'text' => array(),
-                'hovertext' => $hoverText,
+                'line' => array(
+                    'color' => $error_color,
+                ),
+                'hovertext' => $errorLabels,
                 'mode' => 'lines',
-                'hovertemplate' => '<b> +/- ' . '%{hovertext}</b>',
-                'error_y' => array(
-                    'type' => 'data',
-                    'array' => $stderr,
-                    'arrayminus' => $stderr,
-                    'symmetric' => false,
-                    'color' => $error_color
-                ),
-                'legendgroup' => null,
+                'text' => array(),
+                'hovertemplate' => '<b> %{hovertext} </b>',
                 'visible' => $visible,
+                'showlegend' => true,
+                'legendgroup' => null,
+                'connectgaps' => false,
+                'legendrank' => $trace['legendrank']+1,
                 'isRestrictedByRoles' => $data_description->restrictedByRoles,
             ));
 
+            if ($error_trace['type'] == 'area') {
+                $error_trace['fill'] = $trace['fill'];
+                // Referenced https://stackoverflow.com/questions/15202079/convert-hex-color-to-rgb-values-in-php
+                // for idea
+                list($r, $g, $b) = sscanf($trace['marker']['color'], '#%02x%02x%02x');
+                $a = 0.1;
+                $fillColor = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . $a . ')';
+                $error_trace['fillcolor'] = $fillColor;
+                if ($data_description->combine_type=='stack') {
+                    $error_trace['stackgroup'] = 'two';
+                    $error_trace['stackgaps'] = 'interpolate';
+                }
+            }
+
             if ($trace['type'] == 'bar') {
-                $error_trace['marker']['color'] = $trace['marker']['color'];
                 $this->_chart['layout']['barmode'] = 'overlay';
                 $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'x unified';
+
                 if ($this->_swapXY) {
-                    $error_trace['error_x'] = $error_trace['error_y'];
                     $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'y unified';
-                    unset($error_trace['error_y']);
+                }
+
+                if ($data_description->combine_type=='side') {
+                    $error_trace['offsetgroup'] = "group{$traceIndex}";
+                    $this->_chart['layout']['barmode'] = 'group';
+                }
+                if ($data_description->combine_type=='stack') {
+                    $error_trace['y'] = array_fill(0, count($error_trace['y']), 0);
+                    for ($i = 0; $i < count($errorLabels); $i++) {
+                        if (!isset($errorLabels[$i])) {
+                            $error_trace['y'][$i] = null;
+                        }
+                    }
+                    $this->_chart['layout']['barmode'] = 'stack';
+                }
+            }
+
+            $idx = count($this->_chart['data']) - 1;
+            if ($data_description->std_err) {
+                if ($this->_swapXY) {
+                    $this->_chart['data'][$idx]['error_x'] = $error_y;
+                } else {
+                    $this->_chart['data'][$idx]['error_y'] = $error_y;
                 }
             }
 

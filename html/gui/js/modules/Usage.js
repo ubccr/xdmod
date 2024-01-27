@@ -2781,23 +2781,42 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             });
 
                             chartDiv.on('plotly_legendclick', (evt) => {
-                                const traceIdx = evt.curveNumber;
-                                const stdErrIdx = traceIdx + 1;
-                                if (evt.data[traceIdx].name.startsWith('Std Err:')) {
-                                    if (evt.data[traceIdx].visible != 'legendonly') {
-                                        Plotly.update(baseChartOptions.renderTo, { mode: 'lines' }, {}, traceIdx);
+                                console.log(evt);
+                                const node = evt.node;
+                                const nodeVisibility = evt.node.style.opacity;
+                                // Check for std err to update where the error bars go
+                                if (node.textContent.startsWith('Std Err:')) {
+                                    const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
+                                    if (nodeVisibility === '1') {
+                                        Plotly.update(chartDiv, {[errorBar]: false}, {}, [evt.curveNumber+1]);
                                     }
-                                    else if (evt.data[traceIdx-1].visible === 'legendonly') {
-                                        Plotly.update(baseChartOptions.renderTo, { mode: 'markers' }, {}, traceIdx);
+                                    else {
+                                        Plotly.update(chartDiv, {[errorBar]: true}, {}, [evt.curveNumber+1]);
                                     }
                                 }
-                                else if (evt.data.length > stdErrIdx) {
-                                    if (evt.data[stdErrIdx].name.startsWith('Std Err:')) {
-                                        if (evt.data[traceIdx].visible != 'legendonly') {
-                                            Plotly.update(baseChartOptions.renderTo, { mode: 'markers' }, {}, stdErrIdx);
-                                        }
-                                        else {
-                                            Plotly.update(baseChartOptions.renderTo, { mode: 'lines' }, {}, stdErrIdx);
+                                else {
+                                    if (node.nextSibling) {
+                                        const sibling = node.nextSibling
+                                        if (sibling.textContent.startsWith('Std Err:')) {
+                                            const errorBar = evt.layout.swapXY ? 'error_x' : 'error_y';
+                                            if (sibling.style.opacity === '1') {
+                                                // Turning off primary trace so need to transfer error bars
+                                                if (nodeVisibility === '1') {
+                                                    const errorObject = evt.data[evt.curveNumber][errorBar];
+                                                    const update = {
+                                                        [errorBar]: errorObject,
+                                                        mode: 'markers',
+                                                    }
+                                                    Plotly.update(chartDiv, update, {}, [evt.curveNumber-1]);
+                                                }
+                                                else {
+                                                    const update = {
+                                                        [errorBar]: null,
+                                                        mode: 'lines',
+                                                    }
+                                                    Plotly.update(chartDiv, update, {}, [evt.curveNumber-1]);
+                                                }
+                                            }
                                         }
                                     }
                                 }
