@@ -864,7 +864,6 @@ class PlotlyTimeseries2 extends Plotly2
                             $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
 
                             $stderr = array();
-                            $hoverText = array();
                             $dataLabels = array();
                             $errorLabels = array();
                             $errorCount = $yAxisDataObject->getErrorCount();
@@ -874,9 +873,8 @@ class PlotlyTimeseries2 extends Plotly2
                                 $v = $yAxisDataObject->getValue($i);
                                 $e = $yAxisDataObject->getError($i);
                                 $stderr[] = $e;
-                                $hoverText[] = number_format($e, $semDecimals, '.', ',');
-                                $dataLabels[] = number_format($v, $decimals, '.', ',') . ' [+/- ' . number_format($e, $semDecimals, '.', ',') . ']';
-                                $errorLabels[] = '+/- ' . number_format($e, $semDecimals, '.', ',');
+                                $dataLabels[] = isset($e) && isset($v) ? number_format($v, $decimals, '.', ',') . ' [+/- ' . number_format($e, $semDecimals, '.', ',') . ']' : null;
+                                $errorLabels[] = isset($e) ? '+/- ' . number_format($e, $semDecimals, '.', ',') : null;
                             }
 
                             $dsn = 'Std Err: '.$formattedDataSeriesName;
@@ -916,9 +914,10 @@ class PlotlyTimeseries2 extends Plotly2
                                 'line' => array(
                                     'color' => $error_color,
                                 ),
-                                'hovertext' => $hoverText,
+                                'hovertext' => $errorLabels,
                                 'mode' => 'lines',
-                                'hovertemplate' => '<b> +/- ' . '%{hovertext}</b>',
+                                'text' => array(),
+                                'hovertemplate' => '<b> %{hovertext} </b>',
                                 'visible' => $visible,
                                 'showlegend' => true,
                                 'legendgroup' => null,
@@ -964,6 +963,11 @@ class PlotlyTimeseries2 extends Plotly2
                                 }
                                 if ($data_description->combine_type=='stack') {
                                     $error_trace['y'] = array_fill(0, count($error_trace['y']), 0);
+                                    for ($i = 0; $i < count($errorLabels); $i++) {
+                                        if (!isset($errorLabels[$i])) {
+                                            $error_trace['y'][$i] = null;
+                                        }
+                                    }
                                     $this->_chart['layout']['barmode'] = 'stack';
                                 }
                             }

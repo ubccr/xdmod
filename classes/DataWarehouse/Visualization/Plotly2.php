@@ -1545,9 +1545,9 @@ class Plotly2
                 $v = $yAxisDataObject->getValue($i);
                 $e = $yAxisDataObject->getError($i);
                 $stderr[] = $e;
-                $hoverText[] = number_format($e, $semDecimals, '.', ',');
-                $dataLabels[] = number_format($v, $decimals, '.', ',') . ' [+/- ' . number_format($e, $semDecimals, '.', ',') . ']';
-                $errorLabels[] = '+/- ' . number_format($e, $semDecimals, '.', ',');;
+                $hoverText[] = isset($e) ? number_format($e, $semDecimals, '.', ',') : null;
+                $dataLabels[] = isset($e) && isset($v) ? number_format($v, $decimals, '.', ',') . ' [+/- ' . number_format($e, $semDecimals, '.', ',') . ']' : null;
+                $errorLabels[] = isset($e) ? '+/- ' . number_format($e, $semDecimals, '.', ',') : null;
             }
 
             // -- set error dataseries name and visibility --
