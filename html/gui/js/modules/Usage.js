@@ -2781,7 +2781,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             });
 
                             chartDiv.on('plotly_legendclick', (evt) => {
-                                console.log(evt);
                                 const node = evt.node;
                                 const nodeVisibility = evt.node.style.opacity;
                                 // Check for std err to update where the error bars go
