@@ -2761,7 +2761,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     }
                                     else {
                                         const traces = usageDiv.getElementsByClassName('plot')[0].firstChild.children;
-                                        point = getClickedPoint(evt, traces);
+                                        point = getClickedPoint(evt, traces, this.chartOptions.data);
                                     }
                                 }
                                 if (!point) {
