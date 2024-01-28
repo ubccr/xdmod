@@ -979,9 +979,14 @@ class PlotlyTimeseries2 extends Plotly2
                                     $this->_chart['layout']['barmode'] = 'stack';
                                 }
                             }
-
-                            if ($trace['visible'] == 'legendonly') {
+                            if (isset($trace['visible']) && $trace['visible'] != 1) {
                                 $error_trace['mode'] = 'markers';
+                                $error_trace['type'] = 'scatter';
+                                if ($this->_swapXY) {
+                                    $error_trace['error_x'] = $error_y;
+                                } else {
+                                    $error_trace['error_y'] = $error_y;
+                                }
                             }
 
                             if (!$data_description->value_labels && $data_description->std_err_labels) {
@@ -1021,14 +1026,15 @@ class PlotlyTimeseries2 extends Plotly2
 
                             if(!$data_description->log_scale && $data_description->std_err)
                             {
-                                $this->_chart['data'][] = $error_trace;
-                                $idx = count($this->_chart['data']) - 1;
-                                if ($this->_swapXY) {
-                                    $this->_chart['data'][$idx]['error_x'] = $error_y;
-                                } else {
-                                    $this->_chart['data'][$idx]['error_y'] = $error_y;
+                                if ($visible == 1) {
+                                    $idx = count($this->_chart['data']) - 1;
+                                    if ($this->_swapXY) {
+                                        $this->_chart['data'][$idx]['error_x'] = $error_y;
+                                    } else {
+                                        $this->_chart['data'][$idx]['error_y'] = $error_y;
+                                    }
                                 }
-
+                                $this->_chart['data'][] = $error_trace;
                             }
                         } // if($data_description->std_err == 1 && $data_description->display_type != 'pie')
 

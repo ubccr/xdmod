@@ -2797,6 +2797,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     if (node.nextSibling) {
                                         const sibling = node.nextSibling
                                         if (sibling.textContent.startsWith('Std Err:')) {
+                                            const errorType = evt.data[evt.curveNumber].type;
                                             const errorBar = evt.layout.swapXY ? 'error_x' : 'error_y';
                                             if (sibling.style.opacity === '1') {
                                                 // Turning off primary trace so need to transfer error bars
@@ -2805,6 +2806,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                                     const update = {
                                                         [errorBar]: errorObject,
                                                         mode: 'markers',
+                                                        type: 'scatter',
                                                     }
                                                     Plotly.update(chartDiv, update, {}, [evt.curveNumber-1]);
                                                 }
@@ -2812,6 +2814,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                                     const update = {
                                                         [errorBar]: null,
                                                         mode: 'lines',
+                                                        type: errorType,
                                                     }
                                                     Plotly.update(chartDiv, update, {}, [evt.curveNumber-1]);
                                                 }
