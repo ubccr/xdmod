@@ -249,7 +249,7 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
 
     return ret;
 }
-function getClickedPoint(evt, traces, data = null) {
+function getClickedPoint(evt, traces, data) {
     let point;
     if ((traces && traces.length === 0) || (evt.points && evt.points.length === 0)) {
         return point;
@@ -295,6 +295,9 @@ function getClickedPoint(evt, traces, data = null) {
                     point = evt.points[pointIndex];
                     break;
                 }
+            }
+            if (point) {
+                break;
             }
         }
    }
