@@ -513,7 +513,7 @@ class PlotlyTimeseries2 extends Plotly2
                             {
                                 $xValues[] = date('Y-m-d', $start_ts_array[$i]);
                                 $yValues[] = $v;
-                                $text[] = $v; 
+                                $text[] = number_format($v, $decimals, '.', ','); 
                                 $seriesValue = array(
                                     'x' => $start_ts_array[$i]*1000,
                                     'y' => $v,
@@ -630,7 +630,6 @@ class PlotlyTimeseries2 extends Plotly2
                                 'color' => $color,
                                 'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
                             ),
-                            'texttemplate' => "%{text:.{$decimals}f}",
                             'x' => $this->_swapXY ? $yValues : $xValues,
                             'y' => $this->_swapXY ? $xValues : $yValues,
                             'offsetgroup' => "group{$traceIndex}",
@@ -981,13 +980,8 @@ class PlotlyTimeseries2 extends Plotly2
                                 }
                             }
 
-                            $idx = count($this->_chart['data']) - 1;
-                            if ($data_description->std_err) {
-                                if ($this->_swapXY) {
-                                    $this->_chart['data'][$idx]['error_x'] = $error_y;
-                                } else {
-                                    $this->_chart['data'][$idx]['error_y'] = $error_y;
-                                }
+                            if ($trace['visible'] == 'legendonly') {
+                                $error_trace['mode'] = 'markers';
                             }
 
                             if (!$data_description->value_labels && $data_description->std_err_labels) {
@@ -1028,6 +1022,13 @@ class PlotlyTimeseries2 extends Plotly2
                             if(!$data_description->log_scale && $data_description->std_err)
                             {
                                 $this->_chart['data'][] = $error_trace;
+                                $idx = count($this->_chart['data']) - 1;
+                                if ($this->_swapXY) {
+                                    $this->_chart['data'][$idx]['error_x'] = $error_y;
+                                } else {
+                                    $this->_chart['data'][$idx]['error_y'] = $error_y;
+                                }
+
                             }
                         } // if($data_description->std_err == 1 && $data_description->display_type != 'pie')
 

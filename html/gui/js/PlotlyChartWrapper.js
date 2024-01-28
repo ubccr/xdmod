@@ -108,7 +108,10 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         // for comparison idea
         baseChartOptions.data.sort((trace1, trace2) => {
             if (baseChartOptions.layout.barmode != 'group') {
-                return Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace2.legendrank - trace1.legendrank);
+                if (trace1.name.startsWith('Std Err:') || trace2.name.startsWith('Std Err:')) {
+                    return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
+                }
+                return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.legendrank - trace1.legendrank);
             }
             else {
                 const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);

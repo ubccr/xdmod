@@ -1344,7 +1344,7 @@ class Plotly2
                         }
                     }
                     unset($trace['yaxis']);
-                    $this->_chart['layout']['yaxis'] = $this->_chart['layout']['xaxis'];
+                    $this->_chart['layout']['yaxis'] = $this->_chart['layout']["{$xAxisName}"];
                     $this->_chart['layout']["{$xAxisName}"] = $yAxis;
                     $trace['xaxis'] = "x{$yIndex}";
                     if ($yAxisIndex > 1) {
@@ -1648,18 +1648,20 @@ class Plotly2
                 }
             }
 
-            $idx = count($this->_chart['data']) - 1;
-            if ($data_description->std_err) {
-                if ($this->_swapXY) {
-                    $this->_chart['data'][$idx]['error_x'] = $error_y;
-                } else {
-                    $this->_chart['data'][$idx]['error_y'] = $error_y;
-                }
+            if ($trace['visible'] == 'legendonly') {
+                $error_trace['mode'] = 'markers';
             }
 
             if(!$data_description->log_scale && $data_description->std_err)
             {
                 $this->_chart['data'][] = $error_trace;
+                $idx = count($this->_chart['data']) - 1;
+                if ($this->_swapXY) {
+                    $this->_chart['data'][$idx]['error_x'] = $error_y;
+                } else {
+                    $this->_chart['data'][$idx]['error_y'] = $error_y;
+                }
+
             }
 
             return Array('data_labels' => $dataLabels, 'error_labels' => $errorLabels);
