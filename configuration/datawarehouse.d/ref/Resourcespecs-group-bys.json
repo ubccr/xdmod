@@ -21,30 +21,7 @@
       "$ref": "datawarehouse.d/ref/group-by-time-period.json#/day"
   },
   "provider": {
-      "attribute_table_schema": "modw",
-      "attribute_to_aggregate_table_key_map": [
-          {
-              "organization_id": "organization_id"
-          }
-      ],
-      "attribute_values_query": {
-          "joins": [
-              {
-                  "name": "serviceprovider"
-              }
-          ],
-          "orderby": [
-              "order_id"
-          ],
-          "records": {
-              "id": "organization_id",
-              "name": "long_name",
-              "order_id": "order_id",
-              "short_name": "short_name"
-          }
-      },
-      "description_html": "A service provider is an institution that hosts resources.",
-      "name": "Service Provider"
+      "$ref": "datawarehouse.d/ref/group-by-common.json#/provider"
   },
   "resource_allocation_type": {
       "attribute_table_schema": "modw",

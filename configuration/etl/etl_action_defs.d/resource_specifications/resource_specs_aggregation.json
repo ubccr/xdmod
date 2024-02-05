@@ -27,18 +27,17 @@
             "year": "${:YEAR_VALUE}",
             "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
             "record_resource_id": "r.resource_id",
-            "wallduration": "SUM(${resource_specs_duration})",
             "cpu_cores_available": "COALESCE(SUM((${resource_specs_duration}) * r.cpu_processor_count) / 86400, 0)",
             "gpu_cores_available": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_processor_count) / 86400, 0)",
             "cpu_nodes_available": "COALESCE(SUM((${resource_specs_duration}) * r.cpu_node_count) / 86400, 0)",
             "gpu_nodes_available": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_node_count) / 86400, 0)",
-            "core_time_available": "COALESCE(SUM((${resource_specs_duration}) * r.cpu_processor_count * ra.percent / 100.0), 0)",
-            "gpu_time_available": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_processor_count * ra.percent / 100.0), 0)",
-            "cpu_node_time_available": "COALESCE(SUM((${resource_specs_duration}) * r.cpu_node_count * ra.percent / 100.0), 0)",
-            "gpu_node_time_available": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_node_count * ra.percent / 100.0), 0)",
-            "su_available": "COALESCE(SUM(((${resource_specs_duration}) / 86400) * r.su_available_per_day), 0)",
+            "core_time_available": "COALESCE(SUM((${resource_specs_duration}) * r.cpu_processor_count * ra.percent) / 100.0, 0)",
+            "gpu_time_available": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_processor_count * ra.percent) / 100.0, 0)",
+            "cpu_node_time_available": "COALESCE(SUM((${resource_specs_duration}) * r.cpu_node_count * ra.percent) / 100.0, 0)",
+            "gpu_node_time_available": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_node_count * ra.percent) / 100.0, 0)",
+            "su_available": "COALESCE(SUM((${resource_specs_duration}) * r.su_available_per_day) / 86400, 0)",
             "resourcetype_id": "COALESCE(rf.resourcetype_id, -1)",
-            "organization_id": "COALESCE(rf.organization_id, -1)",
+            "resource_organization_id": "COALESCE(rf.organization_id, -1)",
             "resource_state_id": "COALESCE(org.state_id, -1)",
             "resource_country_id": "COALESCE(org.country_id, -1)",
             "organizationtype_id": "COALESCE(org.organizationtype_id, -1)",
@@ -50,7 +49,7 @@
             "${AGGREGATION_UNIT}",
             "record_resource_id",
             "resourcetype_id",
-            "organization_id",
+            "resource_organization_id",
             "resource_state_id",
             "resource_country_id",
             "organizationtype_id",
@@ -68,11 +67,17 @@
                 "on": "r.resource_id = ra.resource_id AND r.start_day_id = ra.start_day_id AND r.end_day_id = ra.end_day_id"
             },
             {
-                "#": "Exclude non compute resources (Storage, User Support, etc) from the resources specifications aggregation. The ID's map to the modw.resourcetype table",
                 "name": "resourcefact",
                 "alias": "rf",
                 "schema": "${SOURCE_SCHEMA}",
-                "on": "r.resource_id = rf.id AND rf.resourcetype_id NOT IN (8,9,10,11,12)"
+                "on": "r.resource_id = rf.id"
+            },
+            {
+                "name": "resourcetype",
+                "alias": "rt",
+                "schema": "${SOURCE_SCHEMA}",
+                "#": "Exclude non compute resources (Storage, User Support, etc) from the resources specifications aggregation.",
+                "on": "rf.resourcetype_id = rt.id AND rt.abbrev IN ('UNK', 'HPC', 'HTC', 'DIC', 'Grid', 'Cloud', 'Vis', 'VM')"
             },
             {
                 "name": "organization",

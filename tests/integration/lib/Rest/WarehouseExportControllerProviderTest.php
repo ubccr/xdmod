@@ -233,21 +233,15 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                     }
                     $index++;
                 }
-                $this->assertCount(
-                    28,
-                    $body['data'][0]['fields'],
-                    $assertMessage
-                );
-                $this->assertCount(
-                    16,
-                    $body['data'][1]['fields'],
-                    $assertMessage
-                );
-                $this->assertCount(
-                    15,
-                    $body['data'][2]['fields'],
-                    $assertMessage
-                );
+
+                $counts = [28, 16, 15];
+                for ($i = 0; $i < count($counts); $i++) {
+                    $this->assertCount(
+                        $counts[$i],
+                        $body['data'][$i]['fields'],
+                        $assertMessage
+                    );
+                }
             })
         );
     }

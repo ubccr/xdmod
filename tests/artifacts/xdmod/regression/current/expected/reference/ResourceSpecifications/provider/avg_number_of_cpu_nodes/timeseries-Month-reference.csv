@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Month,"[screw - Screwdriver] Average Number of CPU Nodes Available"
+Month,"[screw] Average Number of CPU Nodes Available"
 2016-12,670.9677
 2017-01,2000.0000
 ---------

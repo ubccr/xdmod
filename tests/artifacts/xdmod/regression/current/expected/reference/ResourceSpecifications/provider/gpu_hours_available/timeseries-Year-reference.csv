@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Year,"[screw - Screwdriver] GPU Hours Available"
+Year,"[screw] GPU Hours Available"
 2016,0.0000
 2017,0.0000
 ---------

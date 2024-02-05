@@ -25,7 +25,7 @@
                 "is_unique": true
             },
             {
-                "name": "session_lookup_key",
+                "name": "resourcespecs_lookup_key",
                 "columns": [
                     "resourcespec_id",
                     "agg_id"

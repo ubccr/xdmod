@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Quarter,"[screw - Screwdriver] Average Number of CPU Cores Available (Core Count)"
+Quarter,"[screw] Average Number of CPU Cores Available (Core Count)"
 "2016 Q4",2260.8696
 "2017 Q1",20000.0000
 ---------

@@ -1,11 +1,11 @@
 title
-"Average Number of GPU Cores Available (GPU Count): by Resource"
+"Average Number of GPU Cores Available (GPU Core Count): by Resource"
 parameters
 
 start,end
 2016-12-22,2017-01-07
 ---------
-Day,"[frearson] Average Number of GPU Cores Available (GPU Count)","[mortorq] Average Number of GPU Cores Available (GPU Count)","[phillips] Average Number of GPU Cores Available (GPU Count)","[pozidriv] Average Number of GPU Cores Available (GPU Count)","[robertson] Average Number of GPU Cores Available (GPU Count)"
+Day,"[frearson] Average Number of GPU Cores Available (GPU Core Count)","[mortorq] Average Number of GPU Cores Available (GPU Core Count)","[phillips] Average Number of GPU Cores Available (GPU Core Count)","[pozidriv] Average Number of GPU Cores Available (GPU Core Count)","[robertson] Average Number of GPU Cores Available (GPU Core Count)"
 2016-12-22,0,0,0.0000,0.0000,0.0000
 2016-12-23,0,0,0.0000,0.0000,0.0000
 2016-12-24,0,0,0.0000,0.0000,0.0000

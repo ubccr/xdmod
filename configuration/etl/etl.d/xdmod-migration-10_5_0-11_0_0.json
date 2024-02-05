@@ -30,7 +30,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "config": "shredder",
                     "schema": "mod_shredder"
                 }
             }
@@ -61,7 +61,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "config": "shredder",
                     "schema": "mod_shredder"
                 }
             }
@@ -75,13 +75,13 @@
                 "source": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "config": "shredder",
                     "schema": "mod_shredder"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "Shredder/Staging Database",
+                    "config": "shredder",
                     "schema": "mod_shredder"
                 }
             }
@@ -116,7 +116,7 @@
                 "destination": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "config": "shredder",
                     "schema": "mod_shredder"
                 }
             }
@@ -129,13 +129,13 @@
                 "source": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "config": "shredder",
                     "schema": "mod_shredder"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "HPCDB",
+                    "config": "hpcdb",
                     "schema": "mod_hpcdb"
                 }
             }
@@ -153,13 +153,13 @@
                 "source": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "config": "shredder",
                     "schema": "mod_shredder"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "HPCDB",
+                    "config": "hpcdb",
                     "schema": "mod_hpcdb"
                 }
             }
@@ -172,13 +172,13 @@
                 "source": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "config": "shredder",
                     "schema": "mod_shredder"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "HPCDB",
+                    "config": "hpcdb",
                     "schema": "mod_hpcdb"
                 }
             }
@@ -192,13 +192,13 @@
                 "source": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "config": "shredder",
                     "schema": "mod_shredder"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "HPCDB",
+                    "config": "hpcdb",
                     "schema": "mod_hpcdb"
                 }
             }
@@ -211,13 +211,13 @@
                 "source": {
                     "type": "mysql",
                     "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "config": "shredder",
                     "schema": "mod_shredder"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "HPCDB",
+                    "config": "hpcdb",
                     "schema": "mod_hpcdb"
                 }
             }
@@ -234,14 +234,14 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "name": "HPCDB",
+                    "config": "hpcdb",
                     "schema": "mod_hpcdb"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw"
                 }
             }
@@ -253,14 +253,14 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "name": "HPCDB",
+                    "config": "hpcdb",
                     "schema": "mod_hpcdb"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw"
                 }
             }
@@ -272,14 +272,14 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "name": "HPCDB",
+                    "config": "hpcdb",
                     "schema": "mod_hpcdb"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw"
                 }
             }
@@ -291,14 +291,14 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "name": "HPCDB",
+                    "config": "hpcdb",
                     "schema": "mod_hpcdb"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw"
                 }
             }
@@ -310,14 +310,14 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "Shredder/Staging Database",
-                    "config": "database",
+                    "name": "HPCDB",
+                    "config": "hpcdb",
                     "schema": "mod_hpcdb"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw"
                 }
             }
@@ -334,15 +334,15 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw",
                     "create_schema_if_not_exists": true
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
+                    "name": "Aggregates Database",
+                    "config": "datawarehouse",
                     "schema": "modw_aggregates",
                     "create_schema_if_not_exists": true,
                     "truncate_destination": false
@@ -355,21 +355,21 @@
             "namespace": "ETL\\Aggregator",
             "options_class": "AggregatorOptions",
             "description": "Aggregate resource specification records.",
-            "definition_file": "resource_specifications/resource_specs_aggregation_by_day.json",
+            "definition_file": "resource_specifications/resource_specs_aggregation.json",
             "table_prefix": "resourcespecsfact_by_",
             "aggregation_units": ["month", "quarter", "year"],
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw",
                     "create_schema_if_not_exists": true
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
+                    "name": "Aggregates Database",
+                    "config": "datawarehouse",
                     "schema": "modw_aggregates",
                     "create_schema_if_not_exists": true,
                     "truncate_destination": false
@@ -386,15 +386,15 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
+                    "name": "Aggregates Database",
+                    "config": "datawarehouse",
                     "schema": "modw_aggregates",
                     "create_schema_if_not_exists": true
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
+                    "name": "Aggregates Database",
+                    "config": "datawarehouse",
                     "schema": "modw_aggregates",
                     "create_schema_if_not_exists": true,
                     "truncate_destination": false

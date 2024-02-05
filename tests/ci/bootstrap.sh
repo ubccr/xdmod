@@ -13,6 +13,14 @@ function copy_template_httpd_conf {
     cp /usr/share/xdmod/templates/apache.conf /etc/httpd/conf.d/xdmod.conf
 }
 
+function set_resource_spec_end_times {
+    # Adding end time for each resource in resourcespecs.json. This is to get consistant results for
+    # the raw data regression tests. The jq command does not do well with overwriting the existing file
+    # so writing to a temp file and then renaming seems to be the best way to go.
+    cat /etc/xdmod/resource_specs.json | jq '[.[] | .["end_date"] += "2020-01-01"]' > /etc/xdmod/resource_specs2.json
+    mv -f /etc/xdmod/resource_specs2.json /etc/xdmod/resource_specs.json
+}
+
 if [ -z $XDMOD_REALMS ]; then
     export XDMOD_REALMS=jobs,storage,cloud,resourcespecifications
 fi
@@ -89,12 +97,7 @@ then
         done
     fi
 
-    # Adding end time for each resource in resourcespecs.json. This is to get consistant results for
-    # the raw data regression tests. The jq command does not do well with overwriting the existing file
-    # so writing to a temp file and the renaming seem to be the best way to go.
-    cat /etc/xdmod/resource_specs.json | jq '[.[] | .["end_date"] += "2020-01-01"]' > /etc/xdmod/resource_specs2.json
-    mv -f /etc/xdmod/resource_specs2.json /etc/xdmod/resource_specs.json
-
+    set_resource_spec_end_times
     sudo -u xdmod xdmod-ingestor
 
     if [[ "$XDMOD_REALMS" == *"cloud"* ]];
@@ -149,12 +152,7 @@ then
     fi
 
     expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
-
-    # Adding end time for each resource in resourcespecs.json. This is to get consistant results for
-    # the raw data regression tests. The jq command does not do well with overwriting the existing file
-    # so writing to a temp file and the renaming seem to be the best way to go.
-    cat /etc/xdmod/resource_specs.json | jq '[.[] | .["end_date"] += "2020-01-01"]' > /etc/xdmod/resource_specs2.json
-    mv -f /etc/xdmod/resource_specs2.json /etc/xdmod/resource_specs.json
+    set_resource_spec_end_times
 
     if [[ "$XDMOD_REALMS" == *"storage"* ]];
     then

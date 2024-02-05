@@ -31,50 +31,45 @@
                 "nullable": false,
                 "comment": "DIMENSION: The resource the specification is for."
             },{
-                "name": "wallduration",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Wall duration for a specification during the time period"
-            },{
                 "name": "cpu_cores_available",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "FACT: Number of cpu cores available for a time period"
+                "comment": "FACT: Number of CPU cores available to be allocated through ${ORGANIZATION_NAME} during a time period"
             },{
                 "name": "gpu_cores_available",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "FACT: Number of gpu cores available for a time period"
+                "comment": "FACT: Number of GPU cores available to be allocated through ${ORGANIZATION_NAME} during a time period"
             },{
                 "name": "cpu_nodes_available",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "FACT: Number of cpu nodes available for a time period"
+                "comment": "FACT: Number of CPU nodes available to be allocated through ${ORGANIZATION_NAME} during a time period"
             },{
                 "name": "gpu_nodes_available",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "FACT: Number of gpu nodes available for a time period"
+                "comment": "FACT: Number of GPU nodes available to be allocated through ${ORGANIZATION_NAME} during a time period"
             },{
                 "name": "core_time_available",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of cpu cores available for a time period, in seconds"
+                "comment": "FACT: Number of CPU core seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
             },{
                 "name": "gpu_time_available",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of gpu cores available for a time period, in seconds"
+                "comment": "FACT: Number of GPU core seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
             },{
                 "name": "cpu_node_time_available",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of cpu nodes available for a time period, in seconds"
+                "comment": "FACT: Number of CPU node seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
             },{
                 "name": "gpu_node_time_available",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of gpu nodes available for a time period, in seconds"
+                "comment": "FACT: Number of GPU node seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
             },{
                 "name": "su_available",
                 "type": "int(11) unsigned",
@@ -86,7 +81,7 @@
                 "nullable": false,
                 "comment": "DIMENSION: Allocation type for the resource"
             },{
-                "name": "organization_id",
+                "name": "resource_organization_id",
                 "type": "int(11)",
                 "nullable": false,
                 "comment": "DIMENSION: Organization the resource belongs to"

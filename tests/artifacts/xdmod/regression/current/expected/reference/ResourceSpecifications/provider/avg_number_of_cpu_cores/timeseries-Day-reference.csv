@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Day,"[screw - Screwdriver] Average Number of CPU Cores Available (Core Count)"
+Day,"[screw] Average Number of CPU Cores Available (Core Count)"
 2016-12-22,12000.0000
 2016-12-23,12000.0000
 2016-12-24,12000.0000

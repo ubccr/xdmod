@@ -1,11 +1,11 @@
 title
-"Average Number of GPU Cores Available (GPU Count): by Resource Type"
+"Average Number of GPU Cores Available (GPU Core Count): by Resource Type"
 parameters
 
 start,end
 2016-12-22,2017-01-07
 ---------
-Day,"[High-performance computing] Average Number of GPU Cores Available (GPU Count)"
+Day,"[High-performance computing] Average Number of GPU Cores Available (GPU Core Count)"
 2016-12-22,0.0000
 2016-12-23,0.0000
 2016-12-24,0.0000

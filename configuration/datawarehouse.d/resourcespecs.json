@@ -1,7 +1,7 @@
 {
     "ResourceSpecifications": {
         "name": "Resource Specifications",
-        "datasource": "file",
+        "datasource": "Resource specs file",
         "aggregate_schema": "modw_aggregates",
         "aggregate_table_prefix": "resourcespecsfact_by_",
         "aggregate_table_alias": "agg",

@@ -124,7 +124,7 @@
               "tableAlias": "rs",
               "column": "cpu_processor_count",
               "group": "Administration",
-              "documentation": "The number of CPUs for the resource.",
+              "documentation": "The number of CPUs for the resource",
               "batchExport": true
           },
           {
@@ -164,7 +164,7 @@
               "tableAlias": "rs",
               "column": "gpu_processor_count_per_node",
               "group": "Administration",
-              "documentation": "The number of GPU's per node",
+              "documentation": "The number of GPUs per node",
               "batchExport": true
           },
           {
@@ -172,7 +172,7 @@
               "tableAlias": "rs",
               "column": "su_available_per_day",
               "group": "Administration",
-              "documentation": "The number of service units (SUs) available per day.",
+              "documentation": "The number of service units (SUs) available per day",
               "batchExport": true
           },
           {
@@ -180,7 +180,7 @@
               "tableAlias": "rt",
               "column": "description",
               "group": "Administration",
-              "documentation": "The type of the resource.",
+              "documentation": "The type of the resource",
               "batchExport": true
           },
           {
@@ -188,7 +188,7 @@
               "tableAlias": "org",
               "column": "name",
               "group": "Administration",
-              "documentation": "The organization to which resource belongs.",
+              "documentation": "The organization to which resource belongs",
               "batchExport": true
           },
           {
@@ -196,7 +196,7 @@
               "tableAlias": "ra",
               "column": "percent",
               "group": "Administration",
-              "documentation": "The percent of the resource that is allocated to ${ORGANIZATION_NAME}.",
+              "documentation": "The percent of the resource that is allocated to ${ORGANIZATION_NAME}",
               "batchExport": true
           }
         ]

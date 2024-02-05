@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Day,"[screw - Screwdriver] Average Number of GPU Nodes Available"
+Day,"[screw] Average Number of GPU Nodes Available"
 2016-12-22,0.0000
 2016-12-23,0.0000
 2016-12-24,0.0000
