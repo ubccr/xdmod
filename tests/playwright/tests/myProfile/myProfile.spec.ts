@@ -31,16 +31,14 @@ test.describe('My Profile Tests', async () => {
                         let firstNameControl = selectors.general.user_information.first_name();
 
                         await page.isVisible(firstNameControl);
-                        const computed = await page.locator(firstNameControl).inputValue();
-                        await expect(computed).toEqual(givenname);
+                        await expect(page.locator(firstNameControl)).toHaveValue(givenname);
                     });
                     await test.step('Last Name', async () => {
                         let surname = roles[role].surname;
                         let lastNameControl = selectors.general.user_information.last_name();
 
                         await page.isVisible(lastNameControl);
-                        const computed = await page.locator(lastNameControl).inputValue();
-                        await expect(computed).toEqual(surname);
+                        await expect(page.locator(lastNameControl)).toHaveValue(surname);
                     });
                     await test.step('E-Mail Address', async () => {
                         let username = roles[role].username;
@@ -49,8 +47,7 @@ test.describe('My Profile Tests', async () => {
                         let emailControl = selectors.general.user_information.email_address();
 
                         await page.isVisible(emailControl);
-                        const computed = await page.locator(emailControl).inputValue();
-                        await expect(computed).toEqual(email);
+                        await expect(page.locator(emailControl)).toHaveValue(email);
                     });
                     await test.step('Top Role', async () => {
                         // We need to account for the different displays for users

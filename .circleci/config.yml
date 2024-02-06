@@ -94,7 +94,7 @@ jobs:
           command: docker exec -w /xdmod xdmod composer install --no-progress
       - run:
           name: Run Regression Tests
-          command: docker exec -w /xdmod xdmod /xdmod/tests/regression/runtests.sh
+          command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> -w /xdmod xdmod /xdmod/tests/regression/runtests.sh
       - run:
           name: Setup Configuration Files for Integration Tests
           command: |

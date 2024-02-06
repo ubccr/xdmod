@@ -52,8 +52,17 @@ then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true
     rm -rf /etc/xdmod
 
-    rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
+    rm -rf /var/lib/mysql
+    mkdir -p /var/lib/mysql
+    mkdir -p /var/log/mariadb
+    mkdir -p /var/run/mariadb
+    chown -R mysql:mysql /var/lib/mysql
+    chown -R mysql:mysql /var/log/mariadb
+    chown -R mysql:mysql /var/run/mariadb
+
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
+    mysql_install_db --user mysql
+    mv /etc/my.cnf.d/mariadb-server.cnf.rpmsave /etc/my.cnf.d/mariadb-server.cnf
     copy_template_httpd_conf
     ~/bin/services start
     mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
