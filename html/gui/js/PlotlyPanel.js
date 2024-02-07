@@ -88,7 +88,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                                         }
                                     }
                                 }
-                                const point = getClickedPoint(evt, traces, this.chartOptions.data);
+                                const point = getClickedPoint(evt, traces);
                                 if (point) {
                                     pointClick = true;
                                     XDMoD.Module.MetricExplorer.pointContextMenu(point, point.data.datasetId, undefined);

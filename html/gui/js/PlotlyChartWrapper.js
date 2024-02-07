@@ -2,27 +2,40 @@
 // TODO: Convert label and axis formatters for Plotly
 Ext.namespace('XDMoD.utils');
 
-function topLegend(baseChartOptions) {
-    if (baseChartOptions.layout.legend) {
-        return  (baseChartOptions.layout.legend.xanchor == 'center' &&
-                 baseChartOptions.layout.legend.yanchor == 'top'    &&
-                 baseChartOptions.layout.legend.yref != 'paper')
+function topLegend(layout) {
+    if (layout.legend) {
+        return  (layout.legend.xanchor == 'center' &&
+                 layout.legend.yanchor == 'top'    &&
+                 layout.legend.yref != 'paper')
     }
     return false;
 }
 
-function adjustTitles(baseChartOptions) {
-    let subtitle = baseChartOptions.layout.annotations[1];
-    const len = subtitle.text.length;
-    if (len > 0) {
-       const axWidth = baseChartOptions.layout.width -  baseChartOptions.layout.margin.l - baseChartOptions.layout.margin.r;
-       const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 8));
-       baseChartOptions.layout.margin.t += (subtitle_lines.length * 15);
-       baseChartOptions.layout.annotations[1].text = subtitle_lines.join('<br />');
-       if (!topLegend(baseChartOptions)) {
-        baseChartOptions.layout.annotations[0].y += (0.05 * subtitle_lines.length);
-       }
+function adjustTitles(layout) {
+    if (layout.annotations && layout.annotations.length == 0) {
+        return 0;
     }
+    let subtitle = layout.annotations[1];
+    const len = subtitle.text.length;
+    let subtitleLineCount = 0;
+    if (len > 0) {
+       const axWidth = layout.width -  layout.margin.l - layout.margin.r;
+       const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 8));
+       layout.margin.t = 45 + (subtitle_lines.length * 15);
+       layout.annotations[1].text = subtitle_lines.join('<br />');
+       if (topLegend(layout)) {
+           layout.legend.y = 0.95 - (0.025 * subtitle_lines.length);
+           layout.annotations[1].yshift = (17 * subtitle_lines.length) * -1;
+       }
+       subtitleLineCount = subtitle_lines.length;
+    }
+    else {
+        if (topLegend(layout)) {
+            layout.margin.t = 45 + 20;
+        }
+    }
+    
+    return subtitleLineCount;
 }
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
@@ -44,6 +57,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         baseChartOptions.layout = errorConfig;
         baseChartOptions.layout.width = width;
         baseChartOptions.layout.height = height;
+        baseChartOptions.layout.annotations = [];
         if (baseChartOptions.realmOverview) {
             baseChartOptions.layout.images[0].sizex = 4;
             baseChartOptions.layout.images[0].sizey = 4;
@@ -52,35 +66,19 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         else if (margin && titleAndSubtitle) {
             baseChartOptions.layout.margin = margin;
             baseChartOptions.layout.annotations = titleAndSubtitle;
-            baseChartOptions.layout.annotations[0].y = 1.0;
-            adjustTitles(baseChartOptions);
-        }
-    } else {
-        if ('annotations' in baseChartOptions.layout && baseChartOptions.layout.annotations.length != 0) {
-            if (baseChartOptions.data[0].type === 'pie') {
-                baseChartOptions.layout.margin.t += 15;
-                baseChartOptions.layout.annotations[0].y += 0.1;
-                baseChartOptions.layout.annotations[1].y += 0.085;
-            }
-            adjustTitles(baseChartOptions); 
-            // Place credits in bottom right corner
-            if (baseChartOptions.layout.thumbnail) {
-                baseChartOptions.layout.annotations[2].yshift = ((baseChartOptions.layout.height - baseChartOptions.layout.margin.t) * -1);
-                baseChartOptions.layout.annotations[2].xshift = baseChartOptions.layout.margin.r;
-            }
-            else {
-                baseChartOptions.layout.annotations[2].yshift = ((baseChartOptions.layout.height - baseChartOptions.layout.margin.t) * -1);
-                baseChartOptions.layout.annotations[2].xshift = baseChartOptions.layout.margin.r;
-            }
         }
     }
-    if (baseChartOptions.metricExplorer) {
-        configs.showTips = false;
-    }
+    else {
+        if (baseChartOptions.metricExplorer) {
+            configs.showTips = false;
+        }
 
-    if (!isEmpty) {
+        if (baseChartOptions.data[0].type === 'pie' && baseChartOptions.data[0].text.length > 0) {
+            baseChartOptions.layout.margin.t += 30;
+        }
+
         // Remove titles and credits from thumbnail plots
-        if (baseChartOptions.layout.thumbnail && !isEmpty) {
+        if (baseChartOptions.layout.thumbnail) {
             const endIndex = baseChartOptions.layout.annotations.findIndex((elem) => elem.name === 'data_label');
             if (endIndex === -1) {
                 baseChartOptions.layout.annotations = [];
@@ -89,14 +87,14 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
         // Set tickmode to auto for thumbnail plots. Large amount of tick labels for thumbnail plots cause them
         // to lag.
-        if (baseChartOptions.layout.thumbnail && baseChartOptions.layout.xaxis.type != 'category' && !isEmpty) {
+        if (baseChartOptions.layout.thumbnail && baseChartOptions.layout.xaxis.type != 'category') {
            const axesLabels = getMultiAxisObjects(baseChartOptions.layout);
            if (baseChartOptions.swapXY) {
-               baseChartOptions.layout.yaxis.tickmode = 'auto';
+               //baseChartOptions.layout.yaxis.tickmode = 'auto';
                baseChartOptions.layout.yaxis.nticks = 5;
            }
            else {
-               baseChartOptions.layout.xaxis.tickmode = 'auto';
+               //baseChartOptions.layout.xaxis.tickmode = 'auto';
                baseChartOptions.layout.xaxis.nticks = 5;
            }
            for (let i = 0; i < axesLabels.length; i++) {
@@ -108,7 +106,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         // for comparison idea
         baseChartOptions.data.sort((trace1, trace2) => {
             if (baseChartOptions.layout.barmode != 'group') {
-                if (trace1.name.startsWith('Std Err:') || trace2.name.startsWith('Std Err:')) {
+                if (trace2.name.startsWith('Std Err:')) {
                     return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
                 }
                 return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.legendrank - trace1.legendrank);
@@ -121,7 +119,36 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
                 return res;
             }
         });
-   }
-    
-    return Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, configs);
+    }
+
+    const chart = Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, configs);
+    const chartDiv = document.getElementById(baseChartOptions.renderTo);
+
+    chartDiv.once('plotly_afterplot', (evt) => {
+        if (baseChartOptions.layout.annotations.length === 0){
+            return;
+        }
+        const topCenter = topLegend(baseChartOptions.layout);
+        const subtitleLineCount = adjustTitles(baseChartOptions.layout);
+        const marginTop = baseChartOptions.layout.margin.t;
+        const marginRight = chartDiv._fullLayout._size.r;
+        const legendHeight = topCenter ? chartDiv._fullLayout.legend._height : 0;
+        const titleHeight = 30;
+        const subtitleHeight = 20;
+        let update = {
+            'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
+            'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount),
+        }
+
+        if (baseChartOptions.layout.annotations.length > 2) {
+            const marginBottom = chartDiv._fullLayout._size.b;
+            const plotAreaHeight = chartDiv._fullLayout._size.h;
+            update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1;
+            update['annotations[2].xshift'] = marginRight;
+        }
+
+        Plotly.relayout(baseChartOptions.renderTo, update);
+    });
+
+    return chart;
 }

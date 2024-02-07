@@ -249,7 +249,7 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
 
     return ret;
 }
-function getClickedPoint(evt, traces, data) {
+function getClickedPoint(evt, traces) {
     let point;
     if ((traces && traces.length === 0) || (evt.points && evt.points.length === 0)) {
         return point;
@@ -262,36 +262,16 @@ function getClickedPoint(evt, traces, data) {
                 const dimensions = points[j].getBoundingClientRect();
                 if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right &&
                     evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
-                    let pointIndex;
-                    // Grab color of point so we can find it in the dataset
-                    // This is assuming two primary traces cannot be the same color
-                    // which seems to be the case
-                    // Bar charts and scatter plots have their fill in different locations
-                    let traceColor = points[j].firstChild ? points[j].firstChild.style.fill : points[j].style.fill;
-                    // Strip trace color string to get values
-                    if (traceColor.length != 0) {
-                        if (traceColor[3] === 'a') {
-                            // Strip the opacity
-                            traceColor = traceColor.slice(5,-1).split(',').slice(0,-1);
+                    const dataValue = points[j]['__data__'].s ? points[j]['__data__'].s : points[j]['__data__'].y;
+                    const swapXY = evt.points[0].data.yaxis ? false : true;
+                    const pointIndex = evt.points.findIndex((trace) => {
+                        if (trace.value) {
+                            return trace.value === dataValue;
                         }
                         else {
-                            traceColor = traceColor.slice(4,-1).split(',');
+                            return swapXY ? trace.x === dataValue : trace.y === dataValue;
                         }
-                        // Convert trace color to hex so we can compare them to the dataset
-                        // Referenced https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb @Tim Down
-                        // for rgb to hex conversion
-                        const rgbToHex = (num) => { 
-                            var hex = Math.abs(num).toString(16);
-                            return hex.length == 1 ? "0" + hex : hex;
-                        }
-                        const hexColor = '#' + rgbToHex(traceColor[0]) + rgbToHex(traceColor[1]) + rgbToHex(traceColor[2]);
-                        for (let k = 0; k < data.length; k++) {
-                            if (data[k].line.color === hexColor && !data[k].name.startsWith('Trend Line:')) {
-                                pointIndex = data[k].name;
-                            }
-                        }
-                    }
-                    pointIndex = evt.points.findIndex((trace) => trace.data.name === pointIndex);
+                    });
                     point = evt.points[pointIndex];
                     break;
                 }

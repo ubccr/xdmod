@@ -584,6 +584,7 @@ class PlotlyTimeseries2 extends Plotly2
                         }
                         $trace = array(
                             'name' => $lookupDataSeriesName,
+                            'customdata' => $lookupDataSeriesName,
                             'otitle' => $formattedDataSeriesName,
                             'datasetId' => $data_description->id,
                             'zIndex' => $zIndex,
@@ -634,7 +635,7 @@ class PlotlyTimeseries2 extends Plotly2
                             'y' => $this->_swapXY ? $xValues : $yValues,
                             'offsetgroup' => "group{$traceIndex}",
                             'legendgroup' => $traceIndex,
-                            'legendrank' => ($traceIndex+1),
+                            'legendrank' => $traceIndex,
                             'seriesData' => $seriesValues,
                             'visible' => $visible,
                             'isRemainder' => $isRemainder,
@@ -768,7 +769,7 @@ class PlotlyTimeseries2 extends Plotly2
                             }
                         }
 
-                        if (in_array($yValues, null) && $data_description->display_type == 'line') {
+                        if (in_array(null, $yValues) && $data_description->display_type == 'line') {
                             $null_trace = array(
                                 'name' => 'gap connector',
                                 'zIndex' => $zIndex,
@@ -800,8 +801,9 @@ class PlotlyTimeseries2 extends Plotly2
                         $data_labels = array();
                         $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
                         if($data_description->value_labels || $data_description->std_err_labels) {
-                            if ($trace['type'] == 'bar' &&  count($yAxisDataObjectsArray) != 1) {
-                                $trace['constraintext'] = 'none';
+                            if ($trace['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
+                                // For export this needs to be 'none'
+                                $trace['constraintext'] = $data_description->combine_type!='side' ? 'both' : 'none';
                                 $trace['text'] = $text;
                             }
                             else {
@@ -855,11 +857,11 @@ class PlotlyTimeseries2 extends Plotly2
                                     if ($data_description->value_labels && !$data_description->std_err_labels) {
                                         array_push($this->_chart['layout']['annotations'], $data_label);
                                     }
-                                    else if ($data_description->std_err_labels) {
+                                    else if (($data_description->std_err_labels) || ($data_description->value_labels && $data_description->std_err_labels)) {
                                         array_push($data_labels, $data_label);
                                     }
                                 }
-                            }
+                             }
                         }
 
                         $this->_chart['data'][] = $trace;
@@ -882,8 +884,8 @@ class PlotlyTimeseries2 extends Plotly2
                                 $v = $yAxisDataObject->getValue($i);
                                 $e = $yAxisDataObject->getError($i);
                                 $stderr[] = $e;
-                                $dataLabels[] = isset($e) && isset($v) ? number_format($v, $decimals, '.', ',') . ' [+/- ' . number_format($e, $semDecimals, '.', ',') . ']' : null;
-                                $errorLabels[] = isset($e) ? '+/- ' . number_format($e, $semDecimals, '.', ',') : null;
+                                $errorLabels[] = isset($e) ? '+/- ' . number_format($e, $semDecimals, '.', ',') : '+/-' . number_format(0, $semDecimals, '.', ',');
+                                $dataLabels[] = isset($v) ? number_format($v, $decimals, '.', ',') . ' [' . $errorLabels[$i] . ']': (isset($e) ? $errorLabels[$i] : '');
                             }
 
                             $dsn = 'Std Err: '.$formattedDataSeriesName;
@@ -907,6 +909,7 @@ class PlotlyTimeseries2 extends Plotly2
                             // create the data series description:
                             $error_trace = array_merge($trace, array(
                                 'name' => $dsn,
+                                'customdata' => $dsn,
                                 'otitle' => $dsn,
                                 'datasetId' => $data_description->id,
                                 'color'=> $error_color,
@@ -930,7 +933,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 'showlegend' => true,
                                 'legendgroup' => null,
                                 'connectgaps' => false,
-                                'legendrank' => $trace['legendrank']+1,
+                                'legendrank' => $traceIndex + 1,
                                 'isRestrictedByRoles' => $data_description->restrictedByRoles,
                             ));
 
@@ -948,7 +951,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 // Referenced https://stackoverflow.com/questions/15202079/convert-hex-color-to-rgb-values-in-php
                                 // for idea
                                 list($r, $g, $b) = sscanf($trace['marker']['color'], '#%02x%02x%02x');
-                                $a = 0.1;
+                                $a = 0.4;
                                 $fillColor = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . $a . ')';
                                 $error_trace['fillcolor'] = $fillColor;
                                 if ($data_description->combine_type=='stack') {
@@ -988,7 +991,7 @@ class PlotlyTimeseries2 extends Plotly2
                                     $error_trace['error_y'] = $error_y;
                                 }
                             }
-
+                            $idx = count($this->_chart['data']) - 1;
                             if (!$data_description->value_labels && $data_description->std_err_labels) {
                                 if ($trace['type'] == 'bar' && count($data_labels) == 0) {
                                     $this->_chart['data'][$idx]['text'] = $errorLabels; 

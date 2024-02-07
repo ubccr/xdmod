@@ -485,10 +485,16 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     handler: function(t) {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
                         let range = [];
-                        range[0] = instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
-                        range[1] = instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
+                        const swapXY = instance.plotlyPanel.chartOptions.layout.swapXY;
+                        range[0] = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
+                        range[1] = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
                         if (range[0] != 0 || range[1] != null) {
-                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': false });
+                            if (swapXY) {
+                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'xaxis.range': range, 'yaxis.autorange': false });
+                            }
+                            else {
+                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': false });
+                            }
                         }
                         else {
                             Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.autorange': true });
@@ -6406,16 +6412,33 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         function onResize(t, adjWidth, adjHeight, rawWidth, rawHeight) {
             this.maximizeScale.call(this);
+            const chartDiv = document.getElementById('plotly-panel' + this.id);
             const metricDiv = document.getElementById(this.id);
-            const annotationDiv = metricDiv.getElementsByClassName('annotation');
-            const credits = annotationDiv && annotationDiv.length > 2 ? annotationDiv : null;
-            if (credits) {
-                const plotDiv = document.getElementById('plotly-panel' + this.id);
-                const marginTop = plotDiv._fullLayout.margin.t;
-                const marginRight = plotDiv._fullLayout.margin.r;
-                Plotly.relayout('plotly-panel' + this.id, { width: adjWidth, height: adjHeight, 'annotations[2].yshift': ((adjHeight - marginTop) * -1), 'annotations[2].xshift': marginRight });
-            } else {
+            if (chartDiv) {
                 Plotly.relayout('plotly-panel' + this.id, { width: adjWidth, height: adjHeight });
+                if (chartDiv._fullLayout.annotations.length != 0){
+                    const topCenter = topLegend(chartDiv._fullLayout);
+                    const subtitleLineCount = adjustTitles(chartDiv._fullLayout);
+                    const marginTop = topCenter && subtitleLineCount > 0 ? chartDiv._fullLayout.margin.t : chartDiv._fullLayout._size.t;
+                    const marginRight = chartDiv._fullLayout._size.r;
+                    let legendHeight = topCenter ? chartDiv._fullLayout.legend._height : 0;
+                    const titleHeight = 30;
+                    const subtitleHeight = 15;
+                    const shift = topCenter ? 15 : 33;
+                    let update = {
+                        'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
+                        'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount) - shift,
+                    }
+
+                    if (chartDiv._fullLayout.annotations.length > 2) {
+                        const marginBottom = chartDiv._fullLayout._size.b;
+                        const plotAreaHeight = chartDiv._fullLayout._size.h;
+                        update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1;
+                        update['annotations[2].xshift'] = marginRight;
+                    }
+
+                    Plotly.relayout('plotly-panel' + this.id, update);
+                }
             }
         } //onResize
 

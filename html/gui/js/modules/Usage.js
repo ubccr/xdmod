@@ -2594,22 +2594,31 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 const usageDiv = document.getElementById(this.id);
                 if (chartDiv) {
                     Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
-                    var annotationDiv = usageDiv.getElementsByClassName('annotation');
-                    if (annotationDiv && annotationDiv.length > 1) {
-                        const marginTop = chartDiv._fullLayout.margin.t;
-                        const marginRight = chartDiv._fullLayout.margin.r;
-                        let update = {};
-                        if (annotationDiv.length >= 3) {
-                            update['annotations[2].yshift'] = ((adjHeight - marginTop) * -1);
-                            update['annotations[2].xshift'] = marginRight;
+                    if (this.chartOptions.layout.annotations.length != 0){
+                        const topCenter = topLegend(this.chartOptions.layout);
+                        const subtitleLineCount = adjustTitles(this.chartOptions.layout);
+                        const marginTop = topCenter ? chartDiv._fullLayout.margin.t : chartDiv._fullLayout._size.t;
+                        const marginRight = chartDiv._fullLayout._size.r;
+                        let legendHeight = topCenter ? chartDiv._fullLayout.legend._height : 0;
+                        const titleHeight = 30;
+                        const subtitleHeight = 20;
+                        // This needs a rework -- issue is that legend height occupies the margin differently
+                        // when resizing the window smaller.
+                        // We need a number that scales down as the height scales down but in a magntiude that
+                        // makes sense for shifting the titles by pixels
+                        /*if (adjHeight <= 500) {
+                            legendHeight = 10;
+                        }*/
+                        let update = {
+                            'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
+                            'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount),
                         }
-                        if (topLegend(this.chartOptions)) {
-                            const legendDiv = usageDiv.getElementsByClassName('legend').length != 0 ? usageDiv.getElementsByClassName('legend')[0] : null;
-                            if (legendDiv && legendDiv.firstChild) {
-                                const dimensions = legendDiv.firstChild.getBoundingClientRect();
-                                update['annotations[0].yshift'] = dimensions.height + 30;
-                                update['annotations[1].yshift'] = dimensions.height + 10;
-                            }
+
+                        if (this.chartOptions.layout.annotations.length > 2) {
+                            const marginBottom = chartDiv._fullLayout._size.b;
+                            const plotAreaHeight = chartDiv._fullLayout._size.h;
+                            update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1;
+                            update['annotations[2].xshift'] = marginRight;
                         }
 
                         Plotly.relayout(this.chartId, update);
@@ -2761,7 +2770,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     }
                                     else {
                                         const traces = usageDiv.getElementsByClassName('plot')[0].firstChild.children;
-                                        point = getClickedPoint(evt, traces, this.chartOptions.data);
+                                        point = getClickedPoint(evt, traces);
                                     }
                                 }
                                 if (!point) {
@@ -2793,7 +2802,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                         Plotly.update(chartDiv, {[errorBar]: true}, {}, [evt.curveNumber+1]);
                                     }
                                 }
-                                else {
+                                /*else {
                                     if (node.nextSibling) {
                                         const sibling = node.nextSibling
                                         if (sibling.textContent.startsWith('Std Err:')) {
@@ -2821,7 +2830,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                             }
                                         }
                                     }
-                                }
+                                }*/
                             });
 
                         }, this); //task

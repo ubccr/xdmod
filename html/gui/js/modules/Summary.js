@@ -632,9 +632,6 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                     layout: {
                         width: portletWidth,
                         height: portletWidth * portletAspect,
-                        xaxis: {
-                            tickmode: 'auto'
-                        },
                         thumbnail: true,
                         margin: {
                             t: 22,

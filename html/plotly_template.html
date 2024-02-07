@@ -39,6 +39,11 @@
         var chartOptions = {};
         // Chart will be fully configured if export call came from non-supremm module tab
         if (inputChartOptions.layout) {
+            if (chartOptions.data && chartOptions.data.length > 0) {
+                if (chartOptions.data[0].type === 'pie' && chartOptions.data[0].text.length > 0) {
+                    chartOptions.layout.margin.t += 30;
+                }
+            }
             chartOptions = inputChartOptions;
             chartOptions.layout['width'] = _width_;
             chartOptions.layout['height'] = _height_;
@@ -51,26 +56,43 @@
                 return s.match(new RegExp(`([^\\n]{1,${wrapWidth}})(?=\\s|$)`, 'g'))
             }
 
-            let topLegend = (chartOptions) => {
-                return  (chartOptions.layout.legend.xanchor == 'center' &&
-                         chartOptions.layout.legend.yanchor == 'top'    &&
-                         chartOptions.layout.legend.yref != 'paper')
+            let topLegend = (layout) => {
+                return  (layout.legend.xanchor == 'center' &&
+                         layout.legend.yanchor == 'top'    &&
+                         layout.legend.yref != 'paper')
             }
-            let adjustTitles = (chartOptions) => {
-                let subtitle = chartOptions.layout.annotations[1];
-                const len = subtitle.text.length;
-                if (len > 0) {
-                   const axWidth = chartOptions.layout.width -  chartOptions.layout.margin.l - chartOptions.layout.margin.r;
-                   const subtitle_lines = lineSplit(subtitle.text, Math.trunc(axWidth / 8));
-                   chartOptions.layout.margin.t += (subtitle_lines.length * 15);
-                   chartOptions.layout.annotations[1].text = subtitle_lines.join('<br />');
-                   if (!topLegend(chartOptions)) {
-                    chartOptions.layout.annotations[0].y += (0.05 * subtitle_lines.length);
-                   }
+            let adjustTitles = (layout) => {
+                if (layout.annotations && layout.annotations.length == 0) {
+                    return 0;
                 }
+                let subtitle = layout.annotations[1];
+                const len = subtitle.text.length;
+                let subtitleLineCount = 0;
+                if (len > 0) {
+                   const axWidth = _width_ -  layout.margin.l - layout.margin.r;
+                   const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 8));
+                   layout.margin.t = 45 + (subtitle_lines.length * 15);
+                   layout.annotations[1].text = subtitle_lines.join('<br />');
+                   if (topLegend(layout)) {
+                       layout.legend.y = 0.95 - (0.025 * subtitle_lines.length);
+                       layout.annotations[1].yshift = (17 * subtitle_lines.length) * -1;
+                   }
+                   subtitleLineCount = subtitle_lines.length;
+                }
+                else {
+                    if (topLegend(layout)) {
+                        layout.margin.t = 45 + 20;
+                    }
+                }
+                
+                return subtitleLineCount;
             }
-            adjustTitles(chartOptions);
+            adjustTitles(chartOptions.layout);
+            for (let i = 0; i < chartOptions.data.length; i++) {
+                // Rollback constrain for bar chart text font size
+                chartOptions.data[i]['constraintext'] = 'none';
 
+            }
         }
         else {
             chartOptions = generateChartOptions(inputChartOptions, args);
@@ -80,6 +102,35 @@
         chartOptions.layout['height'] = _height_;
 
         Plotly.newPlot('container', chartOptions.data, chartOptions.layout, { staticPlot: true } );
+
+
+        const chartDiv = document.getElementById('container');
+        chartDiv.once('plotly_afterplot', (evt) => {
+            if (chartOptions.layout.annotations.length === 0){
+                return;
+            }
+            const topCenter = topLegend(chartOptions.layout);
+            const subtitleLineCount = adjustTitles(chartOptions.layout);
+            const marginTop = chartDiv._fullLayout.margin.t;
+            const marginRight = chartDiv._fullLayout._size.r;
+            const legendHeight = topCenter ? chartDiv._fullLayout.legend._height : 0;
+            const titleHeight = 30;
+            const subtitleHeight = 20;
+            let update = {
+                'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
+                'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount),
+            }
+
+            if (chartOptions.layout.annotations.length > 2) {
+                const legendOffset = topCenter ? legendHeight + 2: 0;
+                update['annotations[2].yshift'] = ((chartOptions.layout.height - marginTop) * -1) + (legendOffset);
+                update['annotations[2].xshift'] = marginRight;
+            }
+
+            Plotly.relayout('container', update);
+
+        });
+ 
         });
 
         </script>

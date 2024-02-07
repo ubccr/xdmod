@@ -177,7 +177,7 @@ class Plotly2
                     'bgcolor' => 'rgba(255, 255, 255, 0.8)',
                     'font' => array(
                         'size' => 12.8,
-                        'color' => '#000000',
+                        'color' => '#333333',
                         'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
                     ),
                     'namelength' => -1,
@@ -449,8 +449,6 @@ class Plotly2
                 $this->_chart['layout']['legend']['x'] = 0.5;
                 $this->_chart['layout']['legend']['y'] = 0.925;
                 $this->_chart['layout']['legend']['orientation'] = 'h';
-                $this->_chart['layout']['annotations'][0]['y'] = 0.99;
-                $this->_chart['layout']['annotations'][1]['y'] = 0.99;
                 break;
             //case 'bottom_right':
             //break;
@@ -715,6 +713,7 @@ class Plotly2
                 'size' => ($font_size + 11),
                 'color' => '#606060',
             ),
+            //'ticktext' => array(),
             'type' => 'category',
             'linewidth' => 2 + $font_size / 4,
             'linecolor' => '#c0d0e0',
@@ -1042,6 +1041,7 @@ class Plotly2
 
                 $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
                 $data_labels_enabled = $data_description->value_labels || $std_err_labels_enabled;
+                $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
                 $this->_chart['layout']['stdErr'] = $data_description->std_err;
                 $trace = array();
                 $drilldown = array();
@@ -1080,10 +1080,13 @@ class Plotly2
                     } // foreach
                     // Dont add data labels for all pie slices. Plotly will render all labels otherwise,
                     // which causes the margin on pie charts with many slices to break
-                    $pieLimit = 12;
+                    $labelLimit = 12;
+                    $labelsAllocated = 0;
+                    $pieSum = array_sum($yValues);
                     for ($i = 0; $i < count($xValues); $i++) {
-                        if ($i < $pieLimit) {
+                        if ($isThumbnail || ($labelsAllocated < $labelLimit && (($yValue[$i] / $pieSum) * 100) >= 2.0)) {
                             $text[] = '<b>' . $xValues[$i] . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
+                            $labelsAllocated++;
                         }
                         else {
                             $text[] = '';
@@ -1191,7 +1194,7 @@ class Plotly2
                                . $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
                 }
                 $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
-                if ($yAxisCount > 1) {
+                if ($yAxisCount > 1 || $data_description->std_err == 1) {
                     $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'x unified';
                     $tooltip = $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
                     $this->_chart['layout']["{$yAxisName}"]['showgrid'] = false;
@@ -1203,6 +1206,7 @@ class Plotly2
                 $trace = array_merge($trace, array(
                     'automargin'=> $data_description->display_type == 'pie' ? true : null,
                     'name' => $lookupDataSeriesName,
+                    'customdata' => $lookupDataSeriesName,
                     'zIndex' => $zIndex,
                     'cliponaxis' => false,
                     'otitle' => $formattedDataSeriesName,
@@ -1326,26 +1330,21 @@ class Plotly2
                 if ($this->_swapXY && $data_description->display_type!='pie') {
                     if ($trace['type'] == 'bar') {
                         $trace = array_merge($trace, array('orientation' => 'h'));
-                        $trace['hovertemplate'] = '%{hovertext}' . '<br>'. "<span style=\"color:$color\";> ●</span> "
-                            . $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
-                        if ($data_description->std_err) {
-                            $trace['hovertemplate'] = $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
-                        }
                         $trace['textangle'] = 0;
-                    } else {
-                        if ($this->_chart['layout']['hovermode'] != 'closest') {
-                            $this->_chart['layout']['hovermode'] = 'y unified';
-                            $trace['hovertemplate'] = $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
-                        }
-                        else {
-                            $trace['hovertemplate'] = '%{hovertext} <br>' . "<span style=\"color:$color\";> ●</span> " 
-                               . $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
- 
-                        }
+                    }
+                    if ($this->_chart['layout']['hovermode'] != 'closest') {
+                        $this->_chart['layout']['hovermode'] = 'y unified';
+                        $trace['hovertemplate'] = $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
+                    }
+                    else {
+                        $trace['hovertemplate'] = '%{hovertext} <br>' . "<span style=\"color:$color\";> ●</span> " 
+                           . $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
                     }
                     unset($trace['yaxis']);
-                    $this->_chart['layout']['yaxis'] = $this->_chart['layout']["{$xAxisName}"];
-                    $this->_chart['layout']["{$xAxisName}"] = $yAxis;
+                    $xtmp = $this->_chart['layout']["{$xAxisName}"];
+                    $ytmp = $this->_chart['layout']["{$yAxisName}"];
+                    $this->_chart['layout']['yaxis'] = &$xtmp;
+                    $this->_chart['layout']["{$xAxisName}"] = &$ytmp;
                     $trace['xaxis'] = "x{$yIndex}";
                     if ($yAxisIndex > 1) {
                         unset($this->_chart['layout']["{$yAxisName}"]);
@@ -1380,7 +1379,7 @@ class Plotly2
                     unset($this->_chart['layout']['yaxis']['position']);
                 }
 
-               if (in_array($yValues, null) && $data_description->display_type == 'line') {
+               if (in_array(null, $yValues) && $data_description->display_type == 'line') {
                     $null_trace = array(
                         'name' => 'gap connector',
                         'zIndex' => $zIndex,
@@ -1444,10 +1443,9 @@ class Plotly2
                   $formattedDataSeriesName,
                   $yAxisIndex,
                   $semDecimals,
+                  $decimals,
                   $zIndex
               );
-
-              $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
 
               if(($data_description->value_labels || $data_description->std_err_labels) && $data_description->display_type != 'pie') {
                   for ($i = 0; $i < count($xValues); $i++) {
@@ -1534,6 +1532,7 @@ class Plotly2
         $formattedDataSeriesName,
         $yAxisIndex,
         $semDecimals,
+        $decimals,
         $zIndex
     ) {
 
@@ -1550,8 +1549,8 @@ class Plotly2
                 $v = $yAxisDataObject->getValue($i);
                 $e = $yAxisDataObject->getError($i);
                 $stderr[] = $e;
-                $dataLabels[] = isset($e) && isset($v) ? number_format($v, $decimals, '.', ',') . ' [+/- ' . number_format($e, $semDecimals, '.', ',') . ']' : null;
-                $errorLabels[] = isset($e) ? '+/- ' . number_format($e, $semDecimals, '.', ',') : null;
+                $errorLabels[] = isset($e) ? '+/- ' . number_format($e, $semDecimals, '.', ',') : '+/-' . number_format(0, $semDecimals, '.', ',');
+                $dataLabels[] = isset($v) ? number_format($v, $decimals, '.', ',') . ' [' . $errorLabels[$i] . ']': (isset($e) ? $errorLabels[$i] : '');
             }
 
             // -- set error dataseries name and visibility --
