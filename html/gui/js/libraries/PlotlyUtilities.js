@@ -45,7 +45,7 @@ function getDefaultLayout() {
             }
         },
         annotations: [{
-            text: '. Powered by XDMoD/Plotly',
+            text: '. Powered by XDMoD/Plotly JS',
             font: {
                 color: '#909090',
                 size: 10,
@@ -222,7 +222,7 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             }
         },
         annotations: [{
-            text: `${record.data.schema.source}. Powered by XDMoD/Plotly`,
+            text: `${record.data.schema.source}. Powered by XDMoD/Plotly JS`,
             font: {
                 color: '#909090',
                 size: 10,

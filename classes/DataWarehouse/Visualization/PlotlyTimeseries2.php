@@ -983,13 +983,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 }
                             }
                             if (isset($trace['visible']) && $trace['visible'] != 1) {
-                                $error_trace['mode'] = 'markers';
-                                $error_trace['type'] = 'scatter';
-                                if ($this->_swapXY) {
-                                    $error_trace['error_x'] = $error_y;
-                                } else {
-                                    $error_trace['error_y'] = $error_y;
-                                }
+                                $error_trace['visible'] = 'legendonly';
                             }
                             $idx = count($this->_chart['data']) - 1;
                             if (!$data_description->value_labels && $data_description->std_err_labels) {

@@ -143,7 +143,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         if (baseChartOptions.layout.annotations.length > 2) {
             const marginBottom = chartDiv._fullLayout._size.b;
             const plotAreaHeight = chartDiv._fullLayout._size.h;
-            update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1;
+            update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1 + (15 * subtitleLineCount);
             update['annotations[2].xshift'] = marginRight;
         }
 

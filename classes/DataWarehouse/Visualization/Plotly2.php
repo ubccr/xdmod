@@ -146,7 +146,7 @@ class Plotly2
                     ),
                     array(
                         'name' => 'credits',
-                        'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly.',
+                        'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly JS.',
                         'font' => array(
                             'color' => '#909090',
                             'size' => 9.6,
@@ -368,7 +368,7 @@ class Plotly2
     {
         $src = count($source) > 0? ' Src: '.implode(', ', $source).'.':'';
         $this->_chart['layout']['annotations'][2]['text'] = $this->_startDate.' to '.
-            $this->_endDate.' '.$src.' Powered by XDMoD/Plotly';
+            $this->_endDate.' '.$src.' Powered by XDMoD/Plotly JS';
     } // setDataSource()
 
     // ---------------------------------------------------------
@@ -1084,7 +1084,7 @@ class Plotly2
                     $labelsAllocated = 0;
                     $pieSum = array_sum($yValues);
                     for ($i = 0; $i < count($xValues); $i++) {
-                        if ($isThumbnail || ($labelsAllocated < $labelLimit && (($yValue[$i] / $pieSum) * 100) >= 2.0)) {
+                        if ($isThumbnail || (($labelsAllocated < $labelLimit) && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
                             $text[] = '<b>' . $xValues[$i] . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
                             $labelsAllocated++;
                         }
@@ -1661,13 +1661,7 @@ class Plotly2
             }
 
             if (isset($trace['visible']) && $trace['visible'] != 1) {
-                $error_trace['mode'] = 'markers';
-                $error_trace['type'] = 'scatter';
-                if ($this->_swapXY) {
-                    $error_trace['error_x'] = $error_y;
-                } else {
-                    $error_trace['error_y'] = $error_y;
-                }
+                $error_trace['visible'] = 'legendonly';
             }
 
             if(!$data_description->log_scale && $data_description->std_err)
