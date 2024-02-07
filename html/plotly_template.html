@@ -122,8 +122,9 @@
             }
 
             if (chartOptions.layout.annotations.length > 2) {
-                const legendOffset = topCenter ? legendHeight + 2: 0;
-                update['annotations[2].yshift'] = ((chartOptions.layout.height - marginTop) * -1) + (legendOffset);
+                const marginBottom = chartDiv._fullLayout._size.b;
+                const plotAreaHeight = chartDiv._fullLayout._size.h;
+                update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1;
                 update['annotations[2].xshift'] = marginRight;
             }
 

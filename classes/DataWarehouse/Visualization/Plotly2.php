@@ -1411,9 +1411,22 @@ class Plotly2
 
                if(!($data_description->display_type == 'pie')) {
                    $categoryLabels = array();
+                   $longLabel = false;
                    for ($i = 0; $i < count($xValues); $i++) {
-                       if (strlen($xValues[$i]) > 80) {
+                       if (count($xValues) > 20) {
+                           if ($i % 2 == 0) {
+                               $categoryLabels[] = substr($xValues[$i], 0, 25) . '...';
+                           }
+                           else {
+                               $categoryLabels[] = '';
+                           }
+                       }
+                       else if (strlen($xValues[$i]) > 70 || $longLabel) {
                            $categoryLabels[] = substr($xValues[$i], 0, 25) . '...';
+                           if (count($xValues) > 10 && !$longLabel) {
+                               $i = 0; // Go back and tidy up labels
+                               $longLabel = true;
+                           }
                        }
                        else if ($data_description->display_type == 'h_bar') {
                            $categoryLabels[] = wordwrap($xValues[$i], 40, '<br>');

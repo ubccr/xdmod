@@ -771,12 +771,17 @@ class Usage extends Common
                     $usageChartCategories = array();
                     $currentCategoryRank = $usageOffset + 1;
                     foreach ($meChartCategories as $meChartCategory) {
-                        if ($usageChartSettings['combine_type'] == 'stack' || $usageChartSettings['combine_type'] == 'percent') {
-                            $stackRank = abs(count($meChartCategory) - $currentCategoryRank) + 1;
-                            $usageChartCategories[] = "${stackRank}. ${meChartCategory}";
+                        if (!empty($meChartCategory)) {
+                            if ($usageChartSettings['combine_type'] == 'stack' || $usageChartSettings['combine_type'] == 'percent') {
+                                $stackRank = abs(count($meChartCategory) - $currentCategoryRank) + 1;
+                                $usageChartCategories[] = "${stackRank}. ${meChartCategory}";
+                            }
+                            else {
+                                $usageChartCategories[] = "${currentCategoryRank}. ${meChartCategory}";
+                            }
                         }
                         else {
-                            $usageChartCategories[] = "${currentCategoryRank}. ${meChartCategory}";
+                            $usageChartCategories[] = '';
                         }
                         $currentCategoryRank++;
                     }
