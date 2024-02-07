@@ -2790,6 +2790,38 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             });
 
                             chartDiv.on('plotly_legendclick', (evt) => {
+                                // First check if all traces are hidden.
+                                // There is a bug with tick text manually set.
+                                // We need to put tick text as empty if so.
+                                const visibleData = evt.fullData.filter((trace) => trace.visible === true);
+                                let tickType = 'array';
+                                if (evt.layout.swapXY) {
+                                    if (evt.layout.yaxis.type === 'date') {
+                                        tickType = 'date';
+                                    }
+                                }
+                                else {
+                                    if (evt.layout.xaxis.type === 'date') {
+                                        tickType = 'date';
+                                    }
+                                }
+                                if (visibleData.length == 1 && visibleData[0].index == evt.curveNumber) {
+                                    if (evt.layout.swapXY) {
+                                        Plotly.relayout(chartDiv, { 'yaxis.tickmode' : 'auto' });
+                                    }
+                                    else {
+                                        Plotly.relayout(chartDiv, { 'xaxis.tickmode' : 'auto' });
+                                    }
+                                }
+                                else {
+                                    if (evt.layout.swapXY) {
+                                        Plotly.relayout(chartDiv, { 'yaxis.tickmode' : tickType });
+                                    }
+                                    else {
+                                        Plotly.relayout(chartDiv, { 'xaxis.tickmode' : tickType });
+                                    }
+
+                                }
                                 const node = evt.node;
                                 const nodeVisibility = evt.node.style.opacity;
                                 // Check for std err to update where the error bars go
