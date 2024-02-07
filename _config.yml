@@ -29,11 +29,10 @@ latest_version: "10.5"
 latest_sw_version: "10.5.0"
 version_list:
   - "10.5"
-  - "10.0"
 unsupported_version_list:
+  - "10.0"
   - "9.5"
   - "9.0"
-  - "8.5"
 
 # For each version the variable `sw_version` should be set to latest release
 # version of Open XDMoD (e.g. "8.1.2") and `prev_sw_version` should be set to
@@ -116,6 +115,7 @@ defaults:
     values:
       layout: "page"
       version: "8.0"
+      style: "effervescence"
       menu_markdown: "8.0/menu.md"
 
   -
@@ -125,6 +125,7 @@ defaults:
     values:
       layout: "page"
       version: "7.5"
+      style: "effervescence"
       menu_markdown: "7.5/menu.md"
 
   -
@@ -134,6 +135,7 @@ defaults:
     values:
       layout: "page"
       version: "7.0"
+      style: "effervescence"
       menu_markdown: "7.0/menu.md"
 
   -
