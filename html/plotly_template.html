@@ -105,7 +105,12 @@
 
 
         const chartDiv = document.getElementById('container');
-        chartDiv.once('plotly_afterplot', (evt) => {
+
+        if (chartDiv) {
+            Plotly.relayout(baseChartOptions.renderTo, {});
+        }
+
+        chartDiv.once('plotly_relayout', (evt) => {
             if (chartOptions.layout.annotations.length === 0){
                 return;
             }

@@ -123,8 +123,15 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
 
     const chart = Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, configs);
     const chartDiv = document.getElementById(baseChartOptions.renderTo);
+   
+    // Need this because of bug with Plotly JS pie chart automargin
+    // which causes the chart to never fire the 'plotly_afterplot'
+    // event. Therefore, we need to explictly call an event.
+    if (chartDiv) {
+        Plotly.relayout(baseChartOptions.renderTo, {});
+    }
 
-    chartDiv.once('plotly_afterplot', (evt) => {
+    chartDiv.once('plotly_relayout', (evt) => {
         if (baseChartOptions.layout.annotations.length === 0){
             return;
         }
