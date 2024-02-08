@@ -610,7 +610,12 @@ class ReportBuilderTest extends BaseTest
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
-
+        if ($response[1]['content_type'] !== 'application/json' ||
+            $response[1]['http_code'] !== 200) {
+            echo "******** Invalid Response ********\n";
+            print_r($response);
+            echo "**********************************\n";
+        }
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
 
@@ -752,6 +757,13 @@ class ReportBuilderTest extends BaseTest
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
+
+        if ($response[1]['content_type'] !== 'image/png' ||
+            $response[1]['http_code'] !== 200) {
+            echo "******** Invalid Response ********\n";
+            print_r($response);
+            echo "**********************************\n";
+        }
 
         $this->assertEquals('image/png', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);

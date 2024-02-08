@@ -256,18 +256,6 @@ XDMoD.SignUpDialog = Ext.extend(Ext.Window, {
             signUpItems.push(captchaField);
         }
 
-        // Don't display XSEDE text in Open XDMoD.
-        if (CCR.xdmod.features.xsede) {
-            signUpItems.unshift(
-                new Ext.Panel({
-                    frame: true,
-                    title: 'Account Requirements',
-                    width: 550,
-                    html: '<p>Users affiliated with XSEDE do not need to request an XDMoD account; they should use their Globus credentials with a linked XSEDE account*. <br><br>Local accounts are created for users affiliated with XSEDE who do not have an XSEDE User Portal account <b>only with the express permission of XSEDE or NSF management</b>.</p><br><p>* Requires an active XSEDE User Portal account. See <a href="https://portal.xsede.org/software/globus" target="_blank" rel="noopener noreferrer">Add XSEDE to your Globus Profile</a> for more information.</p>'
-                })
-            );
-        }
-
         var signUpSection = new Ext.form.FormPanel({
             width: 310,
             autoHeight: true,

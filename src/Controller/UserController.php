@@ -57,6 +57,7 @@ class UserController extends BaseController
 
     /**
      * @Route("", methods={"POST"})
+     * @Route("/controllers/sab_user.php", methods={"GET"}, name="list_users_legacy")
      * @param Request $request
      * @return Response
      * @throws Exception

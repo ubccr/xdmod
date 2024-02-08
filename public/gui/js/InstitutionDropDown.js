@@ -1,6 +1,6 @@
 CCR.xdmod.ui.InstitutionDropDown = Ext.extend(Ext.form.ComboBox,  {
 
-   controllerBase: '/internal_dashboard/users/institutions',
+   controllerBase: '../controllers/user_admin.php',
    triggerAction: 'all',
 
    displayField: 'name',

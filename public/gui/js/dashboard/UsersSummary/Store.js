@@ -7,7 +7,7 @@
 Ext.namespace('XDMoD.UsersSummary');
 
 XDMoD.UsersSummary.Store = Ext.extend(Ext.data.JsonStore, {
-    url: '/internal_dashboard/users/summary',
+    url: '/internal_dashboard/controllers/user.php',
 
     listeners: {
         exception: function (misc) {

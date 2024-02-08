@@ -3,7 +3,7 @@ Ext.namespace('XDMoD');
 // eslint-disable-next-line no-unused-vars
 var displayExceptionEmails = function () {
     Ext.Ajax.request({
-        url: '/internal_dashboard/users/emails/exceptions',
+        url: '/controllers/user_admin.php',
         params: { operation: 'enum_exception_email_addresses' },
         method: 'POST',
         callback: function (options, success, response) {
@@ -226,7 +226,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------------------------------
 
         var storeUserType = new DashboardStore({
-            url: '/internal_dashboard/users/types',
+            url: '/controllers/user_admin.php',
             root: 'user_types',
             autoLoad: true,
             baseParams: { operation: 'enum_user_types' },
@@ -310,7 +310,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         this.on('activate', function () {
             Ext.Ajax.request({
-                url: '/internal_dashboard/users/types',
+                url: '/controllers/user_admin.php',
                 params: { operation: 'enum_user_types' },
                 method: 'POST',
 
@@ -396,7 +396,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         var storeUserListing = new DashboardStore(
             {
                 autoload: true,
-                url: '/internal_dashboard/users',
+                url: '/controllers/user_admin.php',
                 baseParams: {
                     operation: 'list_users',
                     group: ''
@@ -463,27 +463,8 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------
 
         var userManagementAction = function (objParams) {
-            var url = '/internal_dashboard/users';
-            switch (objParams.operation) {
-                case 'delete_user':
-                    url += '/delete';
-                    break;
-                case 'empty_report_image_cache':
-                    url += '/reports/images/cache';
-                    break;
-                case 'update_user':
-                    url += '/update';
-                    break;
-                case 'pass_reset':
-                    url += '/password';
-                    break;
-                default:
-                    // error case
-                    break;
-            }
-
             Ext.Ajax.request({
-                url: url,
+                url: '/controllers/user_admin.php',
                 params: objParams,
                 method: 'POST',
 

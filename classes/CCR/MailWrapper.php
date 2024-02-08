@@ -35,7 +35,7 @@ class MailWrapper
             throw new \Exception('There is no subject');
         }
 
-        (new MailWrapper())->addAddresses($mail, $properties);
+        MailWrapper::addAddresses($mail, $properties);
 
         if(!empty($properties['fromAddress'])) {
             $address = $properties['fromAddress'];

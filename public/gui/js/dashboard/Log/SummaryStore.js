@@ -7,7 +7,7 @@
 Ext.namespace('XDMoD', 'XDMoD.Log');
 
 XDMoD.Log.SummaryStore = Ext.extend(Ext.data.JsonStore, {
-    url: '/internal_dashboard/logs/summary',
+    url: '/controllers/log.php',
 
     listeners: {
         exception: function () {

@@ -20,7 +20,7 @@ XDMoD.UVGrid = Ext.extend(Ext.grid.GridPanel,  {
          },
 
          proxy: new Ext.data.HttpProxy({
-            url:'/internal_dashboard/users/visits',
+            url:'/internal_dashboard/controllers/controller.php',
 
          }),
 
@@ -79,7 +79,7 @@ XDMoD.UVGrid = Ext.extend(Ext.grid.GridPanel,  {
 
       self.prepCSV = function() {
           CCR.submitHiddenFormImmediately(
-              '/internal_dashboard/users/visits/export',
+              '/internal_dashboard/controllers/controller.php',
               'POST',
               {
                   operation: 'enum_user_visits_export',

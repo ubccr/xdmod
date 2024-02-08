@@ -96,7 +96,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
             proxy: new Ext.data.HttpProxy({
                 method: 'GET',
-                url: '/summary/charts'
+                url: '/controllers/ui_data/summary3.php'
             })
 
         }); // this.summaryStore
@@ -734,7 +734,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
                     proxy: new Ext.data.HttpProxy({
                         method: 'POST',
-                        url: '/metrics/explorer/data'
+                        url: '/controllers/metric_explorer.php'
                     })
 
                 }) // store

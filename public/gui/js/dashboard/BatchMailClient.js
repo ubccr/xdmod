@@ -18,7 +18,7 @@ XDMoD.BatchMailClient = Ext.extend(Ext.Window, {
 
          Ext.Ajax.request({
 
-            url: '/internal_dashboard/users/metadata',
+            url: '/controllers/controller.php',
             params: {operation: 'enum_user_types_and_roles'},
             method: 'GET',
             callback: function(options, success, response) {

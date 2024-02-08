@@ -13,16 +13,17 @@ use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/internal_dashboard")
+ *
  */
 class InternalDashboardController extends BaseController
 {
 
     /**
-     * @Route("")
+     * @Route("/internal_dashboard")
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -42,21 +43,21 @@ class InternalDashboardController extends BaseController
         }
 
         $parameters = [
-            'user'            => $user,
+            'user' => $user,
             'has_app_kernels' => $hasAppKernels,
-            'ak_instance_id'  => $instanceId,
-            'extjs_path'      => 'gui/lib',
-            'extjs_version'   => 'extjs',
-            'rest_token'      => $user->getToken(),
-            'rest_url'        => sprintf(
+            'ak_instance_id' => $instanceId,
+            'extjs_path' => 'gui/lib',
+            'extjs_version' => 'extjs',
+            'rest_token' => $user->getToken(),
+            'rest_url' => sprintf(
                 '%s%s',
                 \xd_utilities\getConfiguration('rest', 'base'),
                 \xd_utilities\getConfiguration('rest', 'version')
             ),
-            'xdmod_features'  => json_encode($this->getFeatures()),
-            'is_logged_in'    => !$user->isPublicUser(),
-            'is_public_user'  => $user->isPublicUser(),
-            'asset_paths'     => Assets::generateAssetTags('internal_dashboard'),
+            'xdmod_features' => json_encode($this->getFeatures()),
+            'is_logged_in' => !$user->isPublicUser(),
+            'is_public_user' => $user->isPublicUser(),
+            'asset_paths' => Assets::generateAssetTags('internal_dashboard'),
         ];
 
         if ($user->isPublicUser()) {
@@ -70,7 +71,25 @@ class InternalDashboardController extends BaseController
     }
 
     /**
-     * @Route("/menus", methods={"POST"})
+     * @Route("/controllers/dashboard.php", methods={"POST"})
+     *
+     * @param Request $request
+     * @return Response
+     * @throws Exception
+     */
+    public function dashboardIndex(Request $request): Response
+    {
+        $operation = $request->get('operation');
+        switch ($operation) {
+            case 'get_menu':
+                return $this->getMenus($request);
+            default:
+                throw new BadRequestHttpException();
+        }
+    }
+
+    /**
+     * @Route("/internal_dashboard/menus", methods={"POST"})
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -86,14 +105,32 @@ class InternalDashboardController extends BaseController
         );
 
         return $this->json([
-            'success'  => true,
+            'success' => true,
             'response' => $config['menu'],
-            'count'    => count($config['menu'])
+            'count' => count($config['menu'])
         ]);
     }
 
     /**
-     * @Route("/users/summary")
+     * @Route("/internal_dashboard/controllers/user.php", methods={"POST"})
+     *
+     * @param Request $request
+     * @return Response
+     * @throws Exception
+     */
+    public function userController(Request $request): Response
+    {
+        $operation = $request->get('operation');
+        switch ($operation) {
+            case 'get_summary':
+                return $this->getUserSummary($request);
+            default:
+                throw new BadRequestHttpException();
+        }
+    }
+
+    /**
+     * @Route("/internal_dashboard/users/summary")
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -121,21 +158,21 @@ class InternalDashboardController extends BaseController
         list($last30DaysRow) = $pdo->query($sql);
 
         $returnData = [
-            'success'  => true,
+            'success' => true,
             'response' => [
                 [
-                    'user_count'             => $userCountRow['count'],
-                    'logged_in_last_7_days'  => $last7DaysRow['count'],
+                    'user_count' => $userCountRow['count'],
+                    'logged_in_last_7_days' => $last7DaysRow['count'],
                     'logged_in_last_30_days' => $last30DaysRow['count'],
                 ]
             ],
-            'count'    => 1,
+            'count' => 1,
         ];
         return $this->json($returnData);
     }
 
     /**
-     * @Route(path="/controllers/controller.php", name="legacy_internal_dashboard_controllers")
+     * @Route(path="/internal_dashboard/controllers/controller.php", name="legacy_internal_dashboard_controllers")
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -202,8 +239,8 @@ SQL;
         $results = $pdo->query($sql);
 
         $data = [
-            'success'  => true,
-            'count'    => count($results),
+            'success' => true,
+            'count' => count($results),
             'response' => $results
         ];
 
@@ -235,7 +272,7 @@ SQL;
         if (count($results) == 1) {
             $pdo->execute('UPDATE AccountRequests SET comments=:comments WHERE id=:id', [
                 'comments' => $comments,
-                'id'       => $id
+                'id' => $id
             ]);
             $data = ['success' => true];
         }
@@ -287,8 +324,8 @@ SQL;
             }
         }
         $data = [
-            'success'  => true,
-            'count'    => count($filtered),
+            'success' => true,
+            'count' => count($filtered),
             'response' => $filtered
         ];
         /*return $this->json([
@@ -346,7 +383,7 @@ SQL;
 
         $data = [
             'success' => true,
-            'stats'   => \XDStatistics::getUserVisitStats($timeframe, $userTypes)
+            'stats' => \XDStatistics::getUserVisitStats($timeframe, $userTypes)
         ];
 
         if ($operation === 'enum_user_visits_export') {
@@ -354,7 +391,7 @@ SQL;
                 $outputStream = fopen('php://output', 'wb');
 
                 $content = array_map(
-                    function($item) {
+                    function ($item) {
                         return implode(',', $item);
                     },
                     $data['stats']

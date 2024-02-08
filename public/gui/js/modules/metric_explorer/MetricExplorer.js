@@ -785,7 +785,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (drillId && drillLabel) {
             for (var dim in dimensions) {
                 if (dimensions.hasOwnProperty(dim)) {
-                    if (dim === dimension || dim === 'none') {
+                    if (dim === dimension || dim === 'none' || metrics[metric].hidden_groupbys.includes(dim)) {
                         continue;
                     }
                     drilldownItems.push({
@@ -826,7 +826,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         var metrics = instance.realms[realm]['metrics'];
         for (var met in metrics) {
             if (metrics.hasOwnProperty(met)) {
-                if (metric === met) {
+                if (metric === met || metrics[metric].hidden_groupbys.includes(dim)) {
                     continue;
                 }
                 metricItems.push({
@@ -842,7 +842,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         var compareToItems = [];
         for (var thisMet in metrics) {
             if (metrics.hasOwnProperty(thisMet)) {
-                if (metric === thisMet) {
+                if (metric === thisMet || metrics[metric].hidden_groupbys.includes(dim)) {
                     continue;
                 }
                 compareToItems.push({
@@ -873,7 +873,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         var dimensionItems = [];
         for (var thisDim in dimensions) {
             if (dimensions.hasOwnProperty(thisDim)) {
-                if (thisDim === dimension) {
+                if (thisDim === dimension || metrics[metric].hidden_groupbys.includes(dim)) {
                     continue;
                 }
                 dimensionItems.push({
@@ -1004,7 +1004,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             storeId: 'raw_data_store',
                             proxy: new Ext.data.HttpProxy({
                                 method: 'POST',
-                                url: 'metrics/explorer/raw_data',
+                                url: '/controllers/metric_explorer.php',
                                 listeners: {
                                     load: function(o, options) {
                                         if (options.reader.jsonData && options.reader.jsonData.totalAvailable) {
@@ -2732,7 +2732,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         this.dwDescriptionStore = new CCR.xdmod.CustomJsonStore({
 
-            url: 'metrics/explorer/get_dw_descripter',
+            url: '/controllers/metric_explorer.php',
             fields: ['realms'],
             root: 'data',
             totalProperty: 'totalCount',
@@ -2821,10 +2821,15 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                                 if (realm_metrics[rm].text === undefined) {
                                     continue;
                                 }
-
+                                var metric_dimensions = {};
+                                for (var dimension in realm_dimensions) {
+                                    if (!realm_metrics[rm].hidden_groupbys.includes(dimension)) {
+                                        metric_dimensions[dimension] = realm_dimensions[dimension];
+                                    }
+                                }
                                 var metricNode = new Ext.tree.TreeNode({
                                     id: realm + '_' + rm,
-                                    dimensions: realm_dimensions,
+                                    dimensions: metric_dimensions,
                                     leaf: true,
                                     singleClickExpand: true,
                                     type: 'metric',
@@ -5288,6 +5293,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         // JMS Jan 15
         this.updateAvailableFilterList = function() {
             //console.time("update available");
+            var hidden_groupbys = [];
+            var instance = CCR.xdmod.ui.metricExplorer;
+
+            this.datasetStore.each(function (record) {
+                hidden_groupbys[record.get('realm')] = instance.realms[record.get('realm')].metrics[record.get('metric')].hidden_groupbys;
+            });
 
             // get a list of the currently plotted realms:
             var enabledRealms = this.getEnabledRealmsList();
@@ -5305,6 +5316,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 if (Ext.isEmpty(enabledRealms)) {
                     item.show();
                     return;
+
+                }
+                for (var iRealm in iRealms) {
+                    if (hidden_groupbys[iRealms[iRealm]] !== undefined && hidden_groupbys[iRealms[iRealm]].includes(item.dimension)) {
+                        item.setVisible(false);
+                    }
                 }
 
                 // If the filterMenu list item realm contains the current record's realm name,
@@ -5480,7 +5497,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             },
             proxy: new Ext.data.HttpProxy({
                 method: 'POST',
-                url: '/metrics/explorer/data'
+                url: '/controllers/metric_explorer.php'
             })
         }); //chartStore
 
@@ -6202,7 +6219,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         var viewGrid = new Ext.ux.DynamicGridPanel({
 
             id: 'view_grid_' + this.id,
-            storeUrl: '/metrics/explorer/data',
+            storeUrl: '/controllers/metric_explorer.php',
             autoScroll: true,
             rowNumberer: true,
             region: 'center',
@@ -6282,7 +6299,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 getXTypes: function() {
                     return 'html';
                 },
-                html: '<img src="metrics/explorer/data?' + params + '" />'
+                html: '<img src="/controllers/metric_explorer.php?' + params + '" />'
 
             });
 
@@ -6297,7 +6314,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
             Ext.apply(parameters, opts);
 
-            CCR.invokePost("metrics/explorer/data", parameters);
+            CCR.invokePost("controllers/metric_explorer.php", parameters);
 
         }); //self.on('export_option_selected', ...
 

@@ -7,7 +7,7 @@
 Ext.namespace('XDMoD.Summary');
 
 XDMoD.Summary.ConfigStore = Ext.extend(Ext.data.JsonStore, {
-    url: '/summary/configs',
+    url: '/controllers/summary.php',
 
     listeners: {
         exception: function (misc) {

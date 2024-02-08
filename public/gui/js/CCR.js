@@ -182,6 +182,20 @@ XDMoD.GlobalToolbar.Roadmap = {
 };
 
 XDMoD.GlobalToolbar.Contact = function () {
+    if (CCR.xdmod.support_url) {
+        return {
+            text: 'Contact Us',
+            tooltip: 'Contact Us',
+            scale: 'small',
+            iconCls: 'contact_16',
+            id: 'global-toolbar-contact-us',
+            handler: function () {
+                window.open(CCR.xdmod.support_url, '_blank');
+            }
+        };
+    }
+
+
     var contactHandler = function(){
         XDMoD.TrackEvent('Portal', 'Contact Us -> ' + this.text + ' Button Clicked');
         switch(this.text){
@@ -558,7 +572,9 @@ XDMoD.utils.trimOnBlur = function (thisField) {
 XDMoD.utils.syncWindowShadow = function (thisComponent) {
     thisComponent.bubble(function (currentComponent) {
         if (currentComponent instanceof Ext.Window) {
-            currentComponent.syncShadow();
+            if (currentComponent.rendered) {
+                currentComponent.syncShadow();
+            }
             return false;
         }
         return true;
@@ -725,6 +741,11 @@ CCR.xdmod.ui.invertColor = function (hexTripletColor) {
     color = ("000000" + color).slice(-6); // pad with leading zeros
     return color;
 };
+
+CCR.randomInt = function(min, max) {
+    // eslint-disable-next-line no-mixed-operators
+    return Math.floor(Math.random() * (max - min + 1) + min);
+}
 // ------------------------------------
 
 // Global reference to login prompt
@@ -1006,7 +1027,7 @@ CCR.WebPanel = Ext.extend(Ext.Window, {
 
 // -----------------------------------
 
-CCR.xdmod.sponsor_message = 'This work was sponsored by NSF under grant number OCI 1025159';
+CCR.xdmod.sponsor_message = 'This work was sponsored by NSF under grant number ACI 1025159, ACI 1445806 and ACI 2137603';
 
 //Used in html/gui/general/login.php
 var toggle_about_footer = function (o) {
@@ -1178,6 +1199,30 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
     //reset referer
     XDMoD.referer = document.location.hash;
+
+    if (CCR.xdmod.SSODirectLink) {
+        Ext.Ajax.request({
+            url: '/rest/auth/idpredirect',
+            method: 'GET',
+            params: {
+                returnTo: '/' + document.location.hash
+            },
+            success: function (response) {
+                document.location = Ext.decode(response.responseText);
+            },
+            failure: function (response, opts) {
+                var message = 'Please contact the XDMoD administrator.';
+                if (response.responseText) {
+                    var decoded = Ext.decode(response.responseText);
+                    if (decoded.message) {
+                        message = decoded.message + '<br />' + message;
+                    }
+                }
+                Ext.Msg.alert('Error ' + response.status + ' ' + response.statusText, message);
+            }
+        });
+        return;
+    }
 
     var txtLoginUsername = new Ext.form.TextField({
         width: 184,

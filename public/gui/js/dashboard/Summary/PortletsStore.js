@@ -7,7 +7,7 @@
 Ext.namespace('XDMoD.Summary');
 
 XDMoD.Summary.PortletsStore = Ext.extend(Ext.data.JsonStore, {
-    url: '/summary/portlets',
+    url: '/controllers/summary.php',
 
     listeners: {
         exception: function (misc) {

@@ -485,6 +485,7 @@ class ReportBuilderController extends BaseController
 
     /**
      * @Route("/reports/builder/image", methods={"GET"})
+     * @Route("/report_image_renderer.php", methods={"GET"}, name="report_image_renderer_legacy")
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -589,7 +590,7 @@ class ReportBuilderController extends BaseController
 
             if (!empty($reportManager)) {
                 $this->logger->warning('Fetching Chart Blob');
-                $blob = $reportManager->fetchChartBlob($type, $insertionRank);
+                $blob = $reportManager->fetchChartBlob($type, $insertionRank, null, $this->logger);
                 $this->logger->warning('Substringing Blob');
                 $image_data_header = substr($blob, 0, 8);
                 $this->logger->warning('Chart BLob Fetched!');

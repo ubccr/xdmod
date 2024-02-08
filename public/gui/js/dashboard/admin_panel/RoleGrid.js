@@ -564,7 +564,7 @@ XDMoD.Admin.RoleGrid = Ext.extend(Ext.grid.EditorGridPanel,  {
 
           autoLoad: false,  // Load the store before render
           autoDestroy: true,
-          url: '/internal_dashboard/users/roles',
+          url: '/controllers/user_admin.php',
           baseParams: {operation: 'enum_roles'},
           root: 'roles',
           fields: ['role', 'role_id', 'include', 'primary']
@@ -676,7 +676,7 @@ XDMoD.Admin.RoleGrid.CenterSelector = Ext.extend(Ext.menu.Menu,  {
 
       var store = new Ext.data.JsonStore({
 
-         url: '/internal_dashboard/users/providers',
+         url: '/controllers/user_admin.php',
          fields: ['id', 'organization'],
          root: 'providers',
          idProperty: 'id',

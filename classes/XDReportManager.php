@@ -226,7 +226,7 @@ class XDReportManager
                 'chart_title_' . $suffix         => $this->fontWrapper($report_chart['chart_title'], 16),
                 'chart_drill_details_' . $suffix => $this->fontWrapper($report_chart['chart_drill_details'], 12),
                 'chart_timeframe_' . $suffix     => $this->fontWrapper($report_chart['chart_date_description'], 14),
-                'chart_id_' . $suffix            => '/reports/builder/image?type=report&ref=' . $report_id . ';' . $report_chart['ordering']
+                'chart_id_' . $suffix            => '/report_image_renderer.php?type=report&ref=' . $report_id . ';' . $report_chart['ordering']
             );
 
             if (count($chartSlot) == $charts_per_page) {
@@ -436,7 +436,7 @@ class XDReportManager
             $timeframe_type = urldecode($timeframe_type);
 
             $thumbnail_link
-                = '/reports/builder/image?type=chart_pool&ref='
+                = '/report_image_renderer.php?type=chart_pool&ref='
                 . $entry['user_id']
                 . ';'
                 . $entry['insertion_rank']
@@ -618,7 +618,7 @@ class XDReportManager
             $chart_data['chart_id'] = $entry['chart_id'];
 
             $chart_data['thumbnail_link']
-                = '/reports/builder/image?type=report&ref='
+                = '/report_image_renderer.php?type=report&ref='
                 . $entry['report_id']
                 . ';'
                 . $entry['ordering']
@@ -1145,7 +1145,9 @@ class XDReportManager
     ) {
         $pdo = DB::factory('database');
         $trace = "";
-
+        if (!empty($logger)) {
+            $logger->warning('Fetching Chart Blob', ['type' => $type, 'insertion_rank' => $insertion_rank, 'chart_id_cache_file' => $chart_id_cache_file]);
+        }
         switch ($type) {
             case 'volatile':
                 if (!empty($logger)) {
@@ -1160,7 +1162,7 @@ class XDReportManager
                     if (!empty($logger)) {
                         $logger->warning('Temp file exists!');
                     }
-                    print file_get_contents($temp_file);
+                    return file_get_contents($temp_file);
                 }
                 else {
                     if (
@@ -1258,7 +1260,7 @@ class XDReportManager
                 $temp_file = $this->generateCachedFilename($insertion_rank);
 
                 if (file_exists($temp_file)) {
-                    print file_get_contents($temp_file);
+                    return file_get_contents($temp_file);
                 }
                 else {
                     $blob = $this->generateChartBlob(
@@ -1269,7 +1271,7 @@ class XDReportManager
                         $logger
                     );
                     file_put_contents($temp_file, $blob);
-                    print $blob;
+                    return $blob;
                 }
 
                 exit;
@@ -1534,7 +1536,10 @@ class XDReportManager
             $logger->warning('testing.');
         }
         if (count($iq) == 0) {
-            throw new \Exception("Unable to target chart entry. Type: $type ");
+            throw new \Exception("Unable to target chart entry. Type: $type " . json_encode(array(
+                    'user_id'        => $this->_user_id,
+                    'insertion_rank' => $insertion_rank,
+                )));
         }
 
         $chart_id = $iq[0]['chart_id'];

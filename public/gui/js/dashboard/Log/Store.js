@@ -7,7 +7,7 @@
 Ext.namespace('XDMoD', 'XDMoD.Log');
 
 XDMoD.Log.Store = Ext.extend(Ext.data.JsonStore, {
-    url: '/internal_dashboard/logs/messages',
+    url: '/controllers/log.php',
 
     listeners: {
         exception: function () {

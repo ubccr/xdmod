@@ -52,7 +52,7 @@ XDMoD.AvailableCharts = Ext.extend(Ext.Panel,  {
 
          proxy: new Ext.data.HttpProxy({
             method: 'POST',
-            url: 'reports/builder/charts'
+            url: '/controllers/report_builder.php'
          }),
 
          listeners: {
@@ -279,7 +279,7 @@ XDMoD.AvailableCharts = Ext.extend(Ext.Panel,  {
 
                      conn.request({
 
-                        url: 'reports/builder/remove/chart',
+                        url: '/controllers/report_builder.php',
                         params: objParams,
                         method: 'POST',
 

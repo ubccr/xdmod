@@ -7,7 +7,7 @@
 Ext.namespace('XDMoD', 'XDMoD.Dashboard');
 
 XDMoD.Dashboard.MenuStore = Ext.extend(Ext.data.JsonStore, {
-    url: '/internal_dashboard/menus',
+    url: '/controllers/dashboard.php',
 
     listeners: {
         exception: function (misc) {

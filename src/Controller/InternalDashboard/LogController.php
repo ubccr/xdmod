@@ -9,15 +9,39 @@ use CCR\DB;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/internal_dashboard/logs")
+ *
  */
 class LogController extends BaseController
 {
+
     /**
-     * @Route("/levels", methods={"POST"})
+     * @Route("/controllers/log.php", methods={"POST"}, name="log_index_legacy")
+     *
+     * @param Request $request
+     * @return Response
+     * @throws Exception
+     */
+    public function index(Request $request): Response
+    {
+        $operation = $request->get('operation');
+        switch($operation) {
+            case 'get_levels':
+                return $this->getLevels($request);
+            case 'get_summary':
+                return $this->getSummary($request);
+            case 'get_messages':
+                return $this->getMessages($request);
+            default:
+                throw new BadRequestHttpException();
+        }
+    }
+    /**
+     * @Route("/internal_dashboard/logs/levels", methods={"POST"})
+     *
      * @param Request $request
      * @return Response
      */
@@ -42,7 +66,7 @@ class LogController extends BaseController
     }
 
     /**
-     * @Route("/messages", methods={"POST"})
+     * @Route("/internal_dashboard/logs/messages", methods={"POST"})
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -63,7 +87,7 @@ class LogController extends BaseController
 
         if (isset($ident)) {
             $clauses[] = 'ident = ?';
-            $params[]  = $ident;
+            $params[] = $ident;
         }
 
         $logLevels = $this->getStringParam($request, 'logLevels');
@@ -85,12 +109,12 @@ class LogController extends BaseController
 
             if (null !== ($startRowId = $summary->getProcessStartRowId())) {
                 $clauses[] = 'id >= ?';
-                $params[]  = $startRowId;
+                $params[] = $startRowId;
             }
 
             if (null !== ($endRowId = $summary->getProcessEndRowId())) {
                 $clauses[] = 'id <= ?';
-                $params[]  = $endRowId;
+                $params[] = $endRowId;
             }
         } else {
             $startDate = $this->getStringParam($request, 'start_date');
@@ -123,7 +147,7 @@ class LogController extends BaseController
         }
 
         $returnData = [
-            'success'  => true,
+            'success' => true,
             'response' => $pdo->query($sql, $params),
         ];
 
@@ -141,7 +165,7 @@ class LogController extends BaseController
     }
 
     /**
-     * @Route("/summary", methods={"POST"})
+     * @Route("/internal_dashboard/logs/summary", methods={"POST"})
      * @param Request $request
      * @return Response
      * @throws Exception

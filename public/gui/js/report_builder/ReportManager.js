@@ -54,7 +54,7 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
         });
 
         conn.request({
-            url: 'reports/builder/send',
+            url: '/controllers/report_builder.php',
 
             params: {
                 operation: 'send_report',
@@ -79,7 +79,7 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                         Ext.encode({name: report_name, format: format})
                     );
 
-                    var location = 'reports/builder/download' +
+                    var location = '/controllers/report_builder.php' +
                         '?operation=download_report&report_loc=' +
                         responseData.report_loc + '&format=' + format;
 

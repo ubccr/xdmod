@@ -6,7 +6,7 @@ XDMoD.AccountRequests = Ext.extend(Ext.Panel, {
         var cachedMD5 = '';
 
         self.storeProvider = new DashboardStore({
-            url: '/internal_dashboard/accounts/requests',
+            url: '/controllers/controller.php',
             root: 'response',
             baseParams: {
                 operation: 'enum_account_requests'
@@ -51,7 +51,7 @@ XDMoD.AccountRequests = Ext.extend(Ext.Panel, {
         ) {
             var entryData   = store.getAt(rowIndex).data;
             var activeColor = (entryData.status == 'new') ? '#000' : '#080';
-            return '<span style="color: ' + activeColor + '">' + 
+            return '<span style="color: ' + activeColor + '">' +
                 Ext.util.Format.htmlEncode(val) +
                 '</span>';
         };
@@ -63,7 +63,7 @@ XDMoD.AccountRequests = Ext.extend(Ext.Panel, {
         var staleCheck = function () {
             Ext.Ajax.request({
                 method: 'POST',
-                url: '/internal_dashboard/accounts/requests',
+                url: 'controllers/controller.php',
                 params: {
                     operation: 'enum_account_requests',
                     md5only: true
@@ -322,7 +322,7 @@ XDMoD.AccountRequests = Ext.extend(Ext.Panel, {
                                     if (resp == 'yes') {
                                         Ext.Ajax.request({
                                             method: 'DELETE',
-                                            url: 'internal_dashboard/accounts/' + selectedRecordIds.join(','),
+                                            url: 'controllers/controller.php',
                                             params: {
                                                 operation: 'delete_request',
                                                 id: selectedRecordIds.join(',')

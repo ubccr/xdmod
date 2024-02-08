@@ -110,7 +110,6 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                 portal.items.itemAt(record.get('column')).add(portlet);
                             }
                         } catch (e) {
-                            console.error(e);
                             Ext.Msg.alert(
                                 'Error loading portlets',
                                 'The portlet ' + record.get('name') + ' (' + record.get('type') + ')<br />could not be loaded.'

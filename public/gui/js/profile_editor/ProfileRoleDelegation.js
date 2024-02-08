@@ -30,7 +30,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
         var self = this;
 
         var storeCenterStaff = new Ext.data.JsonStore({
-            url: 'organizations/members',
+            url: '/controllers/role_manager.php',
             baseParams: { operation: 'enum_center_staff_members' },
             root: 'members',
             autoLoad: true,
@@ -69,7 +69,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
                 select: function (combo, value, index) {
                     var conn = new Ext.data.Connection();
                     conn.request({
-                        url: 'organizations/members/' + combo.getValue() + '/status',
+                        url: '/controllers/role_manager.php',
                         params: {
                             operation: 'get_member_status',
                             member_id: combo.getValue()
@@ -138,7 +138,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
             handler: function () {
                 var conn = new Ext.data.Connection();
                 conn.request({
-                    url: 'organizations/members/' + cmbCenterStaff.getValue() + '/upgrade',
+                    url: '/controllers/role_manager.php',
                     params: {
                         operation: 'upgrade_member',
                         member_id: cmbCenterStaff.getValue()
@@ -179,7 +179,7 @@ XDMoD.ProfileRoleDelegation = Ext.extend(Ext.Panel, {
                 var conn = new Ext.data.Connection();
                 conn.request({
 
-                    url: 'organizations/members/' + cmbCenterStaff.getValue() + '/downgrade',
+                    url: '/controllers/role_manager.php',
                     params: {
                         operation: 'downgrade_member',
                         member_id: cmbCenterStaff.getValue()

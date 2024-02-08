@@ -7,7 +7,7 @@
 Ext.namespace('XDMoD', 'XDMoD.Log');
 
 XDMoD.Log.LevelsStore = Ext.extend(Ext.data.JsonStore, {
-    url: '/internal_dashboard/logs/levels',
+    url: '/controllers/log.php',
 
     listeners: {
         exception: function (misc) {

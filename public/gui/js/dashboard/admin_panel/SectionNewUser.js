@@ -11,7 +11,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
 
     initComponent: function () {
         var self = this;
-        var base_controller = '/internal_dashboard/users';
+        var base_controller = '/controllers/user_admin.php';
 
         // conditionally overridden in the call to initialize()
         var account_request_id = '';
@@ -64,7 +64,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
         });
 
         var storeUserType = new DashboardStore({
-            url: base_controller + '/types',
+            url: base_controller,
             root: 'user_types',
             baseParams: { operation: 'enum_user_types' },
             fields: ['id', 'type'],
@@ -299,7 +299,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             prompt = prompt || false;
 
             Ext.Ajax.request({
-                url: '/internal_dashboard/users/search',
+                url: '/controllers/user_admin.php',
 
                 params: {
                     operation: 'search_users',
@@ -630,7 +630,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
                 };
 
                 Ext.Ajax.request({
-                    url: base_controller + '/create',
+                    url: base_controller,
                     params: objParams,
                     method: 'POST',
 

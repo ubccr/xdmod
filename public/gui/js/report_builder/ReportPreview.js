@@ -94,7 +94,7 @@ XDMoD.ReportPreview = Ext.extend(Ext.Panel,  {
 
          proxy: new Ext.data.HttpProxy({
             method: 'POST',
-            url: 'reports/builder/preview'
+            url: '/controllers/report_builder.php'
          })
 
       });//self.previewStore

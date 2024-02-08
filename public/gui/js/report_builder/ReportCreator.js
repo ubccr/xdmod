@@ -280,9 +280,9 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
             var conn = new Ext.data.Connection();
 
             conn.request({
-                url: 'reports/builder/' + report_id ,
+                url: '/controllers/report_builder.php',
                 params: objParams,
-                method: 'GET',
+                method: 'POST',
 
                 callback: function (options, success, response) {
                     var reportData;
@@ -463,7 +463,7 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
             });
 
             Ext.Ajax.request({
-                url: 'reports/builder/save',
+                url: '/controllers/report_builder.php',
                 params: reportData,
                 method: 'POST',
 
