@@ -384,6 +384,6 @@
                 "batchExport": true
             }
         ],
-        "record_identifier_column": "local_jobid"
+        "record_identifier_column": "local_job_id_raw"
     }
 }
