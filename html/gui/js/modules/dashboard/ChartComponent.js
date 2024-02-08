@@ -118,7 +118,6 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
 
             fields: [
                 'chart',
-                'credits',
                 'title',
                 'subtitle',
                 'xAxis',
@@ -147,15 +146,9 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
         });
 
         this.items = [new CCR.xdmod.ui.PlotlyPanel({
-            credits: false,
             chartOptions: {
-                chart: {
-                    animation: CCR.xdmod.publicUser === true
-                },
-                plotOptions: {
-                    series: {
-                        animation: CCR.xdmod.publicUser === true
-                    }
+                layout: {
+                    credits: false,
                 }
             },
             store: this.store,

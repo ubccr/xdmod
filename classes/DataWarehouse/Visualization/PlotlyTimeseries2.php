@@ -271,10 +271,8 @@ class PlotlyTimeseries2 extends Plotly2
                                 : $colorGenerator->getConfigColor(hexdec($data_description->color) );
                     $yAxisColor = '#'.str_pad(dechex($yAxisColorValue), 6, '0', STR_PAD_LEFT);
                     $yAxisColorUsedBySeries = false;
-                    $yAxisLeftBoundStart = 0.175;
-                    $yAxisRightBoundStart = 0.825;
-                    $yAxisStep = 0.175;
                     $yIndex = $yAxisIndex + 1;
+                    $swapXYDone = false;
                     $yAxisName = $yAxisIndex == 0 ? 'yaxis' : "yaxis{$yIndex}";
                     $xAxisName = substr_replace($yAxisName, 'xaxis', 0, 5);
 
@@ -677,32 +675,35 @@ class PlotlyTimeseries2 extends Plotly2
                             unset($trace['yaxis']);
                             $trace['hovertemplate'] = $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
 
-                            $xAxis['type'] = $yAxisObject->log_scale ? 'log' : '-';
-                            $xAxis['autorange'] = 'reversed';
-                            $xAxis['tickangle'] = 0;
-                            $yAxis['side'] = ($yAxisIndex % 2 != 0) ? 'top' : 'bottom';
-                            if ($yAxis['side'] == 'top') {
+                            if (!$swapXYDone) {
+                                $xAxis['type'] = $yAxisObject->log_scale ? 'log' : '-';
+                                $xAxis['autorange'] = 'reversed';
+                                $xAxis['tickangle'] = 0;
+                                $yAxis['side'] = ($yAxisIndex % 2 != 0) ? 'top' : 'bottom';
+                                if ($yAxis['side'] == 'top') {
+                                    $yAxis['title']['standoff'] = 0;
+                                }
+                                $yAxis['anchor'] = 'free';
+                                if (isset($yAxis['overlaying'])) {
+                                    $yAxis['overlaying'] = 'x';
+                                }
+                                $xAxisStep = 0.115;
+                                $xAxisBottomBoundStart = 0 + ($xAxisStep * ceil($yAxisCount/2));
+                                $xAxisTopBoundStart = 1 - ($xAxisStep * floor($yAxisCount/2));
+                                $topShift = floor($yAxisCount/2) - floor($yAxisIndex/2);
+                                $yAxis['position'] = $yAxis['side'] == 'top' ? min(1 - ($xAxisStep * (floor($yAxisCount/2) - floor($yAxisIndex/2))), 1) :
+                                                                               max(0 + ($xAxisStep * (ceil($yAxisCount/2) - ceil($yAxisIndex/2))), 0);
+                                $yAxis['domain'] = array(0,1);
                                 $yAxis['title']['standoff'] = 0;
-                            }
-                            $yAxis['anchor'] = 'free';
-                            if (isset($yAxis['overlaying'])) {
-                                $yAxis['overlaying'] = 'x';
-                            }
-                            $xAxisStep = 0.115;
-                            $xAxisBottomBoundStart = 0 + ($xAxisStep * ceil($yAxisCount/2));
-                            $xAxisTopBoundStart = 1 - ($xAxisStep * floor($yAxisCount/2));
-                            $topShift = floor($yAxisCount/2) - floor($yAxisIndex/2);
-                            $yAxis['position'] = $yAxis['side'] == 'top' ? min(1 - ($xAxisStep * (floor($yAxisCount/2) - floor($yAxisIndex/2))), 1) :
-                                                                           max(0 + ($xAxisStep * (ceil($yAxisCount/2) - ceil($yAxisIndex/2))), 0);
-                            $yAxis['domain'] = array(0,1);
-                            $yAxis['title']['standoff'] = 0;
-                            $yAxis['showgrid'] = $yAxisCount > 1 ? false : true;
-                            $xAxis['domain'] = array($xAxisBottomBoundStart, $xAxisTopBoundStart);
+                                $yAxis['showgrid'] = $yAxisCount > 1 ? false : true;
+                                $xAxis['domain'] = array($xAxisBottomBoundStart, $xAxisTopBoundStart);
 
-                            $this->_chart['layout']["{$xAxisName}"] = $yAxis;
-                            $this->_chart['layout']['yaxis'] = $xAxis;
-                            unset($this->_chart['layout']["xaxis"]['dtick']);
-                            unset($this->_chart['layout']["xaxis"]['tick0']);
+                                $this->_chart['layout']["{$xAxisName}"] = $yAxis;
+                                $this->_chart['layout']['yaxis'] = $xAxis;
+                                unset($this->_chart['layout']["xaxis"]['dtick']);
+                                unset($this->_chart['layout']["xaxis"]['tick0']);
+                                $swapXYDone = true;
+                            }
                             if ($yAxisIndex > 0) {
                                 unset($this->_chart['layout']["{$yAxisName}"]);
                             }
@@ -1126,6 +1127,10 @@ class PlotlyTimeseries2 extends Plotly2
             } // foreach(array_values($yAxisArray) as $yAxisIndex
         } // foreach(array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions) (big long effing loop)
 
+        // Sort data based on zIndex and legendrank
+        $zIndexColumn = array_column($this->_chart['data'], 'zIndex');
+
+        array_multisort($zIndexColumn, SORT_DESC, $this->_chart['data']);
         if ($this->_showWarnings) {
             $this->addRestrictedDataWarning();
         }

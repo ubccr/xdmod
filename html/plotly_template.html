@@ -47,10 +47,11 @@
             chartOptions = inputChartOptions;
             chartOptions.layout['width'] = _width_;
             chartOptions.layout['height'] = _height_;
-            if (chartOptions.layout.annotations && chartOptions.layout.annotations.length > 0) {
-                chartOptions.layout.annotations[2].yshift = (_height_ - chartOptions.layout.margin.t) * -1;
-                chartOptions.layout.annotations[2].xshift = chartOptions.layout.margin.r - 20;
+
+            if (chartOptions.data[0].type === 'pie') {
+                chartOptions.layout.margin.t += 30;
             }
+
 
             let lineSplit = (s, wrapWidth) => {
                 return s.match(new RegExp(`([^\\n]{1,${wrapWidth}})(?=\\s|$)`, 'g'))
@@ -93,6 +94,24 @@
                 chartOptions.data[i]['constraintext'] = 'none';
 
             }
+
+            chartOptions.data.sort((trace1, trace2) => {
+                if (chartOptions.layout.barmode != 'group') {
+                    if (trace2.name.startsWith('Std Err:')) {
+                        return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
+                    }
+                    return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.legendrank - trace1.legendrank);
+                }
+                else {
+                    const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
+                    if (trace2.name.startsWith('Std Err:') && res === -1) {
+                        return 1;
+                    }
+                    return res;
+                }
+            });
+
+
         }
         else {
             chartOptions = generateChartOptions(inputChartOptions, args);
@@ -116,11 +135,12 @@
             }
             const topCenter = topLegend(chartOptions.layout);
             const subtitleLineCount = adjustTitles(chartOptions.layout);
-            const marginTop = chartDiv._fullLayout.margin.t;
+            const marginTop = (topCenter || subtitleLineCount > 0) ? chartOptions.layout.margin.t : chartDiv._fullLayout._size.t;
             const marginRight = chartDiv._fullLayout._size.r;
-            const legendHeight = topCenter ? chartDiv._fullLayout.legend._height : 0;
+            const legendHeight = (topCenter && !(chartOptions.layout.height <= 550)) ? chartDiv._fullLayout.legend._height : 0;
             const titleHeight = 30;
-            const subtitleHeight = 20;
+            const subtitleHeight = 15;
+            const creditsHeight = subtitleLineCount > 0 && !topCenter ? 21 : 0;
             let update = {
                 'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
                 'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount),
@@ -129,7 +149,7 @@
             if (chartOptions.layout.annotations.length > 2) {
                 const marginBottom = chartDiv._fullLayout._size.b;
                 const plotAreaHeight = chartDiv._fullLayout._size.h;
-                update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1 + (15 * subtitleLineCount);
+                update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1 + creditsHeight;
                 update['annotations[2].xshift'] = marginRight;
             }
 

@@ -20,7 +20,7 @@ function adjustTitles(layout) {
     let subtitleLineCount = 0;
     if (len > 0) {
        const axWidth = layout.width -  layout.margin.l - layout.margin.r;
-       const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 8));
+       const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 7.5));
        layout.margin.t = 45 + (subtitle_lines.length * 15);
        layout.annotations[1].text = subtitle_lines.join('<br />');
        if (topLegend(layout)) {
@@ -31,7 +31,7 @@ function adjustTitles(layout) {
     }
     else {
         if (topLegend(layout)) {
-            layout.margin.t = 45 + 20;
+            layout.margin.t = 45 + 15;
         }
     }
     
@@ -73,8 +73,12 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             configs.showTips = false;
         }
 
-        if (baseChartOptions.data[0].type === 'pie' && baseChartOptions.data[0].text.length > 0) {
+        if (baseChartOptions.data[0].type === 'pie') {
             baseChartOptions.layout.margin.t += 30;
+        }
+
+        if (baseChartOptions.credits && baseChartOptions.layout.credits === false) {
+            baseChartOptions.layout.annotations[2].text = '';
         }
 
         // Remove titles and credits from thumbnail plots
@@ -137,11 +141,12 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
         const topCenter = topLegend(baseChartOptions.layout);
         const subtitleLineCount = adjustTitles(baseChartOptions.layout);
-        const marginTop = baseChartOptions.layout.margin.t;
+        const marginTop = (topCenter || subtitleLineCount > 0) ? baseChartOptions.layout.margin.t : chartDiv._fullLayout._size.t;
         const marginRight = chartDiv._fullLayout._size.r;
-        const legendHeight = topCenter ? chartDiv._fullLayout.legend._height : 0;
-        const titleHeight = 30;
-        const subtitleHeight = 20;
+        const legendHeight = (topCenter && !(baseChartOptions.layout.height <= 550)) ? chartDiv._fullLayout.legend._height : 0;
+        const titleHeight = 31;
+        const subtitleHeight = 15;
+        const creditsHeight = subtitleLineCount > 0 && !topCenter ? (15 * subtitleLineCount) : 0;
         let update = {
             'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
             'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount),
@@ -150,7 +155,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         if (baseChartOptions.layout.annotations.length > 2) {
             const marginBottom = chartDiv._fullLayout._size.b;
             const plotAreaHeight = chartDiv._fullLayout._size.h;
-            update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1 + (15 * subtitleLineCount);
+            update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1 + creditsHeight;
             update['annotations[2].xshift'] = marginRight;
         }
 

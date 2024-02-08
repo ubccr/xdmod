@@ -1504,13 +1504,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                         },
                                         thumbnail: true,
                                     },
-                                    exporting: {
-                                        enabled: false
-                                    },
-
-                                    credits: {
-                                        enabled: true
-                                    }
                                 }; //baseChartOptions
 
                                 var chartOptions = {};
@@ -2597,27 +2590,21 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                     if (this.chartOptions.layout.annotations.length != 0){
                         const topCenter = topLegend(this.chartOptions.layout);
                         const subtitleLineCount = adjustTitles(this.chartOptions.layout);
-                        const marginTop = topCenter ? chartDiv._fullLayout.margin.t : chartDiv._fullLayout._size.t;
+                        const marginTop = (topCenter || subtitleLineCount > 0) ? this.chartOptions.layout.margin.t : chartDiv._fullLayout._size.t;
                         const marginRight = chartDiv._fullLayout._size.r;
-                        let legendHeight = topCenter ? chartDiv._fullLayout.legend._height : 0;
-                        const titleHeight = 30;
-                        const subtitleHeight = 20;
-                        // This needs a rework -- issue is that legend height occupies the margin differently
-                        // when resizing the window smaller.
-                        // We need a number that scales down as the height scales down but in a magntiude that
-                        // makes sense for shifting the titles by pixels
-                        /*if (adjHeight <= 500) {
-                            legendHeight = 10;
-                        }*/
+                        const legendHeight = (topCenter && !(adjHeight <= 550)) ? chartDiv._fullLayout.legend._height : 0;
+                        const titleHeight = 31;
+                        const subtitleHeight = 15;
+                        const creditsHeight = subtitleLineCount > 0 && !topCenter ? 15 : 0;
                         let update = {
                             'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
                             'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount),
                         }
 
-                        if (this.chartOptions.layout.annotations.length > 2) {
+                        if (this.chartOptions.layout.annotations.length >= 2) {
                             const marginBottom = chartDiv._fullLayout._size.b;
                             const plotAreaHeight = chartDiv._fullLayout._size.h;
-                            update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1;
+                            update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1 + creditsHeight;
                             update['annotations[2].xshift'] = marginRight;
                         }
 
@@ -2792,18 +2779,14 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             chartDiv.on('plotly_legendclick', (evt) => {
                                 // First check if all traces are hidden.
                                 // There is a bug with tick text manually set.
-                                // We need to put tick text as empty if so.
+                                // We need set tickmode to auto if so.
                                 const visibleData = evt.fullData.filter((trace) => trace.visible === true);
-                                let tickType = 'array';
+                                let tickType;
                                 if (evt.layout.swapXY) {
-                                    if (evt.layout.yaxis.type === 'date') {
-                                        tickType = 'date';
-                                    }
+                                    tickType = evt.layout.yaxis.tickmode;
                                 }
                                 else {
-                                    if (evt.layout.xaxis.type === 'date') {
-                                        tickType = 'date';
-                                    }
+                                    tickType = evt.layout.xaxis.tickmode;
                                 }
                                 if (visibleData.length == 1 && visibleData[0].index == evt.curveNumber) {
                                     if (evt.layout.swapXY) {

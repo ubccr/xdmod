@@ -6419,18 +6419,18 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 if (chartDiv._fullLayout.annotations.length != 0){
                     const topCenter = topLegend(chartDiv._fullLayout);
                     const subtitleLineCount = adjustTitles(chartDiv._fullLayout);
-                    const marginTop = topCenter && subtitleLineCount > 0 ? chartDiv._fullLayout.margin.t : chartDiv._fullLayout._size.t;
+                    const calculatedMargin = topCenter ? (45 + 20 + (subtitleLineCount * 15)) : (45 + (subtitleLineCount * 15));
+                    const marginTop = Math.min(chartDiv._fullLayout.margin.t, chartDiv._fullLayout._size.t);
                     const marginRight = chartDiv._fullLayout._size.r;
-                    let legendHeight = topCenter ? chartDiv._fullLayout.legend._height : 0;
-                    const titleHeight = 30;
+                    const legendHeight = (topCenter && !(adjHeight <= 550)) ? chartDiv._fullLayout.legend._height : 0;
+                    const titleHeight = 31;
                     const subtitleHeight = 15;
-                    const shift = topCenter ? 15 : 33;
                     let update = {
                         'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
-                        'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount) - shift,
+                        'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount),
                     }
 
-                    if (chartDiv._fullLayout.annotations.length > 2) {
+                    if (chartDiv._fullLayout.annotations.length >= 2) {
                         const marginBottom = chartDiv._fullLayout._size.b;
                         const plotAreaHeight = chartDiv._fullLayout._size.h;
                         update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1;

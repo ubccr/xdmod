@@ -908,6 +908,7 @@ class Plotly2
             $yAxisMin = $first_data_description->log_scale?null:0;
             $yAxisMax = null;
             $yIndex = $yAxisIndex + 1;
+            $swapXYDone = false;
             $yAxisName = $yAxisIndex == 0 ? 'yaxis' : "yaxis{$yIndex}";
             $xAxisName = substr_replace($yAxisName, 'xaxis', 0, 5);
             $config = $this->getAxisOverrides($y_axis, $yAxisLabel, $yAxisIndex);
@@ -1341,42 +1342,51 @@ class Plotly2
                            . $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
                     }
                     unset($trace['yaxis']);
-                    $xtmp = $this->_chart['layout']["{$xAxisName}"];
-                    $ytmp = $this->_chart['layout']["{$yAxisName}"];
-                    $this->_chart['layout']['yaxis'] = &$xtmp;
-                    $this->_chart['layout']["{$xAxisName}"] = &$ytmp;
                     $trace['xaxis'] = "x{$yIndex}";
-                    if ($yAxisIndex > 1) {
+
+                    if (!$swapXYDone) {
+                        $xtmp = $this->_chart['layout']["{$xAxisName}"];
+                        $ytmp = $this->_chart['layout']["{$yAxisName}"];
+                        $this->_chart['layout']['yaxis'] = $xtmp;
+                        $this->_chart['layout']["{$xAxisName}"] = $ytmp;
+
+                        $this->_chart['layout']["{$xAxisName}"]['side'] = ($yAxisIndex % 2 != 0) ? 'top' : 'bottom';
+                        if ($this->_chart['layout']["{$xAxisName}"]['side'] == 'top') {
+                            $this->_chart['layout']["{$xAxisName}"]['title']['standoff'] = 0;
+                        }
+                        $this->_chart['layout']["{$xAxisName}"]['anchor'] = 'free';
+                        if (isset($this->_chart['layout']["{$xAxisName}"]['overlaying'])) {
+                            $this->_chart['layout']["{$xAxisName}"]['overlaying'] = 'x';
+                        }
+                        
+                        $xAxisStep = 0.115;
+                        $xAxisBottomBoundStart = 0 + ($xAxisStep * ceil($yAxisCount/2));
+                        $xAxisTopBoundStart = 1 - ($xAxisStep * floor($yAxisCount/2));
+                        $topShift = floor($yAxisCount/2) - floor($yAxisIndex/2);
+                        $bottomShift = ceil($yAxisCount/2) - ceil($yAxisIndex/2);
+                        
+                        $this->_chart['layout']["{$xAxisName}"]['position'] = $this->_chart['layout']["{$xAxisName}"]['side'] == 'top' ? min(1 - ($xAxisStep * $topShift), 1) :
+                            max(0 + ($xAxisStep * $bottomShift), 0);
+                        
+                        $this->_chart['layout']["{$xAxisName}"]['domain'] = array(0,1);
+                        $this->_chart['layout']["{$xAxisName}"]['title']['standoff'] = 0;
+                        $this->_chart['layout']["{$xAxisName}"]['type'] = $yAxisObject->log_scale ? 'log' : '-';
+                        $this->_chart['layout']["{$xAxisName}"]['showgrid'] =$yAxisCount > 1 ? false : true;
+
+                        $this->_chart['layout']['yaxis']['linewidth'] = 2 + $font_size / 4;
+                        $this->_chart['layout']['yaxis']['linecolor'] = '#c0d0e0';
+                        $this->_chart['layout']['yaxis']['domain'] = array($xAxisBottomBoundStart, $xAxisTopBoundStart);
+                        $this->_chart['layout']['yaxis']['autorange'] = 'reversed';
+                        $this->_chart['layout']['yaxis']['showgrid'] = false;
+                        unset($this->_chart['layout']['yaxis']['position']);
+                        $swapXYDone = true;
+
+                    }
+
+                    if ($yIndex > 1) {
                         unset($this->_chart['layout']["{$yAxisName}"]);
                     }
 
-                    $this->_chart['layout']["{$xAxisName}"]['side'] = ($yAxisIndex % 2 != 0) ? 'top' : 'bottom';
-                    if ($this->_chart['layout']["{$xAxisName}"]['side'] == 'top') {
-                        $this->_chart['layout']["{$xAxisName}"]['title']['standoff'] = 0;
-                    }
-                    $this->_chart['layout']["{$xAxisName}"]['anchor'] = 'free';
-                    if (isset($this->_chart['layout']["{$xAxisName}"]['overlaying'])) {
-                        $this->_chart['layout']["{$xAxisName}"]['overlaying'] = 'x';
-                    }
-                    
-                    $xAxisStep = 0.115;
-                    $xAxisBottomBoundStart = 0 + ($xAxisStep * ceil($yAxisCount/2));
-                    $xAxisTopBoundStart = 1 - ($xAxisStep * floor($yAxisCount/2));
-                    $topShift = floor($yAxisCount/2) - floor($yAxisIndex/2);
-                    $bottomShift = ceil($yAxisCount/2) - ceil($yAxisIndex/2);
-                    
-                    $this->_chart['layout']["{$xAxisName}"]['position'] = $this->_chart['layout']["{$xAxisName}"]['side'] == 'top' ? min(1 - ($xAxisStep * $topShift), 1) :
-                        max(0 + ($xAxisStep * $bottomShift), 0);
-                    
-                    $this->_chart['layout']["{$xAxisName}"]['domain'] = array(0,1);
-                    $this->_chart['layout']["{$xAxisName}"]['title']['standoff'] = 0;
-                    $this->_chart['layout']["{$xAxisName}"]['type'] = $yAxisObject->log_scale ? 'log' : '-';
-                    $this->_chart['layout']["{$xAxisName}"]['showgrid'] =$yAxisCount > 1 ? false : true;
-
-                    $this->_chart['layout']['yaxis']['domain'] = array($xAxisBottomBoundStart, $xAxisTopBoundStart);
-                    $this->_chart['layout']['yaxis']['autorange'] = 'reversed';
-                    $this->_chart['layout']['yaxis']['showgrid'] = false;
-                    unset($this->_chart['layout']['yaxis']['position']);
                 }
 
                if (in_array(null, $yValues) && $data_description->display_type == 'line') {
@@ -1515,7 +1525,7 @@ class Plotly2
                     }
                 }
             } // foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
-        }
+        } //foreach($yAxisArray as $yAxisIndex => $yAxisObject)
 
         // Add restricted data warning
         if ($this->_showWarnings) {
