@@ -29,7 +29,7 @@
         "plotly/plotly": "^1.57.1",
         "robrichards/xmlseclibs": "~3.0",
         "sencha/extjs-gpl": "3.4.*",
-        "simplesamlphp/simplesamlphp": "^2.0.9",
+        "simplesamlphp/simplesamlphp": "^1.19.8",
         "swaggest/json-schema": "^0.12.41",
         "symfony/asset": "5.4.*",
         "symfony/console": "5.4.*",
