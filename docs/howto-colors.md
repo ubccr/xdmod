@@ -32,7 +32,7 @@ In this case, they're padded with white, which Open XDMoD skips when showing cha
 
 ```json
 [
-    [
+	[
 		["FFFFFF"], ["1199FF"], ["DB4230"], ["4E665D"], ["F4A221"], ["66FF00"], ["33ABAB"], ["A88D95"], 
 		["789ABC"], ["FF99CC"], ["00CCFF"], ["FFBC71"], ["A57E81"], ["8D4DFF"], ["FF6666"], ["CC99FF"],
 		["2F7ED8"], ["0D233A"], ["8BBC21"], ["910000"], ["1AADCE"], ["492970"], ["F28F43"], ["77A1E5"], 
@@ -41,8 +41,8 @@ In this case, they're padded with white, which Open XDMoD skips when showing cha
 		["C0C0C0"], ["FF99CC"], ["FFCC99"], ["CCFFCC"], ["CCFFFF"], ["99CCFF"], ["339966"], ["FF9966"],
 		["69BBED"], ["33FF33"], ["6666FF"], ["FF66FF"], ["99ABAB"], ["AB8722"], ["AB6565"], ["990099"],
 		["999900"], ["CC3300"], ["669999"], ["993333"], ["339966"], ["C42525"], ["A6C96A"], ["111111"],
-        ["123456"], ["654321"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"]
-    ]
+		["123456"], ["654321"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"]
+	]
 ]
 ```
 
@@ -61,7 +61,7 @@ following JSON list adds a 8-element "snapshot" of [the Viridis color gradient](
 		["C0C0C0"], ["FF99CC"], ["FFCC99"], ["CCFFCC"], ["CCFFFF"], ["99CCFF"], ["339966"], ["FF9966"],
 		["69BBED"], ["33FF33"], ["6666FF"], ["FF66FF"], ["99ABAB"], ["AB8722"], ["AB6565"], ["990099"],
 		["FDE725"], ["A0DA39"], ["4AC16D"], ["1FA187"], ["277F8E"], ["365C8D"], ["46327E"], ["440154"]
-    ]
+	]
 ]
 ```
 
@@ -78,7 +78,7 @@ nudging the starting point over by a value of 1 in any of the 3 RGB channels.
 [
 	[
 		["123456"], ["AABBCC"], ["CCBBAA"], ["123456"], ["111111"], ["222222"], ["333333"], ["444444"]
-    ]
+	]
 ]
 ```
 
@@ -95,5 +95,5 @@ nudging the starting point over by a value of 1 in any of the 3 RGB channels.
 		["FDE725"], ["A0DA39"], ["4AC16D"], ["1FA187"], ["277F8E"], ["365C8D"], ["46327E"], ["440154"],
 		["FDE726"], ["B5DE2B"], ["6ECE58"], ["35B779"], ["1F9E89"], ["26828e"], ["31688E"], ["3E4989"], 
 		["482878"], ["440155"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"]
-    ]
+	]
 ]
