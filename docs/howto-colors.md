@@ -2,11 +2,12 @@
 title: HOWTO Change Metric Explorer Colors
 ---
 
-The color palette available to color chart data in Metric Explorer can be edited
+The color palette available to style chart data in Metric Explorer can be edited
 in the JSON file `colors1.json` (`/etc/xdmod/colors1.json` if you installed the RPM or
 `PREFIX/etc/colors1.json` if you did a manual install).
 
-The default version of `colors1.json` (and what is used if colors1.json is missing or malformed) is shown below
+The default version of `colors1.json` (and what is used as a fallback palette if `colors1.json` 
+is missing or malformed) is shown below
 
 ```json
 [
@@ -26,7 +27,8 @@ The default version of `colors1.json` (and what is used if colors1.json is missi
 To change the colors available, simply edit the hexadecimal codes for any of the swatches in the palette.
 To add a new color or set of colors, make sure to keep the JSON array rectangular with the same width.
 
-E.G. to add the colors "123456" and "654321" you'd need to pad it with other colors, in this case, all white.
+E.G. to add the colors "123456" and "654321" you'd need to pad it with other colors. In this case, they're padded with
+white, which Open XDMoD skips when plotting.
 
 ```json
 [
@@ -44,7 +46,7 @@ E.G. to add the colors "123456" and "654321" you'd need to pad it with other col
 ]
 ```
 
-Charts in XDMoD will go sequentially through this list when deciding what colors to color grouped sets within
+Charts in Open XDMoD will go sequentially through this list when deciding what colors to color grouped sets within
 one dataset on a chart. As such, you can create a gradient by defining it sequentially in this list. The
 following JSON list adds a 8-element "snapshot" of [the Viridis color gradient](https://bids.github.io/colormap/).
 
@@ -63,11 +65,12 @@ following JSON list adds a 8-element "snapshot" of [the Viridis color gradient](
 ]
 ```
 
-XDMOD indexes the colors based on the first instance of the color found in that list, so any duplicate colors 
-may wreck havoc on group-by coloring. 
+Open XDMOD indexes the colors based on the first instance of the color found in that list, 
+so any duplicate colors may wreck havoc on group-by coloring. 
 As an example, if I selected the first `123456` in the following
 palette, the next two groups in that dataset would be colored `AABBCC` and `CCBBAA`. 
-If I selected the second `123456`, though, the next two groups, would *still* be colored `AABBCC` and `CCBBAA`. 
+If I selected the second `123456`, though, the next two groups, would *still* be colored `AABBCC` and `CCBBAA`.
+
 The second palette below shows a workaround for this to add both an 8-element and 10-element Viridis gradient, by 
 nudging the starting point over by a value of 1 in any of the 3 RGB channels.
 
