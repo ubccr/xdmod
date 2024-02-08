@@ -2,68 +2,95 @@
 title: HOWTO Change Metric Explorer Colors
 ---
 
-If a user wants to add a chart to their Summary tab, they can use Metric Explorer to create a chart,
-then open the "Chart Options" context menu by left clicking in the chart, then check the "Show in Summary
-tab" checkbox.
+The color palette available to color chart data in Metric Explorer can be edited
+in the JSON file `colors1.json` (`/etc/xdmod/colors1.json` if you installed the RPM or
+`PREFIX/etc/colors1.json` if you did a manual install).
 
-To change the charts that appear in users' Summary tabs by default, you'll need to create
-a chart and add its JSON definition to a list of summary charts for each user type.
-The easiest way to create a chart to add to each user's list of charts is interactively, 
-using Metric Explorer's JSON export function.
-
-* Login to Open XDMoD with a user account that has the "Developer" role.
-* Create a chart in the Metric Explorer.
-* Open the "Chart Options" context menu by left clicking in the chart.
-* Select the "View chart json" menu item.
-
-To change the charts which appear in the Summary tab for all users, you need to update the
-`roles.json` file (`/etc/xdmod/roles.json` if you installed the RPM or
-`PREFIX/etc/roles.json` if you did a manual install).
-
-The default summary charts (the ones included with a base intall of Open XDMoD) are included implicity 
-for any user type if `summary_charts` is empty in `roles.json` for that role. As such, 
-adding a chart to the `summary_charts` field for the role `pub`, which is non-logged-in users,
-will override the default charts.
-
-However, the default summary charts are also explicitly defined as added charts
-for roles which inherit the `default` type (which is, by default, any logged-in users) 
-by charts stored in `roles.d/jobs.json` (`/etc/xdmod/roles.d/jobs.json` if you installed the RPM or
-`PREFIX/etc/roles.d/jobs.json` if you did a manual install) - to remove these default charts from 
-logged-in users, the `+summary_charts` field will have to be deleted for this file.
- 
-In `roles.json`, copy the chart JSON into the list of summary charts, as shown below.
+The default version of `colors1.json` (and what is used if colors1.json is missing or malformed) is shown below
 
 ```json
-"summary_charts": [
-    {
-        ...
-    },
-    {
-        ...
-    },
-    ...
+[
+	[
+		["FFFFFF"], ["1199FF"], ["DB4230"], ["4E665D"], ["F4A221"], ["66FF00"], ["33ABAB"], ["A88D95"], 
+		["789ABC"], ["FF99CC"], ["00CCFF"], ["FFBC71"], ["A57E81"], ["8D4DFF"], ["FF6666"], ["CC99FF"],
+		["2F7ED8"], ["0D233A"], ["8BBC21"], ["910000"], ["1AADCE"], ["492970"], ["F28F43"], ["77A1E5"], 
+		["3366FF"], ["FF6600"], ["808000"], ["CC99FF"], ["008080"], ["CC6600"], ["9999FF"], ["99FF99"],
+		["969696"], ["FF00FF"], ["FFCC00"], ["666699"], ["00FFFF"], ["00CCFF"], ["993366"], ["3AAAAA"], 
+		["C0C0C0"], ["FF99CC"], ["FFCC99"], ["CCFFCC"], ["CCFFFF"], ["99CCFF"], ["339966"], ["FF9966"],
+		["69BBED"], ["33FF33"], ["6666FF"], ["FF66FF"], ["99ABAB"], ["AB8722"], ["AB6565"], ["990099"],
+		["999900"], ["CC3300"], ["669999"], ["993333"], ["339966"], ["C42525"], ["A6C96A"], ["111111"]
+	]
 ]
 ```
 
-The export functionality from Metric Explorer does not, by default,
-add an empty "global_filters" field, which in my experience is necessary to 
-add in order to avoid errors when displaying on the Summary page 
-(the premade ones in `jobs.json` all include this field).
+To change the colors available, simply edit the hexadecimal codes for any of the swatches in the palette.
+To add a new color or set of colors, make sure to keep the JSON array rectangular with the same width.
+
+E.G. to add the colors "123456" and "654321" you'd need to pad it with other colors, in this case, all white.
 
 ```json
-"summary_charts": [
-    {
-        "global_filters": {
-            "data": [],
-            "total": 0
-        },
-        ...
-    },
-    ...
+[
+	[
+		["FFFFFF"], ["1199FF"], ["DB4230"], ["4E665D"], ["F4A221"], ["66FF00"], ["33ABAB"], ["A88D95"], 
+		["789ABC"], ["FF99CC"], ["00CCFF"], ["FFBC71"], ["A57E81"], ["8D4DFF"], ["FF6666"], ["CC99FF"],
+		["2F7ED8"], ["0D233A"], ["8BBC21"], ["910000"], ["1AADCE"], ["492970"], ["F28F43"], ["77A1E5"], 
+		["3366FF"], ["FF6600"], ["808000"], ["CC99FF"], ["008080"], ["CC6600"], ["9999FF"], ["99FF99"],
+		["969696"], ["FF00FF"], ["FFCC00"], ["666699"], ["00FFFF"], ["00CCFF"], ["993366"], ["3AAAAA"], 
+		["C0C0C0"], ["FF99CC"], ["FFCC99"], ["CCFFCC"], ["CCFFFF"], ["99CCFF"], ["339966"], ["FF9966"],
+		["69BBED"], ["33FF33"], ["6666FF"], ["FF66FF"], ["99ABAB"], ["AB8722"], ["AB6565"], ["990099"],
+		["999900"], ["CC3300"], ["669999"], ["993333"], ["339966"], ["C42525"], ["A6C96A"], ["111111"],
+        ["123456"], ["654321"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"]
+	]
 ]
 ```
 
-By default, the only "summary_charts" field in roles.json is created for the "default" role,
-which includes all logged in users. However, the "summary_charts" field can be created for any role,
-allowing for changing which charts non-logged-in users can view, or created for other roles
-to create summary charts for specific roles. 
+Charts in XDMoD will go sequentially through this list when deciding what colors to color grouped sets within
+one dataset on a chart. As such, you can create a gradient by defining it sequentially in this list. The
+following JSON list adds a 8-element "snapshot" of [the Viridis color gradient](https://bids.github.io/colormap/).
+
+```json
+[
+	[
+		["FFFFFF"], ["1199FF"], ["DB4230"], ["4E665D"], ["F4A221"], ["66FF00"], ["33ABAB"], ["A88D95"], 
+		["789ABC"], ["FF99CC"], ["00CCFF"], ["FFBC71"], ["A57E81"], ["8D4DFF"], ["FF6666"], ["CC99FF"],
+		["2F7ED8"], ["0D233A"], ["8BBC21"], ["910000"], ["1AADCE"], ["492970"], ["F28F43"], ["77A1E5"], 
+		["3366FF"], ["FF6600"], ["808000"], ["CC99FF"], ["008080"], ["CC6600"], ["9999FF"], ["99FF99"],
+		["969696"], ["FF00FF"], ["FFCC00"], ["666699"], ["00FFFF"], ["00CCFF"], ["993366"], ["3AAAAA"], 
+		["C0C0C0"], ["FF99CC"], ["FFCC99"], ["CCFFCC"], ["CCFFFF"], ["99CCFF"], ["339966"], ["FF9966"],
+		["69BBED"], ["33FF33"], ["6666FF"], ["FF66FF"], ["99ABAB"], ["AB8722"], ["AB6565"], ["990099"],
+		["FDE725"], ["A0DA39"], ["4AC16D"], ["1FA187"], ["277F8E"], ["365C8D"], ["46327E"], ["440154"]
+    ]
+]
+```
+
+XDMOD indexes the colors based on the first instance of the color found in that list, so any duplicate colors 
+may wreck havoc on group-by coloring. 
+As an example, if I selected the first `123456` in the following
+palette, the next two groups in that dataset would be colored `AABBCC` and `CCBBAA`. 
+If I selected the second `123456`, though, the next two groups, would *still* be colored `AABBCC` and `CCBBAA`. 
+The second palette below shows a workaround for this to add both an 8-element and 10-element Viridis gradient, by 
+nudging the starting point over by a value of 1 in any of the 3 RGB channels.
+
+```json
+[
+	[
+		["123456"], ["AABBCC"], ["CCBBAA"], ["123456"], ["111111"], ["222222"], ["333333"], ["444444"]
+    ]
+]
+```
+
+```json
+[
+	[
+		["FFFFFF"], ["1199FF"], ["DB4230"], ["4E665D"], ["F4A221"], ["66FF00"], ["33ABAB"], ["A88D95"], 
+		["789ABC"], ["FF99CC"], ["00CCFF"], ["FFBC71"], ["A57E81"], ["8D4DFF"], ["FF6666"], ["CC99FF"],
+		["2F7ED8"], ["0D233A"], ["8BBC21"], ["910000"], ["1AADCE"], ["492970"], ["F28F43"], ["77A1E5"], 
+		["3366FF"], ["FF6600"], ["808000"], ["CC99FF"], ["008080"], ["CC6600"], ["9999FF"], ["99FF99"],
+		["969696"], ["FF00FF"], ["FFCC00"], ["666699"], ["00FFFF"], ["00CCFF"], ["993366"], ["3AAAAA"], 
+		["C0C0C0"], ["FF99CC"], ["FFCC99"], ["CCFFCC"], ["CCFFFF"], ["99CCFF"], ["339966"], ["FF9966"],
+		["69BBED"], ["33FF33"], ["6666FF"], ["FF66FF"], ["99ABAB"], ["AB8722"], ["AB6565"], ["990099"],
+		["FDE725"], ["A0DA39"], ["4AC16D"], ["1FA187"], ["277F8E"], ["365C8D"], ["46327E"], ["440154"],
+		["FDE726"], ["B5DE2B"], ["6ECE58"], ["35B779"], ["1F9E89"], ["26828e"], ["31688E"], ["3E4989"], 
+		["482878"], ["440155"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"]
+    ]
+]
