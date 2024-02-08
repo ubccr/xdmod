@@ -27,8 +27,8 @@ is missing or malformed) is shown below
 To change the colors available, simply edit the hexadecimal codes for any of the swatches in the palette.
 To add a new color or set of colors, make sure to keep the JSON array rectangular with the same width.
 
-E.G. to add the colors "123456" and "654321" you'd need to pad it with other colors. In this case, they're padded with
-white, which Open XDMoD skips when plotting.
+As an example, to add the colors `123456` and `654321` you'd need to pad the table with other colors. 
+In this case, they're padded with white, which Open XDMoD skips when showing charts.
 
 ```json
 [
