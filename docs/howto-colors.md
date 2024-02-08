@@ -32,7 +32,7 @@ In this case, they're padded with white, which Open XDMoD skips when showing cha
 
 ```json
 [
-	[
+    [
 		["FFFFFF"], ["1199FF"], ["DB4230"], ["4E665D"], ["F4A221"], ["66FF00"], ["33ABAB"], ["A88D95"], 
 		["789ABC"], ["FF99CC"], ["00CCFF"], ["FFBC71"], ["A57E81"], ["8D4DFF"], ["FF6666"], ["CC99FF"],
 		["2F7ED8"], ["0D233A"], ["8BBC21"], ["910000"], ["1AADCE"], ["492970"], ["F28F43"], ["77A1E5"], 
@@ -42,7 +42,7 @@ In this case, they're padded with white, which Open XDMoD skips when showing cha
 		["69BBED"], ["33FF33"], ["6666FF"], ["FF66FF"], ["99ABAB"], ["AB8722"], ["AB6565"], ["990099"],
 		["999900"], ["CC3300"], ["669999"], ["993333"], ["339966"], ["C42525"], ["A6C96A"], ["111111"],
         ["123456"], ["654321"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"]
-	]
+    ]
 ]
 ```
 
