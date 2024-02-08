@@ -267,8 +267,8 @@ see [Integrations][integrations] for more information
 
 [integrations]: integrations.html
 [ssp]: https://simplesamlphp.org/
-[ssp-config]: https://simplesamlphp.org/docs/latest/simplesamlphp-sp.html
+[ssp-config]: https://simplesamlphp.org/docs/stable/simplesamlphp-sp.html
 [ssp-globusconfig]: https://github.com/ubccr/simplesamlphp-module-authglobus
-[ssp-idp-remote]: https://simplesamlphp.org/docs/latest/simplesamlphp-reference-idp-remote.html
-[ssp-apache]: https://simplesamlphp.org/docs/latest/simplesamlphp-install.html#configuring-apache
+[ssp-idp-remote]: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-remote.html
+[ssp-apache]: https://simplesamlphp.org/docs/stable/simplesamlphp-install.html#configuring-apache-section_4
 [saml-idp]: https://github.com/mcguinness/saml-idp/
