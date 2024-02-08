@@ -91,7 +91,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/%{name}/
 %{_datadir}/%{name}/vendor
 %{_datadir}/%{name}/public
-%{_datadir}/%{name}/html
 %{_datadir}/%{name}/config
 %{_datadir}/%{name}/.env
 %{_datadir}/%{name}/var
