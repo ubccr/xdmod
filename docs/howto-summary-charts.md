@@ -27,9 +27,10 @@ will override the default charts.
 
 However, the default summary charts are also explicitly defined as added charts
 for roles which inherit the `default` type (which is, by default, any logged-in users) 
-by charts stored in `roles.d/jobs.json` - to remove these default charts from logged-in users,
-the `+summary_charts` field will have to be deleted for this file.
-
+by charts stored in `roles.d/jobs.json` (`/etc/xdmod/roles.d/jobs.json` if you installed the RPM or
+`PREFIX/etc/roles.d/jobs.json` if you did a manual install) - to remove these default charts from 
+logged-in users, the `+summary_charts` field will have to be deleted for this file.
+ 
 In `roles.json`, copy the chart JSON into the list of summary charts, as shown below.
 
 ```json
