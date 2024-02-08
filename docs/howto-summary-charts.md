@@ -26,7 +26,7 @@ adding a chart to the `summary_charts` field for the role `pub`, which is non-lo
 will override the default charts.
 
 However, the default summary charts are also explicitly defined as added charts
-for roles which inherit the `default` type (which is, by default, any logged-in users) 
+for roles which inherit the `default` role (which is, by default, any logged-in users) 
 by charts stored in `roles.d/jobs.json` (`/etc/xdmod/roles.d/jobs.json` if you installed the RPM or
 `PREFIX/etc/roles.d/jobs.json` if you did a manual install) - to remove these default charts from 
 logged-in users, the `+summary_charts` field will have to be deleted in this file.
@@ -46,7 +46,7 @@ In `roles.json`, copy the chart JSON into the list of summary charts, as shown b
 ```
 
 The export functionality from Metric Explorer does not, by default,
-add an empty "global_filters" field, which in my experience is necessary to 
+add an empty `global_filters` field, which in my experience is necessary to 
 add in order to avoid errors when displaying on the Summary page 
 (the premade ones in `jobs.json` all include this field).
 
@@ -63,7 +63,7 @@ add in order to avoid errors when displaying on the Summary page
 ]
 ```
 
-By default, the only "summary_charts" field in roles.json is created for the "default" role,
-which includes all logged in users. However, the "summary_charts" field can be created for any role,
+By default, the only `summary_chart` field in roles.json is created for the `default` role,
+which includes all logged in users. However, the `summary_charts` field can be created for any role,
 allowing for changing which charts non-logged-in users can view, or created for other roles
 to create summary charts for specific roles. 
