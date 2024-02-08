@@ -3,21 +3,511 @@
 namespace IntegrationTests\Rest;
 
 use IntegrationTests\TokenAuthTest;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class WarehouseControllerProviderTest extends TokenAuthTest
 {
-    /**
-     * Directory containing test artifact files.
-     */
-    const TEST_GROUP = 'integration/rest/warehouse';
-
     private static $helper;
 
     public static function setUpBeforeClass()
     {
         parent::setUpBeforeClass();
         self::$helper = new XdmodTestHelper();
+    }
+
+    /**
+     * @dataProvider provideGetSearchHistory
+     */
+    public function testGetSearchHistory($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideGetSearchHistory()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/history',
+            'method' => 'get',
+            'params' => [],
+            'data' => null
+        ];
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'int_params' => ['nodeid', 'infoid', 'jobid', 'recordid'],
+                'string_params' => ['tsid', 'realm', 'title']
+            ]
+        );
+        $tests[] = [
+            'get_history_by_title_not_found',
+            'cd',
+            parent::mergeParams(
+                $validInput,
+                'params',
+                [
+                    'realm' => 'Jobs',
+                    'title' => 'foo'
+                ]
+            ),
+            parent::validateNotFoundResponse('')
+        ];
+        $leafTest = [
+            'process_job_node_time_series_request_leaf',
+            'cd',
+            parent::mergeParams(
+                $validInput,
+                'params',
+                [
+                    'nodeid' => '0',
+                    'tsid' => 'foo',
+                    'infoid' => '0',
+                    'jobid' => '0',
+                    'recordid' => '0',
+                    'realm' => 'foo'
+                ]
+            ),
+            parent::validateBadRequestResponse('Node 0 is a leaf')
+        ];
+        $tests[] = $leafTest;
+        // Run the same test again with a different name and the 'nodeid'
+        // parameter removed.
+        $leafTest2 = $leafTest;
+        $leafTest2[0] = 'process_job_time_series_request_leaf';
+        unset($leafTest2[2]['params']['nodeid']);
+        $tests[] = $leafTest2;
+        // Run the same test again with a different name, the 'tsid'
+        // parameter removed, and a different expected response body.
+        $leafTest3 = $leafTest2;
+        $leafTest3[0] = 'process_job_request_leaf';
+        unset($leafTest3[2]['params']['tsid']);
+        $leafTest3[3] = parent::validateBadRequestResponse('Node is a leaf');
+        $tests[] = $leafTest3;
+        return $tests;
+    }
+
+    /**
+     * @dataProvider provideCreateSearchHistory
+     */
+    public function testCreateSearchHistory($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideCreateSearchHistory()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/history',
+            'method' => 'post',
+            'params' => null,
+            'data' => [
+                'realm' => 'Jobs',
+                'data' => '{"text":"foo"}'
+            ]
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'int_params' => ['recordid'],
+                'string_params' => ['realm', 'data']
+            ]
+        );
+        $tests = $this->provideSearchParamsMalformedDataTests(
+            $tests,
+            $validInput
+        );
+        return $tests;
+    }
+
+    private function provideSearchParamsMalformedDataTests($tests, $validInput)
+    {
+        $paramSets = [
+            ['id' => 'data_invalid_json', 'data' => 'foo'],
+            ['id' => 'data_missing_text', 'data' => '{}']
+        ];
+        foreach ($paramSets as $paramSet) {
+            $tests[] = [
+                $paramSet['id'],
+                'usr',
+                parent::mergeParams(
+                    $validInput,
+                    'data',
+                    ['data' => $paramSet['data']]
+                ),
+                parent::validateBadRequestResponse(
+                    'Malformed request. Expected \'data.text\' to be present.'
+                )
+            ];
+        }
+        return $tests;
+    }
+
+    /**
+     * @dataProvider provideGetHistoryById
+     */
+    public function testGetHistoryById($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideGetHistoryById()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/history/0',
+            'method' => 'get',
+            'params' => ['realm' => 'Jobs'],
+            'data' => null
+        ];
+        // Run some standard endpoint tests.
+        return parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['realm']
+            ]
+        );
+    }
+
+    /**
+     * @dataProvider provideUpdateHistory
+     */
+    public function testUpdateHistory($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideUpdateHistory()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/history/0',
+            'method' => 'post',
+            'params' => null,
+            'data' => [
+                'realm' => 'Jobs',
+                'data' => '{"text":"foo"}'
+            ]
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['realm', 'data']
+            ]
+        );
+        $tests = $this->provideSearchParamsMalformedDataTests(
+            $tests,
+            $validInput
+        );
+        return $tests;
+    }
+
+    /**
+     * @dataProvider provideDeleteHistory
+     */
+    public function testDeleteHistory($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideDeleteHistory()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/history/0',
+            'method' => 'delete',
+            'params' => ['realm' => 'Jobs'],
+            'data' => null
+        ];
+        // Run some standard endpoint tests.
+        return parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['realm']
+            ]
+        );
+    }
+
+    /**
+     * @dataProvider provideDeleteAllHistory
+     */
+    public function testDeleteAllHistory($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideDeleteAllHistory()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/history',
+            'method' => 'delete',
+            'params' => ['realm' => 'Jobs'],
+            'data' => null
+        ];
+        // Run some standard endpoint tests.
+        return parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['realm']
+            ]
+        );
+    }
+
+    /**
+     * @dataProvider provideSearchJobs
+     */
+    public function testSearchJobs($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideSearchJobs()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/jobs',
+            'method' => 'get',
+            'params' => [
+                'realm' => 'Jobs',
+                'params' => '{"foo":"bar"}',
+                'start_date' => '2017-01-01',
+                'end_date' => '2017-01-01',
+                'start' => '0',
+                'limit' => '0'
+            ],
+            'data' => null
+        ];
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'int_params' => ['start', 'limit'],
+                'string_params' => [
+                    'realm',
+                    'params',
+                    'start_date',
+                    'end_date'
+                ]
+            ]
+        );
+        $tests[] = [
+            'params_invalid_json',
+            'cd',
+            parent::mergeParams(
+                $validInput,
+                'params',
+                ['params' => 'foo']
+            ),
+            parent::validateBadRequestResponse(
+                'params parameter must be valid JSON'
+            )
+        ];
+        $tests[] = [
+            'invalid_realm',
+            'cd',
+            parent::mergeParams(
+                $validInput,
+                'params',
+                [
+                    'realm' => 'foo',
+                    'params' => '{"foo":"bar"}'
+                ]
+            ),
+            parent::validateBadRequestResponse('Invalid realm')
+        ];
+        $tests[] = [
+            'invalid_search_params',
+            'cd',
+            parent::mergeParams(
+                $validInput,
+                'params',
+                [
+                    'realm' => 'Jobs',
+                    'params' => '{"foo":"bar"}'
+                ]
+            ),
+            parent::validateBadRequestResponse(
+                'Invalid search parameters specified in params object'
+            )
+        ];
+        $tests[] = [
+            'invalid_search_by_primary_key_params',
+            'cd',
+            parent::mergeParams(
+                $validInput,
+                'params',
+                [
+                    'realm' => 'Jobs',
+                    'params' => '{"jobref":"foo"}'
+                ]
+            ),
+            parent::validateBadRequestResponse('invalid search parameters')
+        ];
+        return $tests;
+    }
+
+    /**
+     * @dataProvider provideSearchJobsByPeers
+     */
+    public function testSearchJobsByPeers($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideSearchJobsByPeers()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/jobs/peers',
+            'method' => 'get',
+            'params' => [
+                'start' => '0',
+                'limit' => '0'
+            ],
+            'data' => null
+        ];
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'int_params' => ['jobid', 'start', 'limit'],
+                'string_params' => ['realm']
+            ]
+        );
+        $tests[] = [
+            'resource_does_not_exist',
+            'cd',
+            parent::mergeParams(
+                $validInput,
+                'params',
+                [
+                    'realm' => 'Jobs',
+                    'jobid' => '-1'
+                ]
+            ),
+            parent::validateNotFoundResponse(
+                'The requested resource does not exist'
+            )
+        ];
+        return $tests;
+    }
+
+    /**
+     * @dataProvider provideSearchJobsByTimeseries
+     */
+    public function testSearchJobsByTimeseries($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideSearchJobsByTimeseries()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/jobs/timeseries',
+            'method' => 'get',
+            'params' => ['tsid' => 'foo'],
+            'data' => null
+        ];
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'run_as' => 'cd',
+                'additional_params' => [
+                    'realm' => 'Cloud',
+                    'jobid' => '3',
+                    'format' => 'png'
+                ],
+                'int_params' => [
+                    'jobid',
+                    'nodeid',
+                    'cpuid',
+                    'width',
+                    'height',
+                    'font_size'
+                ],
+                'string_params' => [
+                    'realm',
+                    'tsid',
+                    'format',
+                    'scale',
+                    'show_title'
+                ]
+            ]
+        );
+        $tests[] = [
+            'resource_not_found',
+            'cd',
+            parent::mergeParams(
+                $validInput,
+                'params',
+                ['realm' => 'Jobs']
+            ),
+            parent::validateNotFoundResponse(
+                'The requested resource does not exist'
+            )
+        ];
+        $tests[] = [
+            'unsupported_format_type',
+            'cd',
+            parent::mergeParams(
+                $validInput,
+                'params',
+                [
+                    'realm' => 'Cloud',
+                    'jobid' => '3',
+                    'format' => 'foo'
+                ]
+            ),
+            parent::validateBadRequestResponse('Unsupported format type.')
+        ];
+        return $tests;
     }
 
     /**
@@ -49,20 +539,6 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         );
     }
 
-
-    public function aggregateDataMalformedRequestProvider()
-    {
-        $inputs = array();
-
-        $inputs[] = array('cd', array('start' => 0, 'limit' => 10));
-        $inputs[] = array('cd', array('start' => 0, 'limit' => 10, 'config' => ''));
-        $inputs[] = array('cd', array('start' => 0, 'limit' => 10, 'config' => '{"realm": "Jobs"}'));
-        $inputs[] = array('cd', array('start' => 0, 'limit' => 10, 'config' => 'not json data'));
-        $inputs[] = array('cd', array('start' => 'smart', 'limit' => 'asdf', 'config' => '{"realm": "Jobs"}'));
-
-        return $inputs;
-    }
-
     public function aggregateDataAccessControlsProvider()
     {
         $inputs = array();
@@ -78,14 +554,106 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider aggregateDataMalformedRequestProvider
      */
-    public function testGetAggregateDataMalformedRequests($user, $params)
-    {
-        self::$helper->authenticate($user);
-        $response = self::$helper->get('rest/warehouse/aggregatedata', $params);
+    public function testGetAggregateDataMalformedRequests(
+        $id,
+        $role,
+        $input,
+        $output
+    ) {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
 
-        $this->assertEquals(400, $response[1]['http_code']);
-        $this->assertFalse($response[0]['success']);
-        self::$helper->logout();
+    public function aggregateDataMalformedRequestProvider()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/aggregatedata',
+            'method' => 'get',
+            'params' => $this->getAggDataParameterGenerator(),
+            'data' => null
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'int_params' => ['start', 'limit'],
+                'string_params' => ['config']
+            ]
+        );
+        // Test bad request parameters.
+        $tests[] = [
+            'invalid_config',
+            'cd',
+            parent::mergeParams(
+                $validInput,
+                'params',
+                ['config' => 'foo']
+            ),
+            parent::validateBadRequestResponse(
+                'syntax error in config parameter'
+            )
+        ];
+        $config = json_decode($validInput['params']['config'], true);
+        $tests = $this->getAggregateDataMalformedParamTests(
+            $tests,
+            $validInput,
+            $config,
+            null,
+            'missing_config_',
+            function ($param) {
+                return "Missing mandatory config property $param";
+            }
+        );
+        $tests = $this->getAggregateDataMalformedParamTests(
+            $tests,
+            $validInput,
+            $config,
+            'order_by',
+            'missing_config_order_by_',
+            function () {
+                return 'Malformed config property order_by';
+            }
+        );
+        return $tests;
+    }
+
+    private function getAggregateDataMalformedParamTests(
+        array $tests,
+        array $validInput,
+        array $config,
+        $key,
+        $idPrefix,
+        $getMessage
+    ) {
+        if (is_null($key)) {
+            $params = $config;
+        } else {
+            $params = $config[$key];
+        }
+        foreach (array_keys($params) as $param) {
+            $newConfig = $config;
+            if (is_null($key)) {
+                unset($newConfig[$param]);
+            } else {
+                unset($newConfig[$key][$param]);
+            }
+            $tests[] = [
+                $idPrefix . $param,
+                'cd',
+                parent::mergeParams(
+                    $validInput,
+                    'params',
+                    ['config' => json_encode($newConfig)]
+                ),
+                parent::validateBadRequestResponse($getMessage($param))
+            ];
+        }
+        return $tests;
     }
 
     /**
@@ -144,16 +712,78 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     }
 
     /**
+     * @dataProvider provideGetDimensions
+     */
+    public function testGetDimensions($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideGetDimensions()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/dimensions',
+            'method' => 'get',
+            'params' => [],
+            'data' => null
+        ];
+        // Run some standard endpoint tests.
+        return parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['realm']
+            ]
+        );
+    }
+
+    /**
+     * @dataProvider provideGetDimensionValues
+     */
+    public function testGetDimensionValues($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideGetDimensionValues()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/dimensions/resource',
+            'method' => 'get',
+            'params' => [],
+            'data' => null
+        ];
+        // Run some standard endpoint tests.
+        return parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'int_params' => ['offset', 'limit'],
+                'string_params' => ['search_text', 'realm']
+            ]
+        );
+    }
+
+    /**
      * @dataProvider provideGetRawData
      */
-    public function testGetRawData($role, $tokenType, $testKey)
+    public function testGetRawData($id, $role, $tokenType, $input, $output)
     {
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_raw_data',
-            $testKey
+            $input,
+            $output
         );
     }
 
@@ -162,27 +792,81 @@ class WarehouseControllerProviderTest extends TokenAuthTest
      */
     public function provideGetRawData()
     {
-        $testData = TokenAuthTest::provideTokenAuthTestDataWithMultipleKeys(
-            self::TEST_GROUP,
-            'get_raw_data'
+        $validInput = [
+            'path' => 'rest/warehouse/raw-data',
+            'method' => 'get',
+            'params' => [
+                'start_date' => '2017-01-01',
+                'end_date' => '2017-01-01',
+                'realm' => 'Jobs'
+            ],
+            'data' => null,
+            'endpoint_type' => 'rest',
+            'authentication_type' => 'token_required'
+        ];
+        // Run some standard endpoint tests.
+        $tests = parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'token_auth' => true,
+                'int_params' => ['offset'],
+                'string_params' => ['realm', 'fields'],
+                'date_params' => ['start_date', 'end_date']
+            ]
         );
-        // Only run the non-default valid token tests for one non-public user
-        // to make the tests take less time overall.
-        $testNames = array_keys($testData);
-        foreach ($testNames as $testName) {
-            if (
-                // If the user is other than 'usr',
-                1 !== preg_match('/^usr-/', $testName)
-                // and the token type is 'valid_token',
-                && 1 === preg_match('/-valid_token-/', $testName)
-                // and the test key is not 'defaults',
-                && 1 !== preg_match('/-defaults$/', $testName)
-            ) {
-                // Remove the test from the list.
-                unset($testData[$testName]);
-            }
+        $testData = [];
+        // Test bad request parameters.
+        array_push(
+            $testData,
+            [
+                'end_before_start',
+                ['end_date' => '2016-01-01'],
+                parent::validateBadRequestResponse(
+                    'End date cannot be less than start date.'
+                )
+            ],
+            [
+                'invalid_realm',
+                ['realm' => 'foo'],
+                parent::validateBadRequestResponse('Invalid realm.')
+            ],
+            [
+                'invalid_fields',
+                ['fields' => 'foo,bar;'],
+                parent::validateBadRequestResponse(
+                    "Invalid fields specified: 'foo', 'bar;'."
+                )
+            ],
+            [
+                'invalid_filter_key',
+                ['filters[foo]' => '177'],
+                parent::validateBadRequestResponse(
+                    "Invalid filter key 'foo'."
+                )
+            ],
+            [
+                'negative_offset',
+                ['offset' => -1],
+                parent::validateBadRequestResponse(
+                    "Offset must be non-negative."
+                )
+            ]
+        );
+        foreach ($testData as $t) {
+            list($id, $params, $output) = $t;
+            $tests[] = [
+                $id,
+                'usr',
+                'valid_token',
+                parent::mergeParams(
+                    $validInput,
+                    'params',
+                    $params
+                ),
+                $output
+            ];
         }
-        return $testData;
+        return $tests;
     }
 
     /**
@@ -193,8 +877,21 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_raw_data_limit'
+            [
+                'path' => 'rest/warehouse/raw-data/limit',
+                'method' => 'get',
+                'params' => null,
+                'data' => null,
+                'endpoint_type' => 'rest',
+                'authentication_type' => 'token_required'
+            ],
+            parent::validateSuccessResponse(function ($body, $assertMessage) {
+                $this->assertGreaterThan(
+                    0,
+                    $body['data'],
+                    $assertMessage
+                );
+            })
         );
     }
 }

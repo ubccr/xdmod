@@ -130,6 +130,11 @@ class Statistic extends \CCR\Loggable implements iStatistic
     protected $variableStore = null;
 
     /**
+     * @var array Group By names that should be hidden for this statistic.
+     */
+    protected $hiddenGroupBys = [];
+
+    /**
      * @see iStatistic::factory()
      */
 
@@ -267,6 +272,11 @@ class Statistic extends \CCR\Loggable implements iStatistic
                     break;
                 case 'weight_statistic_id':
                     $this->weightStatisticId = trim($value);
+                    break;
+                case 'hidden_groupbys':
+                    if(is_array($value)) {
+                        $this->hiddenGroupBys = $value;
+                    }
                     break;
                 default:
                     $this->logger->notice(
@@ -483,6 +493,15 @@ class Statistic extends \CCR\Loggable implements iStatistic
     public function showInMetricCatalog()
     {
         return $this->showInCatalog;
+    }
+
+    /**
+     * @see iStatistic::getHiddenGroupBys()
+     */
+
+    public function getHiddenGroupBys()
+    {
+        return $this->hiddenGroupBys;
     }
 
     /**

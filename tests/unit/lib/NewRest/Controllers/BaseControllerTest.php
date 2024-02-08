@@ -1,6 +1,6 @@
 <?php
 
-namespace Rest\Utilities;
+namespace UnitTests\NewRest\Controllers;
 
 use Rest\Controllers\BaseControllerProvider;
 

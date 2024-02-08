@@ -12,6 +12,7 @@ use DataWarehouse\Query\Exceptions\UnknownGroupByException;
 use Realm\Realm;
 use Models\Services\Acls;
 use PDO;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use XDChartPool;
 use XDUser;
 
@@ -262,7 +263,7 @@ class Usage extends Common
                 if (!$usageIsTimeseries) {
                     $userStatisticObject = $realm->getStatisticObject($this->request['statistic']);
                     if (!$userStatisticObject->usesTimePeriodTablesForAggregate()) {
-                        throw new \DataWarehouse\Query\Exceptions\BadRequestException(
+                        throw new BadRequestHttpException(
                             json_encode(
                                 array(
                                     'statistic' => $userStatisticObject->getName(),
@@ -817,7 +818,7 @@ class Usage extends Common
                     $usageGroupBy,
                     $meRequestMetric->getId()
                 );
-                $drillTargets = $queryDescripter->getDrillTargets();
+                $drillTargets = $queryDescripter->getDrillTargets($meRequestMetric->getHiddenGroupBys());
                 $drillDowns = array_map(
                     function ($drillTarget) {
                         return explode('-', $drillTarget, 2);

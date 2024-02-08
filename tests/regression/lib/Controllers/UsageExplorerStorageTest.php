@@ -1,12 +1,8 @@
 <?php
-/**
- * @package OpenXdmod
- * @subpackage Tests
- */
 
-namespace Controllers;
+namespace RegressionTests\Controllers;
 
-use TestHarness\RegressionTestHelper;
+use RegressionTests\TestHarness\RegressionTestHelper;
 
 /**
  * Test the usage explorer for storage realm regressions.

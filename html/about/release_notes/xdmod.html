@@ -2,6 +2,150 @@
 
 <p>Below is a list of Open XDMoD releases with major features and bug fixes listed.</p>
 
+<h2 id="2023-09-11-v10-5-0">2023-09-11 v10.5.0</h2>
+<ul>
+    <li><p>Bug Fixes</p>
+        <ul>
+            <li>Cloud<ul>
+                <li>Updates to how end times are set for instance types.</li>
+            </ul>
+            </li>
+            <li>Data Warehouse Export<ul>
+                <li>Exporting an empty timeseries dataset will no longer throw <code>undefined offset</code> errors.</li>
+            </ul>
+            </li>
+            <li>ETL<ul>
+                <li>Fixed a rare race condition that was causing processes to not exit has been fixed.</li>
+                <li>Added variable substitution for hierarchy info used in ETL table definitions and <code>alias</code> used in raw statistics configuration.</li>
+                <li>Updated the table definition for the <code>ReportTemplateCharts</code> table to include an index.</li>
+            </ul>
+            </li>
+            <li><p>General </p>
+                <ul>
+                    <li>Additional conditions that will force a reconnect on database connection loss have been added.</li>
+                    <li>Prevent the MySQL CLI from using user-specific options as the presence of a <code>.my.cnf</code> file in a user&#39;s home directory can contain conflicting credentials.</li>
+                </ul>
+            </li>
+            <li><p>Job Viewer</p>
+                <ul>
+                    <li>Fixed a bug that was causing the y-axis to go up to 120% ( even though the data only went to 100%).</li>
+                </ul>
+            </li>
+            <li>Metrics Explorer<ul>
+                <li>Updated the method by which dataset id&#39;s are calculated to use integers as opposed to floating point numbers.</li>
+            </ul>
+            </li>
+        </ul>
+    </li>
+    <li>Data Analytics Framework<ul>
+        <li>New Feature<ul>
+            <li>API Token authentication / authorization has been added to XDMoD.</li>
+            <li>The My Profile UI component has been updated to allow for the management of API tokens.</li>
+        </ul>
+        </li>
+    </ul>
+    </li>
+    <li>Documentation<ul>
+        <li>Data Analytics Framework<ul>
+            <li>Documentation has been added for the Data Analytics Framework. </li>
+        </ul>
+        </li>
+        <li>Data Warehouse Export<ul>
+            <li>Documentation has been added that explains the data export batch process.</li>
+        </ul>
+        </li>
+        <li>Cloud<ul>
+            <li>FAQ has been updated with information about Rocky/RHEL 8 and PHP 7.2 information. </li>
+        </ul>
+        </li>
+        <li>General<ul>
+            <li>New NSF Grant numbers have been added.</li>
+            <li>New XMS team members have been added.</li>
+            <li>SimpleSAMLPHP links have been updated.</li>
+            <li>Updated the text of the node_utilization How-To section to include language about needing to restart php-fpm in addition to httpd for changes to show up in the UI.</li>
+            <li>Updated links to presentations stored in Google Drive/Docs.</li>
+        </ul>
+        </li>
+    </ul>
+    </li>
+    <li>Enhancements<ul>
+        <li>Cloud<ul>
+            <li>The Core Hour statistic has been changed to CPU Hours to match the Jobs realm. </li>
+        </ul>
+        </li>
+        <li>Data Warehouse Export<ul>
+            <li>Added a new configuration option to disable export for a realm.  </li>
+        </ul>
+        </li>
+        <li>ETL <ul>
+            <li>Support for GPU count data in Grid Engine, specifically Univa Grid Engine now known as Altair® Grid Engine®</li>
+            <li>the <code>mod_logger</code> db schema has been updated to be managed by the ETL framework.</li>
+            <li>Added support for PBS logs that use <code>Resource_list.ngpus</code> to indicate the number of GPUs used by a job.</li>
+            <li>Added an index to <code>mod_shredder.shredded_job</code> to speed up ingestion actions that depend on the <code>qos_name</code></li>
+        </ul>
+        </li>
+        <li>General<ul>
+            <li>Updated the syntax for variable substitution in <code>rawstatistics.json</code>, this brings it inline with the format used by the ETL configuration code.</li>
+        </ul>
+        </li>
+        <li>Infrastructure<ul>
+            <li>REST request logging has been supplemented by including POST data and total elapsed processing time.</li>
+        </ul>
+        </li>
+        <li>Job Viewer<ul>
+            <li>All charts have been migrated from using HighCharts to Plotly.  </li>
+        </ul>
+        </li>
+        <li>Metric Explorer<ul>
+            <li>Legend text generation has been updated and improved.</li>
+            <li>Support for API token authentication hass been added to a number of contoller end points.</li>
+        </ul>
+        </li>
+    </ul>
+    </li>
+    <li>Internal Dashboard<ul>
+        <li>General<ul>
+            <li>ETL Overseer logs have been added to the <code>Logs</code> tab.</li>
+        </ul>
+        </li>
+    </ul>
+    </li>
+    <li>Maintenance / Code Quality<ul>
+        <li>General<ul>
+            <li>Removed dead code from the <code>xd_utilities</code> namespace.</li>
+            <li>Updates to support Chrome 109 </li>
+        </ul>
+        </li>
+    </ul>
+    </li>
+    <li>New Features<ul>
+        <li>ACL<ul>
+            <li>Added the ability to group by&#39;s to be hidden for a specific statistic instead of a whole realm. </li>
+        </ul>
+        </li>
+        <li>Cloud<ul>
+            <li>A new dimension has been added, <code>vm_state</code>.</li>
+            <li>Inactive VMs have been added to cloud realm aggregation.</li>
+        </ul>
+        </li>
+        <li>Data Warehouse Export<ul>
+            <li>A new endpoint for retrieving raw data has been added.</li>
+        </ul>
+        </li>
+    </ul>
+    </li>
+</ul>
+<h2 id="2023-08-04-v10-0-3">2023-08-04 v10.0.3</h2>
+<ul>
+    <li>Bug Fixes<ul>
+        <li>General<ul>
+            <li>Fix handling of filters where the filter string has a quote character in it (#1749)</li>
+        </ul>
+        </li>
+    </ul>
+    </li>
+</ul>
+
 <h2>Version 10.0.2 (2022-04-03)</h2>
 <ul>
     <li>Bug Fixes</li>

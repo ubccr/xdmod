@@ -100,6 +100,27 @@ dnf module -y reset nodejs
 dnf module -y install nodejs:16
 ```
 
+**NOTE**: The method to install the system level mongodb drivers has changed for Rocky 8. To account for this, you will
+need to run the following:
+```shell
+dnf install -y php-devel
+pecl install mongodb
+echo "extension=mongodb.so" > /etc/php.d/40-mongodb.ini
+```
+
+You can double check that the installation was successful by running the following and confirming that
+there is output:
+```shell
+php -i | grep mongo
+```
+
+Add the following property to the `[server]` section of `/etc/my.cnf.d/mariadb-server.cnf`
+```shell
+sql_mode=
+```
+This will instruct your database to operate in permissive SQL mode. We currently require this to be set as XDMoD still relies on
+behaviors and features only present in older versions of MySQL.
+
 Additional Notes
 ----------------
 

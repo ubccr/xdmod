@@ -3,7 +3,8 @@
 namespace IntegrationTests\Controllers;
 
 use IntegrationTests\TokenAuthTest;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\UsageExplorerHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 function arrayRecursiveDiff($a1, $a2) {
     $retval = array();
@@ -29,8 +30,6 @@ function arrayRecursiveDiff($a1, $a2) {
 
 class UsageExplorerTest extends TokenAuthTest
 {
-    const TEST_GROUP = 'integration/controllers/user_interface';
-
     private static $publicView;
 
     public static function setUpBeforeClass()
@@ -55,7 +54,7 @@ class UsageExplorerTest extends TokenAuthTest
 
     protected function setUp()
     {
-        $this->helper = new \TestHarness\XdmodTestHelper();
+        $this->helper = new XdmodTestHelper();
     }
 
     /**
@@ -414,7 +413,7 @@ EOF
         $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
         $this->assertEquals($response[1]['http_code'], 200);
 
-        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
+        $plotdata = json_decode(UsageExplorerHelper::demanglePlotData($response[0]), true);
 
         $this->assertArrayHasKey('chart_settings', $plotdata['data'][0]);
 
@@ -669,7 +668,7 @@ EOF;
 
         $this->assertEquals($response[1]['http_code'], 200);
 
-        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
+        $plotdata = json_decode(UsageExplorerHelper::demanglePlotData($response[0]), true);
 
         $this->assertTrue($plotdata['success']);
 
@@ -860,7 +859,7 @@ EOF;
                         )
                     ),
                     'expected' => array(
-                        'value' => array('zealous', '1754.1433'),
+                        'value' => array('zealous', '1755.8894'),
                         'xpath' => '//rows//row//cell/value'
                     ),
                     'additional_data' => array(
@@ -881,7 +880,7 @@ EOF;
                         )
                     ),
                     'expected' => array(
-                        'value' => array('zealous', '1754.1433'),
+                        'value' => array('zealous', '1755.8894'),
                         'xpath' => '//rows//row//cell/value'
                     ),
                     'additional_data' => array(
@@ -1063,7 +1062,7 @@ EOF;
 
         $results = array();
         foreach($users as $user) {
-            $helper = new \TestHarness\XdmodTestHelper();
+            $helper = new XdmodTestHelper();
             if ($user !== 'pub') {
                 $helper->authenticate($user);
             }
@@ -1217,8 +1216,21 @@ END;
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_data'
+            [
+                'path' => 'controllers/user_interface.php',
+                'method' => 'post',
+                'params' => null,
+                'data' => ['operation' => 'get_data'],
+                'endpoint_type' => 'controller',
+                'authentication_type' => 'token_optional'
+            ],
+            [
+                'status_code' => 500,
+                'body_validator' => parent::validateErrorResponseBody(
+                    'One or more realms must be specified.',
+                    0
+                )
+            ]
         );
     }
 }

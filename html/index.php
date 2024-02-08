@@ -41,11 +41,12 @@ if ($userLoggedIn) {
         // TODO: Refactor generic catch block below to handle specific exceptions,
         //       which would allow this block to be removed.
         throw $see;
+    } catch (PDOException $e) {
+        xd_web_message\displayMessage('XDMoD is currently experiencing a temporary outage.', 'Status: session=true code=' . $e->getCode(), true);
+        exit;
     } catch (Exception $e) {
-
         xd_web_message\displayMessage('There was a problem initializing your account.', $e->getMessage(), true);
         exit;
-
     }
 
     if (!isset($user) || !isset($_SESSION['session_token'])) {
@@ -76,7 +77,12 @@ if ($userLoggedIn) {
         $_SESSION['public_session_token'] = 'public-' . microtime(true) . '-' . uniqid();
     }
 
-    $user = XDUser::getPublicUser();
+    try {
+        $user = XDUser::getPublicUser();
+    } catch (PDOException $e) {
+        xd_web_message\displayMessage('XDMoD is currently experiencing a temporary outage.', 'Status: session=false code=' . $e->getCode(), true);
+        exit;
+    }
 }
 
 $page_title = xd_utilities\getConfiguration('general', 'title');
@@ -162,6 +168,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <!-- Libraries -->
     <script type="text/javascript" src="gui/js/libraries/utilities.js"></script>
+    <script type="text/javascript" src="gui/js/libraries/PlotlyUtilities.js"></script>
 
     <script type="text/javascript" src="gui/js/SessionManager.js"></script>
 
@@ -421,7 +428,7 @@ JS;
     <script type="text/javascript" src="gui/lib/moment/moment.min.js"></script>
     <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
 
-    <script type="text/javascript" src="gui/lib/plotly/plotly-1.57.1.min.js"></script>
+    <script type="text/javascript" src="gui/lib/plotly/plotly-2.24.2.min.js"></script>
 
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts.src.js"></script>
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts-more.js"></script>

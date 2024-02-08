@@ -45,7 +45,7 @@
                 "name": "session_records",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "sr2",
-                "on": "sr.instance_id = sr2.instance_id and sr.start_time_ts = sr2.end_time_ts and sr.resource_id = sr2.resource_id"
+                "on": "sr2.session_id = (SELECT sr3.session_id FROM ${SOURCE_SCHEMA}.session_records AS sr3 WHERE sr.start_time >= sr3.start_time AND sr.start_time >= sr3.end_time AND sr.instance_id = sr3.instance_id AND sr.session_id != sr3.session_id AND sr3.start_event_type_id != 49 ORDER BY start_time desc, end_time desc LIMIT 0,1)"
             }
         ],
         "where": [

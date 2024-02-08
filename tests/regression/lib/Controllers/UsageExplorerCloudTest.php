@@ -1,12 +1,8 @@
 <?php
-/**
- * @package OpenXdmod
- * @subpackage Tests
- */
 
-namespace Controllers;
+namespace RegressionTests\Controllers;
 
-use TestHarness\RegressionTestHelper;
+use RegressionTests\TestHarness\RegressionTestHelper;
 
 /**
  * Test the usage explorer for cloud realm regressions.
@@ -79,6 +75,7 @@ class UsageExplorerCloudTest extends \PHPUnit_Framework_TestCase
             'fieldofscience',
             'nsfdirectorate',
             'parentscience',
+            'instance_state'
         );
 
         $varSettings = array(

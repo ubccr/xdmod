@@ -11,7 +11,8 @@
             "resource_code": "rc.resource",
             "resource_description": "rc.description",
             "resource_shared_jobs": "COALESCE(rc.shared_jobs, FALSE)",
-            "resource_timezone": "COALESCE(rc.timezone, 'UTC')"
+            "resource_timezone": "COALESCE(rc.timezone, 'UTC')",
+            "resource_allocation_type_id": "COALESCE(srat.resource_allocation_type_id, -1)"
         },
         "joins": [
             {
@@ -32,7 +33,15 @@
                 "name": "staging_resource_type",
                 "alias": "srt",
                 "on": "rc.type_abbrev = srt.resource_type_abbrev"
+            },
+            {
+                "type": "LEFT",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource_allocation_type",
+                "alias": "srat",
+                "on": "rc.resource_allocation_type_abbrev = srat.resource_allocation_type_abbrev"
             }
+
         ]
     }
 }

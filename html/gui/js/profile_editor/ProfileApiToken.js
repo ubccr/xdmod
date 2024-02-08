@@ -30,6 +30,8 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
     creationDate: '',
     expirationDate: '',
     initialParentWindowWidth: undefined,
+    hasBeenClosed: false,
+    responseArgs: null,
 
     // Methods
     initComponent: function () {
@@ -41,6 +43,19 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
 
     init: function () {
         this.getToken();
+    },
+
+    handleOpenEvent: function () {
+        this.hasBeenClosed = false;
+        // If a response arrived while the window was opening, process it now.
+        if (this.responseArgs !== null) {
+            this.processHttpResponse();
+        }
+    },
+
+    handleCloseEvent: function () {
+        this.hasBeenClosed = true;
+        this.responseArgs = null;
     },
 
     initSubComponents: function () {
@@ -181,8 +196,22 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
             url: '/users/current/api/token',
             method: params.method,
             callback: function (options, success, response) {
+                // If the window has already been closed, throw away the
+                // response.
+                if (self.hasBeenClosed) {
+                    return;
+                }
+                // Store the arguments needed to process the response.
+                self.responseArgs = {
+                    params: params,
+                    success: success,
+                    response: response
+                };
+                // If the window has finished opening, go ahead and process the
+                // response. Otherwise, the window will call handleOpenEvent
+                // later to process the response.
                 if (self.parentWindow.isVisible()) {
-                    self.processResponse(params, success, response);
+                    self.processHttpResponse();
                 }
             }
         });
@@ -242,7 +271,11 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
         self.showNewToken();
     },
 
-    processResponse: function (params, success, response) {
+    processHttpResponse: function () {
+        var success = this.responseArgs.success;
+        var params = this.responseArgs.params;
+        var response = this.responseArgs.response;
+        this.responseArgs = null;
         if (success) {
             this.processSuccessfulResponse(params, response);
         } else if (params.onFailure) {
@@ -322,10 +355,7 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
     },
 
     showReceivedToken: function () {
-        var isTokenExpired = (
-            new Date(this.creationDate)
-            >= new Date(this.expirationDate)
-        );
+        var isTokenExpired = (new Date() >= new Date(this.expirationDate));
         if (isTokenExpired) {
             this.showMsg(this.getExpiredTokenMsg());
         } else {

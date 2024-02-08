@@ -1,6 +1,6 @@
 {
     "name": "xdmod",
-    "version": "10.5.0",
+    "version": "11.0.0",
     "release": "1.0",
     "files": {
         "include_paths": [
@@ -82,6 +82,7 @@
             {"configuration/rawstatistics.d/20_jobs.json": "rawstatistics.d/20_jobs.json"},
             "configuration/resource_specs.json",
             "configuration/resource_types.json",
+            "configuration/resource_allocation_types.json",
             "configuration/resources.json",
             "configuration/roles.json",
             "configuration/roles.d",

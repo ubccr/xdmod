@@ -2,7 +2,7 @@
  *  Wait for all elements that match a selector to be invisible.
  *
  *  @param {string} selector - elements to check
- *  @param {Number} [ms=9000] - Milliseconds to wait for elements to be invisible
+ *  @param {Number} [ms=18000] - Milliseconds to wait for elements to be invisible
  *
  *  @uses commands/waitForVisible
  */

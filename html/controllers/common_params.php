@@ -2,6 +2,12 @@
 
 function checkDateParameters()
 {
+    if (!isset($_REQUEST['start_date'])) {
+        throw new Exception(
+            'missing required start_date parameter'
+        );
+    }
+
     $start_date_parsed = date_parse_from_format(
         'Y-m-d',
         $_REQUEST['start_date']
@@ -10,6 +16,12 @@ function checkDateParameters()
     if ($start_date_parsed['error_count'] !== 0) {
         throw new Exception(
             'start_date param is not in the correct format of Y-m-d.'
+        );
+    }
+
+    if (!isset($_REQUEST['end_date'])) {
+        throw new Exception(
+            'missing required end_date parameter'
         );
     }
 
@@ -130,14 +142,6 @@ function getLegendLocation()
         isset($_REQUEST['legend_type']) && $_REQUEST['legend_type'] != ''
         ? $_REQUEST['legend_type']
         : 'bottom_center';
-}
-
-function getFontSize()
-{
-    return
-        isset($_REQUEST['font_size']) && $_REQUEST['font_size'] != ''
-        ? $_REQUEST['font_size']
-        : 'default';
 }
 
 function getTitle()

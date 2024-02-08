@@ -1,12 +1,12 @@
 <?php
 
-namespace UnitTesting\DataWarehouse\Export;
+namespace UnitTests\DataWarehouse\Export;
 
 use CCR\Log;
 use DataWarehouse\Export\FileWriter\NullFileWriter;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\LoggerInterface;
-use TestHarness\TestFiles;
+use IntegrationTests\TestHarness\TestFiles;
 
 /**
  * Test data warehouse export null file writer.
@@ -33,7 +33,7 @@ class NullFileWriterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \TestHarness\TestFiles
+     * @return TestFiles
      */
     public function getTestFiles()
     {

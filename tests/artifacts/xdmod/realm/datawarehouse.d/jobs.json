@@ -126,7 +126,7 @@
                         }
                     ],
                     "where": [
-                        "rs.processors IS NOT NULL"
+                        "rs.cpu_processor_count IS NOT NULL"
                     ],
                     "orderby": [
                         "rf.code",

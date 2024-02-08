@@ -746,10 +746,12 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // for each of the key columns and align the values with the approprite aggregate key based
         // on the order specified in the attribute_to_aggregate_table_key_map.
 
+        $db = DB::factory('datawarehouse');
+
         foreach ( $requestFilters as $filterValues ) {
             $list = explode(self::FILTER_DELIMITER, $filterValues);
             foreach ( $this->attributeToAggregateKeyMap as $aggregateKey ) {
-                $aggregateFilters[$aggregateKey][] = array_shift($list);
+                $aggregateFilters[$aggregateKey][] = $db->quote(array_shift($list));
             }
         }
 
@@ -759,10 +761,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // request. If no attribute filter query was specified simply use the list of values.
 
         foreach ( $aggregateFilters as $aggregateKeyColumn => $filterValues ) {
-            // The original code always enclosed values in quotes but this may not be desirable,
-            // although it is unclear if we can differentiate between strings and numerics stored as
-            // strings.
-            $substitution = sprintf("'%s'", implode("','", $filterValues));
+            $substitution = implode(",", $filterValues);
             if ( ! isset($this->attributeFilterMapSqlList[$aggregateKeyColumn]) ) {
                 $fieldIdQuery = $substitution;
             } else {
@@ -802,10 +801,12 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // for each of the key columns and align the values with the approprite aggregate key based
         // on the order specified in the attribute_to_aggregate_table_key_map.
 
+        $db = DB::factory('datawarehouse');
+
         foreach ( $requestFilters as $filterValues ) {
             $list = explode(self::FILTER_DELIMITER, $filterValues);
             foreach ( $this->attributeToAggregateKeyMap as $attributeKey => $aggregateKey ) {
-                $attributeKeyFilters[$attributeKey][] = array_shift($list);
+                $attributeKeyFilters[$attributeKey][] = $db->quote(array_shift($list));
             }
         }
 
@@ -814,7 +815,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
         $whereConditions = array();
         foreach ( $attributeKeyFilters as $attributeKey => $filterValues ) {
-            $whereConditions[] = sprintf("%s IN ('%s')", $attributeKey, implode("','", $filterValues));
+            $whereConditions[] = sprintf("%s IN (%s)", $attributeKey, implode(",", $filterValues));
         }
 
         // If the attribute description query was not specified we will use the existing
@@ -847,13 +848,9 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         } else {
             // Construct the where conditions for each key column and replace the placeholder in the
             // attribute description query.
-            //
-            // The original code always enclosed values in quotes but this may not be desirable,
-            // although it is unclear if we can differentiate between strings and numerics stored as
-            // strings.
 
             foreach ( $attributeKeyFilters as $attributeKey => $filterValues ) {
-                $filters = "'" . implode("','", $filterValues) . "'";
+                $filters = implode(",", $filterValues);
             }
 
             $query = str_replace(
