@@ -9,7 +9,6 @@ use CCR\DB\NullDB;
 use Exception;
 use CCR\Log;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_TestCase;
 use Psr\Log\LoggerInterface;
 use IntegrationTests\TestHarness\TestFiles;
 
@@ -98,11 +97,10 @@ abstract class JobShredderBaseTestCase extends TestCase
         // output is a JSON object and not an array.
         $testCases = [];
         $i = 0;
-        while ((list($testName, $outputTestCase) = each($outputData))) {
+        foreach ($outputData as $testName => $outputTestCase) {
             $testCases[$testName] = [$inputData[$i], $outputTestCase];
             ++$i;
         }
-
         return $testCases;
     }
 }

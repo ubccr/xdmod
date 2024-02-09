@@ -19,11 +19,9 @@ class JsonTest extends TestCase
      */
     public function testJsonDecoding()
     {
-        $modulePath = BASE_DIR . '/open_xdmod/modules/xdmod';
-        $pattern = $modulePath . '/configuration/*.json';
+        $pattern = BASE_DIR . '/configuration/*.json';
         $jsonFiles = glob($pattern);
         sort($jsonFiles);
-
         foreach ($jsonFiles as $file) {
             $contents = file_get_contents($file);
             $this->assertNotFalse($contents, "Got contents of $file");

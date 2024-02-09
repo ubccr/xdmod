@@ -2,8 +2,8 @@
 
 namespace UnitTests\OpenXdmod\Tests;
 
+use IntegrationTests\TestHarness\TestFiles;
 use PHPUnit\Framework\TestCase;
-use TestHarness\TestFiles;
 use Xdmod\SlurmResourceParser;
 
 /**
