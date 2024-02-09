@@ -77,7 +77,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             baseChartOptions.layout.margin.t += 30;
         }
 
-        if (baseChartOptions.credits && baseChartOptions.layout.credits === false) {
+        if (!baseChartOptions.credits && baseChartOptions.credits === false) {
             baseChartOptions.layout.annotations[2].text = '';
         }
 
@@ -146,7 +146,13 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         const legendHeight = (topCenter && !(baseChartOptions.layout.height <= 550)) ? chartDiv._fullLayout.legend._height : 0;
         const titleHeight = 31;
         const subtitleHeight = 15;
-        const creditsHeight = subtitleLineCount > 0 && !topCenter ? (15 * subtitleLineCount) : 0;
+        let creditsHeight = 0;
+        if (subtitleLineCount > 0) {
+            creditsHeight = (15 * subtitleLineCount);
+            if (topCenter) {
+                creditsHeight -= 15;
+            }
+        }
         let update = {
             'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
             'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount),
@@ -155,8 +161,14 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         if (baseChartOptions.layout.annotations.length > 2) {
             const marginBottom = chartDiv._fullLayout._size.b;
             const plotAreaHeight = chartDiv._fullLayout._size.h;
-            update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1 + creditsHeight;
-            update['annotations[2].xshift'] = marginRight;
+            let pieChartYShift = 0;
+            let pieChartXShift = 0;
+            if (chartDiv._fullData.length != 0 && chartDiv._fullData[0].type === 'pie') {
+                pieChartYShift = subtitleLineCount > 0 ? 30 : 0;
+                pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
+            }
+            update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift;
+            update['annotations[2].xshift'] = marginRight - pieChartXShift;
         }
 
         Plotly.relayout(baseChartOptions.renderTo, update);

@@ -6433,8 +6433,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     if (chartDiv._fullLayout.annotations.length >= 2) {
                         const marginBottom = chartDiv._fullLayout._size.b;
                         const plotAreaHeight = chartDiv._fullLayout._size.h;
+                        let pieChartXShift = 0;
+                        if (chartDiv._fullData.length != 0 && chartDiv._fullData[0].type === 'pie') {
+                            pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
+                        }
                         update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1;
-                        update['annotations[2].xshift'] = marginRight;
+                        update['annotations[2].xshift'] = marginRight - pieChartXShift;
                     }
 
                     Plotly.relayout('plotly-panel' + this.id, update);
