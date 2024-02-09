@@ -2,7 +2,7 @@
 
 Job Viewer
 =============
-    
+
 
 The Job Viewer Tab displays information about individual HPC jobs and
 includes a search interface that allows jobs to be selected based on a
@@ -16,9 +16,7 @@ the information for a selected job with one job per tab. The different
 types of information within a job are shown in sub-tabs.
 
 Note that the information available for a given job depends on the data
-collection software that is used by the resource provider. <XSEDE>Most
-of the ACCESS resource providers use tacc_stats software to collect
-performance information.</XSEDE>
+collection software being collected.
 
 .. figure:: media/image95.png
    :name: job_viewer_tab
@@ -55,7 +53,7 @@ viewing.
    Search Window
 
 Alternatively, if you are looking for jobs that satisfy a general set of
-criteria, you can use the **Advanced Search** form (see :numref:`job_viewer_advanced_search`). 
+criteria, you can use the **Advanced Search** form (see :numref:`job_viewer_advanced_search`).
 You must specify (1) the time frame for the search as well as
 (2) one or more **Filters**. The filter field is selected from the drop
 down list, the value for this field is then selected from the box to its
@@ -153,10 +151,10 @@ their time in CPU user mode.
 Accounting data
 ~~~~~~~~~~~~~~~~~~~~~~
 
-This tab shows the information about the job that was obtained from the
-resource manager <XSEDE>and the ACCESS allocation service</XSEDE>. This
-includes timing information such as the start and end time of the job as
-well as administrative information such as the user that submitted the
+This tab shows the information about individual jobs obtained from the
+:only:`<XSEDE>ACCESS allocation service` :only:`<Open> resource manager`.
+This includes timing information such as the start and end time of the job
+as well as administrative information such as the user that submitted the
 job and the account that was charged.
 
 Job script
