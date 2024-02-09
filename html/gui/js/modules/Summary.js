@@ -635,7 +635,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                         thumbnail: true,
                         margin: {
                             t: 22,
-                            b: 0 
+                            b: 0
                         }
                     },
                     data: []

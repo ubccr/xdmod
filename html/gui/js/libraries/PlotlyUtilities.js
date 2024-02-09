@@ -239,9 +239,6 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
         }],
     };
 
-    /*let defaultLayout = getDefaultLayout();
-    XDMoD.utils.deepExtend(layout, defaultLayout);*/
-
     let ret = {
         data: data,
         layout: layout
@@ -254,33 +251,32 @@ function getClickedPoint(evt, traces) {
     if ((traces && traces.length === 0) || (evt.points && evt.points.length === 0)) {
         return point;
     }
-    for (let i = 0; i < traces.length; i++) {
-        let points = traces[i].getElementsByClassName('points');
-        if (points.length != 0 && points[0].children) {
-            points = points[0].children;
-            for (let j = 0; j < points.length; j++) {
-                const dimensions = points[j].getBoundingClientRect();
-                if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right &&
-                    evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
-                    const dataValue = points[j]['__data__'].s ? points[j]['__data__'].s : points[j]['__data__'].y;
-                    const swapXY = evt.points[0].data.yaxis ? false : true;
-                    const pointIndex = evt.points.findIndex((trace) => {
-                        if (trace.value) {
-                            return trace.value === dataValue;
-                        }
-                        else {
-                            return swapXY ? trace.x === dataValue : trace.y === dataValue;
-                        }
-                    });
-                    point = evt.points[pointIndex];
-                    break;
+    const findPoint = (evt, trace) => {
+        for (let i = 0; i < traces.length; i++) {
+            let points = traces[i].getElementsByClassName('points');
+            if (points.length != 0 && points[0].children) {
+                points = points[0].children;
+                for (let j = 0; j < points.length; j++) {
+                    const dimensions = points[j].getBoundingClientRect();
+                    if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right &&
+                        evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
+                        const dataValue = points[j]['__data__'].s ? points[j]['__data__'].s : points[j]['__data__'].y;
+                        const swapXY = evt.points[0].data.yaxis ? false : true;
+                        const pointIndex = evt.points.findIndex((trace) => {
+                            if (trace.value) {
+                                return trace.value === dataValue;
+                            }
+                            else {
+                                return swapXY ? trace.x === dataValue : trace.y === dataValue;
+                            }
+                        });
+                        return evt.points[pointIndex];
+                    }
                 }
             }
-            if (point) {
-                break;
-            }
         }
-   }
+    }
+    point = findPoint(evt, traces);
     return point;
 }
 

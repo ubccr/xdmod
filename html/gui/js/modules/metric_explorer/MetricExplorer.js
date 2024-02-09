@@ -1043,8 +1043,10 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 }
                 var store = Ext.StoreMgr.lookup('hchart_store_metric_explorer');
                 
-                let pontSelected = point.x;
+                let pointSelected = point.x
 
+                // Plotly doesn't accept unix timestamps therefore
+                // we need to grab the raw timestamp stored on the data object.
                 if (point.data.seriesData) {
                     point.data.seriesData.forEach((seriesObj) => {
                         if (seriesObj.y === point.y) {

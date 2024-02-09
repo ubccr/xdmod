@@ -1,7 +1,25 @@
-/* eslint no-param-reassign: ["error", { "props": false }]*/
-// TODO: Convert label and axis formatters for Plotly
+/*
+ * JavaScript Document
+ * @author Amin Ghadersohi
+ * @date 2012-Mar-07 (version 1)
+ *
+ * @author Ryan Gentner
+ * @date 2013-Jun-23 (version 2)
+ *
+ * @author Andrew Stoltman
+ * @date 2024-Feb-09 (version 3)
+ *
+ * Class to generate Plotly JS Chart. Also performs final configurations. 
+ */
+
 Ext.namespace('XDMoD.utils');
 
+/**
+ * Determines if legend is located at the top of the chart.
+ *
+ * @param  {Object} layout - Plotly JS layout configuration object.
+ * @return {boolean} if the legend is top center or not
+ */
 function topLegend(layout) {
     if (layout.legend) {
         return  (layout.legend.xanchor == 'center' &&
@@ -11,6 +29,13 @@ function topLegend(layout) {
     return false;
 }
 
+/**
+ * Word wrap subtitle text and adjust margin depending
+ * on legend location and subtitle length.
+ *
+ * @param  {Object} layout - Plotly JS layout configuration object
+ * @return {Integer} subtitle text line count
+ */
 function adjustTitles(layout) {
     if (layout.annotations && layout.annotations.length == 0) {
         return 0;
@@ -44,20 +69,23 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     jQuery.extend(true, baseChartOptions, chartOptions);
     let isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
 
+    // Configure plot for 'No Data' image. We want to wipe the layout object except for a couple things
     if (isEmpty) {
         let errorConfig = getNoDataErrorConfig();
         const width = baseChartOptions.layout.width;
         const height = baseChartOptions.layout.height;
+        // Save the title and subtitle except for thumbnail plots
         let margin;
         let titleAndSubtitle
         if (baseChartOptions.layout.annotations) {
             margin = baseChartOptions.layout.margin;
             titleAndSubtitle = baseChartOptions.layout.annotations.slice(0,2);
-        }   
+        }
         baseChartOptions.layout = errorConfig;
         baseChartOptions.layout.width = width;
         baseChartOptions.layout.height = height;
         baseChartOptions.layout.annotations = [];
+        // Category chart summary view needs adjustments
         if (baseChartOptions.realmOverview) {
             baseChartOptions.layout.images[0].sizex = 4;
             baseChartOptions.layout.images[0].sizey = 4;
@@ -127,7 +155,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
 
     const chart = Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, configs);
     const chartDiv = document.getElementById(baseChartOptions.renderTo);
-   
+
     // Need this because of bug with Plotly JS pie chart automargin
     // which causes the chart to never fire the 'plotly_afterplot'
     // event. Therefore, we need to explictly call an event.

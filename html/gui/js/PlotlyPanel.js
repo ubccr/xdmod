@@ -6,8 +6,10 @@
  * @author Ryan Gentner
  * @date 2013-Jun-23 (version 2)
  *
+ * @author Andrew Stoltman
+ * @date 2024-Feb-09 (version 3)
  *
- * Component for integrating with plotly api
+ * Plotly JS Chart extended as an ExtJS component
  */
 
 CCR.xdmod.ui.PlotlyPanel = function (config) {
@@ -51,7 +53,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                         return;
                     }
                     this.chartOptions = jQuery.extend(true, {}, t.getAt(0).data, this.baseChartOptions);
-                    this.chartOptions.credits = this.credits; 
+                    this.chartOptions.credits = this.credits;
                     if (this.chartOptions.layout.annotations[0]) {
                         this.chartOptions.layout.annotations[0].text = this.plotlyTextEncode(this.chartOptions.layout.annotations[0].text);
                     }
@@ -70,13 +72,13 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                         chartDiv.on('plotly_click', (evt) => {
                             if (isPie) {
                                 XDMoD.Module.MetricExplorer.pointContextMenu(evt.points[0], evt.points[0].data.datasetId, undefined);
-                            } 
+                            }
                             else {
                                 let traces = [];
                                 let mainAxisTraces = metricDiv.getElementsByClassName('plot')[0];
                                 if (mainAxisTraces && mainAxisTraces.children.length != 0) {
                                     for (let i = 0; i < mainAxisTraces.children.length; i++) {
-                                        traces.push(...mainAxisTraces.children[i].children); 
+                                        traces.push(...mainAxisTraces.children[i].children);
                                     }
                                     
                                 }
@@ -172,7 +174,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                                         yAxisTickDiv.children[i].setAttribute("pointer-events", "all");
                                         yAxisTickDiv.children[i].addEventListener('click', (event) => {
                                             if (this.chartOptions.layout.swapXY) {
-                                                XDMoD.Module.MetricExplorer.xAxisContextMenu(this.chartOptions.layout.yaxis);                
+                                                XDMoD.Module.MetricExplorer.xAxisContextMenu(this.chartOptions.layout.yaxis);
                                             } else {
                                                 XDMoD.Module.MetricExplorer.yAxisContextMenu(this.chartOptions.layout.yaxis, this.chartOptions.data);
                                             }
@@ -227,9 +229,12 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                             yAxisEvents(yAxisTickLayer);
                             xAxisEvents(xAxisTickLayer);
                             titleEvents(infoLayer);
+                            // There is a relayout event when empty charts are initialized which
+                            // requires us to reattach the click event
                             if (this.chartOptions.data && this.chartOptions.data.length === 0) {
                                 plotEvents(plotAreaLayer);
                             }
+                            // Certain properties are in zoom events
                             const evtKeys = Object.keys(evt);
                             this.chartOptions.layout.zoom = evtKeys.some((key) => {
                                 switch (key) {

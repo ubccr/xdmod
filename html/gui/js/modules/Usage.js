@@ -2757,7 +2757,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 const usageDiv = document.getElementById(this.id);
                                 if (evt.points && evt.points.length > 0) {
                                     if (evt.points[0].data.type === 'pie') {
-                                        point = evt.points[0];    
+                                        point = evt.points[0];
                                     }
                                     else {
                                         const traces = usageDiv.getElementsByClassName('plot')[0].firstChild.children;
