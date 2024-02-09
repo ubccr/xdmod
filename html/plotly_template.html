@@ -21,156 +21,144 @@
 
         <div id="container" class="plotly"></div>
         <script type="text/javascript">
-        var Ext = {
+        let Ext = {
             namespace: function () {}
         };
-        var XDMoD = {
+        let XDMoD = {
             utils: {}
         };
+
         $(document).ready(function () {
-        // _ chartOptions _ is a macro that is substituted by \xd_charting\exportHighchart()
-        var inputChartOptions = _chartOptions_;
-        var args = {
-            mainTitleFontSize: inputChartOptions.chartTitleSize,
-            axisTitleFontSize: inputChartOptions.axisTitleSize,
-            axisLabelFontSize: inputChartOptions.axisTickSize,
-            lineWidth: inputChartOptions.lineWidth
-            };
-        var chartOptions = {};
-        // Chart will be fully configured if export call came from non-supremm module tab
-        if (inputChartOptions.layout) {
-            if (chartOptions.data && chartOptions.data.length > 0) {
-                if (chartOptions.data[0].type === 'pie' && chartOptions.data[0].text.length > 0) {
+            // _ chartOptions _ is a macro that is substituted by \xd_charting\exportChart()
+            let inputChartOptions = _chartOptions_;
+            const args = {
+                mainTitleFontSize: inputChartOptions.chartTitleSize,
+                axisTitleFontSize: inputChartOptions.axisTitleSize,
+                axisLabelFontSize: inputChartOptions.axisTickSize,
+                lineWidth: inputChartOptions.lineWidth
+                };
+            let chartOptions = {};
+            // Chart will be fully configured if export call came from non-supremm module tab
+            if (inputChartOptions.layout) {
+                chartOptions = inputChartOptions;
+
+                if (chartOptions.data[0].type === 'pie') {
                     chartOptions.layout.margin.t += 30;
                 }
+
+                for (let i = 0; i < chartOptions.data.length; i++) {
+                    // Rollback constrain for bar chart text font size
+                    chartOptions.data[i]['constraintext'] = 'none';
+                }
+
+                chartOptions.data.sort((trace1, trace2) => {
+                    if (chartOptions.layout.barmode != 'group') {
+                        if (trace2.name.startsWith('Std Err:')) {
+                            return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
+                        }
+                        return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.legendrank - trace1.legendrank);
+                    }
+                    else {
+                        const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
+                        if (trace2.name.startsWith('Std Err:') && res === -1) {
+                            return 1;
+                        }
+                        return res;
+                    }
+                });
             }
-            chartOptions = inputChartOptions;
+            else {
+                chartOptions = generateChartOptions(inputChartOptions, args);
+            }
+
             chartOptions.layout['width'] = _width_;
             chartOptions.layout['height'] = _height_;
 
-            if (chartOptions.data[0].type === 'pie') {
-                chartOptions.layout.margin.t += 30;
+            Plotly.newPlot('container', chartOptions.data, chartOptions.layout, { staticPlot: true } );
+
+            const chartDiv = document.getElementById('container');
+
+            if (chartDiv) {
+                Plotly.relayout('container', {});
             }
 
-
-            let lineSplit = (s, wrapWidth) => {
-                return s.match(new RegExp(`([^\\n]{1,${wrapWidth}})(?=\\s|$)`, 'g'))
-            }
-
-            let topLegend = (layout) => {
-                return  (layout.legend.xanchor == 'center' &&
-                         layout.legend.yanchor == 'top'    &&
-                         layout.legend.yref != 'paper')
-            }
-            let adjustTitles = (layout) => {
-                if (layout.annotations && layout.annotations.length == 0) {
-                    return 0;
+            chartDiv.once('plotly_relayout', (evt) => {
+                if (chartOptions.layout.annotations.length === 0){
+                    return;
                 }
-                let subtitle = layout.annotations[1];
-                const len = subtitle.text.length;
-                let subtitleLineCount = 0;
-                if (len > 0) {
-                   const axWidth = _width_ -  layout.margin.l - layout.margin.r;
-                   const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 8));
-                   layout.margin.t = 45 + (subtitle_lines.length * 15);
-                   layout.annotations[1].text = subtitle_lines.join('<br />');
-                   if (topLegend(layout)) {
-                       layout.legend.y = 0.95 - (0.025 * subtitle_lines.length);
-                       layout.annotations[1].yshift = (17 * subtitle_lines.length) * -1;
-                   }
-                   subtitleLineCount = subtitle_lines.length;
+
+                let lineSplit = (s, wrapWidth) => {
+                    return s.match(new RegExp(`([^\\n]{1,${wrapWidth}})(?=\\s|$)`, 'g'))
                 }
-                else {
-                    if (topLegend(layout)) {
-                        layout.margin.t = 45 + 20;
+
+                let topLegend = (layout) => {
+                    return  (layout.legend.xanchor == 'center' &&
+                             layout.legend.yanchor == 'top'    &&
+                             layout.legend.yref != 'paper')
+                }
+                let adjustTitles = (layout) => {
+                    if (layout.annotations && layout.annotations.length == 0) {
+                        return 0;
+                    }
+                    let subtitle = layout.annotations[1];
+                    const len = subtitle.text.length;
+                    let subtitleLineCount = 0;
+                    if (len > 0) {
+                       const axWidth = _width_ -  layout.margin.l - layout.margin.r;
+                       const subtitle_lines = lineSplit(subtitle.text, Math.trunc(axWidth / 8));
+                       layout.margin.t = 45 + (subtitle_lines.length * 15);
+                       layout.annotations[1].text = subtitle_lines.join('<br />');
+                       if (topLegend(layout)) {
+                           layout.legend.y = 0.95 - (0.025 * subtitle_lines.length);
+                           layout.annotations[1].yshift = (17 * subtitle_lines.length) * -1;
+                       }
+                       subtitleLineCount = subtitle_lines.length;
+                    }
+                    else {
+                        if (topLegend(layout)) {
+                            layout.margin.t = 45 + 20;
+                        }
+                    }
+
+                    return subtitleLineCount;
+                }
+
+                const topCenter = topLegend(chartOptions.layout);
+                const subtitleLineCount = adjustTitles(chartOptions.layout);
+                const marginTop = (topCenter || subtitleLineCount > 0) ? chartOptions.layout.margin.t : chartDiv._fullLayout._size.t;
+                const marginRight = chartDiv._fullLayout._size.r;
+                const legendHeight = (topCenter && !(chartOptions.layout.height <= 550)) ? chartDiv._fullLayout.legend._height : 0;
+                const titleHeight = 30;
+                const subtitleHeight = 15;
+                let creditsHeight = 0;
+                if (subtitleLineCount > 0) {
+                    creditsHeight = (15 * subtitleLineCount);
+                    if (topCenter) {
+                        creditsHeight -= 15;
                     }
                 }
-                
-                return subtitleLineCount;
-            }
-            adjustTitles(chartOptions.layout);
-            for (let i = 0; i < chartOptions.data.length; i++) {
-                // Rollback constrain for bar chart text font size
-                chartOptions.data[i]['constraintext'] = 'none';
 
-            }
+                let update = {
+                    'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
+                    'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount),
+                }
 
-            chartOptions.data.sort((trace1, trace2) => {
-                if (chartOptions.layout.barmode != 'group') {
-                    if (trace2.name.startsWith('Std Err:')) {
-                        return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
+                if (chartOptions.layout.annotations.length > 2) {
+                    const marginBottom = chartDiv._fullLayout._size.b;
+                    const plotAreaHeight = chartDiv._fullLayout._size.h;
+                    let pieChartYShift = 0;
+                    let pieChartXShift = 0;
+                    if (chartDiv._fullData.length != 0 && chartDiv._fullData[0].type === 'pie') {
+                        pieChartYShift = subtitleLineCount > 0 ? 30 : 0;
+                        pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
                     }
-                    return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.legendrank - trace1.legendrank);
+                    update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift;
+                    update['annotations[2].xshift'] = marginRight - pieChartXShift - 15;
                 }
-                else {
-                    const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
-                    if (trace2.name.startsWith('Std Err:') && res === -1) {
-                        return 1;
-                    }
-                    return res;
-                }
+
+                Plotly.relayout('container', update);
+
             });
-
-
-        }
-        else {
-            chartOptions = generateChartOptions(inputChartOptions, args);
-        }
-
-        chartOptions.layout['width'] = _width_;
-        chartOptions.layout['height'] = _height_;
-
-        Plotly.newPlot('container', chartOptions.data, chartOptions.layout, { staticPlot: true } );
-
-
-        const chartDiv = document.getElementById('container');
-
-        if (chartDiv) {
-            Plotly.relayout(baseChartOptions.renderTo, {});
-        }
-
-        chartDiv.once('plotly_relayout', (evt) => {
-            if (chartOptions.layout.annotations.length === 0){
-                return;
-            }
-            const topCenter = topLegend(chartOptions.layout);
-            const subtitleLineCount = adjustTitles(chartOptions.layout);
-            const marginTop = (topCenter || subtitleLineCount > 0) ? chartOptions.layout.margin.t : chartDiv._fullLayout._size.t;
-            const marginRight = chartDiv._fullLayout._size.r;
-            const legendHeight = (topCenter && !(chartOptions.layout.height <= 550)) ? chartDiv._fullLayout.legend._height : 0;
-            const titleHeight = 30;
-            const subtitleHeight = 15;
-            const creditsHeight = 0;
-            let creditsHeight = 0;
-            if (subtitleLineCount > 0) {
-                creditsHeight = (15 * subtitleLineCount);
-                if (topCenter) {
-                    creditsHeight -= 15;
-                }
-            }
-
-            let update = {
-                'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
-                'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount),
-            }
-
-            if (chartOptions.layout.annotations.length > 2) {
-                const marginBottom = chartDiv._fullLayout._size.b;
-                const plotAreaHeight = chartDiv._fullLayout._size.h;
-                let pieChartYShift = 0;
-                let pieChartXShift = 0;
-                if (chartDiv._fullData.length != 0 && chartDiv._fullData[0].type === 'pie') {
-                    pieChartYShift = subtitleLineCount > 0 ? 30 : 0;
-                    pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
-                }
-                update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift;
-                update['annotations[2].xshift'] = marginRight - pieChartXShift;
-            }
-
-            Plotly.relayout('container', update);
-
-        });
- 
         });
 
         </script>
