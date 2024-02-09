@@ -114,7 +114,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
             fclose($pipes[2]);
             $retval = proc_close($process);
             if (strlen($err) > 0 || $retval !== 0) {
-                throw new \Exception("imagehash returned $retval stderr='$err'");
+                throw new Exception("imagehash returned $retval stderr='$err'");
 
             }
         } else {

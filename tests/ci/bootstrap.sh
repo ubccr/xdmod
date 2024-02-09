@@ -29,7 +29,7 @@ fi
 
 # Install python dependencies for the image hash comparison algorithm
 yum install -y python3 python3-six python3-numpy python3-pillow ${PYTHON_SCIPY}
-python3 -m pip install imagehash==4.2.1
+pip3 install imagehash==4.2.1
 cp $REPODIR/tests/ci/scripts/imagehash /root/bin
 
 # ensure php error logging is set to E_ALL (recommended setting for development)
