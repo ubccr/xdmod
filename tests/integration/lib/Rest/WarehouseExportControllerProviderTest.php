@@ -234,7 +234,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                     $index++;
                 }
                 $this->assertCount(
-                    28,
+                    29,
                     $body['data'][0]['fields'],
                     $assertMessage
                 );

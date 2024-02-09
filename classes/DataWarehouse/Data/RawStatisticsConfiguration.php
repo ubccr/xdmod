@@ -157,6 +157,24 @@ class RawStatisticsConfiguration
     }
 
     /**
+     * Get the column name to use when looking up a record in the job viewer
+     *
+     * @param string $realm The name of a realm.
+     * @return string
+     */
+    public function getRecordIdentifierColumn($realm)
+    {
+        $realmConfig = $this->getRealmConfiguration($realm);
+        if (!array_key_exists('record_identifier_column', $realmConfig)) {
+            throw new Exception(sprintf(
+                'Record Identifier setting not found for realm "%s"',
+                $realm
+            ));
+        }
+        return $realmConfig['record_identifier_column'];
+    }
+
+    /**
      * Get the field definitions for generating a query.
      *
      * @param string $realm The name of a realm.
