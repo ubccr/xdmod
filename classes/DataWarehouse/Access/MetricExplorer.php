@@ -90,8 +90,8 @@ class MetricExplorer extends Common
 
         $chart_classname
             = $timeseries
-            ? '\DataWarehouse\Visualization\PlotlyTimeseries2'
-            : '\DataWarehouse\Visualization\Plotly2';
+            ? '\DataWarehouse\Visualization\TimeseriesChart'
+            : '\DataWarehouse\Visualization\AggregateChart';
 
         $filename = $this->getFilename();
         $filenameSpecifiedInRequest = $filename !== null;

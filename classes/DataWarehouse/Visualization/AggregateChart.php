@@ -13,7 +13,7 @@ use DataWarehouse\RoleRestrictionsStringBuilder;
 *
 * Base class for server side generated plotly charts
 */
-class Plotly2
+class AggregateChart
 {
     protected $_swapXY;
     protected $_chart;
@@ -78,7 +78,7 @@ class Plotly2
     // ---------------------------------------------------------
     // __construct()
     //
-    // Constructor for Plotly2 class.
+    // Constructor for AggregateChart class.
     //
     // ---------------------------------------------------------
     public function __construct(
@@ -1776,4 +1776,4 @@ class Plotly2
 
         return array($color, $lineColor);
     }
-} // class Plotly2
+} // class AggregateChart

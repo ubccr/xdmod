@@ -22,12 +22,12 @@ use DataWarehouse\Data\TimeseriesDataset;
 * use them here in configure()
 *
 */
-class PlotlyTimeseries2 extends Plotly2
+class TimeseriesChart extends AggregateChart
 {
     // ---------------------------------------------------------
     // __construct()
     //
-    // Constructor for HighChart2Timeseries class.
+    // Constructor for TimeseriesChart class.
     //
     // note that showContextMenu has default false in HC2T class.
     // ---------------------------------------------------------
