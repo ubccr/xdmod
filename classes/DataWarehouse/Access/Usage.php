@@ -791,7 +791,6 @@ class Usage extends Common
                     else {
                         $meChart['layout']['xaxis']['ticktext'] = $usageChartCategories;
                     }
-                    //$meChart['data'][0]['hovertext'] = $usageChartCategories;
                 }
 
                 // Generate the chart arguments string for the report generator.

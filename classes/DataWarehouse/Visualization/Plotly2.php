@@ -569,19 +569,7 @@ class Plotly2
                 break;
         }
 
-        /* Look into where this should go for Plotly or if we even need it
-        if($legend_location != 'bottom_center')
-        {
-            $this->_chart['chart']['spacingBottom'] = 25;
-        }
-        if($legend_location != 'right_center' &&
-             $legend_location != 'right_top' &&
-             $legend_location != 'right_bottom')
-        {
-            $this->_chart['chart']['spacingRight'] = 20;
-        }*/
         $this->_hasLegend = $this->_legend_location != 'off';
-
     } // setLegend()
 
     // ---------------------------------------------------------
@@ -1105,10 +1093,6 @@ class Plotly2
                         $trace['textangle'] = 90;
                         $this->_chart['layout']['xaxis']['tickangle'] = 0;
                     }
-                    else // (!$this->_swapXY)
-                    {
-                        //TODO: Normal data labels
-                    } // _swapXY
 
                     // set the label for each value:
                     foreach( $yAxisDataObject->getValues() as $index => $value)
@@ -1176,7 +1160,7 @@ class Plotly2
 
                 if (in_array($data_description->display_type, array('h_bar', 'bar', 'pie')))
                 {
-                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';   
+                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';
                 }
 
                 // Display markers for scatter plots, non-thumbnail plots
@@ -1184,6 +1168,7 @@ class Plotly2
                 $showMarker = $data_description->display_type == 'scatter' ||
                     ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
                     $values_count == 1;
+
                 if ($data_description->display_type == 'pie') 
                 {
                     $tooltip = '%{label}' . '<br>' . $lookupDataSeriesName 
@@ -1194,7 +1179,7 @@ class Plotly2
                     $tooltip = '%{hovertext} <br>' . "<span style=\"color:$color\";> ●</span> " 
                                . $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
                 }
-                $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
+
                 if ($yAxisCount > 1 || $data_description->std_err == 1) {
                     $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'x unified';
                     $tooltip = $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
@@ -1203,6 +1188,8 @@ class Plotly2
                 else {
                     $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';
                 }
+
+                $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
 
                 $trace = array_merge($trace, array(
                     'automargin'=> $data_description->display_type == 'pie' ? true : null,
@@ -1263,7 +1250,7 @@ class Plotly2
                     $trace['type'] = 'area';
                 }
 
-                // set stacking
+                // Set stack and configure area plots further
                 if($data_description->display_type!=='line')
                 {
                     if ($trace['type']=='area' && $traceIndex == 0) {
@@ -1328,6 +1315,7 @@ class Plotly2
                     }
                 }
 
+                // Set swap axis
                 if ($this->_swapXY && $data_description->display_type!='pie') {
                     if ($trace['type'] == 'bar') {
                         $trace = array_merge($trace, array('orientation' => 'h'));
@@ -1389,7 +1377,8 @@ class Plotly2
 
                 }
 
-               if (in_array(null, $yValues) && $data_description->display_type == 'line') {
+                // Set null connectors
+                if (in_array(null, $yValues) && $data_description->display_type == 'line') {
                     $null_trace = array(
                         'name' => 'gap connector',
                         'zIndex' => $zIndex,
@@ -1417,113 +1406,115 @@ class Plotly2
 
                     $this->_chart['data'][] = $null_trace;
 
+                }
+
+                // Adjust axis tick labels based on label length
+                if(!($data_description->display_type == 'pie')) {
+                    $categoryLabels = array();
+                    $longLabel = false;
+                    for ($i = 0; $i < count($xValues); $i++) {
+                        if (count($xValues) > 20) {
+                            if ($i % 2 == 0) {
+                                $categoryLabels[] = substr($xValues[$i], 0, 25) . '...';
+                            }
+                            else {
+                                $categoryLabels[] = '';
+                            }
+                        }
+                        else if (strlen($xValues[$i]) > 70 || $longLabel) {
+                            $categoryLabels[] = substr($xValues[$i], 0, 25) . '...';
+                            if (count($xValues) > 10 && !$longLabel) {
+                                $i = 0; // Go back and tidy up labels
+                                $longLabel = true;
+                            }
+                        }
+                        else if ($data_description->display_type == 'h_bar') {
+                            $categoryLabels[] = wordwrap($xValues[$i], 40, '<br>');
+                        } else {
+                            $categoryLabels[] = wordwrap($xValues[$i], 25, '<br>');
+                        }
+                    }
+                    if ($this->_swapXY) {
+                        $this->_chart['layout']['yaxis']['tickmode'] = 'array';
+                        $this->_chart['layout']['yaxis']['tickvals'] = $xValues;
+                        $this->_chart['layout']['yaxis']['ticktext'] = $categoryLabels;
+                    } else {
+                        $this->_chart['layout']['xaxis']['tickmode'] = 'array';
+                        $this->_chart['layout']['xaxis']['tickvals'] = $xValues;
+                        $this->_chart['layout']['xaxis']['ticktext'] = $categoryLabels;
+                    }
                }
 
-               if(!($data_description->display_type == 'pie')) {
-                   $categoryLabels = array();
-                   $longLabel = false;
+               $this->_chart['data'][] = $trace;
+
+               $error_info = $this->buildErrorDataSeries(
+                   $trace,
+                   $data_description,
+                   $legend,
+                   $lineColor,
+                   $yAxisDataObject,
+                   $formattedDataSeriesName,
+                   $yAxisIndex,
+                   $semDecimals,
+                   $decimals,
+                   $zIndex
+               );
+
+               // Add data labels
+               if(($data_description->value_labels || $data_description->std_err_labels) && $data_description->display_type != 'pie') {
                    for ($i = 0; $i < count($xValues); $i++) {
-                       if (count($xValues) > 20) {
-                           if ($i % 2 == 0) {
-                               $categoryLabels[] = substr($xValues[$i], 0, 25) . '...';
+                       $yPosition = $yValues[$i];
+                       if ($data_description->log_scale) {
+                           $yPosition = isset($yPosition) ? log10($yPosition) : null;
+                       }
+                       $data_label = array(
+                           'name' => 'data_label',
+                           'x' => $this->_swapXY ? $yPosition : $xValues[$i],
+                           'y' => $this->_swapXY ? $xValues[$i] : $yPosition, 
+                           'xref' => 'x',
+                           'yref' => 'y',
+                           'showarrow' => false,
+                           'captureevents' => false,
+                           'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
+                           'font' => array(
+                               'size' => 11 + $font_size,
+                               'color' => $color,
+                               'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                           ),
+                           'textangle' => -90,
+                           'yshift' => $isThumbnail ? 45 : 70,
+                       );
+                       if ($this->_swapXY) {
+                         $data_label['textangle'] = 0;
+                         $data_label['yshift'] = $isThumbnail ? -5 : 0;
+                         $data_label['xshift'] = $isThumbnail ? 35 : 70;
+                       }
+
+                       if ($data_description->std_err == 1) {
+                           if ($this->_swapXY) {
+                               $data_label['yshift'] = -7;
                            }
                            else {
-                               $categoryLabels[] = '';
+                               $data_label['xshift'] = -7;
                            }
                        }
-                       else if (strlen($xValues[$i]) > 70 || $longLabel) {
-                           $categoryLabels[] = substr($xValues[$i], 0, 25) . '...';
-                           if (count($xValues) > 10 && !$longLabel) {
-                               $i = 0; // Go back and tidy up labels
-                               $longLabel = true;
+
+                       if ($data_description->value_labels && $data_description->std_err_labels) {
+                           $data_label['text'] = $error_info['data_labels'][$i];
+                           if ($this->_swapXY) {
+                               $data_label['xshift'] = $isThumbnail ? 60 : 90;
+                           }
+                           else {
+                               $data_label['yshift'] = $isThumbnail ? 60 : 90;
                            }
                        }
-                       else if ($data_description->display_type == 'h_bar') {
-                           $categoryLabels[] = wordwrap($xValues[$i], 40, '<br>');
-                       } else {
-                           $categoryLabels[] = wordwrap($xValues[$i], 25, '<br>');
+                       else if (!$data_description->value_labels && $data_description->std_err_labels) {
+                           $data_label['text'] = $error_info['error_labels'][$i];
                        }
-                   }
-                   if ($this->_swapXY) {
-                       $this->_chart['layout']['yaxis']['tickmode'] = 'array';
-                       $this->_chart['layout']['yaxis']['tickvals'] = $xValues;
-                       $this->_chart['layout']['yaxis']['ticktext'] = $categoryLabels;
-                   } else {
-                       $this->_chart['layout']['xaxis']['tickmode'] = 'array';
-                       $this->_chart['layout']['xaxis']['tickvals'] = $xValues;
-                       $this->_chart['layout']['xaxis']['ticktext'] = $categoryLabels;
-                   }
-               }
 
-              $this->_chart['data'][] = $trace;
-
-              $error_info = $this->buildErrorDataSeries(
-                  $trace,
-                  $data_description,
-                  $legend,
-                  $lineColor,
-                  $yAxisDataObject,
-                  $formattedDataSeriesName,
-                  $yAxisIndex,
-                  $semDecimals,
-                  $decimals,
-                  $zIndex
-              );
-
-              if(($data_description->value_labels || $data_description->std_err_labels) && $data_description->display_type != 'pie') {
-                  for ($i = 0; $i < count($xValues); $i++) {
-                      $yPosition = $yValues[$i];
-                      if ($data_description->log_scale) {
-                          $yPosition = isset($yPosition) ? log10($yPosition) : null;
-                      }
-                      $data_label = array(
-                          'name' => 'data_label',
-                          'x' => $this->_swapXY ? $yPosition : $xValues[$i],
-                          'y' => $this->_swapXY ? $xValues[$i] : $yPosition, 
-                          'xref' => 'x',
-                          'yref' => 'y',
-                          'showarrow' => false,
-                          'captureevents' => false,
-                          'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
-                          'font' => array(
-                              'size' => 11 + $font_size,
-                              'color' => $color,
-                              'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
-                          ),
-                          'textangle' => -90,
-                          'yshift' => $isThumbnail ? 45 : 70,
-                      );
-                      if ($this->_swapXY) {
-                        $data_label['textangle'] = 0;
-                        $data_label['yshift'] = $isThumbnail ? -5 : 0;
-                        $data_label['xshift'] = $isThumbnail ? 35 : 70;
-                      }
-
-                      if ($data_description->std_err == 1) {
-                          if ($this->_swapXY) {
-                              $data_label['yshift'] = -7;
-                          }
-                          else {
-                              $data_label['xshift'] = -7;
-                          }
-                      }
-
-                      if ($data_description->value_labels && $data_description->std_err_labels) {
-                          $data_label['text'] = $error_info['data_labels'][$i];
-                          if ($this->_swapXY) {
-                              $data_label['xshift'] = $isThumbnail ? 60 : 90;
-                          }
-                          else {
-                              $data_label['yshift'] = $isThumbnail ? 60 : 90;
-                          }
-                      }
-                      else if (!$data_description->value_labels && $data_description->std_err_labels) {
-                          $data_label['text'] = $error_info['error_labels'][$i];
-                      }
-
-                      array_push($this->_chart['layout']['annotations'], $data_label);
-                    }
-                }
+                       array_push($this->_chart['layout']['annotations'], $data_label);
+                     }
+                 }
             } // foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
         } //foreach($yAxisArray as $yAxisIndex => $yAxisObject)
 

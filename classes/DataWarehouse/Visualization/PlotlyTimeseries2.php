@@ -285,7 +285,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 'color'=> $yAxisColor,
                                 'size' => (12 + $font_size),
                                 'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
-                            ), 
+                            ),
                         ),
                         'otitle' => $originalYAxisLabel,
                         'dtitle' => $defaultYAxisLabel,
@@ -580,6 +580,7 @@ class PlotlyTimeseries2 extends Plotly2
                         if ($yAxisCount > 1) {
                             $this->_chart['layout']["{$yAxisName}"]['showgrid'] = false;
                         }
+
                         $trace = array(
                             'name' => $lookupDataSeriesName,
                             'customdata' => $lookupDataSeriesName,
@@ -644,6 +645,7 @@ class PlotlyTimeseries2 extends Plotly2
                             $trace['type'] = 'area';
                         }
 
+                        // Set date tick interval
                         $this->_chart['layout']['xaxis']['dtick'] = $pointInterval;
                         if (($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') ||
                             ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
@@ -654,7 +656,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 $this->_chart['layout']['xaxis']['dtick'] = "M1";
                             }
                         }
- 
+
                         $this->_chart['layout']['xaxis']['tick0'] = $xValues[0];
 
                         if ((($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day') && count($xValues) > 7) ||
@@ -662,6 +664,7 @@ class PlotlyTimeseries2 extends Plotly2
                             $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
                         }
 
+                        // Set swap axis
                         if ($this->_swapXY && $data_description->display_type!='pie') {
                             if ($trace['type'] == 'bar') {
                                 $trace = array_merge($trace, array('orientation' => 'h'));
@@ -709,6 +712,7 @@ class PlotlyTimeseries2 extends Plotly2
                             }
                         }
 
+                        // Set stacking and area configurationg
                         if($data_description->display_type!=='line')
                         {
                             
@@ -744,7 +748,7 @@ class PlotlyTimeseries2 extends Plotly2
                                 $trace['line']['width'] = 0;
                                 $trace['marker']['line']['width'] = 0;
                             }       
- 
+
                             if ($data_description->combine_type=='side' && $trace['type']=='area'){
                                 if ($this->_swapXY) {
                                     $trace['fill'] = $traceIndex == 0 ? 'tozerox' : 'tozerox';
@@ -770,6 +774,7 @@ class PlotlyTimeseries2 extends Plotly2
                             }
                         }
 
+                        // Set null connector
                         if (in_array(null, $yValues) && $data_description->display_type == 'line') {
                             $null_trace = array(
                                 'name' => 'gap connector',
@@ -799,6 +804,7 @@ class PlotlyTimeseries2 extends Plotly2
                             $this->_chart['data'][] = $null_trace;
                         }
 
+                        // Set data labels
                         $data_labels = array();
                         $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
                         if($data_description->value_labels || $data_description->std_err_labels) {
@@ -905,7 +911,6 @@ class PlotlyTimeseries2 extends Plotly2
                                 {
                                 $visible = $data_description->visibility->{$dsn};
                             }
-                            //$error_trace = $trace;
 
                             // create the data series description:
                             $error_trace = array_merge($trace, array(
@@ -919,7 +924,7 @@ class PlotlyTimeseries2 extends Plotly2
                                     'size' => $trace['marker']['size'],
                                     'line' => array(
                                         'width' => 1,
-                                        'color' => $error_color, 
+                                        'color' => $error_color,
                                     ),
                                     'symbol' => $trace['marker']['symbol'],
                                 ),
@@ -1100,7 +1105,7 @@ class PlotlyTimeseries2 extends Plotly2
                                         'color' => $color,
                                         'width' => $data_description->line_width + $font_size/4,
                                     ),
-                                    'visible' => $visible, 
+                                    'visible' => $visible,
                                     'm' => $m,
                                     'b' => $b,
                                     'x' => $this->_swapXY ? $trendY : $trendX,
@@ -1116,7 +1121,6 @@ class PlotlyTimeseries2 extends Plotly2
                                 }
 
                                 $this->_chart['data'][] = $trendline_trace;
-                                //}
                             } // if($new_values_count > 1)
 
                         } // if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
@@ -1126,14 +1130,6 @@ class PlotlyTimeseries2 extends Plotly2
                 }
             } // foreach(array_values($yAxisArray) as $yAxisIndex
         } // foreach(array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions) (big long effing loop)
-
-        // Sort data based on zIndex and legendrank
-        $zIndexColumn = array_column($this->_chart['data'], 'zIndex');
-
-        array_multisort($zIndexColumn, SORT_DESC, $this->_chart['data']);
-        if ($this->_showWarnings) {
-            $this->addRestrictedDataWarning();
-        }
 
         if($this->show_filters)
         {
@@ -1146,4 +1142,4 @@ class PlotlyTimeseries2 extends Plotly2
 
         $this->setChartTitleSubtitle($font_size);
     } // function configure()
-} // class HighChartTimeseries2
+} // class TimeseriesChart
