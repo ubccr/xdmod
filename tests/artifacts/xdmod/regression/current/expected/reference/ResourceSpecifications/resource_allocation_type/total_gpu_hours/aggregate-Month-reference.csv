@@ -1,0 +1,10 @@
+title
+"GPU Hours: Total: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+"Resource Allocation Type","GPU Hours: Total"
+"CPU Allocated",0.0000
+---------

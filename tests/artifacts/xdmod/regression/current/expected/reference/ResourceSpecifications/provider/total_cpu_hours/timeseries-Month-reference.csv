@@ -1,0 +1,11 @@
+title
+"CPU Hours: Total: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Month,"[screw] CPU Hours: Total"
+2016-12,4992000.0000
+2017-01,14880000.0000
+---------

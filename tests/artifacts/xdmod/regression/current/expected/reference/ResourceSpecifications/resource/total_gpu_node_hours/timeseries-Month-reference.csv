@@ -1,0 +1,11 @@
+title
+"GPU Node Hours: Total: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Month,"[frearson] GPU Node Hours: Total","[mortorq] GPU Node Hours: Total","[phillips] GPU Node Hours: Total","[pozidriv] GPU Node Hours: Total","[robertson] GPU Node Hours: Total"
+2016-12,0.0000,0.0000,0.0000,0.0000,0.0000
+2017-01,0.0000,0.0000,0.0000,0.0000,0.0000
+---------

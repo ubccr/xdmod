@@ -1,0 +1,14 @@
+title
+"Average Number of CPU Cores: Total (Core Count): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Resource,"Average Number of CPU Cores: Total (Core Count)"
+robertson,2106.7031
+pozidriv,2057.4555
+phillips,2051.9836
+mortorq,2030.0958
+frearson,2024.6238
+---------

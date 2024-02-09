@@ -1,0 +1,11 @@
+title
+"GPU Hours: Allocated: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Quarter,"[frearson] GPU Hours: Allocated","[mortorq] GPU Hours: Allocated","[phillips] GPU Hours: Allocated","[pozidriv] GPU Hours: Allocated","[robertson] GPU Hours: Allocated"
+"2016 Q4",0.0000,0.0000,0.0000,0.0000,0.0000
+"2017 Q1",0.0000,0.0000,0.0000,0.0000,0.0000
+---------

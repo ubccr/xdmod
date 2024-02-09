@@ -26,45 +26,85 @@
                 "nullable": false,
                 "comment": "DIMENSION: The resource the specification is for."
             },{
-                "name": "cpu_cores_available",
+                "name": "total_cpu_cores",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "FACT: Number of CPU cores available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: Total number of CPU cores for resources during a time period"
             },{
-                "name": "gpu_cores_available",
+                "name": "allocated_cpu_cores",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "FACT: Number of GPU cores aavailable to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: Number of CPU cores available to be allocated for resources during a time period"
             },{
-                "name": "cpu_nodes_available",
+                "name": "total_gpu_cores",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "FACT: Number of CPU nodes available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: Total Number of GPU cores included in resources during a time period"
             },{
-                "name": "gpu_nodes_available",
+                "name": "allocated_gpu_cores",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "FACT: Number of GPU nodes available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: Number of GPU cores available to be allocated during a time period"
             },{
-                "name": "core_time_available",
+                "name": "total_cpu_nodes",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "FACT: Total number of CPU nodes included in resources during a time period"
+            },{
+                "name": "allocated_cpu_nodes",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "FACT: Number of CPU nodes available to be allocated during a time period"
+            },{
+                "name": "total_gpu_nodes",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "FACT: Total number of GPU nodes included in during a time period"
+            },{
+                "name": "allocated_gpu_nodes",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "FACT: Number of GPU nodes available to be allocated during a time period"
+            },{
+                "name": "total_core_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of CPU core seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: Total number of CPU core seconds for resources during a time period"
             },{
-                "name": "gpu_time_available",
+                "name": "allocated_core_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of GPU core seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: Number of CPU core seconds available to be allocated during a time period"
             },{
-                "name": "cpu_node_time_available",
+                "name": "total_gpu_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of CPU node seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: Total number of GPU core seconds for resources during a time period"
             },{
-                "name": "gpu_node_time_available",
+                "name": "allocated_gpu_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of GPU node seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: Number of GPU core seconds available to be allocated during a time period"
+            },{
+                "name": "total_cpu_node_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: Total number of CPU node seconds for resources during a time period"
+            },{
+                "name": "allocated_cpu_node_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: Number of CPU node seconds available to be allocated during a time period"
+            },{
+                "name": "total_gpu_node_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: Total number of GPU node seconds for resources during a time period"
+            },{
+                "name": "allocated_gpu_node_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: Number of GPU node seconds available to be allocated during a time period"
             },{
                 "name": "su_available",
                 "type": "int(11) unsigned",

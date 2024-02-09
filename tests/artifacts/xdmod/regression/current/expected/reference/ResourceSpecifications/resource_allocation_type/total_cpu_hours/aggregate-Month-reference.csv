@@ -1,0 +1,10 @@
+title
+"CPU Hours: Total: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+"Resource Allocation Type","CPU Hours: Total"
+"CPU Allocated",19872000.0000
+---------

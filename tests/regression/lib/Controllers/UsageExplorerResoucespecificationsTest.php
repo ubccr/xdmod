@@ -47,14 +47,22 @@ class UsageExplorerResourcespecificationsTest extends \PHPUnit_Framework_TestCas
     public function csvExportProvider()
     {
         $statistics = [
-            'cpu_hours_available',
-            'gpu_hours_available',
-            'cpu_node_hours_available',
-            'gpu_node_hours_available',
-            'avg_number_of_cpu_nodes',
-            'avg_number_of_gpu_nodes',
-            'avg_number_of_cpu_cores',
-            'avg_number_of_gpu_cores'
+            'total_cpu_hours',
+            'allocated_cpu_hours',
+            'total_gpu_hours',
+            'allocated_gpu_hours',
+            'total_cpu_node_hours',
+            'allocated_cpu_node_hours',
+            'total_gpu_node_hours',
+            'allocated_gpu_node_hours',
+            'total_avg_number_of_cpu_nodes',
+            'allocated_avg_number_of_cpu_nodes',
+            'total_avg_number_of_gpu_nodes',
+            'allocated_avg_number_of_gpu_nodes',
+            'total_avg_number_of_cpu_cores',
+            'allocated_avg_number_of_cpu_cores',
+            'total_avg_number_of_gpu_cores',
+            'allocated_avg_number_of_gpu_cores'
         ];
 
         $groupBys = [

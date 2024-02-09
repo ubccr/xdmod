@@ -1,0 +1,14 @@
+title
+"Average Number of CPU Nodes: Allocated: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Resource,"Average Number of CPU Nodes: Allocated"
+robertson,241.7582
+pozidriv,221.9780
+phillips,219.7802
+mortorq,210.9890
+frearson,208.7912
+---------
