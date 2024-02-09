@@ -438,7 +438,7 @@ class TimeseriesChart extends AggregateChart
                         $color = '#'.str_pad(dechex($color_value), 6, '0', STR_PAD_LEFT);
                         $lineColor = '#'.str_pad(dechex(\DataWarehouse\Visualization::alterBrightness($color_value, -70)), 6, '0', STR_PAD_LEFT);
 
-                        //highcharts chokes on datasets that are all null so detect them and replace
+                        //chart chokes on datasets that are all null so detect them and replace
                         // all with zero. this will give the user the right impression. (hopefully)
                         $all_null = true;
                         foreach($yAxisDataObject->getValues() as $value)

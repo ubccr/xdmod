@@ -385,7 +385,7 @@ class AggregateChart
     // ---------------------------------------------------------
     // setTitle()
     //
-    // Set chart's title text and highcharts-specific title formatting.
+    // Set chart's title text and plotly-specific title formatting.
     //
     // ---------------------------------------------------------
     public function setTitle($title, $font_size = 3)
@@ -403,7 +403,7 @@ class AggregateChart
     }
 
     /**
-     * Set chart's subtitle text and highcharts-specific subtitle formatting.
+     * Set chart's subtitle text and plotly-specific subtitle formatting.
      * The text is automatically word wrapped based on the chart settings.
      *
      * @param $subtitle_html The charts subtitle in HTML format
