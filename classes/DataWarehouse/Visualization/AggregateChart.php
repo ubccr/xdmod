@@ -126,7 +126,7 @@ class AggregateChart
                         'x' => 0.5,
                         'y' => 1.0,
                         'font' => array(
-                            'color' => '#000000', 
+                            'color' => '#000000',
                             'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
                         ),
                         'showarrow' => false,
@@ -437,7 +437,7 @@ class AggregateChart
             'size' => (12  + $font_size)
         );
         $this->_legend_location = $legend_location;
-        if (preg_match('/floating/i' ,$legend_location)) {
+        if (preg_match('/floating/i', $legend_location)) {
             $this->_chart['layout']['legend']['xref'] = 'paper';
             $this->_chart['layout']['legend']['yref'] = 'paper';
         }
@@ -931,12 +931,12 @@ class AggregateChart
                 'layer' => 'below traces',
                 'title' => array(
                     'text' => '<b>' . $yAxisLabel . '</b>',
-                    'standoff' => 5, 
+                    'standoff' => 5,
                     'font' => array(
                         'size' => ($font_size + 12),
                         'color' => $yAxisColor,
                         'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
-                    ) 
+                    )
                 ),
                 'otitle' => $originalYAxisLabel,
                 'dtitle' => $defaultYAxisLabel,
@@ -1169,14 +1169,14 @@ class AggregateChart
                     ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
                     $values_count == 1;
 
-                if ($data_description->display_type == 'pie') 
+                if ($data_description->display_type == 'pie')
                 {
-                    $tooltip = '%{label}' . '<br>' . $lookupDataSeriesName 
+                    $tooltip = '%{label}' . '<br>' . $lookupDataSeriesName
                                . ": %{value:,.{$decimals}f} <b>(%{percent})</b> <extra></extra>";
                 }
                 else
                 {
-                    $tooltip = '%{hovertext} <br>' . "<span style=\"color:$color\";> ●</span> " 
+                    $tooltip = '%{hovertext} <br>' . "<span style=\"color:$color\";> ●</span> "
                                . $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
                 }
 
@@ -1228,7 +1228,7 @@ class AggregateChart
                     'textfont' => array(
                         'color' => $data_description->display_type == 'pie' ? '#000000' : $color,
                         'size' => ($font_size + 8),
-                        'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif' 
+                        'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
                     ),
                     'textangle' => $data_description->display_type == 'h_bar' ? 0 : 90,
                     'textinfo' => $data_description->display_type == 'pie' ? 'text' : null,
@@ -1256,8 +1256,8 @@ class AggregateChart
                     if ($trace['type']=='area' && $traceIndex == 0) {
                         $hidden_trace = array(
                             'name' => 'area fix',
-                            'x' => $this->_swapXY ? array_fill(0, count($xValues) , 0) : $xValues,
-                            'y' => $this->_swapXY ? $xValues : array_fill(0, count($xValues) , 0),
+                            'x' => $this->_swapXY ? array_fill(0, count($xValues), 0) : $xValues,
+                            'y' => $this->_swapXY ? $xValues : array_fill(0, count($xValues), 0),
                             'showlegend' => false,
                             'zIndex' => 0,
                             'marker' => array(
@@ -1273,7 +1273,7 @@ class AggregateChart
 
                         if ($this->_swapXY) {
                             $null_trace['xaxis'] = "x{$yIndex}";
-                            unset($null_trace['yaxis']); 
+                            unset($null_trace['yaxis']);
                         }
 
                         $this->_chart['data'][] = $hidden_trace;
@@ -1287,7 +1287,7 @@ class AggregateChart
                     if ($trace['type'] == 'bar' && $data_description->display_type != 'h_bar') {
                         $trace['textposition'] = 'outside';
                         $trace['textangle'] = -90;
-                    } 
+                    }
 
                     if ($data_description->combine_type=='side' && $trace['type']=='area'){
                         if ($this->_swapXY) {
@@ -1300,7 +1300,7 @@ class AggregateChart
                     elseif($data_description->combine_type=='stack')
                     {
                         $trace['stackgroup'] = 'one';
-                        $this->_chart['layout']['barmode'] = 'stack'; 
+                        $this->_chart['layout']['barmode'] = 'stack';
                         $trace['stackgaps'] = 'interpolate'; //connect nulls
                     }
                     elseif($data_description->combine_type=='percent' && !$data_description->log_scale)
@@ -1326,7 +1326,7 @@ class AggregateChart
                         $trace['hovertemplate'] = $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
                     }
                     else {
-                        $trace['hovertemplate'] = '%{hovertext} <br>' . "<span style=\"color:$color\";> ●</span> " 
+                        $trace['hovertemplate'] = '%{hovertext} <br>' . "<span style=\"color:$color\";> ●</span> "
                            . $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
                     }
                     unset($trace['yaxis']);
@@ -1401,7 +1401,7 @@ class AggregateChart
 
                     if ($this->_swapXY) {
                         $null_trace['xaxis'] = "x{$yIndex}";
-                        unset($null_trace['yaxis']); 
+                        unset($null_trace['yaxis']);
                     }
 
                     $this->_chart['data'][] = $null_trace;
@@ -1421,14 +1421,14 @@ class AggregateChart
                                 $categoryLabels[] = '';
                             }
                         }
-                        else if (strlen($xValues[$i]) > 70 || $longLabel) {
+                        elseif (strlen($xValues[$i]) > 70 || $longLabel) {
                             $categoryLabels[] = substr($xValues[$i], 0, 25) . '...';
                             if (count($xValues) > 10 && !$longLabel) {
                                 $i = 0; // Go back and tidy up labels
                                 $longLabel = true;
                             }
                         }
-                        else if ($data_description->display_type == 'h_bar') {
+                        elseif ($data_description->display_type == 'h_bar') {
                             $categoryLabels[] = wordwrap($xValues[$i], 40, '<br>');
                         } else {
                             $categoryLabels[] = wordwrap($xValues[$i], 25, '<br>');
@@ -1443,78 +1443,78 @@ class AggregateChart
                         $this->_chart['layout']['xaxis']['tickvals'] = $xValues;
                         $this->_chart['layout']['xaxis']['ticktext'] = $categoryLabels;
                     }
-               }
+                }
 
-               $this->_chart['data'][] = $trace;
+                $this->_chart['data'][] = $trace;
 
-               $error_info = $this->buildErrorDataSeries(
-                   $trace,
-                   $data_description,
-                   $legend,
-                   $lineColor,
-                   $yAxisDataObject,
-                   $formattedDataSeriesName,
-                   $yAxisIndex,
-                   $semDecimals,
-                   $decimals,
-                   $zIndex
-               );
+                $error_info = $this->buildErrorDataSeries(
+                    $trace,
+                    $data_description,
+                    $legend,
+                    $lineColor,
+                    $yAxisDataObject,
+                    $formattedDataSeriesName,
+                    $yAxisIndex,
+                    $semDecimals,
+                    $decimals,
+                    $zIndex
+                );
 
-               // Add data labels
-               if(($data_description->value_labels || $data_description->std_err_labels) && $data_description->display_type != 'pie') {
-                   for ($i = 0; $i < count($xValues); $i++) {
-                       $yPosition = $yValues[$i];
-                       if ($data_description->log_scale) {
-                           $yPosition = isset($yPosition) ? log10($yPosition) : null;
-                       }
-                       $data_label = array(
-                           'name' => 'data_label',
-                           'x' => $this->_swapXY ? $yPosition : $xValues[$i],
-                           'y' => $this->_swapXY ? $xValues[$i] : $yPosition, 
-                           'xref' => 'x',
-                           'yref' => 'y',
-                           'showarrow' => false,
-                           'captureevents' => false,
-                           'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
-                           'font' => array(
-                               'size' => 11 + $font_size,
-                               'color' => $color,
-                               'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
-                           ),
-                           'textangle' => -90,
-                           'yshift' => $isThumbnail ? 45 : 70,
-                       );
-                       if ($this->_swapXY) {
-                         $data_label['textangle'] = 0;
-                         $data_label['yshift'] = $isThumbnail ? -5 : 0;
-                         $data_label['xshift'] = $isThumbnail ? 35 : 70;
-                       }
+                // Add data labels
+                if(($data_description->value_labels || $data_description->std_err_labels) && $data_description->display_type != 'pie') {
+                    for ($i = 0; $i < count($xValues); $i++) {
+                        $yPosition = $yValues[$i];
+                        if ($data_description->log_scale) {
+                            $yPosition = isset($yPosition) ? log10($yPosition) : null;
+                        }
+                        $data_label = array(
+                            'name' => 'data_label',
+                            'x' => $this->_swapXY ? $yPosition : $xValues[$i],
+                            'y' => $this->_swapXY ? $xValues[$i] : $yPosition,
+                            'xref' => 'x',
+                            'yref' => 'y',
+                            'showarrow' => false,
+                            'captureevents' => false,
+                            'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
+                            'font' => array(
+                                'size' => 11 + $font_size,
+                                'color' => $color,
+                                'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                            ),
+                            'textangle' => -90,
+                            'yshift' => $isThumbnail ? 45 : 70,
+                        );
+                        if ($this->_swapXY) {
+                            $data_label['textangle'] = 0;
+                            $data_label['yshift'] = $isThumbnail ? -5 : 0;
+                            $data_label['xshift'] = $isThumbnail ? 35 : 70;
+                        }
 
-                       if ($data_description->std_err == 1) {
-                           if ($this->_swapXY) {
-                               $data_label['yshift'] = -7;
-                           }
-                           else {
-                               $data_label['xshift'] = -7;
-                           }
-                       }
+                        if ($data_description->std_err == 1) {
+                            if ($this->_swapXY) {
+                                $data_label['yshift'] = -7;
+                            }
+                            else {
+                                $data_label['xshift'] = -7;
+                            }
+                        }
 
-                       if ($data_description->value_labels && $data_description->std_err_labels) {
-                           $data_label['text'] = $error_info['data_labels'][$i];
-                           if ($this->_swapXY) {
-                               $data_label['xshift'] = $isThumbnail ? 60 : 90;
-                           }
-                           else {
-                               $data_label['yshift'] = $isThumbnail ? 60 : 90;
-                           }
-                       }
-                       else if (!$data_description->value_labels && $data_description->std_err_labels) {
-                           $data_label['text'] = $error_info['error_labels'][$i];
-                       }
+                        if ($data_description->value_labels && $data_description->std_err_labels) {
+                            $data_label['text'] = $error_info['data_labels'][$i];
+                            if ($this->_swapXY) {
+                                $data_label['xshift'] = $isThumbnail ? 60 : 90;
+                            }
+                            else {
+                                $data_label['yshift'] = $isThumbnail ? 60 : 90;
+                            }
+                        }
+                        elseif (!$data_description->value_labels && $data_description->std_err_labels) {
+                            $data_label['text'] = $error_info['error_labels'][$i];
+                        }
 
-                       array_push($this->_chart['layout']['annotations'], $data_label);
-                     }
-                 }
+                        array_push($this->_chart['layout']['annotations'], $data_label);
+                      }
+                }
             } // foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
         } //foreach($yAxisArray as $yAxisIndex => $yAxisObject)
 
@@ -1598,7 +1598,7 @@ class AggregateChart
                     'color' => $error_color,
                     'line' => array(
                         'width' => 1,
-                        'color' => $error_color, 
+                        'color' => $error_color,
                     ),
                 ),
                 'line' => array(
@@ -1678,7 +1678,7 @@ class AggregateChart
                 $this->_chart['data'][] = $error_trace;
             }
 
-            return Array('data_labels' => $dataLabels, 'error_labels' => $errorLabels);
+            return array('data_labels' => $dataLabels, 'error_labels' => $errorLabels);
         } // if not pie
     } // function buildErrorDataSeries
 

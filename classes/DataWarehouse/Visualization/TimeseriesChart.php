@@ -328,7 +328,7 @@ class TimeseriesChart extends AggregateChart
                                 'autoshift' => true,
                             ));
                         }
-                    } 
+                    }
 
                     $this->_chart['layout']["{$yAxisName}"] = $yAxis;
                 } // if($yAxis == null)
@@ -385,7 +385,7 @@ class TimeseriesChart extends AggregateChart
                             'color' => '#606060',
                         ),
                         'ticksuffix' => ' ',
-		    	        'tickformat' => $this->getDateFormat(),
+                        'tickformat' => $this->getDateFormat(),
                         'tickangle' => -90,
                         'type' => 'date',
                         'rangemode' => 'tozero',
@@ -511,7 +511,7 @@ class TimeseriesChart extends AggregateChart
                             {
                                 $xValues[] = date('Y-m-d', $start_ts_array[$i]);
                                 $yValues[] = $v;
-                                $text[] = number_format($v, $decimals, '.', ','); 
+                                $text[] = number_format($v, $decimals, '.', ',');
                                 $seriesValue = array(
                                     'x' => $start_ts_array[$i]*1000,
                                     'y' => $v,
@@ -603,7 +603,7 @@ class TimeseriesChart extends AggregateChart
                                 'color' => $data_description->display_type == 'pie'? null: $color,
                                 'dash' => $data_description->line_type,
                                 'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4 : 0,
-                                'shape' => ($data_description->display_type == 'spline' || $data_description->display_type == 'areaspline') ? 'spline' : 'linear' 
+                                'shape' => ($data_description->display_type == 'spline' || $data_description->display_type == 'areaspline') ? 'spline' : 'linear'
                             ),
                             'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
                             'hoveron' => $data_description->display_type == 'area' || $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
@@ -719,8 +719,8 @@ class TimeseriesChart extends AggregateChart
                             if ($trace['type']=='area' && $traceIndex == 0) {
                                 $hidden_trace = array(
                                     'name' => 'area fix',
-                                    'x' => $this->_swapXY ? array_fill(0, count($xValues) , 0) : $xValues,
-                                    'y' => $this->_swapXY ? $xValues : array_fill(0, count($xValues) , 0),
+                                    'x' => $this->_swapXY ? array_fill(0, count($xValues), 0) : $xValues,
+                                    'y' => $this->_swapXY ? $xValues : array_fill(0, count($xValues), 0),
                                     'zIndex' => 0,
                                     'showlegend' => false,
                                     'mode' => 'lines+markers',
@@ -735,10 +735,10 @@ class TimeseriesChart extends AggregateChart
                                     'type' => 'scatter',
                                 );
 
-                            if ($this->_swapXY) {
-                                $null_trace['xaxis'] = "x{$yIndex}";
-                                unset($null_trace['yaxis']); 
-                            }
+                                if ($this->_swapXY) {
+                                    $null_trace['xaxis'] = "x{$yIndex}";
+                                    unset($null_trace['yaxis']);
+                                }
 
 
                                 $this->_chart['data'][] = $hidden_trace;
@@ -747,7 +747,7 @@ class TimeseriesChart extends AggregateChart
                             if ($trace['type'] == 'bar') {
                                 $trace['line']['width'] = 0;
                                 $trace['marker']['line']['width'] = 0;
-                            }       
+                            }
 
                             if ($data_description->combine_type=='side' && $trace['type']=='area'){
                                 if ($this->_swapXY) {
@@ -822,7 +822,7 @@ class TimeseriesChart extends AggregateChart
                                     $data_label = array(
                                         'name' => 'data_label',
                                         'x' => $this->_swapXY ? $yPosition : $xValues[$i],
-                                        'y' => $this->_swapXY ? $xValues[$i] : $yPosition, 
+                                        'y' => $this->_swapXY ? $xValues[$i] : $yPosition,
                                         'xref' => 'x',
                                         'yref' => 'y',
                                         'showarrow' => false,
@@ -864,11 +864,11 @@ class TimeseriesChart extends AggregateChart
                                     if ($data_description->value_labels && !$data_description->std_err_labels) {
                                         array_push($this->_chart['layout']['annotations'], $data_label);
                                     }
-                                    else if (($data_description->std_err_labels) || ($data_description->value_labels && $data_description->std_err_labels)) {
+                                    elseif (($data_description->std_err_labels) || ($data_description->value_labels && $data_description->std_err_labels)) {
                                         array_push($data_labels, $data_label);
                                     }
                                 }
-                             }
+                            }
                         }
 
                         $this->_chart['data'][] = $trace;
@@ -994,7 +994,7 @@ class TimeseriesChart extends AggregateChart
                             $idx = count($this->_chart['data']) - 1;
                             if (!$data_description->value_labels && $data_description->std_err_labels) {
                                 if ($trace['type'] == 'bar' && count($data_labels) == 0) {
-                                    $this->_chart['data'][$idx]['text'] = $errorLabels; 
+                                    $this->_chart['data'][$idx]['text'] = $errorLabels;
                                 }
                                 else {
                                     for ($i = 0; $i < count($errorLabels); $i++) {
@@ -1012,7 +1012,7 @@ class TimeseriesChart extends AggregateChart
 
                             if ($data_description->value_labels && $data_description->std_err_labels) {
                                 if ($trace['type'] == 'bar' && count($data_labels) == 0) {
-                                    $this->_chart['data'][$idx]['text'] = $dataLabels; 
+                                    $this->_chart['data'][$idx]['text'] = $dataLabels;
                                 }
                                 else {
                                     for ($i = 0; $i < count($dataLabels); $i++) {
@@ -1023,7 +1023,7 @@ class TimeseriesChart extends AggregateChart
                                             $data_labels[$i]['text'] = isset($data_labels[$i]['y']) ? $dataLabels[$i] : '';
                                         }
                                         array_push($this->_chart['layout']['annotations'], $data_labels[$i]);
-                                    } 
+                                    }
                                 }
                             }
 
@@ -1097,7 +1097,7 @@ class TimeseriesChart extends AggregateChart
                                     'text' => array(),
                                     'mode' => 'lines+markers',
                                     'marker' => array(
-                                        'size' => 0.1, 
+                                        'size' => 0.1,
                                     ),
                                     'line' => array(
                                         'shape' => 'linear',

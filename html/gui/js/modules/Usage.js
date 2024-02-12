@@ -1500,10 +1500,10 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                             t: 20,
                                             l: 5,
                                             r: 5,
-                                            b: 35 
+                                            b: 35
                                         },
-                                        thumbnail: true,
-                                    },
+                                        thumbnail: true
+                                    }
                                 }; //baseChartOptions
 
                                 var chartOptions = {};
@@ -1521,20 +1521,16 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     for (let i = 0; i < axisLabels.length; i++) {
                                         let label = axisLabels[i];
                                         if (label.length > 20) {
-                                            label = label.substring(0,18) + '...';
+                                            label = `${label.substring(0, 18)}...`;
                                             axisLabels[i] = label;
                                         }
                                     }
                                     if (chartOptions.layout.swapXY) {
                                         chartOptions.layout.yaxis.ticktext = axisLabels;
-                                    }
-                                    else {
+                                    } else {
                                         chartOptions.layout.xaxis.ticktext = axisLabels;
                                     }
                                 }
-
-                                chartOptions.exporting.enabled = false;
-                                chartOptions.credits.enabled = false;
 
                                 this.charts.push(XDMoD.utils.createChart(chartOptions));
                                 chartContainer.unmask();
@@ -2584,10 +2580,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             maximizeScale.call(this);
             if (this.chart && this.chartId) {
                 const chartDiv = document.getElementById(this.chartId);
-                const usageDiv = document.getElementById(this.id);
                 if (chartDiv) {
                     Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
-                    if (this.chartOptions.layout.annotations.length != 0){
+                    if (this.chartOptions.layout.annotations.length !== 0) {
                         const topCenter = topLegend(this.chartOptions.layout);
                         const subtitleLineCount = adjustTitles(this.chartOptions.layout);
                         const marginTop = (topCenter || subtitleLineCount > 0) ? this.chartOptions.layout.margin.t : chartDiv._fullLayout._size.t;
@@ -2595,17 +2590,16 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         const legendHeight = (topCenter && !(adjHeight <= 550)) ? chartDiv._fullLayout.legend._height : 0;
                         const titleHeight = 31;
                         const subtitleHeight = 15;
-                        const creditsHeight = subtitleLineCount > 0 && !topCenter ? 15 : 0;
-                        let update = {
+                        const update = {
                             'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
-                            'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount),
-                        }
+                            'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount)
+                        };
 
                         if (this.chartOptions.layout.annotations.length >= 2) {
                             const marginBottom = chartDiv._fullLayout._size.b;
                             const plotAreaHeight = chartDiv._fullLayout._size.h;
                             let pieChartXShift = 0;
-                            if (chartDiv._fullData.length != 0 && chartDiv._fullData[0].type === 'pie') {
+                            if (chartDiv._fullData.length !== 0 && chartDiv._fullData[0].type === 'pie') {
                                 pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
                             }
                             update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1;
@@ -2728,7 +2722,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 renderTo: id,
                                 layout: {
                                     width: chartWidth * chartScale,
-                                    height: chartHeight * chartScale,
+                                    height: chartHeight * chartScale
                                 },
                                 data: [],
                                 exporting: {
@@ -2758,8 +2752,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 if (evt.points && evt.points.length > 0) {
                                     if (evt.points[0].data.type === 'pie') {
                                         point = evt.points[0];
-                                    }
-                                    else {
+                                    } else {
                                         const traces = usageDiv.getElementsByClassName('plot')[0].firstChild.children;
                                         point = getClickedPoint(evt, traces);
                                     }
@@ -2767,12 +2760,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 if (!point) {
                                     return;
                                 }
-                                let drillInfo = point.data.drilldown;
+                                const drillInfo = point.data.drilldown;
                                 if (drillInfo[0]) {
                                     drillId = drillInfo[point.pointNumber].id;
                                     label = drillInfo[point.pointNumber].label;
-                                }
-                                else {
+                                } else {
                                     drillId = drillInfo.id;
                                     label = drillInfo.label;
                                 }
@@ -2788,26 +2780,21 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 let tickType;
                                 if (evt.layout.swapXY) {
                                     tickType = evt.layout.yaxis.tickmode;
-                                }
-                                else {
+                                } else {
                                     tickType = evt.layout.xaxis.tickmode;
                                 }
-                                if (visibleData.length == 1 && visibleData[0].index == evt.curveNumber) {
+                                if (visibleData.length === 1 && visibleData[0].index === evt.curveNumber) {
                                     if (evt.layout.swapXY) {
-                                        Plotly.relayout(chartDiv, { 'yaxis.tickmode' : 'auto' });
+                                        Plotly.relayout(chartDiv, { 'yaxis.tickmode': 'auto' });
+                                    } else {
+                                        Plotly.relayout(chartDiv, { 'xaxis.tickmode': 'auto' });
                                     }
-                                    else {
-                                        Plotly.relayout(chartDiv, { 'xaxis.tickmode' : 'auto' });
-                                    }
-                                }
-                                else {
+                                } else {
                                     if (evt.layout.swapXY) {
-                                        Plotly.relayout(chartDiv, { 'yaxis.tickmode' : tickType });
+                                        Plotly.relayout(chartDiv, { 'yaxis.tickmode': tickType });
+                                    } else {
+                                        Plotly.relayout(chartDiv, { 'xaxis.tickmode': tickType });
                                     }
-                                    else {
-                                        Plotly.relayout(chartDiv, { 'xaxis.tickmode' : tickType });
-                                    }
-
                                 }
                                 const node = evt.node;
                                 const nodeVisibility = evt.node.style.opacity;
@@ -2815,13 +2802,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 if (node.textContent.startsWith('Std Err:')) {
                                     const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
                                     if (nodeVisibility === '1') {
-                                        Plotly.update(chartDiv, {[errorBar]: false}, {}, [evt.curveNumber+1]);
+                                        Plotly.update(chartDiv, { [errorBar]: false }, {}, [evt.curveNumber + 1]);
+                                    } else {
+                                        Plotly.update(chartDiv, { [errorBar]: true }, {}, [evt.curveNumber + 1]);
                                     }
-                                    else {
-                                        Plotly.update(chartDiv, {[errorBar]: true}, {}, [evt.curveNumber+1]);
-                                    }
-                                }
-                                else {
+                                } else {
                                     if (node.nextSibling) {
                                         const sibling = node.nextSibling
                                         if (sibling.textContent.startsWith('Std Err:')) {
@@ -2829,25 +2814,22 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                             if (sibling.style.opacity === '1') {
                                                 // Turning off primary trace so need to transfer error bars
                                                 if (nodeVisibility === '1') {
-                                                    Plotly.update(chartDiv, {visible: 'legendonly'}, {}, [evt.curveNumber-1]);
+                                                    Plotly.update(chartDiv, { visible: 'legendonly' }, {}, [evt.curveNumber - 1]);
                                                 }
-                                            }
-                                            else {
+                                            } else {
                                                 if (nodeVisibility === '0.5') {
-                                                    Plotly.update(chartDiv, {[errorBar]: false}, {}, [evt.curveNumber]);
+                                                    Plotly.update(chartDiv, { [errorBar]: false }, {}, [evt.curveNumber]);
                                                 }
                                             }
                                         }
                                     }
                                 }
                             });
-
                         }, this); //task
 
                         task.delay(0);
 
                         return true;
-
                     }, this); //chartStore.each(function(r)
 
                     self.getDurationSelector().enable();

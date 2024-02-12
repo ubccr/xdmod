@@ -728,7 +728,6 @@ class Usage extends Common
 
                 // If there is a y-axis...
                 if (isset($meChart['layout']['yaxis'])) {
-                    //unset($meChart['layout']['yaxis']['title']);
                     // If a thumbnail was requested, remove the y-axis label.
                     if ($thumbnailRequested) {
                         $meChart['layout']['yaxis']['title'] = '';
@@ -741,7 +740,6 @@ class Usage extends Common
                     if ($meRequestIsTimeseries) {
                         $meChart['layout']['yaxis']['gridcolor'] = '#c0c0c0';
                     } else {
-                        //unset($meChart['layout']['yaxis']['gridLineDashStyle']);
                         unset($meChart['layout']['yaxis']['gridcolor']);
                     }
                     if ($usageChartSettings['show_guide_lines'] === 'n') {
@@ -842,7 +840,6 @@ class Usage extends Common
                     $meRequest,
                     $meRequestMetric,
                     $usageGroupByObject,
-                    $usageChartSettings,
                     $user,
                     &$primaryDataSeriesRank,
                     $chartSortedByValue
@@ -893,9 +890,6 @@ class Usage extends Common
                                             count($meDataSeries['data']) <= 30 ? 'lines+markers' : 'lines';
                     }
 
-                    if (isset($meDataSeries['text']) && !$isTrendLineSeries) {
-                        //$meDataSeries['mode'] .= '+text';
-                    }
                     // If this is a trend line data series...
                     if ($isTrendLineSeries) {
                         // Change the line style to a dotted line.

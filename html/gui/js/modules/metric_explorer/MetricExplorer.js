@@ -259,7 +259,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     }
                 },
                 items: [
-                    '<span class="menu-title">Chart Options:</span><br/>', 
+                    '<span class="menu-title">Chart Options:</span><br/>',
                     {
                         xtype: 'menucheckitem',
                         text: 'Aggregate',
@@ -482,21 +482,19 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     text: 'Reset Zoom',
                     iconCls: 'refresh',
                     xtype: 'menuitem',
-                    handler: function(t) {
+                    handler: function (t) {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
-                        let range = [];
+                        const range = [];
                         const swapXY = instance.plotlyPanel.chartOptions.layout.swapXY;
                         range[0] = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
                         range[1] = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
-                        if (range[0] != 0 || range[1] != null) {
+                        if (range[0] !== 0 || range[1] !== null) {
                             if (swapXY) {
                                 Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'xaxis.range': range, 'yaxis.autorange': false });
-                            }
-                            else {
+                            } else {
                                 Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': false });
                             }
-                        }
-                        else {
+                        } else {
                             Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.autorange': true });
                         }
                     }
@@ -560,17 +558,16 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
         if (!isRemainder) {
             if (point) {
-                let drillInfo = point.data.drilldown;
+                const drillInfo = point.data.drilldown;
                 if (drillInfo[0]) {
                     drillId = drillInfo[point.pointNumber].id;
                     drillLabel = drillInfo[point.pointNumber].label;
-                }
-                else {
+                } else {
                     drillId = drillInfo.id;
                     drillLabel = drillInfo.label;
                 }
             } else {
-                let drillInfo = series.drilldown;
+                const drillInfo = series.drilldown;
                 drillId = drillInfo.id;
                 drillLabel = drillInfo.label;
             }
@@ -961,7 +958,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             ],
             listeners: {
                 'show': {
-                    fn: function(menu) {
+                    fn: function (menu) {
                         menu.getEl().slideIn('t', {
                             easing: 'easeIn',
                             duration: 0.2
@@ -976,15 +973,14 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     text: 'Reset Zoom',
                     xtype: 'menuitem',
                     iconCls: 'refresh',
-                    handler: function(t) {
+                    handler: function (t) {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
-                        let range = [];
+                        const range = [];
                         range[0] = instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
                         range[1] = instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
-                        if (range[0] != 0 || range[1] != null) {
+                        if (range[0] !== 0 || range[1] !== null) {
                             Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': false });
-                        }
-                        else {
+                        } else {
                             Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': true });
                         }
                     }
@@ -1012,7 +1008,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Hide Series option in data series context menu', Ext.encode({
                             checked: check
                         }));
-                        let visible = check ? true : 'legendonly';
+                        const visible = check ? true : 'legendonly';
                         if (check) {
                             delete visibility[originalTitle];
                         } else {
@@ -1043,8 +1039,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 }
                 var store = Ext.StoreMgr.lookup('hchart_store_metric_explorer');
                 
-                let pointSelected = point.x
-
+                let pointSelected = point.x;
                 // Plotly doesn't accept unix timestamps therefore
                 // we need to grab the raw timestamp stored on the data object.
                 if (point.data.seriesData) {
@@ -1655,7 +1650,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         'X Axis [' + (axisIndex + 1) + '] Title',
                         function(text) {
                             if (text !== originalTitle) {
-                                t
                                 XDMoD.TrackEvent('Metric Explorer', 'Pressed enter in x axis title edit field.', Ext.encode({
                                     title: text
                                 }));
@@ -1693,7 +1687,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         }
         var originalTitle = axis.otitle;
         var axisTitle = axis.title.text;
-        let axisTitleText = axisTitle.length != 0 ? axisTitle.substring(3, axisTitle.length-4) : axisTitle;
+        const axisTitleText = axisTitle.length !== 0 ? axisTitle.substring(3, axisTitle.length - 4) : axisTitle;
         var axisIndex = 0;
         var menu = instance.getTextEditMenu(
             axisTitleText,
@@ -1727,13 +1721,13 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         var originalTitle = axis.otitle;
         var axisTitle = axis.title.text;
         if (axisTitle.length > 0) {
-            axisTitle = axisTitle.substring(3, axisTitle.length-4);
+            axisTitle = axisTitle.substring(3, axisTitle.length - 4);
         }
         var axisIndex = axis.index;
         var menu = instance.getTextEditMenu(
             axisTitle,
             'Y Axis [' + (axisIndex + 1) + '] Title',
-            function(text) {
+            function (text) {
                 XDMoD.TrackEvent('Metric Explorer', 'Pressed enter in y axis [' + (axisIndex + 1) + '] title field.', Ext.encode({
                     title: text
                 }));
@@ -1762,7 +1756,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         var axisIndex = axis.index;
         var axisTitle = axis.title.text;
         if (axisTitle.length > 0) {
-            axisTitle = axisTitle.substring(3, axisTitle.length-4);
+            axisTitle = axisTitle.substring(3, axisTitle.length - 4);
         }
         var originalTitle = axis.otitle;
         var defaultTitle = axis.dtitle;
@@ -1792,9 +1786,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
         var yAxisDatasetIds = [];
         for (var s = 0; s < series.length; s++) {
-            let trace  = series[s];
-            if (trace.yaxis && trace.name != 'gap connector' && trace.name != 'area fix') {
-                let yAxisIndex = Number(trace.yaxis.slice(-1))-1;
+            const trace = series[s];
+            if (trace.yaxis && trace.name !== 'gap connector' && trace.name !== 'area fix') {
+                const yAxisIndex = Number(trace.yaxis.slice(-1)) - 1;
                 if (yAxisIndex === axisIndex) {
                     yAxisDatasetIds.push(trace.datasetId);
                 }
@@ -2055,7 +2049,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
              *                            execution is not filtered.
              * @return {dependent}        return type of handler
              */
-            menu.keyNav.doRelay = function(event, handler) {
+            menu.keyNav.doRelay = function (event, handler) {
 
                 var key = event.getKey();
 
@@ -6079,7 +6073,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         }); //assistPanel
 
         // ---------------------------------------------------------
-
         var plotlyPanel = new CCR.xdmod.ui.PlotlyPanel({
             id: 'plotly-panel' + this.id,
             baseChartOptions: {
@@ -6415,28 +6408,26 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         function onResize(t, adjWidth, adjHeight, rawWidth, rawHeight) {
             this.maximizeScale.call(this);
             const chartDiv = document.getElementById('plotly-panel' + this.id);
-            const metricDiv = document.getElementById(this.id);
             if (chartDiv) {
                 Plotly.relayout('plotly-panel' + this.id, { width: adjWidth, height: adjHeight });
-                if (chartDiv._fullLayout.annotations.length != 0){
+                if (chartDiv._fullLayout.annotations.length !== 0) {
                     const topCenter = topLegend(chartDiv._fullLayout);
                     const subtitleLineCount = adjustTitles(chartDiv._fullLayout);
-                    const calculatedMargin = topCenter ? (45 + 20 + (subtitleLineCount * 15)) : (45 + (subtitleLineCount * 15));
                     const marginTop = Math.min(chartDiv._fullLayout.margin.t, chartDiv._fullLayout._size.t);
                     const marginRight = chartDiv._fullLayout._size.r;
                     const legendHeight = (topCenter && !(adjHeight <= 550)) ? chartDiv._fullLayout.legend._height : 0;
                     const titleHeight = 31;
                     const subtitleHeight = 15;
-                    let update = {
+                    const update = {
                         'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
-                        'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount),
-                    }
+                        'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount)
+                    };
 
                     if (chartDiv._fullLayout.annotations.length >= 2) {
                         const marginBottom = chartDiv._fullLayout._size.b;
                         const plotAreaHeight = chartDiv._fullLayout._size.h;
                         let pieChartXShift = 0;
-                        if (chartDiv._fullData.length != 0 && chartDiv._fullData[0].type === 'pie') {
+                        if (chartDiv._fullData.length !== 0 && chartDiv._fullData[0].type === 'pie') {
                             pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
                         }
                         update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1;

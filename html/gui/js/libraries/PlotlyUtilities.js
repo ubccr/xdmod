@@ -1,5 +1,5 @@
 function getDefaultLayout() {
-	var layout = {
+    const layout = {
         hoverlabel: {
             bgcolor: '#ffffff'
         },
@@ -69,10 +69,8 @@ function getDefaultLayout() {
 
     return layout;
 }
-
 function getNoDataErrorConfig() {
-
-    let errorLayout = {
+    const errorLayout = {
         images: [
         {
             source: 'gui/images/report_thumbnail_no_data.png',
@@ -84,21 +82,20 @@ function getNoDataErrorConfig() {
             sizex: 1.0,
             sizey: 1.0,
             x: 0.5,
-            y: 1.0,
+            y: 1.0
         }
         ],
         xaxis: {
             showticklabels: false,
             zeroline: false,
             showgrid: false,
-            showline: false,
-
+            showline: false
         },
         yaxis: {
             showticklabels: false,
             zeroline: false,
             showgrid: false,
-            showline: false,
+            showline: false
         }
     };
 
@@ -149,7 +146,7 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             qtip.push(record.data.series[sid].data[i].qtip);
         }
 
-        var trace = {
+        let trace = {
             x: x,
             y: y,
             marker: {
@@ -203,7 +200,7 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             },
             tickfont: {
                 size: axisLabelFontSize
-            },
+            }
         },
         yaxis: {
             title: `<b> ${record.data.schema.units} </b>`,
@@ -213,7 +210,7 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             range: [0, ymax + (ymax * 0.2)],
             tickfont: {
                 size: axisLabelFontSize
-            },
+            }
         },
         title: {
             text: record.data.schema.description,
@@ -236,39 +233,32 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             y: 0,
             yshift: -80,
             showarrow: false
-        }],
+        }]
     };
 
-    let ret = {
-        data: data,
-        layout: layout
-    };
-
-    return ret;
+    return { data: data, layout: layout };
 }
 function getClickedPoint(evt, traces) {
     let point;
     if ((traces && traces.length === 0) || (evt.points && evt.points.length === 0)) {
         return point;
     }
-    const findPoint = (evt, trace) => {
+    const findPoint = (evt, traces) => {
         for (let i = 0; i < traces.length; i++) {
             let points = traces[i].getElementsByClassName('points');
-            if (points.length != 0 && points[0].children) {
+            if (points.length !== 0 && points[0].children) {
                 points = points[0].children;
                 for (let j = 0; j < points.length; j++) {
                     const dimensions = points[j].getBoundingClientRect();
-                    if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right &&
-                        evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
-                        const dataValue = points[j]['__data__'].s ? points[j]['__data__'].s : points[j]['__data__'].y;
+                    if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right
+                        && evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
+                        const dataValue = points[j].__data__.s ? points[j].__data__.s : points[j].__data__.y;
                         const swapXY = evt.points[0].data.yaxis ? false : true;
                         const pointIndex = evt.points.findIndex((trace) => {
                             if (trace.value) {
                                 return trace.value === dataValue;
                             }
-                            else {
-                                return swapXY ? trace.x === dataValue : trace.y === dataValue;
-                            }
+                            return swapXY ? trace.x === dataValue : trace.y === dataValue;
                         });
                         return evt.points[pointIndex];
                     }
@@ -281,15 +271,14 @@ function getClickedPoint(evt, traces) {
 }
 
 function getMultiAxisObjects(layout) {
-    let multiAxes = [];
+    const multiAxes = [];
     const layoutKeys = Object.keys(layout);
     for (let i = 0; i < layoutKeys.length; i++) {
         if (layout.swapXY) {
             if (layoutKeys[i].startsWith('xaxis')) {
                 multiAxes.push(layoutKeys[i]);
             }
-        }
-        else {
+        } else {
             if (layoutKeys[i].startsWith('yaxis')) {
                 multiAxes.push(layoutKeys[i]);
             }

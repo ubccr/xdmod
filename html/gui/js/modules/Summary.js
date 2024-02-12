@@ -662,7 +662,6 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                             if (help && help.dom) {
                                 help.dom.qtip = '<ul>' + dims + '</ul><hr/>' + '<ul>' + mets + '</ul>';
                             }
-
                         }, // load
 
                         exception: function (thisProxy, type, action, options, response, arg) {
