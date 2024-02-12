@@ -86,7 +86,6 @@ sed -i "s/release = ''/release = '$(jq -r '.version' open_xdmod/modules/xdmod/bu
 
 source $BASE_BUILD_DIR/sphinx_venv/bin/activate
 sphinx-build -t $MANUAL_VERSION $BASE_BUILD_DIR $DEST_DIR
-deactivate
 
 rm -rf $DEST_DIR/_sources/
 
