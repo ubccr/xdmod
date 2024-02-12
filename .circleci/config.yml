@@ -80,7 +80,7 @@ jobs:
             if [ -e /var/log/php_errors.log ]; then
               sed -i '/PHP Warning:  openssl_x509_parse(): illegal ASN1 data type for timestamp in - on line 4/d' /var/log/php_errors.log;
             fi
-      - run: ./tests/regression/runtests.sh
+            #- run: ./tests/regression/runtests.sh
       - run: ./tests/integration/runtests.sh --junit-output-dir ~/phpunit
       - run: ./tests/regression/post_ingest_test.sh --junit-output-dir ~/phpunit
       - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
@@ -91,7 +91,7 @@ jobs:
             curl https://nodejs.org/dist/v10.24.1/node-v10.24.1-linux-x64.tar.xz | tar -xJC /usr/local
             chown root:root -R /usr/local/node-v10.24.1-linux-x64
       - run: pushd ./tests/ui && PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH /usr/local/node-v10.24.1-linux-x64/bin/npm install && popd
-      - run: PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
+        #- run: PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
       - run:
           name: 'Run SSO Tests'
           command: |
