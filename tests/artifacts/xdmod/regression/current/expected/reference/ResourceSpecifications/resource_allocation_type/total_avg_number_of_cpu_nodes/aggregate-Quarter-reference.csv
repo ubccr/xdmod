@@ -6,5 +6,8 @@ start,end
 2016-12-22,2017-01-07
 ---------
 "Resource Allocation Type","Average Number of CPU Nodes: Total"
-"CPU Allocated",1103.2967
+"CPU Allocated",430.7692
+"GPU Node Allocated",241.7582
+"CPU Node Allocated",219.7802
+"GPU Allocated",210.9890
 ---------

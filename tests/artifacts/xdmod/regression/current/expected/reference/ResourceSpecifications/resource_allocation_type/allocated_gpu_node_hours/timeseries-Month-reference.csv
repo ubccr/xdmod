@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Month,"[CPU Allocated] GPU Node Hours: Allocated"
-2016-12,0.0000
-2017-01,0.0000
+Month,"[GPU Node Allocated] GPU Node Hours: Allocated","[GPU Allocated] GPU Node Hours: Allocated","[CPU Allocated] GPU Node Hours: Allocated","[CPU Node Allocated] GPU Node Hours: Allocated"
+2016-12,192000.0000,57600.0000,0.0000,0.0000
+2017-01,297600.0000,297600.0000,0.0000,0.0000
 ---------

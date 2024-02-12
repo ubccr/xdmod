@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Quarter,"[CPU Allocated] Average Number of CPU Nodes: Allocated"
-"2016 Q4",226.0870
-"2017 Q1",2000.0000
+Quarter,"[CPU Allocated] Average Number of CPU Nodes: Allocated","[GPU Node Allocated] Average Number of CPU Nodes: Allocated","[CPU Node Allocated] Average Number of CPU Nodes: Allocated","[GPU Allocated] Average Number of CPU Nodes: Allocated"
+"2016 Q4",69.5652,86.9565,43.4783,26.0870
+"2017 Q1",800.0000,400.0000,400.0000,400.0000
 ---------

@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Quarter,"[CPU Allocated] Average Number of GPU Cores: Total (GPU Core Count)"
-"2016 Q4",0.0000
-"2017 Q1",0.0000
+Quarter,"[GPU Node Allocated] Average Number of GPU Cores: Total (GPU Core Count)","[GPU Allocated] Average Number of GPU Cores: Total (GPU Core Count)","[CPU Allocated] Average Number of GPU Cores: Total (GPU Core Count)","[CPU Node Allocated] Average Number of GPU Cores: Total (GPU Core Count)"
+"2016 Q4",869.5652,260.8696,0.0000,0.0000
+"2017 Q1",4000.0000,4000.0000,0.0000,0.0000
 ---------

@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Month,"[CPU Allocated] Average Number of GPU Nodes: Allocated"
-2016-12,0.0000
-2017-01,0.0000
+Month,"[GPU Node Allocated] Average Number of GPU Nodes: Allocated","[GPU Allocated] Average Number of GPU Nodes: Allocated","[CPU Allocated] Average Number of GPU Nodes: Allocated","[CPU Node Allocated] Average Number of GPU Nodes: Allocated"
+2016-12,258.0645,77.4194,0.0000,0.0000
+2017-01,400.0000,400.0000,0.0000,0.0000
 ---------

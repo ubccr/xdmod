@@ -47,10 +47,10 @@ class UsageExplorerResourcespecificationsTest extends \PHPUnit_Framework_TestCas
     public function csvExportProvider()
     {
         $statistics = [
-            'total_cpu_hours',
-            'allocated_cpu_hours',
-            'total_gpu_hours',
-            'allocated_gpu_hours',
+            'total_cpu_core_hours',
+            'allocated_cpu_core_hours',
+            'total_gpu_core_hours',
+            'allocated_gpu_core_hours',
             'total_cpu_node_hours',
             'allocated_cpu_node_hours',
             'total_gpu_node_hours',

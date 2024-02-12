@@ -31,125 +31,85 @@
                 "nullable": false,
                 "comment": "DIMENSION: The resource the specification is for."
             },{
-                "name": "total_cpu_cores",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Number of CPU cores available to be allocated through ${ORGANIZATION_NAME} during a time period"
-            },{
-                "name": "allocated_cpu_cores",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Number of CPU cores available to be allocated through ${ORGANIZATION_NAME} during a time period"
-            },{
-                "name": "total_gpu_cores",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Number of GPU cores aavailable to be allocated through ${ORGANIZATION_NAME} during a time period"
-            },{
-                "name": "allocated_gpu_cores",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Number of GPU cores aavailable to be allocated through ${ORGANIZATION_NAME} during a time period"
-            },{
-                "name": "total_cpu_nodes",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Number of CPU nodes available to be allocated through ${ORGANIZATION_NAME} during a time period"
-            },{
-                "name": "allocated_cpu_nodes",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Number of CPU nodes available to be allocated through ${ORGANIZATION_NAME} during a time period"
-            },{
-                "name": "total_gpu_nodes",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Number of GPU nodes available to be allocated through ${ORGANIZATION_NAME} during a time period"
-            },{
-                "name": "allocated_gpu_nodes",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Number of GPU nodes available to be allocated through ${ORGANIZATION_NAME} during a time period"
-            },{
-                "name": "total_core_time",
+                "name": "total_cpu_core_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of CPU core seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: The number of CPU core seconds available during a time period, including those not allocated."
             },{
-                "name": "allocated_core_time",
+                "name": "allocated_cpu_core_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of CPU core seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: The number of CPU core seconds available to be allocated during a time period."
             },{
-                "name": "total_gpu_time",
+                "name": "total_gpu_core_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of GPU core seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: The number of GPU core seconds available during a time period, including those not allocated."
             },{
-                "name": "allocated_gpu_time",
+                "name": "allocated_gpu_core_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of GPU core seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: The number of GPU core seconds available to be allocated during a time period."
             },{
                 "name": "total_cpu_node_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of CPU node seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: The number of CPU node seconds available during a time period, including those not allocated."
             },{
                 "name": "allocated_cpu_node_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of CPU node seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: The number of CPU node seconds available to be allocated during a time period."
             },{
                 "name": "total_gpu_node_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of GPU node seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: The number of GPU node seconds available during a time period, including those not allocated."
             },{
                 "name": "allocated_gpu_node_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of GPU node seconds available to be allocated through ${ORGANIZATION_NAME} during a time period"
+                "comment": "FACT: The number of GPU node seconds available to be allocated during a time period."
             },{
                 "name": "su_available",
                 "type": "int(11) unsigned",
                 "nullable": true,
-                "comment": "FACT: Total number of SU's available for a time period"
+                "comment": "FACT: The total number of SU's available during a time period."
             },{
                 "name": "resource_allocation_type_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Allocation type for the resource"
+                "comment": "DIMENSION: The allocation type for the resource."
             },{
                 "name": "resource_organization_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Organization the resource belongs to"
+                "comment": "DIMENSION: The organization to which the resource belongs."
             },{
                 "name": "resource_state_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Geographical state of the organization to which the resource belongs"
+                "comment": "DIMENSION: The geographical state of the organization to which the resource belongs."
             },{
                 "name": "resource_country_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Country of the organization to which the resource belongs"
+                "comment": "DIMENSION: The country of the organization to which the resource belongs."
             },{
                 "name": "organizationtype_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: The type of organization the resource belongs to"
+                "comment": "DIMENSION: The type of organization to which the resource belongs."
             },{
                 "name": "resourcetype_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: The type of resource this is"
+                "comment": "DIMENSION: The type of resource."
             },{
                 "name": "resourcespecs_id_list",
                 "type": "mediumtext",
                 "nullable": false,
-                "comment": "METADATA: the ids in the fact table for the rows that went into this row"
+                "comment": "METADATA: the ids in the fact table for the rows that are aggregated into each row."
             },{
                 "name": "last_modified",
                 "type": "timestamp",

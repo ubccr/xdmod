@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Month,"[frearson] Average Number of GPU Nodes: Total","[mortorq] Average Number of GPU Nodes: Total","[phillips] Average Number of GPU Nodes: Total","[pozidriv] Average Number of GPU Nodes: Total","[robertson] Average Number of GPU Nodes: Total"
-2016-12,0.0000,0.0000,0.0000,0.0000,0.0000
-2017-01,0.0000,0.0000,0.0000,0.0000,0.0000
+Month,"[robertson] Average Number of GPU Nodes: Total","[mortorq] Average Number of GPU Nodes: Total","[frearson] Average Number of GPU Nodes: Total","[phillips] Average Number of GPU Nodes: Total","[pozidriv] Average Number of GPU Nodes: Total"
+2016-12,258.0645,77.4194,0.0000,0.0000,0.0000
+2017-01,400.0000,400.0000,0.0000,0.0000,0.0000
 ---------
