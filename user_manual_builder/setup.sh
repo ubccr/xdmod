@@ -5,6 +5,7 @@ BUILDENV=$BUILDDIR/sphinx_venv
 
 python3 -m venv $BUILDENV
 source $BUILDENV
-which python3
+echo $(which python3)
 pip3 install --upgrade pip
 pip3 install -r $BUILDDIR/requirements.txt
+deactivate

@@ -85,8 +85,10 @@ sed -i "s/release = ''/release = '$(jq -r '.version' open_xdmod/modules/xdmod/bu
 #
 
 source $BASE_BUILD_DIR/sphinx_venv/bin/activate
-which python3
+echo $(which python3)
 sphinx-build -t $MANUAL_VERSION $BASE_BUILD_DIR $DEST_DIR
+deactivate
+echo $(which python3)
 
 rm -rf $DEST_DIR/_sources/
 
