@@ -19,11 +19,11 @@ Ext.namespace('XDMoD.utils');
  * @param  {Object} layout - Plotly JS layout configuration object.
  * @return {boolean} if the legend is top center or not
  */
-function topLegend (layout) {
+function topLegend(layout) {
     if (layout.legend) {
-        return  (layout.legend.xanchor === 'center'
-                 && layout.legend.yanchor === 'top'
-                 && layout.legend.yref !== 'paper');
+        return (layout.legend.xanchor === 'center'
+                && layout.legend.yanchor === 'top'
+                && layout.legend.yref !== 'paper');
     }
     return false;
 }
@@ -34,7 +34,7 @@ function topLegend (layout) {
  * @param  {Object} layout - Plotly JS layout configuration object
  * @return {Integer} subtitle text line count
  */
-function adjustTitles (layout) {
+function adjustTitles(layout) {
     if (layout.annotations && layout.annotations.length === 0) {
         return 0;
     }
@@ -42,7 +42,7 @@ function adjustTitles (layout) {
     const len = subtitle.text.length;
     let subtitleLineCount = 0;
     if (len > 0) {
-        const axWidth = layout.width -  layout.margin.l - layout.margin.r;
+        const axWidth = layout.width - layout.margin.l - layout.margin.r;
         const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 7.5));
         layout.margin.t = 45 + (subtitle_lines.length * 15);
         layout.annotations[1].text = subtitle_lines.join('<br />');
@@ -61,8 +61,8 @@ function adjustTitles (layout) {
 }
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
-    var baseChartOptions = {};
-    let configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500 };
+    let baseChartOptions = {};
+    const configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500 };
     jQuery.extend(true, baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
 
@@ -87,8 +87,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             baseChartOptions.layout.images[0].sizex = 4;
             baseChartOptions.layout.images[0].sizey = 4;
             baseChartOptions.layout.images[0].y = 2.5;
-        }
-        else if (margin && titleAndSubtitle) {
+        } else if (margin && titleAndSubtitle) {
             baseChartOptions.layout.margin = margin;
             baseChartOptions.layout.annotations = titleAndSubtitle;
         }
@@ -119,8 +118,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             const axesLabels = getMultiAxisObjects(baseChartOptions.layout);
             if (baseChartOptions.swapXY) {
                 baseChartOptions.layout.yaxis.nticks = 5;
-            }
-            else {
+            } else {
                 baseChartOptions.layout.xaxis.nticks = 5;
             }
             for (let i = 0; i < axesLabels.length; i++) {
@@ -195,4 +193,4 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     });
 
     return chart;
-}
+};

@@ -146,7 +146,7 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             qtip.push(record.data.series[sid].data[i].qtip);
         }
 
-        let trace = {
+        const trace = {
             x: x,
             y: y,
             marker: {
@@ -196,7 +196,7 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
         xaxis: {
             title: `<b> Time (${record.data.schema.timezone}) </b>`,
             titlefont: {
-                size: axisTitleFontSize,
+                size: axisTitleFontSize
             },
             tickfont: {
                 size: axisLabelFontSize
@@ -205,7 +205,7 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
         yaxis: {
             title: `<b> ${record.data.schema.units} </b>`,
             titlefont: {
-                size: axisTitleFontSize,
+                size: axisTitleFontSize
             },
             range: [0, ymax + (ymax * 0.2)],
             tickfont: {
@@ -265,7 +265,7 @@ function getClickedPoint(evt, traces) {
                 }
             }
         }
-    }
+    };
     point = findPoint(evt, traces);
     return point;
 }

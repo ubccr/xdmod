@@ -1038,7 +1038,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     }
                 }
                 var store = Ext.StoreMgr.lookup('hchart_store_metric_explorer');
-                
+
                 let pointSelected = point.x;
                 // Plotly doesn't accept unix timestamps therefore
                 // we need to grab the raw timestamp stored on the data object.
@@ -1991,8 +1991,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     instance.resetYAxisTitle(axis);
                 }
             });
-        }
-        else {
+        } else {
             menu.addItem('-');
         }
         menu.addItem({
@@ -6076,7 +6075,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         var plotlyPanel = new CCR.xdmod.ui.PlotlyPanel({
             id: 'plotly-panel' + this.id,
             baseChartOptions: {
-                metricExplorer: true 
+                metricExplorer: true
             },
             store: chartStore
         }); //assistPanel

@@ -2808,7 +2808,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     }
                                 } else {
                                     if (node.nextSibling) {
-                                        const sibling = node.nextSibling
+                                        const sibling = node.nextSibling;
                                         if (sibling.textContent.startsWith('Std Err:')) {
                                             const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
                                             if (sibling.style.opacity === '1') {

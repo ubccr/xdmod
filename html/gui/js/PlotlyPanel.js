@@ -28,7 +28,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
         });
         CCR.xdmod.ui.PlotlyPanel.superclass.initComponent.apply(this, arguments);
 
-        let defaultOptions = {
+        const defaultOptions = {
             renderTo: this.id,
             layout: {
                 width: this.width,
@@ -250,8 +250,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                         chartDiv.on('plotly_clickannotation', (evt) => {
                             if (evt.annotation.name === 'subtitle') {
                                 XDMoD.Module.MetricExplorer.subtitleContextMenu(evt.event);
-                            }
-                            else if (evt.annotation.name === 'title') {
+                            } else if (evt.annotation.name === 'title') {
                                 XDMoD.Module.MetricExplorer.titleContextMenu(evt.event);
                             }
                         });
@@ -270,7 +269,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
      * @param  {Object} chartOptions (Optional) A set of Plotly options.
      */
     initNewChart: function (chartOptions) {
-        let finalChartOptions = {};
+        const finalChartOptions = {};
         if (chartOptions) {
             jQuery.extend(true, finalChartOptions, this.baseChartOptions, chartOptions);
         } else {
@@ -287,7 +286,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
      * TODO:error display for plotly charts
      */
     displayError: function (mainMessage, detailMessage) {
-        let errorChartOptions = {
+        const errorChartOptions = {
             title: {
                 text: mainMessage,
                 yref: 'paper',
@@ -332,7 +331,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
  * @param {String} text the text to be encoded for use in a Plotly title.
  * @return {String} the encoded text.
  **/
-CCR.xdmod.ui.PlotlyPanel.prototype.plotlyTextEncode = function(text) {
+CCR.xdmod.ui.PlotlyPanel.prototype.plotlyTextEncode = function (text) {
     if (!text) {
         return text;
     }

@@ -1065,7 +1065,7 @@ class AggregateChart
                             'labels' => $xValues,
                             'values' => $yValues,
                         );
-                        
+
                     } // foreach
                     // Dont add data labels for all pie slices. Plotly will render all labels otherwise,
                     // which causes the margin on pie charts with many slices to break
@@ -1080,7 +1080,7 @@ class AggregateChart
                         else {
                             $text[] = '';
                         }
-                        
+
                     }
 
                     $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';
@@ -1346,13 +1346,13 @@ class AggregateChart
                         if (isset($this->_chart['layout']["{$xAxisName}"]['overlaying'])) {
                             $this->_chart['layout']["{$xAxisName}"]['overlaying'] = 'x';
                         }
-                        
+
                         $xAxisStep = 0.115;
                         $xAxisBottomBoundStart = 0 + ($xAxisStep * ceil($yAxisCount/2));
                         $xAxisTopBoundStart = 1 - ($xAxisStep * floor($yAxisCount/2));
                         $topShift = floor($yAxisCount/2) - floor($yAxisIndex/2);
                         $bottomShift = ceil($yAxisCount/2) - ceil($yAxisIndex/2);
-                        
+
                         $this->_chart['layout']["{$xAxisName}"]['position'] = $this->_chart['layout']["{$xAxisName}"]['side'] == 'top' ? min(1 - ($xAxisStep * $topShift), 1) :
                             max(0 + ($xAxisStep * $bottomShift), 0);
                         
@@ -1513,7 +1513,7 @@ class AggregateChart
                         }
 
                         array_push($this->_chart['layout']['annotations'], $data_label);
-                      }
+                    }
                 }
             } // foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
         } //foreach($yAxisArray as $yAxisIndex => $yAxisObject)

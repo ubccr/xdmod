@@ -715,7 +715,6 @@ class TimeseriesChart extends AggregateChart
                         // Set stacking and area configurationg
                         if($data_description->display_type!=='line')
                         {
-                            
                             if ($trace['type']=='area' && $traceIndex == 0) {
                                 $hidden_trace = array(
                                     'name' => 'area fix',
@@ -952,7 +951,6 @@ class TimeseriesChart extends AggregateChart
                             );
 
                             if ($error_trace['type'] == 'area') {
-                                
                                 $error_trace['fill'] = $trace['fill'];
                                 // Referenced https://stackoverflow.com/questions/15202079/convert-hex-color-to-rgb-values-in-php
                                 // for idea
@@ -1122,10 +1120,7 @@ class TimeseriesChart extends AggregateChart
 
                                 $this->_chart['data'][] = $trendline_trace;
                             } // if($new_values_count > 1)
-
                         } // if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
-
- 
                     } // if( $yAxisDataObject != NULL)
                 }
             } // foreach(array_values($yAxisArray) as $yAxisIndex
