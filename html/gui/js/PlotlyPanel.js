@@ -1,4 +1,4 @@
-/*
+/**
  * JavaScript Document
  * @author Amin Ghadersohi
  * @date 2012-Mar-07 (version 1)
@@ -330,7 +330,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
  *
  * @param {String} text the text to be encoded for use in a Plotly title.
  * @return {String} the encoded text.
- **/
+ */
 CCR.xdmod.ui.PlotlyPanel.prototype.plotlyTextEncode = function (text) {
     if (!text) {
         return text;
