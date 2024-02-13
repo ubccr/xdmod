@@ -138,8 +138,8 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                                     let yAxisDiv = infoDiv.getElementsByClassName('g-ytitle')[0];
                                     if (yAxisDiv) {
                                         for (let i = 0; i < yAxes.length; i++) {
-                                            const yAxis = i === 0 ? 'g-ytitle' : 'g-y' + (i + 1) + 'title';
-                                            yAxisDiv = infoDiv.getElementsByClassName(yAxis)[0];
+                                            const yAxis = i === 0 ? 'g-ytitle' : `g-y${i + 1}title`;
+                                            [yAxisDiv] = infoDiv.getElementsByClassName(yAxis);
                                             yAxisDiv.addEventListener('click', (event) => {
                                                 XDMoD.Module.MetricExplorer.yAxisTitleContextMenu(this.chartOptions.layout[yAxes[i]]);
                                             });
@@ -148,8 +148,8 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                                     let xAxisDiv = infoDiv.getElementsByClassName('g-xtitle')[0];
                                     if (xAxisDiv) {
                                         for (let i = 0; i < xAxes.length; i++) {
-                                            const xAxis = i === 0 ? 'g-xtitle' : 'g-x' + (i + 1) + 'title';
-                                            xAxisDiv = infoDiv.getElementsByClassName(xAxis)[0];
+                                            const xAxis = i === 0 ? 'g-xtitle' : `g-x${i + 1}title`;
+                                            [xAxisDiv] = infoDiv.getElementsByClassName(xAxis);
                                             xAxisDiv.addEventListener('click', (event) => {
                                                 XDMoD.Module.MetricExplorer.xAxisTitleContextMenu(this.chartOptions.layout[xAxes[i]]);
                                             });
@@ -179,10 +179,10 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                                 }
                                 let multipleAxisLayer = metricDiv.getElementsByClassName('overaxes-below');
                                 if (multipleAxisLayer) {
-                                    multipleAxisLayer = multipleAxisLayer[0];
+                                    [multipleAxisLayer] = multipleAxisLayer;
                                     multipleAxisLayer.setAttribute('pointer-events', 'all');
                                     for (let i = 1; i < multiAxes.length; i++) {
-                                        const axisTicks = this.chartOptions.layout.swapXY ? 'x' + (i + 1) + 'y-x' : 'xy' + (i + 1) + '-y';
+                                        const axisTicks = this.chartOptions.layout.swapXY ? `x${i + 1}y-x` : `xy${i + 1}-y`;
                                         const multipleAxisTickDiv = multipleAxisLayer.getElementsByClassName(axisTicks)[0];
                                         if (multipleAxisTickDiv.children && multipleAxisTickDiv.children.length !== 0) {
                                             for (let j = 0; j < multipleAxisTickDiv.children.length; j++) {

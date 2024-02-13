@@ -1355,7 +1355,7 @@ class AggregateChart
 
                         $this->_chart['layout']["{$xAxisName}"]['position'] = $this->_chart['layout']["{$xAxisName}"]['side'] == 'top' ? min(1 - ($xAxisStep * $topShift), 1) :
                             max(0 + ($xAxisStep * $bottomShift), 0);
-                        
+
                         $this->_chart['layout']["{$xAxisName}"]['domain'] = array(0,1);
                         $this->_chart['layout']["{$xAxisName}"]['title']['standoff'] = 0;
                         $this->_chart['layout']["{$xAxisName}"]['type'] = $yAxisObject->log_scale ? 'log' : '-';
