@@ -3,7 +3,7 @@
  * Unit tests for Statistic class.
  */
 
-namespace UnitTesting\Realm;
+namespace UnitTests\Realm;
 
 use CCR\Log as Logger;
 use Realm\Realm;

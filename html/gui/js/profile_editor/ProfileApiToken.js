@@ -355,10 +355,7 @@ XDMoD.ProfileApiToken = Ext.extend(Ext.form.FormPanel, {
     },
 
     showReceivedToken: function () {
-        var isTokenExpired = (
-            new Date(this.creationDate)
-            >= new Date(this.expirationDate)
-        );
+        var isTokenExpired = (new Date() >= new Date(this.expirationDate));
         if (isTokenExpired) {
             this.showMsg(this.getExpiredTokenMsg());
         } else {

@@ -45,6 +45,12 @@
                 "type": "varchar(30)",
                 "nullable": true,
                 "comment": "Resource type Abbreviation"
+            },
+            {
+                "name": "resource_allocation_type_abbrev",
+                "type": "varchar(30)",
+                "nullable": true,
+                "comment": "Allocation unit type such as CPU, GPU, or Node."
             }
         ],
         "indexes": [

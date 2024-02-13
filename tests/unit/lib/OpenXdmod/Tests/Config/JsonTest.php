@@ -3,7 +3,7 @@
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
-namespace OpenXdmod\Tests\Config;
+namespace UnitTests\OpenXdmod\Tests\Config;
 
 /**
  * JSON config file test class.

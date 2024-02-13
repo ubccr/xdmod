@@ -2,7 +2,7 @@
 
 namespace ComponentTests;
 
-use TestHarness\TestFiles;
+use IntegrationTests\TestHarness\TestFiles;
 use Models\Services\Realms;
 
 abstract class BaseTest extends \PHPUnit_Framework_TestCase

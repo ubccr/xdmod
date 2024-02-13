@@ -1,6 +1,6 @@
 <?php
 
-namespace UnitTesting\DataWarehouse\Visualization;
+namespace UnitTests\DataWarehouse\Visualization;
 
 class ColorGeneratorTest extends \PHPUnit_Framework_TestCase
 {

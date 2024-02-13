@@ -23,6 +23,11 @@
             "description": "Resource type",
             "maxLength": 10
         },
+        "resource_allocation_type": {
+            "type": "string",
+            "description": "Resource allocation unit type",
+            "maxLength": 10
+        },
         "pi_column": {
             "type": "string",
             "description": "Column from the resource manager specific table to use as the PI data source"

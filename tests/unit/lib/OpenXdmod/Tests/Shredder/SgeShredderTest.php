@@ -3,7 +3,7 @@
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
-namespace OpenXdmod\Tests\Shredder;
+namespace UnitTests\OpenXdmod\Tests\Shredder;
 
 use OpenXdmod\Shredder;
 

@@ -7,7 +7,7 @@
  * ------------------------------------------------------------------------------------------
  */
 
-namespace UnitTesting\ETL\Configuration;
+namespace UnitTests\ETL\DbModel;
 
 use CCR\Log;
 use ETL\Utilities;

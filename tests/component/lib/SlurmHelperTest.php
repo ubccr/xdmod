@@ -1,6 +1,5 @@
 <?php
 /**
- * @package OpenXdmod\ComponentTests
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 

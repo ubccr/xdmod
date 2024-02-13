@@ -101,7 +101,10 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
                     zeroline: false,
                     gridcolor: '#d8d8d8',
                     type: 'date',
-                    range: [record.data.series[0].data[0].low - (60 * 1000), record.data.series[0].data[0].high + (60 * 1000)]
+                    range: [
+                        moment.tz(record.data.series[0].data[0].low - (60 * 1000), record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS'),
+                        moment.tz(record.data.series[0].data[0].high + (60 * 1000), record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS')
+                    ]
                 },
                 yaxis: {
                     autorange: 'reversed',

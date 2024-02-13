@@ -1,6 +1,6 @@
 <?php
 
-namespace TestHelpers;
+namespace UnitTests\TestHelpers;
 
 /**
  * Provides helper functions for completing tests.
