@@ -4,7 +4,7 @@
 # file permissions are correct on the RPM packaged files.
 
 exitcode=0
-$INSTALL_DIR=/usr/share/xdmod
+INSTALL_DIR=/usr/share/xdmod
 
 # Check that there are no development artifacts installed in the RPM
 if rpm -ql xdmod | fgrep .eslintrc.json; then
