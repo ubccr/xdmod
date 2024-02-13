@@ -1,6 +1,8 @@
 {
   "env": {
-    "browser": true
+    "browser": true,
+    "es6": true,
+    "es2018": true
   },
   "globals": {
     "AppKernel": false,
@@ -10,7 +12,6 @@
     "ga": false,
     "moment": false,
     "_gaq": false,
-    "jQuery": false,
     "Highcharts": false,
     "truncateText": false,
     "XDMoD": false,

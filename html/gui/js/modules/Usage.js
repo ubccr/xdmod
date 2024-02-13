@@ -1538,7 +1538,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 if (chartRecords.length > 0) {
                                     chartOptions = chartRecords[0].get('hc_jsonstore');
                                 }
-                                jQuery.extend(true, chartOptions, baseChartOptions);
+                                XDMoD.utils.deepExtend(chartOptions, baseChartOptions);
 
                                 chartOptions.exporting.enabled = false;
                                 chartOptions.credits.enabled = false;
@@ -2753,7 +2753,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                             var chartOptions = r.get('hc_jsonstore');
 
-                            jQuery.extend(true, chartOptions, baseChartOptions);
+                            XDMoD.utils.deepExtend(chartOptions, baseChartOptions);
                             chartOptions.exporting.enabled = false;
                             chartOptions.credits.enabled = true;
 
