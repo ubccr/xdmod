@@ -11,9 +11,9 @@ use DataWarehouse\RoleRestrictionsStringBuilder;
 * @date 2012-05-03
 * @date 2015-06-xx
 *
-* Base class for server side generated highcharts charts
+* Base class for server side generated plotly charts
 */
-class HighChart2
+class AggregateChart
 {
     protected $_swapXY;
     protected $_chart;
@@ -39,6 +39,14 @@ class HighChart2
         'DashDot',
         'LongDashDot',
         'LongDashDotDot'
+    );
+
+    protected $_symbolStyles = array(
+        'circle',
+        'diamond',
+        'square',
+        'triangle-up',
+        'triangle-down',
     );
 
     protected $_dashStyleCount = 11;
@@ -70,7 +78,7 @@ class HighChart2
     // ---------------------------------------------------------
     // __construct()
     //
-    // Constructor for HighChart2 class.
+    // Constructor for AggregateChart class.
     //
     // ---------------------------------------------------------
     public function __construct(
@@ -104,51 +112,90 @@ class HighChart2
         $this->_showWarnings = $showWarnings;
         $this->_chart = array(
             'chart' => array(
-                'inverted' => $this->_swapXY,
-                'zoomType' => 'xy',
-                'alignTicks' => false,
                 'showWarnings' => $this->_showWarnings,
             ),
-            'credits' => array(
-                'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Highcharts',
-                'href' => ''
+            'layout' => array(
+                'annotations' => array(
+                    array(
+                        'name' => 'title',
+                        'text' => '',
+                        'xref' => 'paper',
+                        'yref' => 'paper',
+                        'xanchor' => 'center',
+                        'yanchor' => 'bottom',
+                        'x' => 0.5,
+                        'y' => 1.0,
+                        'font' => array(
+                            'color' => '#000000',
+                            'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                        ),
+                        'showarrow' => false,
+                        'captureevents' => true,
+                    ),
+                    array(
+                        'name' => 'subtitle',
+                        'text' => '',
+                        'xref' => 'paper',
+                        'yref' => 'paper',
+                        'xanchor' => 'center',
+                        'yanchor' => 'bottom',
+                        'x' => 0.5,
+                        'y' => 1.0,
+                        'showarrow' => false,
+                        'captureevents' => true,
+                    ),
+                    array(
+                        'name' => 'credits',
+                        'text' => $this->_startDate.' to '. $this->_endDate.'. Powered by XDMoD/Plotly JS.',
+                        'font' => array(
+                            'color' => '#909090',
+                            'size' => 9.6,
+                            'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                        ),
+                        'xref' => 'paper',
+                        'yref' => 'paper',
+                        'xanchor' => 'right',
+                        'yanchor' => 'bottom',
+                        'x' => 1.0,
+                        'y' => 1.0,
+                        'xshift' => 25,
+                        'showarrow' => false
+                    ),
+                ),
+                'legend' => array(
+                    'itemwidth' => 40,
+                    'itemsizing' => 'constant',
+                    'bgcolor' => '#ffffff',
+                    'borderwidth' => 0,
+                    'xref' => 'container',
+                    'yref' => 'container',
+                    'traceorder' => 'normal'
+                ),
+                'hovermode' => $this->_hideTooltip ? false : 'x unified',
+                'hoverlabel' => array(
+                    'align' => 'left',
+                    'bgcolor' => 'rgba(255, 255, 255, 0.8)',
+                    'font' => array(
+                        'size' => 12.8,
+                        'color' => '#333333',
+                        'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                    ),
+                    'namelength' => -1,
+                ),
+                'barmode' => 'group',
+                'images' => array(),
+                'margin' => array(
+                    't' => 45,
+                    'r' => 25,
+                    'b' => 25,
+                    'l' => 80,
+                ),
+                'swapXY' => $this->_swapXY,
+                'stdErr' => false,
             ),
-            'title' => array(
-                'text' => ''
-            ),
-            'subtitle' => array(
-                'text' => ''
-            ),
-            'xAxis' => array(
-                'categories' => array()
-            ),
-            'yAxis' => array(),
-            'legend' => array(
-                'symbolWidth' => 40,
-                'backgroundColor' => '#FFFFFF',
-                'borderWidth' => 0,
-                'y' => -5,
-                'wordWrap' => true
-            ),
-            'series' => array(),
-            'tooltip' => array(
-                'enabled' => $this->_hideTooltip?false:true,
-                'crosshairs' => true,
-                'shared' => true,
-                'xDateFormat' => $this->getDateFormat()
-            ),
-            'plotOptions' => array(
-                'series' => array(
-                    'allowPointSelect' => false,
-                    'connectNulls' => false,
-                    'animation' => false
-                )
-            ),
+            'data' => array(),
             'dimensions' => array(),
             'metrics' => array(),
-            'exporting' => array(
-                'enabled' => false
-            )
         );
 
         $this->_colorGenerator = new \DataWarehouse\Visualization\ColorGenerator();
@@ -174,15 +221,15 @@ class HighChart2
         {
             case 'Month':
             case 'month':
-                $pointInterval = 28;
+                $pointInterval = (365.25) * (1/12);
                 break;
             case 'Quarter':
             case 'quarter':
-                $pointInterval = 88;
+                $pointInterval = (365.25) * (1/4);
                 break;
             case 'Year':
             case 'year':
-                $pointInterval = 364;
+                $pointInterval = (365.25);
                 break;
             default:
             case 'Day':
@@ -295,7 +342,7 @@ class HighChart2
                 break;
             case 'Quarter':
             case 'quarter':
-                $format = 'Q%Q %Y';
+                $format = 'Q%q %Y';
                 break;
             case 'Year':
             case 'year':
@@ -320,8 +367,8 @@ class HighChart2
     public function setDataSource(array $source)
     {
         $src = count($source) > 0? ' Src: '.implode(', ', $source).'.':'';
-        $this->_chart['credits']['text'] = $this->_startDate.' to '.
-            $this->_endDate.' '.$src.' Powered by XDMoD/Highcharts';
+        $this->_chart['layout']['annotations'][2]['text'] = $this->_startDate.' to '.
+            $this->_endDate.' '.$src.' Powered by XDMoD/Plotly JS';
     } // setDataSource()
 
     // ---------------------------------------------------------
@@ -332,22 +379,19 @@ class HighChart2
     // ---------------------------------------------------------
     public function getTitle()
     {
-        return $this->_chart['title']['text'];
+        return $this->_chart['layout']['annotations'][0]['text'];
     } // getTitle()
 
     // ---------------------------------------------------------
     // setTitle()
     //
-    // Set chart's title text and highcharts-specific title formatting.
+    // Set chart's title text and plotly-specific title formatting.
     //
     // ---------------------------------------------------------
     public function setTitle($title, $font_size = 3)
     {
-        $this->_chart['title']['text'] = $title;
-        $this->_chart['title']['style'] = array(
-            'color'=> '#000000',
-            'fontSize' => (16 + $font_size).'px'
-        );
+        $this->_chart['layout']['annotations'][0]['text'] = $title;
+        $this->_chart['layout']['annotations'][0]['font']['size'] = $font_size + 16;
     } // setTitle()
 
     /**
@@ -359,7 +403,7 @@ class HighChart2
     }
 
     /**
-     * Set chart's subtitle text and highcharts-specific subtitle formatting.
+     * Set chart's subtitle text and plotly-specific subtitle formatting.
      * The text is automatically word wrapped based on the chart settings.
      *
      * @param $subtitle_html The charts subtitle in HTML format
@@ -369,16 +413,13 @@ class HighChart2
     {
         if($subtitle_html !== null) {
             $this->_subtitleText = html_entity_decode($subtitle_html);
-            $this->_chart['subtitle']['text'] = $subtitle_html;
+            $this->_chart['layout']['annotations'][1]['text'] = $subtitle_html;
         } else {
             $this->_subtitleText = '';
-            $this->_chart['subtitle']['text'] = '';
+            $this->_chart['layout']['annotations'][1]['text'] = '';
         }
-        $this->_chart['subtitle']['style'] = array(
-            'color'=> '#5078a0',
-            'fontSize' => (12 + $font_size).'px'
-        );
-        $this->_chart['subtitle']['y'] = 28 + (2 * $font_size);
+        $this->_chart['layout']['annotations'][1]['font']['color'] = '#5078a0';
+        $this->_chart['layout']['annotations'][1]['font']['size'] = (12 + $font_size);
     } // setSubtitle()
 
     // ---------------------------------------------------------
@@ -390,146 +431,145 @@ class HighChart2
     // ---------------------------------------------------------
     public function setLegend($legend_location, $font_size = 3)
     {
-        $this->_chart['legend']['itemStyle'] = array(
-            'fontWeight' => 'normal',
+        $this->_chart['layout']['legend']['font'] = array(
+            'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
             'color' => '#274b6d',
-            'fontSize' => (12  + $font_size).'px'
+            'size' => (12  + $font_size)
         );
         $this->_legend_location = $legend_location;
+        if (preg_match('/floating/i', $legend_location)) {
+            $this->_chart['layout']['legend']['xref'] = 'paper';
+            $this->_chart['layout']['legend']['yref'] = 'paper';
+        }
         switch($legend_location)
         {
             case 'top_center':
-                $this->_chart['legend']['align'] = 'center';
-                $this->_chart['legend']['verticalAlign'] = 'top';
-                $pad = 0;
-                if($this->_chart['title']['text'] != '')
-                {
-                    $pad += 30;
-                }
-                if($this->_chart['subtitle']['text'] != '')
-                {
-                    $pad += 20;
-                }
-                $this->_chart['legend']['y'] = $pad;
-
+                $this->_chart['layout']['legend']['xanchor'] = 'center';
+                $this->_chart['layout']['legend']['yanchor'] = 'top';
+                $this->_chart['layout']['legend']['x'] = 0.5;
+                $this->_chart['layout']['legend']['y'] = 0.925;
+                $this->_chart['layout']['legend']['orientation'] = 'h';
                 break;
             //case 'bottom_right':
             //break;
             //case 'bottom_left':
             //break;
             case 'left_center':
-                $this->_chart['legend']['align'] = 'left';
-                $this->_chart['legend']['verticalAlign'] = 'middle';
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['layout']['legend']['xanchor'] = 'left';
+                $this->_chart['layout']['legend']['yanchor'] = 'center';
+                $this->_chart['layout']['legend']['x'] = 0.0;
+                $this->_chart['layout']['legend']['y'] = 0.5;
+                $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
 
             case 'left_top':
-                $this->_chart['legend']['align'] = 'left';
-                $this->_chart['legend']['verticalAlign'] = 'top';
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['layout']['legend']['xanchor'] = 'left';
+                $this->_chart['layout']['legend']['yanchor'] = 'top';
+                $this->_chart['layout']['legend']['x'] = 0.0;
+                $this->_chart['layout']['legend']['y'] = 1.0;
+                $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
             case 'left_bottom':
-                $this->_chart['legend']['align'] = 'left';
-                $this->_chart['legend']['verticalAlign'] = 'bottom';
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['layout']['legend']['xanchor'] = 'left';
+                $this->_chart['layout']['legend']['yanchor'] = 'bottom';
+                $this->_chart['layout']['legend']['x'] = 0.0;
+                $this->_chart['layout']['legend']['y'] = 0.0;
+                $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
             case 'right_center':
-                $this->_chart['legend']['align'] = 'right';
-                $this->_chart['legend']['verticalAlign'] = 'middle';
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['layout']['legend']['xanchor'] = 'right';
+                $this->_chart['layout']['legend']['yanchor'] = 'center';
+                $this->_chart['layout']['legend']['x'] = 0.99;
+                $this->_chart['layout']['legend']['y'] = 0.5;
+                $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
             case 'right_top':
-                $this->_chart['legend']['align'] = 'right';
-                $this->_chart['legend']['verticalAlign'] = 'top';
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['layout']['legend']['xanchor'] = 'right';
+                $this->_chart['layout']['legend']['yanchor'] = 'top';
+                $this->_chart['layout']['legend']['x'] = 0.99;
+                $this->_chart['layout']['legend']['y'] = 1.0;
+                $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
             case 'right_bottom':
-                $this->_chart['legend']['align'] = 'right';
-                $this->_chart['legend']['verticalAlign'] = 'bottom';
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['layout']['legend']['xanchor'] = 'right';
+                $this->_chart['layout']['legend']['yanchor'] = 'bottom';
+                $this->_chart['layout']['legend']['x'] = 0.99;
+                $this->_chart['layout']['legend']['y'] = 0.0;
+                $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
             case 'floating_bottom_center':
-                $this->_chart['legend']['align'] = 'center';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['y'] = -100;
+                $this->_chart['layout']['legend']['xanchor'] = 'center';
+                $this->_chart['layout']['legend']['yanchor'] = 'bottom';
+                $this->_chart['layout']['legend']['x'] = 0.5;
+                $this->_chart['layout']['legend']['y'] = 0.0;
+                $this->_chart['layout']['legend']['orientation'] = 'h';
                 break;
             case 'floating_top_center':
-                $this->_chart['legend']['align'] = 'center';
-                $this->_chart['legend']['verticalAlign'] = 'top';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['y'] = 70;
+                $this->_chart['layout']['legend']['xanchor'] = 'center';
+                $this->_chart['layout']['legend']['yanchor'] = 'top';
+                $this->_chart['layout']['legend']['x'] = 0.5;
+                $this->_chart['layout']['legend']['y'] = 1.0;
+                $this->_chart['layout']['legend']['orientation'] = 'h';
                 break;
             case 'floating_left_center':
-                $this->_chart['legend']['align'] = 'left';
-                $this->_chart['legend']['verticalAlign'] = 'middle';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['x'] = 80;
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['layout']['legend']['xanchor'] = 'left';
+                $this->_chart['layout']['legend']['yanchor'] = 'center';
+                $this->_chart['layout']['legend']['x'] = 0.0;
+                $this->_chart['layout']['legend']['y'] = 0.5;
+                $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
             case 'floating_left_top':
-                $this->_chart['legend']['align'] = 'left';
-                $this->_chart['legend']['verticalAlign'] = 'top';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['x'] = 80;
-                $this->_chart['legend']['y'] = 70;
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['layout']['legend']['xanchor'] = 'left';
+                $this->_chart['layout']['legend']['yanchor'] = 'top';
+                $this->_chart['layout']['legend']['x'] = 0.0;
+                $this->_chart['layout']['legend']['y'] = 1.0;
+                $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
             case 'floating_left_bottom':
-                $this->_chart['legend']['align'] = 'left';
-                $this->_chart['legend']['verticalAlign'] = 'bottom';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['x'] = 80;
-                $this->_chart['legend']['y'] = -100;
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['layout']['legend']['xanchor'] = 'left';
+                $this->_chart['layout']['legend']['yanchor'] = 'bottom';
+                $this->_chart['layout']['legend']['x'] = 0.0;
+                $this->_chart['layout']['legend']['y'] = 0.0;
+                $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
             case 'floating_right_center':
-                $this->_chart['legend']['align'] = 'right';
-                $this->_chart['legend']['verticalAlign'] = 'middle';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['x'] = -10;
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['layout']['legend']['xanchor'] = 'right';
+                $this->_chart['layout']['legend']['yanchor'] = 'center';
+                $this->_chart['layout']['legend']['x'] = 0.99;
+                $this->_chart['layout']['legend']['y'] = 0.5;
+                $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
             case 'floating_right_top':
-                $this->_chart['legend']['align'] = 'right';
-                $this->_chart['legend']['verticalAlign'] = 'top';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['x'] = -10;
-                $this->_chart['legend']['y'] = 70;
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['layout']['legend']['xanchor'] = 'right';
+                $this->_chart['layout']['legend']['yanchor'] = 'top';
+                $this->_chart['layout']['legend']['x'] = 0.99;
+                $this->_chart['layout']['legend']['y'] = 1.0;
+                $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
             case 'floating_right_bottom':
-                $this->_chart['legend']['align'] = 'right';
-                $this->_chart['legend']['verticalAlign'] = 'bottom';
-                $this->_chart['legend']['floating'] = true;
-                $this->_chart['legend']['x'] = -10;
-                $this->_chart['legend']['y'] = -100;
-                $this->_chart['legend']['layout'] = 'vertical';
+                $this->_chart['layout']['legend']['xanchor'] = 'right';
+                $this->_chart['layout']['legend']['yanchor'] = 'bottom';
+                $this->_chart['layout']['legend']['x'] = 0.99;
+                $this->_chart['layout']['legend']['y'] = 0.0;
+                $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
             case '':
             case 'none':
             case 'off':
                 $this->_legend_location = 'off';
-                $this->_chart['legend']['enabled'] = false;
+                $this->_chart['layout']['legend']['visible'] = false;
                 break;
             case 'bottom_center':
             default:
-                $this->_legend_location = 'bottom_center';
-                $this->_chart['legend']['align'] = 'center';
-                $this->_chart['legend']['margin'] = 15;
+                $this->_chart['layout']['legend']['xanchor'] = 'center';
+                $this->_chart['layout']['legend']['yanchor'] = 'bottom';
+                $this->_chart['layout']['legend']['x'] = 0.5;
+                $this->_chart['layout']['legend']['y'] = 0.02;
+                $this->_chart['layout']['legend']['orientation'] = 'h';
                 break;
         }
-        if($legend_location != 'bottom_center')
-        {
-            $this->_chart['chart']['spacingBottom'] = 25;
-        }
-        if($legend_location != 'right_center' &&
-             $legend_location != 'right_top' &&
-             $legend_location != 'right_bottom')
-        {
-            $this->_chart['chart']['spacingRight'] = 20;
-        }
-        $this->_hasLegend = $this->_legend_location != 'off';
 
+        $this->_hasLegend = $this->_legend_location != 'off';
     } // setLegend()
 
     // ---------------------------------------------------------
@@ -575,29 +615,29 @@ class HighChart2
     // @param x_axis
     // ---------------------------------------------------------
     /*
-	protected function setXAxisLabel($x_axis)
-	{
-			if (!isset($this->_xAxisDataObject) )  {
-					throw new \Exception( get_class($this)." _xAxisDataObject not set ");
-			}
+    protected function setXAxisLabel($x_axis)
+    {
+        if (!isset($this->_xAxisDataObject) )  {
+            throw new \Exception( get_class($this)." _xAxisDataObject not set ");
+        }
 
-			$defaultXAxisLabel = 'xAxis';
-			$xAxisLabel = $this->_xAxisDataObject->getName() == ORGANIZATION_NAME ? '' :
-										$this->_xAxisDataObject->getName();
+        $defaultXAxisLabel = 'xAxis';
+        $xAxisLabel = $this->_xAxisDataObject->getName() == ORGANIZATION_NAME ? '' :
+                        $this->_xAxisDataObject->getName();
 
-			if($xAxisLabel == '') $xAxisLabel = $defaultXAxisLabel;
-			$originalXAxisLabel = $xAxisLabel;
+        if($xAxisLabel == '') $xAxisLabel = $defaultXAxisLabel;
+        $originalXAxisLabel = $xAxisLabel;
 
-			if(isset($x_axis->{$xAxisLabel}))
-			{
-					$config = $x_axis->{$xAxisLabel};
-					if(isset($config->title)) $xAxisLabel = $config->title;
-			}
-			if($xAxisLabel == $defaultXAxisLabel) $xAxisLabel = '';
+        if(isset($x_axis->{$xAxisLabel}))
+        {
+            $config = $x_axis->{$xAxisLabel};
+            if(isset($config->title)) $xAxisLabel = $config->title;
+        }
+        if($xAxisLabel == $defaultXAxisLabel) $xAxisLabel = '';
 
-			$this->_xAxisLabel = $xAxisLabel;
-	} // setXAxisLabel()
-	*/
+        $this->_xAxisLabel = $xAxisLabel;
+    } // setXAxisLabel()
+    */
 
     // ---------------------------------------------------------
     // setXAxis()
@@ -642,47 +682,50 @@ class HighChart2
         }
 
         // --- set xAxis in _chart object ---
-        $this->_chart['xAxis'] = array(
-                'title' => array(
-                        'text' => $xAxisLabel,
-                        'margin' => 15 + $font_size,
-                        'style' => array(
-                                'color'=> '#000000',
-                                'fontWeight'=> 'bold',
-                                'fontSize' => (12 + $font_size).'px'
-                        )
+        $this->_chart['layout']['xaxis'] = array(
+            'automargin' => true,
+            'cliponaxis' => false,
+            'layer' => 'below traces',
+            'title' => array(
+                'text' => '<b>' . $xAxisLabel . '</b>',
+                'standoff' => 5,
+                'font' => array(
+                    'size' => ($font_size + 12),
+                    'color' => '#000000',
+                    'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
                 ),
-                'otitle' => $originalXAxisLabel,
-                'dtitle' => $defaultXAxisLabel,
-
-                // set chart labels:
-                'labels' => $this->_swapXY ? array(
-                        'enabled' => true,
-                        'staggerLines' => 1,
-                        'step' => $this->_xAxisDataObject->getCount() < 20 ? 0  :round($this->_xAxisDataObject->getCount() / 20 ),
-                        'style' => array(
-                                'fontWeight'=> 'normal',
-                                'fontSize' => (11 + $font_size).'px'
-                        ),
-                        'settings' => array(
-                            'maxL' => floor($this->_width*20/580)
-                        )
-                ) // !($this->_swapXY)
-                : array(
-                        'enabled' => true,
-                        'staggerLines' => 1,
-                        'rotation' => $this->_xAxisDataObject->getCount()<= 8?0: -90,
-                        'align' => $this->_xAxisDataObject->getCount()<= 8?'center':'right',
-                        'step' => $this->_xAxisDataObject->getCount()< 20?0:round($this->_xAxisDataObject->getCount()/20),
-                        'style' => array('fontSize' => (11 + $font_size).'px'),
-                        'settings' => array(
-                            'maxL' => floor($this->_height*($this->limit<11?30:15)/400),
-                            'wrap' => floor($this->_height*($this->limit<11?18:18)/400)
-                        )
-                ),
-                'lineWidth' => 2 + $font_size / 4,
-                'categories' => $this->_xAxisDataObject->getValues()
+            ),
+            'otitle' => $originalXAxisLabel,
+            'dtitle' => $defaultXAxisLabel,
+            'tickfont' => array(
+                'size' => ($font_size + 11),
+                'color' => '#606060',
+            ),
+            //'ticktext' => array(),
+            'type' => 'category',
+            'linewidth' => 2 + $font_size / 4,
+            'linecolor' => '#c0d0e0',
+            'rangemode' => 'tozero',
+            'showgrid' => false,
+            'spikedash' => 'solid',
+            'spikethickness' => 1,
+            'spikecolor' => '#c0c0c0',
+            'standoff' => 25,
+            'categoryarray' => $this->_xAxisDataObject->getValues()
         );
+
+        if (isset($this->_chart['layout']['xaxis']['categoryarray']))
+        {
+            $this->_chart['layout']['xaxis']['categoryorder'] = 'array';
+        }
+
+        $count = $this->_xAxisDataObject->getCount();
+        $this->_chart['layout']['xaxis']['dtick'] = $count < 20 ? 0 : round($count / 20);
+        if (!$this->_swapXY)
+        {
+            $this->_chart['layout']['xaxis']['tickangle'] = -90;
+            $this->_chart['layout']['xaxis']['ticklabelposition'] = 'outside left';
+        }
     }   // setXAxis()
 
     // ---------------------------------------------------------
@@ -757,7 +800,6 @@ class HighChart2
     ) {   // JMS: clearly we do not have enough parameters.
                                         // support min/max/average 'truncation' of dataset
 
-
         $this->limit = $limit;
         $this->show_filters = $show_filters;
         $this->setMultiCategory($data_series);
@@ -796,6 +838,7 @@ class HighChart2
 
         $yAxisArray = $this->setAxes($summarizeDataseries, $offset, $x_axis, $font_size);
         $yAxisCount = count($yAxisArray);
+        $legendRank = 1;
 
         // ------------ prepare to plot ------------
 
@@ -811,7 +854,7 @@ class HighChart2
                     {
                         // set to summarize, then break both loops.
                         $summarizeDataseries = true;
-                        continue 2;
+                        continue 2; // bug? comment above mentions break but uses continue
                     }
                 }
             } // foreach($yAxisArray ...
@@ -852,6 +895,10 @@ class HighChart2
 
             $yAxisMin = $first_data_description->log_scale?null:0;
             $yAxisMax = null;
+            $yIndex = $yAxisIndex + 1;
+            $swapXYDone = false;
+            $yAxisName = $yAxisIndex == 0 ? 'yaxis' : "yaxis{$yIndex}";
+            $xAxisName = substr_replace($yAxisName, 'xaxis', 0, 5);
             $config = $this->getAxisOverrides($y_axis, $yAxisLabel, $yAxisIndex);
             if($config !== null)
             {
@@ -867,6 +914,10 @@ class HighChart2
                 {
                     $yAxisMax = $config->max;
                 }
+                if(isset($config->chartType))
+                {
+                    $yAxisType = $config->chartType;
+                }
             }
             if($yAxisLabel == $defaultYAxisLabel)
             {
@@ -875,41 +926,64 @@ class HighChart2
 
             // populate the yAxis:
             $yAxis = array(
+                'automargin' => true,
+                'cliponaxis' => false,
+                'layer' => 'below traces',
                 'title' => array(
-                    'text' => $yAxisLabel ,
-                    'style' => array(
-                        'color'=> $yAxisColor,
-                        'fontWeight'=> 'bold',
-                        'fontSize' => (12 + $font_size).'px'
+                    'text' => '<b>' . $yAxisLabel . '</b>',
+                    'standoff' => 5,
+                    'font' => array(
+                        'size' => ($font_size + 12),
+                        'color' => $yAxisColor,
+                        'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
                     )
                 ),
                 'otitle' => $originalYAxisLabel,
                 'dtitle' => $defaultYAxisLabel,
-                'labels' => array(
-                    'style' => array(
-                        'fontWeight'=> 'normal',
-                        'fontSize' => (11 + $font_size).'px'
-                    )
+                'exponentformat' => 'SI',
+                'tickfont' => array(
+                    'size' => ($font_size + 11),
+                    'color' => '#606060',
                 ),
-                'startOnTick' => $yAxisMin == null,
-                'endOnTick' => $yAxisMax == null,
-                'opposite' => $yAxisIndex % 2 == 1,
-                'min' => $yAxisMin,
-                'max' => $yAxisMax,
-                'type' => $yAxisObject->log_scale? 'logarithmic' : 'linear',
-                'showLastLabel' => $this->_chart['title']['text'] != '',
-                'gridLineWidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8),
-                'lineWidth' => 2 + $font_size/4,
-                'allowDecimals' => $yAxisObject->decimals > 0,
-                'tickInterval' => $yAxisObject->log_scale ?1:null,
-                'maxPadding' => max(0.05, ($yAxisObject->value_labels?0.25:0.0) + ($yAxisObject->std_err?.25:0))
+                'ticksuffix' => ' ',
+                'tickmode' => 'auto',
+                'nticks' => 10,
+                'index' => $yAxisIndex,
+                'type' => ($yAxisObject->log_scale || $yAxisType == 'log') ? 'log' : 'linear',
+                'rangemode' => 'tozero',
+                'range' => [$yAxisMin, $yAxisMax],
+                'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size / 8),
+                'linewidth' => 2 + $font_size / 4,
+                'linecolor' => '#c0d0e0',
+                'separatethousands' => true,
+                'side' => 'left',
+                'anchor' => 'x',
+                'overlaying' => $yAxisIndex == 0 ? null : 'y',
             );
 
-            $this->_chart['yAxis'][] = $yAxis;
+            if ($yAxisIndex > 0){
+                if ($yAxisIndex % 2 == 0) {
+                    $yAxis = array_merge($yAxis, array(
+                        'side' => 'left',
+                        'anchor' => 'free',
+                        'autoshift' => true,
+                    ));
+                }
+                else {
+                    $yAxis = array_merge($yAxis, array(
+                        'side' => 'right',
+                        'anchor' => $yAxisIndex > 1 ? 'free' : 'x',
+                        'autoshift' => true,
+                    ));
+                }
+            }
+
+            $this->_chart['layout']["{$yAxisName}"] = $yAxis;
 
             // for each of the dataseries on this yAxisObject:
             foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
             {
+                $legendRank++;
                 $yAxisDataObject = $yAxisDataObjectAndDescription['yAxisDataObject']; // SimpleData object
                 $data_description = $yAxisDataObjectAndDescription['data_description'];
                 $decimals = $yAxisDataObjectAndDescription['decimals'];
@@ -922,7 +996,7 @@ class HighChart2
                 $dataSeriesSummarized = false;
                 if ( $summarizeDataseries )
                 {
-                        $valuesCount = $yAxisDataObject->getCount(true );
+                        $valuesCount = $yAxisDataObject->getCount(true);
 
                     if($valuesCount - $this->limit >= 1)
                         {
@@ -955,111 +1029,82 @@ class HighChart2
                 }
 
                 $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
-                $dataLabelsConfig = array(
-                    'enabled' => $data_description->value_labels || $std_err_labels_enabled,
-                    'settings' => array(
-                        'value_labels' => $data_description->value_labels,
-                        'error_labels' => $std_err_labels_enabled,
-                        'decimals' => $decimals
-                    ),
-                    'style' => array(
-                        'fontSize' => (11 + $font_size).'px',
-                        'fontWeight' => 'normal',
-                        'color' => $color,
-                        'textShadow' => false
-                    )
-                );
-
-                $tooltipConfig = array();
-                $values = array();
+                $data_labels_enabled = $data_description->value_labels || $std_err_labels_enabled;
+                $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
+                $this->_chart['layout']['stdErr'] = $data_description->std_err;
+                $trace = array();
+                $drilldown = array();
+                $xValues = array();
+                $yValues = array();
+                $drillable = array();
+                $text = array();
+                $colors = array();
 
                 // to display as pie chart:
                 if($data_description->display_type == 'pie')
                 {
-                    $this->_chart['chart']['inverted'] = false;
-
                     foreach( $yAxisDataObject->getValues() as $index => $value)
                     {
                         // If the first value, give it the yAxisColor so we don't skip
                         // that color in the dataset. Otherwise, pick the next color.
-                        $point = array(
-                            'name' => $this->_xAxisDataObject->getValue($index),
-                            'y' => $value,
-                            'color' => ($index == 0) ? $yAxisColor
-                                    : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT)
-                        );
-
+                        $yValues[] = $value;
+                        $xValues[] = $yAxisDataObject->getXValue($index);
+                        $colors[] = ($index == 0) ? $yAxisColor
+                            : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT);
+                        $drillable[] = true;
                         // N.B.: These are drilldown labels.
                         // X axis labels will be the same, but are plotted
                         // from the x axis object instance variable.
                         // See setXAxis() and _xAxisDataObject.
-                        $point['drilldown'] = array(
+                        $drilldown[] = array(
                             'id' => $yAxisDataObject->getXId($index),
                             'label' => $yAxisDataObject->getXValue($index)
                         );
-                        $values[] = $point;
+
+                        $trace = array(
+                            'labels' => $xValues,
+                            'values' => $yValues,
+                        );
 
                     } // foreach
+                    // Dont add data labels for all pie slices. Plotly will render all labels otherwise,
+                    // which causes the margin on pie charts with many slices to break
+                    $labelLimit = 12;
+                    $labelsAllocated = 0;
+                    $pieSum = array_sum($yValues);
+                    for ($i = 0; $i < count($xValues); $i++) {
+                        if ($isThumbnail || (($labelsAllocated < $labelLimit) && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
+                            $text[] = '<b>' . $xValues[$i] . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
+                            $labelsAllocated++;
+                        }
+                        else {
+                            $text[] = '';
+                        }
 
-                    $dataLabelsConfig  = array_merge(
-                        $dataLabelsConfig,
-                        array(
-                            'color' => '#000000',
-                            'padding' => 10,
-                            'settings' => array(
-                                'maxL' => floor($this->_width*($this->limit<11?30:15)/580),
-                                'wrap' => floor($this->_width*($this->limit<11?15:15)/580),
-                                'decimals' => $decimals
-                            )
-                         )
-                    );
+                    }
 
-                    $tooltipConfig = array_merge(
-                        $tooltipConfig,
-                        array(
-                            'pointFormat' => "{series.name}: {point.y} <b>({point.percentage:.1f}%)</b>",
-                            'percentageDecimals' => 1,
-                            'valueDecimals' => $decimals
-                        )
-                    );
-
-                    $this->_chart['tooltip']['shared'] = false;
+                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';
                 }
                 else // ($data_description->display_type !== 'pie')
                 {
                     if($this->_swapXY)
                     {
-                        $dataLabelsConfig  = array_merge(
-                            $dataLabelsConfig,
-                            array(
-                                'x' => 70
-                            )
-                        );
-                        $this->_chart['xAxis']['labels']['rotation'] = 0;
+                        //TODO: Ajust data labels
+                        $trace['textangle'] = 90;
+                        $this->_chart['layout']['xaxis']['tickangle'] = 0;
                     }
-                    else // (!$this->_swapXY)
-                    {
-                        $dataLabelsConfig  = array_merge(
-                            $dataLabelsConfig,
-                            array(
-                                'rotation' => -90,
-                                'align' => 'center',
-                                'y' => -70,
-                            )
-                        );
-                    } // _swapXY
 
                     // set the label for each value:
                     foreach( $yAxisDataObject->getValues() as $index => $value)
                     {
-                        $point = array(
-                            'y' => $yAxisObject->log_scale && $value == 0 ? null : $value//,
-                        );
-
+                        $yValues[] = $value;
+                        $xValues[] = $yAxisDataObject->getXValue($index);
+                        $text[] = $value;
+                        $drillable[] = true;
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
                         // (Though they are the same labels...)
-                        $point['drilldown'] = array(
+                        $drilldown[] = array(
                             'id' => $yAxisDataObject->getXId($index),
                             'label' => $yAxisDataObject->getXValue($index)
                         );
@@ -1070,20 +1115,14 @@ class HighChart2
 
                         }
 
-                        $values[] = $point ;
                     } // foreach
 
-                    $tooltipConfig = array_merge(
-                        $tooltipConfig,
-                        array(
-                            'valueDecimals' => $decimals
-                        )
-                    );
+                    $trace = array_merge($trace, array('text' => $yValues));
                 } // if ($data_description->display_type == 'pie')
 
-                $values_count = count($values);
+                $values_count = count($yValues);
                 if ($dataSeriesSummarized && $values_count > 0) {
-                    $values[$values_count - 1]['isRemainder'] = true;
+                    $drillable[$values_count - 1] = false;
                 }
 
                 $zIndex = isset($data_description->z_index) ? $data_description->z_index : $data_description_index;
@@ -1119,63 +1158,297 @@ class HighChart2
                     $visible = $data_description->visibility->{$formattedDataSeriesName};
                 }
 
+                if (in_array($data_description->display_type, array('h_bar', 'bar', 'pie')))
+                {
+                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';
+                }
+
                 // Display markers for scatter plots, non-thumbnail plots
                 // with fewer than 21 points, or for plots with a single y value.
                 $showMarker = $data_description->display_type == 'scatter' ||
                     ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
                     $values_count == 1;
 
-                $data_series_desc = array(
+                if ($data_description->display_type == 'pie')
+                {
+                    $tooltip = '%{label}' . '<br>' . $lookupDataSeriesName
+                               . ": %{value:,.{$decimals}f} <b>(%{percent})</b> <extra></extra>";
+                }
+                else
+                {
+                    $tooltip = '%{hovertext} <br>' . "<span style=\"color:$color\";> ●</span> "
+                               . $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
+                }
+
+                if ($yAxisCount > 1 || $data_description->std_err == 1) {
+                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'x unified';
+                    $tooltip = $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
+                    $this->_chart['layout']["{$yAxisName}"]['showgrid'] = false;
+                }
+                else {
+                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';
+                }
+
+                $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
+
+                $trace = array_merge($trace, array(
+                    'automargin'=> $data_description->display_type == 'pie' ? true : null,
                     'name' => $lookupDataSeriesName,
+                    'customdata' => $lookupDataSeriesName,
+                    'zIndex' => $zIndex,
+                    'cliponaxis' => false,
                     'otitle' => $formattedDataSeriesName,
                     'datasetId' => $data_description->id,
-                    'zIndex' => $zIndex,
-                    'color'=> $data_description->display_type == 'pie' ?
-                                                        null : $color,
-                    'type' => $data_description->display_type,
-                    'trackByArea'=>  $data_description->display_type == 'area' ||
-                                                        $data_description->display_type == 'areaspline',
-                    'dashStyle' => $data_description->line_type,
-                    'shadow' => $data_description->shadow,
-                    'groupPadding' => 0.05,
-                    'pointPadding' => 0,
-                    'borderWidth' => 0,
-                    'yAxis' => $yAxisIndex,
-                    'lineWidth' => $data_description->display_type !== 'scatter' ?
-                                                        $data_description->line_width + $font_size / 4 : 0,
+                    'drilldown' => $drilldown,
                     'marker' => array(
-                        'enabled' => $showMarker,
-                        'lineWidth' => 1,
-                        'lineColor' => $lineColor,
-                        'radius' => $font_size / 4 + 5
+                        'size' => ($font_size/4 + 5) * 2,
+                        'color' => $color,
+                        'colors' => $data_description->display_type == 'pie' ? $colors : null,
+                        'line' => array(
+                            'width' => 1,
+                            'color' => $lineColor,
+                        ),
+                        'symbol' => $this->_symbolStyles[$traceIndex % 5],
                     ),
-                    'tooltip' => $tooltipConfig,
-                    'showInLegend' => true,
-                    'dataLabels' => $dataLabelsConfig,
-                    'data' => $values,
+                    'line' => array(
+                        'color' => $data_description->display_type == 'pie' ?
+                                                        null : $color,
+                        'dash' => $data_description->line_type,
+                        'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size / 4 : 0,
+                        'shape' => $data_description->display_type == 'spline' || $data_description->display_type == 'areaspline' ? 'spline' : 'linear',
+                    ),
+                    'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
+                    'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
+                    'hovertext' => $xValues,
+                    'hoveron'=>  $data_description->display_type == 'area' || $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
+                    'hovertemplate' => $tooltip,
+                    'showlegend' => true,
+                    'text' => $data_description->display_type == 'pie' && $data_description->value_labels ? $text : array(),
+                    'textposition' => 'outside',
+                    'textfont' => array(
+                        'color' => $data_description->display_type == 'pie' ? '#000000' : $color,
+                        'size' => ($font_size + 8),
+                        'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                    ),
+                    'textangle' => $data_description->display_type == 'h_bar' ? 0 : 90,
+                    'textinfo' => $data_description->display_type == 'pie' ? 'text' : null,
+                    'x' => $this->_swapXY ? $yValues : $xValues,
+                    'y' => $this->_swapXY ? $xValues : $yValues,
+                    'drillable' => $drillable,
+                    'yaxis' => "y{$yIndex}",
+                    'offsetgroup' => "y{$yIndex}",
+                    'legendgroup' => $traceIndex,
+                    'legendrank' => $legendRank,
                     'cursor' => 'pointer',
                     'visible' => $visible,
+                    'sort' => false,
+                    'direction' => 'clockwise',
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                ); // $data_series_desc
+                )); // $data_series_desc
 
-                                // set stacking
+                if ($data_description->display_type == 'areaspline') {
+                    $trace['type'] = 'area';
+                }
+
+                // Set stack and configure area plots further
                 if($data_description->display_type!=='line')
                 {
-                    if(     $data_description->combine_type=='stack')
+                    if ($trace['type']=='area' && $traceIndex == 0) {
+                        $hidden_trace = array(
+                            'name' => 'area fix',
+                            'x' => $this->_swapXY ? array_fill(0, count($xValues), 0) : $xValues,
+                            'y' => $this->_swapXY ? $xValues : array_fill(0, count($xValues), 0),
+                            'showlegend' => false,
+                            'zIndex' => 0,
+                            'marker' => array(
+                                'color' => '#ffffff'
+                            ),
+                            'line' => array(
+                                'color' => '#ffffff'
+                            ),
+                            'hoverinfo' => 'skip',
+                            'yaxis' => "y{$yIndex}",
+                            'type' => 'scatter',
+                        );
+
+                        if ($this->_swapXY) {
+                            $null_trace['xaxis'] = "x{$yIndex}";
+                            unset($null_trace['yaxis']);
+                        }
+
+                        $this->_chart['data'][] = $hidden_trace;
+                    }
+
+                    if ($trace['type'] == 'bar' || $trace['type'] == 'pie') {
+                        $trace['line']['width'] = 0;
+                        $trace['marker']['line']['width'] = 0;
+                    }
+
+                    if ($trace['type'] == 'bar' && $data_description->display_type != 'h_bar') {
+                        $trace['textposition'] = 'outside';
+                        $trace['textangle'] = -90;
+                    }
+
+                    if ($data_description->combine_type=='side' && $trace['type']=='area'){
+                        if ($this->_swapXY) {
+                            $trace['fill'] = $traceIndex == 0 ? 'tozerox' : 'tozerox';
+                        }
+                        else {
+                            $trace['fill'] = $traceIndex == 0 ? 'tozeroy' : 'tozeroy';
+                        }
+                    }
+                    elseif($data_description->combine_type=='stack')
                     {
-                        // ask the highcharts library to connect nulls for stacking
-                        $data_series_desc['stacking'] = 'normal';
-                        $data_series_desc['connectNulls'] = true;
+                        $trace['stackgroup'] = 'one';
+                        $this->_chart['layout']['barmode'] = 'stack';
+                        $trace['stackgaps'] = 'interpolate'; //connect nulls
                     }
                     elseif($data_description->combine_type=='percent' && !$data_description->log_scale)
                     {
-                        $data_series_desc['stacking'] = 'percent';
+                        $trace['stackgroup'] = 'one';
+                        $trace['stackgaps'] = 'interpolate';
+                        $trace['groupnorm'] = 'percent';
+                        if ($trace['type'] == 'bar') {
+                            $this->_chart['layout']['barmode'] = 'stack';
+                            $this->_chart['layout']['barnorm'] = 'percent';
+                        }
                     }
                 }
-                $this->_chart['series'][] = $data_series_desc;
 
-                // build error data series and add it to chart
-                $this->buildErrorDataSeries(
+                // Set swap axis
+                if ($this->_swapXY && $data_description->display_type!='pie') {
+                    if ($trace['type'] == 'bar') {
+                        $trace = array_merge($trace, array('orientation' => 'h'));
+                        $trace['textangle'] = 0;
+                    }
+                    if ($this->_chart['layout']['hovermode'] != 'closest') {
+                        $this->_chart['layout']['hovermode'] = 'y unified';
+                        $trace['hovertemplate'] = $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
+                    }
+                    else {
+                        $trace['hovertemplate'] = '%{hovertext} <br>' . "<span style=\"color:$color\";> ●</span> "
+                           . $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
+                    }
+                    unset($trace['yaxis']);
+                    $trace['xaxis'] = "x{$yIndex}";
+
+                    if (!$swapXYDone) {
+                        $xtmp = $this->_chart['layout']["{$xAxisName}"];
+                        $ytmp = $this->_chart['layout']["{$yAxisName}"];
+                        $this->_chart['layout']['yaxis'] = $xtmp;
+                        $this->_chart['layout']["{$xAxisName}"] = $ytmp;
+
+                        $this->_chart['layout']["{$xAxisName}"]['side'] = ($yAxisIndex % 2 != 0) ? 'top' : 'bottom';
+                        if ($this->_chart['layout']["{$xAxisName}"]['side'] == 'top') {
+                            $this->_chart['layout']["{$xAxisName}"]['title']['standoff'] = 0;
+                        }
+                        $this->_chart['layout']["{$xAxisName}"]['anchor'] = 'free';
+                        if (isset($this->_chart['layout']["{$xAxisName}"]['overlaying'])) {
+                            $this->_chart['layout']["{$xAxisName}"]['overlaying'] = 'x';
+                        }
+
+                        $xAxisStep = 0.115;
+                        $xAxisBottomBoundStart = 0 + ($xAxisStep * ceil($yAxisCount/2));
+                        $xAxisTopBoundStart = 1 - ($xAxisStep * floor($yAxisCount/2));
+                        $topShift = floor($yAxisCount/2) - floor($yAxisIndex/2);
+                        $bottomShift = ceil($yAxisCount/2) - ceil($yAxisIndex/2);
+
+                        $this->_chart['layout']["{$xAxisName}"]['position'] = $this->_chart['layout']["{$xAxisName}"]['side'] == 'top' ? min(1 - ($xAxisStep * $topShift), 1) :
+                            max(0 + ($xAxisStep * $bottomShift), 0);
+                        
+                        $this->_chart['layout']["{$xAxisName}"]['domain'] = array(0,1);
+                        $this->_chart['layout']["{$xAxisName}"]['title']['standoff'] = 0;
+                        $this->_chart['layout']["{$xAxisName}"]['type'] = $yAxisObject->log_scale ? 'log' : '-';
+                        $this->_chart['layout']["{$xAxisName}"]['showgrid'] =$yAxisCount > 1 ? false : true;
+
+                        $this->_chart['layout']['yaxis']['linewidth'] = 2 + $font_size / 4;
+                        $this->_chart['layout']['yaxis']['linecolor'] = '#c0d0e0';
+                        $this->_chart['layout']['yaxis']['domain'] = array($xAxisBottomBoundStart, $xAxisTopBoundStart);
+                        $this->_chart['layout']['yaxis']['autorange'] = 'reversed';
+                        $this->_chart['layout']['yaxis']['showgrid'] = false;
+                        unset($this->_chart['layout']['yaxis']['position']);
+                        $swapXYDone = true;
+
+                    }
+
+                    if ($yIndex > 1) {
+                        unset($this->_chart['layout']["{$yAxisName}"]);
+                    }
+
+                }
+
+                // Set null connectors
+                if (in_array(null, $yValues) && $data_description->display_type == 'line') {
+                    $null_trace = array(
+                        'name' => 'gap connector',
+                        'zIndex' => $zIndex,
+                        'x' => $this->_swapXY ? $yValues : $xValues,
+                        'y' => $this->_swapXY ? $xValues : $yValues,
+                        'showlegend' => false,
+                        'mode' => 'lines',
+                        'line' => array(
+                            'color' => $color,
+                            'dash' => 'dash'
+                        ),
+                        'connectgaps' => true,
+                        'hoverinfo' => 'skip',
+                        'legendgroup' => $traceIndex,
+                        'type' => 'scatter',
+                        'visible' => $visible,
+                        'yaxis' => "y{$yIndex}",
+                        'isRestrictedByRoles' => $data_description->restrictedByRoles,
+                    );
+
+                    if ($this->_swapXY) {
+                        $null_trace['xaxis'] = "x{$yIndex}";
+                        unset($null_trace['yaxis']);
+                    }
+
+                    $this->_chart['data'][] = $null_trace;
+
+                }
+
+                // Adjust axis tick labels based on label length
+                if(!($data_description->display_type == 'pie')) {
+                    $categoryLabels = array();
+                    $longLabel = false;
+                    for ($i = 0; $i < count($xValues); $i++) {
+                        if (count($xValues) > 20) {
+                            if ($i % 2 == 0) {
+                                $categoryLabels[] = substr($xValues[$i], 0, 25) . '...';
+                            }
+                            else {
+                                $categoryLabels[] = '';
+                            }
+                        }
+                        elseif (strlen($xValues[$i]) > 70 || $longLabel) {
+                            $categoryLabels[] = substr($xValues[$i], 0, 25) . '...';
+                            if (count($xValues) > 10 && !$longLabel) {
+                                $i = 0; // Go back and tidy up labels
+                                $longLabel = true;
+                            }
+                        }
+                        elseif ($data_description->display_type == 'h_bar') {
+                            $categoryLabels[] = wordwrap($xValues[$i], 40, '<br>');
+                        } else {
+                            $categoryLabels[] = wordwrap($xValues[$i], 25, '<br>');
+                        }
+                    }
+                    if ($this->_swapXY) {
+                        $this->_chart['layout']['yaxis']['tickmode'] = 'array';
+                        $this->_chart['layout']['yaxis']['tickvals'] = $xValues;
+                        $this->_chart['layout']['yaxis']['ticktext'] = $categoryLabels;
+                    } else {
+                        $this->_chart['layout']['xaxis']['tickmode'] = 'array';
+                        $this->_chart['layout']['xaxis']['tickvals'] = $xValues;
+                        $this->_chart['layout']['xaxis']['ticktext'] = $categoryLabels;
+                    }
+                }
+
+                $this->_chart['data'][] = $trace;
+
+                $error_info = $this->buildErrorDataSeries(
+                    $trace,
                     $data_description,
                     $legend,
                     $lineColor,
@@ -1183,12 +1456,69 @@ class HighChart2
                     $formattedDataSeriesName,
                     $yAxisIndex,
                     $semDecimals,
+                    $decimals,
                     $zIndex
                 );
 
-            } // foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
-        }
+                // Add data labels
+                if(($data_description->value_labels || $data_description->std_err_labels) && $data_description->display_type != 'pie') {
+                    for ($i = 0; $i < count($xValues); $i++) {
+                        $yPosition = $yValues[$i];
+                        if ($data_description->log_scale) {
+                            $yPosition = isset($yPosition) ? log10($yPosition) : null;
+                        }
+                        $data_label = array(
+                            'name' => 'data_label',
+                            'x' => $this->_swapXY ? $yPosition : $xValues[$i],
+                            'y' => $this->_swapXY ? $xValues[$i] : $yPosition,
+                            'xref' => 'x',
+                            'yref' => 'y',
+                            'showarrow' => false,
+                            'captureevents' => false,
+                            'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
+                            'font' => array(
+                                'size' => 11 + $font_size,
+                                'color' => $color,
+                                'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                            ),
+                            'textangle' => -90,
+                            'yshift' => $isThumbnail ? 45 : 70,
+                        );
+                        if ($this->_swapXY) {
+                            $data_label['textangle'] = 0;
+                            $data_label['yshift'] = $isThumbnail ? -5 : 0;
+                            $data_label['xshift'] = $isThumbnail ? 35 : 70;
+                        }
 
+                        if ($data_description->std_err == 1) {
+                            if ($this->_swapXY) {
+                                $data_label['yshift'] = -7;
+                            }
+                            else {
+                                $data_label['xshift'] = -7;
+                            }
+                        }
+
+                        if ($data_description->value_labels && $data_description->std_err_labels) {
+                            $data_label['text'] = $error_info['data_labels'][$i];
+                            if ($this->_swapXY) {
+                                $data_label['xshift'] = $isThumbnail ? 60 : 90;
+                            }
+                            else {
+                                $data_label['yshift'] = $isThumbnail ? 60 : 90;
+                            }
+                        }
+                        elseif (!$data_description->value_labels && $data_description->std_err_labels) {
+                            $data_label['text'] = $error_info['error_labels'][$i];
+                        }
+
+                        array_push($this->_chart['layout']['annotations'], $data_label);
+                    }
+                }
+            } // foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
+        } //foreach($yAxisArray as $yAxisIndex => $yAxisObject)
+
+        // Add restricted data warning
         if ($this->_showWarnings) {
             $this->addRestrictedDataWarning();
         }
@@ -1203,9 +1533,12 @@ class HighChart2
     //
     // @param ...
     //
+    // TODO: Two main implementations, need to choose which one would be better.
+    // Most likely will be to create line plot and configure it into an error plot
     // for Timeseries, questions include: drilldown?
     // ---------------------------------------------------------
     protected function buildErrorDataSeries(
+        $trace,
         &$data_description,
         &$legend,
         $error_color,
@@ -1213,26 +1546,25 @@ class HighChart2
         $formattedDataSeriesName,
         $yAxisIndex,
         $semDecimals,
+        $decimals,
         $zIndex
     ) {
 
         // build error data series and add it to chart
-        if($data_description->std_err == 1 && $data_description->display_type != 'pie')
+        if(($data_description->std_err == 1 || $data_description->std_err_labels) && $data_description->display_type != 'pie')
         {
-            $error_series = array();
+            $stderr = array();
+            $dataLabels = array();
+            $errorLabels = array();
             $errorCount = $yAxisDataObject->getErrorCount();
             for($i = 0; $i < $errorCount; $i++)
             {
                 // build the error bar and set for display
                 $v = $yAxisDataObject->getValue($i);
                 $e = $yAxisDataObject->getError($i);
-                $has_value = isset($v) && $v != 0;
-                $error_series[] = array(
-                            'x' => $i,
-                            'low' => $has_value ? $v-$e : null,
-                            'high' => $has_value ? $v+$e : null,
-                            'stderr' => $e
-                );
+                $stderr[] = $e;
+                $errorLabels[] = isset($e) ? '+/- ' . number_format($e, $semDecimals, '.', ',') : '+/-' . number_format(0, $semDecimals, '.', ',');
+                $dataLabels[] = isset($v) ? number_format($v, $decimals, '.', ',') . ' [' . $errorLabels[$i] . ']': (isset($e) ? $errorLabels[$i] : '');
             }
 
             // -- set error dataseries name and visibility --
@@ -1254,33 +1586,99 @@ class HighChart2
                 $visible = $data_description->visibility->{$dsn};
             }
 
+            $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
+
             // create the data series description:
-            $err_data_series_desc = array(
-                //'name' => $dsn,
-                'name' => $lookupDataSeriesName,
-                'showInLegend' => true,
+            $error_trace = array_merge($trace, array(
+                'name' => $dsn,
                 'otitle' => $dsn,
                 'datasetId' => $data_description->id,
-                'zIndex' => $zIndex,
                 'color'=> $error_color,
-                'type' => 'errorbar',
-                'shadow' => $data_description->shadow,
-                'groupPadding' => 0.05,
-                'pointPadding' => 0,
-                'lineWidth' => 2,
-                'yAxis' => $yAxisIndex,
-                'tooltip' => array(
-                        'valueDecimals' => $semDecimals
+                'marker' => array(
+                    'color' => $error_color,
+                    'line' => array(
+                        'width' => 1,
+                        'color' => $error_color,
                     ),
-                'data' => $error_series,
-                'cursor' => 'pointer',
+                ),
+                'line' => array(
+                    'color' => $error_color,
+                ),
+                'hovertext' => $errorLabels,
+                'mode' => 'lines',
+                'text' => array(),
+                'hovertemplate' => '<b> %{hovertext} </b>',
                 'visible' => $visible,
+                'showlegend' => true,
+                'legendgroup' => null,
+                'connectgaps' => false,
+                'legendrank' => $trace['legendrank']+1,
                 'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                );
-            if(! $data_description->log_scale)
-            {
-                $this->_chart['series'][] = $err_data_series_desc;
+            ));
+
+            $error_y = array(
+                'type' => 'data',
+                'array' => $stderr,
+                'arrayminus' => $stderr,
+                'symmetric' => false,
+                'color' => $error_color
+            );
+
+            if ($error_trace['type'] == 'area') {
+                $error_trace['fill'] = $trace['fill'];
+                // Referenced https://stackoverflow.com/questions/15202079/convert-hex-color-to-rgb-values-in-php
+                // for idea
+                list($r, $g, $b) = sscanf($trace['marker']['color'], '#%02x%02x%02x');
+                $a = 0.1;
+                $fillColor = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . $a . ')';
+                $error_trace['fillcolor'] = $fillColor;
+                if ($data_description->combine_type=='stack') {
+                    $error_trace['stackgroup'] = 'two';
+                    $error_trace['stackgaps'] = 'interpolate';
+                }
             }
+
+            if ($trace['type'] == 'bar') {
+                $this->_chart['layout']['barmode'] = 'overlay';
+                $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'x unified';
+
+                if ($this->_swapXY) {
+                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'y unified';
+                }
+
+                if ($data_description->combine_type=='side') {
+                    //$error_trace['offsetgroup'] = "group{$traceIndex}";
+                    $this->_chart['layout']['barmode'] = 'group';
+                }
+                if ($data_description->combine_type=='stack') {
+                    $error_trace['y'] = array_fill(0, count($error_trace['y']), 0);
+                    for ($i = 0; $i < count($errorLabels); $i++) {
+                        if (!isset($errorLabels[$i])) {
+                            $error_trace['y'][$i] = null;
+                        }
+                    }
+                    $this->_chart['layout']['barmode'] = 'stack';
+                }
+            }
+
+            if (isset($trace['visible']) && $trace['visible'] != 1) {
+                $error_trace['visible'] = 'legendonly';
+            }
+
+            if(!$data_description->log_scale && $data_description->std_err)
+            {
+                if ($visible == 1) {
+                    $idx = count($this->_chart['data']) - 1;
+                    if ($this->_swapXY) {
+                        $this->_chart['data'][$idx]['error_x'] = $error_y;
+                    } else {
+                        $this->_chart['data'][$idx]['error_y'] = $error_y;
+                    }
+                }
+                $this->_chart['data'][] = $error_trace;
+            }
+
+            return array('data_labels' => $dataLabels, 'error_labels' => $errorLabels);
         } // if not pie
     } // function buildErrorDataSeries
 
@@ -1293,13 +1691,15 @@ class HighChart2
                 return;
         }
 
-        $this->_chart['alignedLabels']['items'][] = array(
-            'html' => implode('<br />', $roleRestrictionsStrings),
-
-            'align' => 'left',
-            'backgroundColor' => '#DFDFDF',
-            'verticalAlign' => 'bottom',
-            'y' => 15,
+        $this->_chart['layout']['annotations'][] = array(
+            'text' => implode('<br />', $roleRestrictionsStrings),
+            'xref' => 'paper',
+            'yref' => 'paper',
+            'xanchor' => 'center',
+            'yanchor' => 'bottom',
+            'bgcolor' => '#DFDFDF',
+            'x' => 0.0,
+            'y' => 1.0,
         );
     }
 
@@ -1312,9 +1712,9 @@ class HighChart2
     protected function setChartTitleSubtitle($font_size)
     {
         // set title and subtitle for chart
-        if($this->_chart['title']['text'] == '' && $this->_chart['subtitle']['text'] != '')
+        if($this->_chart['layout']['annotations'][0]['text'] == '' && $this->_chart['layout']['annotations'][1]['text'] != '')
         {
-            $this->setTitle($this->_chart['subtitle']['text'], $font_size);
+            $this->setTitle($this->_chart['layout']['annotations'][1]['text'], $font_size);
             $this->setSubtitle('', $font_size);
         }
     } // function setChartTitleSubtitle
@@ -1322,7 +1722,7 @@ class HighChart2
     // ---------------------------------------------------------
     // exportJsonStore()
     //
-    // Export chart object as JSON, indicate count.
+    // Export chart object aoverlayings JSON, indicate count.
     //
     // Note that $limit is not in use. Note also that I've made
     // it an instance variable here  --JMS, 1 Sep 15
@@ -1376,4 +1776,4 @@ class HighChart2
 
         return array($color, $lineColor);
     }
-} // class HighChart2
+} // class AggregateChart
