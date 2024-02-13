@@ -6,7 +6,7 @@ of XDMoD then `/etc/xdmod` can be replaced with `/path/to/your/xdmod/install/etc
 
 You will first need to modify `/etc/xdmod/simplesamlphp/metadata/saml20-idp-remote.php` according to the example below:
 
-*NOTE: in the following examples you will need to substitute your own values where `<< ... >>` is found. It is best to keep track of these values as some will be referenced in other files.*
+*NOTE: in the following examples you will need to substitute your own values where `<< ... >>` is found. Each instance of `<< ... >>` will be detailed underneath the code block in which it is found. Some of these values will be referenced in other files, these values will be denoted by a <span style='color:red;font-size=20px'>\*</span>.*
 
 ```injectablephp
 <?php
@@ -41,7 +41,7 @@ $metadata['<<idp-remote-entity-id>>'] = array (
 );
 ```
 
-- `<<idp-remote-entity-id>>`: This is a value selected by you, it will be referenced elsewhere in the configuration.
+- `<<idp-remote-entity-id>>`: <span style='color:red;font-size=20px'>*</span> This is a value selected by you, it will be referenced elsewhere in the configuration.
 - `<<your-xdmod-installation-web-address>>`: The external web address of your XDMoD Installation (which should contain the `host` property from your SP config in `authsources.php`), ex. `https://xdmod.example.com`.
 - `<<contents-of-your-cert-file-minus-the-begin-and-end-certificate-blocks>>`: This should be from the cert file your using for simplesamlphp. Location is based on the `certdir` property found in  `/etc/xdmod/simplesamlphp/config/config.php`.
 - `<<base64-encoded-png-icon-data-that-will-be-shown-in-the-xdmod-login-modal>>`: XDMoD supports displaying a custom image when users log in via SSO. This is where you would encode that image.
@@ -55,7 +55,7 @@ $config = array(
     '<<sp-id>>' => array(
         'saml:SP',
         'idp' => '<<idp-remote-entity-id>>'
-        /** Configuration from simplesSAMLphp general configuration **/        
+        /** Configuration from simplesSAMLphp general configuration **/
     ),
     '<<oidc-key-id>>'  => array(
         'authoidcoauth2:OIDCOAuth2',
@@ -78,8 +78,8 @@ $config = array(
 );
 ```
 - `<<idp-remote-entity-id>>`: This is the `entityid` from `saml20-idp-remote.php`.
-- `<<oidc-key-id>>`: This is a value you select and will be referenced elsewhere in the configuration files.
-- `<<oidc-entity-id>>`: This is a value you select and will be referenced elsewhere in the configuration files.
+- `<<oidc-key-id>>`: <span style='color:red;font-size=20px'>*</span> This is a value you select and will be referenced elsewhere in the configuration files.
+- `<<oidc-entity-id>>`: <span style='color:red;font-size=20px'>*</span> This is a value you select and will be referenced elsewhere in the configuration files.
 - `<<auth-endpoint-url>>`: The url that points to your authentication endpoint, ex. `https://cilogon.org`.
 - `<<auth-path>>`: The path element that will be appended to `<<auth-endpoint-url>>` when authorizing, ex. `/authorize`.
 - `<<api-endpoint>>`: The url that points to your OpenID Connect API endpoint ( often the same as `<<auth-endpoint-url>>` ), ex. `https://cilogon.org`.
@@ -117,4 +117,4 @@ $metadata['<<idp-remote-entity-id>>'] = array(
 ```
 
 - `<<your-private-key-file-name>>`: The key file to be used by simplesamlphp. Location is based on the `certdir` property found in  `/etc/xdmod/simplesamlphp/config/config.php`.
-- `<<the-oidc-key-name-in-authsources>>`: The `<<oidc-key-id>>` used in `authsources.php`.
+- `<<the-oidc-key-name-in-authsources>>`: <span style='color:red;font-size=20px'>*</span> The `<<oidc-key-id>>` used in `authsources.php`.
