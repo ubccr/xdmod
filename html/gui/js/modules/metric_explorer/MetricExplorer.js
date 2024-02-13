@@ -1939,7 +1939,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     instance.yAxis['original' + axisIndex].max = newMax;
                     instance.yAxis['original' + axisIndex].chartType = axisType;
                 } else {
-                    instance.yAxis[`original${axisIndex}`] = {
+                    instance.yAxis['original' + axisIndex] = {
                         title: axisTitle,
                         min: newMin,
                         max: newMax,
@@ -1998,13 +1998,13 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             text: 'Reset Range',
             xtype: 'menuitem',
             handler: function(t) {
-                XDMoD.TrackEvent('Metric Explorer', `Clicked on Reset Range in y axis [${axisIndex + 1}] title field.`);
-                if (instance.yAxis[`original${axisIndex}`]) {
-                    instance.yAxis[`original${axisIndex}`].min = 0;
-                    instance.yAxis[`original${axisIndex}`].max = null;
-                    instance.yAxis[`original${axisIndex}`].chartType = 'linear';
+                XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Range in y axis [' + (axisIndex + 1) + '] title field.');
+                if (instance.yAxis['original' + axisIndex]) {
+                    instance.yAxis['original' + axisIndex].min = 0;
+                    instance.yAxis['original' + axisIndex].max = null;
+                    instance.yAxis['original' + axisIndex].chartType = 'linear';
                 } else {
-                    instance.yAxis[`original${axisIndex}`] = {
+                    instance.yAxis['original' + axisIndex] = {
                         min: 0,
                         max: null,
                         chartType: 'linear'
@@ -6406,9 +6406,9 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         function onResize(t, adjWidth, adjHeight, rawWidth, rawHeight) {
             this.maximizeScale.call(this);
-            const chartDiv = document.getElementById(`plotly-panel${this.id}`);
+            const chartDiv = document.getElementById('plotly-panel' + this.id);
             if (chartDiv) {
-                Plotly.relayout(`plotly-panel${this.id}`, { width: adjWidth, height: adjHeight });
+                Plotly.relayout('plotly-panel' + this.id, { width: adjWidth, height: adjHeight });
                 if (chartDiv._fullLayout.annotations.length !== 0) {
                     const topCenter = topLegend(chartDiv._fullLayout);
                     const subtitleLineCount = adjustTitles(chartDiv._fullLayout);
@@ -6433,7 +6433,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                         update['annotations[2].xshift'] = marginRight - pieChartXShift;
                     }
 
-                    Plotly.relayout(`plotly-panel${this.id}`, update);
+                    Plotly.relayout('plotly-panel' + this.id, update);
                 }
             }
         } //onResize

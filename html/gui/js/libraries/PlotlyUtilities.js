@@ -1,4 +1,4 @@
-function getDefaultLayout() { // eslint-disable-line no-unused-vars
+function getDefaultLayout() {
     const layout = {
         hoverlabel: {
             bgcolor: '#ffffff'
@@ -69,7 +69,7 @@ function getDefaultLayout() { // eslint-disable-line no-unused-vars
 
     return layout;
 }
-function getNoDataErrorConfig() { // eslint-disable-line no-unused-vars
+function getNoDataErrorConfig() {
     const errorLayout = {
         images: [
         {
@@ -236,11 +236,12 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
         }]
     };
 
-    return { data, layout };
+    return { data: data, layout: layout };
 }
-function getClickedPoint(clickEvent, traceDivs) { // eslint-disable-line no-unused-vars
-    if ((traceDivs && traceDivs.length === 0) || (clickEvent.points && clickEvent.points.length === 0)) {
-        return null;
+function getClickedPoint(evt, traces) {
+    let point;
+    if ((traces && traces.length === 0) || (evt.points && evt.points.length === 0)) {
+        return point;
     }
     const findPoint = (evt, traces) => {
         for (let i = 0; i < traces.length; i++) {
@@ -251,7 +252,7 @@ function getClickedPoint(clickEvent, traceDivs) { // eslint-disable-line no-unus
                     const dimensions = points[j].getBoundingClientRect();
                     if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right
                         && evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
-                        const dataValue = points[j].__data__.s || points[j].__data__.y;
+                        const dataValue = points[j].__data__.s ? points[j].__data__.s : points[j].__data__.y;
                         const swapXY = evt.points[0].data.yaxis ? false : true;
                         const pointIndex = evt.points.findIndex((trace) => {
                             if (trace.value) {
@@ -264,12 +265,12 @@ function getClickedPoint(clickEvent, traceDivs) { // eslint-disable-line no-unus
                 }
             }
         }
-        return null;
     };
-    return findPoint(clickEvent, traceDivs);
+    point = findPoint(evt, traces);
+    return point;
 }
 
-function getMultiAxisObjects(layout) { // eslint-disable-line no-unused-vars
+function getMultiAxisObjects(layout) {
     const multiAxes = [];
     const layoutKeys = Object.keys(layout);
     for (let i = 0; i < layoutKeys.length; i++) {

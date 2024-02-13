@@ -2751,7 +2751,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 const usageDiv = document.getElementById(this.id);
                                 if (evt.points && evt.points.length > 0) {
                                     if (evt.points[0].data.type === 'pie') {
-                                        [point] = evt.points;
+                                        point = evt.points[0];
                                     } else {
                                         const traces = usageDiv.getElementsByClassName('plot')[0].firstChild.children;
                                         point = getClickedPoint(evt, traces);
@@ -2789,12 +2789,14 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     } else {
                                         Plotly.relayout(chartDiv, { 'xaxis.tickmode': 'auto' });
                                     }
-                                } else if (evt.layout.swapXY) {
-                                    Plotly.relayout(chartDiv, { 'yaxis.tickmode': tickType });
                                 } else {
-                                    Plotly.relayout(chartDiv, { 'xaxis.tickmode': tickType });
+                                    if (evt.layout.swapXY) {
+                                        Plotly.relayout(chartDiv, { 'yaxis.tickmode': tickType });
+                                    } else {
+                                        Plotly.relayout(chartDiv, { 'xaxis.tickmode': tickType });
+                                    }
                                 }
-                                const { node } = evt;
+                                const node = evt.node;
                                 const nodeVisibility = evt.node.style.opacity;
                                 // Check for std err to update where the error bars go
                                 if (node.textContent.startsWith('Std Err:')) {
@@ -2804,17 +2806,21 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     } else {
                                         Plotly.update(chartDiv, { [errorBar]: true }, {}, [evt.curveNumber + 1]);
                                     }
-                                } else if (node.nextSibling) {
-                                    const sibling = node.nextSibling;
-                                    if (sibling.textContent.startsWith('Std Err:')) {
-                                        const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
-                                        if (sibling.style.opacity === '1') {
-                                            // Turning off primary trace so need to transfer error bars
-                                            if (nodeVisibility === '1') {
-                                                Plotly.update(chartDiv, { visible: 'legendonly' }, {}, [evt.curveNumber - 1]);
+                                } else {
+                                    if (node.nextSibling) {
+                                        const sibling = node.nextSibling;
+                                        if (sibling.textContent.startsWith('Std Err:')) {
+                                            const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
+                                            if (sibling.style.opacity === '1') {
+                                                // Turning off primary trace so need to transfer error bars
+                                                if (nodeVisibility === '1') {
+                                                    Plotly.update(chartDiv, { visible: 'legendonly' }, {}, [evt.curveNumber - 1]);
+                                                }
+                                            } else {
+                                                if (nodeVisibility === '0.5') {
+                                                    Plotly.update(chartDiv, { [errorBar]: false }, {}, [evt.curveNumber]);
+                                                }
                                             }
-                                        } else if (nodeVisibility === '0.5') {
-                                            Plotly.update(chartDiv, { [errorBar]: false }, {}, [evt.curveNumber]);
                                         }
                                     }
                                 }
