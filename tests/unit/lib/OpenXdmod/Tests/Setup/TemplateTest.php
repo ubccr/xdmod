@@ -3,7 +3,7 @@
  * @author Jeffrey T. Palmer <jtpalmer@buffalo.edu>
  */
 
-namespace OpenXdmod\Tests\Setup;
+namespace UnitTests\OpenXdmod\Tests\Setup;
 
 use Xdmod\Template;
 

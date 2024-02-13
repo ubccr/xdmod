@@ -1,0 +1,68 @@
+{
+    "defaults": {
+        "global": {
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "modw_aggregates",
+                    "create_schema_if_not_exists": true,
+                    "truncate_destination": false
+                }
+            }
+        },
+        "aggregate-resource-specs": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions"
+        }
+    },
+    "aggregate-resource-specs": [
+        {
+            "name": "ResourceSpecsAggregatorByDay",
+            "class": "SimpleAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "description": "Aggregate resource specification records.",
+            "definition_file": "resource_specifications/resource_specs_aggregation_by_day.json",
+            "table_prefix": "resourcespecsfact_by_",
+            "aggregation_units": ["day"]
+        },
+        {
+            "name": "ResourceSpecsAggregator",
+            "class": "SimpleAggregator",
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "description": "Aggregate resource specification records.",
+            "definition_file": "resource_specifications/resource_specs_aggregation.json",
+            "table_prefix": "resourcespecsfact_by_",
+            "aggregation_units": ["month", "quarter", "year"]
+        },
+        {
+            "name": "ResourcespecsAggregatorlist",
+            "namespace": "ETL\\Ingestor",
+            "class": "ExplodeTransformIngestor",
+            "options_class": "IngestorOptions",
+            "definition_file": "resource_specifications/resourcespecs_by_day_resourcespecslist.json",
+            "description": "Populate the resourcespecs list table, which contains the back references from the resource specs aggregates table to the resourcespecs table",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "modw_aggregates",
+                    "config": "datawarehouse",
+                    "schema": "modw_aggregates"
+                }
+            },
+            "explode_column": {
+                "resourcespecs_id_list": "resourcespec_id"
+            }
+        }
+  ]
+}

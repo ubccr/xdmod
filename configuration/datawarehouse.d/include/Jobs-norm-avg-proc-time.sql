@@ -6,7 +6,7 @@ COALESCE(
     /
     (
         SELECT
-            SUM(rrf.processors)
+            SUM(rrf.cpu_processor_count)
         FROM
             modw.resourcespecs rrf
         WHERE

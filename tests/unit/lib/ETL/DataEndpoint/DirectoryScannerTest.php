@@ -21,7 +21,7 @@
  * ------------------------------------------------------------------------------------------
  */
 
-namespace UnitTesting\ETL\DataEndpoint;
+namespace UnitTests\ETL\DataEndpoint;
 
 use Exception;
 use CCR\Log;

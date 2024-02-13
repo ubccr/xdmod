@@ -5,11 +5,15 @@
     "destination_record_map": {
         "staging_resource_spec": {
             "resource": "resource",
-            "nodes": "nodes",
-            "processors": "processors",
-            "ppn": "ppn",
+            "cpu_node_count": "cpu_node_count",
+            "cpu_processor_count": "cpu_processor_count",
+            "cpu_processor_count_per_node": "cpu_ppn",
+            "gpu_node_count": "gpu_node_count",
+            "gpu_processor_count": "gpu_processor_count",
+            "gpu_processor_count_per_node": "gpu_ppn",
             "start_date": "start_date",
             "end_date": "end_date",
+            "percent_allocated": "percent_allocated",
             "comments": "comments"
         }
     }

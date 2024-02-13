@@ -1,6 +1,6 @@
 <?php
 
-namespace UnitTesting;
+namespace UnitTests;
 
 class XdRegressionTest extends \PHPUnit_Framework_TestCase
 {

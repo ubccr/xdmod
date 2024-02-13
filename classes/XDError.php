@@ -14,8 +14,6 @@ abstract class XDError
 	const QueryUnknownGroupBy = 101;
 	const QueryUnavailableTimeAggregationUnit = 102;
 	const QueryAccessDenied = 103;
-	const QueryBadRequest = 104;
-	const QueryNotFound = 105;
 	const QueryMissingFilterListTable = 106;
 
 	/**

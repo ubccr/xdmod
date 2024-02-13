@@ -35,6 +35,9 @@ cp $REPODIR/tests/ci/scripts/imagehash /root/bin
 # ensure php error logging is set to E_ALL (recommended setting for development)
 sed -i 's/^error_reporting = .*/error_reporting = E_ALL/' /etc/php.ini
 
+# ensure php command-line errors are logged to a file
+sed -i 's/^;error_log = php_errors.log/error_log = \/var\/log\/php_errors.log/' /etc/php.ini
+
 if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true
@@ -94,7 +97,6 @@ then
         last_modified_start_date=$(date +'%F %T')
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack -f openstack
         sudo -u xdmod xdmod-shredder -r nutsetters -d $REF_DIR/nutsetters -f openstack
-        sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_resource_specs -f cloudresourcespecs
 
         sudo -u xdmod xdmod-import-csv -t cloud-project-to-pi -i $REF_DIR/cloud-pi-test.csv
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_error_sessions -f openstack
