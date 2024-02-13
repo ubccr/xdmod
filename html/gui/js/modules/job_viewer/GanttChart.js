@@ -149,7 +149,7 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
             };
 
             layout.shapes = rect;
-            Plotly.react(this.id + '_hc', data, layout, { displayModeBar: false, doubleClick: 'reset' });
+            Plotly.newPlot(this.id + '_hc', data, layout, { displayModeBar: false, doubleClick: 'reset' });
 
             var panel = document.getElementById(this.id + '_hc');
             panel.on('plotly_click', function (eventData) {
