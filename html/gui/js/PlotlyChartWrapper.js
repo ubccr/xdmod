@@ -51,10 +51,8 @@ function adjustTitles(layout) {
             layout.annotations[1].yshift = (17 * subtitle_lines.length) * -1;
         }
         subtitleLineCount = subtitle_lines.length;
-    } else {
-        if (topLegend(layout)) {
-            layout.margin.t = 45 + 15;
-        }
+    } else if (topLegend(layout)) {
+        layout.margin.t = 45 + 15;
     }
 
     return subtitleLineCount;
@@ -69,8 +67,8 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     // Configure plot for 'No Data' image. We want to wipe the layout object except for a couple things
     if (isEmpty) {
         const errorConfig = getNoDataErrorConfig();
-        const width = baseChartOptions.layout.width;
-        const height = baseChartOptions.layout.height;
+        const { width } = baseChartOptions.layout;
+        const { height } = baseChartOptions.layout;
         // Save the title and subtitle except for thumbnail plots
         let margin;
         let titleAndSubtitle;
