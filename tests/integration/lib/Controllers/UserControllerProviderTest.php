@@ -7,8 +7,8 @@ use Exception;
 use IntegrationTests\TokenAuthTest;
 use Models\Services\Tokens;
 use stdClass;
-use TestHarness\Utilities;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\Utilities;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class UserControllerProviderTest extends BaseUserAdminTest
 {
@@ -117,6 +117,39 @@ class UserControllerProviderTest extends BaseUserAdminTest
             ];
         }
         return $tests;
+    }
+
+    /**
+     * @dataProvider provideUpdateCurrentUser
+     */
+    public function testUpdateCurrentUser($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            $this->helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideUpdateCurrentUser()
+    {
+        $validInput = [
+            'path' => 'rest/users/current',
+            'method' => 'patch',
+            'params' => null,
+            'data' => []
+        ];
+        // Run some standard endpoint tests.
+        return parent::provideRestEndpointTests(
+            $validInput,
+            ['string_params' => [
+                'first_name',
+                'last_name',
+                'email_address',
+                'password'
+            ]]
+        );
     }
 
     /**

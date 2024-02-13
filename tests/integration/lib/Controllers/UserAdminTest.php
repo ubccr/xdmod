@@ -5,6 +5,7 @@ namespace IntegrationTests\Controllers;
 use CCR\Json;
 use Models\Services\Realms;
 use IntegrationTests\Controllers\MetricExplorerTest;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class UserAdminTest extends BaseUserAdminTest
 {
@@ -749,7 +750,7 @@ class UserAdminTest extends BaseUserAdminTest
             parent::getTestFiles()->getFile('user_admin', 'get_user_visits', 'input')
         );
 
-        $helper = new \TestHarness\XdmodTestHelper();
+        $helper = new XdmodTestHelper();
         $helper->authenticateDashboard('mgr');
 
         foreach($data as &$datum) {

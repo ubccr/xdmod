@@ -5,7 +5,7 @@ namespace IntegrationTests;
 use CCR\DB;
 use Exception;
 use Models\Services\Tokens;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 /**
  * Provides methods for testing API token authentication for HTTP endpoints.
@@ -50,6 +50,23 @@ abstract class TokenAuthTest extends BaseTest
             ['usr', 'revoked_token'],
             ['usr', 'valid_token']
         ];
+    }
+
+    /**
+     * Same as BaseTest::makeHttpRequest() but with an API token for the
+     * given user role added to the request header.
+     */
+    public static function makeHttpRequestWithValidToken(
+        XdmodTestHelper $testHelper,
+        array $input,
+        $role
+    ) {
+        $token = self::getToken('valid_token', $role);
+        $testHelper->addheader(
+            'Authorization',
+            Tokens::HEADER_KEY . ' ' . $token
+        );
+        return BaseTest::makeHttpRequest($testHelper, $input);
     }
 
     /**

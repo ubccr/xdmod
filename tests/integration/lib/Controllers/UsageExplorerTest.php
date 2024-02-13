@@ -3,7 +3,8 @@
 namespace IntegrationTests\Controllers;
 
 use IntegrationTests\TokenAuthTest;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\UsageExplorerHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 function arrayRecursiveDiff($a1, $a2) {
     $retval = array();
@@ -53,7 +54,7 @@ class UsageExplorerTest extends TokenAuthTest
 
     protected function setUp()
     {
-        $this->helper = new \TestHarness\XdmodTestHelper();
+        $this->helper = new XdmodTestHelper();
     }
 
     /**
@@ -412,7 +413,7 @@ EOF
         $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
         $this->assertEquals($response[1]['http_code'], 200);
 
-        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
+        $plotdata = json_decode(UsageExplorerHelper::demanglePlotData($response[0]), true);
 
         $this->assertArrayHasKey('chart_settings', $plotdata['data'][0]);
 
@@ -667,7 +668,7 @@ EOF;
 
         $this->assertEquals($response[1]['http_code'], 200);
 
-        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
+        $plotdata = json_decode(UsageExplorerHelper::demanglePlotData($response[0]), true);
 
         $this->assertTrue($plotdata['success']);
 
@@ -1061,7 +1062,7 @@ EOF;
 
         $results = array();
         foreach($users as $user) {
-            $helper = new \TestHarness\XdmodTestHelper();
+            $helper = new XdmodTestHelper();
             if ($user !== 'pub') {
                 $helper->authenticate($user);
             }

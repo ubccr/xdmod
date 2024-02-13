@@ -9,8 +9,8 @@
 set resources [list]
 
 # Storage Resources
-lappend resources [list recex Recex tape 0 0]
-lappend resources [list torx Torx stgrid 0 0]
+lappend resources [list recex Recex tape cpu 2020-01-01 0 0]
+lappend resources [list torx Torx stgrid cpu 2020-01-01 0 0]
 # -----------------
 
 #-------------------------------------------------------------------------------
@@ -33,8 +33,10 @@ foreach resource $resources {
 	provideInput {Resource Name:} [lindex $resource 0]
 	provideInput {Formal Name:} [lindex $resource 1]
 	provideInput {Resource Type*} [lindex $resource 2]
-	provideInput {How many nodes does this resource have?} [lindex $resource 3]
-	provideInput {How many total processors (cpu cores) does this resource have?} [lindex $resource 4]
+	provideInput {Resource Allocation Type*} [lindex $resource 3]
+	provideInput {Resource Start Date, in YYYY-mm-dd format*} [lindex $resource 4]
+	provideInput {How many CPU nodes does this resource have?} [lindex $resource 5]
+	provideInput {How many total CPU processors (cpu cores) does this resource have?} [lindex $resource 6]
 }
 
 selectMenuOption s

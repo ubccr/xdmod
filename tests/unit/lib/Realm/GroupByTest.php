@@ -7,7 +7,7 @@
  * - getAttributeValues()
  */
 
-namespace UnitTesting\Realm;
+namespace UnitTests\Realm;
 
 use CCR\Log as Logger;
 use Psr\Log\LoggerInterface;

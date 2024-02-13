@@ -9,7 +9,7 @@ use IntegrationTests\TokenAuthTest;
 use JsonSchema\Constraints\Constraint;
 use JsonSchema\Validator;
 use PHPUnit_Framework_TestCase;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 use XDUser;
 
 /**
@@ -263,6 +263,41 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
         $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
+    }
+
+    /**
+     * @dataProvider provideCreateRequestParamValidation
+     */
+    public function testCreateRequestParamValidation(
+        $id,
+        $role,
+        $input,
+        $output
+    ) {
+        parent::requestAndValidateJson(self::$helpers[$role], $input, $output);
+    }
+
+    public function provideCreateRequestParamValidation()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/export/request',
+            'method' => 'post',
+            'params' => null,
+            'data' => [
+                'realm' => 'Jobs',
+                'start_date' => '2017-01-01',
+                'end_date' => '2017-01-01'
+            ]
+        ];
+        // Run some standard endpoint tests.
+        return parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['realm', 'format'],
+                'date_params' => ['start_date', 'end_date']
+            ]
+        );
     }
 
     /**

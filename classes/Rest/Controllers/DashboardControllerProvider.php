@@ -200,7 +200,7 @@ class DashboardControllerProvider extends BaseControllerProvider
         $content = json_decode($this->getStringParam($request, 'data', true), true);
 
         if ($content === null || !isset($content['layout']) || !isset($content['columns'])) {
-            throw new BadRequestException('Invalid data parameter');
+            throw new BadRequestHttpException('Invalid data parameter');
         }
 
         $storage = new \UserStorage($user, 'summary_layout');
@@ -239,7 +239,7 @@ class DashboardControllerProvider extends BaseControllerProvider
         $viewedTour = $this->getIntParam($request, 'viewedTour', true);
 
         if (!in_array($viewedTour, [0,1])) {
-            throw new BadRequestException('Invalid data parameter');
+            throw new BadRequestHttpException('Invalid data parameter');
         }
 
         $storage = new \UserStorage($user, 'viewed_user_tour');

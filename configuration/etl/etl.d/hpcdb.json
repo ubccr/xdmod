@@ -33,6 +33,7 @@
                 "common/hpcdb/accounts.json",
                 "common/hpcdb/organizations.json",
                 "common/hpcdb/resource-types.json",
+                "common/hpcdb/resource-allocation-types.json",
                 "common/hpcdb/resources.json",
                 "common/hpcdb/allocations.json",
                 "common/hpcdb/people.json",
@@ -105,6 +106,11 @@
             "name": "resource-allocated",
             "description": "Ingest resource allocated data",
             "definition_file": "common/hpcdb/resource-allocated.json"
+        },
+        {
+            "name": "resource-allocation-type",
+            "description": "Ingest resource allocation type data",
+            "definition_file": "common/hpcdb/resource-allocation-types.json"
         },
         {
             "name": "qos",

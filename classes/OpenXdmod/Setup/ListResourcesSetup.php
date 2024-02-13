@@ -45,6 +45,7 @@ class ListResourcesSetup extends SetupItem
         }
 
         $availableTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
+        $availableResourceAllocationTypes = XdmodConfiguration::assocArrayFactory('resource_allocation_types.json', CONFIG_DIR)['resource_allocation_types'];
 
         foreach ($resources as $resource) {
             $specs = $this->getSpecsForResource($resource['resource']);
@@ -60,11 +61,31 @@ class ListResourcesSetup extends SetupItem
                 }
             }
 
+            $resourceAllocationType = 'UNK';
+            foreach ( $availableResourceAllocationTypes as $name => $type ) {
+                if ( $name === $resource['resource_allocation_type'] ) {
+                    // Note that Console::prompt() expects lowercase values for options
+                    $resourceAllocationType = strtolower($name);
+                    break;
+                }
+            }
+
+            $cpu_nodes_message = isset($specs['cpu_node_count']) ? $specs['cpu_node_count'] : "No value available for CPU Node Count. Please update the resource_specs.json file";
+            $cpu_processors_message = isset($specs['cpu_processor_count']) ? $specs['cpu_processor_count'] : "No value available for CPU Processor Count. Please update the resource_specs.json file";
+            $gpu_nodes_message = isset($specs['gpu_node_count']) ? $specs['gpu_node_count'] : "No value available for GPU Node Count. Please update the resource_specs.json file";
+            $gpu_processors_message = isset($specs['gpu_processor_count']) ? $specs['gpu_processor_count'] : "No value available for GPU Processor Count. Please update the resource_specs.json file";
+            $start_date_message = isset($specs['start_date']) ? $specs['start_date'] : "No value available for Start Date. Please update the resource_specs.json file";
+
+
             $this->console->displayMessage('Resource: ' . $resource['resource']);
             $this->console->displayMessage('Name: ' . $resource['name']);
             $this->console->displayMessage('Type: ' . $resourceType);
-            $this->console->displayMessage('Node count: ' . $specs['nodes']);
-            $this->console->displayMessage('Processor count: ' . $specs['processors']);
+            $this->console->displayMessage('Resource Allocation Type: ' . $resourceAllocationType);
+            $this->console->displayMessage('CPU Node count: ' . $cpu_nodes_message);
+            $this->console->displayMessage('CPU Processor count: ' . $cpu_processors_message);
+            $this->console->displayMessage('GPU Node count: ' . $gpu_nodes_message);
+            $this->console->displayMessage('GPU Processor count: ' . $gpu_processors_message);
+            $this->console->displayMessage('Resource Start Date: ' . $start_date_message);
             $this->console->displayMessage(str_repeat('-', 72));
             $this->console->displayBlankLine();
         }
@@ -86,8 +107,6 @@ class ListResourcesSetup extends SetupItem
         // end date timestamp is added to the specs for ease of
         // comparing the end date with that of other specs.
         $currentSpecs = array(
-            'nodes' => '',
-            'processors' => '',
             'end_date_ts' => 0,
         );
 

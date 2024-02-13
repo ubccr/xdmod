@@ -3,7 +3,7 @@
 namespace IntegrationTests\Controllers;
 
 use IntegrationTests\TokenAuthTest;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class MetricExplorerTest extends TokenAuthTest
 {
@@ -548,6 +548,124 @@ class MetricExplorerTest extends TokenAuthTest
 EOF;
         return array(
             array($emptyChart)
+        );
+    }
+
+    /**
+     * @dataProvider provideCreateQueryParamValidation
+     */
+    public function testCreateQueryParamValidation(
+        $id,
+        $role,
+        $input,
+        $output
+    ) {
+        parent::authenticateRequestAndValidateJson(
+            $this->helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideCreateQueryParamValidation()
+    {
+        $validInput = [
+            'path' => 'rest/metrics/explorer/queries',
+            'method' => 'post',
+            'params' => null,
+            'data' => ['data' => 'foo']
+        ];
+        // Run some standard endpoint tests.
+        return parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['data'],
+                'error_body_validator' => $this->validateQueryErrorBody(
+                    'creatQuery'
+                )
+            ]
+        );
+    }
+
+    private function validateQueryErrorBody($action)
+    {
+        // This function is passed to parent::provideRestEndpointTests().
+        return function ($message) use ($action) {
+            // This function is passed to parent::validateErrorResponseBody().
+            return function ($body, $assertMessage) use ($message, $action) {
+                return parent::assertEquals(
+                    [
+                        'success' => false,
+                        'message' => $message,
+                        'action' => $action
+                    ],
+                    $body,
+                    $assertMessage
+                );
+            };
+        };
+    }
+
+    /**
+     * @dataProvider provideUpdateQueryByIdParamValidation
+     */
+    public function testUpdateQueryByIdParamValidation(
+        $id,
+        $role,
+        $input,
+        $output
+    ) {
+        // Get a query ID.
+        $chartSettings = $this->chartDataProvider()[0][0];
+        $settings = [
+            'name' => 'test',
+            'ts' => microtime(true),
+            'config' => $chartSettings
+        ];
+        $this->helper->authenticate('usr');
+        $response = $this->helper->post(
+            'rest/metrics/explorer/queries',
+            null,
+            ['data' => json_encode($settings)]
+        );
+        $this->helper->logout();
+        $id = $response[0]['data']['recordid'];
+        $path = "rest/metrics/explorer/queries/$id";
+        $input['path'] .= $path;
+        // Run the test.
+        parent::authenticateRequestAndValidateJson(
+            $this->helper,
+            $role,
+            $input,
+            $output
+        );
+        // Delete the query ID.
+        $this->helper->authenticate('usr');
+        $this->helper->delete($path);
+        $this->helper->logout();
+    }
+
+    public function provideUpdateQueryByIdParamValidation()
+    {
+        $validInput = [
+            'path' => null, // set in provideUpdateQueryByIdParamValidation().
+            'method' => 'post',
+            'params' => null,
+            'data' => []
+        ];
+        // Run some standard endpoint tests.
+        return parent::provideRestEndpointTests(
+            $validInput,
+            [
+                'authentication' => true,
+                'string_params' => ['data', 'name', 'config'],
+                'unix_ts_params' => ['ts'],
+                'error_body_validator' => $this->validateQueryErrorBody(
+                    'updateQuery'
+                )
+            ]
         );
     }
 }
