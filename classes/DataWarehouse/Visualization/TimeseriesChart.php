@@ -22,12 +22,12 @@ use DataWarehouse\Data\TimeseriesDataset;
 * use them here in configure()
 *
 */
-class HighChartTimeseries2 extends HighChart2
+class TimeseriesChart extends AggregateChart
 {
     // ---------------------------------------------------------
     // __construct()
     //
-    // Constructor for HighChart2Timeseries class.
+    // Constructor for TimeseriesChart class.
     //
     // note that showContextMenu has default false in HC2T class.
     // ---------------------------------------------------------
@@ -92,7 +92,6 @@ class HighChartTimeseries2 extends HighChart2
 
         // Instantiate the color generator:
         $colorGenerator = new \DataWarehouse\Visualization\ColorGenerator();
-
         $dataSeriesCount  = count($data_series);
         $dataSources = array();
 
@@ -159,7 +158,6 @@ class HighChartTimeseries2 extends HighChart2
         foreach(array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions)
         {
             $yAxis = null;
-
             // === mind you, this is also a big long loop ===
             foreach($yAxisDataDescriptions as $data_description_index => $data_description)
             {
@@ -239,6 +237,7 @@ class HighChartTimeseries2 extends HighChart2
                 $originalYAxisLabel = $yAxisLabel;
                 $yAxisMin = $data_description->log_scale?null:0;
                 $yAxisMax = null;
+                $yAxisType = null;
                 $config = $this->getAxisOverrides($y_axis, $yAxisLabel, $yAxisIndex);
                 if($config !== null)
                 {
@@ -254,6 +253,10 @@ class HighChartTimeseries2 extends HighChart2
                     {
                         $yAxisMax = $config->max;
                     }
+                    if(isset($config->chartType))
+                    {
+                        $yAxisType = $config->chartType;
+                    }
                 }
                 if($yAxisLabel == $defaultYAxisLabel)
                 {
@@ -268,40 +271,66 @@ class HighChartTimeseries2 extends HighChart2
                                 : $colorGenerator->getConfigColor(hexdec($data_description->color) );
                     $yAxisColor = '#'.str_pad(dechex($yAxisColorValue), 6, '0', STR_PAD_LEFT);
                     $yAxisColorUsedBySeries = false;
+                    $yIndex = $yAxisIndex + 1;
+                    $swapXYDone = false;
+                    $yAxisName = $yAxisIndex == 0 ? 'yaxis' : "yaxis{$yIndex}";
+                    $xAxisName = substr_replace($yAxisName, 'xaxis', 0, 5);
 
                     $yAxis = array(
+                        'automargin' => true,
+                        'layer' => 'below traces',
                         'title' => array(
-                            'text' => $yAxisLabel,
-                            'style' => array(
+                            'text' => '<b>' . $yAxisLabel . '</b>',
+                            'font' => array(
                                 'color'=> $yAxisColor,
-                                'fontWeight'=> 'bold',
-                                'fontSize' => (12 + $font_size).'px'
-                            )
+                                'size' => (12 + $font_size),
+                                'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
+                            ),
                         ),
                         'otitle' => $originalYAxisLabel,
                         'dtitle' => $defaultYAxisLabel,
-                        'labels' =>
-                        array(
-                            'style' => array(
-                                'fontWeight'=> 'normal',
-                                'fontSize' => (11 + $font_size).'px'
-                            )
+                        'exponentformat' => 'SI',
+                        'tickfont' => array(
+                            'size' => (11 + $font_size),
+                            'color' => '#606060',
                         ),
-                        'opposite' => $yAxisIndex % 2 == 1,
-                        'min' => $yAxisMin,
-                        'max' => $yAxisMax,
-                        'startOnTick' => $yAxisMin == null,
-                        'endOnTick' => $yAxisMax == null,
-                        'type' => $data_description->log_scale? 'logarithmic' : 'linear',
-                        'showLastLabel' =>  $this->_chart['title']['text'] != '',
-                        'gridLineWidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8),
-                        'lineWidth' => 2 + $font_size/4,
-                        'allowDecimals' => $decimals > 0,
-                        'tickInterval' => $data_description->log_scale ?1:null,
-                        'maxPadding' =>  max(0.05, ($data_description->value_labels?0.25:0) + ($data_description->std_err?.25:0))
+                        'ticksuffix' => ' ',
+                        'tickprefix' => $yAxisIndex > 0 ? ' ' : null,
+                        'tickmode' => 'auto',
+                        'nticks' => 10,
+                        'type' => ($data_description->log_scale || $yAxisType == 'log') ? 'log' : 'linear',
+                        'rangemode' => 'tozero',
+                        'range' => [$yAxisMin, $yAxisMax],
+                        'index' => $yAxisIndex,
+                        'separatethousands' => true,
+                        'overlaying' => $yAxisIndex == 0 ? null : 'y',
+                        'linewidth' => 2 + $font_size / 4,
+                        'linecolor' => '#c0d0e0',
+                        'side' => 'left',
+                        'anchor' => 'x',
+                        'autoshift' => true,
+                        'gridwidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8),
+                        'zeroline' => false,
                     );
 
-                    $this->_chart['yAxis'][] = $yAxis;
+                    if ($yAxisIndex > 0){
+                        if ($yAxisIndex % 2 == 0) {
+                            $yAxis = array_merge($yAxis, array(
+                                'side' => 'left',
+                                'anchor' => 'free',
+                                'autoshift' => true,
+                            ));
+                        }
+                        else {
+                            $yAxis = array_merge($yAxis, array(
+                                'side' => 'right',
+                                'anchor' => $yAxisIndex > 1 ? 'free' : 'x',
+                                'autoshift' => true,
+                            ));
+                        }
+                    }
+
+                    $this->_chart['layout']["{$yAxisName}"] = $yAxis;
                 } // if($yAxis == null)
 
                 $dataset = new TimeseriesDataset($query);
@@ -311,7 +340,7 @@ class HighChartTimeseries2 extends HighChart2
                 $start_ts_array = array();
                 foreach($xAxisData->getStartTs() as $st)
                 {
-                    $start_ts_array[] = $st*1000;
+                    $start_ts_array[] = $st;
                 }
                 $pointInterval = $this->getPointInterval();
 
@@ -338,45 +367,40 @@ class HighChartTimeseries2 extends HighChart2
                     $start_ts = strtotime($this->_startDate)*1000;
                     $end_ts = strtotime($this->_endDate)*1000;
                     $expectedDataPointCount = ($end_ts - $start_ts) / $pointInterval;
-
                     $xAxis = array(
-                        'type' => 'datetime',
-                        'tickLength' => 0,
+                        'automargin' => true,
+                        'layer' => 'below traces',
                         'title' => array(
-                            'text' => $xAxisLabel,
-                            'style' => array(
-                                'color'=> '#000000',
-                                'fontWeight'=> 'bold',
-                                'fontSize' => (12 + $font_size).'px'
-                            )
+                            'text' => '<b>' . $xAxisLabel . '</b>',
+                            'font' => array(
+                                'color' => '#000000',
+                                'size' => (12 + $font_size),
+                                'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
+                            ),
                         ),
                         'otitle' => $originalXAxisLabel,
                         'dtitle' => $defaultXAxisLabel,
-                        'labels' => $this->_swapXY ? array(
-                            'enabled' => true,
-                            'staggerLines' => 1,
-                            'format' => $xAxisLabelFormat,
-                            'style' => array(
-                                'fontWeight'=> 'normal',
-                                'fontSize' => (11 + $font_size).'px',
-                                'marginTop' => $font_size * 2
-                            )
-                        )
-                        : array(
-                            'enabled' => true,
-                            'staggerLines' => 1,
-                            'rotation' => $xAxisData->getName() != 'Year'  && $expectedDataPointCount > 25 ? -90 : 0,
-                            'format' => $xAxisLabelFormat,
-                            'style' => array(
-                                'fontSize' => (8 + $font_size).'px',
-                                'marginTop' => $font_size * 2
-                            )
+                        'tickfont' => array(
+                            'size' => $this->_swapXY ? (8 + $font_size) : (11 + $font_size),
+                            'color' => '#606060',
                         ),
-                        'minTickInterval' => $pointInterval,
-                        'minRange' => $pointInterval,
-                        'lineWidth' => 2 + $font_size / 4
+                        'ticksuffix' => ' ',
+                        'tickformat' => $this->getDateFormat(),
+                        'tickangle' => -90,
+                        'type' => 'date',
+                        'rangemode' => 'tozero',
+                        'hoverformat' => $this->getDateFormat(),
+                        'tickmode' => 'date',
+                        'nticks' => 10,
+                        'spikedash' => 'solid',
+                        'spikethickness' => 1,
+                        'spikecolor' => '#C0C0C0',
+                        'linewidth' => 2 + $font_size / 4,
+                        'linecolor' => '#c0d0e0',
+                        'showgrid' => false,
+                        'zeroline' => false,
                     );
-                     $this->_chart['xAxis'] = $xAxis;
+                     $this->_chart['layout']['xaxis'] = $xAxis;
                 } // if(!isset($xAxis))
 
                 //  ----------- set up yAxis, assign to chart ... eventually -----------
@@ -393,12 +417,11 @@ class HighChartTimeseries2 extends HighChart2
                 $this->_total = max($this->_total, $dataset->getUniqueCount());
 
                 $yAxisDataObjectsArray = $dataset->getDatasets($limit, $offset, $summarizeDataseries);
-
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
                 // @refer HighChart2 line 866
-
-                foreach($yAxisDataObjectsArray as $yAxisDataObject)
+                foreach($yAxisDataObjectsArray as $traceIndex => $yAxisDataObject)
                 {
+                    //throw new \Exception(json_encode($yAxisDataObject));
                     if( $yAxisDataObject != null)
                     {
                         $yAxisDataObject->joinTo($xAxisData, null);
@@ -415,7 +438,7 @@ class HighChartTimeseries2 extends HighChart2
                         $color = '#'.str_pad(dechex($color_value), 6, '0', STR_PAD_LEFT);
                         $lineColor = '#'.str_pad(dechex(\DataWarehouse\Visualization::alterBrightness($color_value, -70)), 6, '0', STR_PAD_LEFT);
 
-                        //highcharts chokes on datasets that are all null so detect them and replace
+                        //chart chokes on datasets that are all null so detect them and replace
                         // all with zero. this will give the user the right impression. (hopefully)
                         $all_null = true;
                         foreach($yAxisDataObject->getValues() as $value)
@@ -430,7 +453,6 @@ class HighChartTimeseries2 extends HighChart2
                         {
                             continue;
                         }
-
                         $values = $yAxisDataObject->getValues();
 
                         // Decide whether to show data point markers:
@@ -446,6 +468,7 @@ class HighChartTimeseries2 extends HighChart2
                                 break;
                             }
                         }
+
                         // Display markers for scatter plots, non-thumbnail plots of data series
                         // with fewer than 21 points, or for any data series with a single y value.
                         $showMarker = $data_description->display_type == 'scatter' ||
@@ -462,23 +485,12 @@ class HighChartTimeseries2 extends HighChart2
 
                         // --- set up $dataLabelsConfig, $seriesValues, $tooltipConfig ---
                         $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
-                        $dataLabelsConfig = array(
-                            'enabled' => $data_description->value_labels || $std_err_labels_enabled,
-                            'settings' => array(
-                                'value_labels' => $data_description->value_labels,
-                                'error_labels' => $std_err_labels_enabled,
-                                'decimals' => $decimals
-                            ),
-                            'style' => array(
-                                'fontSize' => (11 + $font_size).'px',
-                                'fontWeight'=> 'normal',
-                                // this appears to fix a Highcharts bug that
-                                // makes text fuzzy in the color #0053b9
-                                'textShadow' => false,
-                                'color' => $color
-                             )
-                        );
+                        $this->_chart['layout']['stdErr'] = $data_description->std_err;
                         $tooltipConfig = array();
+                        $xValues = array();
+                        $yValues = array();
+                        $text = array();
+                        $trace = array();
                         $seriesValues = array();
                         if($data_description->display_type == 'pie')
                         {
@@ -486,31 +498,22 @@ class HighChartTimeseries2 extends HighChart2
                         } else {
                             if($this->_swapXY)
                             {
-                                $dataLabelsConfig  = array_merge(
-                                    $dataLabelsConfig,
-                                    array(
-                                        'x' => 70
-                                    )
-                                );
-                                $this->_chart['xAxis']['labels']['rotation'] = 0;
+                                $trace['textangle'] = 90;
+                                $this->_chart['layout']['xaxis']['tickangle'] = 0;
                             }
                             else // !($this->_swapXY)
                             {
-                                $dataLabelsConfig  = array_merge(
-                                    $dataLabelsConfig,
-                                    array(
-                                        'rotation' => -90,
-                                        'align' => 'center',
-                                        'y' => -70,
-                                    )
-                                );
+                                $trace['textangle'] = -90;
                             } // if($this->_swapXY)
 
                             // set up seriesValues
                             foreach($values as $i => $v)
                             {
+                                $xValues[] = date('Y-m-d', $start_ts_array[$i]);
+                                $yValues[] = $v;
+                                $text[] = number_format($v, $decimals, '.', ',');
                                 $seriesValue = array(
-                                    'x' => $start_ts_array[$i],
+                                    'x' => $start_ts_array[$i]*1000,
                                     'y' => $v,
                                 );
 
@@ -522,12 +525,6 @@ class HighChartTimeseries2 extends HighChart2
 
                                 $seriesValues[] = $seriesValue;
                             }
-                            $tooltipConfig = array_merge(
-                                $tooltipConfig,
-                                array(
-                                    'valueDecimals' => $decimals
-                                )
-                            );
                         } // ($data_description->display_type == 'pie')
 
                         $zIndex = isset($data_description->z_index) ? $data_description->z_index : $data_description_index;
@@ -573,60 +570,474 @@ class HighChartTimeseries2 extends HighChart2
                             $visible = $data_description->visibility->{$formattedDataSeriesName};
                         }
 
+                        $tooltip = $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
+                        if ($this->_chart['layout']['hovermode'] != 'closest') {
+                            $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
+                        }
+                        $data_labels_enabled = $data_description->value_labels || $std_err_labels_enabled;
                         // note that this is governed by XId and XValue in the non-timeseries case!
                         $drilldown = array('id' => $yAxisDataObject->getGroupId(), 'label' => $yAxisDataObject->getGroupName());
+                        if ($yAxisCount > 1) {
+                            $this->_chart['layout']["{$yAxisName}"]['showgrid'] = false;
+                        }
 
-                        $data_series_desc = array(
+                        $trace = array(
                             'name' => $lookupDataSeriesName,
+                            'customdata' => $lookupDataSeriesName,
                             'otitle' => $formattedDataSeriesName,
                             'datasetId' => $data_description->id,
                             'zIndex' => $zIndex,
+                            'cliponaxis' => false,
                             'drilldown' => $drilldown,
-                            'color'=> $data_description->display_type == 'pie'? null: $color,
-                            'trackByArea'=>  $data_description->display_type == 'area' ||  $data_description->display_type == 'areaspline',
-                            'type' => $data_description->display_type,
-                            'dashStyle' => $data_description->line_type,
-                            'shadow' => $data_description->shadow,
-                            'groupPadding' => 0.1,
-                            'pointPadding' => 0,
-                            'borderWidth' => 0,
-                            'yAxis' => $yAxisIndex,
-                            'lineWidth' =>  $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4:0,
-                            'showInLegend' => $data_description->display_type != 'pie',
-                            'connectNulls' => $data_description->display_type == 'line' || $data_description->display_type == 'spline',
                             'marker' => array(
-                                'enabled' => $showMarker,
-                                'lineWidth' => 1,
-                                'lineColor' => $lineColor,
-                                'radius' => $font_size/4 + 5
+                                'size' => ($font_size/4 + 5) * 2,
+                                'color' => $color,
+                                'line' => array(
+                                    'width' => 1,
+                                    'color' => $lineColor
+                                ),
+                                'symbol' => $this->_symbolStyles[$traceIndex % 5],
                             ),
-                            'tooltip' => $tooltipConfig,
-                            'dataLabels' => $dataLabelsConfig,
-                            'data' => $seriesValues,
-                            'cursor' => 'pointer',
+                            'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
+                            'line' => array(
+                                'color' => $data_description->display_type == 'pie'? null: $color,
+                                'dash' => $data_description->line_type,
+                                'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4 : 0,
+                                'shape' => ($data_description->display_type == 'spline' || $data_description->display_type == 'areaspline') ? 'spline' : 'linear'
+                            ),
+                            'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
+                            'hoveron' => $data_description->display_type == 'area' || $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
+                            'yaxis' => "y{$yIndex}",
+                            'showlegend' => $data_description->display_type != 'pie',
+                            'hovertext' => $text,
+                            'hovertemplate' => $tooltip,
+                            'hoverlabel' => array(
+                                'align' => 'left',
+                                'bgcolor' => 'rgba(255, 255, 255, 0.8)',
+                                'bordercolor' => $yAxisColor,
+                                'font' => array(
+                                    'size' => 12.8,
+                                    'color' => '#000000',
+                                    'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                                ),
+                                'namelength' => -1,
+                            ),
+                            'text' => array(),
+                            'textposition' => 'outside',
+                            'textangle' => $data_description->display_type == 'h_bar' ? 0 : -90,
+                            'textfont' => array(
+                                'size' => 11 + $font_size,
+                                'color' => $color,
+                                'family' => "'Lucida Grande', 'Lucida Sans Unicode', Arial, Helvetica, sans-serif",
+                            ),
+                            'x' => $this->_swapXY ? $yValues : $xValues,
+                            'y' => $this->_swapXY ? $xValues : $yValues,
+                            'offsetgroup' => "group{$traceIndex}",
+                            'legendgroup' => $traceIndex,
+                            'legendrank' => $traceIndex,
+                            'seriesData' => $seriesValues,
                             'visible' => $visible,
-                            'pointRange' => $pointInterval,
                             'isRemainder' => $isRemainder,
-                            'isRestrictedByRoles' => $data_description->restrictedByRoles
+                            'isRestrictedByRoles' => $data_description->restrictedByRoles,
                         ); // $data_series_desc
 
+                        if ($data_description->display_type == 'areaspline') {
+                            $trace['type'] = 'area';
+                        }
+
+                        // Set date tick interval
+                        $this->_chart['layout']['xaxis']['dtick'] = $pointInterval;
+                        if (($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') ||
+                            ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
+                            if (($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
+                                $this->_chart['layout']['xaxis']['dtick'] = "M12";
+                            }
+                            else {
+                                $this->_chart['layout']['xaxis']['dtick'] = "M1";
+                            }
+                        }
+
+                        $this->_chart['layout']['xaxis']['tick0'] = $xValues[0];
+
+                        if ((($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day') && count($xValues) > 7) ||
+                            (($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') && count($xValues) > 12)){
+                            $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
+                        }
+
+                        // Set swap axis
+                        if ($this->_swapXY && $data_description->display_type!='pie') {
+                            if ($trace['type'] == 'bar') {
+                                $trace = array_merge($trace, array('orientation' => 'h'));
+                                $trace['hovertemplate'] = '%{hovertext}' . '<br>'. "<span style=\"color:$color\";> ●</span> "
+                                                         . $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
+                                $trace['textangle'] = 0;
+                            }
+
+                            $this->_chart['layout']['hovermode'] = 'y unified';
+                            $trace['xaxis'] = "x{$yIndex}";
+                            unset($trace['yaxis']);
+                            $trace['hovertemplate'] = $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
+
+                            if (!$swapXYDone) {
+                                $xAxis['type'] = $yAxisObject->log_scale ? 'log' : '-';
+                                $xAxis['autorange'] = 'reversed';
+                                $xAxis['tickangle'] = 0;
+                                $yAxis['side'] = ($yAxisIndex % 2 != 0) ? 'top' : 'bottom';
+                                if ($yAxis['side'] == 'top') {
+                                    $yAxis['title']['standoff'] = 0;
+                                }
+                                $yAxis['anchor'] = 'free';
+                                if (isset($yAxis['overlaying'])) {
+                                    $yAxis['overlaying'] = 'x';
+                                }
+                                $xAxisStep = 0.115;
+                                $xAxisBottomBoundStart = 0 + ($xAxisStep * ceil($yAxisCount/2));
+                                $xAxisTopBoundStart = 1 - ($xAxisStep * floor($yAxisCount/2));
+                                $topShift = floor($yAxisCount/2) - floor($yAxisIndex/2);
+                                $yAxis['position'] = $yAxis['side'] == 'top' ? min(1 - ($xAxisStep * (floor($yAxisCount/2) - floor($yAxisIndex/2))), 1) :
+                                                                               max(0 + ($xAxisStep * (ceil($yAxisCount/2) - ceil($yAxisIndex/2))), 0);
+                                $yAxis['domain'] = array(0,1);
+                                $yAxis['title']['standoff'] = 0;
+                                $yAxis['showgrid'] = $yAxisCount > 1 ? false : true;
+                                $xAxis['domain'] = array($xAxisBottomBoundStart, $xAxisTopBoundStart);
+
+                                $this->_chart['layout']["{$xAxisName}"] = $yAxis;
+                                $this->_chart['layout']['yaxis'] = $xAxis;
+                                unset($this->_chart['layout']["xaxis"]['dtick']);
+                                unset($this->_chart['layout']["xaxis"]['tick0']);
+                                $swapXYDone = true;
+                            }
+                            if ($yAxisIndex > 0) {
+                                unset($this->_chart['layout']["{$yAxisName}"]);
+                            }
+                        }
+
+                        // Set stacking and area configurationg
                         if($data_description->display_type!=='line')
                         {
-                            if($data_description->combine_type=='stack')
+                            if ($trace['type']=='area' && $traceIndex == 0) {
+                                $hidden_trace = array(
+                                    'name' => 'area fix',
+                                    'x' => $this->_swapXY ? array_fill(0, count($xValues), 0) : $xValues,
+                                    'y' => $this->_swapXY ? $xValues : array_fill(0, count($xValues), 0),
+                                    'zIndex' => 0,
+                                    'showlegend' => false,
+                                    'mode' => 'lines+markers',
+                                    'marker' => array(
+                                        'color' => '#FFFFFF'
+                                    ),
+                                    'line' => array(
+                                        'color' => '#FFFFFF'
+                                    ),
+                                    'hoverinfo' => 'skip',
+                                    'yaxis' => "y{$yIndex}",
+                                    'type' => 'scatter',
+                                );
+
+                                if ($this->_swapXY) {
+                                    $null_trace['xaxis'] = "x{$yIndex}";
+                                    unset($null_trace['yaxis']);
+                                }
+
+
+                                $this->_chart['data'][] = $hidden_trace;
+                            }
+
+                            if ($trace['type'] == 'bar') {
+                                $trace['line']['width'] = 0;
+                                $trace['marker']['line']['width'] = 0;
+                            }
+
+                            if ($data_description->combine_type=='side' && $trace['type']=='area'){
+                                if ($this->_swapXY) {
+                                    $trace['fill'] = $traceIndex == 0 ? 'tozerox' : 'tozerox';
+                                }
+                                else {
+                                    $trace['fill'] = $traceIndex == 0 ? 'tozeroy' : 'tozeroy';
+                                }
+                            }
+                            elseif($data_description->combine_type=='stack')
                             {
-                                // ask the highcharts library to connect nulls for stacking
-                                $data_series_desc['stacking'] = 'normal';
-                                $data_series_desc['connectNulls'] = true;
+                                $trace['stackgroup'] = 'one';
+                                $trace['stackgaps'] = 'interpolate';
+                                $this->_chart['layout']['barmode'] = 'stack';
                             }
                             elseif($data_description->combine_type=='percent' && !$data_description->log_scale )
                             {
-                                $data_series_desc['stacking'] = 'percent';
+                                $trace['stackgroup'] = 'one';
+                                $trace['stackgaps'] = 'interpolate';
+                                $trace['groupnorm'] = 'percent';
+                                $trace['hovertemplate'] = $formattedDataSeriesName . ': <b>%{hovertext}</b> <extra></extra>';
+                                $this->_chart['layout']['barmode'] = 'stack';
+                                $this->_chart['layout']['barnorm'] = 'percent';
                             }
                         }
-                        $this->_chart['series'][] = $data_series_desc;
 
+                        // Set null connector
+                        if (in_array(null, $yValues) && $data_description->display_type == 'line') {
+                            $null_trace = array(
+                                'name' => 'gap connector',
+                                'zIndex' => $zIndex,
+                                'x' => $this->_swapXY ? $yValues : $xValues,
+                                'y' => $this->_swapXY ? $xValues : $yValues,
+                                'showlegend' => false,
+                                'mode' => 'lines',
+                                'line' => array(
+                                    'color' => $color,
+                                    'dash' => 'dash'
+                                ),
+                                'connectgaps' => true,
+                                'hoverinfo' => 'skip',
+                                'legendgroup' => $traceIndex,
+                                'type' => 'scatter',
+                                'visible' => $visible,
+                                'yaxis' => "y{$yIndex}",
+                                'isRestrictedByRoles' => $data_description->restrictedByRoles,
+                            );
+
+                            if ($this->_swapXY) {
+                                $null_trace['xaxis'] = "x{$yIndex}";
+                                unset($null_trace['yaxis']);
+                            }
+
+                            $this->_chart['data'][] = $null_trace;
+                        }
+
+                        // Set data labels
+                        $data_labels = array();
+                        $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
+                        if($data_description->value_labels || $data_description->std_err_labels) {
+                            if ($trace['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
+                                // For export this needs to be 'none'
+                                $trace['constraintext'] = $data_description->combine_type!='side' ? 'both' : 'none';
+                                $trace['text'] = $text;
+                            }
+                            else {
+                                for ($i = 0; $i < count($xValues); $i++) {
+                                    $yPosition = $yValues[$i];
+                                    if ($data_description->log_scale) {
+                                        $yPosition = isset($yPosition) ? log10($yPosition) : null;
+                                    }
+                                    $data_label = array(
+                                        'name' => 'data_label',
+                                        'x' => $this->_swapXY ? $yPosition : $xValues[$i],
+                                        'y' => $this->_swapXY ? $xValues[$i] : $yPosition,
+                                        'xref' => 'x',
+                                        'yref' => 'y',
+                                        'showarrow' => false,
+                                        'captureevents' => false,
+                                        'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
+                                        'font' => array(
+                                            'size' => 11 + $font_size,
+                                            'color' => $color,
+                                            'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                                        ),
+                                        'textangle' => -90,
+                                        'yshift' => $isThumbnail ? 45 : 70,
+                                    );
+
+                                    if ($this->_swapXY) {
+                                        $data_label['textangle'] = 0;
+                                        $data_label['yshift'] = -5;
+                                        $data_label['xshift'] = $isThumbnail ? 30 : 70;
+                                    }
+
+                                    if ($data_description->std_err == 1) {
+                                        if ($this->_swapXY) {
+                                            $data_label['yshift'] = -7;
+                                        }
+                                        else {
+                                            $data_label['xshift'] = -7;
+                                        }
+                                    }
+
+                                    if ($data_description->value_labels && $data_description->std_err_labels) {
+                                        if ($this->_swapXY) {
+                                            $data_label['xshift'] = $isThumbnail ? 60 : 90;
+                                        }
+                                        else {
+                                            $data_label['yshift'] = $isThumbnail ? 60 : 90;
+                                        }
+                                    }
+
+                                    if ($data_description->value_labels && !$data_description->std_err_labels) {
+                                        array_push($this->_chart['layout']['annotations'], $data_label);
+                                    }
+                                    elseif (($data_description->std_err_labels) || ($data_description->value_labels && $data_description->std_err_labels)) {
+                                        array_push($data_labels, $data_label);
+                                    }
+                                }
+                            }
+                        }
+
+                        $this->_chart['data'][] = $trace;
                         // REMOVED: Add percent allocated to XSEDE line if the metric
                         // being displayed is XSEDE Utilization.
+
+                        if(($data_description->std_err == 1 || $data_description->std_err_labels) && $data_description->display_type != 'pie')
+                        {
+                            //throw new \Exception(count($data_labels));
+                            $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value, -70);
+                            $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
+
+                            $stderr = array();
+                            $dataLabels = array();
+                            $errorLabels = array();
+                            $errorCount = $yAxisDataObject->getErrorCount();
+                            for($i = 0; $i < $errorCount; $i++)
+                            {
+                                // build the error bar and set for display
+                                $v = $yAxisDataObject->getValue($i);
+                                $e = $yAxisDataObject->getError($i);
+                                $stderr[] = $e;
+                                $errorLabels[] = isset($e) ? '+/- ' . number_format($e, $semDecimals, '.', ',') : '+/-' . number_format(0, $semDecimals, '.', ',');
+                                $dataLabels[] = isset($v) ? number_format($v, $decimals, '.', ',') . ' [' . $errorLabels[$i] . ']': (isset($e) ? $errorLabels[$i] : '');
+                            }
+
+                            $dsn = 'Std Err: '.$formattedDataSeriesName;
+                            $lookupDataSeriesName = $dsn;
+
+                            if(isset($legend->{$dsn}))
+                            {
+                                $config = $legend->{$dsn};
+                                if(isset($config->title))
+                                {
+                                    $lookupDataSeriesName = $config->title;
+                                }
+                            }
+                            $visible = true;
+                            if(isset($data_description->visibility) && isset($data_description->visibility->{$dsn}))
+                                {
+                                $visible = $data_description->visibility->{$dsn};
+                            }
+
+                            // create the data series description:
+                            $error_trace = array_merge($trace, array(
+                                'name' => $dsn,
+                                'customdata' => $dsn,
+                                'otitle' => $dsn,
+                                'datasetId' => $data_description->id,
+                                'color'=> $error_color,
+                                'marker' => array(
+                                    'color' => $error_color,
+                                    'size' => $trace['marker']['size'],
+                                    'line' => array(
+                                        'width' => 1,
+                                        'color' => $error_color,
+                                    ),
+                                    'symbol' => $trace['marker']['symbol'],
+                                ),
+                                'line' => array(
+                                    'color' => $error_color,
+                                ),
+                                'hovertext' => $errorLabels,
+                                'mode' => 'lines',
+                                'text' => array(),
+                                'hovertemplate' => '<b> %{hovertext} </b>',
+                                'visible' => $visible,
+                                'showlegend' => true,
+                                'legendgroup' => null,
+                                'connectgaps' => false,
+                                'legendrank' => $traceIndex + 1,
+                                'isRestrictedByRoles' => $data_description->restrictedByRoles,
+                            ));
+
+                            $error_y = array(
+                                    'type' => 'data',
+                                    'array' => $stderr,
+                                    'arrayminus' => $stderr,
+                                    'symmetric' => false,
+                                    'color' => $error_color
+                            );
+
+                            if ($error_trace['type'] == 'area') {
+                                $error_trace['fill'] = $trace['fill'];
+                                // Referenced https://stackoverflow.com/questions/15202079/convert-hex-color-to-rgb-values-in-php
+                                // for idea
+                                list($r, $g, $b) = sscanf($trace['marker']['color'], '#%02x%02x%02x');
+                                $a = 0.4;
+                                $fillColor = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . $a . ')';
+                                $error_trace['fillcolor'] = $fillColor;
+                                if ($data_description->combine_type=='stack') {
+                                    $error_trace['stackgroup'] = 'two';
+                                    $error_trace['stackgaps'] = 'interpolate';
+                                }
+                            }
+
+                            if ($trace['type'] == 'bar') {
+                                $this->_chart['layout']['barmode'] = 'overlay';
+                                $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'x unified';
+
+                                if ($this->_swapXY) {
+                                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'y unified';
+                                }
+
+                                if ($data_description->combine_type=='side') {
+                                    $error_trace['offsetgroup'] = "group{$traceIndex}";
+                                    $this->_chart['layout']['barmode'] = 'group';
+                                }
+                                if ($data_description->combine_type=='stack') {
+                                    $error_trace['y'] = array_fill(0, count($error_trace['y']), 0);
+                                    for ($i = 0; $i < count($errorLabels); $i++) {
+                                        if (!isset($errorLabels[$i])) {
+                                            $error_trace['y'][$i] = null;
+                                        }
+                                    }
+                                    $this->_chart['layout']['barmode'] = 'stack';
+                                }
+                            }
+                            if (isset($trace['visible']) && $trace['visible'] != 1) {
+                                $error_trace['visible'] = 'legendonly';
+                            }
+                            $idx = count($this->_chart['data']) - 1;
+                            if (!$data_description->value_labels && $data_description->std_err_labels) {
+                                if ($trace['type'] == 'bar' && count($data_labels) == 0) {
+                                    $this->_chart['data'][$idx]['text'] = $errorLabels;
+                                }
+                                else {
+                                    for ($i = 0; $i < count($errorLabels); $i++) {
+                                        if ($this->_swapXY) {
+                                            $data_labels[$i]['text'] = isset($data_labels[$i]['x']) ? $errorLabels[$i] : '';
+                                        }
+                                        else {
+                                            $data_labels[$i]['text'] = isset($data_labels[$i]['y']) ? $errorLabels[$i] : '';
+                                        }
+
+                                        array_push($this->_chart['layout']['annotations'], $data_labels[$i]);
+                                    }
+                                }
+                            }
+
+                            if ($data_description->value_labels && $data_description->std_err_labels) {
+                                if ($trace['type'] == 'bar' && count($data_labels) == 0) {
+                                    $this->_chart['data'][$idx]['text'] = $dataLabels;
+                                }
+                                else {
+                                    for ($i = 0; $i < count($dataLabels); $i++) {
+                                        if ($this->_swapXY) {
+                                            $data_labels[$i]['text'] = isset($data_labels[$i]['x']) ? $dataLabels[$i] : '';
+                                        }
+                                        else {
+                                            $data_labels[$i]['text'] = isset($data_labels[$i]['y']) ? $dataLabels[$i] : '';
+                                        }
+                                        array_push($this->_chart['layout']['annotations'], $data_labels[$i]);
+                                    }
+                                }
+                            }
+
+                            if(!$data_description->log_scale && $data_description->std_err)
+                            {
+                                if ($visible == 1) {
+                                    $idx = count($this->_chart['data']) - 1;
+                                    if ($this->_swapXY) {
+                                        $this->_chart['data'][$idx]['error_x'] = $error_y;
+                                    } else {
+                                        $this->_chart['data'][$idx]['error_y'] = $error_y;
+                                    }
+                                }
+                                $this->_chart['data'][] = $error_trace;
+                            }
+                        } // if($data_description->std_err == 1 && $data_description->display_type != 'pie')
 
                         // ---- Add a trend line on the dataset ----
                         if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
@@ -640,13 +1051,15 @@ class HighChartTimeseries2 extends HighChart2
                             if($new_values_count > 1)
                             {
                                 list($m,$b,$r, $r_squared) = \xd_regression\linear_regression(array_keys($newValues), array_values($newValues));
-                                $trend_points = array();
+                                $trendX = array();
+                                $trendY = array();
                                 foreach($newValues as $ii => $value) //first first positive point on trend line since when logscale negative values make it barf
                                 {
                                     $y = ($m*$ii)+$b;
                                     if(!$data_description->log_scale || $y > 0)
                                     {
-                                        $trend_points[] = array($start_ts_array[$ii], $y);
+                                        $trendX[] = date('Y-m-d', $start_ts_array[$ii]);
+                                        $trendY[] = $y;
                                     }
                                 }
 
@@ -668,117 +1081,50 @@ class HighChartTimeseries2 extends HighChart2
                                 {
                                     $visible = $data_description->visibility->{$dsn};
                                 }
-                                $data_series_desc = array(
+                                $trendline_trace = array(
                                     'name' => $lookupDataSeriesName,
                                     'otitle' => $dsn,
                                     'zIndex' => $zIndex,
                                     'datasetId' => $data_description->id,
                                     'drilldown' => $drilldown,
-                                    'color'=> $color,
-                                    'type' => $data_description->log_scale?'spline':'line',
-                                    'shadow' => $data_description->shadow,
-                                    'groupPadding' => 0.05,
-                                    'pointPadding' => 0,
-                                    'borderWidth' => 0,
-                                    'enableMouseTracking' => false,
-                                    'yAxis' => $yAxisIndex,
-                                    'lineWidth' => 2 + $font_size/4.0,
-                                    'showInLegend' => true,
+                                    'color' => $color,
+                                    'type' => 'scatter',
+                                    'yaxis' => "y{$yIndex}",
+                                    'showlegend' => true,
+                                    'hoverinfo' => 'skip',
+                                    'text' => array(),
+                                    'mode' => 'lines+markers',
                                     'marker' => array(
-                                        'enabled' => false,
-                                        'hover' => array(
-                                            'enabled' => false
-                                        )
+                                        'size' => 0.1,
+                                    ),
+                                    'line' => array(
+                                        'shape' => 'linear',
+                                        'dash' => 'dot',
+                                        'color' => $color,
+                                        'width' => $data_description->line_width + $font_size/4,
                                     ),
                                     'visible' => $visible,
-                                    'dashStyle' => 'ShortDot',
                                     'm' => $m,
                                     'b' => $b,
-                                    'data' => $trend_points,
-                                    'isRemainder' => $isRemainder,
+                                    'x' => $this->_swapXY ? $trendY : $trendX,
+                                    'y' => $this->_swapXY ? $trendX : $trendY,
                                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                                 );
-                                $this->_chart['series'][] = $data_series_desc;
-                            } // if($new_values_count > 1)
 
-                        } // if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
+                                $trendline_trace['legendrank'] = $data_description->std_err ? $traceIndex + 2 : $traceIndex + 1;
 
-
-                        if($data_description->std_err == 1 && $data_description->display_type != 'pie')
-                        {
-                            $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value, -70);
-                            $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
-
-                            $errorCount = $yAxisDataObject->getErrorCount();
-                            $error_series = array();
-
-                            for($i = 0; $i < $errorCount; $i++)
-                            {
-                                // build the error bar and set for display
-                                $v = $yAxisDataObject->getValue($i);
-                                $e = $yAxisDataObject->getError($i);
-                                $has_value = ( isset($v) && ($v != 0) );
-                                $error_series[] = array(
-                                    'x' => $start_ts_array[$i],
-                                    'low' => $has_value ? $v-$e : null,
-                                    'high' => $has_value ? $v+$e : null,
-                                    'stderr' => $e
-                                );
-                            } // for $i ...
-                            $dsn = 'Std Err: '.$formattedDataSeriesName;
-
-                            $lookupDataSeriesName = $dsn;
-                            if(isset($legend->{$dsn}))
-                            {
-                                $config = $legend->{$dsn};
-                                if(isset($config->title))
-                                {
-                                    $lookupDataSeriesName = $config->title;
+                                if ($this->_swapXY) {
+                                    unset($trendline_trace['yaxis']);
+                                    $trendline_trace['xaxis'] = "x{$yIndex}";
                                 }
-                            }
-                            $visible = true;
-                            if(isset($data_description->visibility) && isset($data_description->visibility->{$dsn}))
-                                {
-                                $visible = $data_description->visibility->{$dsn};
-                            }
 
-                            $err_data_series_desc = array(
-                                'name' => $lookupDataSeriesName,
-                                'showInLegend' => true,
-                                'otitle' => $dsn,
-                                'zIndex' => $zIndex,
-                                'datasetId' => $data_description->id,
-                                'drilldown' => $drilldown,
-                                'color'=> $error_color,
-                                'type' => 'errorbar',
-                                'shadow' => $data_description->shadow,
-                                'groupPadding' => 0.05,
-                                'lineWidth' =>2 + $font_size/4,
-                                'pointPadding' => 0,
-                                'yAxis' => $yAxisIndex,
-                                'tooltip' => array(
-                                    'valueDecimals' => $semDecimals
-                                ),
-                                'data' => $error_series,
-                                'cursor' => 'pointer',
-                                'visible' => $visible,
-                                'isRemainder' => $isRemainder,
-                                'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                            );
-
-                            if(! $data_description->log_scale)
-                            {
-                                $this->_chart['series'][] = $err_data_series_desc;
-                            } // if ! log_scale
-                        } // if($data_description->std_err == 1 && $data_description->display_type != 'pie')
+                                $this->_chart['data'][] = $trendline_trace;
+                            } // if($new_values_count > 1)
+                        } // if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
                     } // if( $yAxisDataObject != NULL)
                 }
             } // foreach(array_values($yAxisArray) as $yAxisIndex
         } // foreach(array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions) (big long effing loop)
-
-        if ($this->_showWarnings) {
-            $this->addRestrictedDataWarning();
-        }
 
         if($this->show_filters)
         {
@@ -790,6 +1136,5 @@ class HighChartTimeseries2 extends HighChart2
         $this->setDataSource(array_keys($dataSources));
 
         $this->setChartTitleSubtitle($font_size);
-
     } // function configure()
-} // class HighChartTimeseries2
+} // class TimeseriesChart
