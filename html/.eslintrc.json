@@ -1,6 +1,10 @@
 {
   "env": {
-    "browser": true
+    "browser": true,
+    "es6": true
+  },
+  "rules": {
+    "no-underscore-dangle": "off"
   },
   "globals": {
     "AppKernel": false,
@@ -19,6 +23,11 @@
     "grecaptcha": false,
     "StringUtilities": false,
     "Plotly": false,
-    "generateChartOptions": false
+    "generateChartOptions": false,
+    "getNoDataErrorConfig": false,
+    "getMultiAxisObjects": false,
+    "getClickedPoint": false,
+    "topLegend": false,
+    "adjustTitles": false
   }
 }

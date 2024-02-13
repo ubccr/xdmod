@@ -89,8 +89,8 @@ Ext.apply(XDMoD.Module.Usage, {
 
 
         XDMoD.TrackEvent('Usage', 'Clicked on chart to access drill-down menu', Ext.encode({
-           'x-axis': point.ts ? Highcharts.dateFormat('%Y-%m-%d', point.ts) : point.series.data[point.x].category,
-           'y-axis': point.y,
+           'x-axis': point.data.type === 'pie' ? point.label : point.x,
+           'y-axis': point.data.type === 'pie' ? point.value : point.y,
            'label': (groupByName == 'none') ? '' : groupByUnit + '=' + groupByValue
         }));
 
@@ -1491,47 +1491,19 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 }
 
                                 var baseChartOptions = {
-
-                                    chart: {
-
-                                        renderTo: id,
+                                    renderTo: id,
+                                    realmOverview: true,
+                                    layout: {
                                         width: CCR.xdmod.ui.thumbWidth * chartThumbScale,
                                         height: CCR.xdmod.ui.thumbHeight * chartThumbScale,
-                                        animation: false,
-                                        events: {
-
-                                            load: function (e) {
-
-                                                if (this.series.length == 0) {
-
-                                                    this.renderer.image('gui/images/report_thumbnail_no_data.png', 0, 0, this.chartWidth, this.chartHeight).add();
-
-                                                } //if (this.series.length == 0)
-
-                                            } //load
-
-                                        } //events
-
-                                    },
-                                    plotOptions:{
-                                      series: {
-                                        animation: false
-                                      }
-                                    },
-                                    loading: {
-                                        labelStyle: {
-                                            top: '45%'
-                                        }
-                                    },
-
-                                    exporting: {
-                                        enabled: false
-                                    },
-
-                                    credits: {
-                                        enabled: true
+                                        margin: {
+                                            t: 20,
+                                            l: 5,
+                                            r: 5,
+                                            b: 35
+                                        },
+                                        thumbnail: true
                                     }
-
                                 }; //baseChartOptions
 
                                 var chartOptions = {};
@@ -1540,10 +1512,28 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 }
                                 jQuery.extend(true, chartOptions, baseChartOptions);
 
-                                chartOptions.exporting.enabled = false;
-                                chartOptions.credits.enabled = false;
+                                let axisLabels;
+                                if (chartOptions) {
+                                    axisLabels = chartOptions.layout.swapXY ? chartOptions.layout.yaxis.ticktext : chartOptions.layout.xaxis.ticktext;
+                                }
 
-                                this.charts.push(new Highcharts.Chart(chartOptions));
+                                if (axisLabels) {
+                                    for (let i = 0; i < axisLabels.length; i++) {
+                                        let label = axisLabels[i];
+                                        if (label.length > 20) {
+                                            label = `${label.substring(0, 18)}...`;
+                                            axisLabels[i] = label;
+                                        }
+                                    }
+                                    if (chartOptions.layout.swapXY) {
+                                        chartOptions.layout.yaxis.ticktext = axisLabels;
+                                    } else {
+                                        chartOptions.layout.xaxis.ticktext = axisLabels;
+                                    }
+                                }
+
+                                this.charts.push(XDMoD.utils.createChart(chartOptions));
+                                chartContainer.unmask();
                             };
 
                             deferStore.load({
@@ -2588,7 +2578,38 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
         function onResize(t, adjWidth, adjHeight, rawWidth, rawHeight) {
 
             maximizeScale.call(this);
-            if (this.chart) this.chart.setSize(adjWidth, adjHeight);
+            if (this.chart && this.chartId) {
+                const chartDiv = document.getElementById(this.chartId);
+                if (chartDiv) {
+                    Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
+                    if (this.chartOptions.layout.annotations.length !== 0) {
+                        const topCenter = topLegend(this.chartOptions.layout);
+                        const subtitleLineCount = adjustTitles(this.chartOptions.layout);
+                        const marginTop = (topCenter || subtitleLineCount > 0) ? this.chartOptions.layout.margin.t : chartDiv._fullLayout._size.t;
+                        const marginRight = chartDiv._fullLayout._size.r;
+                        const legendHeight = (topCenter && !(adjHeight <= 550)) ? chartDiv._fullLayout.legend._height : 0;
+                        const titleHeight = 31;
+                        const subtitleHeight = 15;
+                        const update = {
+                            'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
+                            'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount)
+                        };
+
+                        if (this.chartOptions.layout.annotations.length >= 2) {
+                            const marginBottom = chartDiv._fullLayout._size.b;
+                            const plotAreaHeight = chartDiv._fullLayout._size.h;
+                            let pieChartXShift = 0;
+                            if (chartDiv._fullData.length !== 0 && chartDiv._fullData[0].type === 'pie') {
+                                pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
+                            }
+                            update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1;
+                            update['annotations[2].xshift'] = marginRight - pieChartXShift;
+                        }
+
+                        Plotly.relayout(this.chartId, update);
+                    }
+                }
+            }
 
         } //onResize
 
@@ -2698,58 +2719,19 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             }
 
                             var baseChartOptions = {
-
-                                chart: {
-
-                                    renderTo: id,
+                                renderTo: id,
+                                layout: {
                                     width: chartWidth * chartScale,
-                                    height: chartHeight * chartScale,
-                                    animation: false
-
+                                    height: chartHeight * chartScale
                                 },
-
-                                loading: {
-                                    labelStyle: {
-                                        top: '45%'
-                                    }
-                                },
-
+                                data: [],
                                 exporting: {
                                     enabled: false
                                 },
-
                                 credits: {
                                     enabled: true
-                                },
-
-                                plotOptions: {
-                                    series: {
-                                        events: {
-                                            click: function (evt) {
-                                                var drillId;
-                                                var label;
-                                                var drillInfo = evt.point.series.userOptions.drilldown;
-
-                                                if (!drillInfo) {
-                                                    // dataseries such as the trend line do not have a drilldown
-                                                    return;
-                                                }
-
-                                                if (evt.point.drilldown) {
-                                                    drillId = evt.point.drilldown.id;
-                                                    label = evt.point.drilldown.label;
-                                                } else {
-                                                    evt.point.ts = evt.point.x; // eslint-disable-line no-param-reassign
-                                                    drillId = drillInfo.id;
-                                                    label = drillInfo.label;
-                                                }
-                                                XDMoD.Module.Usage.drillChart(evt.point, drillInfo.drilldowns, drillInfo.groupUnit, drillId, label, 'none', 'tg_usage', drillInfo.realm);
-                                            }
-                                        }
-                                    }
                                 }
-
-                            }; //baseChartOptions
+                            };
 
                             var chartOptions = r.get('hc_jsonstore');
 
@@ -2757,36 +2739,91 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             chartOptions.exporting.enabled = false;
                             chartOptions.credits.enabled = true;
 
-                            var extraChartHandlers = {
-                                loadHandlers: [],
-                                redrawHandlers: []
-                            };
-                            extraChartHandlers.loadHandlers.push(function () {
-                                this.checkSeries = function () {
-                                    if (this.series.length === 0) {
-                                        if (this.placeholder_element) {
-                                            this.placeholder_element.destroy();
-                                        }
-                                        this.placeholder_element = this.renderer.image('gui/images/report_thumbnail_no_data.png', (this.chartWidth - 400) / 2, (this.chartHeight - 300) / 2, 400, 300).add();
-                                    }
-                                };
+                            this.chart = XDMoD.utils.createChart(chartOptions);
+                            this.chartId = id;
+                            this.chartOptions = chartOptions;
+                            var chartDiv = document.getElementById(baseChartOptions.renderTo);
 
-                                this.checkSeries();
+                            chartDiv.on('plotly_click', (evt) => {
+                                let drillId;
+                                let label;
+                                let point;
+                                const usageDiv = document.getElementById(this.id);
+                                if (evt.points && evt.points.length > 0) {
+                                    if (evt.points[0].data.type === 'pie') {
+                                        [point] = evt.points;
+                                    } else {
+                                        const traces = usageDiv.getElementsByClassName('plot')[0].firstChild.children;
+                                        point = getClickedPoint(evt, traces);
+                                    }
+                                }
+                                if (!point) {
+                                    return;
+                                }
+                                const drillInfo = point.data.drilldown;
+                                if (drillInfo[0]) {
+                                    drillId = drillInfo[point.pointNumber].id;
+                                    label = drillInfo[point.pointNumber].label;
+                                } else {
+                                    drillId = drillInfo.id;
+                                    label = drillInfo.label;
+                                }
+
+                                XDMoD.Module.Usage.drillChart(point, drillInfo.drilldowns, drillInfo.groupUnit, drillId, label, 'none', 'tg_usage', drillInfo.realm);
                             });
-                            extraChartHandlers.redrawHandlers.push(function () {
-                                if (this.checkSeries) {
-                                    this.checkSeries();
+
+                            chartDiv.on('plotly_legendclick', (evt) => {
+                                // First check if all traces are hidden.
+                                // There is a bug with tick text manually set.
+                                // We need set tickmode to auto if so.
+                                const visibleData = evt.fullData.filter((trace) => trace.visible === true);
+                                let tickType;
+                                if (evt.layout.swapXY) {
+                                    tickType = evt.layout.yaxis.tickmode;
+                                } else {
+                                    tickType = evt.layout.xaxis.tickmode;
+                                }
+                                if (visibleData.length === 1 && visibleData[0].index === evt.curveNumber) {
+                                    if (evt.layout.swapXY) {
+                                        Plotly.relayout(chartDiv, { 'yaxis.tickmode': 'auto' });
+                                    } else {
+                                        Plotly.relayout(chartDiv, { 'xaxis.tickmode': 'auto' });
+                                    }
+                                } else if (evt.layout.swapXY) {
+                                    Plotly.relayout(chartDiv, { 'yaxis.tickmode': tickType });
+                                } else {
+                                    Plotly.relayout(chartDiv, { 'xaxis.tickmode': tickType });
+                                }
+                                const { node } = evt;
+                                const nodeVisibility = evt.node.style.opacity;
+                                // Check for std err to update where the error bars go
+                                if (node.textContent.startsWith('Std Err:')) {
+                                    const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
+                                    if (nodeVisibility === '1') {
+                                        Plotly.update(chartDiv, { [errorBar]: false }, {}, [evt.curveNumber + 1]);
+                                    } else {
+                                        Plotly.update(chartDiv, { [errorBar]: true }, {}, [evt.curveNumber + 1]);
+                                    }
+                                } else if (node.nextSibling) {
+                                    const sibling = node.nextSibling;
+                                    if (sibling.textContent.startsWith('Std Err:')) {
+                                        const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
+                                        if (sibling.style.opacity === '1') {
+                                            // Turning off primary trace so need to transfer error bars
+                                            if (nodeVisibility === '1') {
+                                                Plotly.update(chartDiv, { visible: 'legendonly' }, {}, [evt.curveNumber - 1]);
+                                            }
+                                        } else if (nodeVisibility === '0.5') {
+                                            Plotly.update(chartDiv, { [errorBar]: false }, {}, [evt.curveNumber]);
+                                        }
+                                    }
                                 }
                             });
-
-                            this.chart = XDMoD.utils.createChart(chartOptions, extraChartHandlers);
-
                         }, this); //task
 
                         task.delay(0);
 
                         return true;
-
                     }, this); //chartStore.each(function(r)
 
                     self.getDurationSelector().enable();

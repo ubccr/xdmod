@@ -1,3 +1,106 @@
+function getDefaultLayout() { // eslint-disable-line no-unused-vars
+    const layout = {
+        hoverlabel: {
+            bgcolor: '#ffffff'
+        },
+        xaxis: {
+            titlefont: {
+                family: 'Open-Sans, verdana, arial, sans-serif',
+                size: 12,
+                color: '#5078a0'
+            },
+            color: '#606060',
+            ticks: 'outside',
+            tickcolor: '#c0cfe0',
+            tickfont: {
+                size: 11
+            },
+            linecolor: '#c0cfe0',
+            automargin: true,
+            showgrid: false
+        },
+        yaxis: {
+            titlefont: {
+                family: 'Open-Sans, verdana, arial, sans-serif',
+                size: 12,
+                color: '#5078a0'
+            },
+            color: '#606060',
+            showline: false,
+            zeroline: false,
+            gridcolor: '#d8d8d8',
+            automargin: true,
+            ticks: 'outside',
+            tickcolor: '#ffffff',
+            tickfont: {
+                size: 11
+            },
+            seperatethousands: true
+        },
+        title: {
+            font: {
+                family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                color: '#444b6e',
+                size: 16
+            }
+        },
+        annotations: [{
+            text: '. Powered by XDMoD/Plotly JS',
+            font: {
+                color: '#909090',
+                size: 10,
+                family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+            },
+            xref: 'paper',
+            yref: 'paper',
+            xanchor: 'right',
+            yanchor: 'bottom',
+            x: 1,
+            y: 0,
+            yshift: -80,
+            showarrow: false
+        }],
+        hovermode: 'closest',
+        showlegend: false,
+        margin: {
+            t: 50
+        }
+    };
+
+    return layout;
+}
+function getNoDataErrorConfig() { // eslint-disable-line no-unused-vars
+    const errorLayout = {
+        images: [
+        {
+            source: 'gui/images/report_thumbnail_no_data.png',
+            align: 'center',
+            xref: 'paper',
+            xanchor: 'center',
+            yanchor: 'center',
+            yref: 'paper',
+            sizex: 1.0,
+            sizey: 1.0,
+            x: 0.5,
+            y: 1.0
+        }
+        ],
+        xaxis: {
+            showticklabels: false,
+            zeroline: false,
+            showgrid: false,
+            showline: false
+        },
+        yaxis: {
+            showticklabels: false,
+            zeroline: false,
+            showgrid: false,
+            showline: false
+        }
+    };
+
+    return errorLayout;
+}
 /* generateChartOptions - Generates data array and layout dict for Plotly Chart
  *                        ** Currently assumes that data is in format of a record returned in the JobViewer **
  *
@@ -43,7 +146,7 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             qtip.push(record.data.series[sid].data[i].qtip);
         }
 
-        var trace = {
+        const trace = {
             x: x,
             y: y,
             marker: {
@@ -90,56 +193,33 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
     }
 
     var layout = {
-        hoverlabel: {
-            bgcolor: '#ffffff'
-        },
         xaxis: {
-            title: '<b> Time (' + record.data.schema.timezone + ') </b>',
+            title: `<b> Time (${record.data.schema.timezone}) </b>`,
             titlefont: {
-                family: 'Open-Sans, verdana, arial, sans-serif',
-                size: axisTitleFontSize,
-                color: '#5078a0'
+                size: axisTitleFontSize
             },
-            color: '#606060',
-            ticks: 'outside',
-            tickcolor: '#c0cfe0',
             tickfont: {
                 size: axisLabelFontSize
-            },
-            linecolor: '#c0cfe0',
-            automargin: true,
-            showgrid: false
+            }
         },
         yaxis: {
-            title: '<b>' + record.data.schema.units + '</b>',
+            title: `<b> ${record.data.schema.units} </b>`,
             titlefont: {
-                family: 'Open-Sans, verdana, arial, sans-serif',
-                size: axisTitleFontSize,
-                color: '#5078a0'
+                size: axisTitleFontSize
             },
-            color: '#606060',
             range: [0, ymax + (ymax * 0.2)],
-            showline: false,
-            zeroline: false,
-            gridcolor: '#d8d8d8',
-            automargin: true,
-            ticks: 'outside',
-            tickcolor: '#ffffff',
             tickfont: {
                 size: axisLabelFontSize
-            },
-            seperatethousands: true
+            }
         },
         title: {
             text: record.data.schema.description,
             font: {
-                family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
-                color: '#444b6e',
                 size: mainTitleFontSize
             }
         },
         annotations: [{
-            text: record.data.schema.source + '. Powered by XDMoD/Plotly',
+            text: `${record.data.schema.source}. Powered by XDMoD/Plotly JS`,
             font: {
                 color: '#909090',
                 size: 10,
@@ -153,18 +233,55 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             y: 0,
             yshift: -80,
             showarrow: false
-        }],
-        hovermode: 'closest',
-        showlegend: false,
-        margin: {
-            t: 50
+        }]
+    };
+
+    return { data, layout };
+}
+function getClickedPoint(clickEvent, traceDivs) { // eslint-disable-line no-unused-vars
+    if ((traceDivs && traceDivs.length === 0) || (clickEvent.points && clickEvent.points.length === 0)) {
+        return null;
+    }
+    const findPoint = (evt, traces) => {
+        for (let i = 0; i < traces.length; i++) {
+            let points = traces[i].getElementsByClassName('points');
+            if (points.length !== 0 && points[0].children) {
+                points = points[0].children;
+                for (let j = 0; j < points.length; j++) {
+                    const dimensions = points[j].getBoundingClientRect();
+                    if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right
+                        && evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
+                        const dataValue = points[j].__data__.s || points[j].__data__.y;
+                        const swapXY = evt.points[0].data.yaxis ? false : true;
+                        const pointIndex = evt.points.findIndex((trace) => {
+                            if (trace.value) {
+                                return trace.value === dataValue;
+                            }
+                            return swapXY ? trace.x === dataValue : trace.y === dataValue;
+                        });
+                        return evt.points[pointIndex];
+                    }
+                }
+            }
         }
+        return null;
     };
+    return findPoint(clickEvent, traceDivs);
+}
 
-    var ret = {
-        chartData: data,
-        chartLayout: layout
-    };
-
-    return ret;
+function getMultiAxisObjects(layout) { // eslint-disable-line no-unused-vars
+    const multiAxes = [];
+    const layoutKeys = Object.keys(layout);
+    for (let i = 0; i < layoutKeys.length; i++) {
+        if (layout.swapXY) {
+            if (layoutKeys[i].startsWith('xaxis')) {
+                multiAxes.push(layoutKeys[i]);
+            }
+        } else {
+            if (layoutKeys[i].startsWith('yaxis')) {
+                multiAxes.push(layoutKeys[i]);
+            }
+        }
+    }
+    return multiAxes;
 }
