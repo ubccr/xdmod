@@ -389,14 +389,14 @@ EOF
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode($response[0], true);
-        $dataseries = $plotdata['data'][0]['hc_jsonstore']['series'];
+        $dataseries = $plotdata['data'][0]['hc_jsonstore']['data'];
 
         $this->assertCount(1, $dataseries);
-        $this->assertArrayHasKey('data', $dataseries[0]);
-        $this->assertCount(1, $dataseries[0]['data']);
-        $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
+        //$this->assertArrayHasKey('y', $dataseries[0]);
+        $this->assertCount(1, $dataseries[0]['y']);
+        $this->assertArrayHasKey('y', $dataseries[0]);
 
-        $this->assertEquals($expected, $dataseries[0]['data'][0]['y'], '', 1.0e-6);
+        $this->assertEquals($expected, $dataseries[0]['y'][0], '', 1.0e-6);
     }
 
     /**
@@ -672,9 +672,9 @@ EOF;
 
         $this->assertTrue($plotdata['success']);
 
-        $this->assertCount(count($expectedNames), $plotdata['data'][0]['hc_jsonstore']['series']);
+        $this->assertCount(count($expectedNames), $plotdata['data'][0]['hc_jsonstore']['data']);
 
-        foreach($plotdata['data'][0]['hc_jsonstore']['series'] as $seriesIdx => $seriesData) {
+        foreach($plotdata['data'][0]['hc_jsonstore']['data'] as $seriesIdx => $seriesData) {
             $this->assertEquals(($seriesIdx + 1) . '. ' . $expectedNames[$seriesIdx] . '*', $seriesData['name']);
         }
     }
