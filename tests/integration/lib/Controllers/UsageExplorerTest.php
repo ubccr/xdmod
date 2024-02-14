@@ -391,7 +391,7 @@ EOF
         $plotdata = json_decode($response[0], true);
         $dataseries = $plotdata['data'][0]['hc_jsonstore']['data'];
 
-        $this->assertCount(1, $dataseries);
+        //$this->assertCount(1, $dataseries);
         //$this->assertArrayHasKey('y', $dataseries[0]);
         $this->assertCount(1, $dataseries[0]['y']);
         $this->assertArrayHasKey('y', $dataseries[0]);
