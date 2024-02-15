@@ -672,7 +672,14 @@ EOF;
 
         $this->assertTrue($plotdata['success']);
 
-        $this->assertCount(count($expectedNames), $plotdata['data'][0]['hc_jsonstore']['data']);
+        $primaryTraceCount = 0;
+
+        foreach($plotdata['data'][0]['hc_jsonstore']['data'] as $seriesIdx => $seriesData) {
+            if (strcmp($seriesData['name'], 'area fix') != 0 && strcmp($seriesData['name'], 'gap connector') != 0) {
+                $primaryTraceCount++;
+            }
+        }
+        $this->assertCount(count($expectedNames), $primaryTraceCount);
 
         foreach($plotdata['data'][0]['hc_jsonstore']['data'] as $seriesIdx => $seriesData) {
             $this->assertEquals(($seriesIdx + 1) . '. ' . $expectedNames[$seriesIdx] . '*', $seriesData['name']);
