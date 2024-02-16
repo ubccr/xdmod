@@ -134,7 +134,7 @@ class MetricExplorerTest extends TokenAuthTest
 
         $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
         $output = json_decode($response[0]);
-        $this->assertEquals($output->layout->title->font->size, "19px");
+        $this->assertEquals($output->data[0]->layout->title->font->size, "19px");
 
         $params['data_series'] = '[object Object]';
         $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
