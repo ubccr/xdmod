@@ -603,7 +603,7 @@ class ReportBuilderTest extends BaseTest
         $this->assertEquals(200, $response[1]['http_code']);
 
         $json = $response[0];
-        $this->assertArrayHasKey('action', $json, print_r($json, true));
+        $this->assertArrayHasKey('action', $json, print_r($data, true));
         $this->assertArrayHasKey('phase', $json);
         $this->assertArrayHasKey('status', $json);
         $this->assertArrayHasKey('success', $json);
