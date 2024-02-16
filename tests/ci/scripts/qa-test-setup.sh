@@ -9,8 +9,8 @@ set -e
 if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
 
     # Set default values for the environment variables we're going to use.
-    QA_BRANCH=${QA_BRANCH:-plotly_linter}
-    QA_GIT_URL=${QA_GIT_URL:-https://github.com/aestoltm/xdmod-qa.git}
+    QA_BRANCH=${QA_BRANCH:-v2}
+    QA_GIT_URL=${QA_GIT_URL:-https://github.com/ubccr/xdmod-qa.git}
 
     # Clone a current copy of the xdmod-qa repo.
     git clone --depth=1 --branch="$QA_BRANCH" "$QA_GIT_URL" $HOME/.qa
