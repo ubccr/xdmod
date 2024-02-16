@@ -28,7 +28,7 @@ const args = require('yargs').argv;
     chart = chart.substring(0, chart.length - 6);
     const svg = chart + '' + chartLabels + '</svg>';
     // HTML tags in titles thorw xml not well-formed error
-    const svgInnerHtml = svg.replace(/<br>|<\/span>|<span|<b>|<\/b>/gm, (str) => {
+    const svgInnerHtml = svg.replace(/<br>|<\/span>|<span|<sub>|<\/sub>|<b>|<\/b>/gm, (str) => {
         switch (str) {
             case '<br>':
                 return '&lt;br&gt;';
@@ -40,6 +40,10 @@ const args = require('yargs').argv;
                 return '&lt;span';
             case '</span>':
                 return '&lt;/span&gt;';
+            case '<sub>':
+                return '&lt;sub&gt;';
+            case '</sub>':
+                return '&lt;/sub&gt;';
             default:
                 return str;
         }

@@ -679,7 +679,7 @@ EOF;
                 $actualNames[] = $seriesData;
             }
         }
-        $this->assertCount(count($expectedNames), $primaryTraceCount);
+        $this->assertCount(count($expectedNames), $actualNames);
 
         foreach($actualNames as $seriesIdx => $seriesData) {
             $this->assertEquals(($seriesIdx + 1) . '. ' . $expectedNames[$seriesIdx] . '*', $seriesData['name']);
