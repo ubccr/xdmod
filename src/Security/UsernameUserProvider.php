@@ -69,8 +69,16 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
                 throw new InsufficientAuthenticationException();
             }
         } catch (\Exception $e) {
-            $this->logger->debug(sprintf('User %s not found', $identifier));
-            throw new UserNotFoundException("Unable to find User identified by $identifier");
+            $this->logger->debug("Loading User By Id instead");
+            $user = XDUser::getUserByID($identifier);
+            if ($isSamlUser && isset($user) && $user->getUserType() !== SSO_USER_TYPE) {
+                $this->logger->error('SSO User attempted to log in as a local user.');
+                throw new InsufficientAuthenticationException();
+            }
+            if (!isset($user)) {
+                $this->logger->debug(sprintf('User %s not found', $identifier));
+                throw new UserNotFoundException("Unable to find User identified by $identifier");
+            }
         }
 
         $this->logger->debug("XDUser found by username: {$user->getUserID()} {$user->getUsername()}");

@@ -113,7 +113,7 @@ class Version
         $scheme = 'https';
         $host   = 'xdmod.ccr.buffalo.edu';
         $port   = null;
-        $path   = '/rest/v0.1/versions/current';
+        $path   = '/versions/current';
 
         $url = $scheme . '://' . $host;
 

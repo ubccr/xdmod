@@ -482,9 +482,11 @@ class ControllerTest extends BaseTest
             $testData
         );
 
-        $helper = $options['helper'];
+        $helper = new XdmodTestHelper();
+        $helper->authenticate('mgr');
 
         $response = $helper->post("internal_dashboard/controllers/mailer.php", null, $data);
+
         if ($expectedHttpCode !== $response[1]['http_code'] || $expectedContentType !== $response[1]['content_type']) {
             print_r($response);
         }
@@ -520,14 +522,14 @@ class ControllerTest extends BaseTest
     {
         $data = JSON::loadFile(parent::getTestFiles()->getFile('controllers', 'enum_target_addresses-update_enum_user_types_and_roles', 'input'));
 
-        $helper = new XdmodTestHelper();
-        $helper->authenticate('mgr');
+        /*$helper = new XdmodTestHelper();
+        #$helper->authenticateDashboard('mgr');*/
 
         foreach($data as $key => $test) {
             foreach($test[0]['data'] as $dataKey => $value) {
                 $data[$key][0]['data'][$dataKey] = TestParameterHelper::processParam($value);
             }
-            $data[$key][0]['helper'] = $helper;
+            /*$data[$key][0]['helper'] = $helper;*/
         }
         $data[count($data) -1][0]['last'] = true;
 

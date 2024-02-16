@@ -7,6 +7,7 @@ use Models\Acl;
 use Models\Services\Acls;
 use Models\Services\Organizations;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -169,6 +170,11 @@ SQL;
      * @var boolean
      */
     private $sticky;
+
+    /**
+     * @var PasswordHasherInterface
+     */
+    private $hasher;
     // ---------------------------
 
     /*
@@ -197,10 +203,11 @@ SQL;
         $organization_id = null,
         $person_id = null,
         array $ssoAttrs = array(),
-        $sticky = false
+        $sticky = false,
+        $hasher = null
     )
     {
-
+        $this->hasher = $hasher;
         $this->_pdo = DB::factory('database');
 
         $userCheck = $this->_pdo->query("SELECT id FROM Users WHERE username=:username", array(
@@ -647,7 +654,7 @@ SQL;
             throw new AccessDeniedException("Permission Denied. Only local accounts may have their passwords modified.");
         }
 
-        return $this->_password = $raw_password;
+        $this->_password = $this->hash($raw_password);
     }//setPassword
 
     // ---------------------------
@@ -880,10 +887,18 @@ SQL;
      */
     public function arrayToString($array = array())
     {
+        $values = array_reduce(
+            array_values($array),
+            function ($carry, $item) {
+                $carry[] = var_export($item, true);
+                return $carry;
+            },
+            []
+        );
         $result = 'Keys [ ';
         $result .= implode(', ', array_keys($array)) . ']';
         $result .= 'Values [ ';
-        $result .= implode(', ', array_values($array)) . ']';
+        $result .= implode(', ', $values) . ']';
         return $result;
     }
 
@@ -963,12 +978,15 @@ SQL;
         if ($includePassword) {
             if ($this->_password == "" || is_null($this->_password)) {
                 $update_data['password'] = NULL;
+            } else if (!$forUpdate) {
+                $this->_password = $this->hash($this->_password);
+                $update_data['password'] = $this->_password;
             } else {
-                $this->_password = password_hash($this->_password, PASSWORD_DEFAULT);
                 $update_data['password'] = $this->_password;
             }
             $update_data['password_last_updated'] = 'NOW()';
         }
+
         $update_data['email_address'] = ($this->_email);
         $update_data['first_name'] = ($this->_firstName);
         $update_data['middle_name'] = ($this->_middleName);
@@ -2395,14 +2413,6 @@ SQL;
      */
     public static function validateRID($rid)
     {
-        $log = \CCR\Log::factory('xms.auth.rid', array(
-            'console' => false,
-            'db' => true,
-            'mail' => false,
-            'file' => LOG_DIR . '/xms-auth-rid.log',
-            'fileLogLevel' => Log::DEBUG
-        ));
-
         $results = array(
             'status' => INVALID,
             'user_first_name' => 'INVALID',
@@ -2415,7 +2425,6 @@ SQL;
 
         if ($now >= $expiration) {
             $expirationDate = date('Y-m-d H:i:s', $expiration);
-            $log->debug("RID Token expired for: $userId | expired: $expirationDate");
             return $results;
         }
 
@@ -2434,7 +2443,6 @@ SQL;
             // If there was an exception then it was because we couldn't find a user by that username
             // so log the error and return the default information.
             $expirationDate = date('Y-m-d H:i:s', $expiration);
-            $log->debug("Error occurred while validating RID for User: $userId, Expiration: $expirationDate");
         }
 
         return $results;
@@ -2477,11 +2485,11 @@ SQL;
         // If we have ssoAttrs available and this user's person's organization is 'Unknown' ( -1 ).
         // Then go ahead and lookup the organization value from sso.
         if ($expectedOrganization == -1 && count($this->ssoAttrs) > 0) {
-            $expectedOrganization = Organizations::getIdByName($this->ssoAttrs['organization'][0]);
+            $expectedOrganization = Organizations::getIdByName($this->getSSOAttribute('organization'));
         }
 
         // If these don't match then the user's organization has been updated. Steps need to be taken.
-        if ($actualOrganization !== $expectedOrganization) {
+        if ($actualOrganization != $expectedOrganization) {
             $originalAcls = $this->getAcls(true);
 
             // if the user is currently assigned an acl that interacts with XDMoD's centers ( i.e.
@@ -2548,7 +2556,6 @@ SQL;
                     )
                 );
             }
-
             // Update / save the user with their new organization
             $this->setOrganizationId($expectedOrganization);
             $this->saveUser();
@@ -2565,16 +2572,16 @@ SQL;
     {
         $currentPersonId = $this->getPersonID();
         $hasSSO = count($this->ssoAttrs) > 0;
-
         if ($currentPersonId == -1 && $hasSSO) {
-            $username = $this->ssoAttrs['username'][0];
-            $systemUserName = isset($this->ssoAttrs['system_username']) ? $this->ssoAttrs['system_username'][0] : $username;
+            $username = $this->getSSOAttribute('username');
+            $systemUserName = $this->getSSOAttribute('system_username', $username);
             $expectedPersonId = \DataWarehouse::getPersonIdFromPII($systemUserName, null);
 
             // As long as the identified person is not Unknown and it is different than our current Person Id
             // go ahead and update this user with the new person & that person's organization.
             if ($expectedPersonId != -1 && $currentPersonId != $expectedPersonId) {
                 $organizationId = Organizations::getOrganizationIdForPerson($expectedPersonId);
+
                 $this->setPersonID($expectedPersonId);
                 $this->setOrganizationID($organizationId);
 
@@ -2740,5 +2747,49 @@ SQL;
             $this->_user_type,
             $this->_token
         ]  = $data;
+    }
+
+    private function hash($password)
+    {
+        if (!isset($this->hasher)) {
+            return password_hash($password, PASSWORD_DEFAULT);
+        } else {
+            return $this->hasher->hash($password);
+        }
+    }
+
+    /**
+     * Get an SSO Attribute for this user. Handles when the sso attributes are in the form:
+     * ```
+     * [
+     *   "attributeName" => "attributeValue"
+     * ]
+     * ```
+     *
+     * and when they're in the form:
+     * ```
+     * [
+     *   "attributeName" => [
+     *     "attributeValue"
+     *   ]
+     * ]
+     * ```
+     * The latter is the original format of SSO attributes, while the former is the current.
+     *
+     * @param string $attributeName the name of the SSO attribute to return.
+     * @return mixed|null null is returned if the $attributeName does not exist within this users sso attributes, else
+     *                    the value of the sso attribute identified by $attributeName is returned.
+     */
+    private function getSSOAttribute($attributeName, $default = null)
+    {
+        $result = null;
+        if (isset($this->ssoAttrs[$attributeName])) {
+            if (!is_array($this->ssoAttrs[$attributeName])) {
+                $result = $this->ssoAttrs[$attributeName];
+            } else {
+                $result = $this->ssoAttrs[$attributeName][0];
+            }
+        }
+        return isset($result) ? $result : $default;
     }
 }//XDUser

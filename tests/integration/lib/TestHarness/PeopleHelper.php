@@ -76,7 +76,7 @@ SQL;
             ':short_name' => $shortName
         );
 
-        $this->dbh->execute($query, $params);
+        return $this->dbh->execute($query, $params);
     }
 
     /**

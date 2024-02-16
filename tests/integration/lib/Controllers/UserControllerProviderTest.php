@@ -5,6 +5,7 @@ namespace IntegrationTests\Controllers;
 use Access\Security\Helpers\Tokens;
 use CCR\Json;
 use Exception;
+use IntegrationTests\TokenAuthTest;
 use stdClass;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
@@ -12,17 +13,11 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
 class UserControllerProviderTest extends BaseUserAdminTest
 {
     /**
-     * @var TokenHelper
-     */
-    private $tokenHelper;
-
-    /**
      * @throws Exception
      */
     protected function setUp(): void
     {
         parent::setUp();
-        $this->tokenHelper = new TokenHelper(new XdmodTestHelper());
     }
 
     /**
@@ -41,7 +36,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
     public function provideGetCurrentUser()
     {
         $validInput = [
-            'path' => 'rest/users/current',
+            'path' => 'users/current',
             'method' => 'get',
             'params' => [],
             'data' => null
@@ -148,7 +143,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
     public function provideUpdateCurrentUser()
     {
         $validInput = [
-            'path' => 'rest/users/current',
+            'path' => 'users/current',
             'method' => 'patch',
             'params' => null,
             'data' => []
@@ -264,7 +259,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
         parent::requestAndValidateJson(
             $this->helper,
             [
-                'path' => 'rest/users/current/api/token',
+                'path' => 'users/current/api/token',
                 'method' => $method,
                 'params' => null,
                 'data' => null

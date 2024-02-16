@@ -6,6 +6,8 @@ namespace Access\Entity;
 use DateTime;
 use Hslavich\OneloginSamlBundle\Security\User\SamlUserInterface;
 use Models\DBObject;
+use Symfony\Component\PasswordHasher\Hasher\PasswordHasherAwareInterface;
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -42,12 +44,25 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, LegacyP
     protected $salt;
 
     /**
+     * @var PasswordHasherInterface
+     */
+    protected $hasher;
+
+    /**
      * @param string $username
      * @param array $roles
+     * @param string $userId
+     * @param string $token
      * @param string|null $password
      * @param string|null $salt
      */
-    public function __construct(string $username, array $roles, string $userId = '', string $token = '', ?string $password = '', ?string $salt = '')
+    public function __construct(
+        string  $username,
+        array   $roles,
+        string  $userId = '',
+        string  $token = '',
+        ?string $password = '',
+        ?string $salt = '')
     {
         $this->username = $username;
         $this->roles = $roles;
@@ -109,7 +124,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, LegacyP
     /**
      * @inheritDoc
      **/
-    public function getUserIdentifier(): string{
+    public function getUserIdentifier(): string
+    {
         return $this->username;
     }
 

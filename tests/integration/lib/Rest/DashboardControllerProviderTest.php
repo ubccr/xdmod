@@ -23,7 +23,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
     public function provideSetLayout()
     {
         $validInput = [
-            'path' => 'rest/dashboard/layout',
+            'path' => 'dashboard/layout',
             'method' => 'post',
             'params' => null,
             'data' => ['data' => 'foo']
@@ -167,7 +167,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
     public function provideGetStatisticsParamValidation()
     {
         $validInput = [
-            'path' => 'rest/dashboard/statistics',
+            'path' => 'dashboard/statistics',
             'method' => 'get',
             'params' => [
                 'start_date' => 'foo',
@@ -214,7 +214,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
     public function provideSetViewedUserTour()
     {
         $validInput = [
-            'path' => 'rest/dashboard/viewedUserTour',
+            'path' => 'dashboard/viewedUserTour',
             'method' => 'post',
             'params' => null,
             'data' => ['viewedTour' => '0']

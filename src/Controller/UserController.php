@@ -9,6 +9,7 @@ use Models\Services\Acls;
 use Models\Services\Organizations;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
@@ -28,10 +29,10 @@ class UserController extends BaseController
      * @var array
      */
     private static $userSettableProperties = [
-        'first_name',
-        'last_name',
-        'email_address',
-        'password',
+        'first_name' => 'string',
+        'last_name' => 'string',
+        'email_address' => 'string',
+        'password' => 'string',
     ];
 
     /**
@@ -328,14 +329,26 @@ class UserController extends BaseController
     private function extractUserSettableProperties(Request $request)
     {
         $requestProperties = array();
-        foreach (self::$userSettableProperties as $propertyName) {
+        $this->logger->debug('Getting User Settable Properties');
+        foreach (self::$userSettableProperties as $propertyName => $propertyType) {
             $propertyValue = $request->get($propertyName);
-
+            $this->logger->debug('Checking Property', [$propertyName, $propertyValue, $propertyType]);
             if ($propertyValue === null) {
                 continue;
             }
+
+            // Check to make sure that the property value type is what we expect.
+            if (get_debug_type($propertyValue) !== $propertyType) {
+                throw new BadRequestHttpException(
+                    sprintf(
+                        "Invalid value for $propertyName. Must be a(n) %s.",
+                        $propertyType
+                    )
+                );
+            }
             $requestProperties[$propertyName] = $propertyValue;
         }
+        $this->logger->debug('Returning user settable properties', [var_export($requestProperties, true)]);
         return $requestProperties;
     }
 
@@ -350,23 +363,23 @@ class UserController extends BaseController
      */
     private function updateUser(XDUser $user, array $updatedProperties)
     {
+        $this->logger->debug('Updating User', [$user->getUsername(), var_export($updatedProperties, true)]);
         // For each property that can be set, check if it is included in the
         // given set of properties. If so, invoke that property's setter on the
         // given user with the given property value.
-        $userType = $user->getUserType();
         foreach ($updatedProperties as $propertyName => $propertyValue) {
+            $this->logger->debug('Checking Update Property', [$propertyName, !array_key_exists($propertyName, self::$propertySettingOptions)]);
             if (!array_key_exists($propertyName, self::$propertySettingOptions)) {
                 continue;
             }
             $propertyOptions = self::$propertySettingOptions[$propertyName];
-            $this->logger->info("Calling: {$propertyOptions['setter']} with value $propertyValue");
+            $this->logger->debug(sprintf('Calling %s w/ %s', $propertyOptions['setter'], $propertyValue));
             $user->{$propertyOptions['setter']}($propertyValue);
         }
-        $this->logger->info('Saving User!');
+        $this->logger->debug('Saving User!');
         // Attempt to save the user's new details. This will throw an exception
         // if an error occurs.
         $user->saveUser();
-        $this->logger->info('User Saved!');
     }
 
     /**
@@ -464,8 +477,8 @@ SQL;
         $result = $db->execute(
             $query,
             array(
-                ':user_id'    => $user->getUserID(),
-                ':token'      => $hash,
+                ':user_id' => $user->getUserID(),
+                ':token' => $hash,
                 ':created_on' => $createdOn,
                 ':expires_on' => $expirationDate
             )
@@ -476,7 +489,7 @@ SQL;
         }
 
         return array(
-            'token'           => sprintf('%s.%s', $user->getUserID(), $password),
+            'token' => sprintf('%s.%s', $user->getUserID(), $password),
             'expiration_date' => $expirationDate,
         );
     }

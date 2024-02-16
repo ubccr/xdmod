@@ -43,13 +43,44 @@ then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true
     rm -rf /etc/xdmod
 
-    rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
+    rm -rf /var/lib/mysql
+    mkdir -p /var/lib/mysql
+    mkdir -p /var/log/mariadb
+    mkdir -p /var/run/mariadb
+    chown -R mysql:mysql /var/lib/mysql
+    chown -R mysql:mysql /var/log/mariadb
+    chown -R mysql:mysql /var/run/mariadb
+
     yum -y install ~/rpmbuild/RPMS/*/*.rpm
+    mysql_install_db --user mysql
+
+    if [ -f /etc/my.cnf.d/mariadb-server.cnf.rpmsave ]; then
+        mv /etc/my.cnf.d/mariadb-server.cnf.rpmsave /etc/my.cnf.d/mariadb-server.cnf
+    fi
+    if [ -f /etc/my.cnf.d/mariadb-server.cnf ]; then
+        >/etc/my.cnf.d/mariadb-server.cnf
+        echo "# this is read by the standalone daemon and embedded servers
+              [server]
+              sql_mode=
+              # this is only for the mysqld standalone daemon
+              # Settings user and group are ignored when systemd is used.
+              # If you need to run mysqld under a different user or group,
+              # customize your systemd unit file for mysqld/mariadb according to the
+              # instructions in http://fedoraproject.org/wiki/Systemd
+              [mysqld]
+              datadir=/var/lib/mysql
+              socket=/var/lib/mysql/mysql.sock
+              log-error=/var/log/mariadb/mariadb.log
+              pid-file=/run/mariadb/mariadb.pid" > /etc/my.cnf.d/mariadb-server.cnf
+    fi
+
     copy_template_httpd_conf
     ~/bin/services start
-    mysql -e "CREATE USER 'root'@'_gateway' IDENTIFIED BY '';
+    mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
     FLUSH PRIVILEGES;"
+
+    SECRET=$(date | sha256sum | cut -d' ' -f1 ); echo "APP_SECRET=$SECRET" >> /usr/share/xdmod/.env
 
     # TODO: Replace diff files with hard fixes
     # Modify integration sso tests to work with cloud realm

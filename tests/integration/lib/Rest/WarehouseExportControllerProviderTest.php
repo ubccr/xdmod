@@ -196,7 +196,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
             $role,
             $tokenType,
             [
-                'path' => 'rest/warehouse/export/realms',
+                'path' => 'warehouse/export/realms',
                 'method' => 'get',
                 'params' => null,
                 'data' => null,
@@ -222,14 +222,12 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                             'display',
                             'documentation'
                         ] as $string) {
-                            $this->assertInternalType(
-                                'string',
+                            $this->assertIsString(
                                 $field[$string],
                                 $assertMessage
                             );
                         }
-                        $this->assertInternalType(
-                            'bool',
+                        $this->assertIsBool(
                             $field['anonymize'],
                             $assertMessage
                         );
@@ -283,7 +281,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
     public function provideCreateRequestParamValidation()
     {
         $validInput = [
-            'path' => 'rest/warehouse/export/request',
+            'path' => 'warehouse/export/request',
             'method' => 'post',
             'params' => null,
             'data' => [

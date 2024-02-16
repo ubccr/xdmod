@@ -7,7 +7,7 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class MetricExplorerTest extends TokenAuthTest
 {
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->helper = new XdmodTestHelper();
     }
@@ -53,19 +53,16 @@ class MetricExplorerTest extends TokenAuthTest
                         $assertMessage
                     );
                     foreach ($realm[$property] as $item) {
-                        $testInstance->assertInternalType(
-                            'string',
+                        $testInstance->assertIsString(
                             $item['text'],
                             $assertMessage
                         );
-                        $testInstance->assertInternalType(
-                            'string',
+                        $testInstance->assertIsString(
                             $item['info'],
                             $assertMessage
                         );
                         if ('metrics' === $property) {
-                            $testInstance->assertInternalType(
-                                'bool',
+                            $testInstance->assertIsBool(
                                 $item['std_err'],
                                 $assertMessage
                             );
@@ -132,12 +129,13 @@ class MetricExplorerTest extends TokenAuthTest
 
         unset($params['font_size']);
 
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
+
         $output = json_decode($response[0]);
         $this->assertEquals($output->data[0]->title->style->fontSize, "19px");
 
         $params['data_series'] = '[object Object]';
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
         $this->assertEquals(400, $response[1]['http_code']);
     }
 
@@ -186,19 +184,19 @@ class MetricExplorerTest extends TokenAuthTest
         $this->helper->authenticate('cd');
 
         unset($params['start_date']);
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
         $this->assertFalse($response[0]['success']);
         $this->assertEquals('missing required start_date parameter', $response[0]['message']);
 
         $params['start_date'] = '2016-12-29';
         unset($params['end_date']);
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
         $this->assertFalse($response[0]['success']);
         $this->assertEquals('missing required end_date parameter', $response[0]['message']);
 
         $params['end_date'] = '2016-12-29';
         $params['data_series'] = '[object Object]';
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
         $this->assertFalse($response[0]['success']);
         $this->assertEquals('Invalid data_series specified', $response[0]['message']);
     }
@@ -268,14 +266,12 @@ class MetricExplorerTest extends TokenAuthTest
                     );
                     foreach ($body['data'] as $item) {
                         foreach (['id', 'name', 'short_name'] as $property) {
-                            $this->assertInternalType(
-                                'string',
+                            $this->assertIsString(
                                 $item[$property],
                                 $assertMessage
                             );
                         }
-                        $this->assertInternalType(
-                            'bool',
+                        $this->assertIsBool(
                             $item['checked'],
                             $assertMessage
                         );
@@ -447,10 +443,9 @@ class MetricExplorerTest extends TokenAuthTest
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
-
         $this->helper->authenticate('cd');
 
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
 
         $this->assertArrayHasKey('data', $response[0]);
         $this->assertCount($limit, $response[0]['data']);
@@ -473,7 +468,7 @@ class MetricExplorerTest extends TokenAuthTest
             'config' => $chartSettings
         );
         $this->helper->authenticate('cd');
-        $response = $this->helper->post('/metrics/explorer/queries', null, array('data' => json_encode($settings)));
+        $response = $this->helper->post('metrics/explorer/queries', null, array('data' => json_encode($settings)));
 
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
@@ -487,7 +482,7 @@ class MetricExplorerTest extends TokenAuthTest
 
         $recordid = $querydata['data']['recordid'];
 
-        $allcharts = $this->helper->get('/metrics/explorer/queries');
+        $allcharts = $this->helper->get('metrics/explorer/queries');
         $this->assertTrue($allcharts[0]['success']);
 
         $seenchart = false;
@@ -500,11 +495,11 @@ class MetricExplorerTest extends TokenAuthTest
         }
         $this->assertTrue($seenchart);
 
-        $justthischart = $this->helper->get('/metrics/explorer/queries/' . $recordid);
+        $justthischart = $this->helper->get('metrics/explorer/queries/' . $recordid);
         $this->assertTrue($justthischart[0]['success']);
         $this->assertEquals("Test &lt; &lt;img src=&quot;test.gif&quot; onerror=&quot;alert()&quot; /&gt;", $justthischart[0]['data']['name']);
 
-        $cleanup = $this->helper->delete('/metrics/explorer/queries/' . $recordid);
+        $cleanup = $this->helper->delete('metrics/explorer/queries/' . $recordid);
         $this->assertTrue($cleanup[0]['success']);
     }
 
@@ -571,7 +566,7 @@ EOF;
     public function provideCreateQueryParamValidation()
     {
         $validInput = [
-            'path' => '/metrics/explorer/queries',
+            'path' => 'metrics/explorer/queries',
             'method' => 'post',
             'params' => null,
             'data' => ['data' => 'foo']
@@ -595,7 +590,7 @@ EOF;
         return function ($message) use ($action) {
             // This function is passed to parent::validateErrorResponseBody().
             return function ($body, $assertMessage) use ($message, $action) {
-                return parent::assertEquals(
+                parent::assertEquals(
                     [
                         'success' => false,
                         'message' => $message,
@@ -626,13 +621,13 @@ EOF;
         ];
         $this->helper->authenticate('usr');
         $response = $this->helper->post(
-            '/metrics/explorer/queries',
+            'metrics/explorer/queries',
             null,
             ['data' => json_encode($settings)]
         );
         $this->helper->logout();
         $id = $response[0]['data']['recordid'];
-        $path = "/metrics/explorer/queries/$id";
+        $path = "metrics/explorer/queries/$id";
         $input['path'] .= $path;
         // Run the test.
         parent::authenticateRequestAndValidateJson(

@@ -778,7 +778,7 @@ EOF;
 
             $expectedCount = count($expectedValue);
             $actualCount = count($actualValue);
-            $this->assertEquals($expectedCount, $actualCount, "Number of actual values does not match the expected.\n" . print_r($data, true));
+            $this->assertEquals($expectedCount, $actualCount, "Number of actual values does not match the expected.\n" . var_export($data, true));
 
             for ($i = 0; $i < count($expectedValue); $i++) {
                 $expected = $expectedValue[$i];

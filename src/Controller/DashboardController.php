@@ -157,7 +157,6 @@ class DashboardController extends BaseController
      */
     public function setLayout(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = $this->authorize($request);
 
         $content = json_decode($this->getStringParam($request, 'data', true), true);
@@ -312,8 +311,6 @@ class DashboardController extends BaseController
      */
     public function setViewedUserTour(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $user = $this->authorize($request);
         $viewedTour = $this->getIntParam($request, 'viewedTour', true);
 

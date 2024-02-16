@@ -362,6 +362,8 @@ class RegressionTestHelper extends XdmodTestHelper
         }
 
         list($csvdata, $curldata) = self::post('controllers/user_interface.php', null, $input);
+        $origData = $csvdata;
+
         if (!empty(self::$timingOutputDir)) {
             $time_data = $fullTestName . "," . $curldata['total_time'] . "," . $curldata['starttransfer_time'] . "\n";
             $outputCSV = self::$timingOutputDir . "timings.csv";
@@ -518,7 +520,7 @@ class RegressionTestHelper extends XdmodTestHelper
     public static function getRawDataTestParams(array $realmParams)
     {
         $baseInput = [
-            'path' => 'rest/warehouse/raw-data',
+            'path' => 'warehouse/raw-data',
             'method' => 'get',
             'data' => null
         ];
@@ -571,13 +573,13 @@ class RegressionTestHelper extends XdmodTestHelper
      *                   it.
      * @return bool true if the test artifact file already exists and
      *              contains the response body from the HTTP request.
-     * @throws \PHPUnit_Framework_SkippedTestError if REG_TEST_USER_ROLE is
+     * @throws SkippedTestError if REG_TEST_USER_ROLE is
      *                                             not set or if
      *                                             REG_TEST_FORCE_GENERATION is
      *                                             set and the test artifact
      *                                             file was successfully
      *                                             created.
-     * @throws \PHPUnit_Framework_ExpectationFailedException
+     * @throws ExpectationFailedException
      *                                             if REG_TEST_FORCE_GENERATION
      *                                             is not set and the HTTP
      *                                             response body does not match
@@ -588,7 +590,7 @@ class RegressionTestHelper extends XdmodTestHelper
     {
         $role = self::getEnvUserrole();
         if ('public' === $role) {
-            throw new \PHPUnit_Framework_SkippedTestError(
+            throw new SkippedTestError(
                 'Raw data test cannot be performed with public user.'
             );
         }
@@ -640,7 +642,7 @@ class RegressionTestHelper extends XdmodTestHelper
                 json_decode($expected, true),
                 json_decode($data, true)
             );
-            throw new \PHPUnit_Framework_ExpectationFailedException(
+            throw new ExpectationFailedException(
                 sprintf(
                     (
                         "%d difference"

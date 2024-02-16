@@ -6,7 +6,7 @@ XDMoD.AccountRequests = Ext.extend(Ext.Panel, {
         var cachedMD5 = '';
 
         self.storeProvider = new DashboardStore({
-            url: '/controllers/controller.php',
+            url: '/internal_dashboard/controllers/controller.php',
             root: 'response',
             baseParams: {
                 operation: 'enum_account_requests'
@@ -63,7 +63,7 @@ XDMoD.AccountRequests = Ext.extend(Ext.Panel, {
         var staleCheck = function () {
             Ext.Ajax.request({
                 method: 'POST',
-                url: 'controllers/controller.php',
+                url: '/controllers/controller.php',
                 params: {
                     operation: 'enum_account_requests',
                     md5only: true

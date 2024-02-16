@@ -111,7 +111,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
         $this->logger->debug('Initiating Form Login Authentication', [$request]);
 
         $credentials = $this->getCredentials($request);
-        $this->logger->debug('Attempting to login user' . $credentials['username'], $credentials);
+        $this->logger->debug('Attempting to login user ' . $credentials['username'], $credentials);
 
         return new Passport(
             new UserBadge($credentials['username']),

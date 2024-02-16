@@ -34,7 +34,7 @@ class SummaryController extends BaseController
     }
 
     /**
-     * @Route("/controllers/summary.php")
+     * @Route("/internal_dashboard/controllers/summary.php")
      * @param Request $request
      * @return Response
      */
@@ -51,7 +51,7 @@ class SummaryController extends BaseController
     }
 
     /**
-     * @Route("/summary/configs", methods={"POST"}) 
+     * @Route("/summary/configs", methods={"POST"})
 
      * @throws Exception
      */
@@ -106,7 +106,7 @@ class SummaryController extends BaseController
     }
 
     /**
-     * @Route("/summary/portlets", methods={"POST"}) 
+     * @Route("/summary/portlets", methods={"POST"})
 
      * @throws Exception
      */
@@ -161,7 +161,7 @@ class SummaryController extends BaseController
     }
 
     /**
-     * @Route("/summary/charts", methods={"GET"}) 
+     * @Route("/summary/charts", methods={"GET"})
 
      * @param Request $request
      * @return Response

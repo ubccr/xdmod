@@ -157,8 +157,6 @@ class MetricExplorerController extends BaseController
      */
     public function createQuery(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $action = 'creatQuery';
         $payload = array(
             'success' => false,
@@ -168,44 +166,50 @@ class MetricExplorerController extends BaseController
         try {
             $data = $request->get('data', null);
             if ($data === null) {
-                throw new BadRequestHttpException('data is a required parameter.');
+                throw new BadRequestHttpException('missing required data parameter');
             }
-
-            $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
-            if (isset($user) && $user instanceof XDUser) {
-                $queries = new \UserStorage($user, self::QUERIES_STORE);
-                $data = json_decode($data, true);
-                $success = $queries->insert($data) != null;
-                $payload['success'] = $success;
-                if ($success) {
-                    $payload['success'] = true;
-                    $payload['data'] = $data;
-                    $statusCode = 200;
-                } else {
-                    $payload['message'] = 'Error creating chart. User is over the chart limit.';
-                    $statusCode = 500;
+            if ($this->getUser() !== null) {
+                $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+                if (isset($user) && $user instanceof XDUser) {
+                    $queries = new \UserStorage($user, self::QUERIES_STORE);
+                    if (!is_string($data)) {
+                        throw new BadRequestHttpException('Invalid value for data. Must be a(n) string.');
+                    }
+                    $data = is_string($data) ? json_decode($data, true) : $data;
+                    $success = $queries->insert($data) != null;
+                    $payload['success'] = $success;
+                    if ($success) {
+                        $payload['success'] = true;
+                        $payload['data'] = $data;
+                        $statusCode = 200;
+                    } else {
+                        $payload['message'] = 'Error creating chart. User is over the chart limit.';
+                        $statusCode = 500;
+                    }
                 }
             } else {
                 $payload['message'] = self::DEFAULT_ERROR_MESSAGE;
             }
         } catch (BadRequestException|HttpException|Exception $exception) {
             $payload['message'] = $exception->getMessage();
-            $statusCode = (get_class($exception) === 'Exception') ? 500 : $exception->getStatusCode();
+            if (get_class($exception) === 'Exception') {
+                $statusCode = 500;
+            } elseif (method_exists($exception, 'getStatusCode')) {
+                $statusCode = $exception->getStatusCode();
+            }
         }
 
         return $this->json($payload, $statusCode);
     }
 
     /**
-     * @Route("/metrics/explorer/queries/{queryId}", methods={"PUT"}, requirements={"queryId"="\w+"})
+     * @Route("/metrics/explorer/queries/{queryId}", methods={"PUT", "POST"}, requirements={"queryId"="\w+"})
      * @param Request $request
      * @param string $queryId
      * @return Response
      */
     public function updateQueryById(Request $request, string $queryId): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $action = 'updateQuery';
         $payload = array(
             'success' => false,
@@ -215,55 +219,68 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
-            if (isset($user) && $user instanceof XDUser) {
-                $queries = new \UserStorage($user, self::QUERIES_STORE);
-
-                $query = $queries->getById($queryId);
-                if (isset($query)) {
-
-                    $data = $request->get('data');
-                    if (isset($data)) {
-                        $jsonData = json_decode($data, true);
-                        $name = isset($jsonData['name']) ? $jsonData['name'] : null;
-                        $config = isset($jsonData['config']) ? $jsonData['config'] : null;
-                        $ts = isset($jsonData['ts']) ? $jsonData['ts'] : microtime(true);
-                    } else {
-                        $name = $request->get('name');
-                        $config = $request->get('config');
-                        $ts = $request->get('ts');
-                    }
-
-                    if (isset($name)) {
-                        $query['name'] = $name;
-                    }
-                    if (isset($config)) {
-                        $query['config'] = $config;
-                    }
-                    if (isset($ts)) {
-                        $query['ts'] = $ts;
-                    }
-
-                    $queries->upsert($queryId, $query);
-
-                    // required for the UI to do it's thing.
-                    $total = count($queries->get());
-
-                    // make sure everything is in place for returning to the
-                    // front end.
-                    $payload['total'] = $total;
-                    $payload['success'] = true;
-                    $statusCode = 200;
-                } else {
-                    $payload['message'] = 'There was no query found for the given id';
-                    $statusCode = 404;
-                }
-            } else {
+            if ($this->getUser() === null) {
                 $payload['message'] = self::DEFAULT_ERROR_MESSAGE;
+            } else {
+                $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+                if (isset($user) && $user instanceof XDUser) {
+                    $queries = new \UserStorage($user, self::QUERIES_STORE);
+
+                    $query = $queries->getById($queryId);
+                    if (isset($query)) {
+
+                        $data = $request->get('data');
+
+                        if (isset($data)) {
+                            if (!is_string($data)) {
+                                throw new BadRequestHttpException('Invalid value for data. Must be a(n) string.');
+                            }
+                            $jsonData = json_decode($data, true);
+                            $name = isset($jsonData['name']) ? $jsonData['name'] : null;
+                            $config = isset($jsonData['config']) ? $jsonData['config'] : null;
+                            $ts = isset($jsonData['ts']) ? $jsonData['ts'] : microtime(true);
+                        } else {
+                            $name = $this->getStringParam($request, 'name');
+                            $config = $this->getStringParam($request, 'config');
+                            $ts = $this->getDateTimeFromUnixParam($request, 'ts');
+                        }
+
+                        if (isset($name)) {
+                            $query['name'] = $name;
+                        }
+
+                        if (isset($config)) {
+                            $query['config'] = $config;
+                        }
+                        if (isset($ts)) {
+                            $query['ts'] = $ts;
+                        }
+
+                        $queries->upsert($queryId, $query);
+
+                        // required for the UI to do it's thing.
+                        $total = count($queries->get());
+
+                        // make sure everything is in place for returning to the
+                        // front end.
+                        $payload['total'] = $total;
+                        $payload['success'] = true;
+                        $statusCode = 200;
+                    } else {
+                        $payload['message'] = 'There was no query found for the given id';
+                        $statusCode = 404;
+                    }
+                } else {
+                    $payload['message'] = self::DEFAULT_ERROR_MESSAGE;
+                }
             }
         } catch (BadRequestException|HttpException|Exception $exception) {
             $payload['message'] = $exception->getMessage();
-            $statusCode = (get_class($exception) === 'Exception') ? 500 : $exception->getStatusCode();
+            if (get_class($exception) === 'Exception') {
+                $statusCode = 500;
+            } elseif (method_exists($exception, 'getStatusCode')) {
+                $statusCode = $exception->getStatusCode();
+            }
         }
 
         return $this->json($payload, $statusCode);
@@ -568,7 +585,8 @@ class MetricExplorerController extends BaseController
                                     [
                                         'text' => $statistic_object->getName(),
                                         'info' => $statistic_object->getHtmlDescription(),
-                                        'std_err' => in_array($semStatId, $permittedStatistics)
+                                        'std_err' => in_array($semStatId, $permittedStatistics),
+                                        'hidden_groupbys' => $statistic_object->getHiddenGroupBys()
                                     ];
                                 $seenStats[] = $realm_group_by_statistic;
                             }
@@ -730,7 +748,7 @@ class MetricExplorerController extends BaseController
             $title = $this->getStringParam($request, 'title');
 
             $requestedGlobalFilters = $this->getStringParam($request, 'global_filters');
-            $this->logger->warning('Requested Global Filters', [var_export($requestedGlobalFilters, true)]);
+
             $globalFilters = (object)['data' => [], 'total' => 0];
             if (!empty($requestedGlobalFilters)) {
                 $globalFiltersDecoded = urldecode($requestedGlobalFilters);
@@ -745,7 +763,6 @@ class MetricExplorerController extends BaseController
                     }
                 }
             }
-            $this->logger->warning('Global FIlters', [var_export($globalFilters, true)]);
 
             $dataset_classname = '\DataWarehouse\Data\SimpleDataset';
 
@@ -804,9 +821,7 @@ class MetricExplorerController extends BaseController
                 );
 
                 $groupedRoleParameters = [];
-                $this->logger->warning('Iterating over globalFilters data...');
                 foreach ($globalFilters->data as $global_filter) {
-                    $this->logger->warning('global filter', [var_export($global_filter, true)]);
                     if ($global_filter->checked == 1) {
                         if (
                             !isset(
@@ -834,7 +849,6 @@ class MetricExplorerController extends BaseController
 
                 $limit = null;
                 $limitParam = $this->getStringParam($request, 'limit');
-                $this->logger->warning('Limit Param', [$limitParam]);
                 if (!empty($limitParam)) {
                     try {
                         $limit = $this->getIntParam($request, 'limit');
@@ -846,7 +860,6 @@ class MetricExplorerController extends BaseController
                     }
                 }
 
-                $this->logger->warning('Limit', [$limit]);
                 $offset = 0;
                 $offsetParam = $this->getStringParam($request, 'start');
                 if (!empty($offsetParam)) {
@@ -857,13 +870,8 @@ class MetricExplorerController extends BaseController
                     }
                 }
                 $offset = max($offset, 0);
-                $this->logger->warning('Offset', [$offset]);
                 $totalCount = $dataset->getTotalPossibleCount();
 
-                // This is so that the behavior of this endpoint matches get_rawdata.php
-                if ($offsetParam === null && !empty($limit) && $offset === 0) {
-                    $offset = null;
-                }
                 $ret = array();
 
                 // As a small optimization only compute the total count the first time (ie when the offset is 0)
@@ -885,15 +893,12 @@ class MetricExplorerController extends BaseController
                     $privdataset = new $dataset_classname($privquery);
 
                     $ret['totalAvailable'] = $privdataset->getTotalPossibleCount();
-                    $this->logger->warning(sprintf('SQL: %s', $query));
-                    $this->logger->warning(sprintf("\nData Description: %s\nRole Paramters: %s\n",
-                        var_export($data_description, true),
-                        var_export($groupedRoleParameters, true)
-                    ));
-                    $this->logger->warning(sprintf('Total Available (Priv Query) [%s]', $ret['totalAvailable']));
                 }
-
-                $ret['data'] = $dataset->getResults($limit, $offset);
+                // This is so that the behavior of this endpoint matches get_rawdata.php
+                if ($offsetParam === null && !empty($limit)) {
+                    $offset = null;
+                }
+                $ret['data'] = $dataset->getResults($limit, $offset,false, false, null, null, $this->logger);
                 $ret['totalCount'] = $totalCount;
 
                 return $this->json($ret);
@@ -918,17 +923,13 @@ class MetricExplorerController extends BaseController
         $requestedDataSeries = null;
         try {
             $dataSeriesParam = $this->getStringParam($request, 'data_series', false, '[]');
-            $this->logger->warning('Data Series Param', [var_export($dataSeriesParam, true)]);
             $requestedDataSeries = json_decode(urldecode($dataSeriesParam), true);
         } catch (Exception $e) {
             // NOOP
         }
-        $this->logger->warning('Requested Data Series', [json_encode($requestedDataSeries)]);
         if (is_array($requestedDataSeries) && isset($requestedDataSeries['data']) && is_array($requestedDataSeries['data'])) {
-            $this->logger->warning('Getting Data Series From Array');
             return $this->getDataSeriesFromArray($requestedDataSeries);
         } else {
-            $this->logger->warning('Getting Data series from JSON string.');
             return $this->getDataSeriesFromJsonString($this->getStringParam($request, 'data_series'));
         }
     }
@@ -978,7 +979,6 @@ class MetricExplorerController extends BaseController
     private function getDataSeriesFromJsonString(string $dataSeries): array
     {
         $jsonDataSeries = json_decode(urldecode($dataSeries));
-        $this->logger->warning('Json Data Series', [json_encode($jsonDataSeries)]);
         if (null === $jsonDataSeries) {
             throw new BadRequestHttpException('Invalid data_series specified');
         }

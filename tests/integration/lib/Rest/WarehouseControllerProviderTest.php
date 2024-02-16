@@ -31,7 +31,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideGetSearchHistory()
     {
         $validInput = [
-            'path' => 'rest/warehouse/search/history',
+            'path' => 'warehouse/search/history',
             'method' => 'get',
             'params' => [],
             'data' => null
@@ -55,7 +55,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                     'title' => 'foo'
                 ]
             ),
-            parent::validateNotFoundResponse('')
+            parent::validateNotFoundResponse('Unable to find a history entry with the provided title.')
         ];
         $leafTest = [
             'process_job_node_time_series_request_leaf',
@@ -107,7 +107,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideCreateSearchHistory()
     {
         $validInput = [
-            'path' => 'rest/warehouse/search/history',
+            'path' => 'warehouse/search/history',
             'method' => 'post',
             'params' => null,
             'data' => [
@@ -170,7 +170,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideGetHistoryById()
     {
         $validInput = [
-            'path' => 'rest/warehouse/search/history/0',
+            'path' => 'warehouse/search/history/0',
             'method' => 'get',
             'params' => ['realm' => 'Jobs'],
             'data' => null
@@ -201,7 +201,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideUpdateHistory()
     {
         $validInput = [
-            'path' => 'rest/warehouse/search/history/0',
+            'path' => 'warehouse/search/history/0',
             'method' => 'post',
             'params' => null,
             'data' => [
@@ -240,7 +240,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideDeleteHistory()
     {
         $validInput = [
-            'path' => 'rest/warehouse/search/history/0',
+            'path' => 'warehouse/search/history/0',
             'method' => 'delete',
             'params' => ['realm' => 'Jobs'],
             'data' => null
@@ -271,7 +271,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideDeleteAllHistory()
     {
         $validInput = [
-            'path' => 'rest/warehouse/search/history',
+            'path' => 'warehouse/search/history',
             'method' => 'delete',
             'params' => ['realm' => 'Jobs'],
             'data' => null
@@ -302,7 +302,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideSearchJobs()
     {
         $validInput = [
-            'path' => 'rest/warehouse/search/jobs',
+            'path' => 'warehouse/search/jobs',
             'method' => 'get',
             'params' => [
                 'realm' => 'Jobs',
@@ -399,7 +399,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideSearchJobsByPeers()
     {
         $validInput = [
-            'path' => 'rest/warehouse/search/jobs/peers',
+            'path' => 'warehouse/search/jobs/peers',
             'method' => 'get',
             'params' => [
                 'start' => '0',
@@ -449,7 +449,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideSearchJobsByTimeseries()
     {
         $validInput = [
-            'path' => 'rest/warehouse/search/jobs/timeseries',
+            'path' => 'warehouse/search/jobs/timeseries',
             'method' => 'get',
             'params' => ['tsid' => 'foo'],
             'data' => null
@@ -571,7 +571,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function aggregateDataMalformedRequestProvider()
     {
         $validInput = [
-            'path' => 'rest/warehouse/aggregatedata',
+            'path' => 'warehouse/aggregatedata',
             'method' => 'get',
             'params' => $this->getAggDataParameterGenerator(),
             'data' => null
@@ -727,7 +727,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideGetDimensions()
     {
         $validInput = [
-            'path' => 'rest/warehouse/dimensions',
+            'path' => 'warehouse/dimensions',
             'method' => 'get',
             'params' => [],
             'data' => null
@@ -758,7 +758,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideGetDimensionValues()
     {
         $validInput = [
-            'path' => 'rest/warehouse/dimensions/resource',
+            'path' => 'warehouse/dimensions/resource',
             'method' => 'get',
             'params' => [],
             'data' => null
@@ -793,7 +793,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     public function provideGetRawData()
     {
         $validInput = [
-            'path' => 'rest/warehouse/raw-data',
+            'path' => 'warehouse/raw-data',
             'method' => 'get',
             'params' => [
                 'start_date' => '2017-01-01',
@@ -878,7 +878,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             $role,
             $tokenType,
             [
-                'path' => 'rest/warehouse/raw-data/limit',
+                'path' => 'warehouse/raw-data/limit',
                 'method' => 'get',
                 'params' => null,
                 'data' => null,

@@ -45,7 +45,7 @@ class ReportBuilderTest extends BaseTest
     /**
      * @var bool
      */
-    protected $verbose;
+    protected $verbose = false;
 
     private static $DEFAULT_EXPECTED = array(
         'content_type' => 'application/json',
@@ -55,9 +55,6 @@ class ReportBuilderTest extends BaseTest
     protected function setUp(): void
     {
         $this->verbose = getenv('TEST_VERBOSE');
-        if (!isset($this->verbose)) {
-            $this->verbose = false;
-        }
         $this->helper = new XdmodTestHelper(__DIR__ . '/../../../');
     }
 
@@ -604,8 +601,6 @@ class ReportBuilderTest extends BaseTest
     private function createReport(array $data)
     {
         $this->log("Creating Report");
-        $this->log(sprintf('Params: %s', json_encode($data)));
-
         $response = $this->helper->post('controllers/report_builder.php', null, $data);
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");

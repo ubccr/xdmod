@@ -32,7 +32,6 @@ class AdminController extends BaseController
      */
     public function resetUserTourViewed(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $this->authorize($request, ['mgr']);
 
         $viewedTour = $this->getIntParam($request, 'viewedTour', true);
@@ -41,7 +40,7 @@ class AdminController extends BaseController
         );
 
         if (!isset($selectedUser)) {
-            throw new BadRequestHttpException('User not found.');
+            throw new BadRequestHttpException('User not found');
         }
 
         if (!in_array($viewedTour, [0,1])) {
@@ -73,7 +72,7 @@ class AdminController extends BaseController
             [
                 'success' => true,
                 'total' => 1,
-                'message' => 'This user will now be prompted to view the New User Tour the next time they visit XDMoD'
+                'message' => 'This user will be now be prompted to view the New User Tour the next time they visit XDMoD'
             ]
         );
     }

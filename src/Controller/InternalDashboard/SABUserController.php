@@ -43,8 +43,8 @@ class SABUserController extends BaseController
      */
     private function enumTgUsers(Request $request): Response
     {
-        $start = $this->getStringParam($request, 'start', true, null, RESTRICTION_NUMERIC_POS);
-        $limit = $this->getStringParam($request, 'limit', true, null, RESTRICTION_NUMERIC_POS);
+        $start = $this->getIntParam($request, 'start', true);
+        $limit = $this->getIntParam($request, 'limit');
         $searchMode = $this->getStringParam($request, 'search_mode', true, null, RESTRICTION_SEARCH_MODE);
         $piOnly = $this->getStringParam($request, 'pi_only', true, null, RESTRICTION_YES_NO);
         $usePiFilter = $piOnly === 'y';

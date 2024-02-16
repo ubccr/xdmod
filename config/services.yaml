@@ -62,21 +62,12 @@ services:
             $options:
                 username_parameter: 'username'
                 password_parameter: 'password'
-    Access\Security\Authenticators\TokenAuthenticator:
-        arguments:
-            $options:
-                token_parameter: 'xdmod_token'
-    Access\Security\Authenticators\SessionAuthenticator:
-        arguments:
-            $options:
-                xdmod_session: 'xdUser'
-                dashboard_session: 'xdDashboardUser'
     Access\EventListeners\LogoutListener:
         tags:
-            - name: 'kernel.event_listener'
-              event: 'Symfony\Component\Security\Http\Event\LogoutEvent'
-              dispatcher: security.event_dispatcher.main
-              method: onLogout
+            -   name: 'kernel.event_listener'
+                event: 'Symfony\Component\Security\Http\Event\LogoutEvent'
+                dispatcher: security.event_dispatcher.main
+                method: onLogout
     Access\Errors\ErrorController:
         tags: [ 'controller.service_arguments' ]
         arguments:

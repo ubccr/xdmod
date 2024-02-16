@@ -149,14 +149,15 @@
         CCR.xdmod.publicUser = {{ is_public_user ? 'true' : 'false' }};
         CCR.xdmod.tech_support_recipient = CCR.xdmod.support_email = '{{ tech_support_recipient }}';
         CCR.xdmod.version = '{{ xdmod_portal_version }}';
-        CCR.xdmod.short_version = '{{ xdmod_portal_version_short }}';
+        CCR.xdmod.short_version = "{{ xdmod_portal_version_short }}";
         CCR.xdmod.ui.username = '{{ user ? user.getUsername : '__public__' }}';
 
         {% if user is not null %}
-        CCR.xdmod.ui.fullName = '{{ user.getFormalName }}';
-        CCR.xdmod.ui.usertype = '{{ user.getUserType }}';
+        CCR.xdmod.ui.fullName = "{{ user.getFormalName }}";
+        CCR.xdmod.ui.usertype = "{{ user.getUserType }}";
         CCR.xdmod.ui.userIsSSO = {{ user.isSSOUser ? 'true' : 'false'}};
-        CCR.xdmod.ui.mappedPID = '{{ user.getPersonID }}';
+        CCR.xdmod.ui.mappedPID = "{{ user.getPersonID }}";
+        CCR.xdmod.ui.mappedPName = "{{ person_name }}";
         CCR.xdmod.ui.isManager = {{ user.isManager ? 'true' : 'false'}};
         CCR.xdmod.ui.isDeveloper = {{ user.isDeveloper ? 'true' : 'false'}};
         CCR.xdmod.ui.isCenterDirector = {{ isCenterDirector ? 'true' : 'false'}};
@@ -166,13 +167,13 @@
 
         CCR.xdmod.ui.rawDataAllowedRealms = {{ raw_data_realms | raw }};
         CCR.xdmod.ui.disabledMenus = {{ disabled_menus | raw}};
-        CCR.xdmod.org_name = '{{ ORGANIZATION_NAME }}';
-        CCR.xdmod.org_abbrev = '{{ ORGANIZATION_NAME_ABBREV }}';
+        CCR.xdmod.org_name = "{{ ORGANIZATION_NAME }}";
+        CCR.xdmod.org_abbrev = "{{ ORGANIZATION_NAME_ABBREV }}";
         CCR.xdmod.logged_in = !CCR.xdmod.publicUser;
-        CCR.xdmod.captcha_sitekey = '{{ captcha_site_key }}';
+        CCR.xdmod.captcha_sitekey = "{{ captcha_site_key }}";
         CCR.xdmod.features = {{ xdmod_features | raw}};
-        CCR.xdmod.timezone = '{{ timezone }}';
-        CCR.xdmod.org_name = '{{ org_name }}';
+        CCR.xdmod.timezone = "{{ timezone }}";
+        CCR.xdmod.org_name = "{{ org_name }}";
 
         {% if is_sso_configured %}
         CCR.xdmod.isSSOConfigured = {{ is_sso_configured }};

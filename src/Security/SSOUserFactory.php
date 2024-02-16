@@ -60,17 +60,21 @@ EML;
             $this->logger->debug(var_export($ssoSettings, true));
             throw new \Exception('Required SSO settings not present, unable to continue.');
         }
+
         $ssoParameters = $ssoSettings['parameters'];
-        $attributes = $this->extractAttributes($ssoParameters, $attributes);
+        $this->logger->debug('Creating User With Parameters', [$ssoParameters]);
+
+        $attributes = self::extractAttributes($ssoParameters, $attributes);
+        $this->logger->debug('With Attributes ', [$attributes]);
 
         $systemUserName = $attributes['system_username'];
         $organization = $attributes['organization'];
         $personId = \DataWarehouse::getPersonIdFromPII($systemUserName, $organization);
         $organizationId = $this->getOrganizationId($personId, $organization);
-
+        $this->logger->debug('Creating User with Organization Id: ', [$organizationId]);
         try {
             $newUser = new \XDUser(
-                $attributes['username'],
+                $username,
                 null,
                 $attributes['email_address'],
                 $attributes['first_name'],
@@ -80,7 +84,9 @@ EML;
                 ROLE_ID_USER,
                 $organizationId,
                 $personId,
-                $attributes
+                $attributes,
+                false,
+                null
             );
         } catch (\Exception $e) {
             $this->logger->error('User creation failed: ' . $e->getMessage());
@@ -91,6 +97,7 @@ EML;
 
         try {
             $newUser->saveUser();
+            $this->logger->debug('Created User w/ Organization Id', [$newUser->getOrganizationID()]);
         } catch (\Exception $e) {
             $this->logger->error('User failed to save: ' . $e->getMessage());
             throw $e;
@@ -109,7 +116,7 @@ EML;
      * @param int $index
      * @return ?string
      */
-    private function get($keys, array $attributes, $default = null, int $index = 0): ?string
+    private static function get($keys, array $attributes, $default = null, int $index = 0): ?string
     {
         if (is_string($keys) && array_key_exists($keys, $attributes)) {
             return $attributes[$keys][$index];
@@ -126,10 +133,14 @@ EML;
 
     private function getOrganizationId($personId, $organization): int
     {
-        if (!empty($personId)) {
-            return Organizations::getOrganizationIdForPerson($personId);
+        if (!empty($personId) && $personId > 0) {
+            $organizationId = Organizations::getOrganizationIdForPerson($personId);
+            $this->logger->debug('Getting Organization Id For Person', [$personId, $organizationId]);
+            return $organizationId;
         } elseif (!empty($organization)) {
-            return Organizations::getIdByName($organization);
+            $organizationId = Organizations::getIdByName($organization);
+            $this->logger->debug('Getting Organization Id For Organization Name', [$organization, $organizationId]);
+            return $organizationId;
         }
         return -1;
     }
@@ -193,7 +204,7 @@ EML;
      * @return array
      * @throws \Exception
      */
-    public function extractAttributes($ssoParameters, array $attributes): array
+    public static function extractAttributes($ssoParameters, array $attributes): array
     {
         $results = [];
         foreach ($ssoParameters as $parameter => $parameterData) {
@@ -208,7 +219,7 @@ EML;
                 }
                 throw new \Exception(sprintf('Unable to find referenced value %s for use as a default value', $key));
             }
-            $results[$parameter] = $this->get($attribute, $attributes, $default);
+            $results[$parameter] = self::get($attribute, $attributes, $default);
         }
         return $results;
     }

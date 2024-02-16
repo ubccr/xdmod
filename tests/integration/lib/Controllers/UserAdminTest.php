@@ -19,7 +19,7 @@ class UserAdminTest extends BaseUserAdminTest
      */
     public function testCreateUserFails(array $params, array $expected)
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $response = $this->helper->post('controllers/user_admin.php', null, $params);
 
@@ -160,12 +160,13 @@ class UserAdminTest extends BaseUserAdminTest
     public function testCreateUsersSuccess(array $user)
     {
         $userId = $this->createUser($user);
+        $expectedSuccess = isset($user['expected_success']) ? $user['expected_success'] : true;
 
         // if we received a userId back then let's go ahead and update the
         // users password so that it can be used to login in future tests.
         if ($userId !== null) {
             $username = array_search($userId, self::$newUsers);
-            $this->updateCurrentUser($userId, $username);
+            $this->updateCurrentUser($username, $username);
         }
     }
 
@@ -244,7 +245,6 @@ class UserAdminTest extends BaseUserAdminTest
                 }
             }
         }
-
         $this->helper->authenticateDirect($username, $username);
 
         $response = $this->helper->get('warehouse/quick_filters');
@@ -758,7 +758,7 @@ class UserAdminTest extends BaseUserAdminTest
         );
 
         $helper = new XdmodTestHelper();
-        $helper->authenticateDashboard('mgr');
+        $helper->authenticate('mgr');
 
         foreach($data as &$datum) {
             $datum[0]['helper'] = $helper;

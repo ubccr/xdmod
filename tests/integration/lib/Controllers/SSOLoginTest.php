@@ -98,6 +98,15 @@ class SSOLoginTest extends BaseUserAdminTest
      */
     const SET_ORGANIZATION = 'set_organization';
 
+
+    private $verbose = false;
+
+    public function __construct($name = null, array $data = [], $dataName = '')
+    {
+        parent::__construct($name, $data, $dataName);
+        $this->verbose = getenv('TEST_VERBOSE');
+    }
+
     /**
      * used to test that SSO logins work correctly and the correct user information
      * is reported
@@ -110,7 +119,7 @@ class SSOLoginTest extends BaseUserAdminTest
         $peopleHelper = new PeopleHelper();
 
         $includeDefault = \xd_utilities\array_get($testOptions, self::INCLUDE_DEFAULT_SSO, true);
-        $removeUser  = \xd_utilities\array_get($testOptions, self::REMOVE_USER, false);
+        $removeUser = \xd_utilities\array_get($testOptions, self::REMOVE_USER, false);
         $sticky = \xd_utilities\array_get($testOptions, self::STICKY, false);
         $expectedOrg = \xd_utilities\array_get($testOptions, self::EXPECTED_ORG, null);
         $setAcls = \xd_utilities\array_get($testOptions, self::SET_ACLS, null);
@@ -127,8 +136,10 @@ class SSOLoginTest extends BaseUserAdminTest
 
         // If we need to create a person then do it now. Person needs to be created before a system_account
         // so that it can be associated with it.
-        if ($createPerson) {
-            $peopleHelper->createPerson(
+        if (isset($createPerson)) {
+            $this->log(sprintf('Creating Person: %s', var_export($createPerson, true)));
+
+            $rowsInserted = $peopleHelper->createPerson(
                 $createPerson['organization_id'],
                 $createPerson['nsfstatuscode_id'],
                 $createPerson['first_name'],
@@ -136,19 +147,23 @@ class SSOLoginTest extends BaseUserAdminTest
                 $createPerson['long_name'],
                 $createPerson['short_name']
             );
+            $this->log(sprintf('Person Rows Inserted: %s', $rowsInserted));
         }
 
         // If we need to create a system account then go ahead and do it now.
-        if ($createSystemAccount) {
-            $this->createSystemAccount(
+        if (isset($createSystemAccount)) {
+            $this->log(sprintf('Creating System Account: %s', var_export($createSystemAccount, true)));
+            $rowsInserted = $this->createSystemAccount(
                 $createSystemAccount['person_long_name'],
                 $createSystemAccount['resource_id'],
                 $createSystemAccount['username']
             );
+            $this->log(sprintf('System Account Rows Inserted: %s', $rowsInserted));
         }
 
         // Take care of setting the sticky bit for a user. NOTE: Can only be set for users that exist.
         if ($sticky) {
+            $this->log('Updating User to Sticky');
             $userId = $this->retrieveUserId($username, SSO_USER_TYPE);
             $properties = $this->retrieveUserProperties(
                 $userId,
@@ -170,19 +185,27 @@ class SSOLoginTest extends BaseUserAdminTest
             );
         }
 
+        $this->log('Authenticating w/ SSO');
+
         // Perform the SSO login
         $helper->authenticateSSO($ssoSettings, $includeDefault);
-
-        $response = $helper->get('index.php');
+        $db = DB::factory('database');
+        $results = $db->query('SELECT * FROM moddb.Users WHERE username = :username', [':username' => 'testy']);
+        $this->log('Authenticated, now requesting the homepage');
+        $response = $helper->get('');
         $this->assertEquals(200, $response[1]['http_code']);
 
         $matches = array();
-        preg_match_all('/^(CCR\.xdmod.[a-zA-Z_\.]*) = ([^=;]*);?$/m', $response[0], $matches);
+        preg_match_all('/^\s+?(CCR\.xdmod.[a-zA-Z_\.]*) = ([^=;]*);?$/m', $response[0], $matches);
         $jsvariables = array_combine($matches[1], $matches[2]);
 
         // Ensure that everything is copacetic
         foreach ($expected as $varname => $varvalue) {
-            $this->assertEquals($varvalue, $jsvariables[$varname]);
+            $this->assertEquals(
+                $varvalue,
+                $jsvariables[$varname],
+                sprintf("Unexpected value for $varname, expected $varvalue received: %s", $jsvariables[$varname])
+            );
         }
 
         // Log the SSO User out
@@ -190,6 +213,7 @@ class SSOLoginTest extends BaseUserAdminTest
 
         // If specified, update the users set of acls
         if ($setAcls) {
+            $this->log('Setting Acls');
             $userId = $this->retrieveUserId($username, SSO_USER_TYPE);
             $properties = $this->retrieveUserProperties(
                 $userId,
@@ -211,6 +235,7 @@ class SSOLoginTest extends BaseUserAdminTest
 
         // If specified, update this users organization
         if ($setOrganization) {
+            $this->log('Setting Organization');
             $userId = $this->retrieveUserId($username, SSO_USER_TYPE);
             $properties = $this->retrieveUserProperties(
                 $userId,
@@ -234,6 +259,7 @@ class SSOLoginTest extends BaseUserAdminTest
 
         // If specified, ensure that this user's organization is as expected.
         if ($expectedOrg) {
+            $this->log('Expecting a specific Organization Id');
             $userId = $this->retrieveUserId($username, SSO_USER_TYPE);
             $actualOrganization = $this->retrieveUserProperties(
                 $userId,
@@ -241,11 +267,12 @@ class SSOLoginTest extends BaseUserAdminTest
                     'institution'
                 )
             );
-            $this->assertEquals($expectedOrg, $actualOrganization, "Expected $expectedOrg == $actualOrganization.");
+            $this->assertEquals($expectedOrg, $actualOrganization, "Expected Org Id: $expectedOrg, Received: $actualOrganization.");
         }
 
         // If specified, ensure that this users acls are as expected.
         if ($expectedAcls) {
+            $this->log('Expected Acls');
             $userId = $this->retrieveUserId($username, SSO_USER_TYPE);
             $actualAcls = $this->retrieveUserProperties(
                 $userId,
@@ -257,15 +284,19 @@ class SSOLoginTest extends BaseUserAdminTest
         }
 
         if ($removeSystemAccount) {
+            $this->log('Removing System Account');
             $this->removeSystemAccount($removeSystemAccount);
         }
 
         if ($removePerson) {
+            $this->log('Removing Person');
             $peopleHelper->removePerson($removePerson);
         }
 
         if ($removeUser) {
+
             $userId = $this->retrieveUserId($username, SSO_USER_TYPE);
+            $this->log("Removing User $userId");
             $this->removeUser($userId, $username);
         }
     }
@@ -273,6 +304,7 @@ class SSOLoginTest extends BaseUserAdminTest
     public function loginsProvider()
     {
         return array(
+
             // 0 NU1: New User Test 1
             array(
                 array(
@@ -1051,8 +1083,8 @@ class SSOLoginTest extends BaseUserAdminTest
     public function createSystemAccount($personLongName, $resourceId, $username)
     {
         $query = <<<SQL
-INSERT INTO modw.systemaccount(person_id, resource_id, username, ts) 
-SELECT 
+INSERT INTO modw.systemaccount(person_id, resource_id, username, ts)
+SELECT
     p.id ,
     :resource_id as resource_id,
     :username as username,
@@ -1061,12 +1093,12 @@ FROM modw.person p WHERE p.long_name = :person_long_name
 SQL;
         $params = array(
             ':person_long_name' => $personLongName,
-            ':resource_id'=> $resourceId,
+            ':resource_id' => $resourceId,
             ':username' => $username
         );
 
         $db = DB::factory('database');
-        $db->execute($query, $params);
+        return $db->execute($query, $params);
     }
 
     public function removeSystemAccount($username)
@@ -1077,5 +1109,12 @@ SQL;
         );
         $db = DB::factory('database');
         $db->execute($query, $params);
+    }
+
+    private function log($message)
+    {
+        if ($this->verbose) {
+            echo "\n$message";
+        }
     }
 }

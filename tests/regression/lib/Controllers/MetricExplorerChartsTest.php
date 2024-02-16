@@ -3,7 +3,7 @@
 namespace RegressionTests\Controllers;
 
 use PHPUnit\Framework\TestCase;
-use TestHarness\Utilities;
+use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class MetricExplorerChartsTest extends TestCase
@@ -439,7 +439,7 @@ class MetricExplorerChartsTest extends TestCase
 
         foreach ($baseConfig as $config)
         {
-            $response = $helper->get('rest/v1/warehouse/dimensions', array('realm' => $config['realm']));
+            $response = $helper->get('warehouse/dimensions', array('realm' => $config['realm']));
             foreach ($response[0]['results'] as $dimConfig)
             {
                 $dimension = $dimConfig['id'];

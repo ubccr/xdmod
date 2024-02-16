@@ -2,6 +2,7 @@
 
 namespace IntegrationTests\Controllers;
 
+use CCR\DB;
 use CCR\Json;
 use Exception;
 use IntegrationTests\TestHarness\XdmodTestHelper;
@@ -104,9 +105,11 @@ abstract class BaseUserAdminTest extends BaseTest
         $actualContentType = $response[1]['content_type'];
         $actualHttpCode = $response[1]['http_code'];
         if (strpos($actualContentType, $expectedContentType) === false) {
+            print_r($response);
             throw new Exception("Expected content-type: $expectedContentType. Received: $actualContentType");
         }
         if ($expectedHttpCode !== $actualHttpCode) {
+            print_r($response);
             throw new Exception("Expected http code: $expectedHttpCode. Received: $actualHttpCode");
         }
 
@@ -263,7 +266,7 @@ abstract class BaseUserAdminTest extends BaseTest
             $userId = $this->retrieveUserId($username);
             self::$newUsers[$username] = $userId;
         }
-
+        $this->log("Logging out of mgr session");
         // make sure to logout of the current 'mgr' session.
         $this->helper->logout();
 
@@ -273,19 +276,16 @@ abstract class BaseUserAdminTest extends BaseTest
     protected function updateCurrentUser($username, $password, $firstName = null, $lastName = null, $emailAddress = null)
     {
         $helper = new XdmodTestHelper();
-        /*echo "*********************\n";
-        echo "Logging in as Manager!\n";*/
+
+        $this->log("Logging in as Manager!");
         $helper->authenticate('mgr');
 
-        /*$loginAsParams = array(
-            'uid' => $username
-        );*/
-
         // perform the pseudo-login
-        /*echo "*********************\n";
-        echo "Attempting to Switch Users\n";*/
-        $response = $helper->get('', ['_switch_user' => $username]);
-        #print_r($response);
+        $this->log("Attempting to Switch Users");
+        $switchResult = $helper->get("?_switch_user=$username");
+        if ($switchResult[1]['http_code'] !== 200) {
+            $this->fail("Unable to switch to $username");
+        }
 
         // build the update user params
         $updateUserData = [
@@ -307,25 +307,16 @@ abstract class BaseUserAdminTest extends BaseTest
         if (isset($emailAddress)) {
             $updateUserData['email_address'] = $emailAddress;
         }
-        /*echo "Switching to $username\n";
-        $switchResult = $helper->get("?_switch_user=$username");
-        if ($switchResult[1]['http_code'] !== 200) {
-            print_r($switchResult);
-        }
-        echo "Updating User\n";
-        $updateUserResponse = $helper->patch('users/current', $updateUserData);
 
-        */
-        /*echo "*********************\n";
-        echo "Attempting to Update User\n";*/
+        $this->log("Attempting to Update User");
+        $this->log(var_export($updateUserData, true));
         $updateUserResponse = $helper->patch('users/current', $updateUserData);
 
         $expected = JSON::loadFile(
             parent::getTestFiles()->getFile('user_admin', 'test.update_user')
         );
 
-        /*echo "*********************\n";
-        echo "Validating Update User Response\n";*/
+        $this->log("Validating Update User Response");
         $this->validateResponse($updateUserResponse);
 
         $this->assertEquals(
@@ -334,14 +325,13 @@ abstract class BaseUserAdminTest extends BaseTest
             "Unable to validate update user response. Expected: " . json_encode($expected) . " Received: " . json_encode($updateUserResponse[0])
         );
 
-        /*echo "*********************\n";
-        echo "Switching back\n";*/
+        $this->log("Switching back");
         $switchBackResult = $helper->get('', ['_switch_user' => '_exit']);
         if ($switchBackResult[1]['http_code'] !== 200) {
-            #print_r($switchBackResult);
+            echo "Switch Back Request unexpectedly failed\n";
+            print_r($switchBackResult);
         }
-        /*echo "*********************\n";
-        echo "Logging Out!\n";*/
+        $this->log("Logging Out!");
         $helper->logout();
     }
 
@@ -372,6 +362,7 @@ abstract class BaseUserAdminTest extends BaseTest
             'user_type'     => $user_type,
             'sticky'        => $sticky
         );
+
         $this->helper->authenticate('mgr');
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
@@ -460,7 +451,6 @@ abstract class BaseUserAdminTest extends BaseTest
         $user = $response[0]['user_information'];
         $keys = array_intersect($properties, array_keys($user));
         $results = array_intersect_key($user, array_flip($keys));
-
         $this->helper->logoutDashboard();
 
         return count($results) === 1 && count($properties) === 1 ? array_pop($results) : $results;

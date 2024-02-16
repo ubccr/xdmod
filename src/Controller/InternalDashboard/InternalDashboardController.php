@@ -312,8 +312,8 @@ SQL;
      */
     private function enumExistingUsers(Request $request): Response
     {
-        $groupFilter = $this->getStringParam($request, 'group_filter', true);
-        $roleFilter = $this->getStringParam($request, 'role_filter', true);
+        $groupFilter = $this->getStringParam($request, 'group_filter');
+        $roleFilter = $this->getStringParam($request, 'role_filter');
         $contextFilter = $this->getStringParam($request, 'context_filter', false, '');
 
         $results = Users::getUsers($groupFilter, $roleFilter, $contextFilter);

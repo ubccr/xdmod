@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Access\Controller;
 
+use Access\Security\Helpers\Tokens;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -14,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Security;
+use Twig\Environment;
 use xd_security\SessionSingleton;
 
 
@@ -24,31 +26,28 @@ use xd_security\SessionSingleton;
  * authentication of users. UserProviders are responsible for identifying which user is logged in after they have been
  * logged in.
  */
-class AuthenticationController extends AbstractController
+class AuthenticationController extends BaseController
 {
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
 
     /**
      * @var ContainerBagInterface
      */
     private $parameters;
 
-    /**
-     * @var Security
-     */
+    private $ssoUrl;
 
     /**
      * @param LoggerInterface $logger
      * @param ContainerBagInterface $parameters
+     * @param Environment $twig
+     * @param Tokens $tokenHelper
      */
-    public function __construct(LoggerInterface $logger, ContainerBagInterface $parameters)
+    public function __construct(LoggerInterface $logger, ContainerBagInterface $parameters, Environment $twig, Tokens $tokenHelper)
     {
         $this->logger = $logger;
         $this->parameters = $parameters;
+        $this->ssoUrl = $this->parameters->get('sso')['login_link'];
+        parent::__construct($logger, $twig, $tokenHelper);
     }
 
     /**
@@ -206,13 +205,14 @@ class AuthenticationController extends AbstractController
      */
     public function idpRedirect(Request $request): Response
     {
-        $returnTo = $request->get('returnTo');
-        $ssoUrl = $this->parameters->get('sso')['login_link'];
+        $returnTo = $this->getStringParam($request, 'returnTo');
 
         if (!empty($returnTo)) {
-            $value = "$ssoUrl?returnTo=$returnTo";
+            $this->logger->warning(sprintf('SSO Url: %s', var_export($this->ssoUrl, true)));
+            $this->logger->warning(sprintf('Return To: %s', var_export($returnTo, true)));
+            /*$value = "$ssoUrl?returnTo=$returnTo";*/
         }
-        return new Response($ssoUrl, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
+        return new Response($this->ssoUrl, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
     }
 }
 

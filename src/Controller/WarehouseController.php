@@ -11,7 +11,6 @@ use DataWarehouse\Data\BatchDataset;
 use DataWarehouse\Data\RawDataset;
 use DataWarehouse\Export\RealmManager;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
-use DataWarehouse\Query\Exceptions\NotFoundException;
 use DataWarehouse\Query\Exceptions\UnavailableTimeAggregationUnitException;
 use DataWarehouse\Query\Exceptions\UnknownGroupByException;
 use DataWarehouse\Query\RawQuery;
@@ -300,12 +299,7 @@ class WarehouseController extends BaseController
      */
     public function getDimensions(Request $request): Response
     {
-        $user = $this->getUser();
-        if (null === $user) {
-            $user = XDUser::getPublicUser();
-        } else {
-            $user = XDUser::getUserByUserName($user->getUserIdentifier());
-        }
+        $user = $this->authorize($request);
 
         $realm = $this->getStringParam($request, 'realm');
 
@@ -320,17 +314,17 @@ class WarehouseController extends BaseController
         }
 
 
-        $dimensionsToReturn = [];
-        foreach ($groupBys as $groupByName => $queryDescriptors) {
-            foreach ($queryDescriptors as $queryDescriptor) {
+        $dimensionsToReturn = array();
+        foreach($groupBys as $groupByName => $queryDescriptors) {
+            foreach($queryDescriptors as $queryDescriptor) {
                 if ($groupByName !== 'none') {
-                    $dimensionsToReturn[] = [
+                    $dimensionsToReturn[] = array(
                         'id' => $queryDescriptor->getGroupByName(),
                         'name' => $queryDescriptor->getGroupByLabel(),
                         // NOTE: 'Category' is capitalized for historical reasons.
                         'Category' => $queryDescriptor->getGroupByCategory(),
                         'description' => $queryDescriptor->getGroupByDescription()
-                    ];
+                    );
                 }
             }
         }
@@ -353,13 +347,7 @@ class WarehouseController extends BaseController
      */
     public function getDimensionValues(Request $request, string $dimension): Response
     {
-        $user = $this->getUser();
-        if (null === $user) {
-            throw new UnauthorizedHttpException('');
-            $user = XDUser::getPublicUser();
-        } else {
-            $user = XDUser::getUserByUserName($user->getUserIdentifier());
-        }
+        $user = $this->authorize($request);
 
         // Get Parameter values for feeding to MetricExplorer::getDimensionValues
         $offset = $this->getIntParam($request, 'offset', false, 0);
@@ -404,8 +392,6 @@ class WarehouseController extends BaseController
      */
     public function searchHistory(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $user = $this->authorize($request);
         $action = 'searchHistory';
 
@@ -446,8 +432,6 @@ class WarehouseController extends BaseController
      */
     public function createHistory(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $action = 'createHistory';
         $user = $this->authorize($request);
 
@@ -495,7 +479,7 @@ class WarehouseController extends BaseController
     private function processJobNodeTimeSeriesRequest(
         XDUser $user,
         string $realm,
-        int    $jobId,
+        ?int    $jobId,
         string $tsId,
         int    $nodeId,
         int    $infoId
@@ -532,7 +516,7 @@ class WarehouseController extends BaseController
     private function processJobTimeSeriesRequest(
         XDUser $user,
         string $realm,
-        int    $jobId,
+        ?int    $jobId,
         string $tsId,
         int    $infoId
     ): Response
@@ -566,8 +550,8 @@ class WarehouseController extends BaseController
     private function processJobRequest(
         XDUser $user,
         string $realm,
-        int    $jobId,
-        string $infoId
+        ?int    $jobId,
+        int $infoId
     ): Response
     {
 
@@ -642,8 +626,6 @@ class WarehouseController extends BaseController
      */
     public function getHistoryById(Request $request, int $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $action = 'getHistoryById';
         $user = $this->authorize($request);
         $realm = $this->getStringParam($request, 'realm', true);
@@ -768,7 +750,6 @@ class WarehouseController extends BaseController
      */
     public function updateHistory(Request $request, int $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $action = 'updateHistory';
         $user = $this->authorize($request);
@@ -802,9 +783,9 @@ class WarehouseController extends BaseController
      */
     public function deleteHistory(Request $request, int $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
+        $this->logger->debug('Delete History Called', [$id]);
         $user = $this->authorize($request);
+        $this->logger->debug('User Found', [$user->getUserIdentifier()]);
         $action = 'deleteHistory';
 
         $realm = $this->getStringParam($request, 'realm', true);
@@ -856,7 +837,6 @@ class WarehouseController extends BaseController
      */
     public function searchJobs(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $user = $this->authorize($request);
 
@@ -877,11 +857,11 @@ class WarehouseController extends BaseController
 
     /**
      * @Route(
-     *     "/search/{realm}/{action}",
+     *     "/search/{realms}/{action}",
      *     methods={"GET", "POST"},
      *     requirements={
      *         "action": "([\w|_|-])+",
-     *         "realm": "cloud|jobs"
+     *         "realms": "cloud|jobs"
      *     }
      *)
      * @param Request $request
@@ -891,14 +871,12 @@ class WarehouseController extends BaseController
      */
     public function searchJobsByAction(Request $request, string $action): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = $this->authorize($request);
-
         $actionName = 'searchJobsByAction';
 
-        $realm = ucfirst($this->getStringParam($request, 'realm'));
-        $jobId = $this->getIntParam($request, 'jobid');
+        $realm = ucfirst($this->getStringParam($request, 'realms'));
 
+        $jobId = $this->getIntParam($request, 'jobid');
         return $this->processJobSearchByAction($request, $user, $action, $realm, $jobId, $actionName);
     }
 
@@ -1000,38 +978,49 @@ class WarehouseController extends BaseController
         XDUser  $user,
         string  $action,
         string  $realm,
-        int     $jobId,
+        ?int    $jobId,
         string  $actionName
     ): Response
     {
+
         switch ($action) {
             case 'accounting':
             case 'jobscript':
             case 'analysis':
             case 'metrics':
             case 'analytics':
+                $realm = $this->getStringParam($request, 'realm', true);
                 $results = $this->getJobData($user, $realm, $jobId, $action);
                 break;
             case 'peers':
                 $start = $this->getIntParam($request, 'start', true);
                 $limit = $this->getIntParam($request, 'limit', true);
 
+                if ($jobId === null) {
+                    throw new BadRequestHttpException('Invalid value for realm. Must be a(n) string.');
+                }
+
+                $realm = $this->getStringParam($request, 'realm', true);
+
                 $results = $this->getJobPeers($user, $realm, $jobId, $start, $limit);
                 break;
             case 'executable':
+                $realm = $this->getStringParam($request, 'realm', true);
                 $results = $this->getJobExecutable($user, $realm, $jobId, $action, $actionName);
                 break;
             case 'detailedmetrics':
+                $realm = $this->getStringParam($request, 'realm', true);
                 $results = $this->getJobSummary($user, $realm, $jobId, $action, $actionName);
                 break;
             case 'timeseries':
                 $tsId = $this->getStringParam($request, 'tsid', true);
                 $nodeId = $this->getIntParam($request, 'nodeid');
                 $cpuId = $this->getIntParam($request, 'cpuid');
-
+                $realm = $this->getStringParam($request, 'realm', true);
                 $results = $this->getJobTimeSeriesData($request, $user, $realm, $jobId, $tsId, $nodeId, $cpuId);
                 break;
             case 'vmstate':
+                $realm = $this->getStringParam($request, 'realm', true);
                 $results = $this->getJobTimeSeriesData($request, $user, $realm, $jobId, null, null, null);
                 break;
             default:
@@ -1083,7 +1072,7 @@ class WarehouseController extends BaseController
      * @param int $jobId
      * @return Response
      */
-    private function getJobSummary(XDUser $user, string $realm, int $jobId): Response
+    private function getJobSummary(XDUser $user, string $realm, $jobId): Response
     {
         $queryClass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
         $query = new $queryClass();
@@ -1166,7 +1155,7 @@ class WarehouseController extends BaseController
         Request $request,
         XDUser  $user,
         string  $realm,
-        int     $jobId,
+        ?int     $jobId,
         ?string  $tsId,
         ?int     $nodeId,
         ?int     $cpuId
@@ -1174,10 +1163,11 @@ class WarehouseController extends BaseController
     {
         $infoClass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
         $info = new $infoClass();
-        $results = $info->getJobTimeseriesData($user, $jobId, $tsId, $nodeId, $cpuId);
 
+        $results = $info->getJobTimeseriesData($user, $jobId, $tsId, $nodeId, $cpuId, $this->logger);
+        $this->logger->debug('Results from getJobTimeseriesData', [$results, get_class($info), $realm]);
         if (count($results) === 0) {
-            throw new NotFoundException();
+            throw new NotFoundHttpException('The requested resource does not exist');
         }
 
         $format = $this->getStringParam($request, 'format', false, 'json');
@@ -1185,6 +1175,8 @@ class WarehouseController extends BaseController
         if (!in_array($format, ['json', 'png', 'svg', 'pdf', 'csv'])) {
             throw new BadRequestHttpException('Unsupported format type.');
         }
+        $subject = $results['schema']['source'] ?? '';
+        $title = $results['schema']['description'] ?? '';
 
         switch ($format) {
             case 'png':
@@ -1198,8 +1190,8 @@ class WarehouseController extends BaseController
                     'show_title' => $this->getStringParam($request, 'show_title', false, 'y') === 'y',
                     'fileMetadata' => [
                         'author' => $user->getFormalName(),
-                        'subject' => 'Timeseries data for ' . $results['schema']['source'],
-                        'title' => $results['schema']['description']
+                        'subject' => 'Timeseries data for ' . $subject,
+                        'title' => $title
                     ]
                 ];
                 $response = $this->chartImageResponse($results, $format, $exportConfig);
@@ -1297,6 +1289,11 @@ class WarehouseController extends BaseController
 
         $lineWidth = 1 + $settings['scale'];
 
+        $timezone = $data['schema']['timezone'] ?? '';
+        $units = $data['schema']['units'] ?? '';
+        $source = $data['schema']['source'] ?? '';
+        $description = $data['schema']['description'] ?? '';
+
         $chartConfig = [
             'colors' => ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
                 '#f28f43', '#77a1e5', '#c42525', '#a6c96a'
@@ -1318,7 +1315,7 @@ class WarehouseController extends BaseController
                         'fontSize' => $axisTitleFontSize,
                         'color' => '#5078a0'
                     ],
-                    'text' => 'Time (' . $data['schema']['timezone'] . ')'
+                    'text' => 'Time (' . $timezone . ')'
                 ]
             ],
             'yAxis' => [
@@ -1328,7 +1325,7 @@ class WarehouseController extends BaseController
                         'fontSize' => $axisTitleFontSize,
                         'color' => '#5078a0'
                     ],
-                    'text' => $data['schema']['units']
+                    'text' => $units
                 ],
                 'lineWidth' => $lineWidth,
                 'labels' => [
@@ -1351,7 +1348,7 @@ class WarehouseController extends BaseController
                 ]
             ],
             'credits' => [
-                'text' => $data['schema']['source'] . '. Powered by XDMoD/Highcharts',
+                'text' => $source . '. Powered by XDMoD/Highcharts',
                 'href' => ''
             ],
             'exporting' => [
@@ -1363,12 +1360,12 @@ class WarehouseController extends BaseController
                     'fontSize' => $mainTitleFontSize
                 ],
 
-                'text' => $settings['show_title'] ? $data['schema']['description'] : null
+                'text' => $settings['show_title'] ? $description : null
             ]
         ];
 
         $globalConfig = [
-            'timezone' => $data['schema']['timezone']
+            'timezone' => $timezone
         ];
 
         $chartImage = \xd_charting\exportHighchart(
@@ -1474,11 +1471,11 @@ class WarehouseController extends BaseController
      * @throws AccessDeniedException if the provided user does not have access to the specified realm.
      * @throws NotFoundException if the provided jobId has no data in the provided realm.
      */
-    private function getJobPeers(XDUser $user, string $realm, int $jobId, int $start, int $limit): Response
+    private function getJobPeers(XDUser $user, string $realm, $jobId, int $start, int $limit): Response
     {
         $jobdata = $this->getJobDataSet($user, $realm, $jobId, 'internal');
         if (!$jobdata->hasResults()) {
-            throw new NotFoundException();
+            throw new NotFoundHttpException('The requested resource does not exist');
         }
         $jobresults = $jobdata->getResults();
         $thisjob = $jobresults[0];
@@ -1563,7 +1560,7 @@ class WarehouseController extends BaseController
      * @return RawDataset
      * @throws AccessDeniedException if the provided user does not have access to the specified realm.
      */
-    private function getJobDataSet(XDUser $user, string $realm, int $jobId, string $action): RawDataset
+    private function getJobDataSet(XDUser $user, string $realm, $jobId, string $action): RawDataset
     {
         if (!\DataWarehouse\Access\RawData::realmExists($user, $realm)) {
             throw new AccessDeniedException();
@@ -1662,7 +1659,7 @@ class WarehouseController extends BaseController
         $queryDescripters = Acls::getQueryDescripters($user, $realm);
 
         if (empty($queryDescripters)) {
-            throw new BadRequestHttpException('Invalid realm',  null, 104);
+            throw new BadRequestHttpException('Invalid realm', null);
         }
 
         $offset = $this->getIntParam($request, 'start', true);
@@ -1674,7 +1671,7 @@ class WarehouseController extends BaseController
         );
 
         if ($searchParams === null || !is_array($searchParams)) {
-            throw new BadRequestHttpException('The params parameter must be a json object');
+            throw new BadRequestHttpException('params parameter must be valid JSON');
         }
 
         $params = array_intersect_key($searchParams, $queryDescripters);
@@ -1769,22 +1766,15 @@ class WarehouseController extends BaseController
      */
     private function getSearchParams(Request $request): array
     {
-        $data = $request->get('data');
-
+        $data = $this->getStringParam($request, 'data');
         if (!isset($data)) {
-            throw new MissingMandatoryParametersException(
-                'Malformed request. Expected \'data\' to be present.',
-                400
-            );
+            throw new BadRequestHttpException('missing required data parameter');
         }
 
         $decoded = json_decode($data, true);
 
         if ($decoded === null || !isset($decoded['text'])) {
-            throw new MissingMandatoryParametersException(
-                'Malformed request. Expected \'data.text\' to be present.',
-                400
-            );
+            throw new BadRequestHttpException('Malformed request. Expected \'data.text\' to be present.');
         }
 
         $decoded['text'] = htmlspecialchars($decoded['text'], ENT_COMPAT | ENT_HTML5);
@@ -1876,10 +1866,12 @@ class WarehouseController extends BaseController
         list(
             $params['start_date'], $params['end_date']
             ) = $this->validateRawDataDateParams($request);
+
         $params['realm'] = $this->getStringParam($request, 'realm', true);
+
         $queryDescripters = Acls::getQueryDescripters($user, $params['realm']);
         if (empty($queryDescripters)) {
-            throw new BadRequestHttpException('Invalid realm.', null, 104);
+            throw new BadRequestHttpException('Invalid realm.', null);
         }
         $params['fields'] = $this->getRawDataFieldsArray($request);
         $params['filters'] = $this->validateRawDataFiltersParams(
@@ -1888,7 +1880,7 @@ class WarehouseController extends BaseController
         );
         $params['offset'] = $this->getIntParam($request, 'offset', false, 0);
         if ($params['offset'] < 0) {
-            throw new BadRequestHttpException('Offset must be non-negative.', null, 104);
+            throw new BadRequestHttpException('Offset must be non-negative.', null);
         }
         return $params;
     }
@@ -1976,7 +1968,7 @@ class WarehouseController extends BaseController
             return $dataset;
         } catch (Exception $e) {
             if (preg_match('/Invalid fields specified/', $e->getMessage())) {
-                throw new BadRequestHttpException($e->getMessage(), null, 104);
+                throw new BadRequestHttpException($e->getMessage(), null);
             } else {
                 throw $e;
             }
@@ -2022,9 +2014,7 @@ class WarehouseController extends BaseController
             true
         );
         if ($endDate < $startDate) {
-            throw new BadRequestHttpException(
-                'End date cannot be less than start date.', null, 104
-            );
+            throw new BadRequestHttpException('End date cannot be less than start date.', null);
         }
         return [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')];
     }
@@ -2133,9 +2123,7 @@ class WarehouseController extends BaseController
         string $filterValuesStr
     ): array {
         if (!in_array($filterKey, array_keys($queryDescripters))) {
-            throw new BadRequestHttpException(
-                'Invalid filter key \'' . $filterKey . '\'.', null, 104
-            );
+            throw new BadRequestHttpException('Invalid filter key \'' . $filterKey . '\'.', null);
         }
         return explode(',', $filterValuesStr);
     }

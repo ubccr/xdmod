@@ -1202,7 +1202,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
     if (CCR.xdmod.SSODirectLink) {
         Ext.Ajax.request({
-            url: '/rest/auth/idpredirect',
+            url: '/auth/idpredirect',
             method: 'GET',
             params: {
                 returnTo: '/' + document.location.hash

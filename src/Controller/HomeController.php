@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Access\Controller;
 
 use Access\Security\Helpers\Tokens;
+use CCR\DB;
 use Exception;
 use Models\Services\Acls;
 use Models\Services\Realms;
@@ -100,8 +101,24 @@ class HomeController extends BaseController
                 'icon' => $ssoIcon
             ]
         ];
+        try {
+            $db = DB::factory('database');
+            $personInfo = $db->query(
+                'SELECT first_name, last_name FROM modw.person p WHERE p.id = :person_id',
+                [':person_id' => $user->getPersonID()]
+            );
+        } catch (\Exception $e) {
+            $personInfo = [
+                [
+                    'first_name' => 'Unknown',
+                    'last_name'=> 'Unknown'
+                ]
+            ];
+        }
+
         $params = [
             'user' => $user,
+            'person_name' => sprintf('%s, %s', $personInfo[0]['last_name'], $personInfo[0]['first_name']),
             'title' => \xd_utilities\getConfiguration('general', 'title'),
             'keywords' => 'xdmod, xsede, analytics, metrics on demand, hpc, visualization, statistics, reporting, auditing, nsf, resources, resource providers',
             'description' => 'XSEDE Metrics on Demand (XDMoD) is a comprehensive auditing framework for XSEDE, the follow-on to NSF\'s TeraGrid program. XDMoD provides detailed information on resource utilization and performance across all resource providers.',

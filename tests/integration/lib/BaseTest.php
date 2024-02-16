@@ -2,6 +2,7 @@
 
 namespace IntegrationTests;
 
+use CCR\Json;
 use Exception;
 use PHPUnit\Framework\TestCase;
 use Swaggest\JsonSchema\Schema;
@@ -244,6 +245,7 @@ abstract class BaseTest extends TestCase
         $actualBody = [];
         $actualHeaders = [];
 
+        $this->log(sprintf('Making Request w/ params: %s', var_export($input, true)));
         // Make HTTP request.
         $response = self::makeHttpRequest($testHelper, $input);
 
@@ -266,7 +268,7 @@ abstract class BaseTest extends TestCase
             . "\nEXPECTED CONTENT TYPE: application/json"
             . "\nACTUAL CONTENT TYPE: $actualContentType"
             . "\nACTUAL BODY: "
-            . self::getJsonStringForExceptionMessage($actualBody)
+            . (is_array($actualBody) ? self::getJsonStringForExceptionMessage($actualBody) : $actualBody)
             . "\n"
         );
 
@@ -297,9 +299,14 @@ abstract class BaseTest extends TestCase
         array $input,
         array $output
     ) {
+        $testHelper = new XdmodTestHelper();
         if ('pub' !== $role) {
+            $this->log(sprintf('Authenticating with %s', $role));
             $testHelper->authenticate($role);
+        } else {
+            $this->log('No Authentication');
         }
+
         $actualBody = $this->requestAndValidateJson(
             $testHelper,
             $input,
@@ -624,7 +631,7 @@ abstract class BaseTest extends TestCase
         $bodyValidator = null
     ) {
         return $this->validateBadRequestResponse(
-            "$name is a required parameter.",
+            "missing required $name parameter",
             $bodyValidator
         );
     }
@@ -882,5 +889,13 @@ abstract class BaseTest extends TestCase
             ? substr($str, 0, $numChars) . '...'
             : $str
         );
+    }
+
+    protected function log($message)
+    {
+        if (getenv('TEST_VERBOSE') === '1') {
+            echo "\n*****************************\n";
+            echo "$message\n";
+        }
     }
 }

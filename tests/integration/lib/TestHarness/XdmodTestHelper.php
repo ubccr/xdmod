@@ -170,6 +170,9 @@ class XdmodTestHelper
         );
         $this->setauthvariables(null);
         $authresult = $this->post("login", null, $data);
+        if (!isset($authresult[0]['results'])) {
+            print_r($authresult);
+        }
         $authtokens = $authresult[0]['results'];
         $this->setauthvariables($authtokens['token']);
     }
@@ -232,10 +235,7 @@ class XdmodTestHelper
         $result = $this->post($action, null, $credentials, true);
 
         if ($result[1]['http_code'] !== 200) {
-            throw new \Exception('SSO signin failure: HTTP code' . $result[1]['http_code']);
-        }
-        if (strpos($result[0], 'Logging you into XDMoD') === false) {
-            throw new \Exception('SSO signin failure: ' . $result[0]);
+            throw new \Exception('SSO signin failure: HTTP code ' . $result[1]['http_code']);
         }
     }
 
@@ -256,10 +256,11 @@ class XdmodTestHelper
         $this->setauthvariables(null);
         $data = array(
             'xdmod_username' => $this->config['role'][$userrole]['username'],
-            'xdmod_password' => $this->config['role'][$userrole]['password']
+            'xdmod_password' => $this->config['role'][$userrole]['password'],
+            'username' => $this->config['role'][$userrole]['username']
         );
-        $authresult = $this->post("internal_dashboard/user_check.php", null, $data);
-#        print_r($authresult);
+        $authresult = $this->post("login", null, $data);
+
         $cookie = isset($authresult[2]['Set-Cookie']) ? $authresult[2]['Set-Cookie'] : null;
         $this->setauthvariables('', $cookie);
     }

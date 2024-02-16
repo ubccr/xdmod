@@ -193,11 +193,12 @@ class BaseController extends AbstractController
         bool    $compressWhitespace = true
     )
     {
-        // Attempt to extract the parameter value from the request.
-        $value = $request->get($name);
-
         // If the parameter was not present, throw an exception if it was
         // mandatory and return the default if it was not.
+        // Attempt to extract the parameter value from the request.
+        $value = $request->get($name);
+        $originalValueType = get_debug_type($value);
+
         if ($value === null) {
             if ($mandatory) {
                 throw new BadRequestHttpException("missing required $name parameter");
@@ -205,6 +206,7 @@ class BaseController extends AbstractController
                 return $default;
             }
         }
+
 
         // This is to accommodate the functionality from \xd_security\assertParameterSet that wasn't already provided
         // by this function.
@@ -214,15 +216,24 @@ class BaseController extends AbstractController
 
         // Run the found parameter value through the given filter.
         $value = filter_var($value, $filterId, $filterOptions);
+        $valueType = get_debug_type($value);
+
+        if ($value === null ||
+            ($originalValueType === 'array' && $value === false) ||
+            ($expectedValueType === 'string' && $valueType !== 'string' && $value !== false) ||
+            ($expectedValueType === 'Unix timestamp' && $valueType !== 'DateTime' && $value !== false) ||
+            ($expectedValueType === 'ISO 8601 Date' && $valueType !== 'DateTime' && $value !== false) ||
+            ($expectedValueType === 'integer' && $valueType !== 'int' && $value !== false) ||
+            ($expectedValueType === 'float' && $valueType !== 'float' && $value !== false)
+        ) {
+            throw new BadRequestHttpException("Invalid value for $name. Must be a(n) $expectedValueType.");
+        }
 
         // If the value is invalid, throw an exception.
-        if ($value === null) {
-            throw new BadRequestHttpException("Invalid value for $name. Must be a(n) $expectedValueType.");
-        } elseif ($value === false && $expectedValueType !== 'boolean') {
+        if ($value === false && $expectedValueType !== 'boolean' && $originalValueType !== 'bool') {
             // This happens when filtering a value doesn't match a regexp.
             throw new BadRequestHttpException("Invalid value for $name. Must conform to expected constraint");
         }
-
 
         // Return the filtered value.
         return $value;

@@ -73,7 +73,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
 
     // PROPERTIES =============================================================
     token: XDMoD.REST.token, /*NOTE: This is populated via PHP. So will this render only once? */
-    timeSeriesURL: '/rest/supremm/explorer/hctimeseries/',
+    timeSeriesURL: '/supremm/explorer/hctimeseries/',
     optionWhiteList: ['host'],
     storePropertyWhiteList: ['jobid'],
 

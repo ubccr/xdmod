@@ -37,7 +37,7 @@ XDMoD.CommentEditor = Ext.extend(Ext.Window, {
 
          Ext.Ajax.request({
 
-            url: '/controllers/controller.php',
+            url: '/internal_dashboard/controllers/controller.php',
             params: {
                'operation' : 'update_request',
                'id': id,
