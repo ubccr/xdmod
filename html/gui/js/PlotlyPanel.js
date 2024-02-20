@@ -22,11 +22,11 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
 
     chartOptions: {},
 
-    initComponent: function () { /* eslint object-shorthand: "off" */
+    initComponent: function () {
         Ext.apply(this, {
             layout: 'fit'
         });
-        CCR.xdmod.ui.PlotlyPanel.superclass.initComponent.apply(this, arguments); /* eslint prefer-rest-params: "off" */
+        CCR.xdmod.ui.PlotlyPanel.superclass.initComponent.apply(this, arguments);
 
         const defaultOptions = {
             renderTo: this.id,
@@ -53,7 +53,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                     }
                     this.chartOptions = jQuery.extend(true, {}, t.getAt(0).data, this.baseChartOptions);
                     this.chartOptions.credits = this.credits;
-                    if (this.chartOptions.layout.annotations[0]) {
+                    if (this.chartOptions.layout.annotations && this.chartOptions.layout.annotations[0]) {
                         this.chartOptions.layout.annotations[0].text = this.plotlyTextEncode(this.chartOptions.layout.annotations[0].text);
                     }
 
@@ -268,7 +268,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
      *
      * @param  {Object} chartOptions (Optional) A set of Plotly options.
      */
-    initNewChart: function (chartOptions) { /* eslint object-shorthand: "off" */
+    initNewChart: function (chartOptions) {
         const finalChartOptions = {};
         if (chartOptions) {
             jQuery.extend(true, finalChartOptions, this.baseChartOptions, chartOptions);
@@ -285,7 +285,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
      *                                to display.
      * TODO:error display for plotly charts
      */
-    displayError: function (mainMessage, detailMessage) { /* eslint object-shorthand: "off" */
+    displayError: function (mainMessage, detailMessage) {
         const errorChartOptions = {
             title: {
                 text: mainMessage,

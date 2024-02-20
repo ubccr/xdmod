@@ -251,8 +251,8 @@ function getClickedPoint(clickEvent, traceDivs) { // eslint-disable-line no-unus
                     const dimensions = points[j].getBoundingClientRect();
                     if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right
                         && evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
-                        const dataValue = points[j].__data__.s || points[j].__data__.y;
                         const swapXY = evt.points[0].data.yaxis ? false : true;
+                        const dataValue = points[j].__data__.s || (swapXY ? points[j].__data__.x : points[j].__data__.y);
                         const pointIndex = evt.points.findIndex((trace) => {
                             if (trace.value) {
                                 return trace.value === dataValue;
