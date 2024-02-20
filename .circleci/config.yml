@@ -43,10 +43,6 @@ jobs:
           command: |
             mkdir ~/phpunit
             mkdir /tmp/screenshots
-      - run:
-          name: 'Fixup Simplesaml'
-          command: |
-            sed -i 's/SimpleSAML_Error_Assertion::installHandler();//g' vendor/simplesamlphp/simplesamlphp/www/_include.php
       - run: ~/bin/buildrpm xdmod
       - run:
           name: Install / Upgrade XDMoD from RPM
