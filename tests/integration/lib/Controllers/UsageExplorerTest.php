@@ -160,7 +160,7 @@ believe that you should be able to see this information, then please select
 EOF;
 
         $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 403);
+        $this->assertEquals($response[1]['http_code'], 400);
         $this->assertEquals($response[0]['message'], $expectedErrorMessage);
     }
 

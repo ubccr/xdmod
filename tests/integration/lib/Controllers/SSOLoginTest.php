@@ -1110,11 +1110,4 @@ SQL;
         $db = DB::factory('database');
         $db->execute($query, $params);
     }
-
-    private function log($message)
-    {
-        if ($this->verbose) {
-            echo "\n$message";
-        }
-    }
 }

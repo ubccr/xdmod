@@ -763,11 +763,4 @@ class ReportBuilderTest extends BaseTest
         $this->assertEquals('image/png', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
     }
-
-    private function log($msg)
-    {
-        if ($this->verbose) {
-            echo "$msg\n";
-        }
-    }
 }

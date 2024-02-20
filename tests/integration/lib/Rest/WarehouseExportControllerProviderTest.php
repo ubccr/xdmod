@@ -441,8 +441,10 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
             $datum['id'] = (int)$datum['id'];
             $ids[] = $datum['id'];
         }
+        $data = ['ids' => $ids];
         // Delete all existing requests.
-        list($content, $info, $headers) = self::$helpers[$role]->delete('warehouse/export/requests', null, $data);
+        list($content, $info, $headers) = self::$helpers[$role]->delete('warehouse/export/requests', $data);
+
         $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
