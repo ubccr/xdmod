@@ -2,10 +2,11 @@
 
 namespace RegressionTests\Controllers;
 
+use PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
-class UsageChartsTest extends \PHPUnit_Framework_TestCase
+class UsageChartsTest extends TestCase
 {
     /**
      * The path relative to this file that contains the expected hashes for this test case.
@@ -29,7 +30,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
     /**
      * Determine which JSON file to use for expected hash data.
      */
-    private static function getHashPath()
+    public static function getHashPath(): string
     {
         if (self::$hashFilePath !== null) {
             return self::$hashFilePath;
@@ -67,7 +68,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         return self::$hashFilePath;
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::$helper->logout();
         if(!empty(self::$imagehashes)) {
@@ -129,7 +130,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
     public function testChartSettings($testName, $input, $expectedHash)
     {
         $postvars = null;
-        $response = self::$helper->post('/controllers/user_interface.php', $postvars, $input);
+        $response = self::$helper->post('controllers/user_interface.php', $postvars, $input);
 
         $imageData = $response[0];
         $actualHash = $this->phash($input['format'], $imageData);

@@ -104,7 +104,7 @@ class FileManager extends Loggable
      * This is the path of the file that will be used to store the export data on
      * the Open XDMoD server after it has been generated.
      *
-     * @param intger $id Batch export request primary key.
+     * @param int $id Batch export request primary key.
      * @return string
      */
     public function getExportDataFilePath($id)

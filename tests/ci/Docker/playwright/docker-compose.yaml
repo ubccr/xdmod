@@ -1,0 +1,23 @@
+version: '3.9'
+services: 
+  web:  
+    container_name: web 
+    build:
+        context: ./xdmod
+    ports: 
+      - '443:443'
+    volumes: 
+      - ./../../../../:/xdmod
+    networks:
+      - xdmod_network
+  playwright:
+    container_name: playwright
+    build:
+        context: ./playwright
+    volumes:
+      - ./../../../../:/xdmod
+    networks:
+      - xdmod_network
+networks: 
+  xdmod_network:
+    driver: bridge  

@@ -4,12 +4,12 @@ namespace IntegrationTests;
 
 use CCR\Json;
 use Exception;
+use PHPUnit\Framework\TestCase;
 use Swaggest\JsonSchema\Schema;
 use IntegrationTests\TestHarness\TestFiles;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 use InvalidArgumentException;
-
 /**
  * This class serves as a base for test classes.
  *
@@ -89,7 +89,7 @@ use InvalidArgumentException;
  *      );
  *  }
  */
-abstract class BaseTest extends \PHPUnit_Framework_TestCase
+abstract class BaseTest extends TestCase
 {
     const DATE_REGEX = '/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/';
 
@@ -107,7 +107,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         'output' => ['status_code', 'body_validator']
     ];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$XDMOD_REALMS = Utilities::getRealmsToTest();
     }
@@ -267,7 +267,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             . "\nEXPECTED CONTENT TYPE: application/json"
             . "\nACTUAL CONTENT TYPE: $actualContentType"
             . "\nACTUAL BODY: "
-            . self::getJsonStringForExceptionMessage($actualBody)
+            . (is_array($actualBody) ? self::getJsonStringForExceptionMessage($actualBody) : $actualBody)
             . "\n"
         );
 
@@ -298,9 +298,11 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         array $input,
         array $output
     ) {
+        $testHelper = new XdmodTestHelper();
         if ('pub' !== $role) {
             $testHelper->authenticate($role);
         }
+
         $actualBody = $this->requestAndValidateJson(
             $testHelper,
             $input,
@@ -625,7 +627,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         $bodyValidator = null
     ) {
         return $this->validateBadRequestResponse(
-            "$name is a required parameter.",
+            "missing required $name parameter",
             $bodyValidator
         );
     }
@@ -798,7 +800,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      */
     protected function validateDate($date)
     {
-        parent::assertRegExp(self::DATE_REGEX, $date);
+        parent::assertMatchesRegularExpression(self::DATE_REGEX, $date);
     }
 
     /**
@@ -883,5 +885,13 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
             ? substr($str, 0, $numChars) . '...'
             : $str
         );
+    }
+
+    protected function log($message)
+    {
+        if (getenv('TEST_VERBOSE') === '1') {
+            echo "\n*****************************\n";
+            echo "$message\n";
+        }
     }
 }

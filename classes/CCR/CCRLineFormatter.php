@@ -6,7 +6,7 @@ use Monolog\Formatter\LineFormatter;
 
 class CCRLineFormatter extends LineFormatter
 {
-    public function format(array $record)
+    public function format(array $record):string
     {
         if (isset($record['level_name'])) {
             $record['level_name'] = strtolower($record['level_name']);
@@ -24,7 +24,7 @@ class CCRLineFormatter extends LineFormatter
      *
      * @return string
      */
-    protected function extractMessage($record)
+    protected function extractMessage($record): string
     {
         $json = json_decode($record['message'], true);
 
@@ -57,7 +57,7 @@ class CCRLineFormatter extends LineFormatter
     /**
      * @see LineFormatter::replaceNewlines
      */
-    protected function replaceNewlines($str)
+    protected function replaceNewlines($str): string
     {
         return str_replace(array('\r', '\n'), array("\r", "\n"), $str);
     }

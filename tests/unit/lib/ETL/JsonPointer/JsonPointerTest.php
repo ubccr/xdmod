@@ -12,8 +12,9 @@ namespace UnitTests\ETL\JsonPointer;
 use CCR\Log;
 use ETL\JsonPointer;
 use CCR\Loggable;
+use PHPUnit\Framework\TestCase;
 
-class JsonPointerTest extends \PHPUnit_Framework_TestCase
+class JsonPointerTest extends TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";
@@ -23,7 +24,7 @@ class JsonPointerTest extends \PHPUnit_Framework_TestCase
      */
     private $logger = null;
 
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
@@ -34,6 +35,7 @@ class JsonPointerTest extends \PHPUnit_Framework_TestCase
             'consoleLogLevel' => Log::EMERG
         );
         $this->logger = Log::factory('PHPUnit', $conf);
+        parent::__construct($name, $data, $dataName);
     }
 
     /**

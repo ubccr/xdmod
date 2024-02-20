@@ -98,7 +98,7 @@ EOT
                 'modw',
                 'modw_aggregates',
                 'modw_filters',
-                'mod_logger',
+                'mod_logger'
             );
 
             $this->createDatabases(

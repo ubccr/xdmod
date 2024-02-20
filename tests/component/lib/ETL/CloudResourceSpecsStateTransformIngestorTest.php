@@ -8,12 +8,13 @@ namespace ComponentTests\ETL;
 use ETL\Ingestor\CloudResourceSpecsStateTransformIngestor;
 use ETL\Ingestor\IngestorOptions;
 use ETL\Configuration\EtlConfiguration;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test Cloud Resource Specifications State FSM
  */
 
-class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_TestCase
+class CloudResourceSpecsStateTransformIngestorTest extends TestCase
 {
     private $resource_spec_01 = array(
         "resource_id" => 8,
@@ -186,7 +187,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $fsm;
 
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         $configFile = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/xdmod_etl_config_8.0.0.json');
 
@@ -197,6 +198,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends \PHPUnit_Framework_Te
         $conf = EtlConfiguration::factory($configFile);
 
         $this->fsm = new CloudResourceSpecsStateTransformIngestor($options, $conf);
+        parent::__construct($name, $data, $dataName);
     }
 
     // Test for when the VCpus change for a host

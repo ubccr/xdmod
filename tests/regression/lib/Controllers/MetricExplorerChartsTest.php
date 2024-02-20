@@ -2,14 +2,15 @@
 
 namespace RegressionTests\Controllers;
 
+use PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
-class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
+class MetricExplorerChartsTest extends TestCase
 {
     private static $chartFilterTestData = array();
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // This is used to write expected results file for the
         // testChartFilters test. The output file is just written to
@@ -120,7 +121,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
             'selectedFilterIds' => ''
         );
 
-        $response = $helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $helper->post('controllers/metric_explorer.php', null, $params);
 
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
@@ -189,7 +190,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
 
         foreach ($series as $s) {
             $this->assertEquals($sdata['name'], $s->name);
-            $this->assertEquals($sdata['y'], $s->data[0]->y, '', 1.0E-6);
+            $this->assertEqualsWithDelta($sdata['y'], $s->data[0]->y,  1.0E-6, '');
             $this->assertEquals($sdata['percentage'], $s->data[0]->percentage);
             $sdata = next($expected['series_data']);
         }
@@ -438,7 +439,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
 
         foreach ($baseConfig as $config)
         {
-            $response = $helper->get('rest/v1/warehouse/dimensions', array('realm' => $config['realm']));
+            $response = $helper->get('warehouse/dimensions', array('realm' => $config['realm']));
             foreach ($response[0]['results'] as $dimConfig)
             {
                 $dimension = $dimConfig['id'];

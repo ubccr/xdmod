@@ -2,9 +2,11 @@
 
 namespace UnitTests\DataWarehouse;
 
-class ExportBuilderTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class ExportBuilderTest extends TestCase
 {
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         $this->_dummydata = array(array(
             'headers' => array('Column1', 'Column2'),
@@ -13,6 +15,7 @@ class ExportBuilderTest extends \PHPUnit_Framework_TestCase
             'title2' => array('parameters' => array('param1=value1') ),
             'rows' => array(array('Column1' => 'value1', 'Column2' => 'value2'))
         ));
+        parent::__construct($name, $data, $dataName);
     }
 
     private function exportHelper($format, $inline, $filename)
@@ -30,19 +33,20 @@ class ExportBuilderTest extends \PHPUnit_Framework_TestCase
         return $result;
     }
 
+    /**
+     * @return void
+     */
     public function testExportJson() {
-
         $result = $this->exportHelper('json', true, 'filename');
-
         $this->assertEquals('application/json', $result['headers']['Content-type']);
 
         $data = json_decode($result['results'], true);
 
-        foreach($data as $datum)
-        {
+        foreach ($data as $datum) {
             $this->assertArrayHasKey('title', $datum);
         }
     }
+
 
     public function testExportXml() {
 
@@ -52,7 +56,7 @@ class ExportBuilderTest extends \PHPUnit_Framework_TestCase
 
         $parsedxml = simplexml_load_string($result['results']);
 
-        $this->assertObjectHasAttribute('rows', $parsedxml);
+        $this->assertObjectHasProperty('rows', $parsedxml);
         $this->assertEquals('value1', $parsedxml->rows[0]->row->cell[0]->value);
         $this->assertEquals('value2', $parsedxml->rows[0]->row->cell[1]->value);
     }
@@ -105,12 +109,10 @@ EOF;
         $this->assertEquals($expected, $result['results']);
     }
 
-     /**
-      * @expectedException        Exception
-      * @expectedExceptionMessage Unsupported export format bananas
-      */
     public function testExportBananas()
     {
+        $this->expectExceptionMessage("Unsupported export format bananas");
+        $this->expectException(\Exception::class);
         $this->exportHelper('bananas', false, 'yes we have no bananas');
     }
 }

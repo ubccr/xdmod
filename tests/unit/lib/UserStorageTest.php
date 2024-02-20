@@ -4,7 +4,9 @@ namespace UnitTests;
 
 use UnitTests\TestHelpers\mock\MockXDUser;
 
-class UserStorageTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class UserStorageTest extends TestCase
 {
     public function testGet() {
 
@@ -13,7 +15,7 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
 
         $output = $ustore->get();
 
-        $this->assertInternalType('array', $output);
+        $this->assertIsArray($output);
         $this->assertCount(0, $output);
     }
 
@@ -31,7 +33,7 @@ class UserStorageTest extends \PHPUnit_Framework_TestCase
 
         $output = $ustore->get();
 
-        $this->assertInternalType('array', $output);
+        $this->assertIsArray($output);
         $this->assertCount(1, $output);
 
         $this->assertArrayHasKey('test', $output[0]);

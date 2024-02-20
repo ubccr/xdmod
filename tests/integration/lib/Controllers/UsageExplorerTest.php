@@ -32,9 +32,9 @@ class UsageExplorerTest extends TokenAuthTest
 {
     private static $publicView;
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
         self::$publicView = array(
             "public_user" => "true",
             "realm" => "Jobs",
@@ -52,7 +52,7 @@ class UsageExplorerTest extends TokenAuthTest
      */
     protected $helper;
 
-    protected function setUp()
+    protected function setup(): void
     {
         $this->helper = new XdmodTestHelper();
     }
@@ -67,7 +67,7 @@ class UsageExplorerTest extends TokenAuthTest
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, $input);
+        $response = $this->helper->post('controllers/user_interface.php', null, $input);
 
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(400, $response[1]['http_code']);
@@ -119,7 +119,7 @@ class UsageExplorerTest extends TokenAuthTest
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, array('operation' => 'get_tabs', 'public_user' => 'true'));
+        $response = $this->helper->post('controllers/user_interface.php', null, array('operation' => 'get_tabs', 'public_user' => 'true'));
 
         $this->assertEquals($response[1]['content_type'], 'application/json');
         $this->assertEquals($response[1]['http_code'], 200);
@@ -152,8 +152,7 @@ class UsageExplorerTest extends TokenAuthTest
             $this->markTestSkipped('Needs realm integration.');
         }
         self::$publicView['group_by'] = "username";
-        $response = $this->helper->post('/controllers/user_interface.php', null, self::$publicView);
-
+        $response = $this->helper->post('controllers/user_interface.php', null, self::$publicView);
         $expectedErrorMessage = <<<EOF
 Your user account does not have permission to view the requested data.  If you
 believe that you should be able to see this information, then please select
@@ -161,7 +160,7 @@ believe that you should be able to see this information, then please select
 EOF;
 
         $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 403);
+        $this->assertEquals($response[1]['http_code'], 400);
         $this->assertEquals($response[0]['message'], $expectedErrorMessage);
     }
 
@@ -316,9 +315,13 @@ EOF
      */
     public function testJsonExport($input, $expected, $fieldCount, $recordCount)
     {
-        $response = $this->helper->post('/controllers/user_interface.php', null, $input);
 
-        $got = json_decode($response[0], true);
+        $response = $this->helper->post('controllers/user_interface.php', null, $input);
+
+        $got = $response[0];
+        if (is_string($response[0])) {
+            $got = json_decode($response[0], true);
+        }
 
         // Check correct syntax of fields argument.
 
@@ -331,7 +334,7 @@ EOF
         $this->assertEquals('DESC', $firstField['sortDir']);
 
         foreach($fields as $field) {
-            $this->assertRegExp('/dimension_column_\d+/', $field['name']);
+            $this->assertMatchesRegularExpression('/dimension_column_\d+/', $field['name']);
             $this->assertEquals('float', $field['type']);
             $this->assertEquals('DESC', $field['sortDir']);
         }
@@ -340,9 +343,9 @@ EOF
         $records = $got['records'];
         $this->assertCount($recordCount, $records);
         foreach($records as $record) {
-            $this->assertRegexp('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $record['day']);
+            $this->assertMatchesRegularExpression('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $record['day']);
             foreach($record as $rkey => $rval) {
-                $this->assertRegExp('/^day|dimension_column_\d+$/', $rkey);
+                $this->assertMatchesRegularExpression('/^day|dimension_column_\d+$/', $rkey);
             }
         }
 
@@ -354,9 +357,9 @@ EOF
         $this->assertEquals(array('header' => 'Day', 'width' => 150, 'dataIndex' => 'day', 'sortable' => 1, 'editable' => false, 'locked' => 1), $firstCol);
 
         foreach($columns as $column) {
-            $this->assertRegExp('/^\[[^\]]+\] Job Size: Max \(Core Count\)$/', $column['header']);
+            $this->assertMatchesRegularExpression('/^\[[^\]]+\] Job Size: Max \(Core Count\)$/', $column['header']);
             $this->assertEquals(140, $column['width']);
-            $this->assertRegExp('/^dimension_column_\d+$/', $column['dataIndex']);
+            $this->assertMatchesRegularExpression('/^dimension_column_\d+$/', $column['dataIndex']);
             $this->assertEquals(1, $column['sortable']);
             $this->assertEquals(false, $column['editable']);
             $this->assertEquals('right', $column['align']);
@@ -383,9 +386,9 @@ EOF
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, $view);
+        $response = $this->helper->post('controllers/user_interface.php', null, $view);
 
-        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/html'));
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode($response[0], true);
@@ -396,7 +399,7 @@ EOF
         $this->assertCount(1, $dataseries[0]['data']);
         $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
 
-        $this->assertEquals($expected, $dataseries[0]['data'][0]['y'], '', 1.0e-6);
+        $this->assertEqualsWithDelta($expected, $dataseries[0]['data'][0]['y'], 1.0e-6, '');
     }
 
     /**
@@ -408,9 +411,9 @@ EOF
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
-        $response = $this->helper->post('/controllers/user_interface.php', null, $input);
+        $response = $this->helper->post('controllers/user_interface.php', null, $input);
 
-        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/html'));
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode(UsageExplorerHelper::demanglePlotData($response[0]), true);
@@ -487,7 +490,7 @@ EOF;
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, $chartConfig);
+        $response = $this->helper->post('controllers/user_interface.php', null, $chartConfig);
 
         $this->assertEquals($response[1]['http_code'], 200);
 
@@ -620,7 +623,7 @@ EOF;
 }
 EOF;
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, json_decode($data, true));
+        $response = $this->helper->post('controllers/user_interface.php', null, json_decode($data, true));
 
         $this->assertEquals($response[1]['content_type'], 'application/json');
         $this->assertEquals($response[1]['http_code'], 200);
@@ -664,7 +667,7 @@ EOF;
 
         $this->helper->authenticate($user);
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, $chartSettings);
+        $response = $this->helper->post('controllers/user_interface.php', null, $chartSettings);
 
         $this->assertEquals($response[1]['http_code'], 200);
 
@@ -775,7 +778,7 @@ EOF;
 
             $expectedCount = count($expectedValue);
             $actualCount = count($actualValue);
-            $this->assertEquals($expectedCount, $actualCount, "Number of actual values does not match the expected.\n" . print_r($data, true));
+            $this->assertEquals($expectedCount, $actualCount, "Number of actual values does not match the expected.\n" . var_export($data, true));
 
             for ($i = 0; $i < count($expectedValue); $i++) {
                 $expected = $expectedValue[$i];
@@ -1131,7 +1134,7 @@ EOF;
             $expectedParameterLine = '';
         }
         $response = $this->helper->post(
-            '/controllers/user_interface.php',
+            'controllers/user_interface.php',
             null,
             $data
         );

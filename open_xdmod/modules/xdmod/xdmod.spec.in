@@ -67,6 +67,10 @@ for file in exceptions.log query.log; do
     chown apache:xdmod %{_localstatedir}/log/%{name}/$file
     chmod 0660 %{_localstatedir}/log/%{name}/$file
 done
+
+# Ensure the var directory is owned by apache so it can be written to.
+chown apache:xdmod %{_datadir}/%{name}/var
+
 if [ "$1" -ge 2 ]; then
     echo "Run xdmod-upgrade to complete the Open XDMoD upgrade process."
     echo "Refer to http://open.xdmod.org/upgrade.html for more details."
@@ -80,10 +84,17 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0750,root,xdmod,-)
 %{_bindir}/%{name}-*
 %{_bindir}/acl-*
+%{_bindir}/console
 
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/
 %{_datadir}/%{name}/
+%{_datadir}/%{name}/vendor
+%{_datadir}/%{name}/public
+%{_datadir}/%{name}/config
+%{_datadir}/%{name}/.env
+%{_datadir}/%{name}/var
+
 %{_docdir}/%{name}-%{version}__PRERELEASE__/
 
 %dir %attr(0770,apache,xdmod) %{_localstatedir}/log/%{name}
@@ -96,7 +107,6 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/%{name}/etl/
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
-%config(noreplace) %{_datadir}/%{name}/html/robots.txt
 
 %dir %attr(0570,apache,xdmod) %{xdmod_export_dir}
 

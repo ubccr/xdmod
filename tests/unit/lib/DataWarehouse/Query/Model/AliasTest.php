@@ -10,18 +10,20 @@ namespace UnitTests\DataWarehouse\Query\Model;
 *
 */
 
-class AliasTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class AliasTest extends TestCase
 {
     private $_alias;
     private $_alias1;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->_alias = new \DataWarehouse\Query\Model\Alias('alias_name');
         $this->_alias1 = new \DataWarehouse\Query\Model\Alias('');
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
         $this->_alias = null;
         $this->_alias1 = null;
     }

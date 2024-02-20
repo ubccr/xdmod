@@ -7,15 +7,16 @@ namespace UnitTests\OpenXdmod\Tests\Shredder;
 
 use CCR\DB\NullDB;
 use OpenXdmod\Shredder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * PBS shredder test class.
  */
-class OpenstackShredderTest extends \PHPUnit_Framework_TestCase
+class OpenstackShredderTest extends TestCase
 {
     protected $db;
 
-    public function setUp()
+    public function setup(): void
     {
         $this->db = new NullDB();
     }
@@ -35,7 +36,7 @@ class OpenstackShredderTest extends \PHPUnit_Framework_TestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Openstack')
             ->setConstructorArgs(array($this->db))
-            ->setMethods(array('getResourceConfig'))
+            ->onlyMethods(array('getResourceConfig'))
             ->getMock();
 
         $shredder

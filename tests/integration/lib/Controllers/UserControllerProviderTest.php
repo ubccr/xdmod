@@ -2,16 +2,24 @@
 
 namespace IntegrationTests\Controllers;
 
+use Access\Security\Helpers\Tokens;
 use CCR\Json;
 use Exception;
 use IntegrationTests\TokenAuthTest;
-use Models\Services\Tokens;
 use stdClass;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class UserControllerProviderTest extends BaseUserAdminTest
 {
+    /**
+     * @throws Exception
+     */
+    protected function setUp(): void
+    {
+        parent::setUp();
+    }
+
     /**
      * @dataProvider provideGetCurrentUser
      */
@@ -28,7 +36,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
     public function provideGetCurrentUser()
     {
         $validInput = [
-            'path' => 'rest/users/current',
+            'path' => 'users/current',
             'method' => 'get',
             'params' => [],
             'data' => null
@@ -135,7 +143,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
     public function provideUpdateCurrentUser()
     {
         $validInput = [
-            'path' => 'rest/users/current',
+            'path' => 'users/current',
             'method' => 'patch',
             'params' => null,
             'data' => []
@@ -173,7 +181,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
             // Log the user in so we can create, get, and revoke their tokens.
             $this->helper->authenticate($role);
             // Revoke the token in case the user already has one.
-            $this->helper->delete('rest/users/current/api/token');
+            $this->helper->delete('users/current/api/token');
             // Since the user now doesn't have a token, getting it should fail.
             $notFoundOutput = [
                 'status_code' => 404,
@@ -188,7 +196,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this->makeTokenRequest(
                 'post',
                 parent::validateSuccessResponse(function ($body) {
-                    $this->assertRegExp(
+                    $this->assertMatchesRegularExpression(
                         '/^[0-9]+\\.[0-9a-f]{64}$/',
                         $body['data']['token']
                     );
@@ -251,7 +259,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
         parent::requestAndValidateJson(
             $this->helper,
             [
-                'path' => 'rest/users/current/api/token',
+                'path' => 'users/current/api/token',
                 'method' => $method,
                 'params' => null,
                 'data' => null

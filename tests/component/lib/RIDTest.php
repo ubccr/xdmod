@@ -2,9 +2,10 @@
 
 namespace ComponentTests;
 
+use PHPUnit\Framework\TestCase;
 use XDUser;
 
-class RIDTest extends \PHPUnit_Framework_TestCase
+class RIDTest extends TestCase
 {
 
     /**

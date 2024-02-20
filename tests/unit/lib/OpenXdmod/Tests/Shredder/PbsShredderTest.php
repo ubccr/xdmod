@@ -28,7 +28,7 @@ class PbsShredderTest extends JobShredderBaseTestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Pbs')
             ->setConstructorArgs(array($this->db))
-            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->onlyMethods(array('insertRow', 'getResourceConfig'))
             ->getMock();
 
         $shredder

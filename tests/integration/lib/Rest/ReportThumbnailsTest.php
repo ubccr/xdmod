@@ -2,13 +2,14 @@
 
 namespace IntegrationTests\Rest;
 
+use PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
-class ReportThumbnailsTest extends \PHPUnit_Framework_TestCase
+class ReportThumbnailsTest extends TestCase
 {
     protected static $helpers = array();
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         foreach (array('cd', 'cs') as $user) {
             self::$helpers[$user] = new XdmodTestHelper();
@@ -18,7 +19,7 @@ class ReportThumbnailsTest extends \PHPUnit_Framework_TestCase
         }
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         foreach (self::$helpers as $helper) {
             $helper->logout();
@@ -27,7 +28,7 @@ class ReportThumbnailsTest extends \PHPUnit_Framework_TestCase
 
     public function testCdReport()
     {
-        $response = self::$helpers['cd']->get('rest/v1/dashboard/rolereport', null);
+        $response = self::$helpers['cd']->get('dashboard/rolereport', null);
         $this->assertEquals(8, sizeof($response[0]['data']['queue']));
 
         // delete report
@@ -41,7 +42,7 @@ class ReportThumbnailsTest extends \PHPUnit_Framework_TestCase
 
     public function testCsReport()
     {
-        $response = self::$helpers['cs']->get('rest/v1/dashboard/rolereport', null);
+        $response = self::$helpers['cs']->get('dashboard/rolereport', null);
         $this->assertEquals(4, sizeof($response[0]['data']['queue']));
 
         // delete report

@@ -15,14 +15,14 @@ class ControllerTest extends BaseTest
      */
     protected $helper;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->helper = new XdmodTestHelper(__DIR__ . '/../../../');
     }
 
     public function testEnumExistingUsers()
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $params = array(
             'operation' => 'enum_existing_users',
@@ -74,7 +74,7 @@ class ControllerTest extends BaseTest
             parent::getTestFiles()->getFile('controllers', 'enum_user_types-8.0.0')
         );
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array(
             'operation' => 'enum_user_types'
@@ -82,7 +82,7 @@ class ControllerTest extends BaseTest
 
         $response = $this->helper->post('controllers/user_admin.php', null, $data);
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
+        $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
 
         $actual = $response[0];
@@ -106,7 +106,7 @@ class ControllerTest extends BaseTest
             parent::getTestFiles()->getFile('controllers', 'enum_roles-add_default_center')
         );
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array(
             'operation' => 'enum_roles'
@@ -174,7 +174,7 @@ class ControllerTest extends BaseTest
         $group = $options['user_group'];
         $outputFile = $options['output'];
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array(
             'operation' => 'list_users',
@@ -214,7 +214,7 @@ class ControllerTest extends BaseTest
             parent::getTestFiles()->getFile('controllers', 'enum_user_types_and_roles-update_enum_user_types_and_roles')
         );
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array(
             'operation' => 'enum_user_types_and_roles'
@@ -244,7 +244,7 @@ class ControllerTest extends BaseTest
     {
 
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array(
             'start' => 0,
@@ -305,7 +305,7 @@ class ControllerTest extends BaseTest
 
     public function testCreateUser()
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array(
             'operation' => 'create_user',
@@ -363,7 +363,7 @@ class ControllerTest extends BaseTest
      */
     public function testModifyUser()
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $users = $this->listUsers();
 
@@ -421,7 +421,7 @@ class ControllerTest extends BaseTest
      */
     public function testDeleteUser()
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $users = $this->listUsers();
         $user = array_values(
@@ -466,12 +466,13 @@ class ControllerTest extends BaseTest
      */
     public function testEnumTargetAddresses(array $options)
     {
+        # enum_target_addresses_all_any
         $testData = $options['data'];
         $expected = $options['expected'];
 
         $expectedFile = $expected['file'];
         $expectedFileName = parent::getTestFiles()->getFile('controllers', $expectedFile);
-        $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'text/html; charset=UTF-8';
+        $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'application/json'/*'text/html; charset=UTF-8'*/;
         $expectedHttpCode = array_key_exists('http_code', $expected) ? $expected['http_code'] : 200;
 
         $data = array_merge(
@@ -481,9 +482,14 @@ class ControllerTest extends BaseTest
             $testData
         );
 
-        $helper = $options['helper'];
+        $helper = new XdmodTestHelper();
+        $helper->authenticate('mgr');
 
         $response = $helper->post("internal_dashboard/controllers/mailer.php", null, $data);
+
+        if ($expectedHttpCode !== $response[1]['http_code'] || $expectedContentType !== $response[1]['content_type']) {
+            print_r($response);
+        }
 
         $this->assertEquals($expectedContentType, $response[1]['content_type']);
         $this->assertEquals($expectedHttpCode, $response[1]['http_code']);
@@ -493,10 +499,12 @@ class ControllerTest extends BaseTest
         // application/json but do not return valid json. To account for these
         // two cases we just default to attempting to decode the response data
         // and if that fails then just fallback to the full response body as is.
-        try {
-            $actual = json_decode($response[0], true);
-        } catch (\Exception $e) {
+        if (is_array($response[0])) {
             $actual = $response[0];
+        } elseif (is_string($response[0])) {
+            $actual = json_decode($response[0], true);
+        } else {
+            $this->fail(sprintf('Unrecognized response body type, expected an array or string, received: %s', get_debug_type($response[0])));
         }
 
         $expected = JSON::loadFile($expectedFileName);
@@ -516,14 +524,14 @@ class ControllerTest extends BaseTest
     {
         $data = JSON::loadFile(parent::getTestFiles()->getFile('controllers', 'enum_target_addresses-update_enum_user_types_and_roles', 'input'));
 
-        $helper = new XdmodTestHelper();
-        $helper->authenticateDashboard('mgr');
+        /*$helper = new XdmodTestHelper();
+        #$helper->authenticateDashboard('mgr');*/
 
         foreach($data as $key => $test) {
             foreach($test[0]['data'] as $dataKey => $value) {
                 $data[$key][0]['data'][$dataKey] = TestParameterHelper::processParam($value);
             }
-            $data[$key][0]['helper'] = $helper;
+            /*$data[$key][0]['helper'] = $helper;*/
         }
         $data[count($data) -1][0]['last'] = true;
 

@@ -50,7 +50,12 @@ class RealmManager
 
         // Use array_values to remove gaps in keys that may have been
         // introduced by the use of array_filter.
-        return array_values($realms);
+        $values = array_values($realms);
+
+        // We force sorting in descending order due to the differences in sorting from PHP7.2 to PHP8.0
+        usort($values, fn($left, $right) => strcmp($left->getName(), $right->getName()) * -1);
+
+        return $values;
     }
 
     /**

@@ -9,7 +9,7 @@ class AuthenticationControllerProviderTest extends BaseTest
 {
     private static $helper;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$helper = new XdmodTestHelper();
     }
@@ -30,7 +30,7 @@ class AuthenticationControllerProviderTest extends BaseTest
     public function provideGetIdpRedirect()
     {
         $validInput = [
-            'path' => 'rest/auth/idpredirect',
+            'path' => 'auth/idpredirect',
             'method' => 'get',
             'params' => [],
             'data' => null

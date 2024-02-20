@@ -8,15 +8,16 @@ namespace UnitTests\OpenXdmod\Tests\Shredder;
 use CCR\DB\NullDB;
 use CCR\Log;
 use OpenXdmod\Shredder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * PBS shredder test class.
  */
-class GenericcloudShredderTest extends \PHPUnit_Framework_TestCase
+class GenericcloudShredderTest extends TestCase
 {
     protected $db;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->db = new NullDB();
     }
@@ -36,7 +37,7 @@ class GenericcloudShredderTest extends \PHPUnit_Framework_TestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Genericcloud')
             ->setConstructorArgs(array($this->db))
-            ->setMethods(array('getResourceConfig'))
+            ->onlyMethods(array('getResourceConfig'))
             ->getMock();
 
         $shredder

@@ -3,7 +3,6 @@
 namespace Models\Services;
 
 use Exception;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use XDUser;
 

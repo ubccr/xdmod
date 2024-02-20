@@ -19,7 +19,7 @@ class HpcdbHostsIngestor extends pdoIngestor implements iAction
     /**
      * @see ETL\Ingestor\pdoIngestor::transform
      */
-    public function transform(array $srcRecord, $orderId)
+    public function transform(array $srcRecord, &$orderId)
     {
         $srcRecord = parent::transform($srcRecord, $orderId);
         $transformedRecord = array();

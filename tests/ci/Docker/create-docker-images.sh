@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# Setup default values.
+BASE_DOCKER_FILE=${BASE_DOCKER_FILE:=Dockerfile.rocky8.xdmod-base}
+BASE_DOCKER_REPO=${BASE_DOCKER_REPO:=tools-ext-01.ccr.xdmod.org}
+BASE_DOCKER_OS=${BASE_DOCKER_OS:=rockylinux8.5}
+BASE_DOCKER_REPO=${BASE_DOCKER_REPO:=tools-ext-01.ccr.xdmod.org}
+BASE_DOCKER_TAG=${BASE_DOCKER_TAG:=xdmod-base}
+BASE_DOCKER_DESIGNATION="${BASE_DOCKER_REPO}/${BASE_DOCKER_OS}:${BASE_DOCKER_TAG}"
+
+DOCKER_FILE="${DOCKER_FILE:=Dockerfile.rocky8}"
+DOCKER_OS="${DOCKER_OS:=${BASE_DOCKER_OS}}"
+DOCKER_REPO="${DOCKER_REPO:=${BASE_DOCKER_REPO}}"
+DOCKER_IMAGE_NAME="${DOCKER_IMAGE_NAME:=xdmod10.0}"
+DOCKER_IMAGE_VERSION="${DOCKER_IMAGE_VERSION:=0.1}"
+DOCKER_DESIGNATION="${DOCKER_REPO}/${DOCKER_IMAGE_NAME}:${DOCKER_OS}-${DOCKER_IMAGE_VERSION}"
+
+echo "Building XDMoD Base Image..."
+echo "docker build --no-cache -f ${BASE_DOCKER_FILE} -t ${BASE_DOCKER_DESIGNATION} ."
+
+echo "Building XDMoD Final Image..."
+echo "docker build --no-cache -f ${DOCKER_FILE} -t ${DOCKER_DESIGNATION} ."

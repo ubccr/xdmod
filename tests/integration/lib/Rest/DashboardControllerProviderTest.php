@@ -23,7 +23,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
     public function provideSetLayout()
     {
         $validInput = [
-            'path' => 'rest/dashboard/layout',
+            'path' => 'dashboard/layout',
             'method' => 'post',
             'params' => null,
             'data' => ['data' => 'foo']
@@ -69,7 +69,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
             $this->helper->authenticate($username);
         }
 
-        $response = $this->helper->get('rest/v0.1/dashboard/statistics', $params);
+        $response = $this->helper->get('dashboard/statistics', $params);
         if ($username !== ROLE_ID_PUBLIC) {
             $this->helper->logout();
         }
@@ -134,7 +134,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
                         $expectedValue = (float)$value[0];
                         $actualValue = (float)$actualData[$fieldName][0];
 
-                        $this->assertEquals($expectedValue, $actualValue, "Failed equivalency for: $fieldName", 1.0e-8);
+                        $this->assertEqualsWithDelta($expectedValue, $actualValue, 1.0e-8, "Failed equivalency for: $fieldName");
                     } else {
                         $this->assertEquals($value, $actualData[$fieldName]);
                     }
@@ -167,7 +167,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
     public function provideGetStatisticsParamValidation()
     {
         $validInput = [
-            'path' => 'rest/dashboard/statistics',
+            'path' => 'dashboard/statistics',
             'method' => 'get',
             'params' => [
                 'start_date' => 'foo',
@@ -214,7 +214,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
     public function provideSetViewedUserTour()
     {
         $validInput = [
-            'path' => 'rest/dashboard/viewedUserTour',
+            'path' => 'dashboard/viewedUserTour',
             'method' => 'post',
             'params' => null,
             'data' => ['viewedTour' => '0']

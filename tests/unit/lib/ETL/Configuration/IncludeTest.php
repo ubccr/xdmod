@@ -12,8 +12,10 @@ namespace UnitTests\ETL\Configuration;
 use CCR\Log;
 use Configuration\Configuration;
 use Configuration\IncludeTransformer;
+use PHPUnit\Framework\TestCase;
+use Exception;
 
-class IncludeTest extends \PHPUnit_Framework_TestCase
+class IncludeTest extends TestCase
 {
 
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
@@ -22,7 +24,7 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
     protected static $transformer = null;
     protected static $config = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
       // Set up a logger so we can get warnings and error messages from the ETL infrastructure
         $conf = array(
@@ -41,11 +43,12 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
     /**
      * Test invalid file
      *
-     * @expectedException Exception
+     *
      */
 
     public function testIncludeInvalidFile()
     {
+        $this->expectException(Exception::class);
         $key = '$include';
         $value = 'file_does_not_exist.txt';
         $obj = (object) array($key => $value);
@@ -55,11 +58,12 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
     /**
      * Badly formed URL
      *
-     * @expectedException Exception
+     *
      */
 
     public function testBadUrl()
     {
+        $this->expectException(Exception::class);
         $key = '$include';
         $value = 'badscheme://string';
         $obj = (object) array($key => $value);

@@ -10,6 +10,7 @@ namespace xd_utilities;
 
 use Exception;
 use UnexpectedValueException;
+use xd_security\SessionSingleton;
 
 /**
  * Global INI data.
@@ -581,8 +582,8 @@ function verify_captcha(){
     }
     catch(exception $e){
     }
-
-    if ('' !== $captchaSiteKey && '' !== $captchaSecret && !isset($_SESSION['xdUser'])) {
+    $xdUser = SessionSingleton::getSession()->get('xdUser');
+    if ('' !== $captchaSiteKey && '' !== $captchaSecret && !isset($xdUser)) {
         if (!isset($_POST['g-recaptcha-response'])){
             \xd_response\presentError('Recaptcha information not specified');
         }

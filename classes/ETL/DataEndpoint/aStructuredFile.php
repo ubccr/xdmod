@@ -239,7 +239,7 @@ abstract class aStructuredFile extends File
                         $this->logger->warning(
                             sprintf("Skipping filter '%s': %s", $config->name, implode(", ", $messages))
                         );
-                        continue;
+                        continue 2;
                     }
                     $filterName = 'xdmod.external_process';
                     $resource = @stream_filter_prepend($fd, $filterName, STREAM_FILTER_READ, $config);

@@ -3,16 +3,14 @@
 namespace DataWarehouse\Access;
 
 use CCR\DB;
-use CCR\Log;
 use Exception;
 
-use DataWarehouse;
-use DataWarehouse\Access\MetricExplorer;
-use DataWarehouse\Query\Exceptions\UnknownGroupByException;
 use Realm\Realm;
 use Models\Services\Acls;
 use PDO;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use XDChartPool;
 use XDUser;
 

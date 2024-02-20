@@ -5,12 +5,13 @@
 
 namespace UnitTests\OpenXdmod\Tests\Setup;
 
+use PHPUnit\Framework\TestCase;
 use Xdmod\Template;
 
 /**
  * Template test class.
  */
-class TemplateTest extends \PHPUnit_Framework_TestCase
+class TemplateTest extends TestCase
 {
 
     /**

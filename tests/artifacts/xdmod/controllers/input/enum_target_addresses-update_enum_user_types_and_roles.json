@@ -404,7 +404,7 @@
       "expected": {
         "file": "enum_target_addresses__-update_enum_user_types_and_roles",
         "http_code": 200,
-        "content_type": "text/html; charset=UTF-8"
+        "content_type": "application/json"
       }
     }
   ],
@@ -415,8 +415,7 @@
         "role_filter": "null"
       },
       "expected": {
-        "file": "enum_target_addresses_null_null",
-        "content_type": "application/json"
+        "file": "enum_target_addresses_null_null"
       }
     }
   ],
@@ -427,9 +426,7 @@
         "role_filter": "E6I2iftftHegzzZmkge17i3je3CP1vfGCXJUddaGUoXtYWPid4jkmnEBqgqrMG8oDRjR4tyZSvsQsi8Fms0IPEjfUKHHqP54HpVMStLLYeBqwK6Sc6A1KUhF"
       },
       "expected": {
-        "file": "enum_target_addresses_rand_char(120)_rand_char(120)-update_enum_user_types_and_roles",
-        "http_code": 200,
-        "content_type": "text/html; charset=UTF-8"
+        "file": "enum_target_addresses_rand_char(120)_rand_char(120)-update_enum_user_types_and_roles"
       }
     }
   ],

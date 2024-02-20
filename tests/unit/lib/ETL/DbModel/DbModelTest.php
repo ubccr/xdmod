@@ -20,9 +20,11 @@ use ETL\DbModel\Index;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Trigger;
 use ETL\Configuration\EtlConfiguration;
+use Exception;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class DbModelTest extends \PHPUnit_Framework_TestCase
+class DbModelTest extends TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";
@@ -32,7 +34,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
      */
     private static $logger = null;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
@@ -123,11 +125,13 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     /**
      * Test index initialization error.
      *
-     * @expectedException Exception
-     * @expectedExceptionMessage "columns" must be an array
+     *
+     *
      */
     public function testIndexInitializationError()
     {
+        $this->expectExceptionMessage("\"columns\" must be an array");
+        $this->expectException(Exception::class);
         $config = (object) [
             'name' => 'initialize_error',
             'columns' => [
@@ -153,11 +157,12 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     /**
      * Test table verification error
      *
-     * @expectedException Exception
+     *
      */
 
     public function testTableVerificationError()
     {
+        $this->expectException(Exception::class);
         $config = (object) array(
             'name' => "verification_error",
             'columns' => array( (object) array(

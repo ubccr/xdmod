@@ -8,9 +8,10 @@ namespace ComponentTests\Query;
 
 use CCR\Log as Logger;
 use DataWarehouse\Query\AggregateQuery;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class AggregateQueryTest extends \PHPUnit_Framework_TestCase
+class AggregateQueryTest extends TestCase
 {
 
     /**
@@ -18,7 +19,7 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
      */
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
@@ -45,11 +46,12 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
      * Create an aggregate query with no group by or statistic. We will not be able to generate the
      * query string with no fields for the SELECT clause.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testAggregateQueryNoStatisticNoGroupBy()
     {
+        $this->expectException(\Exception::class);
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
             'day',

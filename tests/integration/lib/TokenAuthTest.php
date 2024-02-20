@@ -4,6 +4,7 @@ namespace IntegrationTests;
 
 use CCR\DB;
 use Exception;
+use CCR\Log;
 use Models\Services\Tokens;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
@@ -15,7 +16,7 @@ abstract class TokenAuthTest extends BaseTest
     /**
      * HTTP path for endpoint that creates, reads, and deletes API tokens.
      */
-    const TOKEN_CRD_ENDPOINT = 'rest/users/current/api/token';
+    const TOKEN_CRD_ENDPOINT = 'users/current/api/token';
 
     /**
      * Valid, expired, and revoked tokens for any of the non-public base roles

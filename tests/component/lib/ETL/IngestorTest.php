@@ -6,6 +6,7 @@
 namespace ComponentTests\ETL;
 
 use CCR\DB;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test various components of the ETLv2 ingestors. All tests in this file run the etl_overseer.php
@@ -21,7 +22,7 @@ use CCR\DB;
  *    data.
  */
 
-class IngestorTest extends \PHPUnit_Framework_TestCase
+class IngestorTest extends TestCase
 {
     const TEST_INPUT_DIR = '/tests/artifacts/xdmod/etlv2/configuration/input';
     const ACTION = 0;   // Run an overseer action
@@ -48,7 +49,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertRegExp('/\[warning\]/', $line);
+                $this->assertMatchesRegularExpression('/\[warning\]/', $line);
                 $numWarnings++;
             }
         }
@@ -195,7 +196,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
                 $matches = array();
                 if ( preg_match('/xdmod.structured-file.read-people-([0-9])/', $line, $matches) ) {
                     $number = $matches[1];
-                    if ( preg_match('/records_loaded:\s*([0-9]+)/', $line, $matches) ) {
+                    if ( preg_match('/"records_loaded":\s*([0-9]+)/', $line, $matches) ) {
                         $recordsLoaded[$number] = $matches[1];
                     }
                 }
@@ -291,7 +292,7 @@ class IngestorTest extends \PHPUnit_Framework_TestCase
      * @return Nothing
      */
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         $dbh = DB::factory('database');
         $dbh->execute('DROP TABLE IF EXISTS `test`.`load_data_infile_test`');

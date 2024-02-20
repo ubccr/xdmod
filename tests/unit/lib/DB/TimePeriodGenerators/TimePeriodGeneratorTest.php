@@ -4,10 +4,12 @@ namespace UnitTests\DB\TimePeriodGenerators;
 
 use UnitTests\TestHelpers\TestHelper;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Tests for TimePeriodGenerator and its subclasses.
  */
-class TimePeriodGeneratorTest extends \PHPUnit_Framework_TestCase
+class TimePeriodGeneratorTest extends TestCase
 {
     /**
      * A cache of TimePeriodGenerator instances.
@@ -396,7 +398,7 @@ class TimePeriodGeneratorTest extends \PHPUnit_Framework_TestCase
                     'start_ts' => 1451606400,
                     'middle_ts' => 1451606400,
                     'end_ts' => 1451606400,
-                    'total_hours' => 0.00027777777777778,
+                    'total_hours' => 0.0002777777777777778,
                     'total_seconds' => 1,
                 ),
             ),
@@ -407,7 +409,7 @@ class TimePeriodGeneratorTest extends \PHPUnit_Framework_TestCase
                     'start_ts' => 1451606400,
                     'middle_ts' => 1451606550,
                     'end_ts' => 1451606700,
-                    'total_hours' => 0.083611111111111,
+                    'total_hours' => 0.08361111111111111,
                     'total_seconds' => 301,
                 ),
             ),

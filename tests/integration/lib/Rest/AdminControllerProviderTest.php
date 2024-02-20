@@ -9,7 +9,7 @@ class AdminControllerProviderTest extends BaseTest
 {
     private static $helper;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         self::$helper = new XdmodTestHelper();
     }
@@ -30,7 +30,7 @@ class AdminControllerProviderTest extends BaseTest
     public function provideResetUserTourViewed()
     {
         $validInput = [
-            'path' => 'rest/admin/reset_user_tour_viewed',
+            'path' => 'reset_user_tour_viewed',
             'method' => 'post',
             'params' => null,
             'data' => [

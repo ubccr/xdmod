@@ -19,11 +19,12 @@ class UserAdminTest extends BaseUserAdminTest
      */
     public function testCreateUserFails(array $params, array $expected)
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $response = $this->helper->post('controllers/user_admin.php', null, $params);
+
         $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
-        $this->assertEquals(200, $response[1]['http_code']);
+        $this->assertEquals(400, $response[1]['http_code']);
 
         $actual = $response[0];
 
@@ -63,64 +64,65 @@ class UserAdminTest extends BaseUserAdminTest
             "totalCount" => 0,
             "results" => [],
             "data" => [],
-            "message" => ''
+            "message" => '',
+            "code" => 0
         );
 
         return array(
             // Username not provided
             array(
                 $this->copyAndRemove($params, array('username')),
-                $this->copyAndReplace($expected, array('message' => "'username' not specified."))
+                $this->copyAndReplace($expected, array('message' => "missing required username parameter"))
             ),
             // Username empty
             array(
                 $this->copyAndReplace($params, array('username' => '')),
-                $this->copyAndReplace($expected, array('message' => "Invalid value specified for 'username'."))
+                $this->copyAndReplace($expected, array('message' => "Invalid value for username. Must conform to expected constraint"))
             ),
             // first_name not provided
             array(
                 $this->copyAndRemove($params, array('first_name')),
-                $this->copyAndReplace($expected, array('message' => "'first_name' not specified."))
+                $this->copyAndReplace($expected, array('message' => "missing required first_name parameter"))
             ),
             // first_name empty
             array(
                 $this->copyAndReplace($params, array('first_name' => '')),
-                $this->copyAndReplace($expected, array('message' => "Invalid value specified for 'first_name'."))
+                $this->copyAndReplace($expected, array('message' => "Invalid value for first_name. Must conform to expected constraint"))
             ),
             // last_name not provided
             array(
                 $this->copyAndRemove($params, array('last_name')),
-                $this->copyAndReplace($expected, array('message' => "'last_name' not specified."))
+                $this->copyAndReplace($expected, array('message' => "missing required last_name parameter"))
             ),
             // last_name empty
             array(
                 $this->copyAndReplace($params, array('last_name' => '')),
-                $this->copyAndReplace($expected, array('message' => "Invalid value specified for 'last_name'."))
+                $this->copyAndReplace($expected, array('message' => "Invalid value for last_name. Must conform to expected constraint"))
             ),
             // user_type not provided
             array(
                 $this->copyAndRemove($params, array('user_type')),
-                $this->copyAndReplace($expected, array('message' => "'user_type' not specified."))
+                $this->copyAndReplace($expected, array('message' => "missing required user_type parameter"))
             ),
             // user_type empty
             array(
                 $this->copyAndReplace($params, array('user_type' => '')),
-                $this->copyAndReplace($expected, array('message' => "Invalid value specified for 'user_type'."))
+                $this->copyAndReplace($expected, array('message' => "Invalid value for user_type. Must conform to expected constraint"))
             ),
             // email_address not provided
             array(
                 $this->copyAndRemove($params, array('email_address')),
-                $this->copyAndReplace($expected, array('message' => "'email_address' not specified."))
+                $this->copyAndReplace($expected, array('message' => "missing required email_address parameter"))
             ),
             // email_address empty
             array(
                 $this->copyAndReplace($params, array('email_address' => '')),
-                $this->copyAndReplace($expected, array('message' => "Failed to assert 'email_address'."))
+                $this->copyAndReplace($expected, array('message' => "Invalid value for email_address. Must be a(n) email."))
             ),
             // acls not provided
             array(
                 $this->copyAndRemove($params, array('acls')),
-                $this->copyAndReplace($expected, array('message' => "Acl information is required"))
+                $this->copyAndReplace($expected, array('message' => "missing required acls parameter"))
             ),
             // acls empty
             array(
@@ -158,12 +160,13 @@ class UserAdminTest extends BaseUserAdminTest
     public function testCreateUsersSuccess(array $user)
     {
         $userId = $this->createUser($user);
+        $expectedSuccess = isset($user['expected_success']) ? $user['expected_success'] : true;
 
         // if we received a userId back then let's go ahead and update the
         // users password so that it can be used to login in future tests.
         if ($userId !== null) {
             $username = array_search($userId, self::$newUsers);
-            $this->updateCurrentUser($userId, $username);
+            $this->updateCurrentUser($username, $username);
         }
     }
 
@@ -242,10 +245,9 @@ class UserAdminTest extends BaseUserAdminTest
                 }
             }
         }
-
         $this->helper->authenticateDirect($username, $username);
 
-        $response = $this->helper->get('rest/v0.1/warehouse/quick_filters');
+        $response = $this->helper->get('warehouse/quick_filters');
         $this->validateResponse($response);
 
         $this->assertArrayHasKey('results', $response[0]);
@@ -525,7 +527,10 @@ class UserAdminTest extends BaseUserAdminTest
 
         $this->validateResponse($response, 200, $expectedContentType);
 
-        $actual = json_decode($response[0], true);
+        $actual = $response[0];
+        if (is_string($response[0])) {
+            $actual = json_decode($response[0], true);
+        }
 
         $expected = JSON::loadFile(
             parent::getTestFiles()->getFile('user_admin', $expectedOutput, 'output')
@@ -608,7 +613,7 @@ class UserAdminTest extends BaseUserAdminTest
         );
 
         $response = $helper->post("internal_dashboard/controllers/controller.php", null, $data);
-        $expectedContentType = $expectedSuccess ? 'application/xls' : 'text/html; charset=UTF-8';
+        $expectedContentType = $expectedSuccess ? 'application/xls' : 'application/json';
         $this->validateResponse($response, 200, $expectedContentType);
 
 
@@ -634,12 +639,14 @@ class UserAdminTest extends BaseUserAdminTest
             }
         } else {
             // we expect the incoming data to be json formatted.
-            $actualLines = json_decode($response[0], true);
+            $actualLines = $response[0];
+            if (is_string($response[0])) {
+                $actualLines = json_decode($response[0], true);
+            }
             foreach($actualLines as $key => $value) {
                 $actual[] = array($key, $value);
             }
         }
-
         $fileType = $expectedSuccess ? '.csv' : '.json';
         $expectedFileName = parent::getTestFiles()->getFile('user_admin', $expectedOutput, 'output', $fileType);
 
@@ -751,7 +758,7 @@ class UserAdminTest extends BaseUserAdminTest
         );
 
         $helper = new XdmodTestHelper();
-        $helper->authenticateDashboard('mgr');
+        $helper->authenticate('mgr');
 
         foreach($data as &$datum) {
             $datum[0]['helper'] = $helper;
@@ -831,7 +838,7 @@ class UserAdminTest extends BaseUserAdminTest
         $expectedData = $options['expected'];
         $expectedContentType = $expectedData['content_type'];
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array_merge(
             array(

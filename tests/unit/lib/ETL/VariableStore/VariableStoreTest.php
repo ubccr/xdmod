@@ -10,8 +10,10 @@
 namespace UnitTests\ETL\VariableStore;
 
 use ETL\VariableStore;
+use PHPUnit\Framework\TestCase;
+use Exception;
 
-class VariableStoreTest extends \PHPUnit_Framework_TestCase
+class VariableStoreTest extends TestCase
 {
 
     /**
@@ -39,11 +41,11 @@ class VariableStoreTest extends \PHPUnit_Framework_TestCase
     /**
      * Test constructor with invalid initializer.
      *
-     * @expectedException Exception
      */
 
     public function testConstructorBadInitializer()
     {
+        $this->expectException(Exception::class);
         new VariableStore('bad initializer');
     }
 
@@ -83,11 +85,11 @@ class VariableStoreTest extends \PHPUnit_Framework_TestCase
     /**
      * Test non-scalar value
      *
-     * @expectedException Exception
      */
 
     public function testNonScalarValue()
     {
+        $this->expectException(Exception::class);
         $store = new VariableStore();
         $store->first = array(1, 2, 3);
     }
