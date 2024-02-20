@@ -51,7 +51,7 @@ class StructuredFileTest extends TestCase
      */
     private $logger = null;
 
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
@@ -63,7 +63,7 @@ class StructuredFileTest extends TestCase
         );
 
         $this->logger = Log::factory('PHPUnit', $conf);
-        parent::__construct();
+        parent::__construct($name, $data, $dataName);
     }  // __construct()
 
     /**
@@ -323,7 +323,6 @@ class StructuredFileTest extends TestCase
 
     /**
      * Test #6: Unknown filter executable.
-     *
      *
      */
 

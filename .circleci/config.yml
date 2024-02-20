@@ -7,7 +7,7 @@ version: 2.1
 executors:
   rocky8: &rocky8-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.5.0-x86_64:rockylinux8.5-0.3
+      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.5.0-x86_64:rockylinux8.5-0.3-php8
 jobs:
   build:
     parameters:
@@ -43,6 +43,10 @@ jobs:
           command: |
             mkdir ~/phpunit
             mkdir /tmp/screenshots
+      - run:
+          name: 'Fixup Simplesaml'
+          command: |
+            sed -i 's/SimpleSAML_Error_Assertion::installHandler();//g' vendor/simplesamlphp/simplesamlphp/www/_include.php
       - run: ~/bin/buildrpm xdmod
       - run:
           name: Install / Upgrade XDMoD from RPM
@@ -87,8 +91,11 @@ jobs:
             PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
             ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - run:
-          name: Ensure that no unexpected Apache errors were generated
-          command: test ! -e /var/log/php-fpm/www-error.log
+          name: Ensure that no unexpected Apache errors were generated ( We expect PHP Deprecated )
+          command: >
+            if [ -e /var/log/php-fpm/www-error.log ]; then
+              test `fgrep -v 'PHP Deprecated' /var/log/php-fpm/www-error.log | wc -l` = 0;
+            fi
       - run:
           name: Ensure that no PHP command-line errors were generated
           command: >

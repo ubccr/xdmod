@@ -223,9 +223,8 @@ class CloudInstanceTypeStateIngestorTest extends TestCase
 
     private $fsm;
 
-    public function __construct($name = null, array $data = [], $dataName = '')
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
-        parent::__construct($name, $data, $dataName);
         $configFile = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/xdmod_etl_config_8.0.0.json');
 
         // This needs to be explicitly defined here so PHP 5.4 doesn't complain
@@ -234,6 +233,7 @@ class CloudInstanceTypeStateIngestorTest extends TestCase
         $options = new IngestorOptions($this->options_array);
         $conf = EtlConfiguration::factory($configFile);
         $this->fsm = new CloudInstanceTypeStateIngestor($options, $conf);
+        parent::__construct($name, $data, $dataName);
     }
 
     // Test for when the number of cores for an instance changes

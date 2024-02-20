@@ -5,7 +5,6 @@ namespace IntegrationTests\Database;
 use CCR\DB;
 use CCR\DB\MySQLHelper;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_TestCase;
 
 /**
  * Test the data warehouse export database table.

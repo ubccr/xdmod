@@ -9,7 +9,7 @@ use CCR\Log;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Table;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_TestCase;
+use Exception;
 use IntegrationTests\TestHarness\TestFiles;
 use stdClass;
 
@@ -43,7 +43,7 @@ class ForeignKeyConstraintTest extends TestCase
     public function testForeignKeyConstraintInitializationError()
     {
         $this->expectExceptionMessage("\"columns\" must be an array");
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $config = (object) [
             'name' => 'initialize_error',
             'columns' => [
@@ -93,7 +93,7 @@ class ForeignKeyConstraintTest extends TestCase
      */
     public function testVerificationFailure(stdClass $config)
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $table = new Table($config, '`', self::$logger);
         $table->verify();
     }
@@ -289,7 +289,10 @@ class ForeignKeyConstraintTest extends TestCase
     {
         return array_map(
             function ($inputData) {
-                return array_map(array($this, 'arrayToStdClass'), $inputData);
+                return array_map(
+                    fn($obj) => json_decode(json_encode($obj)),
+                    $inputData
+                );
             },
             $this->getTestFiles()->loadJsonFile(self::TEST_GROUP, $name)
         );

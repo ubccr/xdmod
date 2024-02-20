@@ -62,8 +62,8 @@ class SlurmHelperTest extends BaseTest
 
         $result = $this->executeSlurmHelper($sacctOutputType, $sacctExitStatus);
         $this->assertEquals($exitStatus, $result['exit_status']);
-        $this->assertRegExp($stdoutRegex, $result['stdout']);
-        $this->assertRegExp($stderrRegex, $result['stderr']);
+        $this->assertMatchesRegularExpression($stdoutRegex, $result['stdout']);
+        $this->assertMatchesRegularExpression($stderrRegex, $result['stderr']);
     }
 
     /**
@@ -123,9 +123,9 @@ class SlurmHelperTest extends BaseTest
         return $this->getTestFiles()->loadJsonFile(self::TEST_GROUP, 'sacct');
     }
 
-    public static function setUpBeforeClass(): void
+    public static function setupBeforeClass(): void
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
         static::$dbh = DB::factory('shredder');
         static::$maxSlurmJobId = static::$dbh->query('SELECT COALESCE(MAX(shredded_job_slurm_id), 0) AS id FROM shredded_job_slurm')[0]['id'];
         static::$maxShreddedJobId = static::$dbh->query('SELECT COALESCE(MAX(shredded_job_id), 0) AS id FROM shredded_job')[0]['id'];

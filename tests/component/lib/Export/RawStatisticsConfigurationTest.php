@@ -43,9 +43,9 @@ class RawStatisticsConfigurationTest extends TestCase
      * Store enabled batch export realm names before adding new test
      * configuration files and then add test configuration files.
      */
-    public static function setUpBeforeClass(): void
+    public static function setupBeforeClass(): void
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
 
         static::$realmNames = array_map(
             function ($realm) {

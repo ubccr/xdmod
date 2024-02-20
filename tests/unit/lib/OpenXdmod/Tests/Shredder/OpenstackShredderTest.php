@@ -16,7 +16,7 @@ class OpenstackShredderTest extends TestCase
 {
     protected $db;
 
-    public function setUp(): void
+    public function setup(): void
     {
         $this->db = new NullDB();
     }
@@ -36,7 +36,7 @@ class OpenstackShredderTest extends TestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Openstack')
             ->setConstructorArgs(array($this->db))
-            ->setMethods(array('getResourceConfig'))
+            ->onlyMethods(array('getResourceConfig'))
             ->getMock();
 
         $shredder

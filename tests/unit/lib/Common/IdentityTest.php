@@ -17,7 +17,7 @@ class IdentityTest extends TestCase
 {
     private $_identity;
     private $_identity1;
-    public function setUp(): void
+    public function setup(): void
     {
         $this->_identity = new \Common\Identity('identity_name');
         $this->_identity1 = new \Common\Identity('');

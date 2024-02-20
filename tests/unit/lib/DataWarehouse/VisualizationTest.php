@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class VisualizationTest extends TestCase
 {
-    public function setUp(): void
+    public function setup(): void
     {
         // Cut and pasted from the colors1.json file.
         $this->expected = array(
@@ -23,7 +23,7 @@ class VisualizationTest extends TestCase
     public function tearDown(): void {
     }
 
-    
+
     public function testGetLotsOfColours()
     {
         $count = 65;

@@ -3,8 +3,7 @@
 namespace IntegrationTests\Configuration;
 
 use Exception;
-use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 use CCR\Json;
 
 /**
@@ -24,7 +23,7 @@ class VersionNumberTest extends TestCase
      */
     private $buildJsonPath;
 
-    public function setUp(): void
+    public function setup(): void
     {
         $buildJsonPath = __DIR__ . '/../../../../open_xdmod/modules/xdmod/build.json';
         $this->buildJsonPath = realpath($buildJsonPath);

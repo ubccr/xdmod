@@ -214,6 +214,7 @@ class XDUserTest extends BaseTest
     {
         $this->expectExceptionMessage("A user must have at least one role.");
         $this->expectException(Exception::class);
+
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
 
         $originalRoles = $user->getRoles();

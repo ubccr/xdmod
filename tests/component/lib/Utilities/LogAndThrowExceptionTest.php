@@ -6,8 +6,7 @@ use CCR\DB;
 use CCR\Loggable;
 use Exception;
 use PDOException;
-use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 
 /**
  * Test various cases for exceptions thrown by Loggable::logAndThrowException()
@@ -18,7 +17,7 @@ class LogAndThrowExceptionTest extends TestCase
     private $db;
     private $loggable;
 
-    public function setUp(): void
+    public function setup(): void
     {
         $this->db = DB::factory('datawarehouse');
         $this->loggable = new Loggable();

@@ -79,8 +79,9 @@ class EtlOverseerTest extends TestCase
             self::$overseerOptions->setIncludeOnlyResourceCodes('resource1');
             $overseer = new EtlOverseer(self::$overseerOptions);
             $overseer->execute(self::$etlConfig);
+            $this->assertTrue(true);
         } catch ( Exception $e ) {
-            $this->assertTrue(false, $e->getMessage());
+            $this->fail($e->getMessage());
         }
 
         // Array of valid resource codes to include
@@ -89,8 +90,9 @@ class EtlOverseerTest extends TestCase
             self::$overseerOptions->setIncludeOnlyResourceCodes(array('resource1', 'resource2'));
             $overseer = new EtlOverseer(self::$overseerOptions);
             $overseer->execute(self::$etlConfig);
+            $this->assertTrue(true);
         } catch ( Exception $e ) {
-            $this->assertTrue(false, $e->getMessage());
+            $this->fail($e->getMessage());
         }
 
         // Single valid resource code to exclude
@@ -99,8 +101,9 @@ class EtlOverseerTest extends TestCase
             self::$overseerOptions->setExcludeResourceCodes('resource1');
             $overseer = new EtlOverseer(self::$overseerOptions);
             $overseer->execute(self::$etlConfig);
+            $this->assertTrue(true);
         } catch ( Exception $e ) {
-            $this->assertTrue(false, $e->getMessage());
+            $this->fail($e->getMessage());
         }
 
         // Array of valid resource codes to exclude
@@ -109,12 +112,10 @@ class EtlOverseerTest extends TestCase
             self::$overseerOptions->setExcludeResourceCodes(array('resource1', 'resource2'));
             $overseer = new EtlOverseer(self::$overseerOptions);
             $overseer->execute(self::$etlConfig);
+            $this->assertTrue(true);
         } catch ( Exception $e ) {
-            $this->assertTrue(false, $e->getMessage());
+            $this->fail($e->getMessage());
         }
-
-        // If we've gotten this far then everything has passed
-        $this->assertTrue(true);
     }
 
     /**

@@ -49,7 +49,7 @@ class IngestorTest extends TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertRegExp('/\[warning\]/', $line);
+                $this->assertMatchesRegularExpression('/\[warning\]/', $line);
                 $numWarnings++;
             }
         }

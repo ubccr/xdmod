@@ -94,7 +94,7 @@ abstract class BaseUserAdminTest extends BaseTest
         $helper->authenticate('mgr');
         $data = array(
             'operation' => 'delete_user',
-            'uid'       => $userId
+            'uid' => $userId
         );
 
         $response = $helper->post('controllers/user_admin.php', null, $data);

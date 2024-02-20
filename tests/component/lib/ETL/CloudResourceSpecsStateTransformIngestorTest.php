@@ -187,7 +187,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends TestCase
 
     private $fsm;
 
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         $configFile = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/xdmod_etl_config_8.0.0.json');
 
@@ -198,7 +198,7 @@ class CloudResourceSpecsStateTransformIngestorTest extends TestCase
         $conf = EtlConfiguration::factory($configFile);
 
         $this->fsm = new CloudResourceSpecsStateTransformIngestor($options, $conf);
-        parent::__construct();
+        parent::__construct($name, $data, $dataName);
     }
 
     // Test for when the VCpus change for a host

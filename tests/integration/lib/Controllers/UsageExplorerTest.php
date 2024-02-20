@@ -32,9 +32,9 @@ class UsageExplorerTest extends TokenAuthTest
 {
     private static $publicView;
 
-    public static function setUpBeforeClass(): void
+    public static function setupBeforeClass(): void
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
         self::$publicView = array(
             "public_user" => "true",
             "realm" => "Jobs",
@@ -52,7 +52,7 @@ class UsageExplorerTest extends TokenAuthTest
      */
     protected $helper;
 
-    protected function setUp(): void
+    protected function setup(): void
     {
         $this->helper = new XdmodTestHelper();
     }
@@ -160,7 +160,7 @@ believe that you should be able to see this information, then please select
 EOF;
 
         $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 400);
+        $this->assertEquals($response[1]['http_code'], 403);
         $this->assertEquals($response[0]['message'], $expectedErrorMessage);
     }
 
@@ -334,7 +334,7 @@ EOF
         $this->assertEquals('DESC', $firstField['sortDir']);
 
         foreach($fields as $field) {
-            $this->assertRegExp('/dimension_column_\d+/', $field['name']);
+            $this->assertMatchesRegularExpression('/dimension_column_\d+/', $field['name']);
             $this->assertEquals('float', $field['type']);
             $this->assertEquals('DESC', $field['sortDir']);
         }
@@ -343,9 +343,9 @@ EOF
         $records = $got['records'];
         $this->assertCount($recordCount, $records);
         foreach($records as $record) {
-            $this->assertRegexp('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $record['day']);
+            $this->assertMatchesRegularExpression('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $record['day']);
             foreach($record as $rkey => $rval) {
-                $this->assertRegExp('/^day|dimension_column_\d+$/', $rkey);
+                $this->assertMatchesRegularExpression('/^day|dimension_column_\d+$/', $rkey);
             }
         }
 
@@ -357,9 +357,9 @@ EOF
         $this->assertEquals(array('header' => 'Day', 'width' => 150, 'dataIndex' => 'day', 'sortable' => 1, 'editable' => false, 'locked' => 1), $firstCol);
 
         foreach($columns as $column) {
-            $this->assertRegExp('/^\[[^\]]+\] Job Size: Max \(Core Count\)$/', $column['header']);
+            $this->assertMatchesRegularExpression('/^\[[^\]]+\] Job Size: Max \(Core Count\)$/', $column['header']);
             $this->assertEquals(140, $column['width']);
-            $this->assertRegExp('/^dimension_column_\d+$/', $column['dataIndex']);
+            $this->assertMatchesRegularExpression('/^dimension_column_\d+$/', $column['dataIndex']);
             $this->assertEquals(1, $column['sortable']);
             $this->assertEquals(false, $column['editable']);
             $this->assertEquals('right', $column['align']);

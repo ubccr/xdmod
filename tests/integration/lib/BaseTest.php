@@ -245,7 +245,6 @@ abstract class BaseTest extends TestCase
         $actualBody = [];
         $actualHeaders = [];
 
-        $this->log(sprintf('Making Request w/ params: %s', var_export($input, true)));
         // Make HTTP request.
         $response = self::makeHttpRequest($testHelper, $input);
 
@@ -301,10 +300,7 @@ abstract class BaseTest extends TestCase
     ) {
         $testHelper = new XdmodTestHelper();
         if ('pub' !== $role) {
-            $this->log(sprintf('Authenticating with %s', $role));
             $testHelper->authenticate($role);
-        } else {
-            $this->log('No Authentication');
         }
 
         $actualBody = $this->requestAndValidateJson(
@@ -804,7 +800,7 @@ abstract class BaseTest extends TestCase
      */
     protected function validateDate($date)
     {
-        parent::assertRegExp(self::DATE_REGEX, $date);
+        parent::assertMatchesRegularExpression(self::DATE_REGEX, $date);
     }
 
     /**

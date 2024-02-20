@@ -493,7 +493,7 @@ class RegressionTestHelper extends XdmodTestHelper
             [$outputDir, $outputFileName]
         );
         file_put_contents($outputFile, $data);
-        throw new \PHPUnit_Framework_SkippedTestError(
+        throw new \PHPUnit\Framework\SkippedTestError(
             "Created Expected output for $fullTestName"
         );
     }

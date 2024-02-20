@@ -15,7 +15,7 @@ use PHPUnit\Framework\TestCase;
 class ScalableValueTest extends TestCase
 {
     private $_scalableValue;
-    public function setUp(): void
+    public function setup(): void
     {
         $this->_scalableValue = new \Common\ScalableValue(10, .5, .2);
     }

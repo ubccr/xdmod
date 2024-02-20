@@ -55,7 +55,7 @@ class CCRDBHandlerTest extends TestCase
         }
 
         $this->assertNotNull($json);
-        $this->assertObjectHasAttribute(
+        $this->assertObjectHasProperty(
             'message',
             $json,
             sprintf(

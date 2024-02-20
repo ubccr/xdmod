@@ -37,7 +37,7 @@ class GenericcloudShredderTest extends TestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Genericcloud')
             ->setConstructorArgs(array($this->db))
-            ->setMethods(array('getResourceConfig'))
+            ->onlyMethods(array('getResourceConfig'))
             ->getMock();
 
         $shredder

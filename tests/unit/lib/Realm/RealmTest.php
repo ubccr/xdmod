@@ -7,6 +7,7 @@ namespace UnitTests\Realm;
 
 use CCR\Log as Logger;
 use PHPUnit\Framework\TestCase;
+use Exception;
 use Realm\Realm;
 
 class RealmTest extends TestCase
@@ -44,7 +45,7 @@ class RealmTest extends TestCase
 
     public function testInvalidRealmName()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         Realm::factory('RealmDoesNotExist', self::$logger);
     }
 

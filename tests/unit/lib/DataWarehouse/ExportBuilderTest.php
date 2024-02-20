@@ -6,7 +6,7 @@ use PHPUnit\Framework\TestCase;
 
 class ExportBuilderTest extends TestCase
 {
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         $this->_dummydata = array(array(
             'headers' => array('Column1', 'Column2'),
@@ -15,7 +15,7 @@ class ExportBuilderTest extends TestCase
             'title2' => array('parameters' => array('param1=value1') ),
             'rows' => array(array('Column1' => 'value1', 'Column2' => 'value2'))
         ));
-        parent::__construct();
+        parent::__construct($name, $data, $dataName);
     }
 
     private function exportHelper($format, $inline, $filename)
@@ -56,7 +56,7 @@ class ExportBuilderTest extends TestCase
 
         $parsedxml = simplexml_load_string($result['results']);
 
-        $this->assertObjectHasAttribute('rows', $parsedxml);
+        $this->assertObjectHasProperty('rows', $parsedxml);
         $this->assertEquals('value1', $parsedxml->rows[0]->row->cell[0]->value);
         $this->assertEquals('value2', $parsedxml->rows[0]->row->cell[1]->value);
     }

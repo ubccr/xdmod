@@ -7,14 +7,14 @@ namespace UnitTests\ETL\DbModel;
 
 use CCR\Log;
 use ETL\DbModel\Table;
-use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_TestCase;
+use Exception;
+use \PHPUnit\Framework\TestCase;
 
 class TableTest extends TestCase
 {
     private static $logger;
 
-    public static function setUpBeforeClass(): void
+    public static function setupBeforeClass(): void
     {
         self::$logger = Log::singleton('null');
     }
@@ -26,7 +26,7 @@ class TableTest extends TestCase
      */
     public function testTableSchemaError()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $config = (object) [
             'schema' => 'my_schema',
             'name' => 'my_table',
@@ -130,11 +130,10 @@ class TableTest extends TestCase
      * Test that the table schema must be a string.
      *
      * @dataProvider tableSchemaTypeErrorProvider
-     *
      */
     public function testTableSchemaTypeError($schemaName)
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $config = (object) [
             'schema' => $schemaName,
             'name' => 'my_table',

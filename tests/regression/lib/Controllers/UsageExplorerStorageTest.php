@@ -18,7 +18,7 @@ class UsageExplorerStorageTest extends TestCase
     /**
      * Create the helper and authenticate.
      */
-    public static function setUpBeforeClass(): void
+    public static function setupBeforeClass(): void
     {
         self::$helper = new RegressionTestHelper();
         self::$helper->authenticate();

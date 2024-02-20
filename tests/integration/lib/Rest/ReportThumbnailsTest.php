@@ -9,7 +9,7 @@ class ReportThumbnailsTest extends TestCase
 {
     protected static $helpers = array();
 
-    public static function setUpBeforeClass(): void
+    public static function setupBeforeClass(): void
     {
         foreach (array('cd', 'cs') as $user) {
             self::$helpers[$user] = new XdmodTestHelper();

@@ -20,7 +20,7 @@ class SlurmResourceParserTest extends TestCase
 
     private $parser;
 
-    public function setUp(): void
+    public function setup(): void
     {
         $this->parser = new SlurmResourceParser();
     }

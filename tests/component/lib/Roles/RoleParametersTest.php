@@ -36,10 +36,9 @@ class RoleParametersTest extends BaseTest
      */
     public function __construct($name = null, array $data = array(), $dataName = '')
     {
-        parent::__construct($name, $data, $dataName);
-
         $this->peopleHelper = new PeopleHelper();
         $this->organizationHelper = new OrganizationHelper();
+        parent::__construct($name, $data, $dataName);
     }
 
 

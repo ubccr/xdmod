@@ -5,7 +5,6 @@ namespace UnitTests\DataWarehouse\Export;
 use DataWarehouse\Export\FileWriter\FileWriterFactory;
 use Exception;
 use PHPUnit\Framework\TestCase;
-use PHPUnit_Framework_TestCase;
 use IntegrationTests\TestHarness\TestFiles;
 
 /**

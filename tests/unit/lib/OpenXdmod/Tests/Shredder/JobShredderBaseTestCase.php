@@ -35,7 +35,7 @@ abstract class JobShredderBaseTestCase extends TestCase
     /**
      * Create a null database and logger.
      */
-    public function setUp(): void
+    public function setup(): void
     {
         $this->db = new NullDB();
         $this->logger = Log::singleton('null');
@@ -97,7 +97,7 @@ abstract class JobShredderBaseTestCase extends TestCase
         // output is a JSON object and not an array.
         $testCases = [];
         $i = 0;
-        foreach ($outputData as $testName => $outputTestCase) {
+        foreach($outputData as $testName => $outputTestCase){
             $testCases[$testName] = [$inputData[$i], $outputTestCase];
             ++$i;
         }

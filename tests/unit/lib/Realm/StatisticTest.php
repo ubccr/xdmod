@@ -6,6 +6,7 @@
 namespace UnitTests\Realm;
 
 use CCR\Log as Logger;
+use Exception;
 use PHPUnit\Framework\TestCase;
 use Realm\Realm;
 
@@ -44,7 +45,7 @@ class StatisticTest extends TestCase
 
     public function testInvalidStatistic()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $realm = Realm::factory('Jobs', self::$logger);
         $realm->getStatisticObject('DoesNotExist');
     }
@@ -135,7 +136,7 @@ class StatisticTest extends TestCase
 
     public function testGetDisabledStatisticObject()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $realm = Realm::factory('Cloud', self::$logger);
         $realm->getStatisticObject('disabled_core_time');
     }

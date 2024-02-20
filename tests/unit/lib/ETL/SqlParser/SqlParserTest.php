@@ -22,7 +22,7 @@ class SqlParserTest extends TestCase
     const TMPDIR = '/tmp/xdmod-etl-sqlparser-test';
     private static $defaultModuleName = null;
 
-    public static function setUpBeforeClass(): void
+    public static function setupBeforeClass(): void
     {
         // Query the configuration file for the default module name
 
@@ -76,7 +76,7 @@ CASE
   ELSE COALESCE(o.amie_name, o.organization_abbrev) || ' - ' || o.organization_name
 END AS long_name
 FROM acct.organizations o, acct.resources r
-WHERE o.organization_id = r.organization_id   
+WHERE o.organization_id = r.organization_id
 AND r.resource_type_id IS NOT NULL
 AND r.resource_type_id NOT IN (4, 11)
 ORDER BY long_name

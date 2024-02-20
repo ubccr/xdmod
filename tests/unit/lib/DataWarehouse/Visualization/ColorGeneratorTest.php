@@ -41,7 +41,7 @@ class ColorGeneratorTest extends TestCase
         }
 
         $c = new \DataWarehouse\Visualization\ColorGenerator($dummydata, 10, false);
-        
+
         $expectedColors = array_slice($this->expected, 1);
         $totalCols = count($expectedColors);
         for($i = 0; $i < $totalCols * 2; $i++)

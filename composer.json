@@ -54,7 +54,7 @@
     "require-dev": {
         "ccampbell/chromephp": "^4.1",
         "dms/phpunit-arraysubset-asserts": "^0.4.0",
-        "phpunit/phpunit": "^8.5",
+        "phpunit/phpunit": "^9.0",
         "symfony/maker-bundle": "^1.43",
         "symfony/stopwatch": "5.4.*",
         "symfony/web-profiler-bundle": "5.4.*"
@@ -236,13 +236,13 @@
             "package": {
                 "name": "plotly/plotly",
                 "type": "vanilla-plugin",
-                "version": "1.57.1",
+                "version": "2.24.2",
                 "license": "MIT",
                 "homepage": "https://github.com/plotly/plotly.js",
                 "dist": {
-                    "url": "https://cdn.plot.ly/plotly-1.57.1.min.js",
+                    "url": "https://cdn.plot.ly/plotly-2.24.2.min.js",
                     "type": "file",
-                    "shasum": "ccf99902ea104599c3b5b4811e83b8ee8118aad3"
+                    "shasum": "18d8802e7767617cfc23b6008a56581a567c1015"
                 },
                 "require": {
                     "composer/installers": "~1.0"

@@ -2,16 +2,13 @@
 
 namespace IntegrationTests\Rest;
 
-use DMS\PHPUnitExtensions\ArraySubset\Assert;
 use CCR\DB;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
 use IntegrationTests\TokenAuthTest;
 use JsonSchema\Constraints\Constraint;
 use JsonSchema\Validator;
-use PHPUnit\Framework\TestCase;
-use TestHarness\TestFiles;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 use XDUser;
 
@@ -85,7 +82,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
     /**
      * Instantiate fixtures and authenticate helpers.
      */
-    public static function setUpBeforeClass(): void
+    public static function setupBeforeClass(): void
     {
         foreach (self::$userRoles as $role => $username) {
             self::$helpers[$role] = new XdmodTestHelper();
@@ -261,7 +258,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
     public function testCreateRequest($role, array $params, $httpCode, $schema)
     {
         list($content, $info, $headers) = self::$helpers[$role]->post('warehouse/export/request', null, $params);
-        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
+        $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
     }
@@ -320,13 +317,13 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
         array $requests
     ) {
         list($content, $info, $headers) = self::$helpers[$role]->get('warehouse/export/requests');
-        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
+        $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
 
         // Only check data for successful requests.
         if ($httpCode == 200) {
-            Assert::assertArraySubset($requests, $content['data'], 'Data contains requests');
+            $this->assertTrue(count($requests) === count($content['data']), 'Data contains requests');
         }
     }
 
@@ -343,7 +340,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
         self::$queryHandler->submittedToAvailable($id);
         @file_put_contents(self::$fileManager->getExportDataFilePath($id), $zipContent);
         list($content, $info, $headers) = self::$helpers[$role]->get('warehouse/export/download/' . $id);
-        $this->assertRegExp('#\bapplication/zip\b#', $headers['Content-Type'], 'Content type header');
+        $this->assertMatchesRegularExpression('#\bapplication/zip\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals(200, $info['http_code'], 'HTTP response code');
         $this->assertEquals($zipContent, $content, 'Download content');
         self::$fileManager->removeExportFile($id);
@@ -375,7 +372,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
         $id = $createContent['data'][0]['id'];
 
         list($content, $info, $headers) = self::$helpers[$role]->delete('warehouse/export/request/' . $id);
-        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
+        $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
         $this->assertEquals($id, $content['data'][0]['id'], 'Deleted ID is in response');
@@ -396,27 +393,27 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
     {
         // Public user can't delete anything.
         list($content, $info, $headers) = self::$helpers['pub']->delete('warehouse/export/request/1');
-        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
+        $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals(401, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, 'error');
 
         // Non-integer ID.
         list($content, $info, $headers) = self::$helpers['usr']->delete('warehouse/export/request/abc');
-        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
+        $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals(404, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, 'error');
 
         // Trying to delete a non-existent request.
         list($row) = self::$dbh->query('SELECT MAX(id) + 1 AS id FROM batch_export_requests');
         list($content, $info, $headers) = self::$helpers['usr']->delete('warehouse/export/request/' . $row['id']);
-        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
+        $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals(404, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, 'error');
 
         // Trying to delete another user's request.
         list($row) = self::$dbh->query('SELECT id FROM batch_export_requests WHERE user_id = :user_id LIMIT 1', ['user_id' => self::$users['pi']->getUserId()]);
         list($content, $info, $headers) = self::$helpers['usr']->delete('warehouse/export/request/' . $row['id']);
-        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
+        $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals(404, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, 'error');
     }
@@ -445,11 +442,11 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
             $ids[] = $datum['id'];
         }
         // Delete all existing requests.
-        list($content, $info, $headers) = self::$helpers[$role]->delete('warehouse/export/requests', ['ids' => $ids]);
-        $this->assertRegExp('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
+        list($content, $info, $headers) = self::$helpers[$role]->delete('warehouse/export/requests', null, $data);
+        $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
-        Assert::assertArraySubset($content['data'], $beforeContent['data'], 'Deleted IDs are in response');
+        $this->assertTrue(count($content['data']) === count($beforeContent['data']), 'Deleted IDs are in response');
 
         // Get list of requests after deletion
         list($afterContent) = self::$helpers[$role]->get('warehouse/export/requests');

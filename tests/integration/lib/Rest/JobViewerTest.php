@@ -9,7 +9,7 @@ class JobViewerTest extends BaseTest
 {
     const ENDPOINT = 'warehouse/';
 
-    public function setUp(): void
+    public function setup(): void
     {
         $xdmodConfig = array( 'decodetextasjson' => true );
         $this->xdmodhelper = new XdmodTestHelper($xdmodConfig);

@@ -13,6 +13,7 @@ use CCR\Log;
 use Configuration\Configuration;
 use Configuration\IncludeTransformer;
 use PHPUnit\Framework\TestCase;
+use Exception;
 
 class IncludeTest extends TestCase
 {
@@ -47,7 +48,7 @@ class IncludeTest extends TestCase
 
     public function testIncludeInvalidFile()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $key = '$include';
         $value = 'file_does_not_exist.txt';
         $obj = (object) array($key => $value);
@@ -62,7 +63,7 @@ class IncludeTest extends TestCase
 
     public function testBadUrl()
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(Exception::class);
         $key = '$include';
         $value = 'badscheme://string';
         $obj = (object) array($key => $value);
