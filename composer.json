@@ -1,4 +1,7 @@
 {
+    "extra": {
+        "COMMENT": "If kassner/log-parser is updated to version >2.1.1, then the call to web_parser->addPattern in classes/ETL/DataEndpoint/WebServerLogFile.php (added in https://github.com/ubccr/xdmod/pull/1816) can be removed along with this 'extra' section."
+    },
     "require": {
         "php": "^5.4 || ^7.2",
         "carlo/jquery-base64-file": "^1.0",
