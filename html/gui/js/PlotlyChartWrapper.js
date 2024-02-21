@@ -42,6 +42,9 @@ function adjustTitles(layout) {
     const len = subtitle.text.length;
     let subtitleLineCount = 0;
     if (len > 0) {
+        if (!layout.width) {
+            layout.width = 1512; // default width -- need for custom queries because the width is not set for some reason
+        }
         const axWidth = layout.width - layout.margin.l - layout.margin.r;
         const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 7.5));
         layout.margin.t = 45 + (subtitle_lines.length * 15);
