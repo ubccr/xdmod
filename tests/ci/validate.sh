@@ -63,10 +63,10 @@ fi
 # Confirm that the user manual is built
 # Check if table of contents tree properly links
 # to corresponding file and each html file exists
-MANUAL_DIR=$INSTALL_DIR/html/user_manual
+MANUAL_DIR="$INSTALL_DIR"/html/user_manual
 PAGES=($(grep -o '<li class="toctree-l1"><a class="reference internal" href="[^"]*"' "$MANUAL_DIR/index.html" | sed -E 's/.*href="([^"]*)"/\1/'))
 for PAGE in "${PAGES[@]}"; do
-    $HTML_FILE="$MANUAL_DIR/${PAGE}"
+    HTML_FILE="$MANUAL_DIR/${PAGE}"
     if [[ ! -f "$HTML_FILE" ]]; then
         echo "$HTML_FILE does not exist."
         exitcode=1

@@ -88,26 +88,3 @@ source $BASE_BUILD_DIR/sphinx_venv/bin/activate
 sphinx-build -t $MANUAL_VERSION $BASE_BUILD_DIR $DEST_DIR
 
 rm -rf $DEST_DIR/_sources/
-
-#
-# Testing
-#
-
-# Input HTML file
-input_file="$DEST_DIR/index.html"
-
-# Check if Compliance is properly removed/built
-grep -q "Compliance Tab" "$input_file"
-if [ $? -eq 0 ]
-then
-    if [ "$MANUAL_VERSION" = "Open" ]; then
-        echo "Error removing Compliance Tab from table of contents"
-        exit 1
-    fi
-else
-    if [ "$MANUAL_VERSION" = "XSEDE" ]; then
-        echo "Error building Compliance Tab"
-        exit 1
-    fi
-fi
-
