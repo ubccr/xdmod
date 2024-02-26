@@ -28,6 +28,7 @@
             "/html/gui/lib/highcharts/graphics",
             "/html/gui/lib/highcharts/index.htm",
             "/html/unit_tests",
+            "/html/user_manual/sphinx_venv",
             "/user_manual_builder"
         ],
         "exclude_patterns": [
