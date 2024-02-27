@@ -41,12 +41,13 @@ class WarehouseRawDataTest extends BaseTest
                     'start_date' => '2016-12-30',
                     'end_date' => '2017-01-01',
                     'realm' => 'Jobs',
-                    'offset' => '2'
+                    'offset' => '70002'
                 ],
                 'fields_and_filters' => [
                     'fields' => 'Local Job Id,Resource,PI Group',
                     'filters[resource]' => '1,2',
-                    'filters[fieldofscience]' => '10,91'
+                    'filters[fieldofscience]' => '10,91',
+                    'offset' => '2'
                 ]
             ],
             'cloud' => [
