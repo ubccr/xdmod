@@ -67,6 +67,7 @@ require_once 'user_check.php';
   <!-- Libraries -->
 
   <script type="text/javascript" src="../gui/js/libraries/utilities.js"></script>
+  <script type="text/javascript" src="../gui/js/libraries/PlotlyUtilities.js"></script>
 
   <script type="text/javascript" src="../gui/js/SessionManager.js"></script>
 
@@ -106,12 +107,8 @@ require_once 'user_check.php';
   <link rel="stylesheet" type="text/css" href="../gui/css/common_ie8.css" />
   <![endif]-->
 
-  <script type="text/javascript" src="../gui/lib/highcharts/js/highcharts.src.js"></script>
-  <script type="text/javascript" src="../gui/lib/highcharts/js/highcharts-more.js"></script>
-  <script type="text/javascript" src="../gui/lib/highchartsDateformats.src.js"></script>
-
-  <script type="text/javascript" src="../gui/js/HighChartPanel.js"></script>
-
+  <script type="text/javascript" src="../gui/js/PlotlyPanel.js"></script>
+  <script type="text/javascript" src="../gui/js/PlotlyChartWrapper.js"></script>
   <link rel="stylesheet" type="text/css" href="../gui/css/ChartDragDrop.css" />
 
   <script type="text/javascript" src="../gui/js/CustomJsonStore.js"></script>
