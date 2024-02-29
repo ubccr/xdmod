@@ -428,7 +428,7 @@ JS;
     <script type="text/javascript" src="gui/lib/moment/moment.min.js"></script>
     <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
 
-    <script type="text/javascript" src="gui/lib/plotly/plotly-2.24.2.min.js"></script>
+    <script type="text/javascript" src="gui/lib/plotly/plotly-2.29.1.min.js"></script>
 
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts.src.js"></script>
     <script type="text/javascript" src="gui/lib/highcharts/js/highcharts-more.js"></script>
