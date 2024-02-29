@@ -393,7 +393,7 @@ EOF
 
         $traceCount = 0;
         for ($i = 0; $i < count($dataseries); $i++) {
-            if (strcmp($seriesData['name'], 'area fix') != 0 && strcmp($seriesData['name'], 'gap connector') != 0) {
+            if (strcmp($dataseries['name'], 'area fix') != 0 && strcmp($dataseries['name'], 'gap connector') != 0) {
                 $traceCount++;
             }
         }
