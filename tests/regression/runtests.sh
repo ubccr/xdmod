@@ -1,6 +1,7 @@
 #!/bin/bash
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-source $BASEDIR/../ci/runtest-include.sh
+XDMOD_SRC_DIR=${XDMOD_SRC_DIR:-${BASEDIR}}
+source $XDMOD_SRC_DIR/tests/ci/runtest-include.sh
 echo "Regression tests beginning:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 set -e
 
@@ -8,7 +9,7 @@ export XDMOD_REALMS
 
 cd $(dirname $0)
 
-if [ ! -e ../ci/testing.json ];
+if [ ! -e $XDMOD_SRC_DIR/tests/ci/testing.json ];
 then
     echo "ERROR missing testing.json file." >&2
     echo >&2
@@ -16,7 +17,7 @@ then
     false
 fi
 
-phpunit="$(readlink -f ../../vendor/bin/phpunit)"
+phpunit="$(readlink -f $XDMOD_SRC_DIR/vendor/bin/phpunit)"
 
 if [ ! -x "$phpunit" ]; then
     echo phpunit not found, run \"composer install\" 1>&2
