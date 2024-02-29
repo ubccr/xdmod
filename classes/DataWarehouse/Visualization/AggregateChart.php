@@ -895,6 +895,7 @@ class AggregateChart
 
             $yAxisMin = $first_data_description->log_scale?null:0;
             $yAxisMax = null;
+            $yAxisType = 'linear';
             $yIndex = $yAxisIndex + 1;
             $swapXYDone = false;
             $yAxisName = $yAxisIndex == 0 ? 'yaxis' : "yaxis{$yIndex}";
@@ -1208,7 +1209,7 @@ class AggregateChart
                             'width' => 1,
                             'color' => $lineColor,
                         ),
-                        'symbol' => $this->_symbolStyles[$traceIndex % 5],
+                        'symbol' => $this->_symbolStyles[$data_description_index % 5],
                     ),
                     'line' => array(
                         'color' => $data_description->display_type == 'pie' ?
@@ -1237,7 +1238,7 @@ class AggregateChart
                     'drillable' => $drillable,
                     'yaxis' => "y{$yIndex}",
                     'offsetgroup' => "y{$yIndex}",
-                    'legendgroup' => $traceIndex,
+                    'legendgroup' => $data_description_index,
                     'legendrank' => $legendRank,
                     'cursor' => 'pointer',
                     'visible' => $visible,
@@ -1253,7 +1254,7 @@ class AggregateChart
                 // Set stack and configure area plots further
                 if($data_description->display_type!=='line')
                 {
-                    if ($trace['type']=='area' && $traceIndex == 0) {
+                    if ($trace['type']=='area' && $data_description_index == 0) {
                         $hidden_trace = array(
                             'name' => 'area fix',
                             'x' => $this->_swapXY ? array_fill(0, count($xValues), 0) : $xValues,
@@ -1291,10 +1292,10 @@ class AggregateChart
 
                     if ($data_description->combine_type=='side' && $trace['type']=='area'){
                         if ($this->_swapXY) {
-                            $trace['fill'] = $traceIndex == 0 ? 'tozerox' : 'tozerox';
+                            $trace['fill'] = $data_description_index == 0 ? 'tozerox' : 'tozerox';
                         }
                         else {
-                            $trace['fill'] = $traceIndex == 0 ? 'tozeroy' : 'tozeroy';
+                            $trace['fill'] = $data_description_index == 0 ? 'tozeroy' : 'tozeroy';
                         }
                     }
                     elseif($data_description->combine_type=='stack')
@@ -1392,7 +1393,7 @@ class AggregateChart
                         ),
                         'connectgaps' => true,
                         'hoverinfo' => 'skip',
-                        'legendgroup' => $traceIndex,
+                        'legendgroup' => $data_description_index,
                         'type' => 'scatter',
                         'visible' => $visible,
                         'yaxis' => "y{$yIndex}",
@@ -1647,7 +1648,6 @@ class AggregateChart
                 }
 
                 if ($data_description->combine_type=='side') {
-                    //$error_trace['offsetgroup'] = "group{$traceIndex}";
                     $this->_chart['layout']['barmode'] = 'group';
                 }
                 if ($data_description->combine_type=='stack') {

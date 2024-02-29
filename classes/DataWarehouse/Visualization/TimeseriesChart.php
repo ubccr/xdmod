@@ -404,7 +404,7 @@ class TimeseriesChart extends AggregateChart
                 } // if(!isset($xAxis))
 
                 //  ----------- set up yAxis, assign to chart ... eventually -----------
-
+                $semDecimals = null;
                 if($data_description->std_err == 1)
                 {
                     $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
@@ -806,7 +806,7 @@ class TimeseriesChart extends AggregateChart
                         // Set data labels
                         $data_labels = array();
                         $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
-                        if($data_description->value_labels || $data_description->std_err_labels) {
+                        if($data_labels_enabled) {
                             if ($trace['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
                                 // For export this needs to be 'none'
                                 $trace['constraintext'] = $data_description->combine_type!='side' ? 'both' : 'none';
@@ -874,7 +874,7 @@ class TimeseriesChart extends AggregateChart
                         // REMOVED: Add percent allocated to XSEDE line if the metric
                         // being displayed is XSEDE Utilization.
 
-                        if(($data_description->std_err == 1 || $data_description->std_err_labels) && $data_description->display_type != 'pie')
+                        if(($data_description->std_err == 1 || $std_err_labels_enabled) && $data_description->display_type != 'pie')
                         {
                             //throw new \Exception(count($data_labels));
                             $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value, -70);

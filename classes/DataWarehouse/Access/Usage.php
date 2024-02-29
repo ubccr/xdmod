@@ -886,8 +886,7 @@ class Usage extends Common
                                 break;
                             }
                         }
-                        $meDataSeries['mode'] = $y_values_count == 1 ||
-                                            count($meDataSeries['data']) <= 30 ? 'lines+markers' : 'lines';
+                        $meDataSeries['mode'] = $y_values_count == 1 ? 'markers' : 'lines+markers';
                     }
 
                     // If this is a trend line data series...
@@ -903,7 +902,9 @@ class Usage extends Common
                     }
 
                     // Set properties that are different.
-                    $meDataSeries['zIndex'] = $meDataSeries['legendrank'];
+                    if (!$isNullSeries) {
+                        $meDataSeries['zIndex'] = $meDataSeries['legendrank'];
+                    }
 
                     // Remove extraneous properties.
                     unset($meDataSeries['otitle']);
