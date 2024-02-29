@@ -191,12 +191,6 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
 
         Plotly.relayout(baseChartOptions.renderTo, update);
-
-        if (baseChartOptions.layout.shapes && baseChartOptions.layout.shapes.length != 0) {
-            if (baseChartOptions.layout.shapes[0].name === 'Change Indicator') {
-                
-            }
-        }
     });
 
     return chart;
