@@ -11,7 +11,7 @@
 
         <script type="text/javascript" src="_html_dir_/gui/lib/moment/moment.min.js"></script>
         <script type="text/javascript" src="_html_dir_/gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
-        <script type="text/javascript" src="_html_dir_/gui/lib/plotly/plotly-2.24.2.min.js"></script>
+        <script type="text/javascript" src="_html_dir_/gui/lib/plotly/plotly-2.29.1.min.js"></script>
 
         <script type="text/javascript" src="_html_dir_/gui/js/libraries/PlotlyUtilities.js"></script>
 
@@ -41,31 +41,59 @@
             // Chart will be fully configured if export call came from non-supremm module tab
             if (inputChartOptions.layout) {
                 chartOptions = inputChartOptions;
+                const isEmpty = (!chartOptions.data) || (chartOptions.data && chartOptions.data.length === 0);
 
-                if (chartOptions.data[0].type === 'pie') {
-                    chartOptions.layout.margin.t += 30;
-                }
-
-                for (let i = 0; i < chartOptions.data.length; i++) {
-                    // Rollback constrain for bar chart text font size
-                    chartOptions.data[i]['constraintext'] = 'none';
-                }
-
-                chartOptions.data.sort((trace1, trace2) => {
-                    if (chartOptions.layout.barmode != 'group') {
-                        if (trace2.name.startsWith('Std Err:')) {
-                            return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
-                        }
-                        return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.legendrank - trace1.legendrank);
+            // Configure plot for 'No Data' image. We want to wipe the layout object except for a couple things
+                if (isEmpty) {
+                    const errorConfig = getNoDataErrorConfig();
+                    const { width } = chartOptions.layout;
+                    const { height } = chartOptions.layout;
+                    // Save the title and subtitle except for thumbnail plots
+                    let margin;
+                    let titleAndSubtitle;
+                    if (chartOptions.layout.annotations) {
+                        margin = chartOptions.layout.margin;
+                        titleAndSubtitle = chartOptions.layout.annotations.slice(0, 2);
                     }
-                    else {
-                        const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
-                        if (trace2.name.startsWith('Std Err:') && res === -1) {
-                            return 1;
+                    chartOptions.layout = errorConfig;
+                    chartOptions.layout.width = width;
+                    chartOptions.layout.height = height;
+                    chartOptions.layout.annotations = [];
+                    // Category chart summary view needs adjustments
+                    if (chartOptions.realmOverview) {
+                        chartOptions.layout.images[0].sizex = 4;
+                        chartOptions.layout.images[0].sizey = 4;
+                        chartOptions.layout.images[0].y = 2.5;
+                    } else if (margin && titleAndSubtitle) {
+                        chartOptions.layout.margin = margin;
+                        chartOptions.layout.annotations = titleAndSubtitle;
+                    } else {
+                        if (chartOptions.data[0].type === 'pie') {
+                            chartOptions.layout.margin.t += 30;
                         }
-                        return res;
+
+                        for (let i = 0; i < chartOptions.data.length; i++) {
+                            // Rollback constrain for bar chart text font size
+                            chartOptions.data[i]['constraintext'] = 'none';
+                        }
+
+                        chartOptions.data.sort((trace1, trace2) => {
+                            if (chartOptions.layout.barmode != 'group') {
+                                if (trace2.name.startsWith('Std Err:')) {
+                                    return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
+                                }
+                                return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.legendrank - trace1.legendrank);
+                            }
+                            else {
+                                const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
+                                if (trace2.name.startsWith('Std Err:') && res === -1) {
+                                    return 1;
+                                }
+                                return res;
+                            }
+                        });
                     }
-                });
+                }
             }
             else {
                 chartOptions = generateChartOptions(inputChartOptions, args);
