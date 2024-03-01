@@ -701,7 +701,7 @@ class AggregateChart
                 'size' => ($font_size + 11),
                 'color' => '#606060',
             ),
-            //'ticktext' => array(),
+            'ticktext' => array(),
             'type' => 'category',
             'linewidth' => 2 + $font_size / 4,
             'linecolor' => '#c0d0e0',
@@ -1109,13 +1109,6 @@ class AggregateChart
                             'id' => $yAxisDataObject->getXId($index),
                             'label' => $yAxisDataObject->getXValue($index)
                         );
-
-                        try {
-                            $point['percentage'] = $yAxisDataObject->getError($index);
-                        } catch (\Exception $e) {
-
-                        }
-
                     } // foreach
 
                     $trace = array_merge($trace, array('text' => $yValues));

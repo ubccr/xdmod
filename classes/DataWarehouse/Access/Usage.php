@@ -762,7 +762,10 @@ class Usage extends Common
                     && $chartSortedByValue
                     && $usageGroupBy !== 'none'
                 ) {
-                    $meChartCategories = $meChart['layout']['xaxis']['ticktext'];
+                    $meChartCategories = array();
+                    if (isset($meChart['layout']['xaxis']['ticktext'])) {
+                        $meChartCategories = $meChart['layout']['xaxis']['ticktext'];
+                    }
                     if (isset($meChart['layout']['yaxis']['ticktext'])) {
                         $meChartCategories = $meChart['layout']['yaxis']['ticktext'];
                     }
