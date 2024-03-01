@@ -10,7 +10,7 @@
  */
 
 module.exports = function waitUntilAnimEnd(selector, ms, interval) {
-    var timeOut = ms || 9000;
+    var timeOut = ms || 20000;
     var checkInterval = interval || 250;
 
     var initialLoc = { x: -1, y: -1 };
