@@ -17,6 +17,7 @@ jobs:
         type: string
     executor: << parameters.os >>
     environment:
+      TERM: xterm
       COMPOSER_ALLOW_SUPERUSER: 1
       XDMOD_REALMS: 'jobs,storage,cloud'
       TRAVIS_COMMIT_RANGE: << pipeline.git.base_revision >>..<<pipeline.git.revision>>
