@@ -1513,7 +1513,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 jQuery.extend(true, chartOptions, baseChartOptions);
 
                                 let axisLabels;
-                                if (chartOptions) {
+                                const isEmpty = chartOptions.data && chartOptions.data.length === 0;
+                                if (!isEmpty && chartOptions) {
                                     axisLabels = chartOptions.layout.swapXY ? chartOptions.layout.yaxis.ticktext : chartOptions.layout.xaxis.ticktext;
                                 }
 

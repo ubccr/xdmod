@@ -155,6 +155,19 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     }
 
     chartDiv.once('plotly_relayout', (evt) => {
+        if (baseChartOptions.layout.appkernels) {
+            const appKernelsDiv = document.getElementById('app_kernels');
+            const legendEntries = appKernelsDiv.getElementsByClassName('groups');
+            for (let i = 0; i < legendEntries.length; i++) {
+                for (let j = 0; j < legendEntries[i].children.length; j++) {
+                    if (legendEntries[i].children[j].textContent === 'Change Indicator') {
+                        let changeIndicatorIcon = legendEntries[i].children[j].children[1];
+                        changeIndicatorIcon.innerHTML = '<image href="/gui/images/exclamation_ak.png" x="15" y="-12" width="20" height="20">';
+                    }
+                }
+            }
+        }
+
         if (baseChartOptions.layout.annotations.length === 0) {
             return;
         }
