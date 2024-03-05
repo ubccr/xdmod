@@ -42,7 +42,7 @@ foreach resource $resources {
 	provideInput {How many total CPU processors (cpu cores) does this resource have?} [lindex $resource 6]
 	if { [lindex $resource 3] == "gpu" || [lindex $resource 3] == "gpunode" } {
 		provideInput {How many GPU nodes does this resource have?} [lindex $resource 7]
-		provideInput {How many total GPU processors (gpu cores) does this resource have?} [lindex $resource 8]
+		provideInput {How many total GPUs does this resource have?} [lindex $resource 8]
 	}
 }
 

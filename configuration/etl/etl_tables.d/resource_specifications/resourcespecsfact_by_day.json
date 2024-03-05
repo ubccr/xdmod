@@ -41,15 +41,15 @@
                 "nullable": false,
                 "comment": "FACT: The number of CPU core seconds available to be allocated during a time period."
             },{
-                "name": "total_gpu_core_time",
+                "name": "total_gpu_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: The number of GPU core seconds available during a time period, including those not allocated."
+                "comment": "FACT: The number of GPU seconds available during a time period, including those not allocated."
             },{
-                "name": "allocated_gpu_core_time",
+                "name": "allocated_gpu_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: The number of GPU core seconds available to be allocated during a time period."
+                "comment": "FACT: The number of GPU seconds available to be allocated during a time period."
             },{
                 "name": "total_cpu_node_time",
                 "type": "bigint(42)",

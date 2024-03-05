@@ -49,8 +49,8 @@ class UsageExplorerResourcespecificationsTest extends \PHPUnit_Framework_TestCas
         $statistics = [
             'total_cpu_core_hours',
             'allocated_cpu_core_hours',
-            'total_gpu_core_hours',
-            'allocated_gpu_core_hours',
+            'total_gpu_hours',
+            'allocated_gpu_hours',
             'total_cpu_node_hours',
             'allocated_cpu_node_hours',
             'total_gpu_node_hours',
@@ -61,8 +61,8 @@ class UsageExplorerResourcespecificationsTest extends \PHPUnit_Framework_TestCas
             'allocated_avg_number_of_gpu_nodes',
             'total_avg_number_of_cpu_cores',
             'allocated_avg_number_of_cpu_cores',
-            'total_avg_number_of_gpu_cores',
-            'allocated_avg_number_of_gpu_cores'
+            'total_avg_number_of_gpus',
+            'allocated_avg_number_of_gpus'
         ];
 
         $groupBys = [
