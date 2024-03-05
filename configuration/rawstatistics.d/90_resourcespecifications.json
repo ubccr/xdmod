@@ -188,7 +188,7 @@
               "tableAlias": "org",
               "column": "name",
               "group": "Administration",
-              "documentation": "The organization to which resource belongs",
+              "documentation": "The organization to which the resource belongs",
               "batchExport": true
           },
           {
