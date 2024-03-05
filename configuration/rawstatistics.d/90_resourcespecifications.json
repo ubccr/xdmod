@@ -144,7 +144,7 @@
               "batchExport": true
           },
           {
-              "name": "GPU Processor Count",
+              "name": "GPU Count",
               "tableAlias": "rs",
               "column": "gpu_processor_count",
               "group": "Requested Resource",
@@ -160,7 +160,7 @@
               "batchExport": true
           },
           {
-              "name": "GPU Processors Per Node",
+              "name": "GPUs Per Node",
               "tableAlias": "rs",
               "column": "gpu_processor_count_per_node",
               "group": "Administration",
