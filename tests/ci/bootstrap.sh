@@ -173,5 +173,4 @@ then
     fi
 
     sudo -u xdmod xdmod-ingestor --aggregate=resourcespecs --last-modified-start-date "$last_modified_start_date"
-    sudo -u xdmod xdmod-build-filter-lists -r ResourceSpecifications
 fi
