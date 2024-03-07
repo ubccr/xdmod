@@ -152,8 +152,8 @@ then
     fi
 
     last_modified_start_date=$(date +'%F %T')
-    expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
     set_resource_spec_end_times
+    expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
 
     # Addding different resource allocation types.
     cat /etc/xdmod/resources.json | jq -c '[ .[] | .["resource_allocation_type"] = if .["resource"] == "phillips" then "CPUNode" elif .["resource"] == "mortorq" then "GPU" elif .["resource"] == "robertson" then "GPUNode" else .["resource_allocation_type"] end ]' > /etc/xdmod/resources2.json

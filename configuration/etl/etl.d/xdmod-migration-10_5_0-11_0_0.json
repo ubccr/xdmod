@@ -327,6 +327,7 @@
             "class": "SimpleAggregator",
             "namespace": "ETL\\Aggregator",
             "options_class": "AggregatorOptions",
+            "truncate_destination": true,
             "description": "Aggregate resource specification records.",
             "definition_file": "resource_specifications/resource_specs_aggregation_by_day.json",
             "table_prefix": "resourcespecsfact_by_",
@@ -344,8 +345,7 @@
                     "name": "Aggregates Database",
                     "config": "datawarehouse",
                     "schema": "modw_aggregates",
-                    "create_schema_if_not_exists": true,
-                    "truncate_destination": false
+                    "create_schema_if_not_exists": true
                 }
             }
         },
@@ -354,6 +354,7 @@
             "class": "SimpleAggregator",
             "namespace": "ETL\\Aggregator",
             "options_class": "AggregatorOptions",
+            "truncate_destination": true,
             "description": "Aggregate resource specification records.",
             "definition_file": "resource_specifications/resource_specs_aggregation.json",
             "table_prefix": "resourcespecsfact_by_",
@@ -371,8 +372,7 @@
                     "name": "Aggregates Database",
                     "config": "datawarehouse",
                     "schema": "modw_aggregates",
-                    "create_schema_if_not_exists": true,
-                    "truncate_destination": false
+                    "create_schema_if_not_exists": true
                 }
             }
         },
@@ -381,6 +381,7 @@
             "namespace": "ETL\\Ingestor",
             "class": "ExplodeTransformIngestor",
             "options_class": "IngestorOptions",
+            "truncate_destination": true,
             "definition_file": "resource_specifications/resourcespecsfact_by_day_resourcespecslist.json",
             "description": "Populate the resourcespecs list table, which contains the back references from the resource specs aggregates table to the resourcespecs table",
             "endpoints": {
@@ -396,8 +397,7 @@
                     "name": "Aggregates Database",
                     "config": "datawarehouse",
                     "schema": "modw_aggregates",
-                    "create_schema_if_not_exists": true,
-                    "truncate_destination": false
+                    "create_schema_if_not_exists": true
                 }
             },
             "explode_column": {
