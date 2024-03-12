@@ -6,8 +6,8 @@ start,end
 2016-12-22,2017-01-07
 ---------
 "Resource Allocation Type","Average Number of GPU Nodes: Total"
-"GPU Node Allocated",241.7582
-"GPU Allocated",210.9890
+"GPU Allocated",400.0000
+"GPU Node Allocated",400.0000
 "CPU Allocated",0.0000
 "CPU Node Allocated",0.0000
 ---------

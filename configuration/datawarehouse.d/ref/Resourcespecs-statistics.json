@@ -57,56 +57,56 @@
     },
     "total_avg_number_of_cpu_nodes": {
         "description_html": "The average number of CPU nodes per day during the selected time period. This does not take into account downtimes, outages of resources, or the percent of a resource allocated.",
-        "formula": "COALESCE(SUM(agg.total_cpu_node_time) / (SELECT SUM(seconds) FROM modw.${AGGREGATION_UNIT}s WHERE FIND_IN_SET(id, GROUP_CONCAT(DISTINCT ${DATE_TABLE_ID_FIELD})) <> 0), 0)",
+        "formula": "COALESCE(SUM(agg.total_cpu_node_time) / (LEAST((SELECT MAX(end_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MAX(duration.${AGGREGATION_UNIT}_end_ts)) + 1 - GREATEST((SELECT MIN(start_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MIN(duration.${AGGREGATION_UNIT}_start_ts))), 0)",
         "name": "Average Number of CPU Nodes: Total",
         "precision": 0,
         "unit": "Nodes"
     },
     "allocated_avg_number_of_cpu_nodes": {
         "description_html": "The average number of allocated CPU nodes available per day during the selected time period. This does not take into account downtimes or outages of resources.",
-        "formula": "COALESCE(SUM(agg.allocated_cpu_node_time) / (SELECT SUM(seconds) FROM modw.${AGGREGATION_UNIT}s WHERE FIND_IN_SET(id, GROUP_CONCAT(DISTINCT ${DATE_TABLE_ID_FIELD})) <> 0), 0)",
+        "formula": "COALESCE(SUM(agg.allocated_cpu_node_time) / (LEAST((SELECT MAX(end_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MAX(duration.${AGGREGATION_UNIT}_end_ts)) + 1 - GREATEST((SELECT MIN(start_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MIN(duration.${AGGREGATION_UNIT}_start_ts))), 0)",
         "name": "Average Number of CPU Nodes: Allocated",
         "precision": 0,
         "unit": "Nodes"
     },
     "total_avg_number_of_gpu_nodes": {
         "description_html": "The average number of GPU nodes per day during the selected time period. This does not take into account downtimes, outages of resources, or the percent of a resource allocated.",
-        "formula": "COALESCE(SUM(agg.total_gpu_node_time) / (SELECT SUM(seconds) FROM modw.${AGGREGATION_UNIT}s WHERE FIND_IN_SET(id, GROUP_CONCAT(DISTINCT ${DATE_TABLE_ID_FIELD})) <> 0), 0)",
+        "formula": "COALESCE(SUM(agg.total_gpu_node_time) / (LEAST((SELECT MAX(end_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MAX(duration.${AGGREGATION_UNIT}_end_ts)) + 1 - GREATEST((SELECT MIN(start_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MIN(duration.${AGGREGATION_UNIT}_start_ts))), 0)",
         "name": "Average Number of GPU Nodes: Total",
         "precision": 0,
         "unit": "Nodes"
     },
     "allocated_avg_number_of_gpu_nodes": {
         "description_html": "The average number of allocated GPU nodes available per day during the selected time period. This does not take into account downtimes or outages of resources.",
-        "formula": "COALESCE(SUM(agg.allocated_gpu_node_time) / (SELECT SUM(seconds) FROM modw.${AGGREGATION_UNIT}s WHERE FIND_IN_SET(id, GROUP_CONCAT(DISTINCT ${DATE_TABLE_ID_FIELD})) <> 0), 0)",
+        "formula": "COALESCE(SUM(agg.allocated_gpu_node_time) / (LEAST((SELECT MAX(end_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MAX(duration.${AGGREGATION_UNIT}_end_ts)) + 1 - GREATEST((SELECT MIN(start_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MIN(duration.${AGGREGATION_UNIT}_start_ts))), 0)",
         "name": "Average Number of GPU Nodes: Allocated",
         "precision": 0,
         "unit": "Nodes"
     },
     "total_avg_number_of_cpu_cores": {
         "description_html": "The average number of CPU cores per day during the selected time period. This does not take into account downtimes, outages of resources, or the percent of a resource allocated.",
-        "formula": "COALESCE(SUM(agg.total_cpu_core_time) / (SELECT SUM(seconds) FROM modw.${AGGREGATION_UNIT}s WHERE FIND_IN_SET(id, GROUP_CONCAT(DISTINCT ${DATE_TABLE_ID_FIELD})) <> 0), 0)",
+        "formula": "COALESCE(SUM(agg.total_cpu_core_time) / (LEAST((SELECT MAX(end_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MAX(duration.${AGGREGATION_UNIT}_end_ts)) + 1 - GREATEST((SELECT MIN(start_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MIN(duration.${AGGREGATION_UNIT}_start_ts))), 0)",
         "name": "Average Number of CPU Cores: Total",
         "precision": 0,
         "unit": "Core Count"
     },
     "allocated_avg_number_of_cpu_cores": {
         "description_html": "The average number of allocated CPU cores available per day during the selected time period. This does not take into account downtimes or outages of resources.",
-        "formula": "COALESCE(SUM(agg.allocated_cpu_core_time) / (SELECT SUM(seconds) FROM modw.${AGGREGATION_UNIT}s WHERE FIND_IN_SET(id, GROUP_CONCAT(DISTINCT ${DATE_TABLE_ID_FIELD})) <> 0), 0)",
+        "formula": "COALESCE(SUM(agg.allocated_cpu_core_time) / (LEAST((SELECT MAX(end_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MAX(duration.${AGGREGATION_UNIT}_end_ts)) + 1 - GREATEST((SELECT MIN(start_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MIN(duration.${AGGREGATION_UNIT}_start_ts))), 0)",
         "name": "Average Number of CPU Cores: Allocated",
         "precision": 0,
         "unit": "Core Count"
     },
     "total_avg_number_of_gpus": {
         "description_html": "The average number of GPUs per day during the selected time period. This does not take into account downtimes, outages of resources, or the percent of a resource allocated.",
-        "formula": "COALESCE(SUM(agg.total_gpu_time) / (SELECT SUM(seconds) FROM modw.${AGGREGATION_UNIT}s WHERE FIND_IN_SET(id, GROUP_CONCAT(DISTINCT ${DATE_TABLE_ID_FIELD})) <> 0), 0)",
+        "formula": "COALESCE(SUM(agg.total_gpu_time) / (LEAST((SELECT MAX(end_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MAX(duration.${AGGREGATION_UNIT}_end_ts)) + 1 - GREATEST((SELECT MIN(start_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MIN(duration.${AGGREGATION_UNIT}_start_ts))), 0)",
         "name": "Average Number of GPUs: Total",
         "precision": 0,
         "unit": "GPU Count"
     },
     "allocated_avg_number_of_gpus": {
         "description_html": "The average number of allocated GPUs available per day during the selected time period. This does not take into account downtimes or outages of resources.",
-        "formula": "COALESCE(SUM(agg.allocated_gpu_time) / (SELECT SUM(seconds) FROM modw.${AGGREGATION_UNIT}s WHERE FIND_IN_SET(id, GROUP_CONCAT(DISTINCT ${DATE_TABLE_ID_FIELD})) <> 0), 0)",
+        "formula": "COALESCE(SUM(agg.allocated_gpu_time) / (LEAST((SELECT MAX(end_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MAX(duration.${AGGREGATION_UNIT}_end_ts)) + 1 - GREATEST((SELECT MIN(start_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MIN(duration.${AGGREGATION_UNIT}_start_ts))), 0)",
         "name": "Average Number of GPUs: Allocated",
         "precision": 0,
         "unit": "GPU Count"
