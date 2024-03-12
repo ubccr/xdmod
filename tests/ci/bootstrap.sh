@@ -18,7 +18,8 @@ function set_resource_spec_end_times {
     # the raw data regression tests. The jq command does not do well with overwriting the existing file
     # so writing to a temp file and then renaming seems to be the best way to go.
     cat /etc/xdmod/resource_specs.json | jq '[.[] | .["end_date"] += "2020-01-01"]' > /etc/xdmod/resource_specs2.json
-    mv -f /etc/xdmod/resource_specs2.json /etc/xdmod/resource_specs.json
+    jq . /etc/xdmod/resource_specs2.json > /etc/xdmod/resource_specs.json
+    rm -f /etc/xdmod/resource_specs2.json
 }
 
 if [ -z $XDMOD_REALMS ]; then
@@ -157,11 +158,13 @@ then
 
     # Addding different resource allocation types.
     cat /etc/xdmod/resources.json | jq -c '[ .[] | .["resource_allocation_type"] = if .["resource"] == "phillips" then "CPUNode" elif .["resource"] == "mortorq" then "GPU" elif .["resource"] == "robertson" then "GPUNode" else .["resource_allocation_type"] end ]' > /etc/xdmod/resources2.json
-    mv /etc/xdmod/resources2.json /etc/xdmod/resources.json
+    jq . /etc/xdmod/resources2.json > /etc/xdmod/resources.json
+    rm -f /etc/xdmod/resources2.json
 
     # Adding resource values for GPU and GPU Node resources.
     cat /etc/xdmod/resource_specs.json | jq -c '[ .[] |  if (.["resource"] == "mortorq" or .["resource"] == "robertson") then .["gpu_processor_count"] = 4000 | .["gpu_node_count"] = 400 | .["gpu_ppn"] = 10 else .["gpu_processor_count"] = .["gpu_processor_count"] | .["gpu_node_count"] = .["gpu_node_count"] | .["gpu_ppn"] = .["gpu_ppn"] end ]' > /etc/xdmod/resource_specs2.json
-    mv /etc/xdmod/resource_specs2.json /etc/xdmod/resource_specs.json
+    jq . /etc/xdmod/resource_specs2.json > /etc/xdmod/resource_specs.json
+    rm -f /etc/xdmod/resource_specs2.json
 
     if [[ "$XDMOD_REALMS" == *"storage"* ]];
     then
