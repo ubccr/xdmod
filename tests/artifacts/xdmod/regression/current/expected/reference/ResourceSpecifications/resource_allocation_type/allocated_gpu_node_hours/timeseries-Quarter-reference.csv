@@ -1,0 +1,11 @@
+title
+"GPU Node Hours: Allocated: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Quarter,"[GPU Node Allocated] GPU Node Hours: Allocated","[GPU Allocated] GPU Node Hours: Allocated","[CPU Allocated] GPU Node Hours: Allocated","[CPU Node Allocated] GPU Node Hours: Allocated"
+"2016 Q4",192000.0000,57600.0000,0.0000,0.0000
+"2017 Q1",864000.0000,864000.0000,0.0000,0.0000
+---------

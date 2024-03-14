@@ -1,0 +1,14 @@
+title
+"CPU Node Hours: Total: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Resource,"CPU Node Hours: Total"
+phillips,163200.0000
+pozidriv,163200.0000
+robertson,163200.0000
+mortorq,124800.0000
+frearson,115200.0000
+---------
