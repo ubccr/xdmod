@@ -4,6 +4,7 @@ namespace Rest;
 
 use CCR\DB\PDODB;
 use Configuration\XdmodConfiguration;
+use Rest\Controllers\BaseControllerProvider;
 use Rest\Utilities\Authentication;
 use Silex\Application;
 use Silex\Provider\UrlGeneratorServiceProvider;
@@ -41,6 +42,8 @@ class XdmodApplicationFactory
      * @param \Silex\Application
      */
     private static $instance = null;
+
+    private static $loggingBlacklist = array('password');
 
     /**
      * Create or retrieve a Silex application configured for the XDMoD REST API.
@@ -101,6 +104,9 @@ class XdmodApplicationFactory
             $retval = array('message' => "Route called");
 
             $authInfo = Authentication::getAuthenticationInfo($request);
+            if (!isset($authInfo['username']) && $request->attributes->has(BaseControllerProvider::_USER)) {
+                $authInfo['username'] = $request->attributes->get(BaseControllerProvider::_USER)->getUsername();
+            }
             $method = $request->getMethod();
             $host = $request->getHost();
             $port = $request->getPort();
@@ -108,11 +114,13 @@ class XdmodApplicationFactory
             // Extracting any POST variables provided in the Request.
             $post = array();
             foreach($request->request->getIterator() as $key => $value) {
-                $post[$key] = (
+                if (!in_array($key, self::$loggingBlacklist)) {
+                    $post[$key] = (
                     is_string($value)
-                    ? json_decode($value, true)
-                    : null
-                );
+                        ? json_decode($value, true)
+                        : null
+                    );
+                }
             }
 
             // Calculate the amount of time that has elapsed serving this request.
