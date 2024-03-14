@@ -1,0 +1,11 @@
+title
+"GPU Node Hours: Total: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Month,"[screw] GPU Node Hours: Total"
+2016-12,249600.0000
+2017-01,595200.0000
+---------

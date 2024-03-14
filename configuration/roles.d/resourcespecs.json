@@ -1,0 +1,52 @@
+{
+    "+roles": {
+        "+default": {
+            "+query_descripters": [
+                {
+                    "realm": "ResourceSpecifications",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "ResourceSpecifications",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "ResourceSpecifications",
+                    "group_by": "resource_type"
+                },
+                {
+                    "realm": "ResourceSpecifications",
+                    "group_by": "provider"
+                },
+                {
+                    "realm": "ResourceSpecifications",
+                    "group_by": "resource_allocation_type"
+                }
+            ]
+        },
+        "+pub": {
+            "+query_descripters": [
+                {
+                    "realm": "ResourceSpecifications",
+                    "group_by": "none"
+                },
+                {
+                    "realm": "ResourceSpecifications",
+                    "group_by": "resource"
+                },
+                {
+                    "realm": "ResourceSpecifications",
+                    "group_by": "resource_type"
+                },
+                {
+                    "realm": "ResourceSpecifications",
+                    "group_by": "provider"
+                },
+                {
+                    "realm": "ResourceSpecifications",
+                    "group_by": "resource_allocation_type"
+                }
+            ]
+        }
+    }
+}
