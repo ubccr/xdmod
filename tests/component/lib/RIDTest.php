@@ -4,7 +4,7 @@ namespace ComponentTests;
 
 use XDUser;
 
-class RIDTest extends \PHPUnit_Framework_TestCase
+class RIDTest extends \PHPUnit\Framework\TestCase
 {
 
     /**

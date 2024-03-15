@@ -64,9 +64,9 @@ class BatchProcessTest extends BaseTest
     /**
      * Create test objects and data.
      */
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
         self::$queryHandler = new QueryHandler();
         self::$exportDirectory = xd_utilities\getConfiguration(
             'data_warehouse_export',
@@ -105,7 +105,7 @@ class BatchProcessTest extends BaseTest
     /**
      * Remove test data from database and generated files.
      */
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // Delete any requests that weren't already deleted.
         self::$dbh->execute('DELETE FROM batch_export_requests');

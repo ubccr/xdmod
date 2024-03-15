@@ -5,11 +5,11 @@ namespace RegressionTests\Controllers;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
-class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
+class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
 {
     private static $chartFilterTestData = array();
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // This is used to write expected results file for the
         // testChartFilters test. The output file is just written to

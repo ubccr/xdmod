@@ -11,7 +11,7 @@ use CCR\Log as Logger;
 use Psr\Log\LoggerInterface;
 use Realm\Realm;
 
-class GroupByTest extends \PHPUnit_Framework_TestCase
+class GroupByTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -19,7 +19,7 @@ class GroupByTest extends \PHPUnit_Framework_TestCase
      */
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
         $conf = array(

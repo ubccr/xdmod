@@ -5,7 +5,7 @@ namespace RegressionTests\Controllers;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
-class UsageChartsTest extends \PHPUnit_Framework_TestCase
+class UsageChartsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * The path relative to this file that contains the expected hashes for this test case.
@@ -67,7 +67,7 @@ class UsageChartsTest extends \PHPUnit_Framework_TestCase
         return self::$hashFilePath;
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::$helper->logout();
         if(!empty(self::$imagehashes)) {

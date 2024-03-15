@@ -89,7 +89,7 @@ use InvalidArgumentException;
  *      );
  *  }
  */
-abstract class BaseTest extends \PHPUnit_Framework_TestCase
+abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
     const DATE_REGEX = '/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/';
 
@@ -107,7 +107,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         'output' => ['status_code', 'body_validator']
     ];
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         self::$XDMOD_REALMS = Utilities::getRealmsToTest();
     }
@@ -798,7 +798,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      */
     protected function validateDate($date)
     {
-        parent::assertRegExp(self::DATE_REGEX, $date);
+        parent::assertMatchesRegularExpression(self::DATE_REGEX, $date);
     }
 
     /**

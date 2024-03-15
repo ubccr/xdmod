@@ -4,7 +4,7 @@ namespace UnitTests\NewRest\Controllers;
 
 use Rest\Controllers\BaseControllerProvider;
 
-class BaseControllerTest extends \PHPUnit_Framework_TestCase
+class BaseControllerTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -42,24 +42,24 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $attributes
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     public function getRequest($attributes)
     {
-        $mock = $this->getMock('Symfony\Component\HttpFoundation\Request');
-        $mock->attributes = $attributes;
-        return $mock;
+        $builder = $this->createMock('Symfony\Component\HttpFoundation\Request');
+        $builder->attributes = $attributes;
+        return $builder;
     }
 
 
     /**
      * @param $user
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit\Framework\MockObject\MockObject
      */
     public function getAttributes($user)
     {
         $builder = $this->getMockBuilder('\Symfony\Component\HttpFoundation\ParameterBag');
-        $builder->setMethods(array('get'));
+        $builder->onlyMethods(array('get'));
         $mock = $builder->getMock();
         $mock->method('get')
             ->with($this->equalTo(BaseControllerProvider::_USER))
@@ -144,12 +144,13 @@ class BaseControllerTest extends \PHPUnit_Framework_TestCase
     {
         $builder = $this->getMockBuilder('\XDUser')
             ->disableOriginalConstructor()
-            ->setMethods(
+            ->onlyMethods(
                 array(
                     'getRoles',
                     'isManager',
                     'isPublicUser',
                     'hasAcl',
+                    'hasAcls',
                     '__toString'
                 )
             );

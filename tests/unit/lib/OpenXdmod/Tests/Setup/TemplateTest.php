@@ -10,7 +10,7 @@ use Xdmod\Template;
 /**
  * Template test class.
  */
-class TemplateTest extends \PHPUnit_Framework_TestCase
+class TemplateTest extends \PHPUnit\Framework\TestCase
 {
 
     /**

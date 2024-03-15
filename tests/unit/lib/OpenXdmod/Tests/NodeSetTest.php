@@ -10,7 +10,7 @@ use Xdmod\NodeSet;
 /**
  * NodeSet test class
  */
-class NodeSetTest extends \PHPUnit_Framework_TestCase
+class NodeSetTest extends \PHPUnit\Framework\TestCase
 {
     public function testNodeSetIterator()
     {

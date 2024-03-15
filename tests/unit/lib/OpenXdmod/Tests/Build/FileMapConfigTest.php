@@ -10,7 +10,7 @@ use OpenXdmod\Build\Config;
 /**
  * Build configuration file map test class.
  */
-class FileMapConfigTest extends \PHPUnit_Framework_TestCase
+class FileMapConfigTest extends \PHPUnit\Framework\TestCase
 {
 
     /**

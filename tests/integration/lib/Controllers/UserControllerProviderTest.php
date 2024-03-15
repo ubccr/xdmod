@@ -188,7 +188,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
             $this->makeTokenRequest(
                 'post',
                 parent::validateSuccessResponse(function ($body) {
-                    $this->assertRegExp(
+                    $this->assertMatchesRegularExpression(
                         '/^[0-9]+\\.[0-9a-f]{64}$/',
                         $body['data']['token']
                     );

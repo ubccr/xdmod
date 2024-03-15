@@ -11,8 +11,9 @@ namespace UnitTests\ETL\Configuration;
 
 use Configuration\Configuration;
 use Configuration\JsonReferenceTransformer;
+use Exception;
 
-class Rfc6901Test extends \PHPUnit_Framework_TestCase
+class Rfc6901Test extends \PHPUnit\Framework\TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
@@ -20,21 +21,23 @@ class Rfc6901Test extends \PHPUnit_Framework_TestCase
     private $config = null;
     private $transformer = null;
 
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         // Configuration is used in the transformer to qualify relative paths
         $this->config = Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config.json');
         $this->transformer = new JsonReferenceTransformer();
+        parent::__construct($name, $data, $dataName);
     }
 
     /**
      * Test invalid pointer (unknown path)
      *
-     * @expectedException Exception
+     *
      */
 
     public function testRfc6901InvalidPointer()
     {
+        $this->expectException(Exception::class);
         $key = '$ref';
         $value = 'rfc6901.json#/wehavenobananastoday';
         $obj = (object) array($key => $value);
@@ -125,11 +128,12 @@ class Rfc6901Test extends \PHPUnit_Framework_TestCase
      /**
       * Include whole document
       *
-      * @expectedException Exception
+      *
       */
 
     public function testRfc6901BadFragment()
     {
+        $this->expectException(Exception::class);
         $key = '$ref';
         $value = 'rfc6901.json#/does-not-exist';
         $obj = (object) array($key => $value);

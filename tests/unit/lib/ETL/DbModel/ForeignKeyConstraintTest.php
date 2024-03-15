@@ -8,11 +8,12 @@ namespace UnitTests\ETL\DbModel;
 use CCR\Log;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Table;
-use PHPUnit_Framework_TestCase;
+use Exception;
+use \PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\TestFiles;
 use stdClass;
 
-class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
+class ForeignKeyConstraintTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_GROUP = 'unit/etl/db-model/foreign-key-constraint';
 
@@ -20,7 +21,7 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
 
     private $testFiles;
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         self::$logger = Log::singleton('null');
     }
@@ -36,11 +37,13 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
     /**
      * Test foreign key constraint initialization error.
      *
-     * @expectedException Exception
-     * @expectedExceptionMessage "columns" must be an array
+     *
+     *
      */
     public function testForeignKeyConstraintInitializationError()
     {
+        $this->expectExceptionMessage("\"columns\" must be an array");
+        $this->expectException(Exception::class);
         $config = (object) [
             'name' => 'initialize_error',
             'columns' => [
@@ -86,10 +89,11 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
      * Test that the given configuration does not result in a valid table.
      *
      * @dataProvider verificationFailureProvider
-     * @expectedException Exception
+     *
      */
     public function testVerificationFailure(stdClass $config)
     {
+        $this->expectException(Exception::class);
         $table = new Table($config, '`', self::$logger);
         $table->verify();
     }
@@ -285,7 +289,10 @@ class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase
     {
         return array_map(
             function ($inputData) {
-                return array_map(array($this, 'arrayToStdClass'), $inputData);
+                return array_map(
+                    fn($obj) => json_decode(json_encodE($obj)),
+                    $inputData
+                );
             },
             $this->getTestFiles()->loadJsonFile(self::TEST_GROUP, $name)
         );

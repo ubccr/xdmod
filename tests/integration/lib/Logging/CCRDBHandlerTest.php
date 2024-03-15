@@ -2,7 +2,7 @@
 
 namespace IntegrationTests\Logging;
 
-class CCRDBHandlerTest extends \PHPUnit_Framework_TestCase
+class CCRDBHandlerTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testHandlerWritesCorrectly()
@@ -53,7 +53,7 @@ class CCRDBHandlerTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertNotNull($json);
-        $this->assertObjectHasAttribute(
+        $this->assertObjectHasProperty(
             'message',
             $json,
             sprintf(

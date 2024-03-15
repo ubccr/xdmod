@@ -29,7 +29,7 @@ class UgeShredderTest extends JobShredderBaseTestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Uge')
             ->disableOriginalConstructor()
-            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->onlyMethods(array('insertRow', 'getResourceConfig'))
             ->getMock();
 
         $shredder

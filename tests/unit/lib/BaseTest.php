@@ -5,7 +5,7 @@
 
 namespace UnitTests;
 
-abstract class BaseTest extends \PHPUnit_Framework_TestCase
+abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Recursively filter out any keys matching one in $keyList. This is a helper function to
