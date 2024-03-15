@@ -138,7 +138,11 @@ abstract class ConfigFilesMigration extends Migration
         // portal_settings file.
         foreach ($data as $sectionName => $sectionData) {
             foreach ($sectionData as $key => $value) {
-                $settings[$sectionName . '_' . $key] = $value;
+                $settings[$sectionName . '_' . $key] = str_replace(
+                    '"',
+                    '\\"',
+                    $value
+                );
             }
         }
 

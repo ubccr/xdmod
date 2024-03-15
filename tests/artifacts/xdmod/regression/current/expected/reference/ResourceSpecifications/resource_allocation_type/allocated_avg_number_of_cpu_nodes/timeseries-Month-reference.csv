@@ -1,0 +1,11 @@
+title
+"Average Number of CPU Nodes: Allocated: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Month,"[CPU Allocated] Average Number of CPU Nodes: Allocated","[GPU Allocated] Average Number of CPU Nodes: Allocated","[CPU Node Allocated] Average Number of CPU Nodes: Allocated","[GPU Node Allocated] Average Number of CPU Nodes: Allocated"
+2016-12,581.8182,400.0000,400.0000,400.0000
+2017-01,800.0000,400.0000,400.0000,400.0000
+---------

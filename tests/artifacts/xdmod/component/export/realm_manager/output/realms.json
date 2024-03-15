@@ -8,6 +8,10 @@
             "1" : {
                 "name": "Cloud",
                 "display": "Cloud"
+            },
+            "2" : {
+                "name": "ResourceSpecifications",
+                "display": "Resource Specifications"
             }
         }
     ]
