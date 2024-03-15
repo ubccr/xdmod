@@ -36,14 +36,13 @@
                 axisTitleFontSize: inputChartOptions.axisTitleSize,
                 axisLabelFontSize: inputChartOptions.axisTickSize,
                 lineWidth: inputChartOptions.lineWidth
-                };
+            };
             let chartOptions = {};
             // Chart will be fully configured if export call came from non-supremm module tab
             if (inputChartOptions.layout) {
                 chartOptions = inputChartOptions;
                 const isEmpty = (!chartOptions.data) || (chartOptions.data && chartOptions.data.length === 0);
-
-            // Configure plot for 'No Data' image. We want to wipe the layout object except for a couple things
+                // Configure plot for 'No Data' image. We want to wipe the layout object except for a couple things
                 if (isEmpty) {
                     const errorConfig = getNoDataErrorConfig();
                     const { width } = chartOptions.layout;
@@ -64,35 +63,29 @@
                         chartOptions.layout.images[0].sizex = 4;
                         chartOptions.layout.images[0].sizey = 4;
                         chartOptions.layout.images[0].y = 2.5;
-                    } else if (margin && titleAndSubtitle) {
+                    } 
+                    if (margin && titleAndSubtitle) {
                         chartOptions.layout.margin = margin;
                         chartOptions.layout.annotations = titleAndSubtitle;
-                    } else {
-                        if (chartOptions.data[0].type === 'pie') {
-                            chartOptions.layout.margin.t += 30;
-                        }
-
-                        for (let i = 0; i < chartOptions.data.length; i++) {
-                            // Rollback constrain for bar chart text font size
-                            chartOptions.data[i]['constraintext'] = 'none';
-                        }
-
-                        chartOptions.data.sort((trace1, trace2) => {
-                            if (chartOptions.layout.barmode != 'group') {
-                                if (trace2.name.startsWith('Std Err:')) {
-                                    return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
-                                }
-                                return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.legendrank - trace1.legendrank);
-                            }
-                            else {
-                                const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
-                                if (trace2.name.startsWith('Std Err:') && res === -1) {
-                                    return 1;
-                                }
-                                return res;
-                            }
-                        });
                     }
+                } else {
+                    if (chartOptions.data[0].type === 'pie') {
+                        chartOptions.layout.margin.t += 30;
+                    }
+
+                    for (let i = 0; i < chartOptions.data.length; i++) {
+                        // Rollback constrain for bar chart text font size
+                        chartOptions.data[i]['constraintext'] = 'none';
+                    }
+
+                    chartOptions.data.sort((trace1, trace2) => {
+                        if (chartOptions.layout.barmode !== 'group') {
+                            return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.traceorder - trace1.traceorder);
+                        }
+                        const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.traceorder - trace2.traceorder);
+                        return res;
+                    });
+
                 }
             }
             else {

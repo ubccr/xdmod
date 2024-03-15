@@ -32,7 +32,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
             renderTo: this.id,
             layout: {
                 width: this.width,
-                height: this.height
+                height: this.height 
             }
         };
 

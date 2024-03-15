@@ -635,6 +635,7 @@ class TimeseriesChart extends AggregateChart
                             'offsetgroup' => "group{$traceIndex}",
                             'legendgroup' => $traceIndex,
                             'legendrank' => $traceIndex,
+                            'traceorder' => $traceIndex,
                             'seriesData' => $seriesValues,
                             'visible' => $visible,
                             'isRemainder' => $isRemainder,
@@ -730,6 +731,8 @@ class TimeseriesChart extends AggregateChart
                                         'color' => '#FFFFFF'
                                     ),
                                     'hoverinfo' => 'skip',
+                                    'legendrank' => -1000,
+                                    'traceorder' => -1000,
                                     'yaxis' => "y{$yIndex}",
                                     'type' => 'scatter',
                                 );
@@ -788,7 +791,10 @@ class TimeseriesChart extends AggregateChart
                                 ),
                                 'connectgaps' => true,
                                 'hoverinfo' => 'skip',
+                                'offsetgroup' => "group{$traceIndex}",
                                 'legendgroup' => $traceIndex,
+                                'legendrank' => -1000,
+                                'traceorder' => -1000,
                                 'type' => 'scatter',
                                 'visible' => $visible,
                                 'yaxis' => "y{$yIndex}",
@@ -939,6 +945,7 @@ class TimeseriesChart extends AggregateChart
                                 'legendgroup' => null,
                                 'connectgaps' => false,
                                 'legendrank' => $traceIndex + 1,
+                                'traceorder' => $traceIndex - 1,
                                 'isRestrictedByRoles' => $data_description->restrictedByRoles,
                             ));
 
@@ -1111,7 +1118,8 @@ class TimeseriesChart extends AggregateChart
                                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                                 );
 
-                                $trendline_trace['legendrank'] = $data_description->std_err ? $traceIndex + 2 : $traceIndex + 1;
+                                $trendline_trace['legendrank'] = $data_description->std_err ? $trace['legendrank'] + 2 : $trace['legendrank'];
+                                $trendline_trace['traceorder'] = $data_description->std_err ? $traceIndex - 2 : $traceIndex;                             
 
                                 if ($this->_swapXY) {
                                     unset($trendline_trace['yaxis']);

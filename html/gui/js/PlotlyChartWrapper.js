@@ -43,9 +43,12 @@ function adjustTitles(layout) {
     let subtitleLineCount = 0;
     if (len > 0) {
         if (!layout.width) {
-            layout.width = 1512; // default width -- need for custom queries because the width is not set for some reason
+            layout.width = 1000; // default width -- need for custom queries because the width is not set for some reason
         }
-        const axWidth = layout.width - layout.margin.l - layout.margin.r;
+        let axWidth = layout.width - layout.margin.l - layout.margin.r;
+        if (layout.pieChart) {
+            axWidth = layout.width / 1.1;
+        }
         const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 7.5));
         layout.margin.t = 45 + (subtitle_lines.length * 15);
         layout.annotations[1].text = subtitle_lines.join('<br />');
@@ -63,7 +66,7 @@ function adjustTitles(layout) {
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     const baseChartOptions = {};
-    const configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500 };
+    const configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500};
     jQuery.extend(true, baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
 
@@ -98,7 +101,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
 
         if (baseChartOptions.data[0].type === 'pie') {
-            baseChartOptions.layout.margin.t += 30;
+            baseChartOptions.layout.pieChart = true;
         }
 
         if (!baseChartOptions.credits && baseChartOptions.credits === false) {
@@ -131,15 +134,9 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         // for comparison idea
         baseChartOptions.data.sort((trace1, trace2) => {
             if (baseChartOptions.layout.barmode !== 'group') {
-                if (trace2.name.startsWith('Std Err:')) {
-                    return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
-                }
-                return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.legendrank - trace1.legendrank);
+                return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.traceorder - trace1.traceorder);
             }
-            const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.legendrank - trace2.legendrank);
-            if (trace2.name.startsWith('Std Err:') && res === -1) {
-                return 1;
-            }
+            const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.traceorder - trace2.traceorder);
             return res;
         });
     }

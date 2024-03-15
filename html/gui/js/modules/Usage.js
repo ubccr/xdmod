@@ -2778,6 +2778,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 // There is a bug with tick text manually set.
                                 // We need set tickmode to auto if so.
                                 const visibleData = evt.fullData.filter((trace) => trace.visible === true);
+                                console.log(evt);
                                 let tickType;
                                 if (evt.layout.swapXY) {
                                     tickType = evt.layout.yaxis.tickmode;
@@ -2803,8 +2804,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     if (nodeVisibility === '1') {
                                         Plotly.update(chartDiv, { [errorBar]: false }, {}, [evt.curveNumber + 1]);
                                     } else {
-                                        Plotly.update(chartDiv, { [errorBar]: true }, {}, [evt.curveNumber + 1]);
+                                        Plotly.update(chartDiv, { [errorBar]: true, visible: true }, {}, [evt.curveNumber + 1]);
                                     }
+                                // Clicked on primary trace
                                 } else if (node.nextSibling) {
                                     const sibling = node.nextSibling;
                                     if (sibling.textContent.startsWith('Std Err:')) {
@@ -2815,7 +2817,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                                 Plotly.update(chartDiv, { visible: 'legendonly' }, {}, [evt.curveNumber - 1]);
                                             }
                                         } else if (nodeVisibility === '0.5') {
-                                            Plotly.update(chartDiv, { [errorBar]: false }, {}, [evt.curveNumber]);
+                                            Plotly.update(chartDiv, { [errorBar]: true }, {}, [evt.curveNumber]);
+                                            Plotly.update(chartDiv, { visible: true }, {}, [evt.curveNumber - 1]);
                                         }
                                     }
                                 }

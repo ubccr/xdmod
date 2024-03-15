@@ -905,9 +905,9 @@ class Usage extends Common
                     }
 
                     // Set properties that are different.
-                    if (!$isNullSeries) {
+                    /*if (!$isNullSeries) {
                         $meDataSeries['zIndex'] = $meDataSeries['legendrank'];
-                    }
+                    }*/
 
                     // Remove extraneous properties.
                     unset($meDataSeries['otitle']);

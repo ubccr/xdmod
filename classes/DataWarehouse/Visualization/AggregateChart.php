@@ -984,7 +984,7 @@ class AggregateChart
             // for each of the dataseries on this yAxisObject:
             foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
             {
-                $legendRank++;
+                $legendRank+=2;
                 $yAxisDataObject = $yAxisDataObjectAndDescription['yAxisDataObject']; // SimpleData object
                 $data_description = $yAxisDataObjectAndDescription['data_description'];
                 $decimals = $yAxisDataObjectAndDescription['decimals'];
@@ -1232,7 +1232,8 @@ class AggregateChart
                     'yaxis' => "y{$yIndex}",
                     'offsetgroup' => "y{$yIndex}",
                     'legendgroup' => $data_description_index,
-                    'legendrank' => $legendRank,
+                    'legendrank' => $legendRank - 1,
+                    'traceorder' => $legendRank,
                     'cursor' => 'pointer',
                     'visible' => $visible,
                     'sort' => false,
@@ -1260,6 +1261,8 @@ class AggregateChart
                             'line' => array(
                                 'color' => '#ffffff'
                             ),
+                            'legendrank' => -1000,
+                            'traceorder' => -1000,
                             'hoverinfo' => 'skip',
                             'yaxis' => "y{$yIndex}",
                             'type' => 'scatter',
@@ -1387,6 +1390,8 @@ class AggregateChart
                         'connectgaps' => true,
                         'hoverinfo' => 'skip',
                         'legendgroup' => $data_description_index,
+                        'legendrank' => -1000,
+                        'traceorder' => -1000,
                         'type' => 'scatter',
                         'visible' => $visible,
                         'yaxis' => "y{$yIndex}",
@@ -1606,7 +1611,8 @@ class AggregateChart
                 'showlegend' => true,
                 'legendgroup' => null,
                 'connectgaps' => false,
-                'legendrank' => $trace['legendrank']+1,
+                'legendrank' => $trace['legendrank'] + 1,
+                'traceorder' => $trace['legendrank'] - 1,
                 'isRestrictedByRoles' => $data_description->restrictedByRoles,
             ));
 
