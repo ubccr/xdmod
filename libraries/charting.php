@@ -2,36 +2,36 @@
 
 namespace xd_charting;
 
-function processForReport(&$highchart_config)
+function processForReport(&$chart_config)
 {
-    $data = json_encode($highchart_config);
-    $highchart_config = json_decode($data, true);
+    $data = json_encode($chart_config);
+    $chart_config = json_decode($data, true);
 
-    if ( isset($highchart_config['data']) && isset($highchart_config['data'][0]) ) {
-        $highchart_config = $highchart_config['data'][0];
+    if ( isset($chart_config['data']) && isset($chart_config['data'][0]) ) {
+        $chart_config = $chart_config['data'][0];
     }
 
-    $highchart_config['credits']['text'] = '';
+    $chart_config['layout']['annotations'][2] = '';
 }
 
-function processForThumbnail(&$highchart_config)
+function processForThumbnail(&$chart_config)
 {
-    if ( isset($highchart_config['data']) && isset($highchart_config['data'][0]) ) {
-        $highchart_config = $highchart_config['data'][0];
+    if ( isset($chart_config['data']) && isset($chart_config['data'][0]) ) {
+        $chart_config = $chart_config['data'][0];
     }
 
-    $highchart_config['legend']['enabled'] = false;
+    $chart_config['layout']['showlegend'] = false;
 
-    $highchart_config['credits']['text'] = '';
+    $chart_config['layout']['annotations'][2]['text'] = '';
 
-    $highchart_config['title']['text'] = '';
-    $highchart_config['subtitle']['text'] = '';
+    $chart_config['layout']['annotations'][0]['text'] = '';
+    $chart_config['layout']['annotations'][1]['text'] = '';
 
-    $highchart_config['xAxis']['title']['text'] = '';
-    $highchart_config['xAxis']['labels']['enabled'] = false;
+    $chart_config['layout']['xaxis']['title']['text'] = '';
+    $chart_config['layout']['xaxis']['showticklabels'] = false;
 
-    $highchart_config['yAxis']['title']['text'] = '';
-    $highchart_config['yAxis']['labels']['enabled'] = false;
+    $chart_config['layout']['yaxis']['title']['text'] = '';
+    $chart_config['layout']['yaxis']['showticklabels'] = false;
 }
 
 function exportChart(
