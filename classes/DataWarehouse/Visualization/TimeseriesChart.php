@@ -418,7 +418,6 @@ class TimeseriesChart extends AggregateChart
 
                 $yAxisDataObjectsArray = $dataset->getDatasets($limit, $offset, $summarizeDataseries);
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
-                // @refer HighChart2 line 866
                 foreach($yAxisDataObjectsArray as $traceIndex => $yAxisDataObject)
                 {
                     //throw new \Exception(json_encode($yAxisDataObject));

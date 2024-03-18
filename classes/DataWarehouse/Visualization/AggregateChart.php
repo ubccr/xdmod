@@ -211,7 +211,7 @@ class AggregateChart
     // selected aggregation unit.
     //
     // Returns pointInterval as milliseconds for javascript
-    // Used by the HighChartTimeseries2 class.
+    // Used by the TimeseriesChart class.
     //
     // Note: Javascript/display related
     // ---------------------------------------------------------

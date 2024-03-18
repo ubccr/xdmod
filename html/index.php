@@ -430,15 +430,6 @@ JS;
 
     <script type="text/javascript" src="gui/lib/plotly/plotly-2.29.1.min.js"></script>
 
-    <script type="text/javascript" src="gui/lib/highcharts/js/highcharts.src.js"></script>
-    <script type="text/javascript" src="gui/lib/highcharts/js/highcharts-more.js"></script>
-    <script type="text/javascript" src="gui/lib/highchartsDateformats.src.js"></script>
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/lib/highchartsChartClicks.src.js"></script>
-    <?php endif; ?>
-    <script type="text/javascript" src="gui/lib/highchartsDottedLineNullPlot.src.js"></script>
-    <script type="text/javascript" src="gui/lib/highcharts/js/modules/exporting.src.js"></script>
-
     <script type="text/javascript" src="gui/js/PlotlyPanel.js"></script>
 
     <?php if ($userLoggedIn): ?>

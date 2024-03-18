@@ -8,7 +8,6 @@
         "egulias/email-validator": "^1.2",
         "google/recaptcha": "~1.1",
         "greenlion/php-sql-parser": "~4.2",
-        "highsoft/highcharts": "^4.2.5",
         "ircmaxell/password-compat": "~1",
         "jquery/jquery-min-file": "^1.12.4",
         "justinrainbow/json-schema": "~5.2",
@@ -58,30 +57,6 @@
                 },
                 "extra": {
                     "installer-name": "extjs"
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "highsoft/highcharts",
-                "type": "vanilla-plugin",
-                "version": "4.2.5",
-                "license": [
-                    "CC-BY-NC-3.0",
-                    "proprietary"
-                ],
-                "homepage": "https://www.highcharts.com/products/highcharts",
-                "dist": {
-                    "url": "https://code.highcharts.com/zips/Highcharts-4.2.5.zip",
-                    "type": "zip",
-                    "shasum": "e4ad04f3a6c1b5042d25a8f960f62ce5aeb32777"
-                },
-                "require": {
-                    "composer/installers": "~1.0"
-                },
-                "extra": {
-                    "installer-name": "highcharts"
                 }
             }
         },
@@ -237,7 +212,6 @@
         "installer-paths": {
             "html/gui/lib/{$name}": [
                 "sencha/extjs-gpl",
-                "highsoft/highcharts",
                 "moment/moment-min-file",
                 "moment/moment-timezone-min-file",
                 "jquery/jquery-min-file",

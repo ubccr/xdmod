@@ -691,27 +691,6 @@
             "time": "2022-02-01T09:26:56+00:00"
         },
         {
-            "name": "highsoft/highcharts",
-            "version": "4.2.5",
-            "dist": {
-                "type": "zip",
-                "url": "https://code.highcharts.com/zips/Highcharts-4.2.5.zip",
-                "shasum": "e4ad04f3a6c1b5042d25a8f960f62ce5aeb32777"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "highcharts"
-            },
-            "license": [
-                "CC-BY-NC-3.0",
-                "proprietary"
-            ],
-            "homepage": "https://www.highcharts.com/products/highcharts"
-        },
-        {
             "name": "ircmaxell/password-compat",
             "version": "v1.0.4",
             "source": {

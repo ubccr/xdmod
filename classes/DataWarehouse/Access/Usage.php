@@ -696,7 +696,7 @@ class Usage extends Common
                 // If the "Show Title" checkbox on the Export Dialog has not been ticked,
                 // do not show a chart title. However, the Metric Explorer promotes the
                 // subtitle to the title if it exists and the title is not shown so mimic
-                // this behavior for consistency. See HighChart2::setChartTitleSubtitle()
+                // this behavior for consistency. See AggregateChart::setChartTitleSubtitle()
 
                 if ( 'n' == $showTitle ) {
                     // The subtitle text is empty for thumbnails but above it is set to
