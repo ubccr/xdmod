@@ -856,7 +856,7 @@ class TimeseriesChart extends AggregateChart
                                         }
                                     }
 
-                                    if ($data_description->value_labels && $data_description->std_err_labels) {
+                                    if ($data_description->value_labels && $std_err_labels_enabled) {
                                         if ($this->_swapXY) {
                                             $data_label['xshift'] = $isThumbnail ? 60 : 90;
                                         }
@@ -865,10 +865,10 @@ class TimeseriesChart extends AggregateChart
                                         }
                                     }
 
-                                    if ($data_description->value_labels && !$data_description->std_err_labels) {
+                                    if ($data_description->value_labels && !$std_err_labels_enabled) {
                                         array_push($this->_chart['layout']['annotations'], $data_label);
                                     }
-                                    elseif (($data_description->std_err_labels) || ($data_description->value_labels && $data_description->std_err_labels)) {
+                                    elseif (($std_err_labels_enabled) || ($data_description->value_labels && $std_err_labels_enabled)) {
                                         array_push($data_labels, $data_label);
                                     }
                                 }
@@ -996,7 +996,7 @@ class TimeseriesChart extends AggregateChart
                                 $error_trace['visible'] = 'legendonly';
                             }
                             $idx = count($this->_chart['data']) - 1;
-                            if (!$data_description->value_labels && $data_description->std_err_labels) {
+                            if (!$data_description->value_labels && $std_err_labels_enabled) {
                                 if ($trace['type'] == 'bar' && count($data_labels) == 0) {
                                     $this->_chart['data'][$idx]['text'] = $errorLabels;
                                 }
@@ -1014,7 +1014,7 @@ class TimeseriesChart extends AggregateChart
                                 }
                             }
 
-                            if ($data_description->value_labels && $data_description->std_err_labels) {
+                            if ($data_description->value_labels && $std_err_labels_enabled) {
                                 if ($trace['type'] == 'bar' && count($data_labels) == 0) {
                                     $this->_chart['data'][$idx]['text'] = $dataLabels;
                                 }

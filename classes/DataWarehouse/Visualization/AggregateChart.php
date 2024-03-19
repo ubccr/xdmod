@@ -1423,7 +1423,6 @@ class AggregateChart
                         elseif (strlen($xValues[$i]) > 70 || $longLabel) {
                             $categoryLabels[] = substr($xValues[$i], 0, 25) . '...';
                             if (count($xValues) > 10 && !$longLabel) {
-                                $i = 0; // Go back and tidy up labels
                                 $longLabel = true;
                             }
                         }
@@ -1460,7 +1459,7 @@ class AggregateChart
                 );
 
                 // Add data labels
-                if(($data_description->value_labels || $data_description->std_err_labels) && $data_description->display_type != 'pie') {
+                if(($data_description->value_labels || $std_err_labels_enabled) && $data_description->display_type != 'pie') {
                     for ($i = 0; $i < count($xValues); $i++) {
                         $yPosition = $yValues[$i];
                         if ($data_description->log_scale) {
@@ -1498,7 +1497,7 @@ class AggregateChart
                             }
                         }
 
-                        if ($data_description->value_labels && $data_description->std_err_labels) {
+                        if ($data_description->value_labels && $std_err_labels_enabled) {
                             $data_label['text'] = $error_info['data_labels'][$i];
                             if ($this->_swapXY) {
                                 $data_label['xshift'] = $isThumbnail ? 60 : 90;
@@ -1507,7 +1506,7 @@ class AggregateChart
                                 $data_label['yshift'] = $isThumbnail ? 60 : 90;
                             }
                         }
-                        elseif (!$data_description->value_labels && $data_description->std_err_labels) {
+                        elseif (!$data_description->value_labels && $std_err_labels_enabled) {
                             $data_label['text'] = $error_info['error_labels'][$i];
                         }
 
@@ -1549,8 +1548,9 @@ class AggregateChart
         $zIndex
     ) {
 
+        $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
         // build error data series and add it to chart
-        if(($data_description->std_err == 1 || $data_description->std_err_labels) && $data_description->display_type != 'pie')
+        if(($data_description->std_err == 1 || $std_err_labels_enabled) && $data_description->display_type != 'pie')
         {
             $stderr = array();
             $dataLabels = array();
