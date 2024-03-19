@@ -183,7 +183,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected['total'], $chartData->totalCount);
 	$chartData = $chartData->data[0];
         $series = $chartData->data;
-        $this->assertCount(count($expected['series_data']), count($series['y']));
+        $this->assertCount(count($expected['series_data']), count($series));
 
         $sdata = reset($expected['series_data']);
 
