@@ -33,10 +33,10 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
             'series_data' => array()
 	);
 	$chartData = $chartData->data[0]->data;
-        foreach ($chartData->data as $series) {
+        foreach ($chartData as $series) {
             $result['series_data'][] = array(
                 'name' => $series->name,
-                'y' => $series['y'][0],
+                'y' => $series->y[0],
             );
         }
         var_export($result);
@@ -72,13 +72,13 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected['subtitle'], $chartData->layout->annotations[1]->text);
         if (isset($expected['yvalue'])) {
-            $this->assertEquals($expected['yvalue'], $chartData->data['y'][0]);
+            $this->assertEquals($expected['yvalue'], $chartData->data[0]->y[0]);
         } else {
             self::$chartFilterTestData[] = array(
                 'settings' => $settings,
                 'expected' => array(
                     'subtitle' => $expected['subtitle'],
-                    'yvalue' => $chartData->data['y'][0]
+                    'yvalue' => $chartData->data[0]->y[0]
                 )
             );
         }
@@ -189,7 +189,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
 
         foreach ($series as $s) {
             $this->assertEquals($sdata['name'], $s->name);
-            $this->assertEquals($sdata['y'], $s['y'][0], '', 1.0E-6);
+            $this->assertEquals($sdata['y'], $s->y[0], '', 1.0E-6);
             $sdata = next($expected['series_data']);
         }
 
