@@ -32,7 +32,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
             'total' => $chartData['totalCount'],
             'series_data' => array()
 	);
-	$chartData = $chartData->data[0]['hc_jsonstore'];
+	$chartData = $chartData->data[0]->data;
         foreach ($chartData->data as $series) {
             $result['series_data'][] = array(
                 'name' => $series->name,
@@ -65,10 +65,10 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(200, $response[1]['http_code']);
 
-        $chartStore = json_decode($response[0], true);
+        $chartStore = json_decode($response[0]);
         $this->assertNotNull($chartStore);
 
-        $chartData = $chartStore->data[0]['hc_jsonstore'];
+        $chartData = $chartStore->data[0];
 
         $this->assertEquals($expected['subtitle'], $chartData->layout->annotations[1]->text);
         if (isset($expected['yvalue'])) {
@@ -171,7 +171,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(200, $response[1]['http_code']);
 
-        $chartData = json_decode($response[0], true);
+        $chartData = json_decode($response[0]);
         $this->assertNotNull($chartData);
 
         if ($expected === null) {
@@ -180,10 +180,10 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
             return;
         }
 
-        $this->assertEquals($expected['total'], $chartData['totalCount']);
-	$chartData = $chartData['data'][0]['hc_jsonstore'];
+        $this->assertEquals($expected['total'], $chartData->totalCount);
+	$chartData = $chartData->data[0];
         $series = $chartData->data;
-        $this->assertCount(count($expected['series_data']), count($series));
+        $this->assertCount(count($expected['series_data']), count($series->y));
 
         $sdata = reset($expected['series_data']);
 
