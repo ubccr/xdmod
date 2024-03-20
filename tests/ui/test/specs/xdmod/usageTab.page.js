@@ -30,7 +30,7 @@ class Usage {
             return chart + '/*[name()="g" and contains(@class, "infolayer")]//*[name()="g" and contains(@class, "annotation") and @data-index="0"]//*[local-name() = "text" and contains(text(),"' + title +'")]';
         };
         this.chartXAxisLabelByName = function (name) {
-            return module.exports.chart + '//*[name()="g" and @class="xaxislayer-below"]/*[name()="g" and @class="xtick"])[1]';
+            return '(' + module.exports.chart + '//*[name()="g" and @class="xaxislayer-below"]/*[name()="g" and @class="xtick"])[1]';
         };
         this.durationButton = this.panel + '//button[contains(@class,"custom_date")]';
         this.durationMenu = '//div[contains(@class,"x-menu-floating")]';
