@@ -6,7 +6,7 @@ class Usage {
         this.tab = '#main_tab_panel__tg_usage';
         this.startField = '#tg_usage input[id^=start_field_ext]';
         this.endField = '#tg_usage input[id^=end_field_ext]';
-        this.legendText = 'g.highcharts-legend-item';
+        this.legendText = module.exports.chart0 + '/*[name()="g" and contains(@class, "infolayer")]/*[name()="g" and @class="legend"]';
         this.refreshButton = '//div[@id="tg_usage"]//button[text()="Refresh"]/ancestor::node()[5]';
         this.toolbar = {
             exportButton: '//div[@id="tg_usage"]//button[text()="Export"]/ancestor::node()[5]'
@@ -23,12 +23,14 @@ class Usage {
         this.unfoldTreeNodeByName = function (name) {
             return module.exports.topTreeNodeByName(name) + '/ancestor::node()[2]/img[contains(@class,"x-tree-ec-icon")]';
         };
-        this.chart = '//div[@id="tg_usage"]//div[@class="highcharts-container"]//*[local-name() = "svg"]';
-        this.chartByTitle = function (title) {
-            return module.exports.chart + '/*[name()="text" and contains(@class, "title")]/*[name()="tspan" and contains(text(),"' + title + '")]';
+        this.chart = '//div[@id="tg_usage"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"][1]';
+        this.chart0 = '//div[@id="tg_usage"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]';
+        this.chartByTitle = function (title, zero=false) {
+            let chart = zero ? module.exports.chart0 : module.exports.chart;
+            return chart + '/*[name()="g" and contains(@class, "infolayer")]//*[name()="g" and contains(@class, "annotation") and @data-index="0"]//*[local-name() = "text" and contains(text(),"' + title +'")]';
         };
         this.chartXAxisLabelByName = function (name) {
-            return module.exports.chart + '/*[name() = "g" and contains(@class, "highcharts-xaxis-labels")]/*[name() = "text" and text() = "' + name + '"]';
+            return module.exports.chart + '//*[name()="g" and @class="xaxislayer-below"]/*[name()="g" and @class="xtick"])[1]';
         };
         this.durationButton = this.panel + '//button[contains(@class,"custom_date")]';
         this.durationMenu = '//div[contains(@class,"x-menu-floating")]';
