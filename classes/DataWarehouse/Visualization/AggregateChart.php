@@ -1414,14 +1414,15 @@ class AggregateChart
                     for ($i = 0; $i < count($xValues); $i++) {
                         if (count($xValues) > 20) {
                             if ($i % 2 == 0) {
-                                $categoryLabels[] = substr($xValues[$i], 0, 25) . '...';
+                                $categoryLabels[] = mb_substr($xValues[$i], 0, 25) . '...';
                             }
                             else {
                                 $categoryLabels[] = '';
                             }
                         }
                         elseif (strlen($xValues[$i]) > 70 || $longLabel) {
-                            $categoryLabels[] = substr($xValues[$i], 0, 25) . '...';
+                            
+                            $categoryLabels[] = mb_substr($xValues[$i], 0, 25) . '...';
                             if (count($xValues) > 10 && !$longLabel) {
                                 $longLabel = true;
                             }
