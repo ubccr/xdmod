@@ -1421,7 +1421,6 @@ class AggregateChart
                             }
                         }
                         elseif (strlen($xValues[$i]) > 70 || $longLabel) {
-                            
                             $categoryLabels[] = mb_substr($xValues[$i], 0, 25) . '...';
                             if (count($xValues) > 10 && !$longLabel) {
                                 $longLabel = true;

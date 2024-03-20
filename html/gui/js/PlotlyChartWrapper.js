@@ -66,7 +66,7 @@ function adjustTitles(layout) {
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     const baseChartOptions = {};
-    const configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500};
+    const configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500 };
     jQuery.extend(true, baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
 
@@ -158,7 +158,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             for (let i = 0; i < legendEntries.length; i++) {
                 for (let j = 0; j < legendEntries[i].children.length; j++) {
                     if (legendEntries[i].children[j].textContent === 'Change Indicator') {
-                        let changeIndicatorIcon = legendEntries[i].children[j].children[1];
+                        const changeIndicatorIcon = legendEntries[i].children[j].children[1];
                         changeIndicatorIcon.innerHTML = '<image href="/gui/images/exclamation_ak.png" x="15" y="-12" width="20" height="20">';
                     }
                 }
