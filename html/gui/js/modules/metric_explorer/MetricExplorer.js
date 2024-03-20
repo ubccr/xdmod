@@ -441,8 +441,8 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 menu.add({
                     text: 'View Plotly JS chart layout',
                     iconCls: 'chart',
-                    handler: function () {
-                        var win = new Ext.Window({
+                    handler: () => {
+                        const win = new Ext.Window({
                             title: 'Plotly JS Layout Json',
                             width: 800,
                             height: 600,
@@ -451,7 +451,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             closeAction: 'destroy',
                             items: [{
                                 autoScroll: true,
-                                html: '<pre>' + Ext.util.Format.htmlEncode(JSON.stringify(instance.plotlyPanel.chartOptions.layout, null, 4)) + '</pre>'
+                                html: `<pre>${Ext.util.Format.htmlEncode(JSON.stringify(instance.plotlyPanel.chartOptions.layout, null, 4))}</pre>`
                             }]
                         });
                         win.show();
@@ -460,8 +460,8 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 menu.add({
                     text: 'View Plotly JS chart data',
                     iconCls: 'dataset',
-                    handler: function () {
-                        var win = new Ext.Window({
+                    handler: () => {
+                        const win = new Ext.Window({
                             title: 'Plotly JS Data Json',
                             width: 800,
                             height: 600,
@@ -470,7 +470,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             closeAction: 'destroy',
                             items: [{
                                 autoScroll: true,
-                                html: '<pre>' + Ext.util.Format.htmlEncode(JSON.stringify(instance.plotlyPanel.chartOptions.data, null, 4)) + '</pre>'
+                                html: `<pre>${Ext.util.Format.htmlEncode(JSON.stringify(instance.plotlyPanel.chartOptions.data, null, 4))}</pre>`
                             }]
                         });
                         win.show();

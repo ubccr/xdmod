@@ -2778,17 +2778,16 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 // There is a bug with tick text manually set.
                                 // We need set tickmode to auto if so.
                                 const visibleData = evt.fullData.filter((trace) => trace.visible === true);
-                                console.log(evt);
                                 let tickType;
-                                let axisType
+                                let axisType;
                                 if (evt.layout.swapXY) {
                                     tickType = evt.layout.yaxis.tickmode;
                                     axisType = evt.layout.yaxis.type;
                                 } else {
                                     tickType = evt.layout.xaxis.tickmode;
-                                    tickType = evt.layout.xaxis.type;
+                                    axisType = evt.layout.xaxis.type;
                                 }
-                                if (visibleData.length === 1 && visibleData[0].index === evt.curveNumber && tickType === 'date') {
+                                if (visibleData.length === 1 && visibleData[0].index === evt.curveNumber && axisType === 'date') {
                                     if (evt.layout.swapXY) {
                                         Plotly.relayout(chartDiv, { 'yaxis.tickmode': 'auto' });
                                     } else {

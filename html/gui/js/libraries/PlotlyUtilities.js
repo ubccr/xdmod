@@ -251,7 +251,7 @@ function getClickedPoint(clickEvent, traceDivs) { // eslint-disable-line no-unus
                     const dimensions = points[j].getBoundingClientRect();
                     if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right
                         && evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
-                        const swapXY = evt.points[0].data.yaxis ? false : true;
+                        const swapXY = !evt.points[0].data.yaxis;
                         const dataValue = points[j].__data__.s || (swapXY ? points[j].__data__.x : points[j].__data__.y);
                         const pointIndex = evt.points.findIndex((trace) => {
                             if (trace.value) {
@@ -277,10 +277,8 @@ function getMultiAxisObjects(layout) { // eslint-disable-line no-unused-vars
             if (layoutKeys[i].startsWith('xaxis')) {
                 multiAxes.push(layoutKeys[i]);
             }
-        } else {
-            if (layoutKeys[i].startsWith('yaxis')) {
+        } else if (layoutKeys[i].startsWith('yaxis')) {
                 multiAxes.push(layoutKeys[i]);
-            }
         }
     }
     return multiAxes;

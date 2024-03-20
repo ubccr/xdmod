@@ -31,8 +31,8 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         $result = array(
             'total' => $chartData['totalCount'],
             'series_data' => array()
-	);
-	$chartData = $chartData->data[0]->data;
+        );
+        $chartData = $chartData->data[0]->data;
         foreach ($chartData as $series) {
             $result['series_data'][] = array(
                 'name' => $series->name,
@@ -181,7 +181,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
         }
 
         $this->assertEquals($expected['total'], $chartData->totalCount);
-	$chartData = $chartData->data[0];
+        $chartData = $chartData->data[0];
         $series = $chartData->data;
         $this->assertCount(count($expected['series_data']), $series);
 

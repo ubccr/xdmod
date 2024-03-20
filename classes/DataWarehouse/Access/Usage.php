@@ -904,11 +904,6 @@ class Usage extends Common
                         $meDataSeries['drilldown']['groupUnit'] = array($usageGroupBy, $usageGroupByObject->getName());
                     }
 
-                    // Set properties that are different.
-                    /*if (!$isNullSeries) {
-                        $meDataSeries['zIndex'] = $meDataSeries['legendrank'];
-                    }*/
-
                     // Remove extraneous properties.
                     unset($meDataSeries['otitle']);
                     unset($meDataSeries['datasetId']);
