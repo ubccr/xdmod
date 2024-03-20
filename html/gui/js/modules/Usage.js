@@ -2780,12 +2780,15 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 const visibleData = evt.fullData.filter((trace) => trace.visible === true);
                                 console.log(evt);
                                 let tickType;
+                                let axisType
                                 if (evt.layout.swapXY) {
                                     tickType = evt.layout.yaxis.tickmode;
+                                    axisType = evt.layout.yaxis.type;
                                 } else {
                                     tickType = evt.layout.xaxis.tickmode;
+                                    tickType = evt.layout.xaxis.type;
                                 }
-                                if (visibleData.length === 1 && visibleData[0].index === evt.curveNumber) {
+                                if (visibleData.length === 1 && visibleData[0].index === evt.curveNumber && tickType === 'date') {
                                     if (evt.layout.swapXY) {
                                         Plotly.relayout(chartDiv, { 'yaxis.tickmode': 'auto' });
                                     } else {
