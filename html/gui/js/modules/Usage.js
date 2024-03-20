@@ -1519,11 +1519,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 }
 
                                 if (axisLabels) {
-                                    for (let i = 0; i < axisLabels.length; i++) {
-                                        let label = axisLabels[i];
+                                    for (let j = 0; j < axisLabels.length; j++) {
+                                        let label = axisLabels[j];
                                         if (label.length > 20) {
                                             label = `${label.substring(0, 18)}...`;
-                                            axisLabels[i] = label;
+                                            axisLabels[j] = label;
                                         }
                                     }
                                     if (chartOptions.layout.swapXY) {

@@ -482,17 +482,16 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     text: 'Reset Zoom',
                     iconCls: 'refresh',
                     xtype: 'menuitem',
-                    handler: function (t) {
+                    handler: (t) => {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
-                        const range = [];
                         const swapXY = instance.plotlyPanel.chartOptions.layout.swapXY;
-                        range[0] = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
-                        range[1] = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
-                        if (range[0] !== 0 || range[1] !== null) {
+                        const min = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
+                        const max = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
+                        if (min !== 0 || max !== null) {
                             if (swapXY) {
-                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'xaxis.range': range, 'yaxis.autorange': false });
+                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'xaxis.range': [min, max], 'yaxis.autorange': false });
                             } else {
-                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': false });
+                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': [min, max], 'yaxis.autorange': false });
                             }
                         } else {
                             Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.autorange': true });
@@ -973,15 +972,15 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     text: 'Reset Zoom',
                     xtype: 'menuitem',
                     iconCls: 'refresh',
-                    handler: function (t) {
+                    handler: (t) => {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
-                        const range = [];
-                        range[0] = instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
-                        range[1] = instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
-                        if (range[0] !== 0 || range[1] !== null) {
-                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': false });
+                        const swapXY = instance.plotlyPanel.chartOptions.layout.swapXY;
+                        const min = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
+                        const max = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
+                        if (min !== 0 || max !== null) {
+                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': [min, max], 'yaxis.autorange': false });
                         } else {
-                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': range, 'yaxis.autorange': true });
+                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': [min, max], 'yaxis.autorange': true });
                         }
                     }
                 });
@@ -1008,11 +1007,11 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Hide Series option in data series context menu', Ext.encode({
                             checked: check
                         }));
-                        const visible = check ? true : 'legendonly';
+                        const displaySeries = check ? true : 'legendonly';
                         if (check) {
                             delete visibility[originalTitle];
                         } else {
-                            visibility[originalTitle] = visible;
+                            visibility[originalTitle] = displaySeries;
                         }
                         record.set('visibility', visibility);
                     }
@@ -2032,7 +2031,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             }, {
                 xtype: 'button',
                 text: 'Cancel',
-                handler: function() {
+                handler: () => {
                     menu.destroy();
                 }
             }]

@@ -670,7 +670,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                 var errorCode = data.code;
 
                                 if (errorCode === XDMoD.Error.QueryUnavailableTimeAggregationUnit) {
-                                    var cp = this.portlet.items.get(0);
+                                    var chartPortlet = this.portlet.items.get(0);
 
                                     var errorMessageExtraData = '';
                                     var errorData = data.errorData;
@@ -691,7 +691,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                       }
                                     }
 
-                                    cp.displayError(
+                                    chartPortlet.displayError(
                         'Data not available for the selected aggregation unit.',
                         errorMessageExtraData
                       );

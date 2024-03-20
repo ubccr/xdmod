@@ -94,7 +94,7 @@ class MetricExplorer {
                     return module.exports.selectors.chart.svg + '/*[name()="g" and contains(@class, "infolayer")]//*[name()="g" and contains(@class, "annotation") and @data-index="0"]//*[local-name() = "text" and contains(text(),"' + title + '")]';
                 },
                 credits: function () {
-                    return module.exports.selectors.chart.svg + '/*[name()="g" and contains(@class, "infolayer")]//*[name()="g" and contains(@class, "annotation") and @data-index="2"]//*[name()="text"and contains(text(),"Powered by XDMoD")]'; 
+                    return module.exports.selectors.chart.svg + '/*[name()="g" and contains(@class, "infolayer")]//*[name()="g" and contains(@class, "annotation") and @data-index="2"]//*[name()="text"and contains(text(),"Powered by XDMoD")]';
                 },
                 yAxisTitle: function () {
                     return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "g-ytitle")]/*[name() = "text" and contains(@class,"ytitle")]';
@@ -107,10 +107,10 @@ class MetricExplorer {
                         case 0:
                             return module.exports.selectors.chart.svg + '/*[name()="g" and @class="cartesianlayer"]//*[name()="g" and @class="points"]//*[name()="path" and @class="point"]';
                         default:
-                            return module.exports.selectors.chart.svg + '/*[name()="g" and contains(@class, "xy' + seriesId + '")]//*[name()="path" and @class="point"]';
+                            return module.exports.selectors.chart.svg + `/*[name()="g" and contains(@class, "xy' + ${seriesId} + '")]//*[name()="path" and @class="point"]`;
                     }
                 },
-                title: function () {
+                title: () => {
                     return `(${module.exports.selectors.chart.svg})[2]//*[name()="g" and @data-index="0" and contains(@class, "annotation")]//*[name()="text"]`;
                 },
                 titleInput: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] input[type=text]',
