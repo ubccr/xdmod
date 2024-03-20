@@ -485,8 +485,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     handler: (t) => {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
                         const swapXY = instance.plotlyPanel.chartOptions.layout.swapXY;
-                        const min = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
-                        const max = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
+                        let min, max;
+                        [min, max] = [swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0],
+                                      swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1]];
                         if (min !== 0 || max !== null) {
                             if (swapXY) {
                                 Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'xaxis.range': [min, max], 'yaxis.autorange': false });
@@ -975,8 +976,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     handler: (t) => {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
                         const swapXY = instance.plotlyPanel.chartOptions.layout.swapXY;
-                        const min = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
-                        const max = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
+                        let min, max;
+                        [min, max ] = [swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0],
+                                       swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1]];
                         if (min !== 0 || max !== null) {
                             Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': [min, max], 'yaxis.autorange': false });
                         } else {
