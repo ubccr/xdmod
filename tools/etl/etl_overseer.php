@@ -385,7 +385,8 @@ foreach ( $argv as $index => $arg ) {
 
 $conf = array(
     'emailSubject' => gethostname() . ': XDMOD: Data Warehouse: Federated ETL Log',
-    'mail' => false
+    'mail' => false,
+    'db' => false
 );
 
 if ( null !== $scriptOptions['verbosity'] ) {
