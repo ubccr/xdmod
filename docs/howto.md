@@ -4,6 +4,7 @@ title: HOWTOs
 
 The Open XDMoD HOWTOs are "how to" documents on specific subjects.
 
-- [Change Default Summary Page Charts](howto-summary-charts.html)
+- [Change Summary Page Charts](howto-summary-charts.html)
+- [Change Metric Explorer Colors](howto-colors.html)
 - [Enable Node Utilization Statistics](howto-node-utilization.html)
-- [Reconstruct Slurm accounting logs](howto-reconstruct-slurm.html)
+- [Reconstruct Slurm Accounting Logs](howto-reconstruct-slurm.html)
