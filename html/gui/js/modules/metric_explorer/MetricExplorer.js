@@ -484,10 +484,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     xtype: 'menuitem',
                     handler: (t) => {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
-                        const swapXY = instance.plotlyPanel.chartOptions.layout.swapXY;
-                        let min, max;
-                        [min, max] = [swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0],
-                                      swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1]];
+                        const { swapXY } = instance.plotlyPanel.chartOptions.layout;
+                        const min = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
+                        const max = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
                         if (min !== 0 || max !== null) {
                             if (swapXY) {
                                 Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'xaxis.range': [min, max], 'yaxis.autorange': false });
@@ -975,10 +974,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     iconCls: 'refresh',
                     handler: (t) => {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
-                        const swapXY = instance.plotlyPanel.chartOptions.layout.swapXY;
-                        let min, max;
-                        [min, max ] = [swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0],
-                                       swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1]];
+                        const { swapXY } = instance.plotlyPanel.chartOptions.layout;
+                        const min = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
+                        const max = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
                         if (min !== 0 || max !== null) {
                             Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': [min, max], 'yaxis.autorange': false });
                         } else {
@@ -2727,6 +2725,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         var chartThumbScale = 0.45;
         var chartWidth = 740;
         var chartHeight = 345;
+        let plotlyPanel;
 
         /*
          * Start Legend Menu
@@ -6073,7 +6072,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         }); //assistPanel
 
         // ---------------------------------------------------------
-        var plotlyPanel = new CCR.xdmod.ui.PlotlyPanel({
+        plotlyPanel = new CCR.xdmod.ui.PlotlyPanel({
             id: 'plotly-panel' + this.id,
             baseChartOptions: {
                 metricExplorer: true

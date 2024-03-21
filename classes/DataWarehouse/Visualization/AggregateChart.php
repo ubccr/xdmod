@@ -1461,9 +1461,9 @@ class AggregateChart
                 // Add data labels
                 if(($data_description->value_labels || $std_err_labels_enabled) && $data_description->display_type != 'pie') {
                     for ($i = 0; $i < count($xValues); $i++) {
-                        $yPosition = $yValues[$i];
+                        $yPosition = is_numeric($yValues[$i]) && $yValues[$i] != 0 ? abs($yValues[$i]) : null;
                         if ($data_description->log_scale) {
-                            $yPosition = isset($yPosition) ? log10($yPosition) : null;
+                            $yPosition = log10($yPosition);
                         }
                         $data_label = array(
                             'name' => 'data_label',

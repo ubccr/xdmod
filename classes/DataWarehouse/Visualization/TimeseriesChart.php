@@ -703,8 +703,8 @@ class TimeseriesChart extends AggregateChart
 
                                 $this->_chart['layout']["{$xAxisName}"] = $yAxis;
                                 $this->_chart['layout']['yaxis'] = $xAxis;
-                                unset($this->_chart['layout']["xaxis"]['dtick']);
-                                unset($this->_chart['layout']["xaxis"]['tick0']);
+                                $this->_chart['layout']['yaxis']['tick0'] = $xValues[0];
+                                $this->_chart['layout']['yaxis']['dtick'] = $pointInterval;
                                 $swapXYDone = true;
                             }
                             if ($yAxisIndex > 0) {
@@ -819,9 +819,9 @@ class TimeseriesChart extends AggregateChart
                             }
                             else {
                                 for ($i = 0; $i < count($xValues); $i++) {
-                                    $yPosition = $yValues[$i];
+                                    $yPosition = is_numeric($yValues[$i]) && $yValues[$i] != 0 ? abs($yValues[$i]) : null;
                                     if ($data_description->log_scale) {
-                                        $yPosition = isset($yPosition) ? log10($yPosition) : null;
+                                        $yPosition = log10($yPosition);
                                     }
                                     $data_label = array(
                                         'name' => 'data_label',
