@@ -110,7 +110,7 @@ class MetricExplorer {
                             return module.exports.selectors.chart.svg + `//*[name()="g" and contains(@class, "xy${seriesId}")]//*[name()="path" and @class="point"]`;
                     }
                 },
-                title: () => return `(${module.exports.selectors.chart.svg})[2]//*[name()="g" and @data-index="0" and contains(@class, "annotation")]//*[name()="text"]`;
+                title: () => `(${module.exports.selectors.chart.svg})[2]//*[name()="g" and @data-index="0" and contains(@class, "annotation")]//*[name()="text"]`;
                 ,
                 titleInput: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] input[type=text]',
                 titleOkButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:first-child button',
