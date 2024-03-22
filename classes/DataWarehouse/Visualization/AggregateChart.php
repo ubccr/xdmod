@@ -567,7 +567,7 @@ class AggregateChart
         }
 
         $this->_hasLegend = $this->_legend_location != 'off';
-    } // end closure for setLegend() function
+    } // end closure for setLegend
 
     // ---------------------------------------------------------
     // setMultiCategory()
@@ -688,7 +688,7 @@ class AggregateChart
             $this->_chart['layout']['xaxis']['tickangle'] = -90;
             $this->_chart['layout']['xaxis']['ticklabelposition'] = 'outside left';
         }
-    }   // end closure for setXAxis() function
+    }   // end closure for setXAxis
 
     // ---------------------------------------------------------
     // setAxes()
@@ -723,7 +723,6 @@ class AggregateChart
         $this->_xAxisDataObject = $this->_dataset->getXAxis(false, $queryLim, $offset);
         $this->_total = $this->_dataset->getTotalX(); //has to be called after getXAxis
 
-        //$this->setXAxisLabel($x_axis);
         $this->setXAxis($x_axis, $font_size, $queryLim );
 
         $yAxisArray = $this->_dataset->getYAxis($queryLim, $offset, $this->_shareYAxis);
@@ -819,7 +818,7 @@ class AggregateChart
                         continue 2; // bug? comment above mentions break but uses continue
                     }
                 }
-            } // foreach($yAxisArray ...
+            }
 
             // if we have just reset summarizeDatasets, recompute limit, xAxis, and yAxis
             // with the new limit in place. Reset dataset _total to 1 to disable paging.
@@ -1469,7 +1468,7 @@ class AggregateChart
                         array_push($this->_chart['layout']['annotations'], $data_label);
                     }
                 }
-            } // end closure for each $yAxisObject 
+            } // end closure for each $yAxisObject
         } // end closure for each $yAxisArray
 
         // Add restricted data warning
@@ -1480,7 +1479,7 @@ class AggregateChart
         // set title and subtitle for chart
         $this->setChartTitleSubtitle($font_size);
 
-    } // configure()
+    } // end closure for configure
 
     // ---------------------------------------------------------
     // buildErrorDataSeries()
