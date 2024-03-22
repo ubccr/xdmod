@@ -391,13 +391,13 @@ EOF
         $plotdata = json_decode($response[0], true);
         $dataseries = $plotdata['data'][0]['hc_jsonstore']['data'];
 
-        $traceCount = 0;
+        $primaryTraces = array();
         for ($i = 0; $i < count($dataseries); $i++) {
             if (strcmp($dataseries[$i]['name'], 'area fix') != 0 && strcmp($dataseries[$i]['name'], 'gap connector') != 0) {
-                $traceCount++;
+                $primaryTraces[] = $dataseries[$i];
             }
         }
-        $this->assertCount(1, $traceCount);
+        $this->assertCount(1, $primaryTraces);
         $this->assertArrayHasKey('y', $dataseries[0]);
         $this->assertCount(1, $dataseries[0]['y']);
         $this->assertArrayHasKey('y', $dataseries[0]);
