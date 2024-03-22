@@ -31,7 +31,7 @@ class Usage {
         this.chartXAxisLabelByName = function (name) {
             return '(' + module.exports.chart + '//*[name()="g" and @class="xaxislayer-below"]/*[name()="g" and @class="xtick"])[1]';
         };
-        this.legendText = module.exports.chart0 + '/*[name()="g" and contains(@class, "infolayer")]/*[name()="g" and @class="legend"]';
+        this.legendText = `${module.exports.chart0}//*[name()="g" and contains(@class, "infolayer")]/*[name()="g" and @class="legend"]`;
         this.durationButton = this.panel + '//button[contains(@class,"custom_date")]';
         this.durationMenu = '//div[contains(@class,"x-menu-floating")]';
         this.durationMenuItem = name => `${this.durationMenu}//li/a[./span[text()="${name}"]]`;
