@@ -451,20 +451,6 @@ class TimeseriesChart extends AggregateChart
                         }
                         $values = $yAxisDataObject->getValues();
 
-                        // Decide whether to show data point markers:
-                        $values_count = count($values);
-                        // Count datapoints having actual, non-null y values:
-                        $y_values_count = 0;
-                        foreach ($values as $y_value) {
-                            if ($y_value !== null) {
-                                ++$y_values_count;
-                            }
-                            // we are only interested in the == 1 case.
-                            if ($y_values_count > 1) {
-                                break;
-                            }
-                        }
-
                         $isRemainder = $yAxisDataObject->getGroupId() === TimeseriesDataset::SUMMARY_GROUP_ID;
 
                         $filterParametersTitle = $data_description->long_legend == 1?$query->getFilterParametersTitle():'';
@@ -685,7 +671,7 @@ class TimeseriesChart extends AggregateChart
                                 $xAxisTopBoundStart = 1 - ($xAxisStep * floor($yAxisCount/2));
                                 $topShift = floor($yAxisCount/2) - floor($yAxisIndex/2);
                                 $bottomShift = ceil($yAxisCount/2) - ceil($yAxisIndex/2);
- 
+
                                 $yAxis['position'] = $yAxis['side'] == 'top' ? min(1 - ($xAxisStep * $topShift), 1) : max(0 + ($xAxisStep * $bottomShift), 0);
                                 $yAxis['domain'] = array(0,1);
                                 $yAxis['title']['standoff'] = 0;
