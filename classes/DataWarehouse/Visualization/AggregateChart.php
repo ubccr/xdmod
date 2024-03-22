@@ -61,6 +61,7 @@ class AggregateChart
     protected $_xAxisDataObject; // SimpleData object
     protected $_xAxisLabel;
     protected $_multiCategory = false;
+    protected $_prevCategory = null;
     protected $_queryType = 'aggregate';
 
     protected $_subtitleText = '';
@@ -202,7 +203,7 @@ class AggregateChart
 
         $this->roleRestrictionsStringBuilder = new RoleRestrictionsStringBuilder();
         $this->user = $user;
-    } // __construct()
+    } // end closure for __construct()
 
     // ---------------------------------------------------------
     // getPointInterval()
@@ -238,7 +239,7 @@ class AggregateChart
                 break;
         }
         return $pointInterval * 24 * 3600 * 1000;
-    } // getPointInterval()
+    }
 
     /**
      * Format and adjust start and end date for chart, given selected aggregation unit.
@@ -324,7 +325,7 @@ class AggregateChart
             : $endDate
         );
 
-    } // setDuration()
+    }
 
     // ---------------------------------------------------------
     // getDateFormat()
@@ -355,7 +356,7 @@ class AggregateChart
                 break;
         }
         return $format;
-    } // getDateFormat()
+    }
 
     // ---------------------------------------------------------
     // setDataSource()
@@ -369,7 +370,7 @@ class AggregateChart
         $src = count($source) > 0? ' Src: '.implode(', ', $source).'.':'';
         $this->_chart['layout']['annotations'][2]['text'] = $this->_startDate.' to '.
             $this->_endDate.' '.$src.' Powered by XDMoD/Plotly JS';
-    } // setDataSource()
+    }
 
     // ---------------------------------------------------------
     // getTitle()
@@ -380,7 +381,7 @@ class AggregateChart
     public function getTitle()
     {
         return $this->_chart['layout']['annotations'][0]['text'];
-    } // getTitle()
+    }
 
     // ---------------------------------------------------------
     // setTitle()
@@ -392,7 +393,7 @@ class AggregateChart
     {
         $this->_chart['layout']['annotations'][0]['text'] = $title;
         $this->_chart['layout']['annotations'][0]['font']['size'] = $font_size + 16;
-    } // setTitle()
+    }
 
     /**
      * @return The chart subtitle encoded as plain text.
@@ -420,7 +421,7 @@ class AggregateChart
         }
         $this->_chart['layout']['annotations'][1]['font']['color'] = '#5078a0';
         $this->_chart['layout']['annotations'][1]['font']['size'] = (12 + $font_size);
-    } // setSubtitle()
+    }
 
     // ---------------------------------------------------------
     // setLegend()
@@ -450,10 +451,6 @@ class AggregateChart
                 $this->_chart['layout']['legend']['y'] = 0.925;
                 $this->_chart['layout']['legend']['orientation'] = 'h';
                 break;
-            //case 'bottom_right':
-            //break;
-            //case 'bottom_left':
-            //break;
             case 'left_center':
                 $this->_chart['layout']['legend']['xanchor'] = 'left';
                 $this->_chart['layout']['legend']['yanchor'] = 'center';
@@ -570,7 +567,7 @@ class AggregateChart
         }
 
         $this->_hasLegend = $this->_legend_location != 'off';
-    } // setLegend()
+    } // end closure for setLegend() function
 
     // ---------------------------------------------------------
     // setMultiCategory()
@@ -588,56 +585,21 @@ class AggregateChart
         // For each data series, check if the category matches the category of
         // the previous data series. If not, there is more than one category
         // being used in this plot.
-        foreach($data_series as $data_description_index => $data_description)
+        foreach($data_series as $data_description)
         {
             $category = DataWarehouse::getCategoryForRealm(
                 $data_description->realm
             );
-            if(isset($prevCategory) && $category != $prevCategory)
+            if(isset($this->_prevCategory) && $category != $this->_prevCategory)
             {
                 $this->_multiCategory = true;
                 return;
             } else {
-                $prevCategory = $category;
+                $this->_prevCategory = $category;
             }
         }
         $this->_multiCategory = false;
-    } // setMultiCategory()
-
-    // ---------------------------------------------------------
-    // setXAxisLabel()
-    //
-    // Set XAxis label. TODO: Take another look
-    //
-    // called by configure()
-    // JMS, June 2015
-    //
-    // @param x_axis
-    // ---------------------------------------------------------
-    /*
-    protected function setXAxisLabel($x_axis)
-    {
-        if (!isset($this->_xAxisDataObject) )  {
-            throw new \Exception( get_class($this)." _xAxisDataObject not set ");
-        }
-
-        $defaultXAxisLabel = 'xAxis';
-        $xAxisLabel = $this->_xAxisDataObject->getName() == ORGANIZATION_NAME ? '' :
-                        $this->_xAxisDataObject->getName();
-
-        if($xAxisLabel == '') $xAxisLabel = $defaultXAxisLabel;
-        $originalXAxisLabel = $xAxisLabel;
-
-        if(isset($x_axis->{$xAxisLabel}))
-        {
-            $config = $x_axis->{$xAxisLabel};
-            if(isset($config->title)) $xAxisLabel = $config->title;
-        }
-        if($xAxisLabel == $defaultXAxisLabel) $xAxisLabel = '';
-
-        $this->_xAxisLabel = $xAxisLabel;
-    } // setXAxisLabel()
-    */
+    }
 
     // ---------------------------------------------------------
     // setXAxis()
@@ -726,7 +688,7 @@ class AggregateChart
             $this->_chart['layout']['xaxis']['tickangle'] = -90;
             $this->_chart['layout']['xaxis']['ticklabelposition'] = 'outside left';
         }
-    }   // setXAxis()
+    }   // end closure for setXAxis() function
 
     // ---------------------------------------------------------
     // setAxes()
@@ -1030,7 +992,6 @@ class AggregateChart
                 }
 
                 $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
-                $data_labels_enabled = $data_description->value_labels || $std_err_labels_enabled;
                 $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
                 $this->_chart['layout']['stdErr'] = $data_description->std_err;
                 $trace = array();
@@ -1067,7 +1028,7 @@ class AggregateChart
                             'values' => $yValues,
                         );
 
-                    } // foreach
+                    }
                     // Dont add data labels for all pie slices. Plotly will render all labels otherwise,
                     // which causes the margin on pie charts with many slices to break
                     $labelLimit = 12;
@@ -1086,7 +1047,7 @@ class AggregateChart
 
                     $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';
                 }
-                else // ($data_description->display_type !== 'pie')
+                else
                 {
                     if($this->_swapXY)
                     {
@@ -1109,10 +1070,10 @@ class AggregateChart
                             'id' => $yAxisDataObject->getXId($index),
                             'label' => $yAxisDataObject->getXValue($index)
                         );
-                    } // foreach
+                    }
 
                     $trace = array_merge($trace, array('text' => $yValues));
-                } // if ($data_description->display_type == 'pie')
+                }
 
                 $values_count = count($yValues);
                 if ($dataSeriesSummarized && $values_count > 0) {
@@ -1157,12 +1118,7 @@ class AggregateChart
                     $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'closest';
                 }
 
-                // Display markers for scatter plots, non-thumbnail plots
-                // with fewer than 21 points, or for plots with a single y value.
-                $showMarker = $data_description->display_type == 'scatter' ||
-                    ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
-                    $values_count == 1;
-
+                // Set tooltip format
                 if ($data_description->display_type == 'pie')
                 {
                     $tooltip = '%{label}' . '<br>' . $lookupDataSeriesName
@@ -1239,7 +1195,7 @@ class AggregateChart
                     'sort' => false,
                     'direction' => 'clockwise',
                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                )); // $data_series_desc
+                ));
 
                 if ($data_description->display_type == 'areaspline') {
                     $trace['type'] = 'area';
@@ -1269,8 +1225,8 @@ class AggregateChart
                         );
 
                         if ($this->_swapXY) {
-                            $null_trace['xaxis'] = "x{$yIndex}";
-                            unset($null_trace['yaxis']);
+                            $hidden_trace['xaxis'] = "x{$yIndex}";
+                            unset($hidden_trace['yaxis']);
                         }
 
                         $this->_chart['data'][] = $hidden_trace;
@@ -1513,8 +1469,8 @@ class AggregateChart
                         array_push($this->_chart['layout']['annotations'], $data_label);
                     }
                 }
-            } // foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
-        } //foreach($yAxisArray as $yAxisIndex => $yAxisObject)
+            } // end closure for each $yAxisObject 
+        } // end closure for each $yAxisArray
 
         // Add restricted data warning
         if ($this->_showWarnings) {
@@ -1589,7 +1545,7 @@ class AggregateChart
 
             // create the data series description:
             $error_trace = array_merge($trace, array(
-                'name' => $dsn,
+                'name' => $lookupDataSeriesName,
                 'otitle' => $dsn,
                 'datasetId' => $data_description->id,
                 'color'=> $error_color,
@@ -1679,7 +1635,7 @@ class AggregateChart
 
             return array('data_labels' => $dataLabels, 'error_labels' => $errorLabels);
         } // if not pie
-    } // function buildErrorDataSeries
+    } // end closure for buildErrorDataSeries function
 
         /**
          * Add a warning to the chart that data may be restricted.
@@ -1716,7 +1672,7 @@ class AggregateChart
             $this->setTitle($this->_chart['layout']['annotations'][1]['text'], $font_size);
             $this->setSubtitle('', $font_size);
         }
-    } // function setChartTitleSubtitle
+    }
 
     // ---------------------------------------------------------
     // exportJsonStore()
@@ -1741,7 +1697,7 @@ class AggregateChart
         );
 
         return $returnData;
-    } // exportJsonStore()
+    }
 
     /**
      * @function getOriginalAxisDefn
@@ -1775,4 +1731,4 @@ class AggregateChart
 
         return array($color, $lineColor);
     }
-} // class AggregateChart
+}

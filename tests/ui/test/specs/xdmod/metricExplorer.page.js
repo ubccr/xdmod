@@ -552,12 +552,8 @@ class MetricExplorer {
     }
 
     clickFirstDataPoint() {
-        var elems = browser.elements(this.selectors.chart.seriesMarkers(0));
-        // Data points are returned in reverse order.
-        // for some unknown reason the first point click gets intercepted by the series
-        // menu.
-        elems.value[0].click();
-        elems.value[elems.value.length - 1].click();
+        const elems = browser.elements(this.selectors.chart.seriesMarkers(0));
+        await elems.nth(0).click({force: true});
     }
 
     /**

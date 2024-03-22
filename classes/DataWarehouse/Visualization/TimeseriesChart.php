@@ -108,11 +108,11 @@ class TimeseriesChart extends AggregateChart
         {
             // set multiCategory true or false
             $category = DataWarehouse::getCategoryForRealm($data_description->realm);
-            if(isset($prevCategory) && $category != $prevCategory)
+            if(isset($this->_prevCategory) && $category != $this->_prevCategory)
             {
                 $multiCategory = true;
             } else {
-                $prevCategory = $category;
+                $this->_prevCategory = $category;
             }
 
             try
@@ -146,10 +146,9 @@ class TimeseriesChart extends AggregateChart
             }
 
             $yAxisArray[$axisId][] = $data_description;
-        } // foreach($data_series ...
+        }
 
         $yAxisCount = count($yAxisArray);
-        $results = array();
 
         $globalFilterDescriptions = array();
 
@@ -331,7 +330,7 @@ class TimeseriesChart extends AggregateChart
                     }
 
                     $this->_chart['layout']["{$yAxisName}"] = $yAxis;
-                } // if($yAxis == null)
+                }
 
                 $dataset = new TimeseriesDataset($query);
 
@@ -363,7 +362,6 @@ class TimeseriesChart extends AggregateChart
                     {
                         $xAxisLabel = '';
                     }
-                    $xAxisLabelFormat = '{value:'.$this->getDateFormat().'}';
                     $start_ts = strtotime($this->_startDate)*1000;
                     $end_ts = strtotime($this->_endDate)*1000;
                     $expectedDataPointCount = ($end_ts - $start_ts) / $pointInterval;
@@ -386,7 +384,7 @@ class TimeseriesChart extends AggregateChart
                         ),
                         'ticksuffix' => ' ',
                         'tickformat' => $this->getDateFormat(),
-                        'tickangle' => -90,
+                        'tickangle' => $xAxisData->getName() != 'Year' && $expectedDataPointCount > 25 ? -90 : 0,
                         'type' => 'date',
                         'rangemode' => 'tozero',
                         'hoverformat' => $this->getDateFormat(),
@@ -401,7 +399,7 @@ class TimeseriesChart extends AggregateChart
                         'zeroline' => false,
                     );
                      $this->_chart['layout']['xaxis'] = $xAxis;
-                } // if(!isset($xAxis))
+                }
 
                 //  ----------- set up yAxis, assign to chart ... eventually -----------
                 $semDecimals = null;
@@ -420,7 +418,6 @@ class TimeseriesChart extends AggregateChart
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
                 foreach($yAxisDataObjectsArray as $traceIndex => $yAxisDataObject)
                 {
-                    //throw new \Exception(json_encode($yAxisDataObject));
                     if( $yAxisDataObject != null)
                     {
                         $yAxisDataObject->joinTo($xAxisData, null);
@@ -468,12 +465,6 @@ class TimeseriesChart extends AggregateChart
                             }
                         }
 
-                        // Display markers for scatter plots, non-thumbnail plots of data series
-                        // with fewer than 21 points, or for any data series with a single y value.
-                        $showMarker = $data_description->display_type == 'scatter' ||
-                            ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
-                            $y_values_count == 1;
-
                         $isRemainder = $yAxisDataObject->getGroupId() === TimeseriesDataset::SUMMARY_GROUP_ID;
 
                         $filterParametersTitle = $data_description->long_legend == 1?$query->getFilterParametersTitle():'';
@@ -485,7 +476,6 @@ class TimeseriesChart extends AggregateChart
                         // --- set up $dataLabelsConfig, $seriesValues, $tooltipConfig ---
                         $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
                         $this->_chart['layout']['stdErr'] = $data_description->std_err;
-                        $tooltipConfig = array();
                         $xValues = array();
                         $yValues = array();
                         $text = array();
@@ -500,10 +490,10 @@ class TimeseriesChart extends AggregateChart
                                 $trace['textangle'] = 90;
                                 $this->_chart['layout']['xaxis']['tickangle'] = 0;
                             }
-                            else // !($this->_swapXY)
+                            else
                             {
                                 $trace['textangle'] = -90;
-                            } // if($this->_swapXY)
+                            }
 
                             // set up seriesValues
                             foreach($values as $i => $v)
@@ -524,7 +514,7 @@ class TimeseriesChart extends AggregateChart
 
                                 $seriesValues[] = $seriesValue;
                             }
-                        } // ($data_description->display_type == 'pie')
+                        }
 
                         $zIndex = isset($data_description->z_index) ? $data_description->z_index : $data_description_index;
 
@@ -679,7 +669,7 @@ class TimeseriesChart extends AggregateChart
                             $trace['hovertemplate'] = $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
 
                             if (!$swapXYDone) {
-                                $xAxis['type'] = $yAxisObject->log_scale ? 'log' : '-';
+                                $xAxis['type'] = $data_description->log_scale ? 'log' : '-';
                                 $xAxis['autorange'] = 'reversed';
                                 $xAxis['tickangle'] = 0;
                                 $yAxis['side'] = ($yAxisIndex % 2 != 0) ? 'top' : 'bottom';
@@ -694,8 +684,9 @@ class TimeseriesChart extends AggregateChart
                                 $xAxisBottomBoundStart = 0 + ($xAxisStep * ceil($yAxisCount/2));
                                 $xAxisTopBoundStart = 1 - ($xAxisStep * floor($yAxisCount/2));
                                 $topShift = floor($yAxisCount/2) - floor($yAxisIndex/2);
-                                $yAxis['position'] = $yAxis['side'] == 'top' ? min(1 - ($xAxisStep * (floor($yAxisCount/2) - floor($yAxisIndex/2))), 1) :
-                                                                               max(0 + ($xAxisStep * (ceil($yAxisCount/2) - ceil($yAxisIndex/2))), 0);
+                                $bottomShift = ceil($yAxisCount/2) - ceil($yAxisIndex/2);
+ 
+                                $yAxis['position'] = $yAxis['side'] == 'top' ? min(1 - ($xAxisStep * $topShift), 1) : max(0 + ($xAxisStep * $bottomShift), 0);
                                 $yAxis['domain'] = array(0,1);
                                 $yAxis['title']['standoff'] = 0;
                                 $yAxis['showgrid'] = $yAxisCount > 1 ? false : true;
@@ -737,8 +728,8 @@ class TimeseriesChart extends AggregateChart
                                 );
 
                                 if ($this->_swapXY) {
-                                    $null_trace['xaxis'] = "x{$yIndex}";
-                                    unset($null_trace['yaxis']);
+                                    $hidden_trace['xaxis'] = "x{$yIndex}";
+                                    unset($hidden_trace['yaxis']);
                                 }
 
 
@@ -881,7 +872,6 @@ class TimeseriesChart extends AggregateChart
 
                         if(($data_description->std_err == 1 || $std_err_labels_enabled) && $data_description->display_type != 'pie')
                         {
-                            //throw new \Exception(count($data_labels));
                             $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value, -70);
                             $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
 
@@ -1043,7 +1033,7 @@ class TimeseriesChart extends AggregateChart
                                 }
                                 $this->_chart['data'][] = $error_trace;
                             }
-                        } // if($data_description->std_err == 1 && $data_description->display_type != 'pie')
+                        } // end closure for error bars
 
                         // ---- Add a trend line on the dataset ----
                         if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
@@ -1126,12 +1116,12 @@ class TimeseriesChart extends AggregateChart
                                 }
 
                                 $this->_chart['data'][] = $trendline_trace;
-                            } // if($new_values_count > 1)
-                        } // if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
-                    } // if( $yAxisDataObject != NULL)
+                            }
+                        } // end closure for trendline trace
+                    } // end closure for if $yAxisDataObject does not equal NULL
                 }
-            } // foreach(array_values($yAxisArray) as $yAxisIndex
-        } // foreach(array_values($yAxisArray) as $yAxisIndex => $yAxisDataDescriptions) (big long effing loop)
+            } // end closure for each $yAxisArray
+        } // end closure for each $yAxisDataDescriptions
 
         if($this->show_filters)
         {
@@ -1143,5 +1133,5 @@ class TimeseriesChart extends AggregateChart
         $this->setDataSource(array_keys($dataSources));
 
         $this->setChartTitleSubtitle($font_size);
-    } // function configure()
-} // class TimeseriesChart
+    } // end closure for configure() functions
+}

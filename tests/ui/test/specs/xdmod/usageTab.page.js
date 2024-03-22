@@ -3,6 +3,7 @@ var xdmod = require('./xdmod.page.js');
 
 class Usage {
     constructor() {
+        const self = this;
         this.tab = '#main_tab_panel__tg_usage';
         this.startField = '#tg_usage input[id^=start_field_ext]';
         this.endField = '#tg_usage input[id^=end_field_ext]';
@@ -25,7 +26,7 @@ class Usage {
         this.chart = '//div[@id="tg_usage"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"][1]';
         this.chart0 = '//div[@id="tg_usage"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]';
         this.chartByTitle = function (title, zero = false) {
-            const chart = zero ? module.exports.chart0 : module.exports.chart;
+            const chart = zero ? self.chart0 : self.chart;
             return chart + '/*[name()="g" and contains(@class, "infolayer")]//*[name()="g" and contains(@class, "annotation") and @data-index="0"]//*[local-name() = "text" and contains(text(),"' + title + '")]';
         };
         this.chartXAxisLabelByName = function (name) {
