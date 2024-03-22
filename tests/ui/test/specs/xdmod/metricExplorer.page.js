@@ -553,7 +553,7 @@ class MetricExplorer {
 
     clickFirstDataPoint() {
         const elems = browser.elements(this.selectors.chart.seriesMarkers(0));
-        elems.nth(0).click({ force: true });
+        elems.click({ force: true });
     }
 
     /**
