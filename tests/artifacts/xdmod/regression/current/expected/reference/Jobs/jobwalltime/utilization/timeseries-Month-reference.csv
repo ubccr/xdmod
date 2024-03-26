@@ -6,6 +6,6 @@ start,end
 2016-12-22,2017-01-01
 ---------
 Month,"[0 - 1s] Screwdriver Utilization (%)","[1 - 30s] Screwdriver Utilization (%)","[30s - 30min] Screwdriver Utilization (%)","[30 - 60min] Screwdriver Utilization (%)","[1 - 5hr] Screwdriver Utilization (%)","[5 - 10hr] Screwdriver Utilization (%)","[10 - 18hr] Screwdriver Utilization (%)","[18+hr] Screwdriver Utilization (%)"
-2016-12,0,0.007312088,0.971630859,1.457270510,1.216216062,0.493595068,0.846587116,11.042537582
-2017-01,0.000000000,0.001435480,0.025614917,0.029903114,0.154266469,0.037458585,0.074024217,0.176036020
+2016-12,0,0.0073,0.9716,1.4573,1.2162,0.4936,0.8466,11.0425
+2017-01,0.0000,0.0014,0.0256,0.0299,0.1543,0.0375,0.0740,0.1760
 ---------
