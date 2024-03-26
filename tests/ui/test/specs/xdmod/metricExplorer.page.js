@@ -105,7 +105,7 @@ class MetricExplorer {
                 seriesMarkers: function (seriesId) {
                     switch (seriesId) {
                         case 0:
-                            return `${module.exports.selectors.chart.svg}//*[name()="g" and @class="cartesianlayer"]//*[name()="g" and @class="points"]//*[name()="path" and @class="point"]`;
+                            return `//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]//*[name()="g" and @class="cartesianlayer"]//*[name()="g" and @class="points"]//*[name()="path" and @class="point"]`;
                         default:
                             return `${module.exports.selectors.chart.svg}//*[name()="g" and contains(@class, "xy${seriesId}")]//*[name()="path" and @class="point"]`;
                     }
