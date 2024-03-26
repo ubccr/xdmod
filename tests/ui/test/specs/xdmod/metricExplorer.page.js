@@ -397,6 +397,30 @@ class MetricExplorer {
             }
         }
     }
+    /**
+     * Call the action function then wait until the current loaded Highcharts chart
+     * disappears. This function should only be called if there is an active highcharts
+     * chart and the action should result in a chart change.
+     *
+     * @params function() action
+     */
+    waitForChartToChange(action) {
+        var elem = browser.elements(this.selectors.chart.svg);
+        if (arguments.length > 1) {
+            action.apply(this, [].slice.call(arguments, 1));
+        } else {
+            action.call(this);
+        }
+        try {
+            let i = 0;
+            while (browser.elementIdDisplayed(elem.value[0].ELEMENT) && i < 20) {
+                browser.pause(100);
+                i++;
+            }
+        } catch (err) {
+            // OK the element has gone away
+        }
+    }
     setTitleWithOptionsMenu(title) {
         browser.waitForChart();
         browser.waitAndClick(this.selectors.options.button);
