@@ -545,7 +545,7 @@ class MetricExplorer {
 
     clickFirstDataPoint() {
         const elems = browser.elements(this.selectors.chart.seriesMarkers(0));
-        browser.click(elems.value[0]).click({ force: true });
+        elems.value[0].click({ force: true });
     }
 
     /**
