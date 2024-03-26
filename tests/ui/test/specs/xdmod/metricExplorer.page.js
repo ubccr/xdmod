@@ -213,9 +213,7 @@ class MetricExplorer {
                 browser.elementIdClick(checkboxes.value[i].ELEMENT);
             }
         }
-        this.waitForChartToChange(function () {
-            browser.waitAndClick(filterByDialogBox + '//button[@class=" x-btn-text" and contains(text(), "Ok")]');
-        });
+        browser.waitAndClick(filterByDialogBox + '//button[@class=" x-btn-text" and contains(text(), "Ok")]');
         expect(browser.element(this.selectors.chart.svg + '//*[name()="text" and @class="undefinedsubtitle"]')).to.exist;
     }
     editFiltersFromToolbar(name) {
@@ -228,9 +226,7 @@ class MetricExplorer {
         }
         browser.waitAndClick(this.selectors.filters.toolbar.byName(name));
         browser.waitUntilNotExist(this.selectors.filters.toolbar.byName(name));
-        this.waitForChartToChange(function () {
-            browser.waitAndClick('//div[@id="grid_filters_metric_explorer"]//button[@class=" x-btn-text" and contains(text(), "Apply")]');
-        });
+        browser.waitAndClick('//div[@id="grid_filters_metric_explorer"]//button[@class=" x-btn-text" and contains(text(), "Apply")]');
         browser.waitUntilNotExist(subtitleSelector + `//*[contains(text(), "${name}")]`);
     }
     cancelFiltersFromToolbar() {
@@ -265,10 +261,8 @@ class MetricExplorer {
                 browser.elementIdClick(checkboxes.value[i].ELEMENT);
             }
         }
-        this.waitForChartToChange(function () {
-            browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Ok")]');
-            browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
-        });
+        browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Ok")]');
+        browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
         browser.waitForExist(this.selectors.chart.legend() + `//*[contains(text(), "${name}")]`);
     }
     editFiltersFromDataSeriesDefinition(name) {
@@ -353,10 +347,8 @@ class MetricExplorer {
         browser.waitForVisible(this.selectors.toolbar.buttonByName('Load Chart'));
         browser.click(this.selectors.toolbar.buttonByName('Load Chart'));
         browser.waitForVisible(this.selectors.load.dialog);
-        this.waitForChartToChange(function () {
-            browser.waitAndClick(this.selectors.load.chartByName(name));
-            browser.waitForInvisible(this.selectors.load.dialog);
-        });
+        browser.waitAndClick(this.selectors.load.chartByName(name));
+        browser.waitForInvisible(this.selectors.load.dialog);
         browser.waitUntilAnimEnd(this.selectors.catalog.expandButton, 5000, 50);
     }
     checkChart(chartTitle, yAxisLabel, legend, isValidChart = true) {
@@ -403,30 +395,6 @@ class MetricExplorer {
                     expect(browser.elementIdText(legendElems.value[i].ELEMENT).value).to.equal(legend[i]);
                 }
             }
-        }
-    }
-    /**
-     * Call the action function then wait until the current loaded Highcharts chart
-     * disappears. This function should only be called if there is an active highcharts
-     * chart and the action should result in a chart change.
-     *
-     * @params function() action
-     */
-    waitForChartToChange(action) {
-        var elem = browser.elements(this.selectors.chart.svg);
-        if (arguments.length > 1) {
-            action.apply(this, [].slice.call(arguments, 1));
-        } else {
-            action.call(this);
-        }
-        try {
-            let i = 0;
-            while (browser.elementIdDisplayed(elem.value[0].ELEMENT) && i < 20) {
-                browser.pause(100);
-                i++;
-            }
-        } catch (err) {
-            // OK the element has gone away
         }
     }
     setTitleWithOptionsMenu(title) {
@@ -553,7 +521,7 @@ class MetricExplorer {
 
     clickFirstDataPoint() {
         const elems = browser.elements(this.selectors.chart.seriesMarkers(0));
-        elems.value[0].click({ force: true });
+        browser.click(elems.value[0]).click({ force: true });
     }
 
     /**
