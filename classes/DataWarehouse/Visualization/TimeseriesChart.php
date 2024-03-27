@@ -403,14 +403,11 @@ class TimeseriesChart extends AggregateChart
 
                 //  ----------- set up yAxis, assign to chart ... eventually -----------
                 $semDecimals = null;
-                if($data_description->std_err == 1)
-                {
-                    $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-                        $data_description->metric
-                    );
-                    $semStatisticObject = $query->_stats[$semStatId];
-                    $semDecimals = $semStatisticObject->getPrecision();
-                }
+                $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                    $data_description->metric
+                );
+                $semStatisticObject = $query->_stats[$semStatId];
+                $semDecimals = $semStatisticObject->getPrecision();
 
                 $this->_total = max($this->_total, $dataset->getUniqueCount());
 
@@ -792,241 +789,53 @@ class TimeseriesChart extends AggregateChart
                             $this->_chart['data'][] = $null_trace;
                         }
 
-                        // Set data labels
-                        $data_labels = array();
-                        $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
-                        if($data_labels_enabled) {
+                        $this->_chart['data'][] = $trace;
+
+                        $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value, -70);
+                        $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
+                        $error_info = $this->buildErrorDataSeries(
+                            $trace,
+                            $data_description,
+                            $legend,
+                            $error_color,
+                            $yAxisDataObject,
+                            $formattedDataSeriesName,
+                            $yAxisIndex,
+                            $semDecimals,
+                            $decimals,
+                            $zIndex
+                        );
+                        if ($data_labels_enabled) {
+                            $idx = $data_description->std_err ? 2 : 1;
+                            $primary_trace = count($this->_chart['data']) - $idx;
                             if ($trace['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
                                 // For export this needs to be 'none'
-                                $trace['constraintext'] = $data_description->combine_type!='side' ? 'both' : 'none';
-                                $trace['text'] = $text;
+                                $this->_chart['data'][$primary_trace]['constraintext'] = $data_description->combine_type != 'side' ? 'both' : 'none';
+                                if ($std_err_labels_enabled && $data_description->value_labels) {
+                                    $this->_chart['data'][$primary_trace]['text'] = $error_info['data_labels'];
+                                }
+                                elseif ($std_err_labels_enabled && !$data_description->value_labels){
+                                    $this->_chart['data'][$primary_trace]['text'] = $error_info['error_labels'];
+                                }
+                                else {
+                                    $this->_chart['data'][$primary_trace]['text'] = $text;
+                                }
                             }
                             else {
-                                for ($i = 0; $i < count($xValues); $i++) {
-                                    $yPosition = is_numeric($yValues[$i]) ? $yValues[$i] : null;
-                                    if ($data_description->log_scale) {
-                                        $yPosition = $yPosition > 0 ? log10($yPosition) : $yPosition;
-                                    }
-                                    $data_label = array(
-                                        'name' => 'data_label',
-                                        'x' => $this->_swapXY ? $yPosition : $xValues[$i],
-                                        'y' => $this->_swapXY ? $xValues[$i] : $yPosition,
-                                        'xref' => 'x',
-                                        'yref' => 'y',
-                                        'showarrow' => false,
-                                        'captureevents' => false,
-                                        'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
-                                        'font' => array(
-                                            'size' => 11 + $font_size,
-                                            'color' => $color,
-                                            'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
-                                        ),
-                                        'textangle' => -90,
-                                        'yshift' => $isThumbnail ? 45 : 70,
-                                    );
-
-                                    if ($this->_swapXY) {
-                                        $data_label['textangle'] = 0;
-                                        $data_label['yshift'] = -5;
-                                        $data_label['xshift'] = $isThumbnail ? 30 : 70;
-                                    }
-
-                                    if ($data_description->std_err == 1) {
-                                        if ($this->_swapXY) {
-                                            $data_label['yshift'] = -7;
-                                        }
-                                        else {
-                                            $data_label['xshift'] = -7;
-                                        }
-                                    }
-
-                                    if ($data_description->value_labels && $std_err_labels_enabled) {
-                                        if ($this->_swapXY) {
-                                            $data_label['xshift'] = $isThumbnail ? 60 : 90;
-                                        }
-                                        else {
-                                            $data_label['yshift'] = $isThumbnail ? 60 : 90;
-                                        }
-                                    }
-
-                                    if ($data_description->value_labels && !$std_err_labels_enabled) {
-                                        array_push($this->_chart['layout']['annotations'], $data_label);
-                                    }
-                                    elseif (($std_err_labels_enabled) || ($data_description->value_labels && $std_err_labels_enabled)) {
-                                        array_push($data_labels, $data_label);
-                                    }
-                                }
+                                $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
+                                $this->configureDataLabels(
+                                    $data_description,
+                                    $error_info,
+                                    $xValues,
+                                    $yValues,
+                                    $std_err_labels_enabled,
+                                    $font_size,
+                                    $color,
+                                    $isThumbnail,
+                                    $decimals
+                                );
                             }
-                        }
-
-                        $this->_chart['data'][] = $trace;
-                        // REMOVED: Add percent allocated to XSEDE line if the metric
-                        // being displayed is XSEDE Utilization.
-
-                        if(($data_description->std_err == 1 || $std_err_labels_enabled) && $data_description->display_type != 'pie')
-                        {
-                            $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value, -70);
-                            $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
-
-                            $stderr = array();
-                            $dataLabels = array();
-                            $errorLabels = array();
-                            $errorCount = $yAxisDataObject->getErrorCount();
-                            for($i = 0; $i < $errorCount; $i++)
-                            {
-                                // build the error bar and set for display
-                                $v = $yAxisDataObject->getValue($i);
-                                $e = $yAxisDataObject->getError($i);
-                                $stderr[] = $e;
-                                $errorLabels[] = isset($e) ? '+/- ' . number_format($e, $semDecimals, '.', ',') : '+/-' . number_format(0, $semDecimals, '.', ',');
-                                $dataLabels[] = isset($v) ? number_format($v, $decimals, '.', ',') . ' [' . $errorLabels[$i] . ']': (isset($e) ? $errorLabels[$i] : '');
-                            }
-
-                            $dsn = 'Std Err: '.$formattedDataSeriesName;
-                            $lookupDataSeriesName = $dsn;
-
-                            if(isset($legend->{$dsn}))
-                            {
-                                $config = $legend->{$dsn};
-                                if(isset($config->title))
-                                {
-                                    $lookupDataSeriesName = $config->title;
-                                }
-                            }
-                            $visible = true;
-                            if(isset($data_description->visibility) && isset($data_description->visibility->{$dsn}))
-                                {
-                                $visible = $data_description->visibility->{$dsn};
-                            }
-
-                            // create the data series description:
-                            $error_trace = array_merge($trace, array(
-                                'name' => $dsn,
-                                'customdata' => $dsn,
-                                'otitle' => $dsn,
-                                'datasetId' => $data_description->id,
-                                'color'=> $error_color,
-                                'marker' => array(
-                                    'color' => $error_color,
-                                    'size' => $trace['marker']['size'],
-                                    'line' => array(
-                                        'width' => 1,
-                                        'color' => $error_color,
-                                    ),
-                                    'symbol' => $trace['marker']['symbol'],
-                                ),
-                                'line' => array(
-                                    'color' => $error_color,
-                                ),
-                                'hovertext' => $errorLabels,
-                                'mode' => 'lines',
-                                'text' => array(),
-                                'hovertemplate' => '<b> %{hovertext} </b>',
-                                'visible' => $visible,
-                                'showlegend' => true,
-                                'legendgroup' => null,
-                                'connectgaps' => false,
-                                'legendrank' => $traceIndex + 1,
-                                'traceorder' => $traceIndex - 1,
-                                'isRestrictedByRoles' => $data_description->restrictedByRoles,
-                            ));
-
-                            $error_y = array(
-                                    'type' => 'data',
-                                    'array' => $stderr,
-                                    'arrayminus' => $stderr,
-                                    'symmetric' => false,
-                                    'color' => $error_color
-                            );
-
-                            if ($error_trace['type'] == 'area') {
-                                $error_trace['fill'] = $trace['fill'];
-                                // Referenced https://stackoverflow.com/questions/15202079/convert-hex-color-to-rgb-values-in-php
-                                // for idea
-                                list($r, $g, $b) = sscanf($trace['marker']['color'], '#%02x%02x%02x');
-                                $a = 0.4;
-                                $fillColor = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . $a . ')';
-                                $error_trace['fillcolor'] = $fillColor;
-                                if ($data_description->combine_type=='stack') {
-                                    $error_trace['stackgroup'] = 'two';
-                                    $error_trace['stackgaps'] = 'interpolate';
-                                }
-                            }
-
-                            if ($trace['type'] == 'bar') {
-                                $this->_chart['layout']['barmode'] = 'overlay';
-                                $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'x unified';
-
-                                if ($this->_swapXY) {
-                                    $this->_chart['layout']['hovermode'] = $this->_hideTooltip ? false : 'y unified';
-                                }
-
-                                if ($data_description->combine_type=='side') {
-                                    $error_trace['offsetgroup'] = "group{$traceIndex}";
-                                    $this->_chart['layout']['barmode'] = 'group';
-                                }
-                                if ($data_description->combine_type=='stack') {
-                                    $error_trace['y'] = array_fill(0, count($error_trace['y']), 0);
-                                    for ($i = 0; $i < count($errorLabels); $i++) {
-                                        if (!isset($errorLabels[$i])) {
-                                            $error_trace['y'][$i] = null;
-                                        }
-                                    }
-                                    $this->_chart['layout']['barmode'] = 'stack';
-                                }
-                            }
-                            if (isset($trace['visible']) && $trace['visible'] != 1) {
-                                $error_trace['visible'] = 'legendonly';
-                            }
-                            $idx = count($this->_chart['data']) - 1;
-                            if (!$data_description->value_labels && $std_err_labels_enabled) {
-                                if ($trace['type'] == 'bar' && count($data_labels) == 0) {
-                                    $this->_chart['data'][$idx]['text'] = $errorLabels;
-                                }
-                                else {
-                                    for ($i = 0; $i < count($errorLabels); $i++) {
-                                        if ($this->_swapXY) {
-                                            $data_labels[$i]['text'] = isset($data_labels[$i]['x']) ? $errorLabels[$i] : '';
-                                        }
-                                        else {
-                                            $data_labels[$i]['text'] = isset($data_labels[$i]['y']) ? $errorLabels[$i] : '';
-                                        }
-
-                                        array_push($this->_chart['layout']['annotations'], $data_labels[$i]);
-                                    }
-                                }
-                            }
-
-                            if ($data_description->value_labels && $std_err_labels_enabled) {
-                                if ($trace['type'] == 'bar' && count($data_labels) == 0) {
-                                    $this->_chart['data'][$idx]['text'] = $dataLabels;
-                                }
-                                else {
-                                    for ($i = 0; $i < count($dataLabels); $i++) {
-                                        if ($this->_swapXY) {
-                                            $data_labels[$i]['text'] = isset($data_labels[$i]['x']) ? $dataLabels[$i] : '';
-                                        }
-                                        else {
-                                            $data_labels[$i]['text'] = isset($data_labels[$i]['y']) ? $dataLabels[$i] : '';
-                                        }
-                                        array_push($this->_chart['layout']['annotations'], $data_labels[$i]);
-                                    }
-                                }
-                            }
-
-                            if(!$data_description->log_scale && $data_description->std_err)
-                            {
-                                if ($visible == 1) {
-                                    $idx = count($this->_chart['data']) - 1;
-                                    if ($this->_swapXY) {
-                                        $this->_chart['data'][$idx]['error_x'] = $error_y;
-                                    } else {
-                                        $this->_chart['data'][$idx]['error_y'] = $error_y;
-                                    }
-                                }
-                                $this->_chart['data'][] = $error_trace;
-                            }
-                        } // end closure for error bars
+                        } 
 
                         // ---- Add a trend line on the dataset ----
                         if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )

@@ -1006,7 +1006,6 @@ class AggregateChart
                     {
                         $yValues[] = $value;
                         $xValues[] = $yAxisDataObject->getXValue($index);
-                        $text[] = $value;
                         $drillable[] = true;
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
@@ -1016,8 +1015,6 @@ class AggregateChart
                             'label' => $yAxisDataObject->getXValue($index)
                         );
                     }
-
-                    $trace = array_merge($trace, array('text' => $yValues));
                 }
 
                 $values_count = count($yValues);
@@ -1359,61 +1356,17 @@ class AggregateChart
                     $zIndex
                 );
 
-                // Add data labels
-                if(($data_description->value_labels || $std_err_labels_enabled) && $data_description->display_type != 'pie') {
-                    for ($i = 0; $i < count($xValues); $i++) {
-                        $yPosition = is_numeric($yValues[$i]) ? $yValues[$i] : null;
-                        if ($data_description->log_scale) {
-                            $yPosition = $yPosition > 0 ? log10($yPosition) : $yPosition;
-                        }
-                        $data_label = array(
-                            'name' => 'data_label',
-                            'x' => $this->_swapXY ? $yPosition : $xValues[$i],
-                            'y' => $this->_swapXY ? $xValues[$i] : $yPosition,
-                            'xref' => 'x',
-                            'yref' => 'y',
-                            'showarrow' => false,
-                            'captureevents' => false,
-                            'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
-                            'font' => array(
-                                'size' => 11 + $font_size,
-                                'color' => $color,
-                                'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
-                            ),
-                            'textangle' => -90,
-                            'yshift' => $isThumbnail ? 45 : 70,
-                        );
-                        if ($this->_swapXY) {
-                            $data_label['textangle'] = 0;
-                            $data_label['yshift'] = $isThumbnail ? -5 : 0;
-                            $data_label['xshift'] = $isThumbnail ? 35 : 70;
-                        }
-
-                        if ($data_description->std_err == 1) {
-                            if ($this->_swapXY) {
-                                $data_label['yshift'] = -7;
-                            }
-                            else {
-                                $data_label['xshift'] = -7;
-                            }
-                        }
-
-                        if ($data_description->value_labels && $std_err_labels_enabled) {
-                            $data_label['text'] = $error_info['data_labels'][$i];
-                            if ($this->_swapXY) {
-                                $data_label['xshift'] = $isThumbnail ? 60 : 90;
-                            }
-                            else {
-                                $data_label['yshift'] = $isThumbnail ? 60 : 90;
-                            }
-                        }
-                        elseif (!$data_description->value_labels && $std_err_labels_enabled) {
-                            $data_label['text'] = $error_info['error_labels'][$i];
-                        }
-
-                        array_push($this->_chart['layout']['annotations'], $data_label);
-                    }
-                }
+                $this->configureDataLabels(
+                    $data_description,
+                    $error_info,
+                    $xValues,
+                    $yValues,
+                    $std_err_labels_enabled,
+                    $font_size,
+                    $color,
+                    $isThumbnail,
+                    $decimals
+                ); 
             } // end closure for each $yAxisObject
         } // end closure for each $yAxisArray
 
@@ -1486,8 +1439,6 @@ class AggregateChart
                 $visible = $data_description->visibility->{$dsn};
             }
 
-            $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
-
             // create the data series description:
             $error_trace = array_merge($trace, array(
                 'name' => $lookupDataSeriesName,
@@ -1496,10 +1447,12 @@ class AggregateChart
                 'color'=> $error_color,
                 'marker' => array(
                     'color' => $error_color,
+                    'size' => $trace['marker']['size'],
                     'line' => array(
                         'width' => 1,
                         'color' => $error_color,
                     ),
+                    'symbol' => $trace['marker']['sybmol'],
                 ),
                 'line' => array(
                     'color' => $error_color,
@@ -1530,7 +1483,7 @@ class AggregateChart
                 // Referenced https://stackoverflow.com/questions/15202079/convert-hex-color-to-rgb-values-in-php
                 // for idea
                 list($r, $g, $b) = sscanf($trace['marker']['color'], '#%02x%02x%02x');
-                $a = 0.1;
+                $a = 0.4;
                 $fillColor = 'rgba(' . $r . ',' . $g . ',' . $b . ',' . $a . ')';
                 $error_trace['fillcolor'] = $fillColor;
                 if ($data_description->combine_type=='stack') {
@@ -1675,5 +1628,79 @@ class AggregateChart
         $lineColor = '#'.str_pad(dechex(\DataWarehouse\Visualization::alterBrightness($color_value, -70)), 6, '0', STR_PAD_LEFT);
 
         return array($color, $lineColor);
+    }
+
+    // ---------------------------------------------------------
+    // setChartTitleSubtitle()
+    //
+    // @param font_size
+    //
+    // ---------------------------------------------------------
+    protected function configureDataLabels(
+        &$data_description,
+        $error_info,
+        $xValues,
+        $yValues,
+        $std_err_labels_enabled,
+        $font_size,
+        $color,
+        $isThumbnail,
+        $decimals
+    ) {
+        // Add data labels
+        if(($data_description->value_labels || $std_err_labels_enabled) && $data_description->display_type != 'pie') {
+            for ($i = 0; $i < count($xValues); $i++) {
+                $yPosition = is_numeric($yValues[$i]) ? $yValues[$i] : null;
+                if ($data_description->log_scale) {
+                    $yPosition = $yPosition > 0 ? log10($yPosition) : $yPosition;
+                }
+                $data_label = array(
+                    'name' => 'data_label',
+                    'x' => $this->_swapXY ? $yPosition : $xValues[$i],
+                    'y' => $this->_swapXY ? $xValues[$i] : $yPosition,
+                    'xref' => 'x',
+                    'yref' => 'y',
+                    'showarrow' => false,
+                    'captureevents' => false,
+                    'text' => isset($yValues[$i]) ? number_format($yValues[$i], $decimals, '.', ',') : '',
+                    'font' => array(
+                        'size' => 11 + $font_size,
+                        'color' => $color,
+                        'family' => 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                    ),
+                    'textangle' => -90,
+                    'yshift' => $isThumbnail ? 45 : 70,
+                );
+                if ($this->_swapXY) {
+                    $data_label['textangle'] = 0;
+                    $data_label['yshift'] = $isThumbnail ? -5 : 0;
+                    $data_label['xshift'] = $isThumbnail ? 35 : 70;
+                }
+
+                if ($data_description->std_err == 1) {
+                    if ($this->_swapXY) {
+                        $data_label['yshift'] = -7;
+                    }
+                    else {
+                        $data_label['xshift'] = -7;
+                    }
+                }
+
+                if ($data_description->value_labels && $std_err_labels_enabled) {
+                    $data_label['text'] = $error_info['data_labels'][$i];
+                    if ($this->_swapXY) {
+                        $data_label['xshift'] = $isThumbnail ? 60 : 90;
+                    }
+                    else {
+                        $data_label['yshift'] = $isThumbnail ? 60 : 90;
+                    }
+                }
+                elseif (!$data_description->value_labels && $std_err_labels_enabled) {
+                    $data_label['text'] = $error_info['error_labels'][$i];
+                }
+
+                array_push($this->_chart['layout']['annotations'], $data_label);
+            }
+        }
     }
 }
