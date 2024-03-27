@@ -102,9 +102,7 @@ class MetricExplorer {
                 legend: function () {
                     return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "legend")]//*[name()="text" and contains(@class, "legendtext")]';
                 },
-                legendContent: (name) => {
-                    return `${module.exports.selectors.chart.svg}//*[name() = "text" and contains(@class, "legendtext") and contains(text(), "${name}")]`;
-                },
+                legendContent: (name) => `${module.exports.selectors.chart.svg}//*[name() = "text" and contains(@class, "legendtext") and contains(text(), "${name}")]`,
                 seriesMarkers: function (seriesId) {
                     switch (seriesId) {
                         case 0:
@@ -118,9 +116,7 @@ class MetricExplorer {
                 titleOkButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:first-child button',
                 titleCancelButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:last-child button',
                 contextMenu: {
-                    menuByTitle: (title) => {
-                        return '//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//span[contains(@class, "menu-title") and contains(text(), "' + title + '")]//ancestor::node()[4]/ul';
-                    },
+                    menuByTitle: (title) => '//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//span[contains(@class, "menu-title") and contains(text(), "' + title + '")]//ancestor::node()[4]/ul',
                     menuItemByText: function (menuTitle, itemText) {
                         return module.exports.selectors.chart.contextMenu.menuByTitle(menuTitle) + '//li/a//span[text()="' + itemText + '"]';
                     },
@@ -549,7 +545,6 @@ class MetricExplorer {
     clickFirstDataPoint() {
         const elems = browser.elements(this.selectors.chart.seriesMarkers(0));
         elems.value[0].doubleClick();
-        //elems.value[elems.value.length - 1].doubleClick();
     }
 
     /**
