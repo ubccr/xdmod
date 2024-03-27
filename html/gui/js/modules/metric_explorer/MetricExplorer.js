@@ -994,7 +994,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             var visible = true;
             if (visibility[originalTitle] !== undefined && visibility[originalTitle] !== null) {
                 visible = visibility[originalTitle];
-                if (visible === 'legendonly') {
+                if (visible !== true) {
                     visible = false;
                 }
             }

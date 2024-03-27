@@ -736,10 +736,10 @@ class TimeseriesChart extends AggregateChart
 
                             if ($data_description->combine_type=='side' && $trace['type']=='area'){
                                 if ($this->_swapXY) {
-                                    $trace['fill'] = $traceIndex == 0 ? 'tozerox' : 'tozerox';
+                                    $trace['fill'] = 'tozerox';
                                 }
                                 else {
-                                    $trace['fill'] = $traceIndex == 0 ? 'tozeroy' : 'tozeroy';
+                                    $trace['fill'] = 'tozeroy';
                                 }
                             }
                             elseif($data_description->combine_type=='stack')
