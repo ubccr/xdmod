@@ -102,7 +102,7 @@ class MetricExplorer {
                 legend: function () {
                     return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "legend")]//*[name()="text" and contains(@class, "legendtext")]';
                 },
-                legendContent: function(name) {
+                legendContent: (name) => {
                     return `${module.exports.selectors.chart.svg}//*[name() = "text" and contains(@class, "legendtext") and contains(text(), "${name}")]`;
                 },
                 seriesMarkers: function (seriesId) {
@@ -118,7 +118,7 @@ class MetricExplorer {
                 titleOkButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:first-child button',
                 titleCancelButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:last-child button',
                 contextMenu: {
-                    menuByTitle: function (title) {
+                    menuByTitle: (title) => {
                         return '//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//span[contains(@class, "menu-title") and contains(text(), "' + title + '")]//ancestor::node()[4]/ul';
                     },
                     menuItemByText: function (menuTitle, itemText) {
@@ -548,13 +548,8 @@ class MetricExplorer {
 
     clickFirstDataPoint() {
         const elems = browser.elements(this.selectors.chart.seriesMarkers(0));
-        /*browser.execute((elems) => {
-            elems.value[0].click();
-        }, elems);*/
-        //browser.moveTo(elems.value[0].ELEMENT);
-        //browser.elementIdClick(elems.value[0].ELEMENT);
         elems.value[0].doubleClick();
-        elems.value[elems.value.length - 1].doubleClick();
+        //elems.value[elems.value.length - 1].doubleClick();
     }
 
     /**

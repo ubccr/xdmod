@@ -437,8 +437,11 @@ class AggregateChart
             'color' => '#274b6d',
             'size' => (12  + $font_size)
         );
+        $isFloating = false;
         $this->_legend_location = $legend_location;
         if (preg_match('/floating/i', $legend_location)) {
+            $isFloating = true;
+            $legend_location = substr($legend_location, 9);
             $this->_chart['layout']['legend']['xref'] = 'paper';
             $this->_chart['layout']['legend']['yref'] = 'paper';
         }
@@ -448,7 +451,7 @@ class AggregateChart
                 $this->_chart['layout']['legend']['xanchor'] = 'center';
                 $this->_chart['layout']['legend']['yanchor'] = 'top';
                 $this->_chart['layout']['legend']['x'] = 0.5;
-                $this->_chart['layout']['legend']['y'] = 0.925;
+                $this->_chart['layout']['legend']['y'] = $isFloating ? 1.0 : 0.925;
                 $this->_chart['layout']['legend']['orientation'] = 'h';
                 break;
             case 'left_center':
@@ -458,7 +461,6 @@ class AggregateChart
                 $this->_chart['layout']['legend']['y'] = 0.5;
                 $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
-
             case 'left_top':
                 $this->_chart['layout']['legend']['xanchor'] = 'left';
                 $this->_chart['layout']['legend']['yanchor'] = 'top';
@@ -494,62 +496,6 @@ class AggregateChart
                 $this->_chart['layout']['legend']['y'] = 0.0;
                 $this->_chart['layout']['legend']['orientation'] = 'v';
                 break;
-            case 'floating_bottom_center':
-                $this->_chart['layout']['legend']['xanchor'] = 'center';
-                $this->_chart['layout']['legend']['yanchor'] = 'bottom';
-                $this->_chart['layout']['legend']['x'] = 0.5;
-                $this->_chart['layout']['legend']['y'] = 0.0;
-                $this->_chart['layout']['legend']['orientation'] = 'h';
-                break;
-            case 'floating_top_center':
-                $this->_chart['layout']['legend']['xanchor'] = 'center';
-                $this->_chart['layout']['legend']['yanchor'] = 'top';
-                $this->_chart['layout']['legend']['x'] = 0.5;
-                $this->_chart['layout']['legend']['y'] = 1.0;
-                $this->_chart['layout']['legend']['orientation'] = 'h';
-                break;
-            case 'floating_left_center':
-                $this->_chart['layout']['legend']['xanchor'] = 'left';
-                $this->_chart['layout']['legend']['yanchor'] = 'center';
-                $this->_chart['layout']['legend']['x'] = 0.0;
-                $this->_chart['layout']['legend']['y'] = 0.5;
-                $this->_chart['layout']['legend']['orientation'] = 'v';
-                break;
-            case 'floating_left_top':
-                $this->_chart['layout']['legend']['xanchor'] = 'left';
-                $this->_chart['layout']['legend']['yanchor'] = 'top';
-                $this->_chart['layout']['legend']['x'] = 0.0;
-                $this->_chart['layout']['legend']['y'] = 1.0;
-                $this->_chart['layout']['legend']['orientation'] = 'v';
-                break;
-            case 'floating_left_bottom':
-                $this->_chart['layout']['legend']['xanchor'] = 'left';
-                $this->_chart['layout']['legend']['yanchor'] = 'bottom';
-                $this->_chart['layout']['legend']['x'] = 0.0;
-                $this->_chart['layout']['legend']['y'] = 0.0;
-                $this->_chart['layout']['legend']['orientation'] = 'v';
-                break;
-            case 'floating_right_center':
-                $this->_chart['layout']['legend']['xanchor'] = 'right';
-                $this->_chart['layout']['legend']['yanchor'] = 'center';
-                $this->_chart['layout']['legend']['x'] = 0.99;
-                $this->_chart['layout']['legend']['y'] = 0.5;
-                $this->_chart['layout']['legend']['orientation'] = 'v';
-                break;
-            case 'floating_right_top':
-                $this->_chart['layout']['legend']['xanchor'] = 'right';
-                $this->_chart['layout']['legend']['yanchor'] = 'top';
-                $this->_chart['layout']['legend']['x'] = 0.99;
-                $this->_chart['layout']['legend']['y'] = 1.0;
-                $this->_chart['layout']['legend']['orientation'] = 'v';
-                break;
-            case 'floating_right_bottom':
-                $this->_chart['layout']['legend']['xanchor'] = 'right';
-                $this->_chart['layout']['legend']['yanchor'] = 'bottom';
-                $this->_chart['layout']['legend']['x'] = 0.99;
-                $this->_chart['layout']['legend']['y'] = 0.0;
-                $this->_chart['layout']['legend']['orientation'] = 'v';
-                break;
             case '':
             case 'none':
             case 'off':
@@ -561,7 +507,7 @@ class AggregateChart
                 $this->_chart['layout']['legend']['xanchor'] = 'center';
                 $this->_chart['layout']['legend']['yanchor'] = 'bottom';
                 $this->_chart['layout']['legend']['x'] = 0.5;
-                $this->_chart['layout']['legend']['y'] = 0.02;
+                $this->_chart['layout']['legend']['y'] = $isFloating ? 0.0 : 0.02;
                 $this->_chart['layout']['legend']['orientation'] = 'h';
                 break;
         }
@@ -1243,10 +1189,10 @@ class AggregateChart
 
                     if ($data_description->combine_type=='side' && $trace['type']=='area'){
                         if ($this->_swapXY) {
-                            $trace['fill'] = $data_description_index == 0 ? 'tozerox' : 'tozerox';
+                            $trace['fill'] = 'tozerox';
                         }
                         else {
-                            $trace['fill'] = $data_description_index == 0 ? 'tozeroy' : 'tozeroy';
+                            $trace['fill'] = 'tozeroy';
                         }
                     }
                     elseif($data_description->combine_type=='stack')

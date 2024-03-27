@@ -545,6 +545,13 @@ class TimeseriesChart extends AggregateChart
                             $visible = $data_description->visibility->{$formattedDataSeriesName};
                         }
 
+                        if ($visible !== true) {
+                           $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
+                        }
+                        else {
+                           $this->_chart['layout']['xaxis']['tickmode'] = 'date'; 
+                        }
+
                         $tooltip = $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
                         if ($this->_chart['layout']['hovermode'] != 'closest') {
                             $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
