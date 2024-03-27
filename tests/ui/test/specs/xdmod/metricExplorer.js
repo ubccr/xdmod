@@ -98,7 +98,7 @@ describe('Metric Explorer', function metricExplorer() {
                 me.clickLogoAndWaitForMask();
                 me.loadExistingChartByName(chartName);
                 me.addFiltersFromDataSeriesDefinition('PI', 'Alpine');
-                me.cancelFiltersFromDataSeriesDefinition();
+                //me.cancelFiltersFromDataSeriesDefinition();
             });
             it('Edit Filters in Data Series Definition', function () {
                 me.editFiltersFromDataSeriesDefinition('Alpine');

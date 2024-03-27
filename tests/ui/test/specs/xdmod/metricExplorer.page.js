@@ -102,6 +102,9 @@ class MetricExplorer {
                 legend: function () {
                     return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "legend")]//*[name()="text" and contains(@class, "legendtext")]';
                 },
+                legendContent: function(name) {
+                    return `${module.exports.selectors.chart.svg}//*[name() = "text" and contains(@class, "legendtext") and contains(text(), "${name}")]`;
+                },
                 seriesMarkers: function (seriesId) {
                     switch (seriesId) {
                         case 0:
@@ -263,7 +266,7 @@ class MetricExplorer {
         }
         browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Ok")]');
         browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
-        browser.waitForExist(this.selectors.chart.legend() + `//*[contains(text(), "${name}")]`);
+        browser.waitForExist(this.selectors.chart.legendContent(name));
     }
     editFiltersFromDataSeriesDefinition(name) {
         this.clickLogoAndWaitForMask();
@@ -274,7 +277,7 @@ class MetricExplorer {
         browser.waitForChart();
         browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//div[contains(@class, "x-panel-header")]');
         browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
-        browser.waitUntilNotExist(this.selectors.chart.legend() + `//*[contains(text(), "${name}")]`);
+        browser.waitUntilNotExist(this.selectors.chart.legendContent(name));
     }
     cancelFiltersFromDataSeriesDefinition() {
         this.clickLogoAndWaitForMask();
@@ -545,7 +548,13 @@ class MetricExplorer {
 
     clickFirstDataPoint() {
         const elems = browser.elements(this.selectors.chart.seriesMarkers(0));
-        elems.value[0].click({ force: true });
+        /*browser.execute((elems) => {
+            elems.value[0].click();
+        }, elems);*/
+        //browser.moveTo(elems.value[0].ELEMENT);
+        //browser.elementIdClick(elems.value[0].ELEMENT);
+        elems.value[0].doubleClick();
+        elems.value[elems.value.length - 1].doubleClick();
     }
 
     /**
