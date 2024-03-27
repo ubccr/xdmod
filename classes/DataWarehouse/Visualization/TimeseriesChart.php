@@ -211,8 +211,7 @@ class TimeseriesChart extends AggregateChart
                     );
                     if ($query->getRealm()->statisticExists($semStatId)) {
                         $query->addStat($semStatId);
-                    }
-                    else {
+                    } else {
                         $data_description->std_err = 0;
                         $data_description->std_err_labels = false;
                     }
@@ -319,8 +318,7 @@ class TimeseriesChart extends AggregateChart
                                 'anchor' => 'free',
                                 'autoshift' => true,
                             ));
-                        }
-                        else {
+                        } else {
                             $yAxis = array_merge($yAxis, array(
                                 'side' => 'right',
                                 'anchor' => $yAxisIndex > 1 ? 'free' : 'x',
@@ -403,11 +401,14 @@ class TimeseriesChart extends AggregateChart
 
                 //  ----------- set up yAxis, assign to chart ... eventually -----------
                 $semDecimals = null;
-                $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
-                    $data_description->metric
-                );
-                $semStatisticObject = $query->_stats[$semStatId];
-                $semDecimals = $semStatisticObject->getPrecision();
+                if($data_description->std_err == 1)
+                {
+                    $semStatId = \Realm\Realm::getStandardErrorStatisticFromStatistic(
+                        $data_description->metric
+                    );
+                    $semStatisticObject = $query->_stats[$semStatId];
+                    $semDecimals = $semStatisticObject->getPrecision();
+                }
 
                 $this->_total = max($this->_total, $dataset->getUniqueCount());
 
@@ -472,9 +473,7 @@ class TimeseriesChart extends AggregateChart
                             {
                                 $trace['textangle'] = 90;
                                 $this->_chart['layout']['xaxis']['tickangle'] = 0;
-                            }
-                            else
-                            {
+                            } else {
                                 $trace['textangle'] = -90;
                             }
 
@@ -543,10 +542,9 @@ class TimeseriesChart extends AggregateChart
                         }
 
                         if ($visible !== true) {
-                           $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
-                        }
-                        else {
-                           $this->_chart['layout']['xaxis']['tickmode'] = 'date'; 
+                            $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
+                        } else {
+                            $this->_chart['layout']['xaxis']['tickmode'] = 'date';
                         }
 
                         $tooltip = $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
@@ -631,8 +629,7 @@ class TimeseriesChart extends AggregateChart
                             ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
                             if (($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
                                 $this->_chart['layout']['xaxis']['dtick'] = "M12";
-                            }
-                            else {
+                            } else {
                                 $this->_chart['layout']['xaxis']['dtick'] = "M1";
                             }
                         }
@@ -734,8 +731,7 @@ class TimeseriesChart extends AggregateChart
                             if ($data_description->combine_type=='side' && $trace['type']=='area'){
                                 if ($this->_swapXY) {
                                     $trace['fill'] = 'tozerox';
-                                }
-                                else {
+                                } else {
                                     $trace['fill'] = 'tozeroy';
                                 }
                             }
@@ -816,12 +812,10 @@ class TimeseriesChart extends AggregateChart
                                 }
                                 elseif ($std_err_labels_enabled && !$data_description->value_labels){
                                     $this->_chart['data'][$primary_trace]['text'] = $error_info['error_labels'];
-                                }
-                                else {
+                                } else {
                                     $this->_chart['data'][$primary_trace]['text'] = $text;
                                 }
-                            }
-                            else {
+                            } else {
                                 $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
                                 $this->configureDataLabels(
                                     $data_description,
@@ -835,7 +829,7 @@ class TimeseriesChart extends AggregateChart
                                     $decimals
                                 );
                             }
-                        } 
+                        }
 
                         // ---- Add a trend line on the dataset ----
                         if(isset($data_description->trend_line) && $data_description->trend_line == 1 && $data_description->display_type != 'pie' )
@@ -848,7 +842,7 @@ class TimeseriesChart extends AggregateChart
 
                             if($new_values_count > 1)
                             {
-                                list($m,$b,$r, $r_squared) = \xd_regression\linear_regression(array_keys($newValues), array_values($newValues));
+                                list($m, $b, $r_squared) = \xd_regression\linear_regression(array_keys($newValues), array_values($newValues));
                                 $trendX = array();
                                 $trendY = array();
                                 foreach($newValues as $ii => $value) //first first positive point on trend line since when logscale negative values make it barf

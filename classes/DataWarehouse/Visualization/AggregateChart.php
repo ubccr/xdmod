@@ -1366,7 +1366,7 @@ class AggregateChart
                     $color,
                     $isThumbnail,
                     $decimals
-                ); 
+                );
             } // end closure for each $yAxisObject
         } // end closure for each $yAxisArray
 
