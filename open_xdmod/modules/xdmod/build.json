@@ -28,6 +28,7 @@
             "/html/gui/lib/highcharts/graphics",
             "/html/gui/lib/highcharts/index.htm",
             "/html/unit_tests",
+            "/html/user_manual/sphinx_venv",
             "/user_manual_builder"
         ],
         "exclude_patterns": [
@@ -104,5 +105,11 @@
         "etc/crond": {
             "configuration/cron.conf": "xdmod"
         }
+    },
+    "commands": {
+        "pre_build": [
+            "user_manual_builder/setup.sh",
+            "user_manual_builder/build_user_manual.sh --builddir user_manual_builder/ --destdir html/user_manual/ --version Open"
+        ]
     }
 }

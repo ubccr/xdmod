@@ -1,7 +1,6 @@
 [general]
 title = "[:general_title:]"
 site_address = "[:general_site_address:]"
-user_manual = "[:general_user_manual:]"
 contact_page_recipient = "[:general_contact_page_recipient:]"
 tech_support_recipient = "[:general_tech_support_recipient:]"
 
