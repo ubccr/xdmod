@@ -88,10 +88,10 @@ class MetricExplorer extends Common
             ? '\DataWarehouse\Data\TimeseriesDataset'
             : '\DataWarehouse\Data\SimpleDataset';
 
-        $highchart_classname
+        $chart_classname
             = $timeseries
-            ? '\DataWarehouse\Visualization\HighChartTimeseries2'
-            : '\DataWarehouse\Visualization\HighChart2';
+            ? '\DataWarehouse\Visualization\TimeseriesChart'
+            : '\DataWarehouse\Visualization\AggregateChart';
 
         $filename = $this->getFilename();
         $filenameSpecifiedInRequest = $filename !== null;
@@ -104,7 +104,6 @@ class MetricExplorer extends Common
         $filename = substr($filename, 0, 250);
 
         $all_data_series = $this->getDataSeries();
-
         $data_series = array();
 
         // Discard disabled datasets.
@@ -120,7 +119,6 @@ class MetricExplorer extends Common
                 $data_series[] = $data_description;
             }
         }
-
         // Check that the user is allowed to view the datasets they have
         // requested. If they are not allowed to view any of them, throw an
         // exception indicating access is denied.
@@ -159,7 +157,7 @@ class MetricExplorer extends Common
 
             $font_size = $this->getFontSize();
 
-            $hc = new $highchart_classname(
+            $chart = new $chart_classname(
                 $aggregation_unit,
                 $start_date,
                 $end_date,
@@ -176,13 +174,11 @@ class MetricExplorer extends Common
             );
 
             if ($show_title) {
-                $hc->setTitle($title, $font_size);
+                $chart->setTitle($title, $font_size);
             }
-
             // Called before and after configure.
-            $hc->setLegend($legend_location, $font_size);
-
-            $hc->configure(
+            $chart->setLegend($legend_location, $font_size);
+            $chart->configure(
                 $data_series,
                 $x_axis,
                 $y_axis,
@@ -195,9 +191,9 @@ class MetricExplorer extends Common
                 $showRemainder
             );
 
-            $hc->setLegend($legend_location, $font_size);
+            $chart->setLegend($legend_location, $font_size);
 
-            $returnData = $hc->exportJsonStore($limit, $offset);
+            $returnData = $chart->exportJsonStore($limit, $offset);
 
             $requestDescripter = new \User\Elements\RequestDescripter($this->request);
             $chartIdentifier = $requestDescripter->__toString();
@@ -211,7 +207,7 @@ class MetricExplorer extends Common
             $returnData['data'][0]['reportGeneratorMeta'] = array(
                 'chart_args'         => $chartIdentifier,
                 'title'              => $title,
-                'params_title'       => $hc->getSubtitleText(),
+                'params_title'       => $chart->getSubtitleText(),
                 'start_date'         => $start_date,
                 'end_date'           => $end_date,
                 'included_in_report' => $includedInReport ? 'y' : 'n',
@@ -343,7 +339,6 @@ class MetricExplorer extends Common
                     "headers" => \DataWarehouse\ExportBuilder::getHeader($format),
                     "results" => $exportedDatas,
                 );
-
                 return $result;
             } // elseif($format === 'jsonstore')
 
@@ -365,7 +360,6 @@ class MetricExplorer extends Common
         if (!isset($this->request['data_series']) || empty($this->request['data_series'])) {
             return json_decode(0);
         }
-
         if (
             is_array($this->request['data_series'])
             && is_array($this->request['data_series']['data'])
@@ -484,7 +478,6 @@ class MetricExplorer extends Common
         if (!isset($this->request['x_axis']) || empty($this->request['x_axis'])) {
             return array();
         }
-
         if (is_array($this->request['x_axis'])) {
             $ret = new stdClass;
 

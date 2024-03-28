@@ -173,7 +173,7 @@ class SimpleTimeseriesData extends SimpleData
     // Depending on the stat alias, we take
     // min, max, or sum of ts datasets.
     // Averaging is done elsewhere (see 
-    // class @HighChartTimeseries2)
+    // class @TimeseriesChart)
     //
     // NOTE that all errors get set == 0.
     // This is consistent with previous implementation.

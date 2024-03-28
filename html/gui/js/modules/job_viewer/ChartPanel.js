@@ -146,10 +146,10 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                 panel.getEl().unmask();
 
                 if (panel.chart) {
-                    Plotly.react(this.id, chartOptions.chartData, chartOptions.chartLayout, { displayModeBar: false, doubleClick: 'reset' });
+                    Plotly.react(this.id, chartOptions.data, chartOptions.layout, { displayModeBar: false, doubleClick: 'reset' });
                     this.chart = true;
                 } else {
-                    Plotly.newPlot(this.id, chartOptions.chartData, chartOptions.chartLayout, { displayModeBar: false, doubleClick: 'reset' });
+                    Plotly.newPlot(this.id, chartOptions.data, chartOptions.layout, { displayModeBar: false, doubleClick: 'reset' });
                     this.chart = true;
                 }
                 if (panel.chart) {

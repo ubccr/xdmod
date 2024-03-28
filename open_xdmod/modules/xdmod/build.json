@@ -22,11 +22,6 @@
             "/html/gui/lib/extjs/pkgs",
             "/html/gui/lib/extjs/test",
             "/html/gui/lib/extjs/welcome",
-            "/html/gui/lib/highcharts/api",
-            "/html/gui/lib/highcharts/examples",
-            "/html/gui/lib/highcharts/gfx",
-            "/html/gui/lib/highcharts/graphics",
-            "/html/gui/lib/highcharts/index.htm",
             "/html/unit_tests",
             "/user_manual_builder"
         ],

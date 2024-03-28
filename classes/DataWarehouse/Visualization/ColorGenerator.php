@@ -5,7 +5,7 @@ namespace DataWarehouse\Visualization;
  * @author Joe White
  * @author Jeanette Sperhac
  *
- * Class that governs color selection for plotting datasets in HighCharts classes.
+ * Class that governs color selection for plotting datasets in chart classes.
  * Adapted for use with configure() method. Lookup is by index; round robin only.
  * Todo: resuscitate fixed mapping, which is constructed to work with dataset names.
  *

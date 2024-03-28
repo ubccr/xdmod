@@ -162,8 +162,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     protected $isAggregationUnit = false;
 
     /**
-     * @var array An associative array specifying chart defaults where the key is the chart property
-     *   and the value is a property value which may be specific to HighCharts. Note that "y" and
+     * @var array An associative array specifying chart defaults. Note that "y" and
      *   "n" are used rather than true and false to ensure that existing code does not break.
      */
 
@@ -193,7 +192,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
     /**
      * @var array An associative array specifying the chart type to use for a given dataset type
      *   when using this group by. The keys are the dataset type (e.g., aggregate or timeseries) and
-     *   the values are chart types. Note that the chart types are currently specific to HighCharts.
+     *   the values are chart types.
      */
 
     protected $datasetTypeToChartDisplayTypeMap = array(
