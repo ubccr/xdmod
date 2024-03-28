@@ -804,7 +804,7 @@ class TimeseriesChart extends AggregateChart
                         if ($data_labels_enabled) {
                             $idx = $data_description->std_err ? 2 : 1;
                             $primary_trace = count($this->_chart['data']) - $idx;
-                            if ($trace['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
+                            if ($this->_chart['data'][$primary_trace]['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
                                 // For export this needs to be 'none'
                                 $this->_chart['data'][$primary_trace]['constraintext'] = $data_description->combine_type != 'side' ? 'both' : 'none';
                                 if ($std_err_labels_enabled && $data_description->value_labels) {
