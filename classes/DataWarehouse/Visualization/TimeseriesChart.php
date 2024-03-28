@@ -780,7 +780,7 @@ class TimeseriesChart extends AggregateChart
                         }
 
                         $this->_chart['data'][] = $trace;
-
+                        $idx = count($this->_chart['data']) - 1;
                         $error_color_value = \DataWarehouse\Visualization::alterBrightness($color_value, -70);
                         $error_color = '#'.str_pad(dechex($error_color_value), 6, '0', STR_PAD_LEFT);
                         $error_info = $this->buildErrorDataSeries(
@@ -796,7 +796,6 @@ class TimeseriesChart extends AggregateChart
                             $zIndex
                         );
                         if ($data_labels_enabled) {
-                            $idx = ($data_description->std_err == 1) ? 2 : 1;
                             $primary_trace = count($this->_chart['data']) - $idx;
                             if ($this->_chart['data'][$primary_trace]['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
                                 // For export this needs to be 'none'
@@ -917,7 +916,7 @@ class TimeseriesChart extends AggregateChart
         // Timeseries ticks need to be set to 'auto' if all legend elements are hidden
         // due to bug with Plotly JS manually set ticks.
         $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
-        if ($this->_chart['layout']["{$axisName}"]['tickmode'] !== 'auto') {
+        if (isset($this->_chart['layout']["{$axisName}"]) && $this->_chart['layout']["{$axisName}"]['tickmode'] !== 'auto') {
             $this->_chart['layout']["{$axisName}"]['tickmode'] = 'auto';
             $visibility = array_column($this->_chart['data'], 'visible');
             if (in_array(true, $visibility, true)) {
