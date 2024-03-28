@@ -895,9 +895,9 @@ class TimeseriesChart extends AggregateChart
                                     'y' => $this->_swapXY ? $trendX : $trendY,
                                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                                 );
-
-                                $trendline_trace['legendrank'] = $data_description->std_err ? $trace['legendrank'] + 2 : $trace['legendrank'];
-                                $trendline_trace['traceorder'] = $data_description->std_err ? $traceIndex - 2 : $traceIndex;
+                                $valid = $data_description->std_err == 1 && !$data_description->log_scale;
+                                $trendline_trace['legendrank'] = $valid ? $trace['legendrank'] + 2 : $trace['legendrank'];
+                                $trendline_trace['traceorder'] = $valid ? $traceIndex - 2 : $traceIndex;
 
                                 if ($this->_swapXY) {
                                     unset($trendline_trace['yaxis']);
