@@ -796,17 +796,16 @@ class TimeseriesChart extends AggregateChart
                             $zIndex
                         );
                         if ($data_labels_enabled) {
-                            $primary_trace = count($this->_chart['data']) - $idx;
-                            if ($this->_chart['data'][$primary_trace]['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
+                            if ($this->_chart['data'][$idx]['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
                                 // For export this needs to be 'none'
-                                $this->_chart['data'][$primary_trace]['constraintext'] = $data_description->combine_type != 'side' ? 'both' : 'none';
+                                $this->_chart['data'][$idx]['constraintext'] = $data_description->combine_type != 'side' ? 'both' : 'none';
                                 if ($std_err_labels_enabled && $data_description->value_labels) {
-                                    $this->_chart['data'][$primary_trace]['text'] = $error_info['data_labels'];
+                                    $this->_chart['data'][$idx]['text'] = $error_info['data_labels'];
                                 }
                                 elseif ($std_err_labels_enabled && !$data_description->value_labels){
-                                    $this->_chart['data'][$primary_trace]['text'] = $error_info['error_labels'];
+                                    $this->_chart['data'][$idx]['text'] = $error_info['error_labels'];
                                 } else {
-                                    $this->_chart['data'][$primary_trace]['text'] = $text;
+                                    $this->_chart['data'][$idx]['text'] = $text;
                                 }
                             } else {
                                 $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
