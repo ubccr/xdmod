@@ -172,6 +172,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         const subtitleLineCount = adjustTitles(baseChartOptions.layout);
         const marginTop = (topCenter || subtitleLineCount > 0) ? baseChartOptions.layout.margin.t : chartDiv._fullLayout._size.t;
         const marginRight = chartDiv._fullLayout._size.r;
+        const marginLeft = chartDiv._fullLayout._size.l;
         const legendHeight = (topCenter && !(baseChartOptions.layout.height <= 550)) ? chartDiv._fullLayout.legend._height : 0;
         const titleHeight = 31;
         const subtitleHeight = 15;
@@ -182,22 +183,51 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
                 creditsHeight -= 15;
             }
         }
-        const update = {
-            'annotations[0].yshift': (marginTop + legendHeight) - titleHeight,
-            'annotations[1].yshift': ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount)
-        };
+        let titleIndex = -1;
+        let subtitleIndex = -1;
+        let creditsIndex = -1;
+        let restrictedIndex = -1;
 
-        if (baseChartOptions.layout.annotations.length > 2) {
-            const marginBottom = chartDiv._fullLayout._size.b;
-            const plotAreaHeight = chartDiv._fullLayout._size.h;
-            let pieChartYShift = 0;
-            let pieChartXShift = 0;
-            if (chartDiv._fullData.length !== 0 && chartDiv._fullData[0].type === 'pie') {
-                pieChartYShift = subtitleLineCount > 0 ? 30 : 0;
-                pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
+        for (let i = 0; i < baseChartOptions.layout.annotations.length; i++) {
+            const name = baseChartOptions.layout.annotations[i].name;
+            switch (name) {
+                case 'title':
+                    titleIndex = i;
+                case 'subtitle':
+                    subtitleIndex = i;
+                case 'credits':
+                    creditsIndex = i;
+                case 'Restricted Data Warning':
+                    restrictedIndex = i;
+                default:
             }
-            update['annotations[2].yshift'] = (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift;
-            update['annotations[2].xshift'] = marginRight - pieChartXShift;
+        }
+        const update = {};
+
+        if (titleIndex > -1) {
+            update[`annotations[${subtitleIndex}].yshift`] = (marginTop + legendHeight) - titleHeight;
+        }
+
+        if (subtitleIndex > -1) {
+            update[`annotations[${subtitleIndex}].yshift`] = ((marginTop + legendHeight) - titleHeight) - (subtitleHeight * subtitleLineCount);
+        }
+
+        const marginBottom = chartDiv._fullLayout._size.b;
+        const plotAreaHeight = chartDiv._fullLayout._size.h;
+        let pieChartYShift = 0;
+        let pieChartXShift = 0;
+        if (chartDiv._fullData.length !== 0 && chartDiv._fullData[0].type === 'pie') {
+            pieChartYShift = subtitleLineCount > 0 ? 30 : 0;
+            pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
+        }
+
+        if (creditsIndex > -1) {
+            update[`annotations[${creditsIndex}].yshift`] = (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift;
+            update[`annotations[${creditsIndex}].xshift`] = marginRight - pieChartXShift;
+        }
+        if (restrictedIndex > -1) {
+           update[`annotations[${restrictedIndex}].yshift`] = (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift;
+           update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift) * -1;
         }
 
         Plotly.relayout(baseChartOptions.renderTo, update);

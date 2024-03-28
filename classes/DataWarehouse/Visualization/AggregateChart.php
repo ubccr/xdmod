@@ -1543,12 +1543,14 @@ class AggregateChart
         }
 
         $this->_chart['layout']['annotations'][] = array(
+            'name' => 'Restricted Data Warning',
             'text' => implode('<br />', $roleRestrictionsStrings),
             'xref' => 'paper',
             'yref' => 'paper',
-            'xanchor' => 'center',
+            'xanchor' => 'left',
             'yanchor' => 'bottom',
             'bgcolor' => '#DFDFDF',
+            'showarrow' => false,
             'x' => 0.0,
             'y' => 1.0,
         );

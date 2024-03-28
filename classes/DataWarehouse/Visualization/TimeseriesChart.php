@@ -912,6 +912,10 @@ class TimeseriesChart extends AggregateChart
             } // end closure for each $yAxisArray
         } // end closure for each $yAxisDataDescriptions
 
+        if ($this->_showWarnings) {
+            $this->addRestrictedDataWarning();
+        }
+
         // Timeseries ticks need to be set to 'auto' if all legend elements are hidden
         // due to bug with Plotly JS manually set ticks.
         $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
