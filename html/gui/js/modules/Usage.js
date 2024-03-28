@@ -2777,15 +2777,25 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 // First check if all traces are hidden.
                                 // There is a bug with tick text manually set.
                                 // We need set tickmode to auto if so.
-                                const visibleData = evt.fullData.filter((trace) => trace.visible === true);
+                                const visibleData = evt.fullData.filter((trace) => trace.name !== 'gap connector' && trace.name !== 'area fix' && trace.visible === true);
                                 let tickType;
                                 let axisType;
+                                let dtick;
                                 if (evt.layout.swapXY) {
-                                    tickType = evt.layout.yaxis.tickmode;
                                     axisType = evt.layout.yaxis.type;
+                                    dtick = evt.layout.yaxis.dtick;
                                 } else {
-                                    tickType = evt.layout.xaxis.tickmode;
                                     axisType = evt.layout.xaxis.type;
+                                    dtick = evt.layout.xaxis.dtick;
+                                }
+                                if (axisType === 'date') {
+                                    if (dtick === 86400000 && evt.data[evt.curveNumber].x.length > 7) {
+                                        tickType = 'auto';
+                                    } else {
+                                        tickType = 'date';
+                                    }
+                                } else {
+                                    tickType = 'category';
                                 }
                                 if (visibleData.length === 1 && visibleData[0].index === evt.curveNumber && axisType === 'date') {
                                     if (evt.layout.swapXY) {

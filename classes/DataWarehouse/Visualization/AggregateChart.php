@@ -1631,10 +1631,23 @@ class AggregateChart
     }
 
     // ---------------------------------------------------------
-    // setChartTitleSubtitle()
+    // configureDataLabels()
     //
+    // @param data_description
+    // @param error_info
+    // @param xValues
+    // @param yValues
+    // @param std_err_labels_enabled
     // @param font_size
+    // @param color
+    // @param isThumbnail
+    // @param $decimals
     //
+    // @return null
+    //
+    // This function will set annotations within the layout array
+    // based on the requested type of labels and other configuration
+    // settings.
     // ---------------------------------------------------------
     protected function configureDataLabels(
         &$data_description,

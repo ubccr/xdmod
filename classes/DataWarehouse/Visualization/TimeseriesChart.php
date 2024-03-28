@@ -541,12 +541,6 @@ class TimeseriesChart extends AggregateChart
                             $visible = $data_description->visibility->{$formattedDataSeriesName};
                         }
 
-                        if ($visible !== true) {
-                            $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
-                        } else {
-                            $this->_chart['layout']['xaxis']['tickmode'] = 'date';
-                        }
-
                         $tooltip = $lookupDataSeriesName . ": <b>%{y:,.{$decimals}f}</b> <extra></extra>";
                         if ($this->_chart['layout']['hovermode'] != 'closest') {
                             $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
@@ -842,7 +836,7 @@ class TimeseriesChart extends AggregateChart
 
                             if($new_values_count > 1)
                             {
-                                list($m, $b, $r_squared) = \xd_regression\linear_regression(array_keys($newValues), array_values($newValues));
+                                list($m, $b, $r, $r_squared) = \xd_regression\linear_regression(array_keys($newValues), array_values($newValues));
                                 $trendX = array();
                                 $trendY = array();
                                 foreach($newValues as $ii => $value) //first first positive point on trend line since when logscale negative values make it barf
@@ -898,6 +892,7 @@ class TimeseriesChart extends AggregateChart
                                     'visible' => $visible,
                                     'm' => $m,
                                     'b' => $b,
+                                    'r' => $r,
                                     'x' => $this->_swapXY ? $trendY : $trendX,
                                     'y' => $this->_swapXY ? $trendX : $trendY,
                                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
@@ -918,6 +913,18 @@ class TimeseriesChart extends AggregateChart
                 }
             } // end closure for each $yAxisArray
         } // end closure for each $yAxisDataDescriptions
+
+        // Timeseries ticks need to be set to 'auto' if all legend elements are hidden
+        // due to bug with Plotly JS manually set ticks.
+        $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
+        if (!$this->_chart['layout']["{$axisName}"]['tickmode'] == 'auto') {
+            $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
+            $this->_chart['layout']["{$axisName}"]['tickmode'] = 'auto';
+            $visibility = array_column($this->_chart['data'], 'visible');
+            if (in_array(true, $visibility, true)) {
+                $this->_chart['layout']["{$axisName}"]['tickmode'] = 'date';
+            }
+        }
 
         if($this->show_filters)
         {
