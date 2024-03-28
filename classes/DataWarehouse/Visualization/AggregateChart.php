@@ -1447,12 +1447,10 @@ class AggregateChart
                 'color'=> $error_color,
                 'marker' => array(
                     'color' => $error_color,
-                    'size' => $trace['marker']['size'],
                     'line' => array(
                         'width' => 1,
                         'color' => $error_color,
                     ),
-                    'symbol' => $trace['marker']['sybmol'],
                 ),
                 'line' => array(
                     'color' => $error_color,
