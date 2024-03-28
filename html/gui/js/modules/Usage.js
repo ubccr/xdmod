@@ -2598,16 +2598,20 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         let creditsIndex = -1;
                         let restrictedIndex = -1;
                         for (let i = 0; i < this.chartOptions.layout.annotations.length; i++) {
-                            const name = this.chartOptions.layout.annotations[i].name;
+                            const { name } = this.chartOptions.layout.annotations[i];
                             switch (name) {
                                 case 'title':
                                     titleIndex = i;
+                                    break;
                                 case 'subtitle':
                                     subtitleIndex = i;
+                                    break;
                                 case 'credits':
                                     creditsIndex = i;
+                                    break;
                                 case 'Restricted Data Warning':
                                     restrictedIndex = i;
+                                    break;
                                 default:
                             }
                         }
@@ -2623,10 +2627,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                         const marginBottom = chartDiv._fullLayout._size.b;
                         const plotAreaHeight = chartDiv._fullLayout._size.h;
-                        let pieChartYShift = 0;
                         let pieChartXShift = 0;
                         if (chartDiv._fullData.length !== 0 && chartDiv._fullData[0].type === 'pie') {
-                            pieChartYShift = subtitleLineCount > 0 ? 30 : 0;
                             pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
                         }
 

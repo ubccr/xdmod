@@ -6423,17 +6423,21 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     let subtitleIndex = -1;
                     let creditsIndex = -1;
                     let restrictedIndex = -1;
-                    for (let i = 0; i < chartDiv._fullLayout.annotations.length; i++) {
-                        const name = chartDiv._fullLayout.annotations[i].name;
+                    for (let idx = 0; idx < chartDiv._fullLayout.annotations.length; idx++) {
+                        const { name } = chartDiv._fullLayout.annotations[idx];
                         switch (name) {
                             case 'title':
-                                titleIndex = i;
+                                titleIndex = idx;
+                                break;
                             case 'subtitle':
-                                subtitleIndex = i;
+                                subtitleIndex = idx;
+                                break;
                             case 'credits':
-                                creditsIndex = i;
+                                creditsIndex = idx;
+                                break;
                             case 'Restricted Data Warning':
-                                restrictedIndex = i;
+                                restrictedIndex = idx;
+                                break;
                             default:
                         }
                     }
@@ -6449,10 +6453,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
                     const marginBottom = chartDiv._fullLayout._size.b;
                     const plotAreaHeight = chartDiv._fullLayout._size.h;
-                    let pieChartYShift = 0;
                     let pieChartXShift = 0;
                     if (chartDiv._fullData.length !== 0 && chartDiv._fullData[0].type === 'pie') {
-                        pieChartYShift = subtitleLineCount > 0 ? 30 : 0;
                         pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
                     }
 

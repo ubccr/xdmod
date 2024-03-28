@@ -177,16 +177,20 @@
                 let restrictedIndex = -1;
 
                 for (let i = 0; i < chartOptions.layout.annotations.length; i++) {
-                    const name = chartOptions.layout.annotations[i].name;
+                    const { name } = chartOptions.layout.annotations[i];
                     switch (name) {
                         case 'title':
                             titleIndex = i;
+                            break;
                         case 'subtitle':
                             subtitleIndex = i;
+                            break;
                         case 'credits':
                             creditsIndex = i;
+                            break;
                         case 'Restricted Data Warning':
                             restrictedIndex = i;
+                            break;
                         default:
                     }
                 }
@@ -215,8 +219,8 @@
                     update[`annotations[${creditsIndex}].xshift`] = (marginRight/2) - pieChartXShift;
                 }
                 if (restrictedIndex > -1) {
-                   update[`annotations[${restrictedIndex}].yshift`] = (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift;
-                   update[`annotations[${restrictedIndex}].xshift`] = ((marginLeft/2) - pieChartXShift) * -1;
+                    update[`annotations[${restrictedIndex}].yshift`] = (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift;
+                    update[`annotations[${restrictedIndex}].xshift`] = ((marginLeft/2) - pieChartXShift) * -1;
                 }
 
                 Plotly.relayout('container', update);

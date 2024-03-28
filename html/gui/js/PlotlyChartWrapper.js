@@ -189,16 +189,20 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         let restrictedIndex = -1;
 
         for (let i = 0; i < baseChartOptions.layout.annotations.length; i++) {
-            const name = baseChartOptions.layout.annotations[i].name;
+            const { name } = baseChartOptions.layout.annotations[i];
             switch (name) {
                 case 'title':
                     titleIndex = i;
+                    break;
                 case 'subtitle':
                     subtitleIndex = i;
+                    break;
                 case 'credits':
                     creditsIndex = i;
+                    break;
                 case 'Restricted Data Warning':
                     restrictedIndex = i;
+                    break;
                 default:
             }
         }
@@ -226,8 +230,8 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             update[`annotations[${creditsIndex}].xshift`] = marginRight - pieChartXShift;
         }
         if (restrictedIndex > -1) {
-           update[`annotations[${restrictedIndex}].yshift`] = (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift;
-           update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift) * -1;
+            update[`annotations[${restrictedIndex}].yshift`] = (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift;
+            update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift) * -1;
         }
 
         Plotly.relayout(baseChartOptions.renderTo, update);
