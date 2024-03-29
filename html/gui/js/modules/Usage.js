@@ -2618,7 +2618,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         const update = {};
 
                         if (titleIndex > -1) {
-                            update[`annotations[${subtitleIndex}].yshift`] = (marginTop + legendHeight) - titleHeight;
+                            update[`annotations[${titleIndex}].yshift`] = (marginTop + legendHeight) - titleHeight;
                         }
 
                         if (subtitleIndex > -1) {
