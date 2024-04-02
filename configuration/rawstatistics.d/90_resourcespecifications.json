@@ -172,7 +172,7 @@
               "tableAlias": "rs",
               "column": "normalization_factor",
               "group": "Administration",
-              "documentation": "The number of service units (SUs) available per day",
+              "documentation": "The normalization factor for a resource. This helps compare capacity across resources",
               "batchExport": true
           },
           {
@@ -180,7 +180,7 @@
               "tableAlias": "rs",
               "column": "su_available_per_day",
               "group": "Administration",
-              "documentation": "The normalization factor for a resource. This helps compare capacity across resources",
+              "documentation": "The number of service units (SUs) available per day",
               "batchExport": true
           },
           {
