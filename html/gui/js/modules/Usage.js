@@ -1534,8 +1534,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 }
 
                                 chartOptions.data.forEach((trace) => {
-                                    if (trace.mode) {
-                                        trace.mode = 'lines';
+                                    if (trace.marker) {
+                                        trace.marker.opacity = 0;
                                     }
                                 });
 
