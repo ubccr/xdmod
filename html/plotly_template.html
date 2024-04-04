@@ -77,8 +77,10 @@
                         // Rollback constrain for bar chart text font size
                         chartOptions.data[i].constraintext = 'none';
                         // mode = 'lines' affects the xaxis range, therefore, just change opacity
-                        if (chartOptions.data[i].marker) {
-                            chartOptions.data[i].marker.opacity = 0;
+                        if ((chartOptions.data[i].type === 'line' || chartOptions.data[i].type === 'area') && chartOptions.data[i].y.length > 1) {
+                            if (chartOptions.data[i].marker) {
+                                chartOptions.data[i].marker.opacity = 0;
+                            }
                         }
                     }
 

@@ -696,7 +696,8 @@ class TimeseriesChart extends AggregateChart
                                     'showlegend' => false,
                                     'mode' => 'lines+markers',
                                     'marker' => array(
-                                        'color' => '#FFFFFF'
+                                        'color' => '#FFFFFF',
+                                        'size' => 0.1
                                     ),
                                     'line' => array(
                                         'color' => '#FFFFFF'

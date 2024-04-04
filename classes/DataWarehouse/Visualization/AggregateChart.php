@@ -1153,8 +1153,10 @@ class AggregateChart
                             'y' => $this->_swapXY ? $xValues : array_fill(0, count($xValues), 0),
                             'showlegend' => false,
                             'zIndex' => 0,
+                            'mode' => 'lines+markers',
                             'marker' => array(
-                                'color' => '#ffffff'
+                                'color' => '#ffffff',
+                                'size' => 0.1
                             ),
                             'line' => array(
                                 'color' => '#ffffff'
