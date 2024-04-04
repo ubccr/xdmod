@@ -59,6 +59,13 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
 
                     this.initNewChart.call(this);
 
+                    // Since the chart is re-created on store loads we need
+                    // to re-attach histogram drilldown.
+                    if (this.chartOptions.efficiency) {
+                        const extDiv = Ext.getCmp(this.chartOptions.renderTo);
+                        extDiv.fireEvent('afterrender', extDiv);
+                    }
+
                     if (this.chartOptions.metricExplorer) {
                         const chartDiv = document.getElementById(this.chartOptions.renderTo);
                         const metricDiv = document.getElementById(this.id);
