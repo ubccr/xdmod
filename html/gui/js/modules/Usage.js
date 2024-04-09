@@ -2831,7 +2831,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     dtick = evt.layout.xaxis.dtick;
                                 }
                                 if (axisType === 'date') {
-                                    if (dtick === 86400000 && evt.data[evt.curveNumber].x.length > 7) {
+                                    if (dtick === CCR.xdmod.ui.dtickDay && evt.data[evt.curveNumber].x.length > 7) {
                                         tickType = 'auto';
                                     } else {
                                         tickType = 'date';

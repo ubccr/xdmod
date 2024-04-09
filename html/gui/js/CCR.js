@@ -695,6 +695,8 @@ CCR.xdmod.ui.tokenDelimiter = ':';
 CCR.xdmod.ui.minChartScale = 0.5;
 CCR.xdmod.ui.maxChartScale = 5;
 
+CCR.xdmod.ui.dtickDay = 86400000;
+
 CCR.xdmod.ui.deltaChartScale = 0.2;
 
 CCR.xdmod.ui.thumbChartScale = 0.76;
