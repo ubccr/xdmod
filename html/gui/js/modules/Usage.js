@@ -2590,7 +2590,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 const chartDiv = document.getElementById(this.chartId);
                 if (chartDiv) {
                     Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
-                    const update = relayoutChart(chartDiv, false);
+                    const update = relayoutChart(chartDiv, false, adjHeight);
                     Plotly.relayout(this.chartId, update);
                 }
             }

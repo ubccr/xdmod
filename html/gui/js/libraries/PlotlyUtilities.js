@@ -284,7 +284,8 @@ function getMultiAxisObjects(layout) { // eslint-disable-line no-unused-vars
     return multiAxes;
 }
 
-function relayoutChart(chartDiv, firstRender) { // eslint-disable-line no-unused-vars
+function relayoutChart(chartDiv, firstRender, adjHeight) { // eslint-disable-line no-unused-vars
+    const update = {};
     if (chartDiv._fullLayout.annotations.length > 0) {
         const topCenter = topLegend(chartDiv._fullLayout);
         const subtitleLineCount = adjustTitles(chartDiv._fullLayout);
@@ -323,7 +324,6 @@ function relayoutChart(chartDiv, firstRender) { // eslint-disable-line no-unused
                 default:
             }
         }
-        const update = {};
         const titleYShift = (marginTop + legendHeight) - titleHeight;
 
         if (titleIndex !== -1) {
@@ -344,7 +344,7 @@ function relayoutChart(chartDiv, firstRender) { // eslint-disable-line no-unused
         }
 
         const shiftYDown = firstRender ? (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift
-                                       : (plotAreaHeight + marginBottom) * -1; 
+                                       : (plotAreaHeight + marginBottom) * -1;
         if (creditsIndex !== -1) {
             update[`annotations[${creditsIndex}].yshift`] = shiftYDown;
             update[`annotations[${creditsIndex}].xshift`] = marginRight - pieChartXShift;
@@ -353,7 +353,6 @@ function relayoutChart(chartDiv, firstRender) { // eslint-disable-line no-unused
            update[`annotations[${restrictedIndex}].yshift`] = shiftYDown;
            update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift) * -1;
         }
-
-        return update;
     }
+    return update;
 }

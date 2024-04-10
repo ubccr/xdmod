@@ -127,7 +127,7 @@
                     return;
                 }
 
-                const update = relayoutChart(chartDiv, true);
+                const update = relayoutChart(chartDiv, true, chartOptions.layout.height);
                 Plotly.relayout('container', update);
 
             });

@@ -6409,7 +6409,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             const chartDiv = document.getElementById(`plotly-panel${this.id}`);
             if (chartDiv) {
                 Plotly.relayout(`plotly-panel${this.id}`, { width: adjWidth, height: adjHeight });
-                const update = relayoutChart(chartDiv, false);
+                const update = relayoutChart(chartDiv, false, adjHeight);
                 Plotly.relayout(`plotly-panel${this.id}`, update);
             }
         } //onResize
