@@ -283,3 +283,77 @@ function getMultiAxisObjects(layout) { // eslint-disable-line no-unused-vars
     }
     return multiAxes;
 }
+
+function relayoutChart(chartDiv, firstRender) { // eslint-disable-line no-unused-vars
+    if (chartDiv._fullLayout.annotations.length > 0) {
+        const topCenter = topLegend(chartDiv._fullLayout);
+        const subtitleLineCount = adjustTitles(chartDiv._fullLayout);
+        const marginTop = Math.min(chartDiv._fullLayout.margin.t, chartDiv._fullLayout._size.t);
+        const marginRight = chartDiv._fullLayout._size.r;
+        const marginLeft = chartDiv._fullLayout._size.l;
+        const legendHeight = (topCenter && adjHeight > 550) ? chartDiv._fullLayout.legend._height : 0;
+        const titleHeight = 31;
+        const subtitleHeight = 15;
+        let creditsHeight = 0;
+        if (subtitleLineCount > 0) {
+            creditsHeight = (15 * subtitleLineCount);
+            if (topCenter) {
+                creditsHeight -= 15;
+            }
+        }
+        let titleIndex = -1;
+        let subtitleIndex = -1;
+        let creditsIndex = -1;
+        let restrictedIndex = -1;
+        for (let idx = 0; idx < chartDiv._fullLayout.annotations.length; idx++) {
+            const { name } = chartDiv._fullLayout.annotations[idx];
+            switch (name) {
+                case 'title':
+                    titleIndex = idx;
+                    break;
+                case 'subtitle':
+                    subtitleIndex = idx;
+                    break;
+                case 'credits':
+                    creditsIndex = idx;
+                    break;
+                case 'Restricted Data Warning':
+                    restrictedIndex = idx;
+                    break;
+                default:
+            }
+        }
+        const update = {};
+        const titleYShift = (marginTop + legendHeight) - titleHeight;
+
+        if (titleIndex !== -1) {
+            update[`annotations[${titleIndex}].yshift`] = titleYShift;
+        }
+
+        if (subtitleIndex !== -1) {
+            update[`annotations[${subtitleIndex}].yshift`] = titleYShift - (subtitleHeight * subtitleLineCount);
+        }
+
+        const marginBottom = chartDiv._fullLayout._size.b;
+        const plotAreaHeight = chartDiv._fullLayout._size.h;
+        let pieChartYShift = 0;
+        let pieChartXShift = 0;
+        if (chartDiv._fullData.length > 0 && chartDiv._fullData[0].type === 'pie') {
+            pieChartYShift = subtitleLineCount > 0 ? 30 : 0;
+            pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
+        }
+
+        const shiftYDown = firstRender ? (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift
+                                       : (plotAreaHeight + marginBottom) * -1; 
+        if (creditsIndex !== -1) {
+            update[`annotations[${creditsIndex}].yshift`] = shiftYDown;
+            update[`annotations[${creditsIndex}].xshift`] = marginRight - pieChartXShift;
+        }
+        if (restrictedIndex !== -1) {
+           update[`annotations[${restrictedIndex}].yshift`] = shiftYDown;
+           update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift) * -1;
+        }
+
+        return update;
+    }
+}

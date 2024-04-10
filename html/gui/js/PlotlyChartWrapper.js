@@ -168,73 +168,8 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         if (baseChartOptions.layout.annotations.length === 0) {
             return;
         }
-        const topCenter = topLegend(baseChartOptions.layout);
-        const subtitleLineCount = adjustTitles(baseChartOptions.layout);
-        const marginTop = (topCenter || subtitleLineCount > 0) ? baseChartOptions.layout.margin.t : chartDiv._fullLayout._size.t;
-        const marginRight = chartDiv._fullLayout._size.r;
-        const marginLeft = chartDiv._fullLayout._size.l;
-        const legendHeight = (topCenter && baseChartOptions.layout.height > 550) ? chartDiv._fullLayout.legend._height : 0;
-        const titleHeight = 31;
-        const subtitleHeight = 15;
-        let creditsHeight = 0;
-        if (subtitleLineCount > 0) {
-            creditsHeight = (15 * subtitleLineCount);
-            if (topCenter) {
-                creditsHeight -= 15;
-            }
-        }
-        let titleIndex = -1;
-        let subtitleIndex = -1;
-        let creditsIndex = -1;
-        let restrictedIndex = -1;
 
-        for (let i = 0; i < baseChartOptions.layout.annotations.length; i++) {
-            const { name } = baseChartOptions.layout.annotations[i];
-            switch (name) {
-                case 'title':
-                    titleIndex = i;
-                    break;
-                case 'subtitle':
-                    subtitleIndex = i;
-                    break;
-                case 'credits':
-                    creditsIndex = i;
-                    break;
-                case 'Restricted Data Warning':
-                    restrictedIndex = i;
-                    break;
-                default:
-            }
-        }
-        const update = {};
-        const titleYShift = (marginTop + legendHeight) - titleHeight;
-
-        if (titleIndex !== -1) {
-            update[`annotations[${titleIndex}].yshift`] = titleYShift;
-        }
-
-        if (subtitleIndex !== -1) {
-            update[`annotations[${subtitleIndex}].yshift`] = titleYShift - (subtitleHeight * subtitleLineCount);
-        }
-
-        const marginBottom = chartDiv._fullLayout._size.b;
-        const plotAreaHeight = chartDiv._fullLayout._size.h;
-        let pieChartYShift = 0;
-        let pieChartXShift = 0;
-        if (chartDiv._fullData.length > 0 && chartDiv._fullData[0].type === 'pie') {
-            pieChartYShift = subtitleLineCount > 0 ? 30 : 0;
-            pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
-        }
-
-        if (creditsIndex !== -1) {
-            update[`annotations[${creditsIndex}].yshift`] = (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift;
-            update[`annotations[${creditsIndex}].xshift`] = marginRight - pieChartXShift;
-        }
-        if (restrictedIndex !== -1) {
-            update[`annotations[${restrictedIndex}].yshift`] = (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift;
-            update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift) * -1;
-        }
-
+        const update = relayoutChart(chartDiv, true);
         Plotly.relayout(baseChartOptions.renderTo, update);
     });
 
