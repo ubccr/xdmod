@@ -720,10 +720,8 @@ class Usage extends Common
                 // Remove extraneous x-axis properties.
                 if ($meRequestIsTimeseries) {
                     unset($meChart['layout']['xaxis']['title']);
-                } else {
-                    if ($usageChartSettings['display_type'] != 'h_bar'){
-                        unset($meChart['layout']['xaxis']['title']['text']);
-                    }
+                } else if ($usageChartSettings['display_type'] != 'h_bar'){
+                    unset($meChart['layout']['xaxis']['title']['text']);
                 }
 
                 // If there is a y-axis...
@@ -743,11 +741,8 @@ class Usage extends Common
                         unset($meChart['layout']['yaxis']['gridcolor']);
                     }
                     if ($usageChartSettings['show_guide_lines'] === 'n') {
-                        if ($usageChartSettings['display_type'] == 'h_bar') {
-                            $meChart['layout']['xaxis']['showgrid'] = false;
-                        } else {
-                            $meChart['layout']['yaxis']['showgrid'] = false;
-                        }
+                        $axis = ($usageChartSettings['display_type'] == 'h_bar') ? 'x' : 'y';
+                        $meChart['layout'][$axis . 'axis']['showgrid'] = false;
                     }
                 }
 
@@ -763,23 +758,16 @@ class Usage extends Common
                     && $usageGroupBy !== 'none'
                 ) {
                     $meChartCategories = array();
-                    if (isset($meChart['layout']['xaxis']['ticktext'])) {
-                        $meChartCategories = $meChart['layout']['xaxis']['ticktext'];
-                    }
-                    if (isset($meChart['layout']['yaxis']['ticktext'])) {
-                        $meChartCategories = $meChart['layout']['yaxis']['ticktext'];
+                    foreach (['x', 'y'] as $axis) {
+                        if (isset($meChart['layout'][$axis . 'axis']['ticktext'])) {
+                            $meChartCategories = $meChart['layout'][$axis . 'axis']['ticktext'];
+                        }
                     }
                     $usageChartCategories = array();
                     $currentCategoryRank = $usageOffset + 1;
                     foreach ($meChartCategories as $meChartCategory) {
                         if (!empty($meChartCategory)) {
-                            if ($usageChartSettings['combine_type'] == 'stack' || $usageChartSettings['combine_type'] == 'percent') {
-                                $stackRank = $currentCategoryRank;
-                                $usageChartCategories[] = "${stackRank}. ${meChartCategory}";
-                            }
-                            else {
-                                $usageChartCategories[] = "${currentCategoryRank}. ${meChartCategory}";
-                            }
+                            $usageChartCategories[] = "${currentCategoryRank}. ${meChartCategory}";
                         }
                         else {
                             $usageChartCategories[] = '';
