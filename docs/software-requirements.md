@@ -90,6 +90,15 @@ start after a reboot unless you have configured them to do so.
 **NOTE**: APCu is optional, but highly recommended as it provides enhanced performance.
 
 ### Rocky 8+
+```sh
+dnf install -y epel-release
+
+dnf install -y httpd php php-cli php-mysqlnd php-gd php-pdo php-xml \
+            php-pear libreoffice nodejs \
+            mariadb-server mariadb cronie logrotate \
+            perl-Image-ExifTool php-mbstring php-pecl-apcu jq \
+            chromium-headless librsvg2-tools
+```
 
 **NOTE**: The nodejs version that is enabled by default in Rocky 8 is nodejs 10. Open
 XDMoD requires nodejs 16 which can be installed on Rocky 8 using the  nodejs 16 module
@@ -104,7 +113,7 @@ dnf module -y install nodejs:16
 need to run the following:
 ```shell
 dnf install -y php-devel
-pecl install mongodb
+pecl install mongodb-1.16.2
 echo "extension=mongodb.so" > /etc/php.d/40-mongodb.ini
 ```
 
