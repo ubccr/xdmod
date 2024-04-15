@@ -1,4 +1,4 @@
-#!/usr/bin/node
+#!/usr/bin/env node
 const puppeteer = require('puppeteer-core');
 const args = require('yargs').argv;
 
