@@ -104,6 +104,7 @@ class MetricExplorer extends Common
         $filename = substr($filename, 0, 250);
 
         $all_data_series = $this->getDataSeries();
+
         $data_series = array();
 
         // Discard disabled datasets.
@@ -119,6 +120,7 @@ class MetricExplorer extends Common
                 $data_series[] = $data_description;
             }
         }
+
         // Check that the user is allowed to view the datasets they have
         // requested. If they are not allowed to view any of them, throw an
         // exception indicating access is denied.
@@ -176,6 +178,7 @@ class MetricExplorer extends Common
             if ($show_title) {
                 $chart->setTitle($title, $font_size);
             }
+
             // Called before and after configure.
             $chart->setLegend($legend_location, $font_size);
             $chart->configure(
@@ -339,6 +342,7 @@ class MetricExplorer extends Common
                     "headers" => \DataWarehouse\ExportBuilder::getHeader($format),
                     "results" => $exportedDatas,
                 );
+
                 return $result;
             } // elseif($format === 'jsonstore')
 
@@ -360,6 +364,7 @@ class MetricExplorer extends Common
         if (!isset($this->request['data_series']) || empty($this->request['data_series'])) {
             return json_decode(0);
         }
+
         if (
             is_array($this->request['data_series'])
             && is_array($this->request['data_series']['data'])
@@ -478,6 +483,7 @@ class MetricExplorer extends Common
         if (!isset($this->request['x_axis']) || empty($this->request['x_axis'])) {
             return array();
         }
+
         if (is_array($this->request['x_axis'])) {
             $ret = new stdClass;
 
