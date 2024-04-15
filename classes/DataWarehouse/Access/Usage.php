@@ -720,7 +720,7 @@ class Usage extends Common
                 // Remove extraneous x-axis properties.
                 if ($meRequestIsTimeseries) {
                     unset($meChart['layout']['xaxis']['title']);
-                } else if ($usageChartSettings['display_type'] != 'h_bar'){
+                } elseif ($usageChartSettings['display_type'] != 'h_bar'){
                     unset($meChart['layout']['xaxis']['title']['text']);
                 }
 
