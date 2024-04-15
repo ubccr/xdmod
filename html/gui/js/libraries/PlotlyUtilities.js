@@ -540,5 +540,5 @@ function overrideLegendEvent(chartDiv) { // eslint-disable-line no-unused-vars
         }
     });
 
-    chartDiv.on('plotly_legenddoubleclick', (evt) => return false);
+    chartDiv.on('plotly_legenddoubleclick', (evt) => false);
 }
