@@ -29,6 +29,7 @@
     "topLegend": false,
     "adjustTitles": false,
     "relayoutChart": false,
-    "overrideLegendEvent": false
+    "overrideLegendEvent": false,
+    "lineSplit": false
   }
 }
