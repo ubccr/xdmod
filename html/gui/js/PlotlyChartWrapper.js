@@ -115,8 +115,8 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             }
         }
 
-        if (baseChartOptions.layout.annotations.length === 0 ||
-           (baseChartOptions.summary || baseChartOptions.dashboard || baseChartOptions.realmOverview)) {
+        if (baseChartOptions.layout.annotations.length === 0
+           || (baseChartOptions.summary || baseChartOptions.dashboard || baseChartOptions.realmOverview)) {
             return;
         }
 

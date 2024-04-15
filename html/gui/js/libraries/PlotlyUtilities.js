@@ -371,7 +371,7 @@ function adjustSubtitle(layout, subtitleIndex, legendTopCenter, firstRender) { /
         } else if (prevLineCount === update.subtitleLineCount) {
             update.chartUpdates['margin.t'] = 45 + subtitle_lines.length * 15;
         }
-    } 
+    }
 
     return update;
 }
@@ -419,8 +419,8 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
                 default:
             }
         }
-        
-        let isPie = chartDiv._fullData.length > 0 && chartDiv._fullData[0].type === 'pie'; 
+
+        const isPie = chartDiv._fullData.length > 0 && chartDiv._fullData[0].type === 'pie';
 
         const subtitleUpdates = adjustSubtitle(chartDiv._fullLayout, subtitleIndex, topCenter, firstRender);
         update = subtitleUpdates.chartUpdates;
@@ -450,11 +450,9 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
         }
 
         const marginBottom = chartDiv._fullLayout._size.b;
-        let pieChartYShift = 0;
         let pieChartXShift = 0;
-        let exportShift = isExport ? 30 : 0;
+        const exportShift = isExport ? 30 : 0;
         if (isPie) {
-            pieChartYShift = subtitleUpdates.subtitleLineCount > 0 ? 30 : 0;
             pieChartXShift = subtitleUpdates.subtitleLineCount > 0 ? 2 : 1;
         }
 
@@ -542,7 +540,5 @@ function overrideLegendEvent(chartDiv) { // eslint-disable-line no-unused-vars
         }
     });
 
-    chartDiv.on('plotly_legenddoubleclick', (evt, doubleClick) => {
-        return false;
-    });
+    chartDiv.on('plotly_legenddoubleclick', (evt) => return false);
 }

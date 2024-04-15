@@ -28,6 +28,7 @@
     "getClickedPoint": false,
     "topLegend": false,
     "adjustTitles": false,
-    "relayoutChart": false
+    "relayoutChart": false,
+    "overrideLegendEvent" false
   }
 }

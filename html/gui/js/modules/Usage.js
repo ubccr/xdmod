@@ -2754,7 +2754,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                                 XDMoD.Module.Usage.drillChart(point, drillInfo.drilldowns, drillInfo.groupUnit, drillId, label, 'none', 'tg_usage', drillInfo.realm);
                             });
-                            
+
                             overrideLegendEvent(chartDiv);
                         }, this); //task
 
