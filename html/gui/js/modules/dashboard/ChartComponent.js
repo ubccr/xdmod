@@ -148,7 +148,9 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
 
         this.items = [new CCR.xdmod.ui.PlotlyPanel({
             credits: false,
-            chartOptions: {},
+            baseChartOptions: {
+                dashboard: true
+            },
             store: this.store,
             listeners: {
                 render: function (panel) {

@@ -108,7 +108,9 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
 
                         var win; // Window to display the chart
                         this.tmpHpc = new CCR.xdmod.ui.PlotlyPanel({
-                            chartOptions: {},
+                            chartOptions: {
+                                dashboard: true
+                            },
                             store: new CCR.xdmod.CustomJsonStore({
                                 autoDestroy: true,
                                 root: 'data',

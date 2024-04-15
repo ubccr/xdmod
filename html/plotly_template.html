@@ -8,7 +8,6 @@
         <style type="text/css">html,body{margin:0px;height:100%;}</style>
         <script type="text/javascript" src="_html_dir_/gui/lib/jquery/jquery-1.12.4.min.js"></script>
         <script type="text/javascript" src="_html_dir_/gui/js/StringExtensions.js"></script>
-
         <script type="text/javascript" src="_html_dir_/gui/lib/moment/moment.min.js"></script>
         <script type="text/javascript" src="_html_dir_/gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
         <script type="text/javascript" src="_html_dir_/gui/lib/plotly/plotly-2.29.1.min.js"></script>
@@ -126,8 +125,7 @@
                 if (chartOptions.layout.annotations.length === 0){
                     return;
                 }
-
-                const update = relayoutChart(chartDiv, true, chartOptions.layout.height);
+                const update = relayoutChart(chartDiv, chartOptions.layout.height, true, true);
                 Plotly.relayout('container', update);
 
             });

@@ -2590,7 +2590,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 const chartDiv = document.getElementById(this.chartId);
                 if (chartDiv) {
                     Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
-                    const update = relayoutChart(chartDiv, false, adjHeight);
+                    const update = relayoutChart(chartDiv, adjHeight, false);
                     Plotly.relayout(this.chartId, update);
                 }
             }
@@ -2754,69 +2754,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                                 XDMoD.Module.Usage.drillChart(point, drillInfo.drilldowns, drillInfo.groupUnit, drillId, label, 'none', 'tg_usage', drillInfo.realm);
                             });
-
-                            chartDiv.on('plotly_legendclick', (evt) => {
-                                // First check if all traces are hidden.
-                                // There is a bug with tick text manually set.
-                                // We need set tickmode to auto if so.
-                                const visibleData = evt.fullData.filter((trace) => trace.name !== 'gap connector' && trace.name !== 'area fix' && trace.visible === true);
-                                let tickType;
-                                let axisType;
-                                let dtick;
-                                if (evt.layout.swapXY) {
-                                    axisType = evt.layout.yaxis.type;
-                                    dtick = evt.layout.yaxis.dtick;
-                                } else {
-                                    axisType = evt.layout.xaxis.type;
-                                    dtick = evt.layout.xaxis.dtick;
-                                }
-                                if (axisType === 'date') {
-                                    if (dtick === CCR.xdmod.ui.dtickDay && evt.data[evt.curveNumber].x.length > 7) {
-                                        tickType = 'auto';
-                                    } else {
-                                        tickType = 'date';
-                                    }
-                                } else {
-                                    tickType = 'category';
-                                }
-                                if (visibleData.length === 1 && visibleData[0].index === evt.curveNumber && axisType === 'date') {
-                                    if (evt.layout.swapXY) {
-                                        Plotly.relayout(chartDiv, { 'yaxis.tickmode': 'auto' });
-                                    } else {
-                                        Plotly.relayout(chartDiv, { 'xaxis.tickmode': 'auto' });
-                                    }
-                                } else if (evt.layout.swapXY) {
-                                    Plotly.relayout(chartDiv, { 'yaxis.tickmode': tickType });
-                                } else {
-                                    Plotly.relayout(chartDiv, { 'xaxis.tickmode': tickType });
-                                }
-                                const { node } = evt;
-                                const nodeVisibility = evt.node.style.opacity;
-                                // Check for std err to update where the error bars go
-                                if (node.textContent.startsWith('Std Err:')) {
-                                    const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
-                                    if (nodeVisibility === '1') {
-                                        Plotly.update(chartDiv, { [errorBar]: false }, {}, [evt.curveNumber + 1]);
-                                    } else {
-                                        Plotly.update(chartDiv, { [errorBar]: true, visible: true }, {}, [evt.curveNumber + 1]);
-                                    }
-                                // Clicked on primary trace
-                                } else if (node.nextSibling) {
-                                    const sibling = node.nextSibling;
-                                    if (sibling.textContent.startsWith('Std Err:')) {
-                                        const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
-                                        if (sibling.style.opacity === '1') {
-                                            // Turning off primary trace so need to transfer error bars
-                                            if (nodeVisibility === '1') {
-                                                Plotly.update(chartDiv, { visible: 'legendonly' }, {}, [evt.curveNumber - 1]);
-                                            }
-                                        } else if (nodeVisibility === '0.5') {
-                                            Plotly.update(chartDiv, { [errorBar]: true }, {}, [evt.curveNumber]);
-                                            Plotly.update(chartDiv, { visible: true }, {}, [evt.curveNumber - 1]);
-                                        }
-                                    }
-                                }
-                            });
+                            
+                            overrideLegendEvent(chartDiv);
                         }, this); //task
 
                         task.delay(0);

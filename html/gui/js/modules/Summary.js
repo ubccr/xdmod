@@ -628,6 +628,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
                 credits: false,
                 baseChartOptions: {
+                    summary: true,
                     chart: {},
                     layout: {
                         width: portletWidth,

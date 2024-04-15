@@ -13,56 +13,6 @@
  */
 
 Ext.namespace('XDMoD.utils');
-/**
- * Determines if legend is located at the top of the chart.
- *
- * @param  {Object} layout - Plotly JS layout configuration object.
- * @return {boolean} if the legend is top center or not
- */
-function topLegend(layout) {
-    if (layout.legend) {
-        return (layout.legend.xanchor === 'center'
-                && layout.legend.yanchor === 'top'
-                && layout.legend.yref !== 'paper');
-    }
-    return false;
-}
-/**
- * Word wrap subtitle text and adjust margin depending
- * on legend location and subtitle length.
- *
- * @param  {Object} layout - Plotly JS layout configuration object
- * @return {Integer} subtitle text line count
- */
-function adjustTitles(layout) {
-    if (layout.annotations && layout.annotations.length === 0) {
-        return 0;
-    }
-    const subtitle = layout.annotations[1];
-    const len = subtitle.text.length;
-    let subtitleLineCount = 0;
-    if (len > 0) {
-        if (!layout.width) {
-            layout.width = 1000; // default width -- need for custom queries because the width is not set for some reason
-        }
-        let axWidth = layout.width - layout.margin.l - layout.margin.r;
-        if (layout.pieChart) {
-            axWidth = layout.width / 1.1;
-        }
-        const subtitle_lines = CCR.xdmod.ui.lineSplit(subtitle.text, Math.trunc(axWidth / 7.5));
-        layout.margin.t = 45 + (subtitle_lines.length * 15);
-        layout.annotations[1].text = subtitle_lines.join('<br />');
-        if (topLegend(layout)) {
-            layout.legend.y = 0.95 - (0.025 * subtitle_lines.length);
-            layout.annotations[1].yshift = (17 * subtitle_lines.length) * -1;
-        }
-        subtitleLineCount = subtitle_lines.length;
-    } else if (topLegend(layout)) {
-        layout.margin.t = 45 + 15;
-    }
-
-    return subtitleLineCount;
-}
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     const baseChartOptions = {};
@@ -165,11 +115,12 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             }
         }
 
-        if (baseChartOptions.layout.annotations.length === 0) {
+        if (baseChartOptions.layout.annotations.length === 0 ||
+           (baseChartOptions.summary || baseChartOptions.dashboard || baseChartOptions.realmOverview)) {
             return;
         }
 
-        const update = relayoutChart(chartDiv, true, baseChartOptions.layout.height);
+        const update = relayoutChart(chartDiv, baseChartOptions.layout.height, true);
         Plotly.relayout(baseChartOptions.renderTo, update);
     });
 

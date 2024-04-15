@@ -66,6 +66,11 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                         extDiv.fireEvent('afterrender', extDiv);
                     }
 
+                    if (this.chartOptions.summary || this.chartOptions.dashboard) {
+                        const chartDiv = document.getElementById(this.chartOptions.renderTo);
+                        overrideLegendEvent(chartDiv);
+                    }
+
                     if (this.chartOptions.metricExplorer) {
                         const chartDiv = document.getElementById(this.chartOptions.renderTo);
                         const metricDiv = document.getElementById(this.id);
@@ -261,7 +266,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                                 XDMoD.Module.MetricExplorer.titleContextMenu(evt.event);
                             }
                         });
-                    }
+                    } // end if metric explorer
                 }, this);
             }
         }, this, {

@@ -978,9 +978,13 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         const min = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
                         const max = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
                         if (min !== 0 || max !== null) {
-                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': [min, max], 'yaxis.autorange': false });
+                            if (swapXY) {
+                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'xaxis.range': [min, max], 'yaxis.autorange': false });
+                            } else {
+                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': [min, max], 'yaxis.autorange': false });
+                            }
                         } else {
-                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': [min, max], 'yaxis.autorange': true });
+                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.autorange': true });
                         }
                     }
                 });
@@ -6409,7 +6413,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             const chartDiv = document.getElementById(`plotly-panel${this.id}`);
             if (chartDiv) {
                 Plotly.relayout(`plotly-panel${this.id}`, { width: adjWidth, height: adjHeight });
-                const update = relayoutChart(chartDiv, false, adjHeight);
+                const update = relayoutChart(chartDiv, adjHeight, false);
                 Plotly.relayout(`plotly-panel${this.id}`, update);
             }
         } //onResize

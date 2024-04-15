@@ -307,7 +307,8 @@ class TimeseriesChart extends AggregateChart
                         'side' => 'left',
                         'anchor' => 'x',
                         'autoshift' => true,
-                        'gridwidth' => $yAxisCount > 1 ?0: 1 + ($font_size/8),
+                        'gridwidth' => $yAxisCount > 1 ? 0 : 1 + ($font_size/8),
+                        'gridcolor' => '#c0c0c0',
                         'zeroline' => false,
                     );
 
@@ -394,6 +395,7 @@ class TimeseriesChart extends AggregateChart
                         'linewidth' => 2 + $font_size / 4,
                         'linecolor' => '#c0d0e0',
                         'showgrid' => false,
+                        'gridcolor' => '#c0c0c0',
                         'zeroline' => false,
                     );
                      $this->_chart['layout']['xaxis'] = $xAxis;

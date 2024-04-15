@@ -106,7 +106,7 @@ require_once 'user_check.php';
   <!--[if lte IE 8]>
   <link rel="stylesheet" type="text/css" href="../gui/css/common_ie8.css" />
   <![endif]-->
-
+  <script type="text/javascript" src="../gui/lib/plotly/plotly-2.29.1.min.js"></script>
   <script type="text/javascript" src="../gui/js/PlotlyPanel.js"></script>
   <script type="text/javascript" src="../gui/js/PlotlyChartWrapper.js"></script>
   <link rel="stylesheet" type="text/css" href="../gui/css/ChartDragDrop.css" />

@@ -1,3 +1,18 @@
+/**
+ * Returns text wrapped by given width. Mainly used for subtitle
+ * text wrapping.
+ *
+ * @return {String} s - Subtitle text
+ * @return {Integer} wrapWidth - word wrap boundary
+ */
+function lineSplit(s, wrapWidth) { // eslint-disable-line no-unused-vars
+    return s.match(new RegExp(`([^\\n]{1,${wrapWidth}})(?=\\s|$)`, 'g'));
+}
+/**
+ * Returns object for default Plotly JS layout configuration
+ *
+ * @return {Object} layout - Plotly JS layout configuration
+ */
 function getDefaultLayout() { // eslint-disable-line no-unused-vars
     const layout = {
         hoverlabel: {
@@ -69,6 +84,11 @@ function getDefaultLayout() { // eslint-disable-line no-unused-vars
 
     return layout;
 }
+/**
+ * Returns Plotly JS layout configuration for charts with no data found
+ *
+ * @return {Object} errorLayout - Plotly JS layout configuration
+ */
 function getNoDataErrorConfig() { // eslint-disable-line no-unused-vars
     const errorLayout = {
         images: [
@@ -101,10 +121,11 @@ function getNoDataErrorConfig() { // eslint-disable-line no-unused-vars
 
     return errorLayout;
 }
-/* generateChartOptions - Generates data array and layout dict for Plotly Chart
- *                        ** Currently assumes that data is in format of a record returned in the JobViewer **
+/**
+ * generateChartOptions - Generates data array and layout dict for Plotly Chart
+ *                        Currently assumes that data is in format of a record returned in the JobViewer
  *
- * @param{dict} Record containing chart data
+ * @param  {Object} Record containing chart data
  *
  */
 function generateChartOptions(record, params) { // eslint-disable-line no-unused-vars
@@ -238,6 +259,14 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
 
     return { data, layout };
 }
+/**
+ * Returns array of axis layout keys for the axis that represents
+ * the range of the data
+ *
+ * @param  {Object} clickEvent - Plotly JS click event object.
+ * @param  {Array} traceDivs - Array of chart series svg elements
+ * @return {Object} point from Plotly JS click event
+ */
 function getClickedPoint(clickEvent, traceDivs) { // eslint-disable-line no-unused-vars
     if ((traceDivs && traceDivs.length === 0) || (clickEvent.points && clickEvent.points.length === 0)) {
         return null;
@@ -268,7 +297,13 @@ function getClickedPoint(clickEvent, traceDivs) { // eslint-disable-line no-unus
     };
     return findPoint(clickEvent, traceDivs);
 }
-
+/**
+ * Returns array of axis layout keys for the axis that represents
+ * the range of the data
+ *
+ * @param  {Object} layout - Plotly JS layout configuration object.
+ * @return {Array} multiAxes - Array of Plotly JS layout keys
+ */
 function getMultiAxisObjects(layout) { // eslint-disable-line no-unused-vars
     const multiAxes = [];
     const layoutKeys = Object.keys(layout);
@@ -283,25 +318,85 @@ function getMultiAxisObjects(layout) { // eslint-disable-line no-unused-vars
     }
     return multiAxes;
 }
+/**
+ * Determines if legend is located at the top of the chart.
+ *
+ * @param  {Object} layout - Plotly JS layout configuration object.
+ * @return {Boolean} If the legend is top center or not
+ */
+function topLegend(layout) {
+    if (layout.legend) {
+        return (layout.legend.xanchor === 'center'
+                && layout.legend.yanchor === 'top'
+                && layout.legend.yref !== 'paper');
+    }
+    return false;
+}
+/**
+ * Word wrap subtitle text and adjust margin depending
+ * on legend location and subtitle length.
+ *
+ * @param  {Object} layout - Plotly JS layout configuration object
+ * @param  {Integer} subtitleIndex - Index of subtitle annotation
+ * @param  {Boolean} legendTopCenter - Indicates if legend location is 'top_center'
+ * @param  {Boolean} firstRender - Indicates if is initial render or resize event
+ * @return {Object} update - Contains Plotly JS relayout updates and subtitle line count
+ */
+function adjustSubtitle(layout, subtitleIndex, legendTopCenter, firstRender) { // eslint-disable-line no-unused-vars
+    let prevLineCount = layout.annotations[1].text.match(/<br \/>/g);
+    if (!prevLineCount) {
+        prevLineCount = 1;
+    } else {
+        prevLineCount = prevLineCount.length;
+    }
+    const subtitle = layout.annotations[1].text.replace(/<br \/>/g, '');
+    const len = subtitle.length;
+    const update = { chartUpdates: {}, subtitleLineCount: 0 };
+    if (len > 0) {
+        if (!layout.width) {
+            layout.width = 1000; // default width -- need for custom queries because the width is not set for some reason
+        }
+        let axWidth = layout.width - layout.margin.l - layout.margin.r;
+        if (layout.pieChart) {
+            axWidth = layout.width / 1.1;
+        }
+        const subtitle_lines = lineSplit(subtitle, Math.trunc(axWidth / 7.5));
+        update.chartUpdates[`annotations[${subtitleIndex}].text`] = subtitle_lines.join('<br />');
+        if (legendTopCenter) {
+            update.chartUpdates['legend.y'] = 0.95 - (0.025 * subtitle_lines.length);
+        }
+        update.subtitleLineCount = subtitle_lines.length;
+        if (firstRender) {
+            update.chartUpdates['margin.t'] = 45 + subtitle_lines.length * 15;
+        } else if (prevLineCount === update.subtitleLineCount) {
+            update.chartUpdates['margin.t'] = 45 + subtitle_lines.length * 15;
+        }
+    } 
 
-function relayoutChart(chartDiv, firstRender, adjHeight) { // eslint-disable-line no-unused-vars
-    const update = {};
+    return update;
+}
+/**
+ * Configures the layout object passed to the Plotly.relayout function.
+ *
+ * @param  {Object} chartDiv - Plotly JS chart div.
+ * @param  {Integer} adjHeight - Height of chart at initial render or during resize event
+ * @param  {Boolean} firstRender - Indicates if is initial render or resize event
+ * @return {Object} update - Layout object passed to Plotly.relayout
+ */
+function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = false) { // eslint-disable-line no-unused-vars
+    let update = {};
     if (chartDiv._fullLayout.annotations.length > 0) {
         const topCenter = topLegend(chartDiv._fullLayout);
-        const subtitleLineCount = adjustTitles(chartDiv._fullLayout);
-        const marginTop = Math.min(chartDiv._fullLayout.margin.t, chartDiv._fullLayout._size.t);
         const marginRight = chartDiv._fullLayout._size.r;
         const marginLeft = chartDiv._fullLayout._size.l;
         const legendHeight = (topCenter && adjHeight > 550) ? chartDiv._fullLayout.legend._height : 0;
+        let marginTop = legendHeight === 0 ? Math.max(chartDiv._fullLayout.margin.t, chartDiv._fullLayout._size.t)
+                                    : Math.min(chartDiv._fullLayout.margin.t, chartDiv._fullLayout._size.t);
+        let extraShift = 0;
+
         const titleHeight = 31;
         const subtitleHeight = 15;
-        let creditsHeight = 0;
-        if (subtitleLineCount > 0) {
-            creditsHeight = (15 * subtitleLineCount);
-            if (topCenter) {
-                creditsHeight -= 15;
-            }
-        }
+
         let titleIndex = -1;
         let subtitleIndex = -1;
         let creditsIndex = -1;
@@ -324,35 +419,130 @@ function relayoutChart(chartDiv, firstRender, adjHeight) { // eslint-disable-lin
                 default:
             }
         }
+        
+        let isPie = chartDiv._fullData.length > 0 && chartDiv._fullData[0].type === 'pie'; 
+
+        const subtitleUpdates = adjustSubtitle(chartDiv._fullLayout, subtitleIndex, topCenter, firstRender);
+        update = subtitleUpdates.chartUpdates;
+
+        if (isPie && topCenter && subtitleUpdates.subtitleLineCount > 0) {
+            extraShift -= 10;
+        }
+
+        if (subtitleUpdates.subtitleLineCount > 0 && firstRender) {
+            marginTop = subtitleUpdates.chartUpdates['margin.t'];
+        }
+
+        if (topCenter && subtitleUpdates.subtitleLineCount === 0 && !isPie) {
+            extraShift += 15;
+        }
+
+        marginTop += extraShift;
+
         const titleYShift = (marginTop + legendHeight) - titleHeight;
 
         if (titleIndex !== -1) {
-            update[`annotations[${titleIndex}].yshift`] = titleYShift;
+            update[`annotations[${titleIndex}].yshift`] = subtitleUpdates.subtitleLineCount >= 3 ? titleYShift + 5 : titleYShift;
         }
 
         if (subtitleIndex !== -1) {
-            update[`annotations[${subtitleIndex}].yshift`] = titleYShift - (subtitleHeight * subtitleLineCount);
+            update[`annotations[${subtitleIndex}].yshift`] = titleYShift - (subtitleHeight * subtitleUpdates.subtitleLineCount);
         }
 
         const marginBottom = chartDiv._fullLayout._size.b;
-        const plotAreaHeight = chartDiv._fullLayout._size.h;
         let pieChartYShift = 0;
         let pieChartXShift = 0;
-        if (chartDiv._fullData.length > 0 && chartDiv._fullData[0].type === 'pie') {
-            pieChartYShift = subtitleLineCount > 0 ? 30 : 0;
-            pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
+        let exportShift = isExport ? 30 : 0;
+        if (isPie) {
+            pieChartYShift = subtitleUpdates.subtitleLineCount > 0 ? 30 : 0;
+            pieChartXShift = subtitleUpdates.subtitleLineCount > 0 ? 2 : 1;
         }
 
-        const shiftYDown = firstRender ? (plotAreaHeight + marginBottom) * -1 + creditsHeight - pieChartYShift
-                                       : (plotAreaHeight + marginBottom) * -1;
+        const shiftYDown = marginBottom * -1;
         if (creditsIndex !== -1) {
             update[`annotations[${creditsIndex}].yshift`] = shiftYDown;
-            update[`annotations[${creditsIndex}].xshift`] = marginRight - pieChartXShift;
+            update[`annotations[${creditsIndex}].xshift`] = marginRight - pieChartXShift - exportShift;
         }
         if (restrictedIndex !== -1) {
            update[`annotations[${restrictedIndex}].yshift`] = shiftYDown;
-           update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift) * -1;
+           update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift - exportShift) * -1;
         }
     }
     return update;
+}
+/**
+ * Changes Plotly JS legend_click and legend_doubleclick functionality.
+ * Disables legend_doubleclick event. Overrides legend_click
+ * to correctly hide Std Err traces when hiding traces and adjust axis
+ * tickmode due to Plotly JS bug with custom ticktext.
+ *
+ * @param  {Object} chartDiv - Plotly JS chart div.
+ */
+function overrideLegendEvent(chartDiv) { // eslint-disable-line no-unused-vars
+    chartDiv.on('plotly_legendclick', (evt) => {
+        // First check if all traces are hidden.
+        // There is a bug with tick text manually set.
+        // We need set tickmode to auto if so.
+        const visibleData = evt.fullData.filter((trace) => trace.name !== 'gap connector' && trace.name !== 'area fix' && trace.visible === true);
+        let tickType;
+        let axisType;
+        let dtick;
+        if (evt.layout.swapXY) {
+            axisType = evt.layout.yaxis.type;
+            dtick = evt.layout.yaxis.dtick;
+        } else {
+            axisType = evt.layout.xaxis.type;
+            dtick = evt.layout.xaxis.dtick;
+        }
+        if (axisType === 'date') {
+            if (dtick === CCR.xdmod.ui.dtickDay && evt.data[evt.curveNumber].x.length > 7) {
+                tickType = 'auto';
+            } else {
+                tickType = 'date';
+            }
+        } else {
+            tickType = 'category';
+        }
+        if (visibleData.length === 1 && visibleData[0].index === evt.curveNumber && axisType === 'date') {
+            if (evt.layout.swapXY) {
+                Plotly.relayout(chartDiv, { 'yaxis.tickmode': 'auto' });
+            } else {
+                Plotly.relayout(chartDiv, { 'xaxis.tickmode': 'auto' });
+            }
+        } else if (evt.layout.swapXY) {
+            Plotly.relayout(chartDiv, { 'yaxis.tickmode': tickType });
+        } else {
+            Plotly.relayout(chartDiv, { 'xaxis.tickmode': tickType });
+        }
+        const { node } = evt;
+        const nodeVisibility = evt.node.style.opacity;
+        // Check for std err to update where the error bars go
+        if (node.textContent.startsWith('Std Err:')) {
+            const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
+            if (nodeVisibility === '1') {
+                Plotly.update(chartDiv, { [errorBar]: false }, {}, [evt.curveNumber + 1]);
+            } else {
+                Plotly.update(chartDiv, { [errorBar]: true, visible: true }, {}, [evt.curveNumber + 1]);
+            }
+        // Clicked on primary trace
+        } else if (node.nextSibling) {
+            const sibling = node.nextSibling;
+            if (sibling.textContent.startsWith('Std Err:')) {
+                const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
+                if (sibling.style.opacity === '1') {
+                    // Turning off primary trace so need to transfer error bars
+                    if (nodeVisibility === '1') {
+                        Plotly.update(chartDiv, { visible: 'legendonly' }, {}, [evt.curveNumber - 1]);
+                    }
+                } else if (nodeVisibility === '0.5') {
+                    Plotly.update(chartDiv, { [errorBar]: true }, {}, [evt.curveNumber]);
+                    Plotly.update(chartDiv, { visible: true }, {}, [evt.curveNumber - 1]);
+                }
+            }
+        }
+    });
+
+    chartDiv.on('plotly_legenddoubleclick', (evt, doubleClick) => {
+        return false;
+    });
 }
