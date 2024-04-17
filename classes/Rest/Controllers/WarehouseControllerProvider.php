@@ -1908,11 +1908,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $columns = array('Time');
         $ndatapoints = 0;
-        foreach ($data['data'] as $series) {
-            if (isset($series['chartSeries']) && isset($series['chartSeries']['dtype'])) {
+        foreach ($data['series'] as $series) {
+            if (isset($series['dtype'])) {
                 $columns[] = $series['name'];
                 if ($ndatapoints === 0) {
-                    $ndatapoints = count($series['x']);
+                    $ndatapoints = count($series['data']);
                 }
             }
         }
@@ -1920,12 +1920,12 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         for ($i = 0; $i < $ndatapoints; $i++) {
             $outline = array();
-            foreach ($data['data'] as $series) {
-                if (isset($series['chartSeries']) && isset($series['chartSeries']['dtype'])) {
+            foreach ($data['series'] as $series) {
+                if (isset($series['dtype'])) {
                     if (count($outline) === 0) {
-                        $outline[] = isset($series['x'][$i]) ? $series['x'][$i] : $series['x'][0];
+                        $outline[] = isset($series['data'][$i]['x']) ? $series['data'][$i]['x'] : $series['data'][$i][0];
                     }
-                    $outline[] = isset($series['y'][$i]) ? $series['y'][$i] : $series['y'][1];
+                    $outline[] = isset($series['data'][$i]['y']) ? $series['data'][$i]['y'] : $series['data'][$i][1];
                 }
             }
             fputcsv($fp, $outline);
