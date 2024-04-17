@@ -1046,11 +1046,12 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 // Plotly doesn't accept unix timestamps therefore
                 // we need to grab the raw timestamp stored on the data object.
                 if (point.data.seriesData) {
-                    point.data.seriesData.forEach((seriesObj) => {
-                        if (seriesObj.y === point.y) {
-                            pointSelected = seriesObj.x;
+                    for (let pointIndex = 0; pointIndex < point.data.seriesData.length; pointIndex++) {
+                        if (point.data.seriesData[pointIndex].y === point.y) {
+                            pointSelected = point.data.seriesData[pointIndex].x;
+                            break;
                         }
-                    });
+                    }
                 }
 
                 menu.addItem({
