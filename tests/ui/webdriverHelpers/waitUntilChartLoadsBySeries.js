@@ -8,7 +8,7 @@
 module.exports = function waitUntilChartLoadsBySeries(series, ms) {
     var timeOut = ms || 9000;
     return this.waitForVisible(
-    `//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]//*[name() = "g" and contains(@class, "g-ytitle")]/*[local-name() = "tspan" and text()[contains(., ${series})]]`,
+    `//*[local-name() = "svg"]//*[name() = "g" and contains(@class, "g-ytitle")]/*[local-name() = "tspan" and text()[contains(., ${series})]]`,
     timeOut
   );
 };
