@@ -77,7 +77,7 @@ toc:
         url: /dashboard.html
       - page: Data Analytics Framework
         url: /data-analytics-framework.html
-      - page: New Charting Library 
+      - page: New Charting Library
         url: /new-charting-library.html
   - title: Resource Manager Notes
     subfolderitems:
