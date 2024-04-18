@@ -71,9 +71,5 @@ Open XDMoD is an open source project released under the
 
 [lgpl3]: http://www.gnu.org/licenses/lgpl-3.0.txt
 
-<div markdown="1" class="non-commercial-notice">
-
-</div>
-
 [notices]:                       notices.html
 [cc-by-nc]:                      http://creativecommons.org/licenses/by-nc/3.0/legalcode
