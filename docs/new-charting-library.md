@@ -10,13 +10,14 @@ Some chart features have been changed, added, and removed in Open XDMoD 11.0.
 ### Features Changed
 The following chart features have changed.
 
-- Resetting the chart zoom for metric explorer charts appears in the chart context menus instead of a button on the chart. Resetting the chart zoom for charts in all other tabs now requires a double click on the plotting area instead of a button on the chart.
+- Resetting the chart zoom for Metric Explorer charts appears in the chart context menus instead of a button on the chart. Resetting the chart zoom for charts in all other tabs now requires a double click on the plotting area instead of a button on the chart.
 
 ### Features Added
 The following are new chart features available.
 
-- Zoom by both 'x' and 'y' axis
-- Draggable axis
+- The range for charts in the Metric Explorer can be reset to default through the axis context menu.
+- Charts can zoom by both 'x' and 'y' axis.
+- Chart axes are draggable to adjust chart range.
 
 ### Features Removed
 The following chart features are no longer available but are planned to be added back.
