@@ -9,82 +9,6 @@ function lineSplit(s, wrapWidth) { // eslint-disable-line no-unused-vars
     return s.match(new RegExp(`([^\\n]{1,${wrapWidth}})(?=\\s|$)`, 'g'));
 }
 /**
- * Returns object for default Plotly JS layout configuration
- *
- * @return {Object} layout - Plotly JS layout configuration
- */
-function getDefaultLayout() { // eslint-disable-line no-unused-vars
-    const layout = {
-        hoverlabel: {
-            bgcolor: '#ffffff'
-        },
-        xaxis: {
-            titlefont: {
-                family: 'Open-Sans, verdana, arial, sans-serif',
-                size: 12,
-                color: '#5078a0'
-            },
-            color: '#606060',
-            ticks: 'outside',
-            tickcolor: '#c0cfe0',
-            tickfont: {
-                size: 11
-            },
-            linecolor: '#c0cfe0',
-            automargin: true,
-            showgrid: false
-        },
-        yaxis: {
-            titlefont: {
-                family: 'Open-Sans, verdana, arial, sans-serif',
-                size: 12,
-                color: '#5078a0'
-            },
-            color: '#606060',
-            showline: false,
-            zeroline: false,
-            gridcolor: '#d8d8d8',
-            automargin: true,
-            ticks: 'outside',
-            tickcolor: '#ffffff',
-            tickfont: {
-                size: 11
-            },
-            seperatethousands: true
-        },
-        title: {
-            font: {
-                family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
-                color: '#444b6e',
-                size: 16
-            }
-        },
-        annotations: [{
-            text: '. Powered by XDMoD/Plotly JS',
-            font: {
-                color: '#909090',
-                size: 10,
-                family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
-            },
-            xref: 'paper',
-            yref: 'paper',
-            xanchor: 'right',
-            yanchor: 'bottom',
-            x: 1,
-            y: 0,
-            yshift: -80,
-            showarrow: false
-        }],
-        hovermode: 'closest',
-        showlegend: false,
-        margin: {
-            t: 50
-        }
-    };
-
-    return layout;
-}
-/**
  * Returns Plotly JS layout configuration for charts with no data found
  *
  * @return {Object} errorLayout - Plotly JS layout configuration
@@ -213,29 +137,56 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
         }
     }
 
-    var layout = {
+    const layout = {
+        hoverlabel: {
+            bgcolor: '#ffffff'
+        },
         xaxis: {
-            title: `<b> Time (${record.data.schema.timezone}) </b>`,
-            titlefont: {
-                size: axisTitleFontSize
+            title: { 
+                text: `<b> Time (${record.data.schema.timezone}) </b>`,
+                font: {
+                    family: 'Open-Sans, verdana, arial, sans-serif',
+                    size: axisTitleFontSize,
+                    color: '#5078a0'
+                }
             },
+            color: '#606060',
+            ticks: 'outside',
+            tickcolor: '#c0cfe0',
             tickfont: {
                 size: axisLabelFontSize
-            }
+            },
+            linecolor: '#c0cfe0',
+            automargin: true,
+            showgrid: false
         },
         yaxis: {
-            title: `<b> ${record.data.schema.units} </b>`,
-            titlefont: {
-                size: axisTitleFontSize
+            title: {
+                text: `<b> ${record.data.schema.units} </b>`,
+                font: {
+                    family: 'Open-Sans, verdana, arial, sans-serif',
+                    size: axisTitleFontSize,
+                    color: '#5078a0'
+                }
             },
+            color: '#606060',
             range: [0, ymax + (ymax * 0.2)],
+            showline: false,
+            zeroline: false,
+            gridcolor: '#d8d8d8',
+            automargin: true,
+            ticks: 'outside',
+            tickcolor: '#ffffff',
             tickfont: {
                 size: axisLabelFontSize
-            }
+            },
+            seperatethousands: true
         },
         title: {
             text: record.data.schema.description,
             font: {
+                family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif',
+                color: '#444b6e',
                 size: mainTitleFontSize
             }
         },
@@ -254,7 +205,12 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             y: 0,
             yshift: -80,
             showarrow: false
-        }]
+        }],
+        hovermode: 'closest',
+        showlegend: false,
+        margin: {
+            t: 50
+        }
     };
 
     return { data, layout };
