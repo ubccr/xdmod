@@ -142,7 +142,7 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             bgcolor: '#ffffff'
         },
         xaxis: {
-            title: { 
+            title: {
                 text: `<b> Time (${record.data.schema.timezone}) </b>`,
                 font: {
                     family: 'Open-Sans, verdana, arial, sans-serif',
