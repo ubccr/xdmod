@@ -82,7 +82,7 @@
             },
             {
                 "name": "normalization_factor",
-                "type": "decimal(8,4)",
+                "type": "decimal(10,4)",
                 "nullable": true,
                 "default": 1,
                 "comment": "Normalization factor for a resource. This helps compare capacity across resources"
