@@ -8,7 +8,7 @@
 # Parse command line arguments
 #
 
-ARGS=$(getopt -o "b:d:x:h" -l "builddir:,destdir:,xsede,help" -n "build_user_manual" -- "$@");
+ARGS=$(getopt -o "b:d:xh" -l "builddir:,destdir:,xsede,help" -n "build_user_manual" -- "$@");
 
 eval set -- "$ARGS";
 
@@ -27,16 +27,14 @@ while true; do
 		fi
 		;;
 	-x|--xsede)
-		if [ -n "$2" ]; then
-			MANUAL_VERSION="XSEDE"
-			shift 2
-		fi
+		MANUAL_VERSION="XSEDE"
+		shift
 		;;
 	-h|--help)
-		echo "Usage: $0 \\" >&2
-		echo "  [-x|--xsede ]: Build XSEDE version of the user manual [$MANUAL_VERSION] \\" >&2
+		echo "Usage: $0" >&2
 		echo "  [-b|--builddir dir] : Directory where the manual will be built [$BASE_BUILD_DIR]" >&2
 		echo "  [-d|--destdir dir] : Directory that the tarball will unpack into [$DEST_DIR]" >&2
+		echo "  [-x|--xsede ]: Build XSEDE version of the user manual" >&2
 		echo "  [-h|--help] : Display this help" >&2
 		exit 1
 		;;
