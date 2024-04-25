@@ -2,6 +2,8 @@
 
 namespace IntegrationTests\Rest;
 
+use IntegrationTests\TestHarness\XdmodTestHelper;
+
 class ReportThumbnailsTest extends \PHPUnit_Framework_TestCase
 {
     protected static $helpers = array();
@@ -9,7 +11,7 @@ class ReportThumbnailsTest extends \PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         foreach (array('cd', 'cs') as $user) {
-            self::$helpers[$user] = new \TestHarness\XdmodTestHelper();
+            self::$helpers[$user] = new XdmodTestHelper();
             if ($user != 'pub') {
                 self::$helpers[$user]->authenticate($user);
             }

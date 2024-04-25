@@ -4,6 +4,12 @@
         "engine": "InnoDB",
         "columns": [
             {
+                "name": "resourcespec_id",
+                "type": "int(11)",
+                "nullable": false,
+                "extra": "auto_increment"
+            },
+            {
                 "name": "resource_id",
                 "type": "int(11)",
                 "nullable": false
@@ -19,17 +25,42 @@
                 "nullable": true
             },
             {
-                "name": "processors",
+                "name": "start_day_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "end_day_id",
                 "type": "int(11)",
                 "nullable": true
             },
             {
-                "name": "q_nodes",
+                "name": "cpu_processor_count",
                 "type": "int(11)",
                 "nullable": true
             },
             {
-                "name": "q_ppn",
+                "name": "cpu_node_count",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "cpu_processor_count_per_node",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "gpu_processor_count",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "gpu_node_count",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "gpu_processor_count_per_node",
                 "type": "int(11)",
                 "nullable": true
             },
@@ -39,9 +70,28 @@
                 "nullable": true
             },
             {
+                "name": "su_available_per_day",
+                "type": "int(10) unsigned",
+                "nullable": true,
+                "comment": "Total number of SU's available per day"
+            },
+            {
+                "name": "normalization_factor",
+                "type": "decimal(10,4)",
+                "nullable": true,
+                "comment": "Normalization factor for a resource. This helps compare capacity across resources"
+            },
+            {
                 "name": "name",
                 "type": "varchar(200)",
                 "nullable": true
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "nullable": false,
+                "default": "CURRENT_TIMESTAMP",
+                "extra": "on update CURRENT_TIMESTAMP"
             }
         ],
         "indexes": [
@@ -52,6 +102,13 @@
                     "start_date_ts"
                 ],
                 "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "increment_key",
+                "columns": [
+                    "resourcespec_id"
+                ],
                 "is_unique": true
             },
             {

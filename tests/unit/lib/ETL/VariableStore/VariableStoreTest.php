@@ -7,7 +7,7 @@
  *
  */
 
-namespace UnitTesting\ETL\VariableStore;
+namespace UnitTests\ETL\VariableStore;
 
 use ETL\VariableStore;
 

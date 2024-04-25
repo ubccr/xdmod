@@ -5,11 +5,16 @@
     "source_query": {
         "records": {
             "resource_id": "r.resource_id",
-            "start_date_ts": "IF(ISNULL(rs.start_date), 0, UNIX_TIMESTAMP(rs.start_date))",
-            "end_date_ts": "IF(ISNULL(rs.end_date), NULL, UNIX_TIMESTAMP(CONCAT(rs.end_date, ' 23:59:59')))",
-            "node_count": "rs.nodes",
-            "cpu_count": "rs.processors",
-            "cpu_count_per_node": "rs.ppn",
+            "start_date_ts": "UNIX_TIMESTAMP(rs.start_date)",
+            "end_date_ts": "IF(ISNULL(rs.end_date), UNIX_TIMESTAMP(CONCAT(CURRENT_DATE(), ' 23:59:59')), UNIX_TIMESTAMP(CONCAT(rs.end_date, ' 23:59:59')))",
+            "cpu_node_count": "rs.cpu_node_count",
+            "cpu_processor_count": "rs.cpu_processor_count",
+            "cpu_processor_count_per_node": "rs.cpu_processor_count_per_node",
+            "gpu_node_count": "rs.gpu_node_count",
+            "gpu_processor_count": "rs.gpu_processor_count",
+            "gpu_processor_count_per_node": "rs.gpu_processor_count_per_node",
+            "su_available_per_day": "rs.su_available_per_day",
+            "normalization_factor": "rs.normalization_factor",
             "comments": "rs.comments"
         },
         "joins": [

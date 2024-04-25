@@ -7,11 +7,11 @@ use CCR\Json;
 use Models\Acl;
 use Models\Services\Users;
 use ReflectionClass;
-use TestHarness\UserHelper;
+use IntegrationTests\TestHarness\UserHelper;
 use \XDUser;
 use Models\Services\Acls;
 use \Exception;
-use TestHarness\TestFiles;
+use IntegrationTests\TestHarness\TestFiles;
 
 /**
  * modify the isDeveloper function.

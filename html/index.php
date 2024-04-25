@@ -41,11 +41,12 @@ if ($userLoggedIn) {
         // TODO: Refactor generic catch block below to handle specific exceptions,
         //       which would allow this block to be removed.
         throw $see;
+    } catch (PDOException $e) {
+        xd_web_message\displayMessage('XDMoD is currently experiencing a temporary outage.', 'Status: session=true code=' . $e->getCode(), true);
+        exit;
     } catch (Exception $e) {
-
         xd_web_message\displayMessage('There was a problem initializing your account.', $e->getMessage(), true);
         exit;
-
     }
 
     if (!isset($user) || !isset($_SESSION['session_token'])) {
@@ -76,7 +77,12 @@ if ($userLoggedIn) {
         $_SESSION['public_session_token'] = 'public-' . microtime(true) . '-' . uniqid();
     }
 
-    $user = XDUser::getPublicUser();
+    try {
+        $user = XDUser::getPublicUser();
+    } catch (PDOException $e) {
+        xd_web_message\displayMessage('XDMoD is currently experiencing a temporary outage.', 'Status: session=false code=' . $e->getCode(), true);
+        exit;
+    }
 }
 
 $page_title = xd_utilities\getConfiguration('general', 'title');

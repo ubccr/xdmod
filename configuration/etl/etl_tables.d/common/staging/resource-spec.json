@@ -31,29 +31,61 @@
                 "comment": "Resource specifications end date"
             },
             {
-                "name": "nodes",
+                "name": "cpu_node_count",
                 "type": "int(10) unsigned",
                 "nullable": false,
-                "comment": "Number of nodes in resource"
+                "comment": "Number of CPU nodes in resource"
             },
             {
-                "name": "processors",
+                "name": "cpu_processor_count",
                 "type": "int(10) unsigned",
                 "nullable": false,
-                "comment": "Number of processors/cores in resource"
+                "comment": "Number of CPU processors/cores in resource"
             },
             {
-                "name": "ppn",
+                "name": "cpu_processor_count_per_node",
                 "type": "int(10) unsigned",
                 "nullable": true,
                 "default": null,
-                "comment": "Number of processors per node in resource"
+                "comment": "Number of CPU processors per node in resource"
+            },
+            {
+                "name": "gpu_node_count",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "Number of GPU nodes in resource"
+            },
+            {
+                "name": "gpu_processor_count",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "Number of GPU processors/cores in resource"
+            },
+            {
+                "name": "gpu_processor_count_per_node",
+                "type": "int(10) unsigned",
+                "nullable": true,
+                "default": null,
+                "comment": "Number of GPU processors per node in resource"
             },
             {
                 "name": "percent_allocated",
                 "type": "int(10) unsigned",
                 "nullable": true,
                 "comment": "Percentage of resource to include in utilization metric calculation"
+            },
+            {
+                "name": "su_available_per_day",
+                "type": "int(10) unsigned",
+                "nullable": true,
+                "comment": "Total number of SU's available per day"
+            },
+            {
+                "name": "normalization_factor",
+                "type": "decimal(10,4)",
+                "nullable": true,
+                "default": 1,
+                "comment": "Normalization factor for a resource. This helps compare capacity across resources"
             },
             {
                 "name": "comments",

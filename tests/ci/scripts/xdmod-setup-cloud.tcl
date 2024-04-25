@@ -9,8 +9,8 @@
 set resources [list]
 
 # Cloud Resources
-lappend resources [list openstack OpenStack cloud 123 234]
-lappend resources [list nutsetters NutSetters cloud 123 234]
+lappend resources [list openstack OpenStack cloud cpu 2018-04-18 123 234]
+lappend resources [list nutsetters NutSetters cloud cpu 2019-06-26 123 234]
 
 #-------------------------------------------------------------------------------
 
@@ -32,8 +32,10 @@ foreach resource $resources {
 	provideInput {Resource Name:} [lindex $resource 0]
 	provideInput {Formal Name:} [lindex $resource 1]
 	provideInput {Resource Type*} [lindex $resource 2]
-	provideInput {How many nodes does this resource have?} [lindex $resource 3]
-	provideInput {How many total processors (cpu cores) does this resource have?} [lindex $resource 4]
+	provideInput {Resource Allocation Type*} [lindex $resource 3]
+	provideInput {Resource Start Date, in YYYY-mm-dd format*} [lindex $resource 4]
+	provideInput {How many CPU nodes does this resource have?} [lindex $resource 5]
+	provideInput {How many total CPU processors (cpu cores) does this resource have?} [lindex $resource 6]
 }
 
 selectMenuOption s

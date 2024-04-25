@@ -4,8 +4,8 @@ namespace IntegrationTests\Controllers;
 
 use CCR\Json;
 use Exception;
-use TestHarness\XdmodTestHelper;
-use TestHarness\PeopleHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\PeopleHelper;
 use IntegrationTests\BaseTest;
 
 abstract class BaseUserAdminTest extends BaseTest

@@ -1,0 +1,19 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/jobs/xdw/resource-allocation-type.json#/table_definition"
+    },
+    "source_query": {
+        "records": {
+            "resource_allocation_type_id": "rat.resource_allocation_type_id",
+            "resource_allocation_type_description": "rat.resource_allocation_type_description",
+            "resource_allocation_type_abbrev": "rat.resource_allocation_type_abbrev"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_resource_allocation_types",
+                "alias": "rat"
+            }
+        ]
+    }
+}

@@ -6,7 +6,7 @@ use Models\Services\Organizations;
 use Silex\Application;
 use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\Request;
-use DataWarehouse\Query\Exceptions\BadRequestException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use XDUser;
 use Rest\Utilities\Authentication;
 
@@ -36,11 +36,11 @@ class AdminControllerProvider extends BaseControllerProvider
         $selected_user = XDUser::getUserByID($this->getIntParam($request, 'uid', true));
 
         if ($selected_user === null) {
-            throw new BadRequestException('User not found');
+            throw new BadRequestHttpException('User not found');
         }
 
         if (!in_array($viewedTour, [0,1])) {
-            throw new BadRequestException('Invalid data parameter');
+            throw new BadRequestHttpException('Invalid data parameter');
         }
 
         $storage = new \UserStorage($selected_user, 'viewed_user_tour');

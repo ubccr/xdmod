@@ -1,8 +1,9 @@
 <?php
 
-namespace IntegrationTests\REST\Warehouse;
+namespace IntegrationTests\Rest;
 
 use IntegrationTests\BaseTest;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class JobViewerTest extends BaseTest
 {
@@ -11,7 +12,7 @@ class JobViewerTest extends BaseTest
     public function setUp()
     {
         $xdmodConfig = array( 'decodetextasjson' => true );
-        $this->xdmodhelper = new \TestHarness\XdmodTestHelper($xdmodConfig);
+        $this->xdmodhelper = new XdmodTestHelper($xdmodConfig);
     }
 
     private static function getDimensions() {
@@ -72,7 +73,7 @@ class JobViewerTest extends BaseTest
 
     public function dimensionsProvider()
     {
-        $xdmodhelper = new \TestHarness\XdmodTestHelper(array('decodetextasjson' => true));
+        $xdmodhelper = new XdmodTestHelper(array('decodetextasjson' => true));
         $xdmodhelper->authenticate('cd');
 
         $testCases = array();
@@ -272,7 +273,7 @@ class JobViewerTest extends BaseTest
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $xdmodhelper = new \TestHarness\XdmodTestHelper(array('decodetextasjson' => true));
+        $xdmodhelper = new XdmodTestHelper(array('decodetextasjson' => true));
         $xdmodhelper->authenticate('cd');
 
         $tests = array();
