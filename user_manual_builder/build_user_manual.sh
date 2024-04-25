@@ -8,7 +8,7 @@
 # Parse command line arguments
 #
 
-ARGS=$(getopt -o "b:d:v:h" -l "builddir:,destdir:,version:,help" -n "build_user_manual" -- "$@");
+ARGS=$(getopt -o "b:d:x:h" -l "builddir:,destdir:,xsede,help" -n "build_user_manual" -- "$@");
 
 eval set -- "$ARGS";
 
@@ -26,15 +26,15 @@ while true; do
 			shift 2
 		fi
 		;;
-	-v|--version)
+	-x|--xsede)
 		if [ -n "$2" ]; then
-			MANUAL_VERSION=$2
+			MANUAL_VERSION="XSEDE"
 			shift 2
 		fi
 		;;
 	-h|--help)
 		echo "Usage: $0 \\" >&2
-		echo "  -v|--version manual_version : Manual version to be linked (Open or XSEDE) [$MANUAL_VERSION] \\" >&2
+		echo "  [-x|--xsede ]: Build XSEDE version of the user manual [$MANUAL_VERSION] \\" >&2
 		echo "  [-b|--builddir dir] : Directory where the manual will be built [$BASE_BUILD_DIR]" >&2
 		echo "  [-d|--destdir dir] : Directory that the tarball will unpack into [$DEST_DIR]" >&2
 		echo "  [-h|--help] : Display this help" >&2
@@ -48,8 +48,8 @@ done
 # Verify arguments
 #
 
-if [ -z "$BASE_BUILD_DIR" ] || [ -z "$DEST_DIR" ] || [ -z "$MANUAL_VERSION" ]; then
-	echo "Must specify build_dir, dest_dir and manual_version" >&2
+if [ -z "$BASE_BUILD_DIR" ] || [ -z "$DEST_DIR" ]; then
+	echo "Must specify build directory and destination directory" >&2
 	exit 1
 elif [ ! -d "$BASE_BUILD_DIR" ]; then
 	mkdir -p $BASE_BUILD_DIR
@@ -57,13 +57,14 @@ elif [ ! -d "$BASE_BUILD_DIR" ]; then
 		echo "Error creating base build directory: '$BASE_BUILD_DIR'" >&2
 		exit 1
 	fi
-elif [ "$MANUAL_VERSION" != "XSEDE" ] && [ "$MANUAL_VERSION" != "Open" ]; then
-	echo "Must input either Open or XSEDE for manual version"
-	exit 1
+fi
+
+if [ -z "$MANUAL_VERSION" ]; then
+    MANUAL_VERSION="Open"
 fi
 
 #
-# Format the manual
+# Format the manual for building
 #
 
 cp $BASE_BUILD_DIR/index.rst.in $BASE_BUILD_DIR/index.rst
@@ -78,7 +79,8 @@ fi
 sed -i "s/copyright = '/copyright = '$(date +'%Y')/g" "$BASE_BUILD_DIR/conf.py"
 
 # Update version number
-sed -i "s/release = ''/release = '$(jq -r '.version' open_xdmod/modules/xdmod/build.json)'/g" "$BASE_BUILD_DIR/conf.py"
+XDMOD_VERSION=$(jq -r '.version' open_xdmod/modules/xdmod/build.json)
+sed -i "s/release = ''/release = '$XDMOD_VERSION'/g" "$BASE_BUILD_DIR/conf.py"
 
 #
 # Build the manual
