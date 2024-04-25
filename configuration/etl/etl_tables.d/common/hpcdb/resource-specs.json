@@ -65,7 +65,7 @@
             },
             {
                 "name": "normalization_factor",
-                "type": "int(10) unsigned",
+                "type": "decimal(10,4)",
                 "nullable": true,
                 "comment": "Normalization factor for a resource. This helps compare capacity across resources"
             },
