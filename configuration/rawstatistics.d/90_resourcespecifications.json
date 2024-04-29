@@ -168,6 +168,14 @@
               "batchExport": true
           },
           {
+              "name": "Normalization Factor",
+              "tableAlias": "rs",
+              "column": "normalization_factor",
+              "group": "Administration",
+              "documentation": "The normalization factor for a resource. This helps compare capacity across resources",
+              "batchExport": true
+          },
+          {
               "name": "SUs Available",
               "tableAlias": "rs",
               "column": "su_available_per_day",
