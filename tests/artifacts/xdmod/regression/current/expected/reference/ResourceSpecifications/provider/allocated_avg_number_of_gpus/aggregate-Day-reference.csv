@@ -1,0 +1,10 @@
+title
+"Average Number of GPUs: Allocated (GPU Count): by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+"Service Provider","Average Number of GPUs: Allocated (GPU Count)"
+screw,7058.8235
+---------

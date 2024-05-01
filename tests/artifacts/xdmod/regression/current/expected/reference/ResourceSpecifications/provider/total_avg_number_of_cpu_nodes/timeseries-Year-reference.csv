@@ -1,0 +1,11 @@
+title
+"Average Number of CPU Nodes: Total: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Year,"[screw] Average Number of CPU Nodes: Total"
+2016,1040.0000
+2017,2000.0000
+---------

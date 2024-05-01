@@ -1,0 +1,11 @@
+title
+"Average Number of CPU Cores: Allocated (Core Count): by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Quarter,"[screw] Average Number of CPU Cores: Allocated (Core Count)"
+"2016 Q4",10400.0000
+"2017 Q1",20000.0000
+---------
