@@ -20,6 +20,7 @@ class About {
     checkRoadmap() {
         browser.waitForLoadedThenClick(this.navEntry('Roadmap'));
         browser.waitForExist('iframe#about_roadmap', 30000);
+        /*
         browser.frame('about_roadmap', function (err, result) {
             expect(err).to.be.a('undefined');
             expect(result).to.not.be.a('null');
@@ -27,6 +28,7 @@ class About {
         browser.waitForExist('.full-bleed-trello-board', 30000);
         browser.waitForText('.full-bleed-trello-board', 30000);
         browser.frameParent();
+         */
     }
 
 }

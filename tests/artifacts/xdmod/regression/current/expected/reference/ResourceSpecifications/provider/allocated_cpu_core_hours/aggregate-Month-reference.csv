@@ -1,0 +1,10 @@
+title
+"CPU Hours: Allocated: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+"Service Provider","CPU Hours: Allocated"
+screw,19872000.0000
+---------

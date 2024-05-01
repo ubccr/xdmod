@@ -81,6 +81,13 @@
                 "comment": "Total number of SU's available per day"
             },
             {
+                "name": "normalization_factor",
+                "type": "decimal(10,4)",
+                "nullable": true,
+                "default": 1,
+                "comment": "Normalization factor for a resource. This helps compare capacity across resources"
+            },
+            {
                 "name": "comments",
                 "type": "varchar(500)",
                 "nullable": true,
