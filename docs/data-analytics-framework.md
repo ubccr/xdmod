@@ -6,7 +6,7 @@ The XDMoD Data Analytics Framework provides REST API access to the XDMoD data wa
 
 ## Configuration
 
-The configuration settings for the Data Analytics Framework are set in the `portal_settings.ini` file.
+There is one configuration setting for the Data Analytics Framework in the `portal_settings.ini` file.
 
 ### API Token Expiration
 
@@ -15,15 +15,6 @@ The `expiration_interval` setting in the `api_token` section specifies how long 
 ```ini
 [api_token]
 expiration_interval = "6 months"
-```
-
-### Raw Data Request Limit
-
-REST requests for raw data are limited to a maximum number of rows per request. This is configured by the `rest_raw_row_limit` setting in the `datawarehouse` section. Note that the `xdmod-data` API is configured to make multiple requests until all rows are obtained, so this limit is transparent to the end user of the framework.
-
-```ini
-[datawarehouse]
-rest_raw_row_limit = "10000"
 ```
 
 ## API Token Generation

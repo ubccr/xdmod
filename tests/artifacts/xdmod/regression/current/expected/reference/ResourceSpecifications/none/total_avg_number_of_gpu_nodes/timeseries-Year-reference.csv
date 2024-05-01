@@ -1,0 +1,11 @@
+title
+"Average Number of GPU Nodes: Total"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Year,"[Screwdriver] Average Number of GPU Nodes: Total"
+2016,520.0000
+2017,800.0000
+---------

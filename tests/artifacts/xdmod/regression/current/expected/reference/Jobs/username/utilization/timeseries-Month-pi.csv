@@ -7,6 +7,6 @@ start,end
 2016-12-22,2017-01-01
 ---------
 Month,"[ovenb] Screwdriver Utilization (%)","[swath] Screwdriver Utilization (%)","[ybsbu] Screwdriver Utilization (%)","[sante] Screwdriver Utilization (%)","[litst] Screwdriver Utilization (%)","[savsp] Screwdriver Utilization (%)"
-2016-12,0.591818603,0.152152703,0.158250434,0.016560369,0.001658565,0.000057634
-2017-01,0.012486111,0,0,0,0,0.000000859
+2016-12,0.5918,0.1522,0.1583,0.0166,0.0017,0.0001
+2017-01,0.0125,0,0,0,0,0.0000
 ---------

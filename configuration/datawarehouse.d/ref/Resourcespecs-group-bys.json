@@ -1,0 +1,52 @@
+{
+  "none": {
+      "$ref": "datawarehouse.d/ref/group-by-none.json"
+  },
+  "resource": {
+      "$ref": "datawarehouse.d/ref/group-by-common.json#/resource"
+  },
+  "resource_type": {
+      "$ref": "datawarehouse.d/ref/group-by-common.json#/resource_type"
+  },
+  "quarter": {
+      "$ref": "datawarehouse.d/ref/group-by-time-period.json#/quarter"
+  },
+  "year": {
+      "$ref": "datawarehouse.d/ref/group-by-time-period.json#/year"
+  },
+  "month": {
+      "$ref": "datawarehouse.d/ref/group-by-time-period.json#/month"
+  },
+  "day": {
+      "$ref": "datawarehouse.d/ref/group-by-time-period.json#/day"
+  },
+  "provider": {
+      "$ref": "datawarehouse.d/ref/group-by-common.json#/provider"
+  },
+  "resource_allocation_type": {
+      "attribute_table_schema": "modw",
+      "attribute_to_aggregate_table_key_map": [
+          {
+              "resource_allocation_type_id": "resource_allocation_type_id"
+          }
+      ],
+      "attribute_values_query": {
+          "joins": [
+              {
+                  "name": "resource_allocation_type"
+              }
+          ],
+          "orderby": [
+              "resource_allocation_type_id"
+          ],
+          "records": {
+              "id": "resource_allocation_type_id",
+              "name": "resource_allocation_type_description",
+              "order_id": "resource_allocation_type_id",
+              "short_name": "resource_allocation_type_description"
+          }
+      },
+      "description_html": "The resource allocation type is how the resource is allocated to users, such as CPU, Node, GPU, etc.",
+      "name": "Resource Allocation Type"
+  }
+}
