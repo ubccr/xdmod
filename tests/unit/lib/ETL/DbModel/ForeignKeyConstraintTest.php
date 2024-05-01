@@ -3,13 +3,13 @@
  * Test ETL foreign key constraint database models.
  */
 
-namespace UnitTesting\ETL\Configuration;
+namespace UnitTests\ETL\DbModel;
 
 use CCR\Log;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Table;
 use PHPUnit_Framework_TestCase;
-use TestHarness\TestFiles;
+use IntegrationTests\TestHarness\TestFiles;
 use stdClass;
 
 class ForeignKeyConstraintTest extends PHPUnit_Framework_TestCase

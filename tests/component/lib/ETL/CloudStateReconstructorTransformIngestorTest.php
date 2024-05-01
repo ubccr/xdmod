@@ -1,6 +1,5 @@
 <?php
 /**
- * @package OpenXdmod\ComponentTests
  * @author Rudra Chakraborty <rudracha@buffalo.edu>
  */
 

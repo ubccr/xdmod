@@ -4,7 +4,7 @@
         /
         (
             SELECT
-                SUM(ra.percent * inner_days.hours * rs.q_nodes / 100.0)
+                SUM(ra.percent * inner_days.hours * rs.cpu_node_count / 100.0)
             FROM
                 modw.resourcespecs rs,
                 modw.resource_allocated ra,

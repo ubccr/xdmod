@@ -1,7 +1,0 @@
-{
-    "status_code": 200,
-    "body": {
-        "success": true,
-        "data": 10000
-    }
-}

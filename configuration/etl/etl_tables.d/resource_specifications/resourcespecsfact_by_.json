@@ -1,0 +1,133 @@
+{
+    "table_definition": {
+        "name": "resourcespecsfact_by_",
+        "table_prefix": "resourcespecsfact_by_",
+        "engine": "InnoDB",
+        "comment": "Resource specifications aggregate table",
+        "columns": [
+            {
+                "name": "${AGGREGATION_UNIT}_id",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The id related to modw.${AGGREGATION_UNIT}s."
+            },{
+                "name": "year",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The year of the ${AGGREGATION_UNIT}"
+            },{
+                "name": "${AGGREGATION_UNIT}",
+                "type": "smallint(5) unsigned",
+                "nullable": false,
+                "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
+            },{
+                "name": "record_resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The resource the specification is for."
+            },{
+                "name": "total_cpu_core_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of CPU core seconds available during a time period, including those not allocated."
+            },{
+                "name": "allocated_cpu_core_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of CPU core seconds available to be allocated during a time period."
+            },{
+                "name": "total_gpu_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of GPU seconds available during a time period, including those not allocated."
+            },{
+                "name": "allocated_gpu_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of GPU seconds available to be allocated during a time period."
+            },{
+                "name": "total_cpu_node_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of CPU node seconds available during a time period, including those not allocated."
+            },{
+                "name": "allocated_cpu_node_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of CPU node seconds available to be allocated during a time period."
+            },{
+                "name": "total_gpu_node_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of GPU node seconds available during a time period, including those not allocated."
+            },{
+                "name": "allocated_gpu_node_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of GPU node seconds available to be allocated during a time period."
+            },{
+                "name": "total_su_available",
+                "type": "decimal(14,4)",
+                "nullable": true,
+                "comment": "FACT: The total number of SU's available during a time period."
+            },{
+                "name": "allocated_su_available",
+                "type": "decimal(14,4)",
+                "nullable": true,
+                "comment": "FACT: The number of SU's available to be allocated during a time period."
+            },{
+                "name": "total_normalized_su_available",
+                "type": "decimal(14,4)",
+                "nullable": true,
+                "comment": "FACT: The total number of Normalized SU's available during a time period."
+            },{
+                "name": "allocated_normalized_su_available",
+                "type": "decimal(14,4)",
+                "nullable": true,
+                "comment": "FACT: The number of Normalized SU's available to be allocated during a time period."
+            },{
+                "name": "resource_allocation_type_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The allocation type for the resource."
+            },{
+                "name": "resource_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The organization to which the resource belongs."
+            },{
+                "name": "resource_state_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The geographical state of the organization to which the resource belongs."
+            },{
+                "name": "resource_country_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The country of the organization to which the resource belongs."
+            },{
+                "name": "organizationtype_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The type of organization to which the resource belongs."
+            },{
+                "name": "resourcetype_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The type of resource."
+            }
+        ],
+        "indexes": [
+            {
+                "name": "index_resource",
+                "columns": [ "record_resource_id" ]
+            },{
+                "name": "index_period_value",
+                "columns": [ "${AGGREGATION_UNIT}" ]
+            },{
+                "name": "index_period",
+                "columns": [ "${AGGREGATION_UNIT}_id" ]
+            }
+        ]
+    }
+}

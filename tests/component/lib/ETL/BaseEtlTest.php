@@ -1,6 +1,5 @@
 <?php
 /**
- * @package OpenXdmod\ComponentTests
  * @author Steven M. Gallo <smgallo@buffalo.edu>
  */
 

@@ -1,0 +1,16 @@
+{
+    "resource_allocation_types": {
+        "CPU": {
+            "description": "CPU Allocated"
+        },
+        "GPU": {
+            "description": "GPU Allocated"
+        },
+        "CPUNode": {
+            "description": "CPU Node Allocated"
+        },
+        "GPUNode": {
+            "description": "GPU Node Allocated"
+        }
+    }
+}

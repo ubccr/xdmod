@@ -6,6 +6,6 @@ start,end
 2016-12-22,2017-01-01
 ---------
 Year,"[curry] Screwdriver Utilization (%)","[banana-cream] Screwdriver Utilization (%)","[derby] Screwdriver Utilization (%)","[cashew] Screwdriver Utilization (%)","[fish] Screwdriver Utilization (%)","[buttermilk] Screwdriver Utilization (%)","[coconut-cream] Screwdriver Utilization (%)","[apple] Screwdriver Utilization (%)","[bavarian-cream] Screwdriver Utilization (%)","[chestnut] Screwdriver Utilization (%)","[blackberry] Screwdriver Utilization (%)","[bumbleberry] Screwdriver Utilization (%)","[cheese] Screwdriver Utilization (%)","[butter] Screwdriver Utilization (%)","[blueberry] Screwdriver Utilization (%)","[green-grape] Screwdriver Utilization (%)","[cherry] Screwdriver Utilization (%)","[boysenberry] Screwdriver Utilization (%)","[flapper] Screwdriver Utilization (%)"
-2016,0.940853839,0.196865576,0.186755483,0.085175546,0.055284375,0.040401852,0.019764945,0.016577720,0.010509338,0.007948989,0.003841161,0.000069127,0.002796767,0.000987256,0.001450440,0.000696917,0.000548181,0.000579431,0.000412631
-2017,0.119658593,0.007811483,0.010892964,0.013979573,0,0.000077487,0.004185109,0.005256139,0.001060537,0.000819110,0.001625172,0.008949325,0,0.000786825,0,0.000313727,0.000131171,0.000100623,0.000061089
+2016,17.2176,9.0066,3.4176,5.1957,1.0117,2.9574,0.7234,0.7138,0.4525,0.2909,0.1654,0.0030,0.1706,0.0328,0.0483,0.0128,0.0334,0.0249,0.0076
+2017,0.1197,0.0078,0.0109,0.0140,0,0.0001,0.0042,0.0053,0.0011,0.0008,0.0016,0.0089,0,0.0008,0,0.0003,0.0001,0.0001,0.0001
 ---------

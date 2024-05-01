@@ -1,0 +1,14 @@
+title
+"GPU Hours: Allocated: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Resource,"GPU Hours: Allocated"
+robertson,1632000.0000
+mortorq,1248000.0000
+frearson,0.0000
+phillips,0.0000
+pozidriv,0.0000
+---------
