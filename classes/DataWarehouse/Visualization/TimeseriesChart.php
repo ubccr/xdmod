@@ -276,6 +276,10 @@ class TimeseriesChart extends AggregateChart
 
                     $yAxis = array(
                         'automargin' => true,
+                        'autorangeoptions' => array(
+                            'minallowed' => $yAxisMin,
+                            'maxallowed' => $yAxisMax
+                        ),
                         'layer' => 'below traces',
                         'title' => array(
                             'text' => '<b>' . $yAxisLabel . '</b>',

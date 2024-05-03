@@ -389,6 +389,40 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
             marginTop = subtitleUpdates.chartUpdates['margin.t'];
         }
 
+        // Handle <br> in title
+        // Grab the contents inbetween leading and trailing <br> tags
+        const titleContents = chartDiv._fullLayout.annotations[titleIndex].text.match(/(?![\<br\>])(.*\S)(?<![\<br\>])/g);
+        let lineBreakCount = 0;
+        if (titleContents) {
+            const count = titleContents[0].match(/\<br\>/g);
+            if (count) {
+                lineBreakCount = count.length;
+            }
+        }
+
+        if (lineBreakCount > 0) {
+            if (firstRender) {
+                update['margin.t'] = marginTop + (titleHeight * lineBreakCount);
+            } else {
+                // Observed inconsistency with margin when subtitle is one line long. Unsure of the cause.
+                if (subtitleUpdates.subtitleLineCount === 1) {
+                    marginTop = subtitleUpdates.chartUpdates['margin.t'] - (titleHeight * lineBreakCount);
+                } else {
+                    marginTop -= (titleHeight * lineBreakCount);
+                }
+            }
+            if (topCenter) {
+                if (subtitleUpdates.subtitleLineCount > 0) {
+                    marginTop += subtitleHeight + 5;
+                    update['legend.y'] -= 0.025;
+                    update['margin.t'] += chartDiv._fullLayout.legend._height + subtitleHeight;
+                } else {
+                    marginTop -= chartDiv._fullLayout.legend._height / 2;
+                }
+            }
+        }
+        
+
         if (topCenter && subtitleUpdates.subtitleLineCount === 0 && !isPie) {
             extraShift += 15;
         }

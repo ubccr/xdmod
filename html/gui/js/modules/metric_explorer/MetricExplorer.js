@@ -1878,8 +1878,8 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         }
 
         handler = function() {
-            var oldMin = axis.min,
-                oldMax = axis.max,
+            var oldMin = axis.range[0],
+                oldMax = axis.range[1],
                 allLog = setLog.getValue(),
                 axisType = null,
                 newMin = minField.getValue(),

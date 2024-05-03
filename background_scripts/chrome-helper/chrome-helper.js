@@ -26,37 +26,14 @@ const args = require('yargs').argv;
     const chartLabels = await page.evaluate(() => document.querySelector('.user-select-none.svg-container').children[2].innerHTML);
 
     chart = chart.substring(0, chart.length - 6);
-    const svg = chart + '' + chartLabels + '</svg>';
-    // HTML tags in titles thorw xml not well-formed error
-    const svgInnerHtml = svg.replace(/<br>|<br\/>|<br \/>|<\/span>|<span|<sub>|<\/sub>|<sup>|<\/sup>|<b>|<\/b>/gm, (str) => {
-        switch (str) {
-            case '<br>':
-                return '&lt;br&gt;';
-            case '<br/>':
-                return '&lt;br/&gt;';
-            case '<br />':
-                return '&lt;br /&gt;';
-            case '<b>':
-                return '&lt;b&gt;';
-            case '</b>':
-                return '&lt;/b&gt;';
-            case '<span':
-                return '&lt;span';
-            case '</span>':
-                return '&lt;/span&gt;';
-            case '<sub>':
-                return '&lt;sub&gt;';
-            case '</sub>':
-                return '&lt;/sub&gt;';
-            case '<sup>':
-                return '&lt;sup&gt;';
-            case '</sup>':
-                return '&lt;/sup&gt;';
-            default:
-                return str;
-        }
+    let svg = chart + '' + chartLabels + '</svg>';
+
+    // Unencoded HTML tags throw xml not well-formed error
+    svg = svg.replace(/data-unformatted=\"(.*?)\"/g, (str) => {
+  	    return str.replace(/>/g, '&gt;').replace(/</g, '&lt;');
     });
-    console.log(JSON.stringify(svgInnerHtml));
+
+    console.log(JSON.stringify(svg));
 
     await browser.close();
 })();

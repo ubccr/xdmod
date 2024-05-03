@@ -836,6 +836,10 @@ class AggregateChart
             // populate the yAxis:
             $yAxis = array(
                 'automargin' => true,
+                'autorangeoptions' => array(
+                    'minallowed' => $yAxisMin,
+                    'maxallowed' => $yAxisMax
+                ),
                 'cliponaxis' => false,
                 'layer' => 'below traces',
                 'title' => array(
