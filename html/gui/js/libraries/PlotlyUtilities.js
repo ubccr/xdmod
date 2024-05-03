@@ -382,7 +382,8 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
 
         // Handle <br> in title
         // Grab the contents inbetween leading and trailing <br> tags
-        const titleContents = chartDiv._fullLayout.annotations[titleIndex].text.match(/(?![<br>])(.*)(?<![<br>])/g);
+        // Eslint throws invalid syntax on regex even though it is valid.
+        const titleContents = chartDiv._fullLayout.annotations[titleIndex].text.match(/(?![<br>])(.*\S)(?<![<br>])/g); // eslint-disable-line
         let lineBreakCount = 0;
         if (titleContents) {
             const count = titleContents[0].match(/<br>/g);
@@ -479,7 +480,7 @@ function overrideLegendEvent(chartDiv) { // eslint-disable-line no-unused-vars
         } else {
             tickType = 'category';
         }
-        Plotly.relayout(chartDiv, { `${axis}.tickmode`: tickType });
+        Plotly.relayout(chartDiv, { [`${axis}.tickmode`]: tickType });
 
         const { node } = evt;
         const nodeVisibility = evt.node.style.opacity;
