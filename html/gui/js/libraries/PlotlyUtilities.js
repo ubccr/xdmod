@@ -396,8 +396,7 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
         if (lineBreakCount > 0) {
             if (firstRender) {
                 update['margin.t'] = marginTop + (titleHeight * lineBreakCount);
-            }
-            else if (subtitleUpdates.subtitleLineCount === 1) {
+            } else if (subtitleUpdates.subtitleLineCount === 1) {
                 marginTop = subtitleUpdates.chartUpdates['margin.t'] - (titleHeight * lineBreakCount);
             } else {
                 marginTop -= (titleHeight * lineBreakCount);
