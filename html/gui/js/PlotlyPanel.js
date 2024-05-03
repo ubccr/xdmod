@@ -47,7 +47,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
             });
 
             if (this.store) {
-                this.store.on('load', function (t, records, opitons) {
+                this.store.on('load', function (t, records, options) {
                     if (t.getCount() <= 0) {
                         return;
                     }
@@ -295,7 +295,6 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
      * @param  {String} mainMessage The main error message to display.
      * @param  {String} detailMessage (Optional) A secondary error message
      *                                to display.
-     * TODO:error display for plotly charts
      */
     displayError: function (mainMessage, detailMessage) { /* eslint object-shorthand: "off" */
         const errorChartOptions = {

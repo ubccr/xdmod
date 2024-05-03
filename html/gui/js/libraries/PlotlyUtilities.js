@@ -16,18 +16,18 @@ function lineSplit(s, wrapWidth) { // eslint-disable-line no-unused-vars
 function getNoDataErrorConfig() { // eslint-disable-line no-unused-vars
     const errorLayout = {
         images: [
-        {
-            source: 'gui/images/report_thumbnail_no_data.png',
-            align: 'center',
-            xref: 'paper',
-            xanchor: 'center',
-            yanchor: 'center',
-            yref: 'paper',
-            sizex: 1.0,
-            sizey: 1.0,
-            x: 0.5,
-            y: 1.0
-        }
+            {
+                source: 'gui/images/report_thumbnail_no_data.png',
+                align: 'center',
+                xref: 'paper',
+                xanchor: 'center',
+                yanchor: 'center',
+                yref: 'paper',
+                sizex: 1.0,
+                sizey: 1.0,
+                x: 0.5,
+                y: 1.0
+            }
         ],
         xaxis: {
             showticklabels: false,
@@ -223,35 +223,32 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
  * @param  {Array} traceDivs - Array of chart series svg elements
  * @return {Object} point from Plotly JS click event
  */
-function getClickedPoint(clickEvent, traceDivs) { // eslint-disable-line no-unused-vars
-    if ((traceDivs && traceDivs.length === 0) || (clickEvent.points && clickEvent.points.length === 0)) {
+function getClickedPoint(evt, traces) { // eslint-disable-line no-unused-vars
+    if ((traces && traces.length === 0) || (evt.points && evt.points.length === 0)) {
         return null;
     }
-    const findPoint = (evt, traces) => {
-        for (let i = 0; i < traces.length; i++) {
-            let points = traces[i].getElementsByClassName('points');
-            if (points.length !== 0 && points[0].children) {
-                points = points[0].children;
-                for (let j = 0; j < points.length; j++) {
-                    const dimensions = points[j].getBoundingClientRect();
-                    if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right
-                        && evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
-                        const swapXY = !evt.points[0].data.yaxis;
-                        const dataValue = points[j].__data__.s || (swapXY ? points[j].__data__.x : points[j].__data__.y);
-                        const pointIndex = evt.points.findIndex((trace) => {
-                            if (trace.value) {
-                                return trace.value === dataValue;
-                            }
-                            return swapXY ? trace.x === dataValue : trace.y === dataValue;
-                        });
-                        return evt.points[pointIndex];
-                    }
+    for (let i = 0; i < traces.length; i++) {
+        let points = traces[i].getElementsByClassName('points');
+        if (points.length > 0 && points[0].children) {
+            points = points[0].children;
+            for (let j = 0; j < points.length; j++) {
+                const dimensions = points[j].getBoundingClientRect();
+                if (evt.event.pageX >= dimensions.left && evt.event.pageX <= dimensions.right
+                    && evt.event.pageY >= dimensions.top && evt.event.pageY <= dimensions.bottom) {
+                    const swapXY = !evt.points[0].data.yaxis;
+                    const dataValue = points[j].__data__.s || (swapXY ? points[j].__data__.x : points[j].__data__.y);
+                    const pointIndex = evt.points.findIndex((trace) => {
+                        if (trace.value) {
+                            return trace.value === dataValue;
+                        }
+                        return swapXY ? trace.x === dataValue : trace.y === dataValue;
+                    });
+                    return evt.points[pointIndex];
                 }
             }
         }
-        return null;
-    };
-    return findPoint(clickEvent, traceDivs);
+    }
+    return null;
 }
 /**
  * Returns array of axis layout keys for the axis that represents
@@ -263,13 +260,10 @@ function getClickedPoint(clickEvent, traceDivs) { // eslint-disable-line no-unus
 function getMultiAxisObjects(layout) { // eslint-disable-line no-unused-vars
     const multiAxes = [];
     const layoutKeys = Object.keys(layout);
+    const axisKeyStart = (layout.swapXY ? 'x' : 'y') + 'axis';
     for (let i = 0; i < layoutKeys.length; i++) {
-        if (layout.swapXY) {
-            if (layoutKeys[i].startsWith('xaxis')) {
-                multiAxes.push(layoutKeys[i]);
-            }
-        } else if (layoutKeys[i].startsWith('yaxis')) {
-                multiAxes.push(layoutKeys[i]);
+        if (layoutKeys[i].startsWith(axisKeyStart)) {
+            multiAxes.push(layoutKeys[i]);
         }
     }
     return multiAxes;
@@ -280,7 +274,7 @@ function getMultiAxisObjects(layout) { // eslint-disable-line no-unused-vars
  * @param  {Object} layout - Plotly JS layout configuration object.
  * @return {Boolean} If the legend is top center or not
  */
-function topLegend(layout) {
+function isTopLegend(layout) {
     if (layout.legend) {
         return (layout.legend.xanchor === 'center'
                 && layout.legend.yanchor === 'top'
@@ -300,15 +294,14 @@ function topLegend(layout) {
  */
 function adjustSubtitle(layout, subtitleIndex, legendTopCenter, firstRender) { // eslint-disable-line no-unused-vars
     let prevLineCount = layout.annotations[1].text.match(/<br \/>/g);
-    if (!prevLineCount) {
-        prevLineCount = 1;
-    } else {
+    if (prevLineCount) {
         prevLineCount = prevLineCount.length;
+    } else {
+        prevLineCount = 1;
     }
     const subtitle = layout.annotations[1].text.replace(/<br \/>/g, '');
-    const len = subtitle.length;
     const update = { chartUpdates: {}, subtitleLineCount: 0 };
-    if (len > 0) {
+    if (subtitle.length > 0) {
         if (!layout.width) {
             layout.width = 1000; // default width -- need for custom queries because the width is not set for some reason
         }
@@ -322,9 +315,7 @@ function adjustSubtitle(layout, subtitleIndex, legendTopCenter, firstRender) { /
             update.chartUpdates['legend.y'] = 0.95 - (0.025 * subtitle_lines.length);
         }
         update.subtitleLineCount = subtitle_lines.length;
-        if (firstRender) {
-            update.chartUpdates['margin.t'] = 45 + subtitle_lines.length * 15;
-        } else if (prevLineCount === update.subtitleLineCount) {
+        if (firstRender || prevLineCount === update.subtitleLineCount) {
             update.chartUpdates['margin.t'] = 45 + subtitle_lines.length * 15;
         }
     }
@@ -342,12 +333,12 @@ function adjustSubtitle(layout, subtitleIndex, legendTopCenter, firstRender) { /
 function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = false) { // eslint-disable-line no-unused-vars
     let update = {};
     if (chartDiv._fullLayout.annotations.length > 0) {
-        const topCenter = topLegend(chartDiv._fullLayout);
+        const topCenter = isTopLegend(chartDiv._fullLayout);
         const marginRight = chartDiv._fullLayout._size.r;
         const marginLeft = chartDiv._fullLayout._size.l;
         const legendHeight = (topCenter && adjHeight > 550) ? chartDiv._fullLayout.legend._height : 0;
-        let marginTop = legendHeight === 0 ? Math.max(chartDiv._fullLayout.margin.t, chartDiv._fullLayout._size.t)
-                                    : Math.min(chartDiv._fullLayout.margin.t, chartDiv._fullLayout._size.t);
+        const func = (legendHeight === 0) ? Math.max : Math.min;
+        let marginTop = func(chartDiv._fullLayout.margin.t, chartDiv._fullLayout._size.t);
         let extraShift = 0;
 
         const titleHeight = 31;
@@ -391,10 +382,10 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
 
         // Handle <br> in title
         // Grab the contents inbetween leading and trailing <br> tags
-        const titleContents = chartDiv._fullLayout.annotations[titleIndex].text.match(/(?![\<br\>])(.*\S)(?<![\<br\>])/g);
+        const titleContents = chartDiv._fullLayout.annotations[titleIndex].text.match(/(?![<br>])(.*\S)(?<![<br>])/g);
         let lineBreakCount = 0;
         if (titleContents) {
-            const count = titleContents[0].match(/\<br\>/g);
+            const count = titleContents[0].match(/<br>/g);
             if (count) {
                 lineBreakCount = count.length;
             }
@@ -403,13 +394,12 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
         if (lineBreakCount > 0) {
             if (firstRender) {
                 update['margin.t'] = marginTop + (titleHeight * lineBreakCount);
+            }
+            // Observed inconsistency with margin when subtitle is one line long. Unsure of the cause.
+            else if (subtitleUpdates.subtitleLineCount === 1) {
+                marginTop = subtitleUpdates.chartUpdates['margin.t'] - (titleHeight * lineBreakCount);
             } else {
-                // Observed inconsistency with margin when subtitle is one line long. Unsure of the cause.
-                if (subtitleUpdates.subtitleLineCount === 1) {
-                    marginTop = subtitleUpdates.chartUpdates['margin.t'] - (titleHeight * lineBreakCount);
-                } else {
-                    marginTop -= (titleHeight * lineBreakCount);
-                }
+                marginTop -= (titleHeight * lineBreakCount);
             }
             if (topCenter) {
                 if (subtitleUpdates.subtitleLineCount > 0) {
@@ -421,7 +411,6 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
                 }
             }
         }
-        
 
         if (topCenter && subtitleUpdates.subtitleLineCount === 0 && !isPie) {
             extraShift += 15;
@@ -441,12 +430,12 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
 
         const marginBottom = chartDiv._fullLayout._size.b;
         let pieChartXShift = 0;
-        const exportShift = isExport ? 30 : 0;
         if (isPie) {
             pieChartXShift = subtitleUpdates.subtitleLineCount > 0 ? 2 : 1;
         }
 
         const shiftYDown = marginBottom * -1;
+        const exportShift = isExport ? 30 : 0;
         if (creditsIndex !== -1) {
             update[`annotations[${creditsIndex}].yshift`] = shiftYDown;
             update[`annotations[${creditsIndex}].xshift`] = marginRight - pieChartXShift - exportShift;
@@ -470,20 +459,19 @@ function overrideLegendEvent(chartDiv) { // eslint-disable-line no-unused-vars
     chartDiv.on('plotly_legendclick', (evt) => {
         // First check if all traces are hidden.
         // There is a bug with tick text manually set.
-        // We need set tickmode to auto if so.
+        // We need set the tickmode to auto if so.
         const visibleData = evt.fullData.filter((trace) => trace.name !== 'gap connector' && trace.name !== 'area fix' && trace.visible === true);
-        let tickType;
-        let axisType;
-        let dtick;
-        if (evt.layout.swapXY) {
-            axisType = evt.layout.yaxis.type;
-            dtick = evt.layout.yaxis.dtick;
-        } else {
-            axisType = evt.layout.xaxis.type;
-            dtick = evt.layout.xaxis.dtick;
-        }
-        if (axisType === 'date') {
-            if (dtick === CCR.xdmod.ui.dtickDay && evt.data[evt.curveNumber].x.length > 7) {
+        const axis = (evt.layout.swapXY ? 'y' : 'x') + 'axis';
+        if (evt.layout[axis].type === 'date') {
+            if (
+                (
+                    evt.layout[axis].dtick === CCR.xdmod.ui.dtickDay
+                    && evt.data[evt.curveNumber].x.length > 7
+                ) || (
+                    visibleData.length === 1
+                    && visibleData[0].index === evt.curveNumber
+                )
+            ) {
                 tickType = 'auto';
             } else {
                 tickType = 'date';
@@ -491,22 +479,13 @@ function overrideLegendEvent(chartDiv) { // eslint-disable-line no-unused-vars
         } else {
             tickType = 'category';
         }
-        if (visibleData.length === 1 && visibleData[0].index === evt.curveNumber && axisType === 'date') {
-            if (evt.layout.swapXY) {
-                Plotly.relayout(chartDiv, { 'yaxis.tickmode': 'auto' });
-            } else {
-                Plotly.relayout(chartDiv, { 'xaxis.tickmode': 'auto' });
-            }
-        } else if (evt.layout.swapXY) {
-            Plotly.relayout(chartDiv, { 'yaxis.tickmode': tickType });
-        } else {
-            Plotly.relayout(chartDiv, { 'xaxis.tickmode': tickType });
-        }
+        Plotly.relayout(chartDiv, { `${axis}.tickmode`: tickType });
+
         const { node } = evt;
         const nodeVisibility = evt.node.style.opacity;
+        const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
         // Check for std err to update where the error bars go
         if (node.textContent.startsWith('Std Err:')) {
-            const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
             if (nodeVisibility === '1') {
                 Plotly.update(chartDiv, { [errorBar]: false }, {}, [evt.curveNumber + 1]);
             } else {
@@ -516,7 +495,6 @@ function overrideLegendEvent(chartDiv) { // eslint-disable-line no-unused-vars
         } else if (node.nextSibling) {
             const sibling = node.nextSibling;
             if (sibling.textContent.startsWith('Std Err:')) {
-                const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
                 if (sibling.style.opacity === '1') {
                     // Turning off primary trace so need to transfer error bars
                     if (nodeVisibility === '1') {

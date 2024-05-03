@@ -720,7 +720,7 @@ class Usage extends Common
                 // Remove extraneous x-axis properties.
                 if ($meRequestIsTimeseries) {
                     unset($meChart['layout']['xaxis']['title']);
-                } elseif ($usageChartSettings['display_type'] != 'h_bar'){
+                } elseif ($usageChartSettings['display_type'] != 'h_bar') {
                     unset($meChart['layout']['xaxis']['title']['text']);
                 }
 
@@ -817,8 +817,6 @@ class Usage extends Common
                 );
 
                 // For each data series...
-                $primaryDataSeriesRank = $usageOffset;
-
                 array_walk($meChart['data'], function (
                     &$meDataSeries,
                     $meDataSeriesIndex
@@ -832,7 +830,6 @@ class Usage extends Common
                     $meRequestMetric,
                     $usageGroupByObject,
                     $user,
-                    &$primaryDataSeriesRank,
                     $chartSortedByValue
                 ) {
                     // Determine the type of this data series.
@@ -846,7 +843,6 @@ class Usage extends Common
                     // a timeseries chart, it is sorted by value, and it is a
                     // grouped chart, add the rank to the series label.
                     if ($isPrimaryDataSeries) {
-                        $primaryDataSeriesRank++;
                         if (
                             $meRequestIsTimeseries
                             && $chartSortedByValue
@@ -856,10 +852,6 @@ class Usage extends Common
                             $meDataSeries['name'] = "${rank}. " . $meDataSeries['name'];
                         }
                     }
-
-                    // If this is the primary data series, modify the data labels
-                    // and don't specify the line style. Otherwise, just remove
-                    // the data labels.
 
                     // If this is the primary data series and the chart is not a
                     // thumbnail, use line markers if and only if the number of
@@ -896,9 +888,6 @@ class Usage extends Common
                     unset($meDataSeries['otitle']);
                     unset($meDataSeries['datasetId']);
                     unset($meDataSeries['visible']);
-
-                    // Note: keep dataLabels color param set, else we lose some of the pie datalabels
-                    // in the Usage chart only.
                 });
 
                 if ('n' == $usageGroupByObject->getDefaultEnableErrors()) {

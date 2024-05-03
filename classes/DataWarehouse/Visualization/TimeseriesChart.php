@@ -316,20 +316,20 @@ class TimeseriesChart extends AggregateChart
                         'zeroline' => false,
                     );
 
-                    if ($yAxisIndex > 0){
-                        if ($yAxisIndex % 2 == 0) {
-                            $yAxis = array_merge($yAxis, array(
-                                'side' => 'left',
-                                'anchor' => 'free',
-                                'autoshift' => true,
-                            ));
-                        } else {
-                            $yAxis = array_merge($yAxis, array(
-                                'side' => 'right',
-                                'anchor' => $yAxisIndex > 1 ? 'free' : 'x',
-                                'autoshift' => true,
-                            ));
+                    if ($yAxisIndex > 0) {
+                        $side = 'left';
+                        $anchor = 'free';
+                        if ($yAxisIndex % 2 == 1) {
+                            $side = 'right';
                         }
+                        if ($yAxisIndex == 1) {
+                            $anchor = 'x';
+                        }
+                        $yAxis = array_merge($yAxis, array(
+                            'side' => $side,
+                            'anchor' => $anchor,
+                            'autoshift' => true,
+                        ));
                     }
 
                     $this->_chart['layout']["{$yAxisName}"] = $yAxis;
@@ -815,7 +815,7 @@ class TimeseriesChart extends AggregateChart
                                     $this->_chart['data'][$idx]['text'] = $text;
                                 }
                             } else {
-                                $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
+                                $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
                                 $this->configureDataLabels(
                                     $data_description,
                                     $error_info,

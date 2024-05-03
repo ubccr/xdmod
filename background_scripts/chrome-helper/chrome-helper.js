@@ -29,9 +29,7 @@ const args = require('yargs').argv;
     let svg = chart + '' + chartLabels + '</svg>';
 
     // Unencoded HTML tags throw xml not well-formed error
-    svg = svg.replace(/data-unformatted=\"(.*?)\"/g, (str) => {
-  	    return str.replace(/>/g, '&gt;').replace(/</g, '&lt;');
-    });
+    svg = svg.replace(/data-unformatted="(.*?)"/g, (str) => str.replace(/>/g, '&gt;').replace(/</g, '&lt;'));
 
     console.log(JSON.stringify(svg));
 

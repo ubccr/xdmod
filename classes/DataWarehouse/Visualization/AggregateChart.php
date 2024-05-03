@@ -222,15 +222,15 @@ class AggregateChart
         {
             case 'Month':
             case 'month':
-                $pointInterval = (365.25) * (1/12);
+                $pointInterval = 365.25 / 12;
                 break;
             case 'Quarter':
             case 'quarter':
-                $pointInterval = (365.25) * (1/4);
+                $pointInterval = 365.25 / 4;
                 break;
             case 'Year':
             case 'year':
-                $pointInterval = (365.25);
+                $pointInterval = 365.25;
                 break;
             default:
             case 'Day':
@@ -563,9 +563,6 @@ class AggregateChart
             throw new \Exception(get_class($this)." _xAxisDataObject not set ");
         }
 
-        // part from setXAxisLabel(), which we may or may not keep.
-        // if we need the default and original, guess we should keep this.
-        // otherwise, just call it (see above)
         $defaultXAxisLabel = 'xAxis';
         $xAxisLabel = $this->_xAxisDataObject->getName() == ORGANIZATION_NAME ? '' :
                                     $this->_xAxisDataObject->getName();
@@ -762,7 +759,7 @@ class AggregateChart
                     {
                         // set to summarize, then break both loops.
                         $summarizeDataseries = true;
-                        continue 2; // bug? comment above mentions break but uses continue
+                        break 2;
                     }
                 }
             }
@@ -875,21 +872,20 @@ class AggregateChart
                 'overlaying' => $yAxisIndex == 0 ? null : 'y',
             );
 
-            if ($yAxisIndex > 0){
-                if ($yAxisIndex % 2 == 0) {
-                    $yAxis = array_merge($yAxis, array(
-                        'side' => 'left',
-                        'anchor' => 'free',
-                        'autoshift' => true,
-                    ));
+            if ($yAxisIndex > 0) {
+                $side = 'left';
+                $anchor = 'free';
+                if ($yAxisIndex % 2 == 1) {
+                    $side = 'right';
                 }
-                else {
-                    $yAxis = array_merge($yAxis, array(
-                        'side' => 'right',
-                        'anchor' => $yAxisIndex > 1 ? 'free' : 'x',
-                        'autoshift' => true,
-                    ));
+                if ($yAxisIndex == 1) {
+                    $anchor = 'x';
                 }
+                $yAxis = array_merge($yAxis, array(
+                    'side' => $side,
+                    'anchor' => $anchor,
+                    'autoshift' => true,
+                ));
             }
 
             $this->_chart['layout']["{$yAxisName}"] = $yAxis;
@@ -897,7 +893,7 @@ class AggregateChart
             // for each of the dataseries on this yAxisObject:
             foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
             {
-                $legendRank+=2;
+                $legendRank += 2;
                 $yAxisDataObject = $yAxisDataObjectAndDescription['yAxisDataObject']; // SimpleData object
                 $data_description = $yAxisDataObjectAndDescription['data_description'];
                 $decimals = $yAxisDataObjectAndDescription['decimals'];
@@ -943,7 +939,7 @@ class AggregateChart
                 }
 
                 $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
-                $isThumbnail = !($this->_width > \DataWarehouse\Visualization::$thumbnail_width);
+                $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
                 $this->_chart['layout']['stdErr'] = $data_description->std_err;
                 $trace = array();
                 $drilldown = array();
@@ -1002,7 +998,6 @@ class AggregateChart
                 {
                     if($this->_swapXY)
                     {
-                        //TODO: Ajust data labels
                         $trace['textangle'] = 90;
                         $this->_chart['layout']['xaxis']['tickangle'] = 0;
                     }
@@ -1388,15 +1383,13 @@ class AggregateChart
 
     } // end closure for configure
 
-    // ---------------------------------------------------------
-    // buildErrorDataSeries()
-    //
-    // @param ...
-    //
-    // TODO: Two main implementations, need to choose which one would be better.
-    // Most likely will be to create line plot and configure it into an error plot
-    // for Timeseries, questions include: drilldown?
-    // ---------------------------------------------------------
+    /**
+     * buildErrorDataSeries()
+     *
+     * Sets the error objects that will be given to the primary data trace.
+     * Also create a mirrored trace so the error trace can be managed in the
+     * legend.
+     */
     protected function buildErrorDataSeries(
         $trace,
         &$data_description,
@@ -1583,7 +1576,7 @@ class AggregateChart
     // ---------------------------------------------------------
     // exportJsonStore()
     //
-    // Export chart object aoverlayings JSON, indicate count.
+    // Export chart object as JSON, indicate count.
     //
     // Note that $limit is not in use. Note also that I've made
     // it an instance variable here  --JMS, 1 Sep 15
@@ -1638,25 +1631,10 @@ class AggregateChart
         return array($color, $lineColor);
     }
 
-    // ---------------------------------------------------------
-    // configureDataLabels()
-    //
-    // @param data_description
-    // @param error_info
-    // @param xValues
-    // @param yValues
-    // @param std_err_labels_enabled
-    // @param font_size
-    // @param color
-    // @param isThumbnail
-    // @param $decimals
-    //
-    // @return null
-    //
-    // This function will set annotations within the layout array
-    // based on the requested type of labels and other configuration
-    // settings.
-    // ---------------------------------------------------------
+    /**
+     * Set annotations within the layout array based on the
+     * requested type of labels and other configuration settings.
+     */
     protected function configureDataLabels(
         &$data_description,
         $error_info,

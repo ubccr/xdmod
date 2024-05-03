@@ -107,7 +107,7 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
                         }
 
                         var win; // Window to display the chart
-                        this.tmpHpc = new CCR.xdmod.ui.PlotlyPanel({
+                        this.reportCharts = new CCR.xdmod.ui.PlotlyPanel({
                             chartOptions: {
                                 dashboard: true
                             },
@@ -143,36 +143,36 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
 
                         }); // hcp
 
-                        this.tmpHpc.store.removeAll();
+                        this.reportCharts.store.removeAll();
                         for (var key in config) {
                             if (key === 'data_series') {
-                                this.tmpHpc.store.setBaseParam(key, Ext.util.JSON.encode(config[key]));
+                                this.reportCharts.store.setBaseParam(key, Ext.util.JSON.encode(config[key]));
                                 var data_series = {};
                                 data_series.data = config[key];
                                 data_series.total = config[key].length;
                                 config.data_series = data_series;
                             } else if (key === 'global_filters') {
-                                this.tmpHpc.store.setBaseParam(key, Ext.util.JSON.encode(config[key]));
+                                this.reportCharts.store.setBaseParam(key, Ext.util.JSON.encode(config[key]));
                             } else {
-                                this.tmpHpc.store.setBaseParam(key, config[key]);
+                                this.reportCharts.store.setBaseParam(key, config[key]);
                             }
                         }
                         if (!(self.timeframe.start_date === null && self.timeframe.end_date === null)) {
                             config.start_date = self.timeframe.start_date;
                             config.end_date = self.timeframe.end_date;
                             config.timeframe_label = 'User Defined';
-                            this.tmpHpc.store.setBaseParam('start_date', self.timeframe.start_date);
-                            this.tmpHpc.store.setBaseParam('end_date', self.timeframe.end_date);
-                            this.tmpHpc.store.setBaseParam('timeframe_label', 'User Defined');
+                            this.reportCharts.store.setBaseParam('start_date', self.timeframe.start_date);
+                            this.reportCharts.store.setBaseParam('end_date', self.timeframe.end_date);
+                            this.reportCharts.store.setBaseParam('timeframe_label', 'User Defined');
                         } else {
                             var timeframe = filterRange(ranges, config.timeframe_label);
                             config.start_date = timeframe.start_date;
                             config.end_date = timeframe.end_date;
-                            this.tmpHpc.store.setBaseParam('start_date', timeframe.start_date);
-                            this.tmpHpc.store.setBaseParam('end_date', timeframe.end_date);
+                            this.reportCharts.store.setBaseParam('start_date', timeframe.start_date);
+                            this.reportCharts.store.setBaseParam('end_date', timeframe.end_date);
                         }
 
-                        this.tmpHpc.store.setBaseParam('operation', 'get_data');
+                        this.reportCharts.store.setBaseParam('operation', 'get_data');
 
                         win = new Ext.Window({
                             layout: 'fit',
@@ -181,7 +181,7 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
                             closeAction: 'destroy',
                             plain: true,
                             title: dataView.store.data.items[index].json.chart_title,
-                            items: [this.tmpHpc],
+                            items: [this.reportCharts],
                             buttons: [{
                                 text: 'Open in Metric Explorer',
                                 handler: function () {
