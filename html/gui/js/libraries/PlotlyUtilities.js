@@ -383,7 +383,7 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
         // Handle <br> in title
         // Grab the contents inbetween leading and trailing <br> tags
         // Eslint throws invalid syntax on regex even though it is valid.
-        const titleContents = chartDiv._fullLayout.annotations[titleIndex].text.match(/(?![\<br\>])(.*\S)(?<![\<br\>])/g); // eslint-disable-line
+        const titleContents = chartDiv._fullLayout.annotations[titleIndex].text.match(/(?![<br>])(.*\S)(?<![<br>])/g);
         let lineBreakCount = 0;
         if (titleContents) {
             const count = titleContents[0].match(/<br>/g);
@@ -392,11 +392,11 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
             }
         }
 
+        // Observed inconsistency with margin when subtitle is one line long. Unsure of the cause.
         if (lineBreakCount > 0) {
             if (firstRender) {
                 update['margin.t'] = marginTop + (titleHeight * lineBreakCount);
             }
-            // Observed inconsistency with margin when subtitle is one line long. Unsure of the cause.
             else if (subtitleUpdates.subtitleLineCount === 1) {
                 marginTop = subtitleUpdates.chartUpdates['margin.t'] - (titleHeight * lineBreakCount);
             } else {
@@ -463,6 +463,7 @@ function overrideLegendEvent(chartDiv) { // eslint-disable-line no-unused-vars
         // We need set the tickmode to auto if so.
         const visibleData = evt.fullData.filter((trace) => trace.name !== 'gap connector' && trace.name !== 'area fix' && trace.visible === true);
         const axis = (evt.layout.swapXY ? 'y' : 'x') + 'axis';
+        let tickType;
         if (evt.layout[axis].type === 'date') {
             if (
                 (
