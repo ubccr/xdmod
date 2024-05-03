@@ -54,7 +54,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                     this.chartOptions = jQuery.extend(true, {}, t.getAt(0).data, this.baseChartOptions);
                     this.chartOptions.credits = this.credits;
                     if (this.chartOptions.layout.annotations && this.chartOptions.layout.annotations[0]) {
-                        //this.chartOptions.layout.annotations[0].text = this.plotlyTextEncode(this.chartOptions.layout.annotations[0].text);
+                        this.chartOptions.layout.annotations[0].text = this.plotlyTextEncode(this.chartOptions.layout.annotations[0].text);
                     }
 
                     this.initNewChart.call(this);

@@ -382,7 +382,7 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
 
         // Handle <br> in title
         // Grab the contents inbetween leading and trailing <br> tags
-        const titleContents = chartDiv._fullLayout.annotations[titleIndex].text.match(/(?![<br>])(.*\S)(?<![<br>])/g);
+        const titleContents = chartDiv._fullLayout.annotations[titleIndex].text.match(/(?![<br>])(.*)(?<![<br>])/g);
         let lineBreakCount = 0;
         if (titleContents) {
             const count = titleContents[0].match(/<br>/g);
