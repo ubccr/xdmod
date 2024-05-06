@@ -660,29 +660,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 r.store.resumeEvents();
             }
         }, this);
-        var layerItems = [],
-            minZIndex,
-            maxZIndex,
-            z_index = record.get('z_index');
-        record.store.each(function(r) {
-            if (r.id !== record.id) {
-                var z_index = r.get('z_index');
-                if (minZIndex === undefined || z_index < minZIndex) {
-                    minZIndex = z_index;
-                }
-                if (maxZIndex === undefined || z_index > maxZIndex) {
-                    maxZIndex = z_index;
-                }
-            }
-        }, this);
-
-        function replaceZIndex(from, to, record) {
-            var neighborRecordIndex = -1;
-            while ((neighborRecordIndex = record.store.find('z_index', from, 0, false)) > -1) {
-                var neighborRecord = record.store.getAt(neighborRecordIndex);
-                neighborRecord.set('z_index', to);
-            }
-        }
 
         var widthItems = [];
         for (var y = 0; CCR.xdmod.ui.AddDataPanel.line_widths.length > y; y++) {
