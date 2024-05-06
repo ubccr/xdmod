@@ -1420,7 +1420,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     // so that the chartTitleField has the correct value.
                     // We also want to strip out the anchor tag to avoid nefarious links.
                     var decoded = Ext.util.Format.htmlDecode(text);
-                    const sanitizedText = decoded.replace(/<a.*?>|<\/?a.*?>/g,'');
+                    const sanitizedText = decoded.replace(/<a.*?>|<\/?a.*?>/g, '');
                     instance.chartTitleField.setValue(sanitizedText);
                     instance.saveQuery();
                 }
