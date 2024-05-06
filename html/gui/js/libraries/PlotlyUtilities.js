@@ -459,7 +459,7 @@ function overrideLegendEvent(chartDiv) { // eslint-disable-line no-unused-vars
     chartDiv.on('plotly_legendclick', (evt) => {
         // First check if all traces are hidden.
         // There is a bug with tick text manually set.
-        // We need set the tickmode to auto if so.
+        // We need to set the tickmode to auto if so.
         const visibleData = evt.fullData.filter((trace) => trace.name !== 'gap connector' && trace.name !== 'area fix' && trace.visible === true);
         const axis = (evt.layout.swapXY ? 'y' : 'x') + 'axis';
         let tickType;

@@ -56,13 +56,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         ['off', 'Off']
     ],
 
-    layer_types: [
-        ['send_backward', 'Send Backward'],
-        ['bring_forward', 'Bring Forward'],
-        ['send_to_back', 'Send to Back'],
-        ['bring_to_front', 'Bring to Front']
-    ],
-
     /**
      * A mapping of realms to the categories they belong to.
      *
@@ -689,81 +682,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 var neighborRecord = record.store.getAt(neighborRecordIndex);
                 neighborRecord.set('z_index', to);
             }
-        }
-
-        for (var g = 0; XDMoD.Module.MetricExplorer.layer_types.length > g; g++) {
-            var disabled = false;
-            switch (XDMoD.Module.MetricExplorer.layer_types[g][0]) {
-                case 'send_backward':
-                case 'send_to_back':
-                    disabled = minZIndex === undefined || z_index < minZIndex;
-                    break;
-                case 'bring_forward':
-                case 'bring_to_front':
-                    disabled = minZIndex === undefined || z_index > maxZIndex;
-                    break;
-            }
-            layerItems.push({
-                text: XDMoD.Module.MetricExplorer.layer_types[g][1],
-                value: XDMoD.Module.MetricExplorer.layer_types[g][0],
-                disabled: disabled,
-                xtype: 'menuitem',
-                handler: function( /*b*/ ) {
-
-                    XDMoD.TrackEvent('Metric Explorer', 'Clicked on Layer option in data series context menu', Ext.encode({
-                        datasetId: datasetId,
-                        combine_type: this.value
-                    }));
-
-                    var process_value = function(value, record) {
-                        var toZIndex;
-                        switch (value) {
-                            case 'send_backward':
-                                if (minZIndex !== undefined && z_index >= minZIndex) {
-                                    var maxZIndexLessThanZIndex;
-                                    record.store.each(function(r) {
-                                        var r_z_index = r.get('z_index');
-                                        if ((maxZIndexLessThanZIndex === undefined || r_z_index > maxZIndexLessThanZIndex) && r_z_index < z_index) {
-                                            maxZIndexLessThanZIndex = r_z_index;
-                                        }
-                                    }, this);
-                                    toZIndex = maxZIndexLessThanZIndex !== undefined ? maxZIndexLessThanZIndex : z_index - 1;
-                                    replaceZIndex(toZIndex, z_index, record);
-                                    record.set('z_index', toZIndex);
-                                }
-                                break;
-                            case 'bring_forward':
-                                if (maxZIndex !== undefined && z_index <= maxZIndex) {
-                                    var minZIndexGreaterThanZIndex;
-                                    record.store.each(function(r) {
-                                        var r_z_index = r.get('z_index');
-                                        if ((minZIndexGreaterThanZIndex === undefined || r_z_index < minZIndexGreaterThanZIndex) && r_z_index > z_index) {
-                                            minZIndexGreaterThanZIndex = r_z_index;
-                                        }
-                                    }, this);
-                                    toZIndex = minZIndexGreaterThanZIndex !== undefined ? minZIndexGreaterThanZIndex : z_index + 1;
-                                    replaceZIndex(toZIndex, z_index, record);
-                                    record.set('z_index', toZIndex);
-                                }
-                                break;
-                            case 'send_to_back':
-                                if (minZIndex !== undefined && z_index >= minZIndex) {
-                                    toZIndex = minZIndex - 1;
-                                    record.set('z_index', toZIndex);
-                                }
-                                break;
-                            case 'bring_to_front':
-                                if (maxZIndex !== undefined && z_index <= maxZIndex) {
-                                    toZIndex = maxZIndex + 1;
-                                    record.set('z_index', toZIndex);
-                                }
-                                break;
-                        }
-                    };
-
-                    process_value(this.value, record);
-                }
-            });
         }
 
         var widthItems = [];
@@ -1397,12 +1315,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
         menu.addItem(moreOptionsMenuItem);
 
-        menu.addItem('-');
-        menu.addItem({
-            text: 'Layer',
-            iconCls: 'layer',
-            menu: layerItems
-        });
         menu.addItem('-');
         menu.addItem({
             text: 'Edit Dataset',

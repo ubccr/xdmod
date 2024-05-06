@@ -2,16 +2,25 @@
 
 ## 2024-XX-XX v11.0.0
 - Important Notes
-    - Open XDMoD is now no longer bundled with any non-commercial licenses. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the non-commercial license required from the Highcharts library. Please refer to the [license notices](https://open.xdmod.org/10.5/notices.html) for more information about the open source licenses bundled with Open XDMoD.
+    - Open XDMoD is now no longer bundled with any non-commercial licenses. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the non-commercial license required from the Highcharts library. Please refer to the [license notices](https://open.xdmod.org/11.0/notices.html) for more information about the open source licenses bundled with Open XDMoD.
 - New Features
     - General
         - Chart axes are draggable to adjust the chart range. For charts in the Metric Explorer, the axis range can be reset to the default through the axis context menu. For other charts, the chart can be reset to the default by double-clicking.
-        - Rendering support for a subset of HTML tags in a chart's main title. Please refer to the [list](https://plotly.com/javascript/reference/layout/annotations/#layout-annotations-items-annotation-text) of supported HTML tags. Unsupported tags will not render but still display in the title.
+        - Rendering support for a subset of HTML tags in a chart's main title. Unsupported tags will render as plain text instead of HTML. The following HTML tags are supported:
+            - Newline
+            - Bold text
+            - Italic text
+            - Superscripts
+            - Subscripts
+            - Hyperlinks
+            - Greek Letters (Recommend unicode format i.e. '$#x3BC;' for lowercase mu)
+            - Some math symbols (such as ±)
+            - Degrees
 - Uncategorized
     - Chart Feature Changes
         - For line charts, the context menu for a data series is brought up by clicking on its points, not its lines. As before, the context menu can also be brought up by clicking on it in the legend.
         - The button for resetting the chart zoom in Metric Explorer charts appears in the chart context menus instead of a button on the chart. Resetting the chart zoom for charts in all other tabs now requires a double click on the plotting area instead of a button on the chart.
-    - Chart Features Temporarily Removed
+    - Chart Features Removed
         - The ability to change the layering order for charts with multiple axes.
         - Hover animations.
         - Shadow.

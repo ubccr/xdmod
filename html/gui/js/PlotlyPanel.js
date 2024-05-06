@@ -53,10 +53,6 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                     }
                     this.chartOptions = jQuery.extend(true, {}, t.getAt(0).data, this.baseChartOptions);
                     this.chartOptions.credits = this.credits;
-                    if (this.chartOptions.layout.annotations && this.chartOptions.layout.annotations[0]) {
-                        this.chartOptions.layout.annotations[0].text = this.plotlyTextEncode(this.chartOptions.layout.annotations[0].text);
-                    }
-
                     this.initNewChart.call(this);
 
                     // Since the chart is re-created on store loads we need
@@ -336,15 +332,3 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
         this.initNewChart.call(this, errorChartOptions);
     }
 });
-/**
- * Properly encodes a string for use as the title value in a Plotly instance.
- *
- * @param {String} text the text to be encoded for use in a Plotly title.
- * @return {String} the encoded text.
- */
-CCR.xdmod.ui.PlotlyPanel.prototype.plotlyTextEncode = function (text) {
-    if (!text) {
-        return text;
-    }
-    return String(text).replace(/>/g, '&gt;').replace(/</g, '&lt;');
-};
