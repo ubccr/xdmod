@@ -151,7 +151,7 @@ layout: null
                   "scale": {
                     "type": "string",
                     "format": "integer",
-                    "description": "For chart image exports this sets the zoom factor for the exported image compared to the on-screen display. See https://api.highcharts.com/highcharts/exporting.scale"
+                    "description": "Sets the scaling of the chart width and height."
                   },
                   "share_y_axis": {
                     "type": "string",
@@ -269,7 +269,7 @@ layout: null
                     "scale": {
                         "type": "string",
                         "format": "integer",
-                        "description": "For chart image exports this sets the zoom factor for the exported image compared to the on-screen display. See https://api.highcharts.com/highcharts/exporting.scale"
+                        "description": "Sets the scaling of the chart width and height."
                     },
                     "aggregation_unit": {
                         "type": "string",
