@@ -1254,7 +1254,7 @@ SQL;
     /**
      * Add an order by and set the sort info using a data description object.
      *
-     * Code originally found in ComplexDataset and HighChartTimeseries2.
+     * Code originally found in ComplexDataset and TimeseriesChart.
      *
      * @param object $data_description A data description object.
      */
