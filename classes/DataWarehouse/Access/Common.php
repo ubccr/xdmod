@@ -299,7 +299,7 @@ class Common
 
             $result = array(
                 "headers" => array( "Content-Type" => "image/png"),
-                "results" => \xd_charting\exportHighchart($returnData, '148', '69', 2, 'png')
+                "results" => \xd_charting\exportChart($returnData, '148', '69', 2, 'png')
             );
 
             return $result;
@@ -312,7 +312,7 @@ class Common
 
             $result = array( 
                 "headers" => array( "Content-Type" => "image/png"),
-                "results" => \xd_charting\exportHighchart($returnData, $width, $height, $scale, 'png')
+                "results" => \xd_charting\exportChart($returnData, $width, $height, $scale, 'png')
             );
 
             return $result;
@@ -329,7 +329,7 @@ class Common
 
             $result = array(
                 "headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename),
-                "results" => \xd_charting\exportHighchart($returnData['data'][0], $width, $height, $scale, $format, null, $fileMeta)
+                "results" => \xd_charting\exportChart($returnData['data'][0], $width, $height, $scale, $format, null, $fileMeta)
             );
 
             return $result;
@@ -338,7 +338,7 @@ class Common
         {
             $result = array(
                 "headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename),
-                "results" => 'data:image/png;base64,'.base64_encode(\xd_charting\exportHighchart($returnData['data'][0], $width, $height, $scale, 'png'))
+                "results" => 'data:image/png;base64,'.base64_encode(\xd_charting\exportChart($returnData['data'][0], $width, $height, $scale, 'png'))
             );
             return $result;
 
@@ -348,7 +348,7 @@ class Common
             $result = array(
                 "headers" => \DataWarehouse\ExportBuilder::getHeader( $format, false, $filename),
                 "results" => 'data:image/svg+xml;base64,' . base64_encode(
-                    \xd_charting\exportHighchart( $returnData['data'][0], $width, $height, $scale, 'svg'))
+                    \xd_charting\exportChart( $returnData['data'][0], $width, $height, $scale, 'svg'))
                 );
 
             return $result;
