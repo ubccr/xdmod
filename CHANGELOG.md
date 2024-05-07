@@ -6,7 +6,7 @@
 - New Features
     - General
         - Chart axes are draggable to adjust the chart range. For charts in the Metric Explorer, the axis range can be reset to the default through the axis context menu. For other charts, the chart can be reset to the default by double-clicking.
-        - Rendering support for a subset of HTML tags and entities in a chart's main title. Unsupported tags/entities will render as plain text instead of HTML. The following HTML tags are supported: &lt;br&gt;, &lt;b&gt;, &lt;i&gt;, &lt;sup&gt;, and &lt;sub&gt;. The following entities are supported: Greek letters (recommended Unicode format, e.g., &amp;#x3BC; for lowercase mu), some mathematical symbols (e.g., &plusmn; for ±), and degrees (&deg;).
+        - Rendering support for a subset of HTML tags and entities in a chart's main title. Unsupported tags/entities will render as plain text instead of HTML. The following HTML tags are supported: `<br>`, `<b>`, `<i>`, `<sup>`, and `<sub>`. The following entities are supported: Greek letters (recommended Unicode format, e.g., `&#x3BC;` for lowercase mu), some mathematical symbols (e.g., `&plusmn;` for ±), and degrees (`&deg;`).
 - Uncategorized
     - Chart Feature Changes
         - For line charts, the context menu for a data series is brought up by clicking on its points, not its lines. As before, the context menu can also be brought up by clicking on it in the legend.
