@@ -358,7 +358,7 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.load.chartByName(name));
         await this.page.locator(this.load.dialog).waitFor({state:'hidden'});
         await expect(this.page.locator(this.load.dialog)).toBeHidden();
-        await this.page.locator(this.catalog.expandButton).waitFor({state:'visible'});
+        await this.page.locator(this.catalog.expandButton).waitFor({state:'visible', timeout: 10000});
         await expect(this.page.locator(this.catalog.expandButton)).toBeVisible();
     }
 
