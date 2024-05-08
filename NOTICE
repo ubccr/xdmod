@@ -16,10 +16,10 @@ License: MIT license
 Author:  jQuery Foundation and other contributors
 Link:    http://jquery.com/
 
-Name:    Highcharts
-License: Creative Commons Attribution-NonCommercial 3.0
-Author:  Torstein Hønsi
-Link:    http://www.highcharts.com/
+Name:    Plotly.js
+License: MIT license
+Author:  Plotly, Inc.
+Link:    https://github.com/plotly/plotly.js
 
 Name:    RSVP.js
 License: MIT license
