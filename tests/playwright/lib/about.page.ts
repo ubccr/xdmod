@@ -27,7 +27,7 @@ class About extends BasePage{
         await this.page.locator(selectors.navEntryPath('Roadmap')).click();
         await expect(this.page.locator(this.roadMapFrame)).toBeVisible();
         await this.page.locator(this.roadMapFrame).isVisible();
-        await expect(this.page.frameLocator(this.roadMapFrame).locator(this.trelloBoard)).toBeVisible();
+        await expect(this.page.frameLocator(this.roadMapFrame).locator(this.trelloBoard)).toBeVisible({timeout: 20000});
         await expect(this.page.frameLocator(this.roadMapFrame).locator(this.trelloBoard).innerText()).not.toEqual(null);
     }
 }
