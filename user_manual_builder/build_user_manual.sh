@@ -74,7 +74,7 @@ else
 fi
 
 # Update copyright year
-sed -i "s/copyright = '/copyright = '$(date +'%Y')/g" "$BASE_BUILD_DIR/conf.py"
+sed -i "s/copyright = '[0-9]* /copyright = '$(date +'%Y') /g" "$BASE_BUILD_DIR/conf.py"
 
 # Update version number
 XDMOD_VERSION=$(jq -r '.version' open_xdmod/modules/xdmod/build.json)
