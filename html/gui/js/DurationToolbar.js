@@ -55,7 +55,7 @@ chartStore.on('beforeload', function()
 {
 	if(!this.durationToolbar.validate()) return;
 	this.mask('Loading...');
-	highChartPanel.un('resize', onResize, this);	
+	plotlyPanel.un('resize', onResize, this);
 	
 	chartStore.baseParams = {};
 	Ext.apply(chartStore.baseParams, getBaseParams.call(this));

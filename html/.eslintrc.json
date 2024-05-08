@@ -1,7 +1,10 @@
 {
   "env": {
     "browser": true,
-    "es6": true
+    "es2018": true
+  },
+  "rules": {
+    "no-underscore-dangle": "off"
   },
   "globals": {
     "AppKernel": false,
@@ -11,7 +14,6 @@
     "ga": false,
     "moment": false,
     "_gaq": false,
-    "Highcharts": false,
     "truncateText": false,
     "XDMoD": false,
     "Dashboard": false,
@@ -19,6 +21,14 @@
     "grecaptcha": false,
     "StringUtilities": false,
     "Plotly": false,
-    "generateChartOptions": false
+    "generateChartOptions": false,
+    "getNoDataErrorConfig": false,
+    "getMultiAxisObjects": false,
+    "getClickedPoint": false,
+    "isTopLegend": false,
+    "adjustTitles": false,
+    "relayoutChart": false,
+    "overrideLegendEvent": false,
+    "lineSplit": false
   }
 }
