@@ -6,44 +6,44 @@ start,end
 2016-12-22,2017-01-01
 ---------
 "PI Group","Screwdriver Utilization (%)"
-"Organic and Macromolecular Chemistry",7.308463780
-"Quantum Electronics, Waves, and Beams",6.977956216
-"Systems Prototyping and Fabrication",6.345087174
-Sociology,3.638159464
-"Physical Chemistry",2.575573991
-"Structures and Building Systems",2.455055556
-"Stellar Astronomy and Astrophysics",2.082928977
-"Statistics and Probability",2.019544496
-"Emerging Technologies Initiation",1.844111111
-"Metals, Ceramics, and Electronic Materials",1.741571970
-"Operations Research and Production Systems",1.453984454
-"Solid State Chemistry and Polymers",1.244291791
-"Fluid, Particulate, and Hydraulic Systems",1.241095960
-"Polar Ocean and Climate Systems",1.106352238
-Biophysics,1.030328862
-"Cell Biology",0.824535064
-Tectonics,0.813495818
-Arts,0.718562564
-"Experimental Systems",0.697648253
-"Galactic Astronomy",0.513573392
-"Design and Computer-Integrated Engineering",0.498325337
-"Algebra and Number Theory",0.492239583
-"Theoretical Physics",0.150465278
-"Systematic and Population Biology",0.143763994
-"Volcanology and Mantle Geochemistry",0.142876984
-Economics,0.137021096
-"Global Atmospheric Research",0.136788721
-"Decision, Risk, and Management Science",0.112092014
-"Biochemistry and Molecular Structure and Function",0.096737190
-"Solid-State and Microstructures",0.096551531
-"Polar Aeronomy and Astrophysics",0.095358691
-Seismology,0.058963016
-"Geology and Paleontology",0.055902909
-"Mechanics and Materials",0.014171200
-"Polar Meteorology",0.012856034
-"Computer and Computation Theory",0.009549400
-"Extragalactic Astronomy and Cosmology",0.005669429
-Geophysics,0.003354001
-"Design, Tools, and Test",0.002664773
-"Law and Social Sciences",0.000098485
+"Quantum Electronics, Waves, and Beams",0.7276
+"Organic and Macromolecular Chemistry",0.6371
+"Systems Prototyping and Fabrication",0.6345
+Sociology,0.3334
+"Physical Chemistry",0.2357
+"Stellar Astronomy and Astrophysics",0.2083
+"Emerging Technologies Initiation",0.1844
+"Statistics and Probability",0.1765
+"Metals, Ceramics, and Electronic Materials",0.1742
+"Structures and Building Systems",0.1551
+"Operations Research and Production Systems",0.1454
+"Fluid, Particulate, and Hydraulic Systems",0.1241
+"Solid State Chemistry and Polymers",0.1139
+Biophysics,0.1133
+"Polar Ocean and Climate Systems",0.0967
+"Cell Biology",0.0825
+Tectonics,0.0813
+"Experimental Systems",0.0698
+Arts,0.0628
+"Design and Computer-Integrated Engineering",0.0498
+"Algebra and Number Theory",0.0492
+"Galactic Astronomy",0.0470
+"Theoretical Physics",0.0150
+"Systematic and Population Biology",0.0144
+Economics,0.0137
+"Global Atmospheric Research",0.0137
+"Decision, Risk, and Management Science",0.0112
+"Volcanology and Mantle Geochemistry",0.0104
+"Solid-State and Microstructures",0.0101
+"Polar Aeronomy and Astrophysics",0.0099
+"Biochemistry and Molecular Structure and Function",0.0097
+Seismology,0.0059
+"Geology and Paleontology",0.0056
+"Polar Meteorology",0.0013
+"Computer and Computation Theory",0.0010
+"Mechanics and Materials",0.0009
+"Extragalactic Astronomy and Cosmology",0.0006
+"Design, Tools, and Test",0.0003
+Geophysics,0.0002
+"Law and Social Sciences",0.0000
 ---------
