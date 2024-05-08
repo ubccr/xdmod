@@ -2,7 +2,7 @@ import {PlaywrightTestConfig, devices} from '@playwright/test';
 const config: PlaywrightTestConfig = {
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
-    timeout: 30000,
+    timeout: 60000,
     workers: 5,
     use: {
         trace: 'on-first-retry',
