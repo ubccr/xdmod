@@ -6,7 +6,7 @@ import selectors from './usageTab.selectors'
 class Usage extends BasePage{
     readonly selectors = selectors;
 
-    readonly legendTextLocator = this.page.locator(selectors.legendText);
+    readonly legendTextLocator = this.page.locator(selectors.legendText());
     readonly chartLocator = this.page.locator(selectors.chart);
     readonly maskLocator = this.page.locator(selectors.mask);
     readonly durationButtonLocator = this.page.locator(selectors.durationButton());

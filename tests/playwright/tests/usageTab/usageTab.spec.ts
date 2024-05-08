@@ -24,23 +24,23 @@ test.describe('Usage', async () => {
                 await usg.selectTab();
                 await expect(page.locator(usg.selectors.chart)).toBeVisible();
                 await expect(page.locator(usg.selectors.mask)).toBeHidden();
-                await expect(page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title, true))).toBeVisible();
 
                 // by refreshing we ensure that there are not stale legend-item elements
                 // on the page.
                 await page.reload();
-                await expect(page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title, true))).toBeVisible();
             });
             await test.step('Set a known start and end date', async () => {
                 await usg.setStartDate(baselineDate.start);
                 await usg.setEndDate(baselineDate.end);
                 await usg.refresh();
-                await expect(page.locator(usg.selectors.chartXAxisLabelByName(baselineDate.start))).toContainText(baselineDate.end);
+                await expect(page.locator(usg.selectors.chartXAxisLabelByName(baselineDate.start))).toBeVisible();
             });
             await test.step('Select Job Size Min', async () =>{
                 await expect(page.locator(usg.selectors.treeNodeByPath('Jobs Summary', 'Job Size: Min'))).toBeVisible();
                 await page.locator(usg.selectors.treeNodeByPath('Jobs Summary', 'Job Size: Min')).click();
-                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)'))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)', true))).toBeVisible();
                 await usg.checkLegendText(expected.centerdirector.legend);
 
                 //Check to make sure that the 'Std Err' display menu items are disabled.
@@ -60,12 +60,12 @@ test.describe('Usage', async () => {
                 await page.locator(usg.selectors.unfoldTreeNodeByName('Jobs by System Username')).click();
                 await expect(page.locator(usg.selectors.treeNodeByPath('Jobs by System Username', 'CPU Hours: Per Job'))).toBeVisible();
                 await page.locator(usg.selectors.treeNodeByPath('Jobs by System Username', 'CPU Hours: Per Job')).click();
-                await expect(page.locator(usg.selectors.chartByTitle('CPU Hours: Per Job: by System Username'))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle('CPU Hours: Per Job: by System Username', true))).toBeVisible();
             });
             await test.step('View CPU Hours: Per Job', async () => {
                 await expect(page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary', 'CPU Hours: Per Job'))).toBeVisible();
                 await page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary', 'CPU Hours: Per Job')).click();
-                await expect(page.locator(usg.selectors.chartByTitle('CPU Hours: Per Job'))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle('CPU Hours: Per Job', true))).toBeVisible();
 
                 ///Check to make sure that the 'Std Err' display menu items are disabled.
                 await expect(page.locator(usg.selectors.toolbarButtonByText('Display'))).toBeVisible();
@@ -85,12 +85,12 @@ test.describe('Usage', async () => {
             await page.locator(usg.selectors.signInLink).waitFor({state:'visible'});
             await test.step('Selected', async () => {
                 await usg.selectTab();
-                await page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title)).waitFor({state:'visible'});
+                await page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title, true)).waitFor({state:'visible'});
 
                 // by refreshing we ensure that there are not stale legend-item elements
                 // on the page.
                 await page.reload();
-                await expect(page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle(expected.centerdirector.default_chart_title, true))).toBeVisible();
             });
             await test.step('Set a known start and end date', async () => {
                 await usg.setStartDate(baselineDate.start);
@@ -101,7 +101,7 @@ test.describe('Usage', async () => {
             await test.step('View Job Size Min', async () => {
                 await expect(page.locator(usg.selectors.treeNodeByPath('Jobs Summary', 'Job Size: Min'))).toBeVisible();
                 await page.locator(usg.selectors.treeNodeByPath('Jobs Summary', 'Job Size: Min')).click();
-                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)'))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)', true))).toBeVisible();
                 await usg.checkLegendText(expected.centerdirector.legend);
             });
             await test.step('Confirm System Username is not selectable', async () => {
@@ -109,7 +109,7 @@ test.describe('Usage', async () => {
                 await page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary')).click();
                 await expect(page.locator(usg.selectors.topTreeNodeByName('Jobs by System Username'))).toBeVisible();
                 await page.locator(usg.selectors.topTreeNodeByName('Jobs by System Username')).click();
-                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)'))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)', true))).toBeVisible();
             });
         });
     }

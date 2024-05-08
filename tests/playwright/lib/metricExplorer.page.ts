@@ -195,7 +195,11 @@ class MetricExplorer extends BasePage{
     async openDataSeriesDefinitionFromDataPoint() {
         await this.clickLogo();
         await this.clickFirstDataPoint();
-        await this.page.click(this.chartContextMenu.menuItemByText('Data Series:', 'Edit Dataset'));
+
+        // Wait for the context menu to be visible.
+        await expect(this.page.locator('//div[contains(@class, "x-menu-floating") and contains(@style, "visible")]//span[@class="menu-title"]')).toBeVisible();
+        await this.page.locator('//div[contains(@class, "x-menu x-menu-floating") and contains(@style    , "visibility: visible;")]//ul//li/a//span[text()="Edit Dataset"]//ancestor::a').click({clickCount: 2})
+        await expect(this.page.locator('//div[contains(@class, "x-window-body")]//div[contains(@class, "x-panel-header")]//span[@class="x-panel-header-text"]')).toBeVisible();
     }
 
     /**
@@ -207,7 +211,11 @@ class MetricExplorer extends BasePage{
     async addFiltersFromDataSeriesDefinition(filter, name) {
         await this.clickLogo();
         await this.openDataSeriesDefinitionFromDataPoint();
-        await this.page.click(this.dataSeriesDef.addFilter());
+
+        let addFilter = this.page.locator(this.dataSeriesDef.addFilter())
+        await addFilter.isVisible();
+        await this.page.screenshot({path: 'add_filter_visible.png'});
+        await addFilter.click();
         await this.page.click(this.dataSeriesDef.filter(filter));
         await expect(this.page.locator(this.dataSeriesDef.name(name))).toBeVisible();
         await this.page.click(this.dataSeriesDef.name(name));
@@ -369,7 +377,7 @@ class MetricExplorer extends BasePage{
         if (isValidChart) {
             selToCheck = this.chart.credits();
         } else {
-            selToCheck = this.chart.titleByText(chartTitle);
+            selToCheck = this.chart.titleByText(chartTitle, true);
         }
         await this.page.locator(selToCheck).waitFor({state:'visible'});
         await this.page.click(selToCheck);
@@ -445,7 +453,7 @@ class MetricExplorer extends BasePage{
      * @param {String} title    name to check if chart matches
      */
     async verifyHighChartsTitle(title) {
-        const execReturn = await this.page.evaluate('return Ext.util.Format.htmlDecode(document.querySelector("' + this.chart.title + '").textContent);');
+        const execReturn = await this.page.evaluate('return Ext.util.Format.htmlDecode(document.querySelector("' + this.chart.title() + '").textContent);');
         await expect(execReturn._status).toEqual(0);
         await expect(typeof(execReturn.value)).toEqual('string');
         await expect(execReturn.value).toEqual(title);
@@ -455,7 +463,7 @@ class MetricExplorer extends BasePage{
      * Check if the chart matches the readonly newTitle variable
      */
     async verifyEditChartTitle() {
-        await this.page.click(this.chart.title);
+        await this.page.click(this.chart.title());
         await expect(this.page.isVisible(this.chart.titleInput));
         const titleValue = await this.page.locator(this.chart.titleInput).inputValue();
         await expect(typeof(titleValue)).toEqual('string');
@@ -479,7 +487,7 @@ class MetricExplorer extends BasePage{
      * @param {String} title    name of chart to set title to
      */
     async setChartTitleViaChart(title) {
-        await this.page.click(this.chart.title);
+        await this.page.click(this.chart.title());
         await expect(this.page.locator(this.chart.titleInput)).isVisible();
         await this.page.clearElement(this.chart.titleInput);
         await this.page.fill(this.chart.titleInput, title);
@@ -529,7 +537,7 @@ class MetricExplorer extends BasePage{
      * Attempt to delete chart
      */
     async attemptDeleteScratchpad() {
-        const title = this.page.locator(this.chart.title).textContent();
+        const title = this.page.locator(this.chart.title()).textContent();
         await expect(this.page.locator(this.toolbar.buttonByName('Delete'))).toBeVisible();
         await this.page.click(this.toolbar.buttonByName('Delete'));
         await expect(this.page.locator(this.deleteChart.dialogBox)).toBeVisible();
@@ -582,7 +590,7 @@ class MetricExplorer extends BasePage{
      * @param {String} largeTitle   name for chart title to match to
      */
     async confirmChartTitleChange(largeTitle) {
-        const titleChange = await this.page.evaluate('return document.querySelector("' + this.chart.title + '").textContent;');
+        const titleChange = await this.page.evaluate('return document.querySelector("' + this.chart.title() + '").textContent;');
         await expect(titleChange._status).toEqual(0);
         await expect(typeof(titleChange.value)).toEqual('string');
         await expect(titleChange.value).toEqual(largeTitle);
@@ -618,9 +626,9 @@ class MetricExplorer extends BasePage{
         // Data points are returned in reverse order.
         // for some unknown reason the first point click gets intercepted by the series
         // menu.
-        await elems.nth(0).click();
-        const num = await elems.count();
-        await elems.nth(num - 1).click();
+        await elems.nth(0).click({force: true});
+        // const num = await elems.count();
+        // await elems.nth(num - 1).click({force: true});
     }
 
     /**

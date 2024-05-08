@@ -139,35 +139,42 @@ const selectors = {
         title: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] #me_chart_title'
     },
     chart: {
-        svg: '//div[@id="metric_explorer"]//div[@class="highcharts-container"]//*[local-name() = "svg"]',
+        svg: '//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]',
         subtitle: function() {
-            return selectors.chart.svg + '//*[name()="text" and @class="undefinedsubtitle"]';
+            return selectors.chart.svg + '/*[name()="g" and contains(@class, "infolayer")]//*[name()="g" and contains(@class, "annotation") and @data-index="1"]';
         },
         subtitleName: function(name) {
             return selectors.chart.subtitle() + `//*[contains(text(), "${name}")]`;
         },
-        titleByText: function (title) {
-            return selectors.chart.svg + '/*[name()="text" and contains(@class, "title")]/*[name()="tspan" and contains(text(),"' + title + '")]';
+        titleByText: function (title, zero=false) {
+            return selectors.chart.svg + '/*[name()="g" and contains(@class, "infolayer")]//*[name()="g" and contains(@class, "annotation") and @data-index="0"]//*[local-name() = "text" and contains(text(),"' + title +'")]';
         },
         credits: function () {
-            return selectors.chart.svg + '/*[name()="text"]/*[name()="tspan" and contains(text(),"Powered by XDMoD")]';
+            return selectors.chart.svg + '/*[name()="g" and contains(@class, "infolayer")]//*[name()="g" and contains(@class, "annotation") and @data-index="2"]//*[name()="text"and contains(text(),"Powered by XDMoD")]';
         },
         yAxisTitle: function () {
-            return selectors.chart.svg + '//*[name() = "g" and contains(@class, "highcharts-axis")]/*[name() = "text" and contains(@class,"highcharts-yaxis-title")]';
+            return selectors.chart.svg + '//*[name() = "g" and contains(@class, "g-ytitle")]/*[name() = "text" and contains(@class,"ytitle")]';
         },
         legend: function () {
-            return selectors.chart.svg + '//*[name() = "g" and contains(@class, "highcharts-legend-item")]/*[name()="text"]';
+            return selectors.chart.svg + '//*[name() = "g" and contains(@class, "legend")]//*[name()="text" and contains(@class, "legendtext")]';
         },
         firstLegendContent: function () {
             return '(' + selectors.chart.legend() + ')[1]';
         },
         legendContent: function(name){
-            return selectors.chart.legend() + `//*[contains(text(), "${name}")]`;
+            return selectors.chart.svg + `//*[name() = "text" and contains(@class, "legendtext") and contains(text(), "${name}")]`;
         },
         seriesMarkers: function (seriesId) {
-            return selectors.chart.svg + '//*[local-name() = "g" and contains(@class, "highcharts-series-' + seriesId.toString() + '") and contains(@class, "highcharts-markers")]/*[local-name() = "path"]';
+            switch (seriesId) {
+                case 0:
+                    return selectors.chart.svg + '/*[name()="g" and @class="cartesianlayer"]//*[name()="g" and @class="points"]//*[name()="path" and @class="point"]';
+                default:
+                    return selectors.chart.svg + '/*[name()="g" and contains(@class, "xy' + seriesId + '")]//*[name()="path" and @class="point"]';
+            }
         },
-        title: '#hc-panelmetric_explorer svg .undefinedtitle',
+        title: function() {
+            return `(${selectors.chart.svg})[2]//*[name()="g" and @data-index="0" and contains(@class, "annotation")]//*[name()="text"]`
+        },
         titleInput: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] input[type=text]',
         titleOkButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility:     visible"] table.x-btn.x-btn-noicon.x-box-item:first-child button',
         titleCancelButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibili    ty: visible"] table.x-btn.x-btn-noicon.x-box-item:last-child button',
