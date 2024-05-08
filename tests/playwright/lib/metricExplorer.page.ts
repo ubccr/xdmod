@@ -639,7 +639,7 @@ class MetricExplorer extends BasePage{
      */
     async clickSelector(selector) {
         await expect(this.page.locator(selector)).toBeVisible();
-        await this.page.click(selector, {delay:250});
+        await this.page.click(selector, {delay:500});
     }
 
     /**
