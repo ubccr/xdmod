@@ -1,5 +1,5 @@
 import {PlaywrightTestConfig, devices} from '@playwright/test';
-// Comment to trigger CI
+// Comment to trigger CI man do I hate trello boards...
 const config: PlaywrightTestConfig = {
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
