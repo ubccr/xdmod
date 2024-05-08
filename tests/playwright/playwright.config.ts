@@ -1,4 +1,5 @@
 import {PlaywrightTestConfig, devices} from '@playwright/test';
+// Comment to trigger CI
 const config: PlaywrightTestConfig = {
     forbidOnly: !!process.env.CI,
     retries: process.env.CI ? 2 : 0,
