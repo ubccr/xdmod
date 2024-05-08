@@ -1,5 +1,3 @@
-version: '3'
-
 services:
     xdmod:
         image: tools-ext-01.ccr.xdmod.org/xdmod-10.5.0-x86_64:rockylinux8.5-0.3
@@ -12,7 +10,7 @@ services:
             - 9006:443
             - 7000:7000
         environment:
-            XDMOD_REALMS: 'jobs,storage,cloud'
+            XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
             XDMOD_IS_CORE: true
         stdin_open: true
         tty: true
@@ -32,7 +30,7 @@ services:
             - xdmod
         environment:
             BASE_URL: https://xdmod
-            XDMOD_REALMS: 'jobs,storage,cloud'
+            XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
         command: sleep infinity
 networks:
     testing-rocky8:
