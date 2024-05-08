@@ -382,7 +382,7 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
                     return;
                 }
 
-                var userManualSectionName = tabPanel.getActiveTab().userManualSectionName;
+                const { userManualSectionName } = tabPanel.getActiveTab();
                 XDMoD.TrackEvent("Portal", "Help -> User Manual Button Clicked with " + userManualSectionName || "no tab selected");
                 window.open('user_manual/' + userManualSectionName.replace(/ /g, '_') + '.html');
             }
