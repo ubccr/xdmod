@@ -547,7 +547,6 @@ class RegressionTestHelper extends XdmodTestHelper
                         ['params' => array_merge(
                             $params['base'],
                             $params['fields_and_filters']
-
                         )],
                         ['sort' => $params['sort']]
                     )
