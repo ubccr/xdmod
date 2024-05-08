@@ -7,7 +7,7 @@ only available for logged in users.` :only:`<XSEDE>The dashboard tab is
 the first tab displayed to logged in users.` It displays various
 information in separate display windows called components. The
 information displayed in the dashboard varies according to the assigned
-role of each user account. :only:`<Open>{open_dashboard_user_role}`:only:`<XSEDE>{xsede_dashboard_user_role}` 
+role of each user account. :only:`<Open>{open_dashboard_user_role}`:only:`<XSEDE>{xsede_dashboard_user_role}`
 lists the default settings for each role.
 
 .. TODO: fix Open table. should be that each entry in xdmod module is either a module name or dash to indicate
@@ -169,9 +169,9 @@ Saved Charts and Reports Component
 .. could make section ref either have full "section # - name" or just "name"
 
 :numref:`saved_charts_and_reports` shows the saved charts and reports component. This
-component lists a user’s charts that were saved in  
+component lists a user’s charts that were saved in
 :numref:`Section %s - Metric Explorer<metric_explorer>`
-and their reports from  
+and their reports from
 :numref:`Section %s - Report Generator<report_generator>`.
 The list can be sorted by the name,
 type (chart or report), and last modification date. By default, the list

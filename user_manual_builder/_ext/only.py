@@ -73,5 +73,5 @@ def setup(app):
     """
     app.add_role('only', only_role)
     return {'version': '0.1',
-            'parallel_read_safe': True, 
+            'parallel_read_safe': True,
             'parallel_write_safe': True,}

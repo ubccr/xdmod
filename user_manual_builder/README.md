@@ -132,7 +132,7 @@ text : not wrapped by anything
 The extension code uses the app variable stored by Sphinx and the .has(tag) function to separate XSEDE and Open
 versions of XDMoD. The only function then relies on Sphinx's node based system to add in the proper nodes
 depending on what tags are active. This shouldn't require a lot of maintenance, as the extension works for 4
-previous versions. If the extension stops working, the most likely culprit is the app variable and how it is 
+previous versions. If the extension stops working, the most likely culprit is the app variable and how it is
 declared.
 
 ### Breaking down the sphinx-build command

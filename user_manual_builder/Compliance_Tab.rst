@@ -124,4 +124,3 @@ associated with your XDMoD account.
    :name: compliance_create_scheduled_report
 
    Creating a compliance report to be delivered on a monthly basis
-

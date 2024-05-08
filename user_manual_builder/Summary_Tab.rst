@@ -1,6 +1,6 @@
 .. _summary_tab:
 
-Summary Tab 
+Summary Tab
 ==============
 
 .. only:: XSEDE
@@ -11,7 +11,7 @@ Summary Tab
       Summary Tab
 
 .. only:: Open
-   
+
    .. figure:: media/image63.png
       :name: open_summary_tab
 
@@ -48,7 +48,7 @@ summary content tailored to specific roles (:numref:`summary_portlet_tools`).
    program manager role).
 
 .. only:: Open
-   
+
    Based on the user's role, the Summary page may show your jobs (for
    user role), those of your group (for PI role) or those of your entire
    center (for center director role).

@@ -15,4 +15,3 @@ access to data stored in the warehouse while maintaining a clear
 separation between the user interface and the application logic. This
 also allows 3rd party tools to access the services directly and ingest
 or present the information as they see fit.
-

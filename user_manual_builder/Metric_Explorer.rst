@@ -1,6 +1,6 @@
 .. _metric_explorer:
 
-Metric Explorer 
+Metric Explorer
 ==================
 
 The Metric Explorer allows you to create complex plots containing
@@ -36,7 +36,7 @@ automatically presents you with a print dialog.
 **Available For Report**: when checked, the exact chart will be included
 in the report generator’s list of available charts.
 
-For more information about the top toolbar, refer to the 
+For more information about the top toolbar, refer to the
 :ref:`common_user_interface_elements` section in this document.
 
 The **Chart Options** region above your chart gives you ultimate
@@ -56,11 +56,11 @@ chart.
 The sections that follow discuss the **Chart Options** region in more
 detail.
 
-Managing Charts 
+Managing Charts
 --------------------
 
 .. table::
-   :widths: 50 50 
+   :widths: 50 50
 
    +-----------------------------------+-----------------------------------------+
    | .. figure:: media/image32.png     | The **Charts** section                  |
@@ -120,7 +120,7 @@ Managing Charts
 
 .. list-table
    :widths: 50 50
-   
+
    * - .. figure:: media/image32.png
           :name: chart_tools
 
@@ -139,7 +139,7 @@ Managing Charts
        In earlier versions of XDMoD, charts were automatically saved. However, the
        current version gives you more control over your charts. You must manually
        save your charts by clicking on either the Save or the Save As button, see
-       **Figure 9-2a**. Charts or changes to charts that you do not explicitly save 
+       **Figure 9-2a**. Charts or changes to charts that you do not explicitly save
        will be lost when you exit XDMoD. An Undo button allows you to cancel the
        last change, and a Redo button lets you cancel the effect of the last Undo.
 
@@ -149,7 +149,7 @@ Managing Charts
 
 .. _basic_chart_options:
 
-Basic Chart Options 
+Basic Chart Options
 ------------------------
 
 .. table::
@@ -211,13 +211,13 @@ display format.
 
    In the Metric Explorer Plots can easily be changed directly by clicking on them.
 
-Managing Data Series 
+Managing Data Series
 -------------------------
 
 .. figure:: media/image111.png
    :name: metric_explorer_left_panel_add_data
-   
-   Adding additional data to a chart is made easier 
+
+   Adding additional data to a chart is made easier
    through the menu on the left-hand-side. Here we show how to add CPU
    Hours Per Job to an existing plot of NUs charged Per job and Number
    of jobs Ended (Selecting CPU Hours Per Job is shown in the upper left
@@ -256,10 +256,10 @@ Using filters allows you to acquire this information.
    Data Series workflow of Metric Explorer
 
 In addition to adding new metrics to a plot, the Metric Explorer also
-allows the user to drill down for more detailed information on a 
-particular metric. :numref:`metric_explorer_dialogue_box` shows the dialog box that opens 
-when you click on a data series within the chart viewer. Selecting 
-“Drilldown” will display the data analyzed by the chosen dimension or 
+allows the user to drill down for more detailed information on a
+particular metric. :numref:`metric_explorer_dialogue_box` shows the dialog box that opens
+when you click on a data series within the chart viewer. Selecting
+“Drilldown” will display the data analyzed by the chosen dimension or
 grouping, as described by Section 5.3 (the Chart Viewer) previously.
 
 .. figure:: media/image52.png
@@ -282,7 +282,7 @@ each data series. By double-clicking on a data entry in the grid
 below, you will be presented with a dialog which gives you finer
 control of how the data can be represented.
 
-Managing Filters 
+Managing Filters
 ---------------------
 
 .. table::

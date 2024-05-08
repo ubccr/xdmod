@@ -13,7 +13,7 @@ Logging In
 
    .. figure:: media/image7.png
       :name: xsede_login
-   
+
       ACCESS XDMoD Login
 
    You must have an ACCESS account to be able to log in to XDMoD.
@@ -58,10 +58,10 @@ buttons on a common toolbar at the upper right region of the page
 .. only:: XSEDE
 
    .. figure:: media/image13.png
-      :alt: XSEDE_tabs.png        
-      :name: xsede_tabs    
-                                 
-      XDMoD Portal tabs and common toolbar. For description see section 2.0**              
+      :alt: XSEDE_tabs.png
+      :name: xsede_tabs
+
+      XDMoD Portal tabs and common toolbar. For description see section 2.0
 
 .. only:: Open
 

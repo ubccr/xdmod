@@ -269,4 +269,3 @@ software).
    :name: job_viewer_chart_vs_time
 
    Chart vs Time
-

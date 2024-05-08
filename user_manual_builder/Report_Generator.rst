@@ -106,7 +106,7 @@ you will be directed to the **Report Editor**:
    Selecting reports and charts via the Select menus
 
 An alternative way to select reports and charts in the Report Generator
-is to make use of the **Select** menus (as highlighted in :numref:`report_generator_select_2` a and 
+is to make use of the **Select** menus (as highlighted in :numref:`report_generator_select_2` a and
 :numref:`report_generator_select_2` b). Using these select menus is especially helpful
 if you are dealing with a substantial number of reports or charts. The
 select menus also gives you the ability to invert selections made in the
@@ -153,7 +153,7 @@ vice-versa (see :numref:`report_generator_select_2` c).
 
 To add charts to a report, simply drag an entry from the list of
 **Available Charts** (on the right-hand side) into the **Included
-Charts** list. See the section entitled :ref:`selection_model` 
+Charts** list. See the section entitled :ref:`selection_model`
 for adding multiple charts at once.
 
 The order in which the charts appear in the **Included Charts** section

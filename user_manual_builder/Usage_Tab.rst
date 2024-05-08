@@ -1,4 +1,4 @@
-Usage Tab 
+Usage Tab
 ============
 
 .. figure:: media/image131.png

@@ -19,7 +19,7 @@ poor efficiency.
 
 A larger, interactive view of the scatter plot can be seen by clicking
 on the analytic that you want to learn more about (:numref:`efficiency_interactive_scatter_plot`). The
-scatter plots are described in more detail in 
+scatter plots are described in more detail in
 :numref:`Section %s - Scatter Plot View <scatter_plot_view>`.
 
 .. figure:: media/image6.png
@@ -66,7 +66,7 @@ that analytic.
 
 .. _scatter_plot_view:
 
-Scatter Plot View 
+Scatter Plot View
 -----------------------
 
 This view shows a larger, interactive scatter plot for the analytic
@@ -143,7 +143,7 @@ users’ jobs at the same center. If you have access to the user, you are
 able to click on their point on the scatter plot to drill down and view
 more information about that user’s jobs’ efficiency (:numref:`efficiency_histogram_1`).
 When you drill down, you will be presented with a histogram chart
-(:numref:`efficiency_histogram_2`) which is described in 
+(:numref:`efficiency_histogram_2`) which is described in
 :numref:`Section %s - Histogram View <histogram_view>`.
 
 .. figure:: media/image130.png
@@ -194,7 +194,7 @@ data and therefore can only drill down on their own point.
 
 The data that appears in the scatter plot can be altered by changing
 duration and applying filters. Applying filters to the scatter plot is
-described in :numref:`Section %s - Filtering Charts <filtering_charts>` 
+described in :numref:`Section %s - Filtering Charts <filtering_charts>`
 and changing duration is described in :numref:`Section %s - Selecting Duration of Charts <selecting_duration_of_charts>`.
 
 .. _histogram_view:
@@ -226,7 +226,7 @@ associated with jobs that were running more efficiently.
 The histogram chart can be modified to learn more information about the
 user’s jobs. You can change the duration of the data included in the
 histogram by using the duration selector toolbar as described in
-:numref:`Section %s - Filtering Charts <filtering_charts>` 
+:numref:`Section %s - Filtering Charts <filtering_charts>`
 and filters can be applied to the chart as described in
 :numref:`Section %s - Selecting Duration of Charts <selecting_duration_of_charts>`.
 
@@ -241,7 +241,7 @@ jobs that were grouped in the category that you are viewing (:numref:`efficiency
    Clicking on a bin in the histogram plot will bring up a
    list of all jobs that were binned in this category.
 
-Job List 
+Job List
 --------------
 
 As shown in :numref:`efficiency_histogram_bin`, a job list window will appear when you
@@ -263,7 +263,7 @@ provide you with more details about the job.
 
 .. _filtering_charts:
 
-Filtering Charts 
+Filtering Charts
 -------------------------------
 
 .. figure:: media/image34.png
@@ -307,7 +307,7 @@ the top of the filter menu.
 
 .. _selecting_duration_of_charts:
 
-Selecting Duration of Charts 
+Selecting Duration of Charts
 -------------------------------------------
 
 .. figure:: media/image21.png
@@ -325,7 +325,7 @@ to select a custom timeframe.
 
 to select a timeframe for the chart that you are viewing.
 
-Navigation in Efficiency Tab 
+Navigation in Efficiency Tab
 ----------------------------------
 
 To move forward in the efficiency tab, you click on elements within the

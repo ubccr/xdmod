@@ -33,7 +33,7 @@ system performance, including: global file-system performance, local
 processor-memory bandwidth, allocable shared memory, processing speed,
 and network latency and bandwidth.
 
-.. only:: XSEDE 
+.. only:: XSEDE
 
    Metrics that focus on scientific impact, such as publications and external funding, are also
    included to help demonstrate the important role such centers play in
@@ -130,7 +130,7 @@ summary by adding charts, see the section on the :ref:`metric_explorer`
    .. figure:: media/image58.png
       :name: xsede_sum_tab
 
-      **XDMoD Summary Tab**. Summary tab contains a series of user configurable summary 
+      **XDMoD Summary Tab**. Summary tab contains a series of user configurable summary
       plots of usage. In this case the summary summary plots are for all XSEDE in 2012.
 
 .. only:: Open
@@ -157,7 +157,7 @@ summary by adding charts, see the section on the :ref:`metric_explorer`
    job size, job wall time, NSF directorate, NSF user status, parent
    science, person, principal investigator, and by resource. Many of the
    plots are context sensitive and allow users to click on a data element
-   within the plot to further analyze the data. For example, in :numref:`xsede_usage_tab`, 
+   within the plot to further analyze the data. For example, in :numref:`xsede_usage_tab`,
    which shows the distribution of total CPU hours by job size in
    2012 for all of XSEDE, one can click on any of the columns to obtain a
    more detailed analysis for the selected job size range. The plot can
@@ -200,7 +200,7 @@ summary by adding charts, see the section on the :ref:`metric_explorer`
    .. figure:: media/image36.png
       :alt: Usage_Overview.png
       :name: xsede_usage_tab
-                             
+
       **XDMoD Usage Tab.** A Usage plot showing the total CPU hours
       broken out by job size on all XSEDE resources for 2012.
 
@@ -208,7 +208,7 @@ summary by adding charts, see the section on the :ref:`metric_explorer`
 
    .. figure:: media/image135.png
       :name: open_usage_tab
-      
+
       **XDMoD Usage Tab**. A Usage plot showing the total CPU hours
       broken out per job on all available resources.
 
@@ -275,7 +275,7 @@ and flexible interface to facilitate analysis of the data.
    .. figure:: media/image103.png
       :name: open_metric_explorer_1
       :alt: Open Metric Explorer_Overview3.png
-      
+
       **The XDMoD Metric Explorer Tab**. Plot shows the number of jobs
       running vs Max core count on all available resources. Number of
       jobs running is shown on the primary axis (left-hand axis) and
@@ -283,7 +283,7 @@ and flexible interface to facilitate analysis of the data.
 
    .. figure:: media/image15.png
       :name: open_metric_explorer_2
-      
+
       **The XDMoD Metric Explorer Tab.** A Metric Explorer generated
       plot showing Number of Jobs Running for vs Max core count on.
       Number of Jobs Running is shown on the primary axis (left-hand
@@ -328,7 +328,7 @@ without the need to log into the portal.
 .. figure:: media/image120.png
    :alt: Report Generator_Overview.png
    :name: report_generator_tab
-   
+
    **XDMoD Custom Report Generator tab**. *A user can create custom
    reports by selecting plots from the pool of plots (right hand
    side) that were generated previously using the XDMoD portal.*
@@ -374,7 +374,7 @@ fitting the specified criteria.
    .. figure:: media/image50.png
       :alt: Custom Queries_Overview.png
       :name: custom_query_tab
-   
+
       **Custom Query tab** *showing number of SUs delivered in 2013 by
       supporting funding agency*
 
@@ -384,5 +384,3 @@ fitting the specified criteria.
    reporting requirements and TAS recommendations. The new compliance tab
    tracks whether or not each service provider is supplying required
    reporting metrics and data.
-
-

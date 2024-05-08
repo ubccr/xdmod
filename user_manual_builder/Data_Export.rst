@@ -53,4 +53,3 @@ set amount of time, typically 30 days. The expiration date will be
 displayed in both the email and the web portal. After this date the file
 will no longer be available for download, but the request may be
 resubmitted.
-

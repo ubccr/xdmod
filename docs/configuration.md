@@ -133,7 +133,7 @@ for SSL configuration information.
 The `ServerName` setting should be updated to match the server name in the SSL
 certificate.
 
-The name and port of the server must match with the `site_address` 
+The name and port of the server must match with the `site_address`
 configuration setting in `portal_settings.ini`.
 
 The template configuration file also configures the webserver to send the `Strict-Transport-Security` HTTP Header

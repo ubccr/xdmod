@@ -38,7 +38,7 @@ the data and in turn refreshing the screen.
    |                                   | thing.                           |
    +-----------------------------------+----------------------------------+
 
-.. table:: 
+.. table::
    :widths: 50 50
 
    +-----------------------------------+------------------------------------------+
@@ -103,7 +103,7 @@ Chart Configuration Toolbar
 The chart configuration toolbar (:numref:`chart_config_toolbar`) provides options for a
 user to customize the appearance of individual charts (and their
 datasheet view), export the data in a number of output formats, and make
-a chart available to the :ref:`Report Generator <report_generator>` 
+a chart available to the :ref:`Report Generator <report_generator>`
 
 .. figure:: media/image127.png
    :name: dataset_filter
@@ -253,7 +253,7 @@ give more details on the use of the filters.
 
 .. |image11| image:: media/image125.png
 
-.. table:: 
+.. table::
    :widths: 50 50
 
    +-----------------------------------+----------------------------------------------------+
@@ -405,4 +405,3 @@ buttons:
 -  Reducing the chart size
 
 -  Increasing the chart size
-

@@ -42,7 +42,7 @@ follow.
 .. only:: Open
 
    Also in the **My Profile** window is the option to choose your **Role
-   Delegation** by clicking the tab at the top of the window (:numref:`my_profile_role_delegation_menu`). 
+   Delegation** by clicking the tab at the top of the window (:numref:`my_profile_role_delegation_menu`).
    This tab allows you to choose a specific staff member
    connected to your account to delegate special privileges.
 
@@ -108,7 +108,7 @@ Clicking on the RoadMap button brings up a screen which displays an
 information page giving details on how to navigate to the XDMoD
 development roadmap (:numref:`about_roadmap_info`). Click on any feature in this page
 and you will be taken off of the XDMoD site to the Trello.com site where
-you will be able to view and interact with the XDMoD roadmap (:numref:`about_trello_roadmap`). 
+you will be able to view and interact with the XDMoD roadmap (:numref:`about_trello_roadmap`).
 To return to XDMoD, simply close the browser tab/window. If you
 simply want to view the Roadmap you can select the various Trello cards
 shown in :numref:`about_trello_roadmap` for further details about each roadmap task.

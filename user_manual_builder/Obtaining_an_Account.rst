@@ -29,4 +29,3 @@ Obtaining an Account
     You must have an ACCESS account to login to XDMoD. If you do not have an
     ACCESS account then you can create one following the instructions here:
     https://identity.access-ci.org/new-user.
-
