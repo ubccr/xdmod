@@ -629,7 +629,6 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                 credits: false,
                 baseChartOptions: {
                     summary: true,
-                    chart: {},
                     layout: {
                         width: portletWidth,
                         height: portletWidth * portletAspect,
@@ -638,8 +637,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                             t: 22,
                             b: 0
                         }
-                    },
-                    data: []
+                    }
                 },
                 store: new CCR.xdmod.CustomJsonStore({
 

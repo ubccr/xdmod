@@ -695,12 +695,13 @@ XDMoD.utils.deepExtend = function extend(out, ...arguments_) {
     return {};
   }
 
-  for (const obj of arguments_) {
+  for (let i = 0; i < arguments_.length; i++) {
+    const obj = arguments_[i];
     if (!obj) {
       continue;
     }
 
-    for (const [key, value] of Object.entries(obj)) {
+    Object.entries(obj).forEach(([key, value]) => {
       switch (Object.prototype.toString.call(value)) {
         case '[object Object]':
           out[key] = out[key] || {};
@@ -712,7 +713,7 @@ XDMoD.utils.deepExtend = function extend(out, ...arguments_) {
         default:
           out[key] = value;
       }
-    }
+    });
   }
 
   return out;
