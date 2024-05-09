@@ -22,9 +22,6 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
 
     // Configure plot for 'No Data' image. We want to wipe the layout object except for a couple things
     if (isEmpty) {
-        if (!baseChartOptions.data) {
-            baseChartOptions.data = [];
-        }
         const errorConfig = getNoDataErrorConfig();
         const { width } = baseChartOptions.layout;
         const { height } = baseChartOptions.layout;
