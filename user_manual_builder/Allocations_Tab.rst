@@ -24,10 +24,10 @@ allocations for other individuals.
 The summary view provides basic information about each allocation
 including title, charge number, project timeframe, and SU balance.
 Allocation information in ACCESS XDMoD is updated daily and therefore does
-not have information from the current day. See `allocations_homepage`_ for
-the most up-to-date information about an allocation.
+not have information from the current day. For the most up-to-date information
+about an allocation, log in to the `ACCESS Allocations`_ page.
 
-.. _allocations_homepage: https://allocations.access-ci.org/
+.. _ACCESS Allocations: https://allocations.access-ci.org/
 
 .. figure:: media/allocations_search.png
    :name: search
