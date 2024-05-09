@@ -17,6 +17,7 @@
             "gpu_processor_count_per_node": "rsf.gpu_processor_count_per_node",
             "comments": "rsf.comments",
             "su_available_per_day": "rsf.su_available_per_day",
+            "normalization_factor": "rsf.normalization_factor",
             "name": "rf.resource_name"
         },
         "joins": [

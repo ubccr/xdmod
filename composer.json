@@ -1,11 +1,13 @@
 {
+    "extra": {
+        "COMMENT": "If kassner/log-parser is updated to version >2.1.1, then the call to web_parser->addPattern in classes/ETL/DataEndpoint/WebServerLogFile.php (added in https://github.com/ubccr/xdmod/pull/1816) can be removed along with this 'extra' section."
+    },
     "require": {
         "php": "^5.4 || ^7.2",
         "carlo/jquery-base64-file": "^1.0",
         "egulias/email-validator": "^1.2",
         "google/recaptcha": "~1.1",
         "greenlion/php-sql-parser": "~4.2",
-        "highsoft/highcharts": "^4.2.5",
         "ircmaxell/password-compat": "~1",
         "jquery/jquery-min-file": "^1.12.4",
         "justinrainbow/json-schema": "~5.2",
@@ -25,7 +27,7 @@
         "ubccr/simplesamlphp-module-authoidcoauth2": "^1.1",
         "phpoffice/phpword": "^0.17.0",
         "monolog/monolog": "^1.25",
-        "plotly/plotly": "^2.24.2",
+        "plotly/plotly": "^2.29.1",
         "kassner/log-parser": "~1.5",
         "geoip2/geoip2": "~2.0",
         "ua-parser/uap-php": "^3.9",
@@ -55,30 +57,6 @@
                 },
                 "extra": {
                     "installer-name": "extjs"
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "highsoft/highcharts",
-                "type": "vanilla-plugin",
-                "version": "4.2.5",
-                "license": [
-                    "CC-BY-NC-3.0",
-                    "proprietary"
-                ],
-                "homepage": "https://www.highcharts.com/products/highcharts",
-                "dist": {
-                    "url": "https://code.highcharts.com/zips/Highcharts-4.2.5.zip",
-                    "type": "zip",
-                    "shasum": "e4ad04f3a6c1b5042d25a8f960f62ce5aeb32777"
-                },
-                "require": {
-                    "composer/installers": "~1.0"
-                },
-                "extra": {
-                    "installer-name": "highcharts"
                 }
             }
         },
@@ -213,13 +191,13 @@
             "package": {
                 "name": "plotly/plotly",
                 "type": "vanilla-plugin",
-                "version": "2.24.2",
+                "version": "2.29.1",
                 "license": "MIT",
                 "homepage": "https://github.com/plotly/plotly.js",
                 "dist": {
-                    "url": "https://cdn.plot.ly/plotly-2.24.2.min.js",
+                    "url": "https://cdn.plot.ly/plotly-2.29.1.min.js",
                     "type": "file",
-                    "shasum": "18d8802e7767617cfc23b6008a56581a567c1015"
+                    "shasum": "62b7c9478e01491b8d774300683cd8aac2d02a45"
                 },
                 "require": {
                     "composer/installers": "~1.0"
@@ -234,7 +212,6 @@
         "installer-paths": {
             "html/gui/lib/{$name}": [
                 "sencha/extjs-gpl",
-                "highsoft/highcharts",
                 "moment/moment-min-file",
                 "moment/moment-timezone-min-file",
                 "jquery/jquery-min-file",

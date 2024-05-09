@@ -201,14 +201,14 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                 'authentication_type' => 'token_optional'
             ],
             parent::validateSuccessResponse(function ($body, $assertMessage) {
-                $this->assertSame(2, $body['total'], $assertMessage);
+                $this->assertSame(3, $body['total'], $assertMessage);
                 $index = 0;
-                foreach (['Jobs', 'Cloud'] as $realmName) {
+                foreach (['Jobs', 'Cloud', 'ResourceSpecifications'] as $realmName) {
                     $realm = $body['data'][$index];
                     foreach (['id', 'name'] as $property) {
                         $this->assertSame(
                             $realmName,
-                            $realm[$property],
+                            str_replace(' ', '', $realm[$property]),
                             $assertMessage
                         );
                     }
@@ -233,16 +233,15 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                     }
                     $index++;
                 }
-                $this->assertCount(
-                    29,
-                    $body['data'][0]['fields'],
-                    $assertMessage
-                );
-                $this->assertCount(
-                    16,
-                    $body['data'][1]['fields'],
-                    $assertMessage
-                );
+
+                $counts = [29, 16, 16];
+                for ($i = 0; $i < count($counts); $i++) {
+                    $this->assertCount(
+                        $counts[$i],
+                        $body['data'][$i]['fields'],
+                        $assertMessage
+                    );
+                }
             })
         );
     }
