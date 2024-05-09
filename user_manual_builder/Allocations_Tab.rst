@@ -6,7 +6,7 @@ Allocations Tab
 The Allocations Tab displays information about both active and
 expired allocations. Toggle the |active| button or the |expired|
 button to view only allocations that are active or expired.
-The default view in (:numref:`allocations_tab`) below shows a summary
+The default view in (:numref:`summary`) below shows a summary
 for the logged in individual. Use the search feature shown in
 (:numref:`search`) to look up allocations for other individuals.
 
@@ -17,7 +17,7 @@ for the logged in individual. Use the search feature shown in
    :height: 0.16667in
 
 .. figure:: media/allocations_tab.png
-   :name: allocations_tab
+   :name: summary
 
    View a summary of your allocations in the Allocations Tab.
 
@@ -35,9 +35,9 @@ including associated users and associated resources.
    View additional information about an allocation.
 
 The usage for an individual on an allocations can be broken down by
-resource as show in (:numref:`user_info`).
+resource.
 
-.. figure:: media/allocations_user_info
+.. figure:: media/allocations_user_info.png
    :name: user_info
 
    Break down usage by resource.
