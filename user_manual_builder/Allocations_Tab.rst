@@ -31,6 +31,7 @@ about an allocation, log in to the `ACCESS Allocations`_ page.
 
 .. figure:: media/allocations_search.png
    :name: search
+   :align: center
 
    Look up other ACCESS allocations using the search feature.
 
