@@ -19,7 +19,15 @@ allocations for other individuals.
 .. figure:: media/allocations_tab.png
    :name: summary
 
-   View a summary of your allocations in the Allocations Tab.
+   View a summary of your allocations.
+
+The summary view provides basic information about each allocation
+including title, charge number, project timeframe, and SU balance.
+Allocation information in ACCESS XDMoD is updated daily and therefore does
+not have information from the current day. See `allocations_homepage`_ for
+the most up-to-date information about an allocation.
+
+.. _allocations_homepage: https://allocations.access-ci.org/
 
 .. figure:: media/allocations_search.png
    :name: search
@@ -34,7 +42,7 @@ including associated users and associated resources.
 
    View additional information about an allocation.
 
-The usage for an individual on an allocations can be broken down by
+The usage for an individual on an allocation can be broken down by
 resource.
 
 .. figure:: media/allocations_user_info.png
