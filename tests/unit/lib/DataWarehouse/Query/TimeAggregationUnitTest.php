@@ -1,8 +1,8 @@
 <?php
 
-namespace UnitTesting\DataWarehouse\Query;
+namespace UnitTests\DataWarehouse\Query;
 
-use \UnitTesting\mock;
+use UnitTests\TestHelpers\mock;
 
 class TimeAggregationUnitTest extends \PHPUnit_Framework_TestCase
 {

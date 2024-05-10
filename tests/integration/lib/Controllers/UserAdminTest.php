@@ -4,6 +4,8 @@ namespace IntegrationTests\Controllers;
 
 use CCR\Json;
 use Models\Services\Realms;
+use IntegrationTests\Controllers\MetricExplorerTest;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class UserAdminTest extends BaseUserAdminTest
 {
@@ -447,26 +449,23 @@ class UserAdminTest extends BaseUserAdminTest
         if (!$isPublicUser) {
             $this->helper->authenticateDirect($username, $username);
         }
-
-        $testGroup = 'integration/controllers/metric_explorer';
-        $fileName = 'get_dw_descripter';
-        $input = parent::loadJsonTestArtifact(
-            $testGroup,
-            $fileName,
-            'input'
-        );
-        $input['data'] += [
-            'public_user' => ($isPublicUser ? 'true' : 'false')
-        ];
-        $output = parent::loadJsonTestArtifact(
-            $testGroup,
-            $fileName,
-            'output'
-        );
         parent::requestAndValidateJson(
             $this->helper,
-            $input,
-            $output
+            array_replace(
+                MetricExplorerTest::getDefaultRequestInput(),
+                [
+                    'data' => [
+                        'operation' => 'get_dw_descripter',
+                        'public_user' => ($isPublicUser ? 'true' : 'false')
+                    ]
+                ]
+            ),
+            [
+                'status_code' => 200,
+                'body_validator' => (
+                    MetricExplorerTest::getDwDescriptersBodyValidator($this)
+                )
+            ]
         );
         if (!$isPublicUser) {
             $this->helper->logout();
@@ -751,7 +750,7 @@ class UserAdminTest extends BaseUserAdminTest
             parent::getTestFiles()->getFile('user_admin', 'get_user_visits', 'input')
         );
 
-        $helper = new \TestHarness\XdmodTestHelper();
+        $helper = new XdmodTestHelper();
         $helper->authenticateDashboard('mgr');
 
         foreach($data as &$datum) {

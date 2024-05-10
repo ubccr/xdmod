@@ -19,6 +19,16 @@
                 "nullable": true
             },
             {
+                "name": "start_day_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "end_day_id",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
                 "name": "name",
                 "type": "varchar(200)",
                 "nullable": true

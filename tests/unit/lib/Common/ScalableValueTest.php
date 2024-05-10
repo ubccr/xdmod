@@ -1,6 +1,6 @@
 <?php
 
-namespace Common;
+namespace UnitTests\Common;
 
 /*
 * @author Amin Ghadersohi

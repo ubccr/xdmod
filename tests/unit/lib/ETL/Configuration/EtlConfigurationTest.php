@@ -7,16 +7,17 @@
  * ------------------------------------------------------------------------------------------
  */
 
-namespace UnitTesting\ETL\Configuration;
+namespace UnitTests\ETL\Configuration;
 
 use Configuration\ModuleConfiguration;
 use Configuration\XdmodConfiguration;
 use ETL\Configuration\EtlConfiguration;
 use CCR\Json;
+use UnitTests\BaseTest;
 
-use TestHarness\TestFiles;
+use IntegrationTests\TestHarness\TestFiles;
 
-class EtlConfigurationTest extends \UnitTesting\BaseTest
+class EtlConfigurationTest extends BaseTest
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";

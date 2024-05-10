@@ -101,7 +101,10 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
                     zeroline: false,
                     gridcolor: '#d8d8d8',
                     type: 'date',
-                    range: [record.data.series[0].data[0].low - (60 * 1000), record.data.series[0].data[0].high + (60 * 1000)]
+                    range: [
+                        moment.tz(record.data.series[0].data[0].low - (60 * 1000), record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS'),
+                        moment.tz(record.data.series[0].data[0].high + (60 * 1000), record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS')
+                    ]
                 },
                 yaxis: {
                     autorange: 'reversed',
@@ -146,7 +149,7 @@ XDMoD.Module.JobViewer.GanttChart = Ext.extend(XDMoD.Module.JobViewer.ChartTab, 
             };
 
             layout.shapes = rect;
-            Plotly.react(this.id + '_hc', data, layout, { displayModeBar: false, doubleClick: 'reset' });
+            Plotly.newPlot(this.id + '_hc', data, layout, { displayModeBar: false, doubleClick: 'reset' });
 
             var panel = document.getElementById(this.id + '_hc');
             panel.on('plotly_click', function (eventData) {

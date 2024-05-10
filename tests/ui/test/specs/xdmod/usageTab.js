@@ -14,12 +14,12 @@ describe('Usage', function () {
             it('Select "Usage" tab', function () {
                 usg.selectTab();
                 browser.waitForChart();
-                browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title));
+                browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
 
                 // by refreshing we ensure that there are not stale legend-item elements
                 // on the page.
                 browser.refresh();
-                browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title));
+                browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
             });
             it('Set a known start and end date', function meSetStartEnd() {
                 usg.setStartDate(baselineDate.start);
@@ -29,7 +29,7 @@ describe('Usage', function () {
             });
             it('Select Job Size Min', function () {
                 browser.waitForLoadedThenClick(usg.treeNodeByPath('Jobs Summary', 'Job Size: Min'));
-                browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)'));
+                browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)', true));
                 usg.checkLegendText(expected.centerdirector.legend);
 
                 // Check to make sure that the 'Std Err' display menu items are disabled.
@@ -43,11 +43,11 @@ describe('Usage', function () {
                 browser.waitForLoadedThenClick(usg.unfoldTreeNodeByName('Jobs Summary'));
                 browser.waitForLoadedThenClick(usg.unfoldTreeNodeByName('Jobs by System Username'));
                 browser.waitUntilAnimEndAndClick(usg.treeNodeByPath('Jobs by System Username', 'CPU Hours: Per Job'));
-                browser.waitForExist(usg.chartByTitle('CPU Hours: Per Job: by System Username'));
+                browser.waitForExist(usg.chartByTitle('CPU Hours: Per Job: by System Username', true));
             });
             it('View CPU Hours: Per Job', function () {
                 browser.waitForLoadedThenClick(usg.unfoldTreeNodeByName('Jobs Summary', 'CPU Hours: Per Job'));
-                browser.waitForExist(usg.chartByTitle('CPU Hours: Per Job'));
+                browser.waitForExist(usg.chartByTitle('CPU Hours: Per Job', true));
 
                 // Check to make sure that the 'Std Err' display menu items are disabled.
                 browser.waitForLoadedThenClick(usg.toolbarButtonByText('Display'));
@@ -62,12 +62,12 @@ describe('Usage', function () {
             it('Selected', function () {
                 usg.selectTab();
                 browser.waitForChart();
-                browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title));
+                browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
 
                 // by refreshing we ensure that there are not stale legend-item elements
                 // on the page.
                 browser.refresh();
-                browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title));
+                browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
             });
             it('Set a known start and end date', function meSetStartEnd() {
                 usg.setStartDate(baselineDate.start);
@@ -77,7 +77,7 @@ describe('Usage', function () {
             });
             it('View Job Size Min', function () {
                 browser.waitForLoadedThenClick(usg.treeNodeByPath('Jobs Summary', 'Job Size: Min'));
-                browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)'));
+                browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)', true));
                 usg.checkLegendText(expected.centerdirector.legend);
             });
             it('Confirm System Username is not selectable', function () {
@@ -87,7 +87,7 @@ describe('Usage', function () {
                 // since nothing should happen, there is no action to wait for, so we
                 // have to pause for a bit
                 browser.pause(500);
-                browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)'));
+                browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)', true));
             });
         });
     }

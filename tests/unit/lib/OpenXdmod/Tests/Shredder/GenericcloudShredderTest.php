@@ -3,7 +3,7 @@
  * @author Greg Dean <gmdean@buffalo.edu>
  */
 
-namespace OpenXdmod\Tests\Shredder;
+namespace UnitTests\OpenXdmod\Tests\Shredder;
 
 use CCR\DB\NullDB;
 use CCR\Log;

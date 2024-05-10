@@ -1,9 +1,11 @@
-<?php namespace IntegrationTests\Controllers;
+<?php
+
+namespace IntegrationTests\Controllers;
 
 use CCR\Json;
 use IntegrationTests\BaseTest;
-use TestHarness\TestParameterHelper;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\TestParameterHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class ControllerTest extends BaseTest
 {

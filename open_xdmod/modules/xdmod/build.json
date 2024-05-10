@@ -1,6 +1,6 @@
 {
     "name": "xdmod",
-    "version": "10.5.0",
+    "version": "11.0.0",
     "release": "1.0",
     "files": {
         "include_paths": [
@@ -22,12 +22,8 @@
             "/html/gui/lib/extjs/pkgs",
             "/html/gui/lib/extjs/test",
             "/html/gui/lib/extjs/welcome",
-            "/html/gui/lib/highcharts/api",
-            "/html/gui/lib/highcharts/examples",
-            "/html/gui/lib/highcharts/gfx",
-            "/html/gui/lib/highcharts/graphics",
-            "/html/gui/lib/highcharts/index.htm",
             "/html/unit_tests",
+            "/html/user_manual/sphinx_venv",
             "/user_manual_builder"
         ],
         "exclude_patterns": [
@@ -82,6 +78,7 @@
             {"configuration/rawstatistics.d/20_jobs.json": "rawstatistics.d/20_jobs.json"},
             "configuration/resource_specs.json",
             "configuration/resource_types.json",
+            "configuration/resource_allocation_types.json",
             "configuration/resources.json",
             "configuration/roles.json",
             "configuration/roles.d",
@@ -103,5 +100,11 @@
         "etc/crond": {
             "configuration/cron.conf": "xdmod"
         }
+    },
+    "commands": {
+        "pre_build": [
+            "user_manual_builder/setup.sh",
+            "user_manual_builder/build_user_manual.sh --builddir user_manual_builder/ --destdir html/user_manual/"
+        ]
     }
 }
