@@ -6,7 +6,7 @@ Allocations Tab
 The Allocations Tab displays information about both active and
 expired allocations. Toggle the |active| button or the |expired|
 button to view only allocations that are active or expired.
-The default view shows a summary for the logged in individual.
+The default view shows a summary for the logged-in individual.
 Use the search feature shown in (:numref:`search`) to look up
 allocations for other individuals.
 
