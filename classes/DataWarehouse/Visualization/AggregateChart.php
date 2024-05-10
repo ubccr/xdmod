@@ -1084,6 +1084,12 @@ class AggregateChart
 
                 $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
 
+                // Display markers for scatter plots, non-thumbnail plots
+                // with fewer than 21 points, or for plots with a single y value.
+                $showMarker = $data_description->display_type == 'scatter' ||
+                    ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
+                    $values_count == 1;
+
                 $trace = array_merge($trace, array(
                     'automargin'=> $data_description->display_type == 'pie' ? true : null,
                     'name' => $lookupDataSeriesName,
@@ -1111,7 +1117,7 @@ class AggregateChart
                         'shape' => $data_description->display_type == 'spline' || $data_description->display_type == 'areaspline' ? 'spline' : 'linear',
                     ),
                     'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
-                    'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
+                    'mode' => $data_description->display_type == 'scatter' ? 'markers' : ($showMarker ? 'lines+markers' : 'lines'),
                     'hovertext' => $xValues,
                     'hoveron'=>  $data_description->display_type == 'area' || $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
                     'hovertemplate' => $tooltip,
@@ -1553,7 +1559,7 @@ class AggregateChart
             'bgcolor' => '#DFDFDF',
             'showarrow' => false,
             'x' => 0.0,
-            'y' => 1.0,
+            'y' => 0.0,
         );
     }
 

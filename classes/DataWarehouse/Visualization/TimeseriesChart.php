@@ -455,6 +455,25 @@ class TimeseriesChart extends AggregateChart
                         }
                         $values = $yAxisDataObject->getValues();
 
+                        // Decide whether to show data point markers:
+                        $values_count = count($values);
+                        // Count datapoints having actual, non-null y values:
+                        $y_values_count = 0;
+                        foreach ($values as $y_value) {
+                            if ($y_value !== null) {
+                                ++$y_values_count;
+                            }
+                            // we are only interested in the == 1 case.
+                            if ($y_values_count > 1) {
+                                break;
+                            }
+                        }
+                        // Display markers for scatter plots, non-thumbnail plots of data series
+                        // with fewer than 21 points, or for any data series with a single y value.
+                        $showMarker = $data_description->display_type == 'scatter' ||
+                            ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
+                            $y_values_count == 1;
+
                         $isRemainder = $yAxisDataObject->getGroupId() === TimeseriesDataset::SUMMARY_GROUP_ID;
 
                         $filterParametersTitle = $data_description->long_legend == 1?$query->getFilterParametersTitle():'';
@@ -582,7 +601,7 @@ class TimeseriesChart extends AggregateChart
                                 'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4 : 0,
                                 'shape' => ($data_description->display_type == 'spline' || $data_description->display_type == 'areaspline') ? 'spline' : 'linear'
                             ),
-                            'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
+                            'mode' => $data_description->display_type == 'scatter' ? 'markers' : ($showMarker ? 'lines+markers' : 'lines'),
                             'hoveron' => $data_description->display_type == 'area' || $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
                             'yaxis' => "y{$yIndex}",
                             'showlegend' => $data_description->display_type != 'pie',
