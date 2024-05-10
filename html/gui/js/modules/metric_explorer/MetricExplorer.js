@@ -757,7 +757,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                                     instance.filtersStore.add(new instance.filtersStore.recordType(filter));
                                 } else if (datasetCount > 1) {
                                     var filters = XDMoD.utils.deepExtend({}, record.get('filters'));
-                                    var found = false;
+                                    let found = false;
                                     for (let i = 0; i < filters.length; i++) {
                                         if (filters[i].id == filter.id) {
                                             found = true;
