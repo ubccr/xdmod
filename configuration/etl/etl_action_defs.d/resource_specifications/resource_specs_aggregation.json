@@ -35,7 +35,10 @@
             "allocated_cpu_node_time": "COALESCE(SUM((${resource_specs_duration}) * r.cpu_node_count * ra.percent) / 100.0, 0)",
             "total_gpu_node_time": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_node_count), 0)",
             "allocated_gpu_node_time": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_node_count * ra.percent) / 100.0, 0)",
-            "su_available": "COALESCE(SUM((${resource_specs_duration}) * r.su_available_per_day) / 86400, 0)",
+            "total_su_available": "COALESCE(SUM((${resource_specs_duration}) * r.su_available_per_day), 0)",
+            "allocated_su_available": "COALESCE(SUM((${resource_specs_duration}) * r.su_available_per_day * ra.percent) / 100.0, 0)",
+            "total_normalized_su_available": "COALESCE(SUM((${resource_specs_duration}) * r.su_available_per_day * r.normalization_factor), 0)",
+            "allocated_normalized_su_available": "COALESCE(SUM((${resource_specs_duration}) * r.su_available_per_day * r.normalization_factor * ra.percent) / 100.0, 0)",
             "resourcetype_id": "COALESCE(rf.resourcetype_id, -1)",
             "resource_organization_id": "COALESCE(rf.organization_id, -1)",
             "resource_state_id": "COALESCE(org.state_id, -1)",
@@ -64,7 +67,7 @@
                 "name": "resource_allocated",
                 "alias": "ra",
                 "schema": "${SOURCE_SCHEMA}",
-                "on": "r.resource_id = ra.resource_id AND r.start_day_id = ra.start_day_id AND r.end_day_id = ra.end_day_id"
+                "on": "r.resource_id = ra.resource_id AND ra.start_day_id <= ${:PERIOD_END_DAY_ID} AND ra.end_day_id >= ${:PERIOD_START_DAY_ID} AND ra.start_day_id <= r.end_day_id AND ra.end_day_id >= r.start_day_id"
             },
             {
                 "name": "resourcefact",

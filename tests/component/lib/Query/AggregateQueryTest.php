@@ -266,7 +266,7 @@ SQL;
         );
         $query->addStat('job_count');
 
-        // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
+        // addOrderByAndSetSortInfo() is called from ComplexDataset and TimeseriesChart and
         // prepends the metric to the ORDER BY clause. Simulate that here.
 
         $data_description = (object) array(
@@ -336,7 +336,7 @@ SQL;
         $query->addGroupBy('queue');
         $query->addStat('job_count');
 
-        // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
+        // addOrderByAndSetSortInfo() is called from ComplexDataset and TimeseriesChart and
         // prepends the metric to the ORDER BY clause. Simulate that here.
 
         $data_description = (object) array(
@@ -386,7 +386,7 @@ SQL;
         $query->addGroupBy('none');
         $query->addStat('job_count');
 
-        // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
+        // addOrderByAndSetSortInfo() is called from ComplexDataset and TimeseriesChart and
         // prepends the metric to the ORDER BY clause. Simulate that here.
 
         $data_description = (object) array(
