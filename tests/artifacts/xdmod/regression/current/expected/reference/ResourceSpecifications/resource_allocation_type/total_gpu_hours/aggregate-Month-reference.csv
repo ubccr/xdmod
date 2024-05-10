@@ -1,0 +1,13 @@
+title
+"GPU Hours: Total: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+"Resource Allocation Type","GPU Hours: Total"
+"GPU Node Allocated",4896000.0000
+"GPU Allocated",3552000.0000
+"CPU Allocated",0.0000
+"CPU Node Allocated",0.0000
+---------

@@ -47,6 +47,12 @@ class WebServerLogFile extends aStructuredFile implements iStructuredFile
         parent::__construct($options, $logger);
 
         $this->web_parser = new \Kassner\LogParser\LogParser();
+
+        // Allow "at" sign in remote user format string.
+        // This can be removed if Kassner LogParser is updated to
+        // version >2.1.1 (see note in composer.json).
+        $this->web_parser->addPattern('%u', '(?P<user>(?:-|[\w\-\.@]+))');
+
         if (isset($options->log_format)) {
             $this->web_parser->setFormat($options->log_format);
         }

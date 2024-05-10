@@ -1,0 +1,10 @@
+title
+"Average Number of CPU Cores: Total (Core Count): by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+"Service Provider","Average Number of CPU Cores: Total (Core Count)"
+screw,17882.3529
+---------

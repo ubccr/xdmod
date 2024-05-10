@@ -1,3 +1,6 @@
+---
+layout: null
+---
 {
     "openapi": "3.0.3",
     "info": {
@@ -17,7 +20,7 @@
             "backgroundColor": "#FFFFFF",
             "altText": ""
         },
-        "version": "10.0.0"
+        "version": "{{ page.sw_version }}"
     },
     "servers": [
         {
@@ -68,7 +71,7 @@
                 "name": "start_date",
                 "in": "query",
                 "required": true,
-                "description": "Start date of requested data",
+                "description": "Start date of requested data in the portal's local time zone in YYYY-MM-DD format.",
                 "schema": {
                     "type": "string",
                     "format": "date"
@@ -78,7 +81,7 @@
                 "name": "end_date",
                 "in": "query",
                 "required": true,
-                "description": "End date of requested data",
+                "description": "End date of requested data in the portal's local time zone in YYYY-MM-DD format.",
                 "schema": {
                     "type": "string",
                     "format": "date"
@@ -148,7 +151,7 @@
                   "scale": {
                     "type": "string",
                     "format": "integer",
-                    "description": "For chart image exports this sets the zoom factor for the exported image compared to the on-screen display. See https://api.highcharts.com/highcharts/exporting.scale"
+                    "description": "Sets the scaling of the chart width and height."
                   },
                   "share_y_axis": {
                     "type": "string",
@@ -266,7 +269,7 @@
                     "scale": {
                         "type": "string",
                         "format": "integer",
-                        "description": "For chart image exports this sets the zoom factor for the exported image compared to the on-screen display. See https://api.highcharts.com/highcharts/exporting.scale"
+                        "description": "Sets the scaling of the chart width and height."
                     },
                     "aggregation_unit": {
                         "type": "string",
@@ -2854,7 +2857,7 @@
                     "Data Analytics Framework"
                 ],
                 "summary": "Get raw data from the data warehouse",
-                "description": "This will return rows of raw data up to a maximum number of rows. The limit on number of rows can be obtained via `GET /warehouse/raw-data/limit`.",
+                "description": "",
                 "operationId": "get-warehouse-raw-data",
                 "security": [
                     { "http_bearer": [] },
@@ -3049,7 +3052,7 @@
                                             "results": [],
                                             "data": [],
                                             "message": "Invalid realm.",
-                                            "code": 104
+                                            "code": 0
                                         }
                                     },
                                     "invalid-fields": {
@@ -3061,7 +3064,7 @@
                                             "results": [],
                                             "data": [],
                                             "message": "Invalid fields specified: 'foo', 'bar'.",
-                                            "code": 104
+                                            "code": 0
                                         }
                                     },
                                     "invalid-filter-key": {
@@ -3073,7 +3076,7 @@
                                             "results": [],
                                             "data": [],
                                             "message": "Invalid filter key 'foo'.",
-                                            "code": 104
+                                            "code": 0
                                         }
                                     },
                                     "negative-offset": {
@@ -3085,7 +3088,7 @@
                                             "results": [],
                                             "data": [],
                                             "message": "Offset must be non-negative.",
-                                            "code": 104
+                                            "code": 0
                                         }
                                     }
                                 }
@@ -3112,96 +3115,6 @@
                                     "expired-token": {
                                         "$ref": "#/components/examples/expired-token"
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/warehouse/raw-data/limit": {
-            "get": {
-                "tags": [
-                    "Data Warehouse",
-                    "Data Analytics Framework"
-                ],
-                "summary": "Get the raw data response limit",
-                "description": "This gets the maximum number of rows that will be returned in a single response from `GET /warehouse/raw-data`.",
-                "operationId": "get-warehouse-raw-data-limit",
-                "security": [
-                    { "http_bearer": [] },
-                    { "query_param_bearer": [] }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "title": "success",
-                                    "properties": {
-                                        "success":  {
-                                            "type": "boolean",
-                                            "enum": [ true ]
-                                        },
-                                        "data": {
-                                            "type": "integer",
-                                            "minimum": 0
-                                        }
-                                    },
-                                    "required": [
-                                        "success",
-                                        "data"
-                                    ]
-                                },
-                                "example": {
-                                    "success": true,
-                                    "data": 10000
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/warehouse-error"
-                                },
-                                "examples": {
-                                    "empty-token": {
-                                        "$ref": "#/components/examples/empty-token"
-                                    },
-                                    "malformed-token": {
-                                        "$ref": "#/components/examples/malformed-token"
-                                    },
-                                    "invalid-token": {
-                                        "$ref": "#/components/examples/invalid-token"
-                                    },
-                                    "expired-token": {
-                                        "$ref": "#/components/examples/expired-token"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/warehouse-error"
-                                },
-                                "example": {
-                                    "success": false,
-                                    "count": 0,
-                                    "total": 0,
-                                    "totalCount": 0,
-                                    "results": [],
-                                    "data": [],
-                                    "message": "Option 'rest_raw_row_limit' does not exist in section 'datawarehouse'",
-                                    "code": 0
                                 }
                             }
                         }

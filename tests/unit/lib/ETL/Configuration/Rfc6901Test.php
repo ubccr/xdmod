@@ -7,7 +7,7 @@
  * ------------------------------------------------------------------------------------------
  */
 
-namespace UnitTesting\ETL\Configuration;
+namespace UnitTests\ETL\Configuration;
 
 use Configuration\Configuration;
 use Configuration\JsonReferenceTransformer;

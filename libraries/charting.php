@@ -2,68 +2,66 @@
 
 namespace xd_charting;
 
-function processForReport(&$highchart_config)
+function processForReport(&$chart_config)
 {
-    $data = json_encode($highchart_config);
-    $highchart_config = json_decode($data, true);
+    $data = json_encode($chart_config);
+    $chart_config = json_decode($data, true);
 
-    if ( isset($highchart_config['data']) && isset($highchart_config['data'][0]) ) {
-        $highchart_config = $highchart_config['data'][0];
+    if ( isset($chart_config['data']) && isset($chart_config['data'][0]) ) {
+        $chart_config = $chart_config['data'][0];
     }
 
-    $highchart_config['credits']['text'] = '';
+    $chart_config['layout']['annotations'][2] = '';
 }
 
-function processForThumbnail(&$highchart_config)
+function processForThumbnail(&$chart_config)
 {
-    if ( isset($highchart_config['data']) && isset($highchart_config['data'][0]) ) {
-        $highchart_config = $highchart_config['data'][0];
+    if ( isset($chart_config['data']) && isset($chart_config['data'][0]) ) {
+        $chart_config = $chart_config['data'][0];
     }
 
-    $highchart_config['legend']['enabled'] = false;
+    $chart_config['layout']['showlegend'] = false;
 
-    $highchart_config['credits']['text'] = '';
+    $chart_config['layout']['annotations'][2]['text'] = '';
 
-    $highchart_config['title']['text'] = '';
-    $highchart_config['subtitle']['text'] = '';
+    $chart_config['layout']['annotations'][0]['text'] = '';
+    $chart_config['layout']['annotations'][1]['text'] = '';
 
-    $highchart_config['xAxis']['title']['text'] = '';
-    $highchart_config['xAxis']['labels']['enabled'] = false;
+    $chart_config['layout']['xaxis']['title']['text'] = '';
+    $chart_config['layout']['xaxis']['showticklabels'] = false;
 
-    $highchart_config['yAxis']['title']['text'] = '';
-    $highchart_config['yAxis']['labels']['enabled'] = false;
+    $chart_config['layout']['yaxis']['title']['text'] = '';
+    $chart_config['layout']['yaxis']['showticklabels'] = false;
 }
 
-function exportHighchart(
+function exportChart(
     $chartConfig,
     $width,
     $height,
     $scale,
     $format,
     $globalChartConfig = null,
-    $fileMetadata = null,
-    $isPlotly = false
+    $fileMetadata = null
 ) {
     $effectiveWidth = (int)($width*$scale);
     $effectiveHeight = (int)($height*$scale);
 
     $html_dir = __DIR__ . "/../html";
-    $template = file_get_contents($html_dir . "/highchart_template.html");
-    if ($isPlotly){
-        $template = file_get_contents($html_dir . "/plotly_template.html");
-    }
+    $template = file_get_contents($html_dir . "/plotly_template.html");
 
     $template = str_replace('_html_dir_', $html_dir, $template);
     $template = str_replace('_width_', $effectiveWidth, $template);
     $template = str_replace('_height_', $effectiveHeight, $template);
     $globalChartOptions = array('timezone' => date_default_timezone_get());
+
     if ($globalChartConfig !== null) {
         $globalChartOptions = array_merge($globalChartOptions, $globalChartConfig);
     }
+
     $template = str_replace('_globalChartOptions_', json_encode($globalChartOptions), $template);
     $template = str_replace('_chartOptions_', json_encode($chartConfig), $template);
+    $svg = getSvgViaChromiumHelper($template, $effectiveWidth, $effectiveHeight);
 
-    $svg = getSvgViaChromiumHelper($template, $effectiveWidth, $effectiveHeight, $isPlotly);
     switch($format){
         case 'png':
             return convertSvg($svg, 'png', $effectiveWidth, $effectiveHeight, $fileMetadata);
@@ -87,7 +85,7 @@ function exportHighchart(
  *
  * @throws \Exception on invalid format, command execution failure, or non zero exit status
  */
-function getSvgViaChromiumHelper($html, $width, $height, $isPlotly){
+function getSvgViaChromiumHelper($html, $width, $height){
 
     // Chromium requires the file to have a .html extension
     // cant use datauri as it will not execute embdeeded javascript
@@ -104,8 +102,7 @@ function getSvgViaChromiumHelper($html, $width, $height, $isPlotly){
     $command = LIB_DIR . '/chrome-helper/chrome-helper.js' .
         ' --window-size=' . $width . ',' . $height .
         ' --path-to-chrome=' . $chromiumPath .
-        ' --input-file=' . $tmpHtmlFile .
-        ' --plotly=' . $isPlotly;
+        ' --input-file=' . $tmpHtmlFile;
 
     $pipes = array();
     $descriptor_spec = array(

@@ -1,6 +1,6 @@
 <?php
 
-namespace UnitTesting\DataWarehouse;
+namespace UnitTests\DataWarehouse;
 
 class ExportBuilderTest extends \PHPUnit_Framework_TestCase
 {

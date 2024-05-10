@@ -1,12 +1,12 @@
 <?php
 
-namespace UnitTesting\DataWarehouse\Export;
+namespace UnitTests\DataWarehouse\Export;
 
 use CCR\Log;
 use DataWarehouse\Export\FileWriter\JsonFileWriter;
 use PHPUnit_Framework_TestCase;
 use Psr\Log\LoggerInterface;
-use TestHarness\TestFiles;
+use IntegrationTests\TestHarness\TestFiles;
 
 /**
  * Test data warehouse export JSON file writer.
@@ -33,7 +33,7 @@ class JsonFileWriterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return \TestHarness\TestFiles
+     * @return TestFiles
      */
     public function getTestFiles()
     {

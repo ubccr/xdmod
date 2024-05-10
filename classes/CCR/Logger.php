@@ -47,9 +47,9 @@ class Logger extends \Monolog\Logger implements LoggerInterface
     protected function extractMessage($record)
     {
         if (is_array($record)) {
-            return json_encode($this->recursivelyStringifyObjects($record));
+            return json_encode($this->recursivelyStringifyObjects($record), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
         }
-        return json_encode(array('message' => $record));
+        return json_encode(array('message' => $record), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
     }
 
     /**

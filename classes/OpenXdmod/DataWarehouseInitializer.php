@@ -361,32 +361,29 @@ class DataWarehouseInitializer
             array('last-modified-start-date' => $lastModifiedStartDate)
         );
 
-        $this->aggregateCloudResourceSpecs($lastModifiedStartDate);
-
         $filterListBuilder = new FilterListBuilder();
         $filterListBuilder->setLogger($this->logger);
         $filterListBuilder->buildRealmLists('Cloud');
     }
 
     /**
-     * Aggregated cloud resource specifications for use with utilization statistic
-     * in the cloud realm. If the cloud realm is not enabled then do nothing
+     * Aggregated resource specifications data
      *
      * @param string $lastModifiedStartDate Aggregate data ingested on or after
      *     this date.
      */
-    public function aggregateCloudResourceSpecs($lastModifiedStartDate){
-        if( !$this->isRealmEnabled('Cloud') ){
-            $this->logger->debug('Cloud realm not enabled, not aggregating');
-            return;
-        }
-
-        $this->logger->notice('Aggregating Cloud Resource Specification data');
+    public function aggregateResourceSpecs($lastModifiedStartDate)
+    {
+        $this->logger->notice('Aggregating Resource Specification data');
         Utilities::runEtlPipeline(
-            array('aggregate-cloud-resource-specs'),
+            array('aggregate-resource-specs'),
             $this->logger,
             array('last-modified-start-date' => $lastModifiedStartDate)
         );
+
+        $filterListBuilder = new FilterListBuilder();
+        $filterListBuilder->setLogger($this->logger);
+        $filterListBuilder->buildRealmLists('ResourceSpecifications');
     }
 
     /**

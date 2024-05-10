@@ -2,24 +2,24 @@
 
 namespace Rest\Controllers;
 
+use CCR\DB;
 use CCR\Log;
 use Configuration\XdmodConfiguration;
 use DataWarehouse\Data\BatchDataset;
 use DataWarehouse\Export\RealmManager;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
-use DataWarehouse\Query\Exceptions\NotFoundException;
-use DataWarehouse\Query\Exceptions\BadRequestException;
-use DataWarehouse\Query\Model\WhereCondition;
 use Exception;
 use Models\Services\Acls;
 use Models\Services\Parameters;
 use Models\Services\Realms;
+use PDO;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\ControllerCollection;
 
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use XDUser;
 use DataWarehouse\Access\MetricExplorer;
@@ -336,9 +336,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $controller
             ->get("$root/raw-data", "$current::getRawData");
-
-        $controller
-            ->get("$root/raw-data/limit", "$current::getRawDataLimit");
     }
 
     /**
@@ -365,8 +362,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Application $app
      * @return array in the format array( boolean success, string message)
      * @throws AccessDeniedException
-     * @throws BadRequestException
-     * @throws NotFoundException
+     * @throws BadRequestHttpException
+     * @throws NotFoundHttpException
      */
     public function searchHistory(Request $request, Application $app)
     {
@@ -479,7 +476,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             }
         }
 
-        throw new NotFoundException("", 404);
+        throw new NotFoundHttpException();
     }
 
     /**
@@ -487,25 +484,18 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * throws and exception if the parameters are missing.
      * @param Request $request The request.
      * @return array decoded search parameters.
-     * @throws MissingMandatoryParametersException If the required parameters are absent.
+     * @throws BadRequestHttpException If the required 'data' parameter is
+     *                                 absent.
      */
     private function getSearchParams(Request $request)
     {
-        $data = $request->get('data');
-
-        if (!isset($data)) {
-            throw new MissingMandatoryParametersException(
-                'Malformed request. Expected \'data\' to be present.',
-                400
-            );
-        }
+        $data = $this->getStringParam($request, 'data', true);
 
         $decoded = json_decode($data, true);
 
         if ($decoded === null || !isset($decoded['text']) ) {
-            throw new MissingMandatoryParametersException(
-                'Malformed request. Expected \'data.text\' to be present.',
-                400
+            throw new BadRequestHttpException(
+                'Malformed request. Expected \'data.text\' to be present.'
             );
         }
 
@@ -522,7 +512,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Application $app that will be used to complete the requested operation
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws AccessDeniedException
-     * @throws BadRequestException
+     * @throws BadRequestHttpException
      */
     public function createHistory(Request $request, Application $app)
     {
@@ -545,11 +535,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
             : $history->insert($decoded);
 
         if ($created == null) {
-            throw new BadRequestException(
+            throw new BadRequestHttpException(
                 "Create request will exceed record storage restrictions " .
                 "(record count limited to " .
-                WarehouseControllerProvider::_MAX_RECORDS . ")",
-                400
+                WarehouseControllerProvider::_MAX_RECORDS . ")"
             );
         }
 
@@ -576,7 +565,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Application $app that will be used to complete the requested operation
      * @param int $id of the Search History Record to be updated.
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws MissingMandatoryParametersException
+     * @throws BadRequestHttpException
      * @throws AccessDeniedException
      */
     public function updateHistory(Request $request, Application $app, $id)
@@ -617,7 +606,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Application $app that will be used to complete the requested operation
      * @param int $id of the Search History Record to be removed.
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws MissingMandatoryParametersException
+     * @throws BadRequestHttpException
      * @throws AccessDeniedException
      */
     public function deleteHistory(Request $request, Application $app, $id)
@@ -646,7 +635,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Request $request that will be used to complete the requested operation
      * @param Application $app that will be used to complete the requested operation
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws MissingMandatoryParametersException
+     * @throws BadRequestHttpException
      * @throws AccessDeniedException
      */
     public function deleteAllHistory(Request $request, Application $app)
@@ -674,7 +663,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Request $request
      * @param Application $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws BadRequestException
+     * @throws BadRequestHttpException
      * @throws AccessDeniedException
      */
     public function searchJobs(Request $request, Application $app)
@@ -687,7 +676,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $params = json_decode($params, true);
 
         if($params === null) {
-            throw new BadRequestException('params parameter must be valid JSON');
+            throw new BadRequestHttpException('params parameter must be valid JSON');
         }
 
         if ( (isset($params['resource_id']) && isset($params['local_job_id'])) || isset($params['jobref']) ) {
@@ -705,7 +694,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Application $app
      * @param string $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws MissingMandatoryParametersException
+     * @throws BadRequestHttpException
      * @throws AccessDeniedException
      */
     public function searchJobsByAction(Request $request, Application $app, $action)
@@ -768,13 +757,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $config = json_decode($json_config);
 
         if ($config === null) {
-            throw new BadRequestException('syntax error in config parameter');
+            throw new BadRequestHttpException('syntax error in config parameter');
         }
 
         $mandatory = array('realm', 'group_by', 'statistics', 'aggregation_unit', 'start_date', 'end_date', 'order_by');
         foreach ($mandatory as $required_property) {
             if (!property_exists($config, $required_property)) {
-                throw new BadRequestException('Missing mandatory config property ' . $required_property);
+                throw new BadRequestHttpException('Missing mandatory config property ' . $required_property);
             }
         }
 
@@ -805,7 +794,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         if (!property_exists($config->order_by, 'field') || !property_exists($config->order_by, 'dirn')) {
-            throw new BadRequestException('Malformed config property order_by');
+            throw new BadRequestHttpException('Malformed config property order_by');
         }
         $dirn = $config->order_by->dirn === 'asc' ? 'ASC' : 'DESC';
 
@@ -1292,7 +1281,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $queryDescripters = Acls::getQueryDescripters($user, $realm);
 
         if (empty($queryDescripters)) {
-            throw new BadRequestException('Invalid realm');
+            throw new BadRequestHttpException('Invalid realm');
         }
 
         $offset = $this->getIntParam($request, 'start', true);
@@ -1303,13 +1292,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $searchParams = json_decode($searchParameterStr, true);
 
         if ($searchParams === null || !is_array($searchParams)) {
-            throw new BadRequestException('The params parameter must be a json object');
+            throw new BadRequestHttpException('The params parameter must be a json object');
         }
 
         $params = array_intersect_key($searchParams, $queryDescripters);
 
         if (count($params) != count($searchParams)) {
-            throw new BadRequestException('Invalid search parameters specified in params object');
+            throw new BadRequestHttpException('Invalid search parameters specified in params object');
         } else {
             $QueryClass = "\\DataWarehouse\\Query\\$realm\\RawData";
             $query = new $QueryClass($realm, "day", $startDate, $endDate, null, "", array());
@@ -1439,12 +1428,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param $start the start offset (for store paging).
      * @param $limit the number of records to return (for store paging).
      * @return json in Extjs.store parsable format.
+     * @throws NotFoundHttpException
      */
     protected function getJobPeers(Application $app, XDUser $user, $realm, $jobId, $start, $limit)
     {
         $jobdata = $this->getJobDataSet($user, $realm, $jobId, 'internal');
         if (!$jobdata->hasResults()) {
-            throw new NotFoundException();
+            throw new NotFoundHttpException('The requested resource does not exist');
         }
         $jobresults = $jobdata->getResults();
         $thisjob = $jobresults[0];
@@ -1625,7 +1615,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param int $infoId
      * @param string $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws BadRequestException
+     * @throws BadRequestHttpException
      * @throws Exception
      */
     private function processJobNodeTimeSeriesRequest(
@@ -1640,7 +1630,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     ) {
 
         if ($infoId != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS) {
-            throw new BadRequestException("Node $infoId is a leaf", 400);
+            throw new BadRequestHttpException("Node $infoId is a leaf");
         }
 
         $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
@@ -1667,7 +1657,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param int $infoId
      * @param string $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws BadRequestException
+     * @throws BadRequestHttpException
      */
     private function processJobTimeSeriesRequest(
         Application $app,
@@ -1680,7 +1670,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     ) {
 
         if ($infoId != \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS) {
-            throw new BadRequestException("Node $infoId is a leaf", 400);
+            throw new BadRequestHttpException("Node $infoId is a leaf");
         }
 
         $infoclass = "\\DataWarehouse\\Query\\$realm\\JobMetadata";
@@ -1705,7 +1695,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param int $infoId
      * @param string $action
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws BadRequestException
+     * @throws BadRequestHttpException
      */
     private function processJobRequest(
         Application $app,
@@ -1745,7 +1735,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 return $app->json(array('success' => true, "results" => $result));
                 break;
             default:
-                throw new BadRequestException("Node is a leaf");
+                throw new BadRequestHttpException("Node is a leaf");
         }
     }
 
@@ -1982,7 +1972,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             'timezone' => $data['schema']['timezone']
         );
 
-        $chartImage = \xd_charting\exportHighchart($chartConfig, $settings['width'], $settings['height'], $settings['scale'], $type, $globalConfig, $settings['fileMetadata'], true);
+        $chartImage = \xd_charting\exportChart($chartConfig, $settings['width'], $settings['height'], $settings['scale'], $type, $globalConfig, $settings['fileMetadata']);
         $chartFilename = $settings['fileMetadata']['title'] . '.' . $type;
         $mimeOverride = $type == 'svg' ? 'image/svg+xml' : null;
 
@@ -1996,13 +1986,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $results = $info->getJobTimeseriesData($user, $jobId, $tsId, $nodeId, $cpuId);
 
         if (count($results) === 0) {
-            throw new NotFoundException();
+            throw new NotFoundHttpException('The requested resource does not exist');
         }
 
         $format = $this->getStringParam($request, 'format', false, 'json');
 
         if (!in_array($format, array('json', 'png', 'svg', 'pdf', 'csv'))) {
-            throw new BadRequestException('Unsupported format type.');
+            throw new BadRequestHttpException('Unsupported format type.');
         }
 
         switch ($format) {
@@ -2047,7 +2037,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param array $searchparams
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      * @throws \DataWarehouse\Query\Exceptions\AccessDeniedException
-     * @throws BadRequestException
+     * @throws BadRequestHttpException
      */
     private function getJobByPrimaryKey(Application $app, \XDUser $user, $realm, $searchparams)
     {
@@ -2065,7 +2055,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 'job_identifier' => $searchparams['local_job_id']
             );
         } else {
-            throw new BadRequestException('invalid search parameters');
+            throw new BadRequestHttpException('invalid search parameters');
         }
 
         $QueryClass = "\\DataWarehouse\\Query\\$realm\\JobDataset";
@@ -2132,61 +2122,78 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Request $request
      * @param Application $app
      * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws BadRequestException if any of the required parameters are not
-     *                             included; if an invalid start date, end
-     *                             date, realm, field alias, or filter key
-     *                             is provided; if the end date is before the
-     *                             start date; or if the offset is negative.
+     * @throws BadRequestHttpException if any of the required parameters are
+     *                                 not included; if an invalid start date,
+     *                                 end date, realm, field alias, or filter
+     *                                 key is provided; if the end date is
+     *                                 before the start date; or if the offset
+     *                                 is negative.
      */
     public function getRawData(Request $request, Application $app)
     {
         $user = parent::authenticateToken($request);
         $params = $this->validateRawDataParams($request, $user);
-        $query = $this->getRawDataQuery($params);
+        $realmManager = new RealmManager();
+        $queryClass = $realmManager->getRawDataQueryClass($params['realm']);
         $logger = $this->getRawDataLogger();
-        $limit = $this->getConfiguredRawDataLimit();
-        $dataset = $this->getRawBatchDataset(
+        $streamCallback = function () use (
             $user,
             $params,
-            $query,
-            $logger,
-            $limit
+            $queryClass,
+            $logger
+        ) {
+            $reachedOffset = false;
+            $i = 1;
+            $offset = $params['offset'];
+            $echoedFirstRow = false;
+            // Jobs realm has a performance improvement by querying one day at
+            // a time.
+            if ('Jobs' === $params['realm']) {
+                $currentDate = $params['start_date'];
+                while ($currentDate <= $params['end_date']) {
+                    $this->echoRawData(
+                        $queryClass,
+                        $currentDate,
+                        $currentDate,
+                        $currentDate === $params['start_date'],
+                        $currentDate === $params['end_date'],
+                        $params,
+                        $user,
+                        $logger,
+                        $reachedOffset,
+                        $i,
+                        $offset,
+                        $echoedFirstRow
+                    );
+                    $currentDate = date(
+                        'Y-m-d',
+                        strtotime("$currentDate + 1 day")
+                    );
+                }
+            } else {
+                // All other realms query the entire date range in a single
+                // query.
+                $this->echoRawData(
+                    $queryClass,
+                    $params['start_date'],
+                    $params['end_date'],
+                    true,
+                    true,
+                    $params,
+                    $user,
+                    $logger,
+                    $reachedOffset,
+                    $i,
+                    $offset,
+                    $echoedFirstRow
+                );
+            }
+        };
+        return $app->stream(
+            $streamCallback,
+            200,
+            ['Content-Type' => 'application/json']
         );
-        $data = $this->parseRawBatchDataset($dataset);
-        return $app->json([
-            'success' => true,
-            'fields' => $dataset->getHeader(),
-            'data' => $data
-        ]);
-    }
-
-    /**
-     * Endpoint to get the maximum number of rows that can be returned in a
-     * single response from the raw data endpoint (@see getRawData()). Requires
-     * API token authorization.
-     *
-     * No parameters.
-     *
-     * If successful, the response will include the following keys:
-     * - success: true.
-     * - data: integer value obtained from the 'rest_raw_row_limit' setting in
-     *         the 'datawarehouse' section of the portal_settings.ini
-     *         configuration file.
-     *
-     * @param Request $request
-     * @param Application $app
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws Exception if there is no setting for 'rest_raw_row_limit' in
-     *                   the 'datawarehouse' section of portal_settings.ini.
-     */
-    public function getRawDataLimit(Request $request, Application $app)
-    {
-        parent::authenticateToken($request);
-        $limit = $this->getConfiguredRawDataLimit();
-        return $app->json([
-            'success' => true,
-            'data' => $limit
-        ]);
     }
 
     /**
@@ -2196,7 +2203,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Request $request
      * @param XDUser $user
      * @return array of validated parameter values.
-     * @throws BadRequestException if any of the parameters are invalid.
+     * @throws BadRequestHttpException if any of the parameters are invalid.
      */
     private function validateRawDataParams($request, $user)
     {
@@ -2207,7 +2214,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $params['realm'] = $this->getStringParam($request, 'realm', true);
         $queryDescripters = Acls::getQueryDescripters($user, $params['realm']);
         if (empty($queryDescripters)) {
-            throw new BadRequestException('Invalid realm.');
+            throw new BadRequestHttpException('Invalid realm.');
         }
         $params['fields'] = $this->getRawDataFieldsArray($request);
         $params['filters'] = $this->validateRawDataFiltersParams(
@@ -2216,32 +2223,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
         );
         $params['offset'] = $this->getIntParam($request, 'offset', false, 0);
         if ($params['offset'] < 0) {
-            throw new BadRequestException('Offset must be non-negative.');
+            throw new BadRequestHttpException('Offset must be non-negative.');
         }
         return $params;
-    }
-
-    /**
-     * Get the corresponding query for a request to get raw data with the given
-     * parameters.
-     *
-     * @param array $params validated parameters
-     *                      (@see validateRawDataParams()).
-     * @return \DataWarehouse\Query\RawQuery
-     */
-    private function getRawDataQuery($params)
-    {
-        $realmManager = new RealmManager();
-        $className = $realmManager->getRawDataQueryClass($params['realm']);
-        $query = new $className(
-            [
-                'start_date' => $params['start_date'],
-                'end_date' => $params['end_date']
-            ],
-            'batch'
-        );
-        $query = $this->setRawDataQueryFilters($query, $params);
-        return $query;
     }
 
     /**
@@ -2262,21 +2246,89 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Get the value configured in the portal settings for the maximum number
-     * of rows that can be returned in a single response from the raw data
-     * endpoint.
+     * Perform an unbuffered database query and echo the result as JSON, flushing every 10000 rows.
      *
-     * @return int
-     * @throws Exception if the 'datawarehouse' section and/or the
-     *                   'rest_raw_row_limit' option have not been set in the
-     *                   portal configuration.
+     * @param string $queryClass the fully qualified name of the query class.
+     * @param string $startDate the start date of the query in ISO 8601 format.
+     * @param string $endDate the end date of the query in ISO 8601 format.
+     * @param bool $isFirstQueryInSeries if true, echo the JSON prolog before echoing the data. Otherwise, just echo
+     *                                   the data.
+     * @param bool $isLastQueryInSeries if true, echo the JSON epilog after echoing the data. Otherwise, just echo
+     *                                  the data.
+     * @param array $params validated parameter values from @see validateRawDataParams().
+     * @param XDUser $user the user making the request.
+     * @param \CCR\Logger $logger used to log the database request.
+     * @param bool $reachedOffset if true, the requested offset row has been already been reached so don't keep
+     *                            checking for it, instead just echo all rows. Otherwise, keep checking for the
+     *                            offset row and only start echoing rows once it is reached.
+     * @param int $i the number of rows iterated so far plus one — used to keep track of whether the offset has been
+     *               reached and when to flush.
+     * @param int $offset the number of rows to ignore before echoing.
+     * @param bool $echoedFirstRow if true, the first row has already been echoed, so echo a comma before the next
+     *                             one. Otherwise, don't echo the comma.
+     * @return null
+     * @throws Exception if $startDate or $endDate are invalid ISO 8601 dates, if there is an error connecting to
+     *                   or querying the database, or if invalid fields have been specified in the query parameters.
      */
-    private function getConfiguredRawDataLimit()
-    {
-        return intval(\xd_utilities\getConfiguration(
-            'datawarehouse',
-            'rest_raw_row_limit'
-        ));
+    private function echoRawData(
+        $queryClass,
+        $startDate,
+        $endDate,
+        $isFirstQueryInSeries,
+        $isLastQueryInSeries,
+        $params,
+        $user,
+        $logger,
+        &$reachedOffset,
+        &$i,
+        &$offset,
+        &$echoedFirstRow
+    ) {
+        $query = new $queryClass(
+            [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ],
+            'batch'
+        );
+        $query = $this->setRawDataQueryFilters($query, $params);
+        $dataset = $this->getRawBatchDataset(
+            $user,
+            $params,
+            $query,
+            $logger
+        );
+        $pdo = DB::factory($query->_db_profile)->handle();
+        if ($isFirstQueryInSeries) {
+            $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+            echo '{"success":true,"fields":'
+                . json_encode($dataset->getHeader())
+                . ',"data":[';
+        }
+        foreach ($dataset as $row) {
+            if ($reachedOffset || $i > $offset) {
+                $reachedOffset = true;
+                if ($echoedFirstRow) {
+                    echo ',';
+                }
+                echo "\n";
+                echo json_encode($row);
+                $echoedFirstRow = true;
+            }
+            if (10000 === $i) {
+                ob_flush();
+                flush();
+                $i = 0;
+                if (!$reachedOffset) {
+                    $offset -= 10000;
+                }
+            }
+            $i++;
+        }
+        if ($isLastQueryInSeries) {
+            echo ']}';
+            $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        }
     }
 
     /**
@@ -2286,7 +2338,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param array $params validated parameter values.
      * @param \DataWarehouse\Query\RawQuery $query
      * @param \CCR\Logger
-     * @param int $limit maximum number of rows to get.
      * @return BatchDataset
      * @throws Exception if the 'fields' parameter contains invalid field
      *                   aliases.
@@ -2295,41 +2346,23 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $user,
         $params,
         $query,
-        $logger,
-        $limit
+        $logger
     ) {
         try {
             $dataset = new BatchDataset(
                 $query,
                 $user,
                 $logger,
-                $params['fields'],
-                $limit,
-                $params['offset']
+                $params['fields']
             );
             return $dataset;
         } catch (Exception $e) {
             if (preg_match('/Invalid fields specified/', $e->getMessage())) {
-                throw new BadRequestException($e->getMessage());
+                throw new BadRequestHttpException($e->getMessage());
             } else {
                 throw $e;
             }
         }
-    }
-
-    /**
-     * Parse the given dataset into an array of records.
-     *
-     * @param BatchDataset $dataset
-     * @return array of records obtained by iterating over the dataset.
-     */
-    private function parseRawBatchDataset($dataset)
-    {
-        $data = [];
-        foreach ($dataset as $record) {
-            $data[] = $record;
-        }
-        return $data;
     }
 
     /**
@@ -2339,9 +2372,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Request $request
      * @return array containing the validated start and end dates in Y-m-d
      *               format.
-     * @throws BadRequestException if the start and/or end dates are not
-     *                             provided or are not valid ISO 8601 dates or
-     *                             the end date is less than the start date.
+     * @throws BadRequestHttpException if the start and/or end dates are not
+     *                                 provided or are not valid ISO 8601 dates
+     *                                 or the end date is less than the start
+     *                                 date.
      */
     private function validateRawDataDateParams($request)
     {
@@ -2356,7 +2390,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             true
         );
         if ($endDate < $startDate) {
-            throw new BadRequestException(
+            throw new BadRequestHttpException(
                 'End date cannot be less than start date.'
             );
         }
@@ -2394,8 +2428,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @return array whose keys are the validated filter keys (they must be
      *               valid dimensions the user is authorized to see) and whose
      *               values are arrays of the provided string values.
-     * @throws BadRequestException if any of the filter keys are invalid
-     *                             dimension names.
+     * @throws BadRequestHttpException if any of the filter keys are invalid
+     *                                 dimension names.
      */
     private function validateRawDataFiltersParams($request, $queryDescripters)
     {
@@ -2459,8 +2493,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param string $filterKey the label of a dimension.
      * @param string $filerValuesStr a comma-separated string.
      * @return array
-     * @throws BadRequestException if the filter key is an invalid dimension
-     *                             name.
+     * @throws BadRequestHttpException if the filter key is an invalid
+     *                                 dimension name.
      */
     private function validateRawDataFilterParam(
         $queryDescripters,
@@ -2468,7 +2502,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $filterValuesStr
     ) {
         if (!in_array($filterKey, array_keys($queryDescripters))) {
-            throw new BadRequestException(
+            throw new BadRequestHttpException(
                 'Invalid filter key \'' . $filterKey . '\'.'
             );
         }

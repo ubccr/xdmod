@@ -25,6 +25,18 @@ fi
 
 roles=( pub usr pi cd cs )
 
+function run_warehouse_raw_data_tests {
+    # Need to ignore the values of deidentified usernames when comparing the
+    # actual and expected data because the values will be different depending
+    # on whether XDMOD_TEST_MODE is set to 'upgrade' or 'fresh_install' since
+    # these two testing pipelines produce different hashes for the usernames.
+    REG_TEST_USER_ROLE=usr \
+        REG_TEST_REGEX='/[0-9a-f]{40}/' \
+        REG_TEST_REPLACE='<username>' \
+        $phpunit $(log_opts "regression-$1" "WarehouseRawDataTest") \
+            --filter WarehouseRawDataTest .
+}
+
 if [ "$REG_TEST_ALL" = "1" ]; then
     set +e
     if [[ "$XDMOD_REALMS" == *"jobs"* ]];
@@ -40,6 +52,8 @@ if [ "$REG_TEST_ALL" = "1" ]; then
             REG_TEST_USER_ROLE=$role $phpunit $opts .
         fi
     done
+
+    run_warehouse_raw_data_tests 'all'
 else
     pids=()
 
@@ -65,6 +79,9 @@ else
             pids+=($!)
         fi
     done
+
+    run_warehouse_raw_data_tests 'subset'
+    pids+=($!)
 
     # Wait for tests to finish, if any fail, return exit status of 1
     EXIT_STATUS=0

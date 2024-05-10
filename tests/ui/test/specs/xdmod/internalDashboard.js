@@ -264,11 +264,14 @@ describe('Internal Dashboard', function () {
                     browser.doubleClick(usernameCol);
 
                     browser.waitForVisible(page.selectors.create_manage_users.window);
-                    browser.waitForVisible(page.selectors.create_manage_users.current_users.container);
+                    browser.waitForVisible(page.selectors.create_manage_users.current_users.settings.container);
                     browser.waitForInvisible(page.selectors.create_manage_users.loading_mask);
                 });
                 it(`Change the "${setting.label}" to "${setting.updated}"`, function () {
+                    const detailsHeader = page.selectors.create_manage_users.current_users.settings.userDetailsHeader('User Details: Bob Test');
+                    browser.waitForVisible(detailsHeader);
                     browser.waitForInvisible(page.selectors.create_manage_users.current_users.settings.noUserSelectedModal());
+
                     if ('dropdown' === setting.type) {
                         const inputTrigger = page.selectors.create_manage_users.current_users.settings.dropDownTriggerByLabel(setting.label);
                         browser.waitForVisible(inputTrigger);

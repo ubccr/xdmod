@@ -3,7 +3,8 @@
 namespace IntegrationTests\Controllers;
 
 use IntegrationTests\TokenAuthTest;
-use TestHarness\XdmodTestHelper;
+use IntegrationTests\TestHarness\UsageExplorerHelper;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 
 function arrayRecursiveDiff($a1, $a2) {
     $retval = array();
@@ -29,8 +30,6 @@ function arrayRecursiveDiff($a1, $a2) {
 
 class UsageExplorerTest extends TokenAuthTest
 {
-    const TEST_GROUP = 'integration/controllers/user_interface';
-
     private static $publicView;
 
     public static function setUpBeforeClass()
@@ -55,7 +54,7 @@ class UsageExplorerTest extends TokenAuthTest
 
     protected function setUp()
     {
-        $this->helper = new \TestHarness\XdmodTestHelper();
+        $this->helper = new XdmodTestHelper();
     }
 
     /**
@@ -390,14 +389,20 @@ EOF
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode($response[0], true);
-        $dataseries = $plotdata['data'][0]['hc_jsonstore']['series'];
+        $dataseries = $plotdata['data'][0]['hc_jsonstore']['data'];
 
-        $this->assertCount(1, $dataseries);
-        $this->assertArrayHasKey('data', $dataseries[0]);
-        $this->assertCount(1, $dataseries[0]['data']);
-        $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
+        $primaryTraces = array();
+        for ($i = 0; $i < count($dataseries); $i++) {
+            if (strcmp($dataseries[$i]['name'], 'area fix') != 0 && strcmp($dataseries[$i]['name'], 'gap connector') != 0) {
+                $primaryTraces[] = $dataseries[$i];
+            }
+        }
+        $this->assertCount(1, $primaryTraces);
+        $this->assertArrayHasKey('y', $dataseries[0]);
+        $this->assertCount(1, $dataseries[0]['y']);
+        $this->assertArrayHasKey('y', $dataseries[0]);
 
-        $this->assertEquals($expected, $dataseries[0]['data'][0]['y'], '', 1.0e-6);
+        $this->assertEquals($expected, $dataseries[0]['y'][0], '', 1.0e-6);
     }
 
     /**
@@ -414,7 +419,7 @@ EOF
         $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
         $this->assertEquals($response[1]['http_code'], 200);
 
-        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
+        $plotdata = json_decode(UsageExplorerHelper::demanglePlotData($response[0]), true);
 
         $this->assertArrayHasKey('chart_settings', $plotdata['data'][0]);
 
@@ -669,13 +674,20 @@ EOF;
 
         $this->assertEquals($response[1]['http_code'], 200);
 
-        $plotdata = json_decode(\TestHarness\UsageExplorerHelper::demanglePlotData($response[0]), true);
+        $plotdata = json_decode(UsageExplorerHelper::demanglePlotData($response[0]), true);
 
         $this->assertTrue($plotdata['success']);
 
-        $this->assertCount(count($expectedNames), $plotdata['data'][0]['hc_jsonstore']['series']);
+        $actualNames = array();
 
-        foreach($plotdata['data'][0]['hc_jsonstore']['series'] as $seriesIdx => $seriesData) {
+        foreach($plotdata['data'][0]['hc_jsonstore']['data'] as $seriesIdx => $seriesData) {
+            if (strcmp($seriesData['name'], 'area fix') != 0 && strcmp($seriesData['name'], 'gap connector') != 0) {
+                $actualNames[] = $seriesData;
+            }
+        }
+        $this->assertCount(count($expectedNames), $actualNames);
+
+        foreach($actualNames as $seriesIdx => $seriesData) {
             $this->assertEquals(($seriesIdx + 1) . '. ' . $expectedNames[$seriesIdx] . '*', $seriesData['name']);
         }
     }
@@ -1063,7 +1075,7 @@ EOF;
 
         $results = array();
         foreach($users as $user) {
-            $helper = new \TestHarness\XdmodTestHelper();
+            $helper = new XdmodTestHelper();
             if ($user !== 'pub') {
                 $helper->authenticate($user);
             }
@@ -1217,8 +1229,21 @@ END;
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            self::TEST_GROUP,
-            'get_data'
+            [
+                'path' => 'controllers/user_interface.php',
+                'method' => 'post',
+                'params' => null,
+                'data' => ['operation' => 'get_data'],
+                'endpoint_type' => 'controller',
+                'authentication_type' => 'token_optional'
+            ],
+            [
+                'status_code' => 500,
+                'body_validator' => parent::validateErrorResponseBody(
+                    'One or more realms must be specified.',
+                    0
+                )
+            ]
         );
     }
 }
