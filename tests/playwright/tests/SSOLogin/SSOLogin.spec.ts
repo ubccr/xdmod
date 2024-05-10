@@ -21,12 +21,9 @@ test('Single Sign On Login', async ({page}) =>{
         await expect(page.locator('#main_tab_panel__about_xdmod')).toBeVisible();
     });
     await test.step('Might prompt with My Profile', async () => {
-        const isProfileVisible = await page.isVisible('#xdmod-profile-editor');
-        if (isProfileVisible){
-            await expect(page.locator('#xdmod-profile-editor button.general_btn_close')).toBeVisible();
-            await page.locator('#xdmod-profile-editor button.general_btn_close').click();
-            await expect(page.locator('#xdmod-profile-editor')).toBeHidden();
-        }
+        await expect(page.locator('#xdmod-profile-editor')).toBeVisible();
+        await expect(page.locator('#xdmod-profile-editor button.general_btn_close')).toBeVisible();
+        await page.locator('#xdmod-profile-editor button.general_btn_close').click();
         await expect(page.locator('#xdmod-profile-editor')).toBeHidden();
     });
     await test.step('Logout', async () => {
