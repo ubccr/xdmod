@@ -7,6 +7,11 @@
     - General
         - Chart axes are draggable to adjust the chart range. For charts in the Metric Explorer, the axis range can be reset to the default through the axis context menu. For other charts, the chart can be reset to the default by double-clicking.
         - Rendering support for a subset of HTML tags and entities in a chart's main title. Unsupported tags/entities will render as plain text instead of HTML. The following HTML tags are supported: `<br>`, `<b>`, `<i>`, `<sup>`, and `<sub>`. The following entities are supported: Greek letters (recommended Unicode format, e.g., `&#x3BC;` for lowercase mu), some mathematical symbols (e.g., `&plusmn;` for ±), and degrees (`&deg;`).
+- Enhancements
+    - User Manual
+        - Changed user manual source pages from .docx to .rst. These pages are now stored in version control in the base XDMoD repository.
+        - Improved user manual build process from internal scripts to Sphinx. This build process is now done as part of the base XDMoD build.
+        - Updated theme from ExtJS to ReadTheDocs.
 - Uncategorized
     - Chart Feature Changes
         - For line charts, the context menu for a data series is brought up by clicking on its points, not its lines. As before, the context menu can also be brought up by clicking on it in the legend.
