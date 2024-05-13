@@ -1083,17 +1083,15 @@ class AggregateChart
                 }
 
                 $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
-
-                // Display markers for scatter plots, non-thumbnail plots
-                // with fewer than 21 points, or for plots with a single y value.
-                $showMarker = $data_description->display_type == 'scatter' ||
-                    ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
-                    $values_count == 1;
+                // Hide markers for 32 points or greater, except when there are multiple traces then hide markers starting at 21 points.
+                // Need check for chart types that this applies to otherwise bar charts will be have hidden traces.
+                $hideMarker = in_array($data_description->display_type, array('line', 'spline', 'area', 'areaspline'))
+                    && ($values_count >= 32 || (count($yAxisDataObjectsArray) > 1 && $values_count >= 21));
 
                 $trace = array_merge($trace, array(
                     'automargin'=> $data_description->display_type == 'pie' ? true : null,
                     'name' => $lookupDataSeriesName,
-                    'customdata' => $lookupDataSeriesName,
+                    'customdata' => $showMarker,
                     'zIndex' => $zIndex,
                     'cliponaxis' => false,
                     'otitle' => $formattedDataSeriesName,
@@ -1108,6 +1106,7 @@ class AggregateChart
                             'color' => $lineColor,
                         ),
                         'symbol' => $this->_symbolStyles[$data_description_index % 5],
+                        'opacity' => $hideMarker ? 0.0 : 1.0
                     ),
                     'line' => array(
                         'color' => $data_description->display_type == 'pie' ?
@@ -1117,7 +1116,7 @@ class AggregateChart
                         'shape' => $data_description->display_type == 'spline' || $data_description->display_type == 'areaspline' ? 'spline' : 'linear',
                     ),
                     'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
-                    'mode' => $data_description->display_type == 'scatter' ? 'markers' : ($showMarker ? 'lines+markers' : 'lines'),
+                    'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
                     'hovertext' => $xValues,
                     'hoveron'=>  $data_description->display_type == 'area' || $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
                     'hovertemplate' => $tooltip,

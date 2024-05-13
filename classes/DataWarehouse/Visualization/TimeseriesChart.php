@@ -468,11 +468,10 @@ class TimeseriesChart extends AggregateChart
                                 break;
                             }
                         }
-                        // Display markers for scatter plots, non-thumbnail plots of data series
-                        // with fewer than 21 points, or for any data series with a single y value.
-                        $showMarker = $data_description->display_type == 'scatter' ||
-                            ($values_count < 21 && $this->_width > \DataWarehouse\Visualization::$thumbnail_width) ||
-                            $y_values_count == 1;
+                        // Hide markers for 32 points or greater, except when there are multiple traces then hide markers starting at 21 points.
+                        // Need check for chart types that this applies to otherwise bar charts will be have hidden traces.
+                        $hideMarker = in_array($data_description->display_type, array('line', 'spline', 'area', 'areaspline'))
+                            && ($values_count >= 32 || (count($yAxisDataObjectsArray) > 1 && $values_count >= 21));
 
                         $isRemainder = $yAxisDataObject->getGroupId() === TimeseriesDataset::SUMMARY_GROUP_ID;
 
@@ -579,7 +578,7 @@ class TimeseriesChart extends AggregateChart
 
                         $trace = array(
                             'name' => $lookupDataSeriesName,
-                            'customdata' => $lookupDataSeriesName,
+                            'customdata' => $showMarker,
                             'otitle' => $formattedDataSeriesName,
                             'datasetId' => $data_description->id,
                             'zIndex' => $zIndex,
@@ -593,6 +592,7 @@ class TimeseriesChart extends AggregateChart
                                     'color' => $lineColor
                                 ),
                                 'symbol' => $this->_symbolStyles[$traceIndex % 5],
+                                'opacity' => $hideMarker ? 0.0 : 1.0
                             ),
                             'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
                             'line' => array(
@@ -601,7 +601,7 @@ class TimeseriesChart extends AggregateChart
                                 'width' => $data_description->display_type !== 'scatter' ? $data_description->line_width + $font_size/4 : 0,
                                 'shape' => ($data_description->display_type == 'spline' || $data_description->display_type == 'areaspline') ? 'spline' : 'linear'
                             ),
-                            'mode' => $data_description->display_type == 'scatter' ? 'markers' : ($showMarker ? 'lines+markers' : 'lines'),
+                            'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
                             'hoveron' => $data_description->display_type == 'area' || $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
                             'yaxis' => "y{$yIndex}",
                             'showlegend' => $data_description->display_type != 'pie',
@@ -700,8 +700,6 @@ class TimeseriesChart extends AggregateChart
 
                                 $this->_chart['layout']["{$xAxisName}"] = $yAxis;
                                 $this->_chart['layout']['yaxis'] = $xAxis;
-                                $this->_chart['layout']['yaxis']['tick0'] = $xValues[0];
-                                $this->_chart['layout']['yaxis']['dtick'] = $pointInterval;
                                 $swapXYDone = true;
                             }
                             if ($yAxisIndex > 0) {
@@ -821,10 +819,11 @@ class TimeseriesChart extends AggregateChart
                             $decimals,
                             $zIndex
                         );
+                        $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
                         if ($data_labels_enabled) {
                             if ($this->_chart['data'][$idx]['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
                                 // For export this needs to be 'none'
-                                $this->_chart['data'][$idx]['constraintext'] = $data_description->combine_type != 'side' ? 'both' : 'none';
+                                $this->_chart['data'][$idx]['constraintext'] = 'inside';
                                 if ($std_err_labels_enabled && $data_description->value_labels) {
                                     $this->_chart['data'][$idx]['text'] = $error_info['data_labels'];
                                 }
@@ -834,7 +833,6 @@ class TimeseriesChart extends AggregateChart
                                     $this->_chart['data'][$idx]['text'] = $text;
                                 }
                             } else {
-                                $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
                                 $this->configureDataLabels(
                                     $data_description,
                                     $error_info,

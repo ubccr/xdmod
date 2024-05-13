@@ -869,7 +869,6 @@ class Usage extends Common
                                 break;
                             }
                         }
-                        $meDataSeries['mode'] = $y_values_count == 1 ? 'markers' : 'lines+markers';
                     }
 
                     // If this is a trend line data series...
