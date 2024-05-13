@@ -72,22 +72,22 @@
                 "comment": "FACT: The number of GPU node seconds available to be allocated during a time period."
             },{
                 "name": "total_su_available",
-                "type": "decimal(14,4)",
+                "type": "decimal(20,4)",
                 "nullable": true,
                 "comment": "FACT: The total number of SU's available during a time period."
             },{
                 "name": "allocated_su_available",
-                "type": "decimal(14,4)",
+                "type": "decimal(20,4)",
                 "nullable": true,
                 "comment": "FACT: The number of SU's available to be allocated during a time period."
             },{
                 "name": "total_normalized_su_available",
-                "type": "decimal(14,4)",
+                "type": "decimal(20,4)",
                 "nullable": true,
                 "comment": "FACT: The total number of Normalized SU's available during a time period."
             },{
                 "name": "allocated_normalized_su_available",
-                "type": "decimal(14,4)",
+                "type": "decimal(20,4)",
                 "nullable": true,
                 "comment": "FACT: The number of Normalized SU's available to be allocated during a time period."
             },{
