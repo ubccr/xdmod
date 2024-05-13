@@ -52,15 +52,14 @@ function getNoDataErrorConfig() { // eslint-disable-line no-unused-vars
  * @param  {Object} Record containing chart data
  *
  */
-function generateChartOptions(record, params) { // eslint-disable-line no-unused-vars
-    var args = params || {};
+function generateChartOptions(record, params = null) { // eslint-disable-line no-unused-vars
     var colors = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
         '#f28f43', '#77a1e5', '#c42525', '#a6c96a'];
     var mainTitleFontSize = 16;
     var axisLabelFontSize = 11;
     var axisTitleFontSize = 12;
     var lineWidth = 2;
-    if (args) {
+    if (params) {
         mainTitleFontSize = args.mainTitleFontSize;
         axisLabelFontSize = args.axisLabelFontSize;
         axisTitleFontSize = args.axisTitleFontSize;
@@ -124,6 +123,22 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             trace.marker.size = 20;
             trace.mode = 'markers';
             delete trace.line;
+        }
+
+        if (y.includes(null)) {
+            data.push({
+                name: 'null connector',
+                line: {
+                    color: color,
+                    dash: 'dash',
+                    width: lineWidth
+                },
+                mode: 'lines',
+                hoverinfo: 'skip',
+                showlegend: false,
+                x: x,
+                y: y
+            });
         }
 
         data.push(trace);
