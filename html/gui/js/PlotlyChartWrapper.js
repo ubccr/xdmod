@@ -75,7 +75,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
                     baseChartOptions.layout.yaxis.nticks = 5;
                     baseChartOptions.layout.yaxis.tickangle = -90;
                 }
-            } else if (baseChartOptions.layout.xaxis.type === 'date'){
+            } else if (baseChartOptions.layout.xaxis.type === 'date') {
                 baseChartOptions.layout.xaxis.nticks = 5;
                 baseChartOptions.layout.xaxis.tickangle = -90;
             }
