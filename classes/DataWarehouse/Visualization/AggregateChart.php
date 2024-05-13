@@ -1091,7 +1091,7 @@ class AggregateChart
                 $trace = array_merge($trace, array(
                     'automargin'=> $data_description->display_type == 'pie' ? true : null,
                     'name' => $lookupDataSeriesName,
-                    'customdata' => $showMarker,
+                    'customdata' => $lookupDataSeriesName,
                     'zIndex' => $zIndex,
                     'cliponaxis' => false,
                     'otitle' => $formattedDataSeriesName,

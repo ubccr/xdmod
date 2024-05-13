@@ -578,7 +578,7 @@ class TimeseriesChart extends AggregateChart
 
                         $trace = array(
                             'name' => $lookupDataSeriesName,
-                            'customdata' => $showMarker,
+                            'customdata' => $lookupDataSeriesName,
                             'otitle' => $formattedDataSeriesName,
                             'datasetId' => $data_description->id,
                             'zIndex' => $zIndex,
