@@ -60,10 +60,10 @@ function generateChartOptions(record, params = null) { // eslint-disable-line no
     var axisTitleFontSize = 12;
     var lineWidth = 2;
     if (params) {
-        mainTitleFontSize = args.mainTitleFontSize;
-        axisLabelFontSize = args.axisLabelFontSize;
-        axisTitleFontSize = args.axisTitleFontSize;
-        lineWidth = args.lineWidth;
+        mainTitleFontSize = params.mainTitleFontSize;
+        axisLabelFontSize = params.axisLabelFontSize;
+        axisTitleFontSize = params.axisTitleFontSize;
+        lineWidth = params.lineWidth;
     }
     var data = [];
     var isEnvelope = false;
