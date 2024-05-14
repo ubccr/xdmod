@@ -819,7 +819,6 @@ class TimeseriesChart extends AggregateChart
                             $decimals,
                             $zIndex
                         );
-                        $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
                         if ($data_labels_enabled) {
                             if ($this->_chart['data'][$idx]['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
                                 // For export this needs to be 'none'
@@ -833,6 +832,7 @@ class TimeseriesChart extends AggregateChart
                                     $this->_chart['data'][$idx]['text'] = $text;
                                 }
                             } else {
+                                $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
                                 $this->configureDataLabels(
                                     $data_description,
                                     $error_info,
