@@ -239,7 +239,7 @@ XDMoD.Module.JobViewer.SearchHistoryPanel = Ext.extend(XDMoD.Module.JobViewer.Se
                             id: 'job-viewer-search-history-context-get-url',
                             handler: function () {
                                 const params = self.getParams(node);
-                                const url = `${window.location.protocol}\/\/${window.location.host}\/#job_viewer?action=show&realm=${params.realm}&jobref=${params.jobid}`;
+                                const url = `${window.location.protocol}//${window.location.host}/#job_viewer?action=show&realm=${params.realm}&jobref=${params.jobid}`;
                                 Ext.Msg.show({
                                     title: 'URL for ' + node.attributes.text,
                                     msg: `<p>${url}<br /><br /></p>
