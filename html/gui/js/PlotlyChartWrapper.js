@@ -17,7 +17,7 @@ Ext.namespace('XDMoD.utils');
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     const baseChartOptions = {};
     const configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500 };
-    jQuery.extend(true, baseChartOptions, chartOptions);
+    XDMoD.utils.deepExtend(baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
 
     // Configure plot for 'No Data' image. We want to wipe the layout object except for a couple things

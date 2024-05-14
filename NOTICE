@@ -11,10 +11,10 @@ License: New BSD License
 Author:  Zend Technologies USA, Inc.
 Link:    http://framework.zend.com/
 
-Name:    jQuery
+Name:    youmightnotneedjquery
 License: MIT license
-Author:  jQuery Foundation and other contributors
-Link:    http://jquery.com/
+Author:  HubSpot, Inc.
+Link:    https://github.com/HubSpot/YouMightNotNeedjQuery
 
 Name:    Plotly.js
 License: MIT license
