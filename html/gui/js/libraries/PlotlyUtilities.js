@@ -134,6 +134,8 @@ function generateChartOptions(record, params = null) { // eslint-disable-line no
                     width: lineWidth
                 },
                 mode: 'lines',
+                type: 'scatter',
+                connectgaps: true,
                 hoverinfo: 'skip',
                 showlegend: false,
                 x: x,
