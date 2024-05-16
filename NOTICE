@@ -95,11 +95,6 @@ License: MIT License
 Author:  Mike Crawford, Ben Maurer
 Link:    https://developers.google.com/recaptcha/old/docs/php
 
-Name:    jquery-base64
-License: MIT License
-Author:  Carlo Zottmann
-Link:    https://github.com/carlo/jquery-base64
-
 Name:    Ext.ux.form.GroupComboBox
 License: "BSD"
 Author:  Robert B. Williams
