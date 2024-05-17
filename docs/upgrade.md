@@ -46,7 +46,7 @@ recommended process of migrating from a CentOS 7 XDMoD 10.0.X installation to an
 ### Server: EL8, XDMoD: 10.5, PHP: 7.2
 The steps to accommodate this scenario are fairly straightforward:
 
-*NOTE: There may be some PHP Warning messages generated during this process, they can be safely ignored. Once the 
+*NOTE: There may be some PHP Warning messages generated during this process, they can be safely ignored. Once the
 process is complete then*
 
 Update the PHP module to 8.0
