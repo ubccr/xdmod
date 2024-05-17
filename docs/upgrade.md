@@ -62,10 +62,10 @@ $ dnf install -y php libzip-devel php-pear
 
 Install the mongodb PHP Pear package
 ```shell
-$ yes '' | pecl install mongodb 
+$ yes '' | pecl install mongodb
 ```
 
-Upgrade XDMoD 11.0 from RPM ( or source ) 
+Upgrade XDMoD 11.0 from RPM ( or source )
 ```shell
 $ dnf install -y xdmod-{{ page.sw_version}}-1.0.el8.noarch.rpm
 ```
