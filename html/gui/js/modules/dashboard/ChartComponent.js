@@ -43,7 +43,7 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
         this.title += ' - ' + this.config.chart.start_date + ' to ' + this.config.chart.end_date;
 
         var chartConfig = {};
-        jQuery.extend(true, chartConfig, this.config.chart);
+        XDMoD.utils.deepExtend(chartConfig, this.config.chart);
         chartConfig.title = '';
 
         this.store = new CCR.xdmod.CustomJsonStore({

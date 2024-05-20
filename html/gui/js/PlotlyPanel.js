@@ -36,7 +36,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
             }
         };
 
-        this.baseChartOptions = jQuery.extend(true, {}, defaultOptions, this.baseChartOptions);
+        this.baseChartOptions = XDMoD.utils.deepExtend({}, defaultOptions, this.baseChartOptions);
 
         this.on('render', function () {
             this.initNewChart.call(this);
@@ -51,7 +51,7 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                     if (t.getCount() <= 0) {
                         return;
                     }
-                    this.chartOptions = jQuery.extend(true, {}, t.getAt(0).data, this.baseChartOptions);
+                    this.chartOptions = XDMoD.utils.deepExtend({}, t.getAt(0).data, this.baseChartOptions);
                     this.chartOptions.credits = this.credits;
                     this.initNewChart.call(this);
 
@@ -279,9 +279,9 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
     initNewChart: function (chartOptions) { /* eslint object-shorthand: "off" */
         const finalChartOptions = {};
         if (chartOptions) {
-            jQuery.extend(true, finalChartOptions, this.baseChartOptions, chartOptions);
+            XDMoD.utils.deepExtend(finalChartOptions, this.baseChartOptions, chartOptions);
         } else {
-            jQuery.extend(true, finalChartOptions, this.baseChartOptions, this.chartOptions);
+            XDMoD.utils.deepExtend(finalChartOptions, this.baseChartOptions, this.chartOptions);
         }
         this.chart = XDMoD.utils.createChart(finalChartOptions);
     },
