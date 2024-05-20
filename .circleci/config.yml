@@ -108,13 +108,13 @@ jobs:
           name: Ensure that no unexpected Apache errors were generated ( We expect PHP Deprecated )
           command: >
             if [ -e /var/log/php-fpm/www-error.log ]; then
-              test `fgrep -v 'PHP Deprecated' /var/log/php-fpm/www-error.log | wc -l` = 0;
+              test `egrep -v "PHP Deprecated.*vendor\/.*" /var/log/php-fpm/www-error.log | wc -l` = 0;
             fi
       - run:
           name: Ensure that no PHP command-line errors were generated
           command: >
               if [ -e /var/log/php_errors.log ]; then
-                  test `egrep -v 'vendor/phpunit/phpunit/src|PHP Deprecated|PHP Notice:  fread()' /var/log/php_errors.log | wc -l` = 0;
+                  test `egrep -v "PHP Deprecated.*vendor\/.*" /var/log/php_errors.log | wc -l` = 0;
               fi
       - store_artifacts:
           path: /tmp/screenshots
