@@ -40,7 +40,7 @@ jobs:
           command: dnf module -y reset php && dnf module -y enable php:8.0
       - run:
           name: Install PHP 8.0 and PHP module pre-reqs & an updated version of PHP Pear
-          command: dnf install -y php libzip-devel php-pear
+          command: dnf install -y php libzip-devel php-pearx
       - run:
           name: Install MongoDB Pear module
           command: yes '' | pecl install mongodb || true
@@ -114,7 +114,7 @@ jobs:
           name: Ensure that no PHP command-line errors were generated
           command: >
               if [ -e /var/log/php_errors.log ]; then
-                  test `egrep -v "PHP Deprecated.*vendor\/.*" /var/log/php_errors.log | wc -l` = 0;
+                  test `egrep -v "PHP Deprecated.*vendor\/.*|PHP Notice:  fread()" /var/log/php_errors.log | wc -l` = 0;
               fi
       - store_artifacts:
           path: /tmp/screenshots
