@@ -733,7 +733,7 @@ class pdoAggregator extends aAggregator
 
         // There are instances where $firstPeriod is a bool not an array ( when $aggregationPeriodList is empty or at the end of the array)
         // the following code takes that into account.
-        $periodSize = 1;
+        $periodSize = 0;
         if (!is_bool($firstPeriod)) {
             $periodSize = $firstPeriod['period_end_day_id'] - $firstPeriod['period_start_day_id'];
         }
