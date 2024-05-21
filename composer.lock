@@ -4,28 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1aa2bd1eead6e666a7169bfd29500487",
+    "content-hash": "73cf8f4b0dd2820a2730226b76917aae",
     "packages": [
-        {
-            "name": "carlo/jquery-base64-file",
-            "version": "1.0",
-            "dist": {
-                "type": "file",
-                "url": "https://github.com/carlo/jquery-base64/raw/master/jquery.base64.js",
-                "shasum": "7f0ba311c1676b1b730b29b06e1a9e9e55760acc"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "base64"
-            },
-            "license": [
-                "MIT"
-            ],
-            "homepage": "https://github.com/carlo/jquery-base64"
-        },
         {
             "name": "composer/ca-bundle",
             "version": "1.3.2",
@@ -843,26 +823,6 @@
                 "source": "https://github.com/Jean85/pretty-package-versions/tree/2.0.5"
             },
             "time": "2021-10-08T21:21:46+00:00"
-        },
-        {
-            "name": "jquery/jquery-min-file",
-            "version": "1.12.4",
-            "dist": {
-                "type": "file",
-                "url": "https://code.jquery.com/jquery-1.12.4.min.js",
-                "shasum": "5a9dcfbef655a2668e78baebeaa8dc6f41d8dabb"
-            },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "jquery"
-            },
-            "license": [
-                "MIT"
-            ],
-            "homepage": "https://jquery.com"
         },
         {
             "name": "justinrainbow/json-schema",
