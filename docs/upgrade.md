@@ -45,7 +45,7 @@ recommended process of migrating from a CentOS 7 XDMoD 10.0.X installation to an
 8. Next, follow the upgrade process detailed below on the Rocky 8 Server.
 
 ### Server: EL8, XDMoD: 10.5, PHP: 7.2
-The steps to accommodate this scenario are fairly straightforward:
+The following steps should be used to update an XDMoD 10.5.0 instance running on Rocky Linux 8.
 
 Update the PHP module to 8.0
 ```shell
