@@ -2115,7 +2115,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * - offset: starting row index of data to get.
      *
      * If successful, the response will be a JSON text sequence. The first line
-     * will be an array containing the 'display' property of each obtained
+     * will be an array containing the `display` property of each obtained
      * field. Subsequent lines will be arrays containing the obtained field
      * values for each record.
      *
@@ -2248,7 +2248,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param string $queryClass the fully qualified name of the query class.
      * @param string $startDate the start date of the query in ISO 8601 format.
      * @param string $endDate the end date of the query in ISO 8601 format.
-     * @param bool $isFirstQueryInSeries if true, echo the dataset header before echoing the data.
+     * @param bool $isFirstQueryInSeries if true, echo an array with the `display` header of each field before
+     *                                   echoing the data.
      * @param bool $isLastQueryInSeries if true, switch back to MySQL buffered query mode after echoing the last row.
      * @param array $params validated parameter values from @see validateRawDataParams().
      * @param XDUser $user the user making the request.
@@ -2323,7 +2324,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param \DataWarehouse\Query\RawQuery $query
      * @param \CCR\Logger
      * @return BatchDataset
-     * @throws Exception if the 'fields' parameter contains invalid field
+     * @throws Exception if the `fields` parameter contains invalid field
      *                   aliases.
      */
     private function getRawBatchDataset(
@@ -2350,7 +2351,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Validate the 'start_date' and 'end_date' parameters of the given request
+     * Validate the `start_date` and `end_date` parameters of the given request
      * to the raw data endpoint (@see getRawData()).
      *
      * @param Request $request
@@ -2383,8 +2384,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     /**
      * Get the array of field aliases from the given request to the raw data
-     * endpoint (@see getRawData()), e.g., the parameter 'fields=foo,bar,baz'
-     * results in ['foo', 'bar', 'baz'].
+     * endpoint (@see getRawData()), e.g., the parameter `fields=foo,bar,baz`
+     * results in `['foo', 'bar', 'baz']`.
      *
      * @param Request $request
      * @return array|null containing the field aliases parsed from the request,
@@ -2401,9 +2402,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Validate the optional 'filters' parameter of the given request to the
+     * Validate the optional `filters` parameter of the given request to the
      * raw data endpoint (@see getRawData()), e.g., the parameter
-     * 'filters[foo]=bar,baz' results in ['foo' => ['bar', 'baz']].
+     * `filters[foo]=bar,baz` results in `['foo' => ['bar', 'baz']]`.
      *
      * @param Request $request
      * @param array $queryDescripters the set of dimensions the user is
@@ -2438,7 +2439,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * dimension does not match any of the provided values.
      *
      * @param \DataWarehouse\Query\RawQuery $query
-     * @param array $params containing a 'filters' key whose value is an
+     * @param array $params containing a `filters` key whose value is an
      *                      associative array of dimensions and dimension
      *                      values.
      * @return \DataWarehouse\Query\RawQuery the query with the filters
@@ -2465,10 +2466,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Validate a specific filter from the 'filters' parameter of a request to
+     * Validate a specific filter from the `filters` parameter of a request to
      * the raw data endpoint (@see getRawData()), and return the parsed array
-     * of values for that filter (e.g., 'foo,bar,baz' becomes ['foo', 'bar',
-     * 'baz']).
+     * of values for that filter (e.g., `foo,bar,baz` becomes `['foo', 'bar',
+     * 'baz']`).
      *
      * @param Request $request
      * @param array $queryDescripters the set of dimensions the user is
