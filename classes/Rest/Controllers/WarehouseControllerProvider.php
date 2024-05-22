@@ -2108,16 +2108,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *
      * It can also contain the following optional parameters:
      * - fields: list of aliases of fields to get (if not provided, all
-     *           fields are gotten).
+     *           fields are obtained).
      * - filters: mapping of dimension names to their possible values.
      *            Results will only be included whose values for each of the
      *            given dimensions match one of the corresponding given values.
      * - offset: starting row index of data to get.
      *
-     * If successful, the response will include the following keys:
-     * - success: true.
-     * - fields: array containing the 'display' property of each field gotten.
-     * - data: array of arrays containing the field values gotten.
+     * If successful, the response will be a JSON text sequence. The first line
+     * will be an array containing the 'display' property of each obtained
+     * field. Subsequent lines will be arrays containing the obtained field
+     * values for each record.
      *
      * @param Request $request
      * @param Application $app
