@@ -2121,7 +2121,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *
      * @param Request $request
      * @param Application $app
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
      * @throws BadRequestHttpException if any of the required parameters are
      *                                 not included; if an invalid start date,
      *                                 end date, realm, field alias, or filter
@@ -2145,7 +2145,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $reachedOffset = false;
             $i = 1;
             $offset = $params['offset'];
-            $echoedFirstRow = false;
             // Jobs realm has a performance improvement by querying one day at
             // a time.
             if ('Jobs' === $params['realm']) {
@@ -2162,8 +2161,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                         $logger,
                         $reachedOffset,
                         $i,
-                        $offset,
-                        $echoedFirstRow
+                        $offset
                     );
                     $currentDate = date(
                         'Y-m-d',
@@ -2184,15 +2182,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
                     $logger,
                     $reachedOffset,
                     $i,
-                    $offset,
-                    $echoedFirstRow
+                    $offset
                 );
             }
         };
         return $app->stream(
             $streamCallback,
             200,
-            ['Content-Type' => 'application/json']
+            ['Content-Type' => 'application/json-seq']
         );
     }
 
@@ -2246,15 +2243,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Perform an unbuffered database query and echo the result as JSON, flushing every 10000 rows.
+     * Perform an unbuffered database query and echo the result as a JSON text sequence, flushing every 10000 rows.
      *
      * @param string $queryClass the fully qualified name of the query class.
      * @param string $startDate the start date of the query in ISO 8601 format.
      * @param string $endDate the end date of the query in ISO 8601 format.
-     * @param bool $isFirstQueryInSeries if true, echo the JSON prolog before echoing the data. Otherwise, just echo
-     *                                   the data.
-     * @param bool $isLastQueryInSeries if true, echo the JSON epilog after echoing the data. Otherwise, just echo
-     *                                  the data.
+     * @param bool $isFirstQueryInSeries if true, echo the dataset header before echoing the data.
+     * @param bool $isLastQueryInSeries if true, switch back to MySQL buffered query mode after echoing the last row.
      * @param array $params validated parameter values from @see validateRawDataParams().
      * @param XDUser $user the user making the request.
      * @param \CCR\Logger $logger used to log the database request.
@@ -2264,8 +2259,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param int $i the number of rows iterated so far plus one — used to keep track of whether the offset has been
      *               reached and when to flush.
      * @param int $offset the number of rows to ignore before echoing.
-     * @param bool $echoedFirstRow if true, the first row has already been echoed, so echo a comma before the next
-     *                             one. Otherwise, don't echo the comma.
      * @return null
      * @throws Exception if $startDate or $endDate are invalid ISO 8601 dates, if there is an error connecting to
      *                   or querying the database, or if invalid fields have been specified in the query parameters.
@@ -2281,8 +2274,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $logger,
         &$reachedOffset,
         &$i,
-        &$offset,
-        &$echoedFirstRow
+        &$offset
     ) {
         $query = new $queryClass(
             [
@@ -2301,19 +2293,12 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $pdo = DB::factory($query->_db_profile)->handle();
         if ($isFirstQueryInSeries) {
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
-            echo '{"success":true,"fields":'
-                . json_encode($dataset->getHeader())
-                . ',"data":[';
+            echo "\036" . json_encode($dataset->getHeader()) . "\n";
         }
         foreach ($dataset as $row) {
             if ($reachedOffset || $i > $offset) {
                 $reachedOffset = true;
-                if ($echoedFirstRow) {
-                    echo ',';
-                }
-                echo "\n";
-                echo json_encode($row);
-                $echoedFirstRow = true;
+                echo "\036" . json_encode($row) . "\n";
             }
             if (10000 === $i) {
                 ob_flush();
@@ -2326,7 +2311,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $i++;
         }
         if ($isLastQueryInSeries) {
-            echo ']}';
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         }
     }
