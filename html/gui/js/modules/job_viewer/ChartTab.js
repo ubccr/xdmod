@@ -109,7 +109,7 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
             }
         };
 
-        var storeSettings = jQuery.extend(true, {}, defaultStoreSettings, this.panelSettings.store);
+        var storeSettings = XDMoD.utils.deepExtend({}, defaultStoreSettings, this.panelSettings.store);
 
         this.store = new Ext.data.JsonStore(storeSettings);
 

@@ -117,7 +117,7 @@ XDMoD.Module.DataExport = Ext.extend(XDMoD.PortalModule, {
                 '<p><b>{name} Realm Fields</b></p>',
                 '<ul>',
                 '<tpl for="fields">',
-                '<li><b>{name}</b>: {documentation}</li>',
+                '<li><b>{name}<tpl if="anonymize == true"> (anonymized)</tpl></b>: {documentation}</li>',
                 '</tpl>',
                 '</ul>',
                 '</tpl>'

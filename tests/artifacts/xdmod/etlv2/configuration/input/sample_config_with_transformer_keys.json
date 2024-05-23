@@ -8,5 +8,8 @@
   },
   "reference_with_subreference": {
     "$ref": "file://${TMPDIR}/sample_config_with_reference.json"
+  },
+  "double_reference": {
+    "$ref": "file://${TMPDIR}/sample_config_with_double_reference.json"
   }
 }

@@ -129,12 +129,14 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      *   included in the reference object to ensure comments are removed before transformers are
      *   processed.
      * - A nested JSON reference
+     * - A double JSON reference (reference to a reference)
      */
 
     public function testJsonReferenceAndIncludeWithVariables()
     {
         @copy(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json', '/tmp/sample_config_with_variables.json');
         @copy(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_reference.json', '/tmp/sample_config_with_reference.json');
+        @copy(self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_double_reference.json', '/tmp/sample_config_with_double_reference.json');
         $configObj = Configuration::factory(
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_transformer_keys.json',
             null,
