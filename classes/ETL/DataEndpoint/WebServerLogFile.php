@@ -54,6 +54,13 @@ class WebServerLogFile extends aStructuredFile implements iStructuredFile
         $this->web_parser->addPattern('%u', '(?P<user>(?:-|[\w\-\.@]+))');
 
         if (isset($options->log_format)) {
+            // Replace `%r` with `%m %U %H` so the request method, URL, and
+            // protocol can be parsed separately.
+            $options->log_format = str_replace(
+                '%r',
+                '%m %U %H',
+                $options->log_format
+            );
             $this->web_parser->setFormat($options->log_format);
         }
 

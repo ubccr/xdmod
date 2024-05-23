@@ -317,8 +317,8 @@ configuration/aggregation_meta/
 # configuration/etl/*.json
 # configuration/etl/**/*.json
 
-# Include log files that are used for regression testing
-!tests/artifacts/xdmod-test-artifacts/xdmod/referencedata/*.log
+# Include log files that are used for CI testing
+!tests/artifacts/**/*.log
 
 # Include CCR Log Class
 !classes/Log

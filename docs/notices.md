@@ -14,8 +14,8 @@ where denoted. These software products are free for commercial use.
   available under the [GPL 3.0][gpl3].
 - [Zend Framework 1.12.0](http://framework.zend.com/), which is available
   under the [New BSD License][new-bsd].
-- [jQuery](http://jquery.com/), which is available under the
-  [MIT License][mit].
+- [youmightnotneedjquery](https://github.com/HubSpot/YouMightNotNeedjQuery),
+  which is available under the [MIT License][mit].
 - [RSVP.js](https://github.com/tildeio/rsvp.js), which is available
   under the [MIT License][mit].
 - [Silex](http://silex.sensiolabs.org), which is available under the
@@ -46,8 +46,6 @@ where denoted. These software products are free for commercial use.
   available under the [MIT License][mit].
 - [reCAPTCHA PHP Library](https://developers.google.com/recaptcha/old/docs/php),
   which is available under the [MIT License][mit].
-- [jquery-base64](https://github.com/carlo/jquery-base64), which is available
-  under the [MIT License][mit].
 - \*[Ext.ux.form.GroupComboBox](https://www.sencha.com/forum/showthread.php?45412-Ext-ux-form-GroupComboBox),
   which is available under a "BSD" license (it is not clear which BSD license
   is being referred to).
