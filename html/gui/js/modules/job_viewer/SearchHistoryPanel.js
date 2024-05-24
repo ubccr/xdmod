@@ -238,14 +238,20 @@ XDMoD.Module.JobViewer.SearchHistoryPanel = Ext.extend(XDMoD.Module.JobViewer.Se
                             iconCls: 'save_as',
                             id: 'job-viewer-search-history-context-get-url',
                             handler: function () {
-                                var params = self.getParams(node);
+                                const params = self.getParams(node);
+                                const url = `${window.location.protocol}//${window.location.host}/#job_viewer?action=show&realm=${params.realm}&jobref=${params.jobid}`;
                                 Ext.Msg.show({
                                     title: 'URL for ' + node.attributes.text,
-                                    msg: '<p>' + window.location.protocol + '//' + window.location.host + '/#job_viewer?action=show&realm=' + params.realm + '&jobref=' + params.jobid + '<br /><br /></p>' +
-                                         '<p>Note that this link does not change the access permissions on the job data. XDMoD users must already have permission to be able to view the job via this link.</p>',
-                                    buttons: Ext.Msg.OK,
+                                    msg: `<p>${url}<br /><br /></p>
+                                         <p>Note that this link does not change the access permissions on the job data. XDMoD users must already have permission to be able to view the job via this link.</p>`,
+                                    buttons: { ok: 'Copy', cancel: 'Cancel' },
                                     minWidth: 650,
-                                    icon: Ext.MessageBox.INFO
+                                    icon: Ext.MessageBox.INFO,
+                                    fn: (buttonId) => {
+                                        if (buttonId === 'ok') {
+                                            navigator.clipboard.writeText(url);
+                                        }
+                                    }
                                 });
                             }
                         });
