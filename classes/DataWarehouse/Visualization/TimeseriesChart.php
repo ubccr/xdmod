@@ -643,16 +643,16 @@ class TimeseriesChart extends AggregateChart
                         }
 
                         // Set date tick interval
-                        $xAxis['dtick'] = $pointInterval;
-                        $xAxis['tick0'] = $xValues[0];
+                        $this->_chart['layout']['xaxis']['dtick'] = $pointInterval;
+                        $this->_chart['layout']['xaxis']['tick0'] = $xValues[0];
                         $value_count = count($xValues);
 
                         if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
                             if ($value_count > 12) {
-                                $xAxis['tickangle'] = -90;
+                                $this->_chart['layout']['xaxis']['tickangle'] = -90;
                             }
                             if ($value_count > 7) {
-                                $xAxis['tickmode'] = 'auto';
+                                $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
 
                             }
                         }
@@ -660,18 +660,18 @@ class TimeseriesChart extends AggregateChart
                         if ($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') {
                             $this->_chart['layout']['xaxis']['dtick'] = "M1";
                             if ($value_count > 12) {
-                                $xAxis['tickmode'] = 'auto';
+                                $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
                             }
                         }
 
                         if ($this->_aggregationUnit == 'Quarter' || $this->_aggregationUnit == 'quarter') {
-                            $xAxis['dtick'] = $value_count > 20 ? "M6" : "M3";
+                            $this->_chart['layout']['xaxis']['dtick'] = $value_count > 20 ? "M6" : "M3";
                         }
 
                         if ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year') {
-                            $xAxis['dtick'] = "M12";
+                            $this->_chart['layout']['xaxis']['dtick'] = "M12";
                             if ($value_count > 10) {
-                                $xAxis['tickmode'] = 'auto';
+                                $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
                             }
                         }
 
@@ -712,6 +712,10 @@ class TimeseriesChart extends AggregateChart
                                 $yAxis['title']['standoff'] = 0;
                                 $yAxis['showgrid'] = $yAxisCount > 1 ? false : true;
                                 $xAxis['domain'] = array($xAxisBottomBoundStart, $xAxisTopBoundStart);
+
+                                $xAxis['tickmode'] = $this->_chart['layout']['xaxis']['tickmode'];
+                                $xAxis['tick0'] = $this->_chart['layout']['xaxis']['tick0'];
+                                $xAxis['dtick'] = $this->_chart['layout']['xaxis']['dtick'];
 
                                 $this->_chart['layout']["{$xAxisName}"] = $yAxis;
                                 $this->_chart['layout']['yaxis'] = $xAxis;
