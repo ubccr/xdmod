@@ -1204,12 +1204,10 @@ class AggregateChart
                     {
                         $trace['stackgroup'] = 'one';
                         $this->_chart['layout']['barmode'] = 'stack';
-                        $trace['stackgaps'] = 'interpolate'; //connect nulls
                     }
                     elseif($data_description->combine_type=='percent' && !$data_description->log_scale)
                     {
                         $trace['stackgroup'] = 'one';
-                        $trace['stackgaps'] = 'interpolate';
                         $trace['groupnorm'] = 'percent';
                         if ($trace['type'] == 'bar') {
                             $this->_chart['layout']['barmode'] = 'stack';

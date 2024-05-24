@@ -775,13 +775,11 @@ class TimeseriesChart extends AggregateChart
                             elseif($data_description->combine_type=='stack')
                             {
                                 $trace['stackgroup'] = 'one';
-                                $trace['stackgaps'] = 'interpolate';
                                 $this->_chart['layout']['barmode'] = 'stack';
                             }
                             elseif($data_description->combine_type=='percent' && !$data_description->log_scale )
                             {
                                 $trace['stackgroup'] = 'one';
-                                $trace['stackgaps'] = 'interpolate';
                                 $trace['groupnorm'] = 'percent';
                                 $trace['hovertemplate'] = $formattedDataSeriesName . ': <b>%{hovertext}</b> <extra></extra>';
                                 $this->_chart['layout']['barmode'] = 'stack';
@@ -840,7 +838,6 @@ class TimeseriesChart extends AggregateChart
                         );
                         if ($data_labels_enabled) {
                             if ($this->_chart['data'][$idx]['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
-                                // For export this needs to be 'none'
                                 $this->_chart['data'][$idx]['constraintext'] = 'inside';
                                 if ($std_err_labels_enabled && $data_description->value_labels) {
                                     $this->_chart['data'][$idx]['text'] = $error_info['data_labels'];
