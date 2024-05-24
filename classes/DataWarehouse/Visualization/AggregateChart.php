@@ -1084,7 +1084,7 @@ class AggregateChart
 
                 $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
                 // Hide markers for 32 points or greater, except when there are multiple traces then hide markers starting at 21 points.
-                // Need check for chart types that this applies to otherwise bar charts will be have hidden traces.
+                // Need check for chart types that this applies to otherwise bar, scatter, and pie charts will be hidden.
                 $hideMarker = in_array($data_description->display_type, array('line', 'spline', 'area', 'areaspline'))
                     && ($values_count >= 32 || (count($yAxisObject->series) > 1 && $values_count >= 21));
 

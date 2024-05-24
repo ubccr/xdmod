@@ -391,8 +391,8 @@ class TimeseriesChart extends AggregateChart
                         'type' => 'date',
                         'rangemode' => 'tozero',
                         'hoverformat' => $this->getDateFormat(),
-                        'tickmode' => 'date',
-                        'nticks' => 10,
+                        'tickmode' => 'linear',
+                        'nticks' => 20,
                         'spikedash' => 'solid',
                         'spikethickness' => 1,
                         'spikecolor' => '#C0C0C0',
@@ -469,7 +469,7 @@ class TimeseriesChart extends AggregateChart
                             }
                         }
                         // Hide markers for 32 points or greater, except when there are multiple traces then hide markers starting at 21 points.
-                        // Need check for chart types that this applies to otherwise bar charts will be have hidden traces.
+                        // Need check for chart types that this applies to otherwise bar, scatter, and pie charts will be hidden.
                         $hideMarker = in_array($data_description->display_type, array('line', 'spline', 'area', 'areaspline'))
                             && ($values_count >= 32 || (count($yAxisDataObjectsArray) > 1 && $values_count >= 21));
 
@@ -643,21 +643,36 @@ class TimeseriesChart extends AggregateChart
                         }
 
                         // Set date tick interval
-                        $this->_chart['layout']['xaxis']['dtick'] = $pointInterval;
-                        if (($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') ||
-                            ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
-                            if (($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
-                                $this->_chart['layout']['xaxis']['dtick'] = "M12";
-                            } else {
-                                $this->_chart['layout']['xaxis']['dtick'] = "M1";
+                        $xAxis['dtick'] = $pointInterval;
+                        $xAxis['tick0'] = $xValues[0];
+                        $value_count = count($xValues);
+
+                        if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
+                            if ($value_count > 12) {
+                                $xAxis['tickangle'] = -90;
+                            }
+                            if ($value_count > 7) {
+                                $xAxis['tickmode'] = 'auto';
+
                             }
                         }
 
-                        $this->_chart['layout']['xaxis']['tick0'] = $xValues[0];
+                        if ($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') {
+                            $this->_chart['layout']['xaxis']['dtick'] = "M1";
+                            if ($value_count > 12) {
+                                $xAxis['tickmode'] = 'auto';
+                            }
+                        }
 
-                        if ((($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day') && count($xValues) > 7) ||
-                            (($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') && count($xValues) > 12)){
-                            $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
+                        if ($this->_aggregationUnit == 'Quarter' || $this->_aggregationUnit == 'quarter') {
+                            $xAxis['dtick'] = $value_count > 20 ? "M6" : "M3";
+                        }
+
+                        if ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year') {
+                            $xAxis['dtick'] = "M12";
+                            if ($value_count > 10) {
+                                $xAxis['tickmode'] = 'auto';
+                            }
                         }
 
                         // Set swap axis
@@ -947,7 +962,7 @@ class TimeseriesChart extends AggregateChart
             $this->_chart['layout']["{$axisName}"]['tickmode'] = 'auto';
             $visibility = array_column($this->_chart['data'], 'visible');
             if (in_array(true, $visibility, true)) {
-                $this->_chart['layout']["{$axisName}"]['tickmode'] = 'date';
+                $this->_chart['layout']["{$axisName}"]['tickmode'] = 'linear';
             }
         }
 
