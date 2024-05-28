@@ -30,13 +30,13 @@ that are outside the normal installation of the rpm and `xdmod-upgrade`. Below y
 that exist with steps to accommodate all of them:
 
 ### Server: EL7, XDMoD: 10.5, PHP: 5.4
-Included in these new features is official support for the Rocky 8 operating system. This will allow organizations
-to migrate their XDMoD installations from the soon-to-be end-of-life CentOS 7 to a currently supported OS. The officially
-recommended process of migrating from a CentOS 7 XDMoD 10.5 installation to an Rocky 8 XDMoD 10.5 installation is as follows:
+The officially recommended process of migrating from a CentOS 7 XDMoD 10.5 installation to a Rocky 8 XDMoD 10.5
+installation is as follows:
+
 1. Install a fresh copy of XDMoD 10.5 on a new Rocky 8 server [https://open.xdmod.org/10.5/install-rpm.html](https://open.xdmod.org/10.5/install-rpm.html)
    1. Instead of running `xdmod-setup` do steps 2 & 3 below.
 2. Copy the contents of `/etc/xdmod` from the CentOS 7 server to the Rocky 8 server.
-    1. If the database host has changed then update the `host = ` entries in `/etc/xdmod/portal_settings.ini`. 
+    1. If the database host has changed then update the `host = ` entries in `/etc/xdmod/portal_settings.ini`.
 3. Export the database from the CentOS 7 installation and transfer the files to the Rocky 8 server.
     1. For example, using `mysqldump`.
     2. *Add specific commands / steps for doing this*
