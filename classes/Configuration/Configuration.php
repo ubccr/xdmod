@@ -981,6 +981,7 @@ class Configuration extends Loggable implements iConfiguration
         // Examine each key in the configuration object. If there is a transformer that
         // matches the key, transform the key and value.
 
+        $replaceObjWithValue = false;
         foreach ( $obj as $key => &$value ) {
 
             // Examine all transformers
@@ -1009,14 +1010,8 @@ class Configuration extends Loggable implements iConfiguration
                 } elseif ( null === $transformKey ) {
 
                     // If the key is null but the value is set, replace the ENTIRE OBJECT
-                    // with the value. Note that if we are replacing the value with an
-                    // array we need to assign it by reference so we can modify it later.
-
-                    if ( is_array($value) ) {
-                        $obj = &$value;
-                    } else {
-                        $obj = $value;
-                    }
+                    // with the value.
+                    $replaceObjWithValue = true;
 
                 } else {
 
@@ -1054,12 +1049,8 @@ class Configuration extends Loggable implements iConfiguration
                 }
             }
 
-            // If we have replaced the object by something that is not Traversable (such as an
-            // included string) then do not continue the loop or the foreach will try to call
-            // valid() and next() on a non-Traversable.
-
-            if ( ! ( is_array($obj) || is_object($obj) || ($obj instanceof \Traversable) ) ) {
-                break;
+            if ($replaceObjWithValue) {
+                return $value;
             }
 
         }
