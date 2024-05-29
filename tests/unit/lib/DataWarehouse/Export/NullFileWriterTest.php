@@ -11,7 +11,7 @@ use IntegrationTests\TestHarness\TestFiles;
 /**
  * Test data warehouse export null file writer.
  */
-class NullFileWriterTest extends \PHPUnit\Framework\TestCase
+class NullFileWriterTest extends TestCase
 {
     /**
      * Test artifacts path.

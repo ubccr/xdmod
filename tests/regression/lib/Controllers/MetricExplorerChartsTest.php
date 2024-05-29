@@ -465,7 +465,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
                 if (count($testConfig['settings']['filter_values']) === 1) {
                     $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' =  ' . $testConfig['settings']['filter_values'][0] ;
                 } else {
-                    $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' = ( ' . implode($testConfig['settings']['filter_values'], ',  ') . ' )';
+                    $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' = ( ' . implode(', ', $testConfig['settings']['filter_values']) . ' )';
                 }
 
                 $output[] = $testConfig;

@@ -15,7 +15,7 @@ use IntegrationTests\TestHarness\TestFiles;
 /**
  * Base class for job shredder test classes.
  */
-abstract class JobShredderBaseTestCase extends \PHPUnit\Framework\TestCase
+abstract class JobShredderBaseTestCase extends TestCase
 {
     /**
      * @var TestFiles

@@ -11,7 +11,7 @@ use IntegrationTests\TestHarness\TestFiles;
 /**
  * Test data warehouse export CSV file writer.
  */
-class CsvFileWriterTest extends \PHPUnit\Framework\TestCase
+class CsvFileWriterTest extends TestCase
 {
     /**
      * Test artifacts path.

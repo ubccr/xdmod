@@ -346,9 +346,9 @@ class RegressionTestHelper extends XdmodTestHelper
      * @param string $expectedFile Path to file containing expected output.
      * @param string $userRole User role used during test.
      * @return boolean True if CSV export returned expected data.
-     * @throws \PHPUnit\Framework\SkippedTestError If the test is skipped.
-     * @throws \PHPUnit\Framework\IncompleteTestError If the test is incomplete.
-     * @throws \PHPUnit\Framework\ExpectationFailedException If the test failed.
+     * @throws SkippedTestError If the test is skipped.
+     * @throws IncompleteTestError If the test is incomplete.
+     * @throws ExpectationFailedException If the test failed.
      */
     public function checkCsvExport($testName, $input, $expectedFile, $userRole)
     {
@@ -357,7 +357,7 @@ class RegressionTestHelper extends XdmodTestHelper
         $fullTestName = $testName . $datasetType . '-' . $aggUnit . '-' . $userRole;
 
         if (in_array($testName, self::$skip)) {
-            throw new \PHPUnit\Framework\SkippedTestError($fullTestName . ' intentionally skipped');
+            throw new SkippedTestError($fullTestName . ' intentionally skipped');
         }
 
         list($csvdata, $curldata) = self::post('/controllers/user_interface.php', null, $input);
@@ -490,7 +490,7 @@ class RegressionTestHelper extends XdmodTestHelper
             [$outputDir, $outputFileName]
         );
         file_put_contents($outputFile, $data);
-        throw new \PHPUnit\Framework\SkippedTestError(
+        throw new SkippedTestError(
             "Created Expected output for $fullTestName"
         );
     }
@@ -587,7 +587,7 @@ class RegressionTestHelper extends XdmodTestHelper
     {
         $role = self::getEnvUserrole();
         if ('public' === $role) {
-            throw new \PHPUnit\Framework\SkippedTestError(
+            throw new SkippedTestError(
                 'Raw data test cannot be performed with public user.'
             );
         }

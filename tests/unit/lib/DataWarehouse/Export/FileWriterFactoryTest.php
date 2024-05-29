@@ -9,7 +9,7 @@ use IntegrationTests\TestHarness\TestFiles;
 /**
  * Test data warehouse export file.
  */
-class FileWriterTest extends \PHPUnit\Framework\TestCase
+class FileWriterTest extends TestCase
 {
     /**
      * Test artifacts path.

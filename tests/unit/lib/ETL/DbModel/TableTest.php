@@ -10,7 +10,7 @@ use ETL\DbModel\Table;
 use Exception;
 use \PHPUnit\Framework\TestCase;
 
-class TableTest extends \PHPUnit\Framework\TestCase
+class TableTest extends TestCase
 {
     private static $logger;
 

@@ -11,7 +11,7 @@ use IntegrationTests\TestHarness\TestFiles;
 /**
  * Test data warehouse export JSON file writer.
  */
-class JsonFileWriterTest extends \PHPUnit\Framework\TestCase
+class JsonFileWriterTest extends TestCase
 {
     /**
      * Test artifacts path.

@@ -150,6 +150,9 @@ class FileManagerTest extends BaseTest
          ->will($this->onConsecutiveCalls(1, 2, false));
         $dataSet->method('valid')
          ->will($this->onConsecutiveCalls(true, true, false));
+        $dataSet->method('next')->willReturn(null);
+        $dataSet->method('rewind')->willReturn(null);
+
 
         $format = $request['export_file_format'];
         $file = self::$fileManager->writeDataSetToFile($dataSet, $format);

@@ -13,7 +13,7 @@ use \PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\TestFiles;
 use stdClass;
 
-class ForeignKeyConstraintTest extends \PHPUnit\Framework\TestCase
+class ForeignKeyConstraintTest extends TestCase
 {
     const TEST_GROUP = 'unit/etl/db-model/foreign-key-constraint';
 
@@ -290,7 +290,7 @@ class ForeignKeyConstraintTest extends \PHPUnit\Framework\TestCase
         return array_map(
             function ($inputData) {
                 return array_map(
-                    fn($obj) => json_decode(json_encodE($obj)),
+                    fn($obj) => json_decode(json_encode($obj)),
                     $inputData
                 );
             },

@@ -4,6 +4,7 @@ namespace IntegrationTests;
 
 use CCR\Json;
 use Exception;
+use SebastianBergmann\Comparator\ComparisonFailure;
 use Swaggest\JsonSchema\Schema;
 use IntegrationTests\TestHarness\TestFiles;
 use IntegrationTests\TestHarness\Utilities;
@@ -883,5 +884,58 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
             ? substr($str, 0, $numChars) . '...'
             : $str
         );
+    }
+
+
+    public function assertArraySubset($subset, $other, $description = '', $strict = false, $returnResult = false): ?bool
+    {
+        // type cast $other & $subset as an array to allow support in standard array functions.
+        $other   = $this->toArray($other);
+        $subset  = $this->toArray($subset);
+        $patched = \array_replace_recursive($other, $subset);
+
+        if ($strict) {
+            $result = $other === $patched;
+        } else {
+            $result = $other == $patched;
+        }
+        if ($returnResult) {
+            return $result;
+        }
+        if (!$result) {
+            $f = new ComparisonFailure(
+                $patched,
+                $other,
+                \var_export($patched, true),
+                \var_export($other, true)
+            );
+            if (strlen($description) > 0) {
+                $this->fail($description);
+            }
+            $this->fail($f->getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * Used in assertArraySubset
+     *
+     * @param iterable $other
+     * @return array
+     */
+    private function toArray(iterable $other): array
+    {
+        if (\is_array($other)) {
+            return $other;
+        }
+        if ($other instanceof \ArrayObject) {
+            return $other->getArrayCopy();
+        }
+        if ($other instanceof \Traversable) {
+            return \iterator_to_array($other);
+        }
+        // Keep BC even if we know that array would not be the expected one
+        return (array) $other;
     }
 }

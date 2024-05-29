@@ -232,7 +232,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                     $index++;
                 }
 
-                $counts = [28, 16, 16 ];
+                $counts = [28, 16, 16];
                 for ($i = 0; $i < count($counts); $i++) {
                     $this->assertCount(
                         $counts[$i],
@@ -322,7 +322,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
 
         // Only check data for successful requests.
         if ($httpCode == 200) {
-            $this->assertTrue(count($requests) === count($content['data']), 'Data contains requests');
+            $this->assertTrue($this->assertArraySubset($requests, $content['data']), 'Data contains requests');
         }
     }
 
@@ -447,7 +447,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
         $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
-        $this->assertTrue(count($content['data']) === count($beforeContent['data']), 'Deleted IDs are in response');
+        $this->assertTrue($this->assertArraySubset($content['data'], $beforeContent['data']), 'Deleted IDs are in response');
 
         // Get list of requests after deletion
         list($afterContent) = self::$helpers[$role]->get('rest/warehouse/export/requests');
