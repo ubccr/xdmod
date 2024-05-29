@@ -25,7 +25,7 @@ RPM Upgrade Process
 -------------------
 
 # !!! XDMoD 11.0 Upgrade Process Changes !!!
-Due to our ongoing modernization efforts XDMoD 11.0 will require PHP 8.0. To accommodate this change there are a few 
+Due to our ongoing modernization efforts XDMoD 11.0 will require PHP 8.0. To accommodate this change there are a few
 additional steps required that are outside the typical upgrade process. Below we have included the upgrade steps if you
 are upgrading from both CentOS 7 and Rocky 8. If you run into any problems during your upgrade process, please submit a
 ticket to `ccr-xdmod-help@buffalo.edu` and we will do our best to help.
