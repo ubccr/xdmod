@@ -5,10 +5,10 @@ namespace IntegrationTests\Rest;
 use CCR\DB;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use IntegrationTests\TokenAuthTest;
 use JsonSchema\Constraints\Constraint;
 use JsonSchema\Validator;
-use \PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 use XDUser;
 
@@ -19,6 +19,8 @@ use XDUser;
  */
 class WarehouseExportControllerProviderTest extends TokenAuthTest
 {
+    use ArraySubsetAsserts;
+
     /**
      * Directory containing test artifact files.
      */
@@ -322,7 +324,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
 
         // Only check data for successful requests.
         if ($httpCode == 200) {
-            $this->assertTrue($this->assertArraySubset($requests, $content['data'], 'Data contains requests', false, true), 'Data contains requests');
+            self::assertArraySubset($requests, $content['data']);
         }
     }
 
@@ -447,7 +449,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
         $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);
-        $this->assertTrue($this->assertArraySubset($content['data'], $beforeContent['data'], 'Deleted IDs are in the response', false, true), 'Deleted IDs are in response');
+        self::assertArraySubset($content['data'], $beforeContent['data'], false, 'Deleted IDs are in the response');
 
         // Get list of requests after deletion
         list($afterContent) = self::$helpers[$role]->get('rest/warehouse/export/requests');
