@@ -28,12 +28,12 @@ RPM Upgrade Process
 Due to our ongoing modernization efforts XDMoD 11.0 will require PHP 8.0. To accommodate this change there are a few 
 additional steps required that are outside the typical upgrade process. Below we have included the upgrade steps if you
 are upgrading from both CentOS 7 and Rocky 8. If you run into any problems during your upgrade process, please submit a
-ticket to `ccr-xdmod-help@buffalo.edu` and we will do our best to help. 
+ticket to `ccr-xdmod-help@buffalo.edu` and we will do our best to help.
 
 
 ### Server: EL7, XDMoD: 10.5, PHP: 5.4
-If you are still using CentOS 7 and are wanting to upgrade to XDMoD 11.0 on Rocky or Alma 8, please follow the steps below. 
-At the end of this process you should expect to have a working XDMoD 10.5.0 installation on a Rocky 8 server that 
+If you are still using CentOS 7 and are wanting to upgrade to XDMoD 11.0 on Rocky or Alma 8, please follow the steps below.
+At the end of this process you should expect to have a working XDMoD 10.5.0 installation on a Rocky 8 server that
 contains all of your current data.
 
 1. Install a fresh copy of XDMoD 10.5 on a new Rocky 8 server [https://open.xdmod.org/10.5/install-rpm.html](https://open.xdmod.org/10.5/install-rpm.html)
