@@ -71,17 +71,6 @@
                         chartOptions.layout.margin.t += 30;
                     }
 
-                    for (let i = 0; i < chartOptions.data.length; i++) {
-                        // Rollback constrain for bar chart text font size
-                        chartOptions.data[i].constraintext = 'none';
-                        // mode = 'lines' affects the xaxis range, therefore, just change opacity
-                        if ((chartOptions.data[i].type === 'line' || chartOptions.data[i].type === 'area') && chartOptions.data[i].y.length > 1) {
-                            if (chartOptions.data[i].marker) {
-                                chartOptions.data[i].marker.opacity = 0;
-                            }
-                        }
-                    }
-
                     chartOptions.data.sort((trace1, trace2) => {
                         if (chartOptions.layout.barmode !== 'group') {
                             return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.traceorder - trace1.traceorder);
