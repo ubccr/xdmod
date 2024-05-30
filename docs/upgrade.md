@@ -34,14 +34,14 @@ ticket to `ccr-xdmod-help@buffalo.edu` and we will do our best to help.
 ### Server: EL7, XDMoD: 10.5, PHP: 5.4
 If you are still using CentOS 7 and are wanting to upgrade to XDMoD 11.0 on Rocky or Alma 8, please follow the steps below.
 At the end of this process you should expect to have a working XDMoD 10.5.0 installation on a Rocky 8 server that
-contains all of your current data. After which you can then follow the upgrade procedure that immediately follows this 
+contains all of your current data. After which you can then follow the upgrade procedure that immediately follows this
 section which starts at `Server: EL8, XDMoD: 10.5, PHP: 7.2`.
 
 1. Install a fresh copy of XDMoD 10.5 on a new Rocky 8 server [https://open.xdmod.org/10.5/install-rpm.html](https://open.xdmod.org/10.5/install-rpm.html)
    1. Instead of running `xdmod-setup` do steps 2 & 3 below.
 2. Copy the contents of `/etc/xdmod` (or if you have a source install the contents of `/path/to/your/xdmod/etc/`) from the CentOS 7
    server to the Rocky 8 server.
-    1. <span style="color: orange;">***NOTE:***</span>If the database host has changed then on the Rocky 8 Server, 
+    1. <span style="color: orange;">***NOTE:***</span>If the database host has changed then on the Rocky 8 Server,
        update the `host = ` entries in `/etc/xdmod/portal_settings.ini` to reflect this.
 3. Export the database from the CentOS 7 installation and transfer the files to the Rocky 8 server.
     1. For example, `mysqldump --databases mod_hpcdb mod_logger moddb modw modw_aggregates modw_cloud modw_filters > backup.sql`
