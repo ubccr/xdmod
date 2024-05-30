@@ -12,7 +12,7 @@ BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}__PRERELEASE__-%{relea
 BuildArch:     noarch
 BuildRequires: php-cli
 Requires:      httpd mod_ssl
-Requires:      php >= 8.0 php-cli php-mysqlnd php-pdo php-gd php-xml php-mbstring php-zip php-posix
+Requires:      php >= 7.4 php-cli php-mysqlnd php-pdo php-gd php-xml php-mbstring php-zip php-posix
 Requires:      php-pecl-apcu php-json
 Requires:      libreoffice-writer
 Requires:      chromium-headless >= 111
