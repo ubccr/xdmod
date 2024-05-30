@@ -40,10 +40,10 @@ jobs:
           command: dnf module -y reset php && dnf module -y enable php:8.0
       - run:
           name: Install PHP 8.0 and PHP module pre-reqs & an updated version of PHP Pear
-          command: dnf install -y php libzip-devel php-pear
+          command: dnf install -y php libzip-devel php-pear php-devel
       - run:
           name: Install MongoDB Pear module
-          command: yes '' | pecl install mongodb || true
+          command: yes '' | pecl install mongodb
       - run:
             name: install the composer dependencies
             command: composer install
@@ -52,10 +52,6 @@ jobs:
           command: |
             mkdir ~/phpunit
             mkdir /tmp/screenshots
-      - run:
-          name: 'Fixup Simplesaml'
-          command: |
-            sed -i 's/SimpleSAML_Error_Assertion::installHandler();//g' vendor/simplesamlphp/simplesamlphp/www/_include.php
       - run:
           name: Build XDMoD RPM
           command: ~/bin/buildrpm xdmod
