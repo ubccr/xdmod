@@ -282,8 +282,6 @@ xdmod-*.rpm
 /.sonar/
 external_libraries/
 
-/html/gui/lib/jquery
-/html/gui/lib/jquery-plugins
 /html/gui/lib/moment
 /html/gui/lib/moment-timezone
 /html/gui/lib/rsvp
