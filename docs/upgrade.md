@@ -38,7 +38,7 @@ contains all of your current data.
 
 1. Install a fresh copy of XDMoD 10.5 on a new Rocky 8 server [https://open.xdmod.org/10.5/install-rpm.html](https://open.xdmod.org/10.5/install-rpm.html)
    1. Instead of running `xdmod-setup` do steps 2 & 3 below.
-2. Copy the contents of `/etc/xdmod` (or if you have a source install the contents of `/opt/xdmod/etc/`) from the CentOS 7
+2. Copy the contents of `/etc/xdmod` (or if you have a source install the contents of `/path/to/your/xdmod/etc/`) from the CentOS 7
    server to the Rocky 8 server.
     1. <span style="color: orange;">***NOTE:***</span>If the database host has changed then on the Rocky 8 Server, 
        update the `host = ` entries in `/etc/xdmod/portal_settings.ini` to reflect this.
