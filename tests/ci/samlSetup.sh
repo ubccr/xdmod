@@ -137,9 +137,6 @@ sed -i -- 's%#</Directory>%</Directory>%' /etc/httpd/conf.d/xdmod.conf
 cp "$VENDOR_DIR/simplesamlphp/simplesamlphp/config-templates/config.php" "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php"
 sed -i -- "s/'trusted.url.domains' => array(),/'trusted.url.domains' => array('localhost'),/" "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php"
 
-# Temporarily ( until the REST update goes in ) need to remove this line due to Assertions being removed in PHP8.
-sed -i 's/SimpleSAML_Error_Assertion::installHandler();//g' vendor/simplesamlphp/simplesamlphp/www/_include.php
-
 cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/authsources.php" <<EOF
 <?php
 \$config = array(
