@@ -37,7 +37,7 @@ jobs:
       # Download and cache dependencies
       - run:
           name: Update php module
-          command: dnf module -y reset php && dnf module -y enable php:8.0
+          command: dnf module -y reset php && dnf module -y enable php:7.4
       - run:
           name: Install PHP 8.0 and PHP module pre-reqs & an updated version of PHP Pear
           command: dnf install -y php libzip-devel php-pear php-devel
