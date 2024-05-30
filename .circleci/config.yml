@@ -46,7 +46,7 @@ jobs:
           command: yes '' | pecl install mongodb || true
       - run:
             name: install the composer dependencies
-            command: composer install
+            command: rm -f composer.lock && composer install
       - run:
           name: Create Test Artifact Directories
           command: |
