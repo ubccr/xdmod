@@ -68,12 +68,16 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
         // Set tickmode to auto for thumbnail plots. Large amount of tick labels for thumbnail plots cause them
         // to lag.
-        if (baseChartOptions.layout.thumbnail && baseChartOptions.layout.xaxis.type !== 'category') {
+        if (baseChartOptions.layout.thumbnail) {
             const axesLabels = getMultiAxisObjects(baseChartOptions.layout);
             if (baseChartOptions.swapXY) {
-                baseChartOptions.layout.yaxis.nticks = 5;
-            } else {
+                if (baseChartOptions.layout.yaxis.type === 'date') {
+                    baseChartOptions.layout.yaxis.nticks = 5;
+                    baseChartOptions.layout.yaxis.tickangle = -90;
+                }
+            } else if (baseChartOptions.layout.xaxis.type === 'date') {
                 baseChartOptions.layout.xaxis.nticks = 5;
+                baseChartOptions.layout.xaxis.tickangle = -90;
             }
             for (let i = 0; i < axesLabels.length; i++) {
                 baseChartOptions.layout[axesLabels[i]].nticks = 5;
