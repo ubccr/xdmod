@@ -40,8 +40,8 @@ contains all of your current data.
    1. Instead of running `xdmod-setup` do steps 2 & 3 below.
 2. Copy the contents of `/etc/xdmod` (or if you have a source install the contents of `/opt/xdmod/etc/`) from the CentOS 7
    server to the Rocky 8 server.
-    1. <span style="color: orange;">***NOTE:***</span> If the database host has changed then update the `host = `
-       entries in `/etc/xdmod/portal_settings.ini` to reflect this.
+    1. <span style="color: orange;">***NOTE:***</span>If the database host has changed then on the Rocky 8 Server, 
+       update the `host = ` entries in `/etc/xdmod/portal_settings.ini` to reflect this.
 3. Export the database from the CentOS 7 installation and transfer the files to the Rocky 8 server.
     1. For example, `mysqldump --databases mod_hpcdb mod_logger moddb modw modw_aggregates modw_cloud modw_filters > backup.sql`
        1. To make the process of importing the data less error-prone, please update the following sed snippet with your installations MySQL user (`` `user`@`host` ``) and run it against the dumped sql file(s).
@@ -62,14 +62,18 @@ $ dnf module -y enable php:8.0
 
 Install PHP 8.0 and some require pre-reqs for PHP Pear packages
 ```shell
-$ dnf install -y php libzip-devel php-pear
+$ dnf install -y php libzip-devel php-pear php-devel
 ```
 
-*NOTE: You may get some PHP Warning messages generated during this process:*
+Some Notes:
+- If you run the above command and dnf tells you that the packages are already installed, double-check the contents of
+  `/etc/dnf/dnf.conf` if `best=False` is present then change it to `best=True`. Re-run the command above and it should
+  now find / install the 8.0 version of the packages.
+- You may also see some `PHP: Warning` messages during this process, specifically:
 ```
 PHP Warning:  PHP Startup: Unable to load dynamic library 'mongodb.so' (tried: /usr/lib64/php/modules/mongodb.so (/usr/lib64/php/modules/mongodb.so: undefined symbol: _zval_ptr_dtor), /usr/lib64/php/modules/mongodb.so.so (/usr/lib64/php/modules/mongodb.so.so: cannot open shared object file: No such file or directory)) in Unknown on line 0
 ```
-*This will be resolved by the next step*
+*Not to worry, this will be resolved by the next step*
 
 Install the mongodb PHP Pear package
 ```shell
@@ -84,7 +88,7 @@ Download available at [GitHub][github-latest-release].
 
 ### Install the RPM
 
-    # yum install xdmod-{{ page.sw_version }}-1.0.el8.noarch.rpm
+    # dnf install xdmod-{{ page.sw_version }}-1.0.el8.noarch.rpm
 
 Likewise, install the latest `xdmod-appkernels` or `xdmod-supremm` RPM
 files if you have those installed.
