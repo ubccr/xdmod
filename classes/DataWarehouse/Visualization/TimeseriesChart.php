@@ -391,8 +391,8 @@ class TimeseriesChart extends AggregateChart
                         'type' => 'date',
                         'rangemode' => 'tozero',
                         'hoverformat' => $this->getDateFormat(),
-                        'tickmode' => 'date',
-                        'nticks' => 10,
+                        'tickmode' => 'linear',
+                        'nticks' => 20,
                         'spikedash' => 'solid',
                         'spikethickness' => 1,
                         'spikecolor' => '#C0C0C0',
@@ -454,6 +454,24 @@ class TimeseriesChart extends AggregateChart
                             continue;
                         }
                         $values = $yAxisDataObject->getValues();
+
+                        // Decide whether to show data point markers:
+                        $values_count = count($values);
+                        // Count datapoints having actual, non-null y values:
+                        $y_values_count = 0;
+                        foreach ($values as $y_value) {
+                            if ($y_value !== null) {
+                                ++$y_values_count;
+                            }
+                            // we are only interested in the == 1 case.
+                            if ($y_values_count > 1) {
+                                break;
+                            }
+                        }
+                        // Hide markers for 32 points or greater, except when there are multiple traces then hide markers starting at 21 points.
+                        // Need check for chart types that this applies to otherwise bar, scatter, and pie charts will be hidden.
+                        $hideMarker = in_array($data_description->display_type, array('line', 'spline', 'area', 'areaspline'))
+                            && ($values_count >= 32 || (count($yAxisDataObjectsArray) > 1 && $values_count >= 21));
 
                         $isRemainder = $yAxisDataObject->getGroupId() === TimeseriesDataset::SUMMARY_GROUP_ID;
 
@@ -574,6 +592,7 @@ class TimeseriesChart extends AggregateChart
                                     'color' => $lineColor
                                 ),
                                 'symbol' => $this->_symbolStyles[$traceIndex % 5],
+                                'opacity' => $hideMarker ? 0.0 : 1.0
                             ),
                             'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
                             'line' => array(
@@ -625,20 +644,35 @@ class TimeseriesChart extends AggregateChart
 
                         // Set date tick interval
                         $this->_chart['layout']['xaxis']['dtick'] = $pointInterval;
-                        if (($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') ||
-                            ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
-                            if (($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year')) {
-                                $this->_chart['layout']['xaxis']['dtick'] = "M12";
-                            } else {
-                                $this->_chart['layout']['xaxis']['dtick'] = "M1";
+                        $this->_chart['layout']['xaxis']['tick0'] = $xValues[0];
+                        $value_count = count($xValues);
+
+                        if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
+                            if ($value_count > 12) {
+                                $this->_chart['layout']['xaxis']['tickangle'] = -90;
+                            }
+                            if ($value_count > 7) {
+                                $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
+
                             }
                         }
 
-                        $this->_chart['layout']['xaxis']['tick0'] = $xValues[0];
+                        if ($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') {
+                            $this->_chart['layout']['xaxis']['dtick'] = "M1";
+                            if ($value_count > 12) {
+                                $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
+                            }
+                        }
 
-                        if ((($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day') && count($xValues) > 7) ||
-                            (($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') && count($xValues) > 12)){
-                            $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
+                        if ($this->_aggregationUnit == 'Quarter' || $this->_aggregationUnit == 'quarter') {
+                            $this->_chart['layout']['xaxis']['dtick'] = $value_count > 20 ? "M6" : "M3";
+                        }
+
+                        if ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year') {
+                            $this->_chart['layout']['xaxis']['dtick'] = "M12";
+                            if ($value_count > 10) {
+                                $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
+                            }
                         }
 
                         // Set swap axis
@@ -679,10 +713,12 @@ class TimeseriesChart extends AggregateChart
                                 $yAxis['showgrid'] = $yAxisCount > 1 ? false : true;
                                 $xAxis['domain'] = array($xAxisBottomBoundStart, $xAxisTopBoundStart);
 
+                                $xAxis['tickmode'] = $this->_chart['layout']['xaxis']['tickmode'];
+                                $xAxis['tick0'] = $this->_chart['layout']['xaxis']['tick0'];
+                                $xAxis['dtick'] = $this->_chart['layout']['xaxis']['dtick'];
+
                                 $this->_chart['layout']["{$xAxisName}"] = $yAxis;
                                 $this->_chart['layout']['yaxis'] = $xAxis;
-                                $this->_chart['layout']['yaxis']['tick0'] = $xValues[0];
-                                $this->_chart['layout']['yaxis']['dtick'] = $pointInterval;
                                 $swapXYDone = true;
                             }
                             if ($yAxisIndex > 0) {
@@ -739,13 +775,11 @@ class TimeseriesChart extends AggregateChart
                             elseif($data_description->combine_type=='stack')
                             {
                                 $trace['stackgroup'] = 'one';
-                                $trace['stackgaps'] = 'interpolate';
                                 $this->_chart['layout']['barmode'] = 'stack';
                             }
                             elseif($data_description->combine_type=='percent' && !$data_description->log_scale )
                             {
                                 $trace['stackgroup'] = 'one';
-                                $trace['stackgaps'] = 'interpolate';
                                 $trace['groupnorm'] = 'percent';
                                 $trace['hovertemplate'] = $formattedDataSeriesName . ': <b>%{hovertext}</b> <extra></extra>';
                                 $this->_chart['layout']['barmode'] = 'stack';
@@ -804,8 +838,7 @@ class TimeseriesChart extends AggregateChart
                         );
                         if ($data_labels_enabled) {
                             if ($this->_chart['data'][$idx]['type'] == 'bar' && count($yAxisDataObjectsArray) > 1) {
-                                // For export this needs to be 'none'
-                                $this->_chart['data'][$idx]['constraintext'] = $data_description->combine_type != 'side' ? 'both' : 'none';
+                                $this->_chart['data'][$idx]['constraintext'] = 'inside';
                                 if ($std_err_labels_enabled && $data_description->value_labels) {
                                     $this->_chart['data'][$idx]['text'] = $error_info['data_labels'];
                                 }
@@ -930,7 +963,7 @@ class TimeseriesChart extends AggregateChart
             $this->_chart['layout']["{$axisName}"]['tickmode'] = 'auto';
             $visibility = array_column($this->_chart['data'], 'visible');
             if (in_array(true, $visibility, true)) {
-                $this->_chart['layout']["{$axisName}"]['tickmode'] = 'date';
+                $this->_chart['layout']["{$axisName}"]['tickmode'] = 'linear';
             }
         }
 
