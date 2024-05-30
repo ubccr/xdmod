@@ -68,7 +68,7 @@ $ dnf install -y php libzip-devel php-pear php-devel
 
 Some Notes:
 - If you run the above command and dnf tells you that the packages are already installed, double-check the contents of
-  `/etc/dnf/dnf.conf` if `best=False` is present then change it to `best=True`. Re-run the command above and it should
+  `/etc/dnf/dnf.conf` if `best=False` is present then change it to `best=True`. Re-run the command above, and it should
   now find / install the 8.0 version of the packages.
 - You may also see some `PHP: Warning` messages during this process, specifically:
 ```
