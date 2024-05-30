@@ -593,14 +593,12 @@ class RegressionTestHelper extends XdmodTestHelper
             $input,
             $role
         );
+        $data = str_replace("\x1e", '', $response[0]);
         if ($sort) {
-            array_multisort(
-                array_column($response[0]['data'], 0),
-                SORT_ASC,
-                $response[0]['data']
-            );
+            $lines = explode("\n", $data);
+            sort($lines);
+            $data = implode("\n", $lines);
         }
-        $data = json_encode($response[0]) . "\n";
         $data = preg_replace(self::$replaceRegex, self::$replacements, $data);
         if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
             return $this->generateArtifact(
@@ -629,22 +627,11 @@ class RegressionTestHelper extends XdmodTestHelper
             if ($expected === $data) {
                 return true;
             }
-            $differences = [];
-            self::compareJsonData(
-                $differences,
-                '/',
-                json_decode($expected, true),
-                json_decode($data, true)
-            );
             throw new \PHPUnit_Framework_ExpectationFailedException(
                 sprintf(
-                    (
-                        "%d difference"
-                        . (1 === count($differences) ? '' : 's')
-                        . ":\n\t%s"
-                    ),
-                    count($differences),
-                    implode("\n\t", $differences)
+                    "Response does not match artifact:\nExpected:\n%s\nActual:\n%s\n",
+                    $expected,
+                    $data
                 )
             );
         }
