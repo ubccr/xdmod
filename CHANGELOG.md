@@ -12,6 +12,10 @@
         - Changed user manual source pages from .docx to .rst. These pages are now stored in version control in the base XDMoD repository.
         - Improved user manual build process from internal scripts to Sphinx. This build process is now done as part of the base XDMoD build.
         - Updated theme from ExtJS to ReadTheDocs.
+    - Metric Explorer
+        - Added copy to clipboard option when generating a link to the current chart.
+    - Job Viewer
+        - Added copy to clipboard option when getting a shareable link to a job.
 - Uncategorized
     - Chart Feature Changes
         - For line charts, the context menu for a data series is brought up by clicking on its points, not its lines. As before, the context menu can also be brought up by clicking on it in the legend.
