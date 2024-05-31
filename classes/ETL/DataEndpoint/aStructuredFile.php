@@ -490,7 +490,7 @@ abstract class aStructuredFile extends File
      * @see Iterator::current()
      */
 
-    public function current()
+    public function current(): mixed
     {
         if ( ! $this->valid() ) {
             return false;
