@@ -33,25 +33,6 @@ class ExternalProcess extends \php_user_filter
     const READ_SIZE = 1024;
 
     /**
-     * @var string The name of the filter, populated by PHP
-     */
-
-    public $filtername = null;
-
-    /**
-     * @var object The parameters passed to this filter by stream_filter_prepend() or
-     * stream_filter_append(), set by PHP. This is expected to be an object with the
-     * following properties:
-     *
-     * path: The path to the external application. If a relative path is given, regular
-     *       shell $PATH rules apply.
-     * arguments: Optional argument string to be passed to the application
-     * logger: Optional logger for displying error messages
-     */
-
-    public $params = null;
-
-    /**
      * @var array An array containing file descriptors connected to the application. The following
      * indexes are expected:
      * 0: application stdin
@@ -83,19 +64,20 @@ class ExternalProcess extends \php_user_filter
      * Called when applying the filter. Move data from the input buckets to the output
      * buckets, filtering along the way.
      *
-     * @param $in A resource pointing to a bucket brigade which contains one or more
+     * @param resource $in A resource pointing to a bucket brigade which contains one or more
      *   bucket objects containing data to be filtered.
-     * @param $out A resource pointing to a second bucket brigade into which your modified
+     * @param resource $out A resource pointing to a second bucket brigade into which your modified
      *   buckets should be placed.
-     * @param $consumed A reference to a value that should be incremented by the length of
+     * @param mixed $consumed A reference to a value that should be incremented by the length of
      *   the data which your filter reads in and alters. In most cases this means you will
      *   increment consumed by $bucket->datalen for each $bucket.
-     * @param $closing Set to TRUE if the stream is in the process of closing (and
+     * @param boolean $closing Set to TRUE if the stream is in the process of closing (and
      *   therefore this is the last pass through the filterchain).
      *
-     * @return PSFS_PASS_ON If data has been copied to the $out brigade
-     * @return PSFS_FEED_ME If the filter was successful but did not copy data to the $out brigade,
-     * @return PSFS_ERR_FATAL On error.
+     * @return int
+     *     PSFS_PASS_ON If data has been copied to the $out brigade
+     *     PSFS_FEED_ME If the filter was successful but did not copy data to the $out brigade,
+     *     PSFS_ERR_FATAL On error.
      */
 
     public function filter($in, $out, &$consumed, $closing)
@@ -144,8 +126,9 @@ class ExternalProcess extends \php_user_filter
     /**
      * Perform setup on filter instantiation. This includes setting up the external filter
      * application and opening read and write pipes to the application.
+     *
+     * @return bool
      */
-
     public function onCreate()
     {
         // Verify parameters
@@ -217,8 +200,10 @@ class ExternalProcess extends \php_user_filter
 
     /**
      * Cleanup after the filter is closed.
+     *
+     * @return void
+     * @throws \Exception if a non-zero exit status is returned.
      */
-
     public function onClose()
     {
         if ($this->pipes[0]) {

@@ -508,7 +508,7 @@ abstract class aStructuredFile extends File
      * @see Iterator::key()
      */
 
-    public function key()
+    public function key(): int|string|null
     {
         return key($this->recordList);
     }
@@ -517,7 +517,7 @@ abstract class aStructuredFile extends File
      * @see Iterator::next()
      */
 
-    public function next()
+    public function next(): void
     {
         next($this->recordList);
     }
@@ -526,7 +526,7 @@ abstract class aStructuredFile extends File
      * @see Iterator::rewind()
      */
 
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->recordList);
     }
@@ -535,7 +535,7 @@ abstract class aStructuredFile extends File
      * @see Iterator::valid()
      */
 
-    public function valid()
+    public function valid(): bool
     {
         // return isset($this->recordList[$this->recordListPosition]);
         // Note that we can't check for values that are FALSE because that is a valid
@@ -547,7 +547,7 @@ abstract class aStructuredFile extends File
      * @see Countable::count()
      */
 
-    public function count()
+    public function count(): int
     {
         return count($this->recordList);
     }

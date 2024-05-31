@@ -466,7 +466,7 @@ function qualify_path($path, $base_path)
  * cause issues in a dynamic environment.
  */
 
-function resolve_path($path)
+function resolve_path(string $path): string
 {
     // If we don't limit to filly qualified paths then relative paths such as "../../foo"
     // are not properly resolved.
