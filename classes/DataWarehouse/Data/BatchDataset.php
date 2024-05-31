@@ -164,9 +164,9 @@ class BatchDataset extends Loggable implements Iterator
     /**
      * Get the current row from the data set.
      *
-     * @return mixed[]
+     * @return mixed
      */
-    public function current()
+    public function current(): mixed
     {
         return $this->currentRow;
     }
@@ -176,7 +176,7 @@ class BatchDataset extends Loggable implements Iterator
      *
      * @return int
      */
-    public function key()
+    public function key(): mixed
     {
         return $this->currentRowIndex;
     }
@@ -186,7 +186,7 @@ class BatchDataset extends Loggable implements Iterator
      *
      * Fetches the next row.
      */
-    public function next()
+    public function next(): void
     {
         $this->currentRowIndex++;
         $this->currentRow = $this->getNextRow();
@@ -197,7 +197,7 @@ class BatchDataset extends Loggable implements Iterator
      *
      * Executes the underlying raw query.
      */
-    public function rewind()
+    public function rewind(): void
     {
         $this->logger->debug('Executing query');
         $this->sth = $this->query->getRawStatement($this->limit, $this->offset);
@@ -215,7 +215,7 @@ class BatchDataset extends Loggable implements Iterator
      *
      * @return bool
      */
-    public function valid()
+    public function valid(): bool
     {
         return $this->currentRow !== false;
     }

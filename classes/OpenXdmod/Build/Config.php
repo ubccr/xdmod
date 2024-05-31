@@ -377,7 +377,7 @@ class Config
                     $patch = $matches[$i];
                     break;
                 case $PRE_RELEASE:
-                    $preRelease = $matches[i];
+                    $preRelease = $matches[$i];
                     break;
             }
         }

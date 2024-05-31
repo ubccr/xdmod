@@ -466,11 +466,13 @@ function qualify_path($path, $base_path)
  * cause issues in a dynamic environment.
  */
 
-function resolve_path(string $path): string
+function resolve_path(?string $path): ?string
 {
     // If we don't limit to filly qualified paths then relative paths such as "../../foo"
     // are not properly resolved.
-
+    if (!isset($path)) {
+        return null;
+    }
     if ( 0 !== strpos($path, DIRECTORY_SEPARATOR) ) {
         return $path;
     }

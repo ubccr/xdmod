@@ -80,7 +80,7 @@ class ExternalProcess extends \php_user_filter
      *     PSFS_ERR_FATAL On error.
      */
 
-    public function filter($in, $out, &$consumed, $closing)
+    public function filter($in, $out, &$consumed, $closing): int
     {
         $retval = PSFS_FEED_ME;
 
@@ -129,7 +129,7 @@ class ExternalProcess extends \php_user_filter
      *
      * @return bool
      */
-    public function onCreate()
+    public function onCreate(): bool
     {
         // Verify parameters
 
@@ -204,7 +204,7 @@ class ExternalProcess extends \php_user_filter
      * @return void
      * @throws \Exception if a non-zero exit status is returned.
      */
-    public function onClose()
+    public function onClose(): void
     {
         if ($this->pipes[0]) {
             fclose($this->pipes[0]);

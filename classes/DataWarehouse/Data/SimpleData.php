@@ -4,7 +4,7 @@ namespace DataWarehouse\Data;
 
 /**
  * This class represents one data column as one returned
- * from a database query. This is an array of numbers or 
+ * from a database query. This is an array of numbers or
  * values, potentially with error bars and with labels.
  *
  * TODO: support statistic and group by? Perhaps just in timeseries?
@@ -24,8 +24,8 @@ class SimpleData extends \Common\Identity
     protected $_errors = array();
 
     /**
-     * order_ids and ids: 
-     * only available in case the data is a dimension and 
+     * order_ids and ids:
+     * only available in case the data is a dimension and
      * not a stat (metric).
      */
     protected $_order_ids = array();
@@ -33,7 +33,7 @@ class SimpleData extends \Common\Identity
 
     // JMS: knowledge of statistic and group by belongs with query
     // in the SimpleDataset class.
-    //protected $statisticObject; 
+    //protected $statisticObject;
     //protected $groupByObject;
     // TODO: consider that groupby should live in SimpleTimeseriesDataset
     // instead of SimpleTimeseriesData class?
@@ -55,9 +55,9 @@ class SimpleData extends \Common\Identity
     protected $_errorsCount;
     protected $_valuesCount;
 
-    // derived from Query class 
+    // derived from Query class
     protected $_statistic;
-    protected $_group_by; 
+    protected $_group_by;
 
     // ----------- public functions ------------- //
 
@@ -66,7 +66,7 @@ class SimpleData extends \Common\Identity
         parent::__construct($name);
     }
 
-    // Helper function for debugging 
+    // Helper function for debugging
     // JMS April 2015
     public function __toString() {
         $st = isset($this->_statistic) ? $this->getStatistic()->getId() : null;
@@ -85,12 +85,12 @@ class SimpleData extends \Common\Identity
             . "X Values Count: " . count( $this->getXValues() ). "\n"
             . "X Ids: " . implode(',', $this->getXIds()) . "\n"
             . "X Ids Count: " . count( $this->getXIds() ). "\n";
-    } // __toString() 
+    } // __toString()
 
     /**
-     *  truncate() 
+     *  truncate()
      *
-     * Truncate the dataset in PHP. 
+     * Truncate the dataset in PHP.
      * No computation is done with the errors beyond $limit (set to 0).
      * We have no short labels in SimpleData model as of now.
      * Weights are unused.
@@ -210,7 +210,7 @@ class SimpleData extends \Common\Identity
         }
 
         foreach ($this->values as $value) {
-            if ($value != NoValue) {
+            if ($value != null) {
                 $min = min($min,$value);
                 $max = max($max,$value);
             }
@@ -339,7 +339,7 @@ class SimpleData extends \Common\Identity
 
     public function getGroupBy()
     {
-        return $this->_group_by; 
+        return $this->_group_by;
     }
 
 

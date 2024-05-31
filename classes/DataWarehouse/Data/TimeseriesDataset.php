@@ -331,7 +331,7 @@ class TimeseriesDataset
     /**
      * Get the total number of series in the dataset. The count is determined from the
      * aggregate version of the supplied timeseries query.
-     * @return the number of data series in this dataset.
+     * @return int the number of data series in this dataset.
      */
     public function getUniqueCount()
     {

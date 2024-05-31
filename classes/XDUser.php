@@ -2305,7 +2305,7 @@ SQL;
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $ignored = array(
             '_pdo', '_primary_role', '_publicUser', '_timeCreated','_timeUpdated',

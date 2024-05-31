@@ -56,7 +56,7 @@ class JsonConfigFile extends JsonFile
      * or record fields in a configuration file.
      */
 
-    protected function createReturnRecord($record)
+    protected function createReturnRecord($record): mixed
     {
         return $record;
     }

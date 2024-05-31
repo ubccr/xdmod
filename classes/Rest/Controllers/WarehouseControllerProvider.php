@@ -1423,10 +1423,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *
      * @param Application $app The router application.
      * @param XDUser $user the logged in user.
-     * @param $realm data realm.
-     * @param $jobId the unique identifier for the job.
-     * @param $start the start offset (for store paging).
-     * @param $limit the number of records to return (for store paging).
+     * @param mixed $realm data realm.
+     * @param mixed $jobId the unique identifier for the job.
+     * @param int $start the start offset (for store paging).
+     * @param int $limit the number of records to return (for store paging).
      * @return json in Extjs.store parsable format.
      * @throws NotFoundHttpException
      */

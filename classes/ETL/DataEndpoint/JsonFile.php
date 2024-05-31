@@ -217,7 +217,7 @@ class JsonFile extends aStructuredFile implements iStructuredFile, iComplexDataR
      * @see aStructuredFile::createReturnRecord()
      */
 
-    protected function createReturnRecord($record)
+    protected function createReturnRecord($record): mixed
     {
         $arrayRecord = parent::createReturnRecord($record);
 

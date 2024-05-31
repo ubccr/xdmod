@@ -446,7 +446,7 @@ abstract class aStructuredFile extends File
      * @return array A record that includes all of the data for the requested fields
      */
 
-    protected function createReturnRecord($record)
+    protected function createReturnRecord($record): mixed
     {
         // Create an associative array with discovered field names as keys and the
         // associated record field values. Since the expected fields can be set using a
