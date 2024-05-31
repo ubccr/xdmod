@@ -595,9 +595,9 @@ class RegressionTestHelper extends XdmodTestHelper
         );
         $data = str_replace("\x1e", '', $response[0]);
         if ($sort) {
-            $lines = explode("\n", $data);
+            $lines = explode("\n", rtrim($data));
             sort($lines);
-            $data = implode("\n", $lines);
+            $data = implode("\n", $lines) . "\n";
         }
         $data = preg_replace(self::$replaceRegex, self::$replacements, $data);
         if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
