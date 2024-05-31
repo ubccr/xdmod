@@ -433,7 +433,7 @@ function filter_var($value, $filter = FILTER_DEFAULT, $options = null)
     if (FILTER_VALIDATE_BOOLEAN === $filter && false === $value) {
         return false;
     }
-    if (isset($options) && is_int($options) || is_array($options)) {
+    if (isset($options) && (is_int($options) || is_array($options))) {
         return \filter_var($value, $filter, $options);
     }
     return \filter_var($value, $filter);
