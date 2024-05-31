@@ -25,7 +25,7 @@ RPM Upgrade Process
 -------------------
 
 # !!! XDMoD 11.0 Upgrade Process Changes !!!
-Due to our ongoing modernization efforts XDMoD 11.0 will require PHP 8.0. To accommodate this change there are a few
+Due to our ongoing modernization efforts XDMoD 11.0 will require PHP 7.4. To accommodate this change there are a few
 additional steps required that are outside the typical upgrade process. Below we have included the upgrade steps if you
 are upgrading from both CentOS 7 and Rocky 8. If you run into any problems during your upgrade process, please submit a
 ticket to `ccr-xdmod-help@buffalo.edu` and we will do our best to help.
@@ -52,16 +52,16 @@ section which starts at `Server: EL8, XDMoD: 10.5, PHP: 7.2`.
 5. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
 6. Next, follow the upgrade process detailed below on the Rocky 8 Server.
 
-### Server: EL8, XDMoD: 10.5, PHP: 7.2
+### Server: EL8, XDMoD: 10.5, PHP: 7.4
 If you have XDMoD 10.5 installed on Rocky 8 then please follow the steps below:
 
-Update the PHP module to 8.0
+Update the PHP module to 7.4
 ```shell
 $ dnf module -y reset php
-$ dnf module -y enable php:8.0
+$ dnf module -y enable php:7.4
 ```
 
-Install PHP 8.0 and some require pre-reqs for PHP Pear packages
+Install PHP 7.4 and some require pre-reqs for PHP Pear packages
 ```shell
 $ dnf install -y php libzip-devel php-pear php-devel
 ```
@@ -69,7 +69,7 @@ $ dnf install -y php libzip-devel php-pear php-devel
 Some Notes:
 - If you run the above command and dnf tells you that the packages are already installed, double-check the contents of
   `/etc/dnf/dnf.conf` if `best=False` is present then change it to `best=True`. Re-run the command above, and it should
-  now find / install the 8.0 version of the packages.
+  now find / install the 7.4 version of the packages.
 - You may also see some `PHP: Warning` messages during this process, specifically:
 ```
 PHP Warning:  PHP Startup: Unable to load dynamic library 'mongodb.so' (tried: /usr/lib64/php/modules/mongodb.so (/usr/lib64/php/modules/mongodb.so: undefined symbol: _zval_ptr_dtor), /usr/lib64/php/modules/mongodb.so.so (/usr/lib64/php/modules/mongodb.so.so: cannot open shared object file: No such file or directory)) in Unknown on line 0
