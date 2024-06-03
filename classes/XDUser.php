@@ -955,7 +955,7 @@ SQL;
         }
 
         $update_data['username'] = $this->_username;
-        $includePassword = strlen($this->_password) <= CHARLIM_PASSWORD;
+        $includePassword = isset($this->_password) && strlen($this->_password) <= CHARLIM_PASSWORD;
         if ($includePassword) {
             if ($this->_password == "" || is_null($this->_password)) {
                 $update_data['password'] = NULL;
