@@ -290,9 +290,8 @@ class BatchProcessTest extends BaseTest
             },
             $submittedRequestsBefore
         );
-        $this->assertContains(
-            self::$submittedRequestId,
-            $submittedRequestsIdsBefore,
+        $this->assertTrue(
+            in_array(self::$submittedRequestId, $submittedRequestsIdsBefore),
             'Submitted request ID listed before processing'
         );
 
@@ -320,9 +319,8 @@ class BatchProcessTest extends BaseTest
             },
             $expiringRequestsBefore
         );
-        $this->assertContains(
-            self::$expiringRequestId,
-            $expiringRequestsIdsBefore,
+        $this->assertTrue(
+            in_array(self::$expiringRequestId, $expiringRequestsIdsBefore),
             'Expiring request ID listed before processing'
         );
 
@@ -332,6 +330,7 @@ class BatchProcessTest extends BaseTest
             },
             $expiringRequestsAfter
         );
+
         $this->assertNotContains(
             self::$expiringRequestId,
             $expiringRequestsIdsAfter,
