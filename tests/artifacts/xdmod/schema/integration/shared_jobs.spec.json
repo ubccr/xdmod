@@ -10,7 +10,7 @@
           "type":"string"
         },
         "shared_jobs": {
-          "type":"string"
+          "type":"integer"
         }
       },
       "required": [
