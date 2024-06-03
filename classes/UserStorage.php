@@ -66,14 +66,14 @@ class UserStorage
 
     private function _getnewid(&$storage)
     {
-        $newid = ($storage['maxid'] + 1) % PHP_INT_MAX;
+        $newid = intval(($storage['maxid'] + 1)) % PHP_INT_MAX;
         while(isset($storage['data'][$newid])) {
             $newid = ($newid + 1) % PHP_INT_MAX;
         }
         $storage['maxid'] = $newid;
         return $newid;
     }
-            
+
     public function upsert($id, $data)
     {
         $userProfile = $this->_user->getProfile();

@@ -39,7 +39,14 @@ abstract class Visualization
             }
         }
         $ret_count = count($ret);
-        srand($count);
+
+        // Passing a null to `srand()` is being deprecated, so we just take that into account here.
+        if (!isset($count)) {
+            srand();
+        } else {
+            srand($count);
+        }
+
         if ($count != NULL && $ret_count < $count)
         {
             $value = 15;
