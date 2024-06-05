@@ -22,8 +22,10 @@ CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox, {
         // person ID from whatever value is returned via the superclass.
 
         var value = CCR.xdmod.ui.TGUserDropDown.superclass.getValue.call(this);
-
-        var person_id = value.split(';')[0];
+        var person_id = value;
+        if ((typeof value === 'string' || value instanceof String) && value.indexOf(';') !== -1) {
+            person_id = value.split(';')[0];
+        }
 
         return person_id;
     },
