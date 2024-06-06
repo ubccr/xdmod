@@ -464,8 +464,8 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
             update[`annotations[${creditsIndex}].xshift`] = marginRight - pieChartXShift - exportShift;
         }
         if (restrictedIndex !== -1) {
-           update[`annotations[${restrictedIndex}].yshift`] = shiftYDown;
-           update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift - exportShift) * -1;
+            update[`annotations[${restrictedIndex}].yshift`] = shiftYDown;
+            update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift - exportShift) * -1;
         }
     }
     return update;
