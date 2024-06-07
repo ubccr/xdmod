@@ -11,10 +11,10 @@ License: New BSD License
 Author:  Zend Technologies USA, Inc.
 Link:    http://framework.zend.com/
 
-Name:    jQuery
+Name:    youmightnotneedjquery
 License: MIT license
-Author:  jQuery Foundation and other contributors
-Link:    http://jquery.com/
+Author:  HubSpot, Inc.
+Link:    https://github.com/HubSpot/YouMightNotNeedjQuery
 
 Name:    Plotly.js
 License: MIT license
@@ -94,11 +94,6 @@ Name:    reCAPTCHA PHP Library
 License: MIT License
 Author:  Mike Crawford, Ben Maurer
 Link:    https://developers.google.com/recaptcha/old/docs/php
-
-Name:    jquery-base64
-License: MIT License
-Author:  Carlo Zottmann
-Link:    https://github.com/carlo/jquery-base64
 
 Name:    Ext.ux.form.GroupComboBox
 License: "BSD"

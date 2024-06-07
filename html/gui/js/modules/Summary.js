@@ -638,8 +638,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                             t: 22,
                             b: 0
                         }
-                    },
-                    data: []
+                    }
                 },
                 store: new CCR.xdmod.CustomJsonStore({
 

@@ -4,12 +4,10 @@
     },
     "require": {
         "php": "^5.4 || ^7.2",
-        "carlo/jquery-base64-file": "^1.0",
         "egulias/email-validator": "^1.2",
         "google/recaptcha": "~1.1",
         "greenlion/php-sql-parser": "~4.2",
         "ircmaxell/password-compat": "~1",
-        "jquery/jquery-min-file": "^1.12.4",
         "justinrainbow/json-schema": "~5.2",
         "moment/moment-min-file": "^2.13.0",
         "moment/moment-timezone-min-file": "^0.5.4",
@@ -126,48 +124,6 @@
         {
             "type": "package",
             "package": {
-                "name": "jquery/jquery-min-file",
-                "type": "vanilla-plugin",
-                "version": "1.12.4",
-                "license": "MIT",
-                "homepage": "https://jquery.com",
-                "dist": {
-                    "url": "https://code.jquery.com/jquery-1.12.4.min.js",
-                    "type": "file",
-                    "shasum": "5a9dcfbef655a2668e78baebeaa8dc6f41d8dabb"
-                },
-                "require": {
-                    "composer/installers": "~1.0"
-                },
-                "extra": {
-                    "installer-name": "jquery"
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
-                "name": "carlo/jquery-base64-file",
-                "type": "vanilla-plugin",
-                "version": "1.0",
-                "license": "MIT",
-                "homepage": "https://github.com/carlo/jquery-base64",
-                "dist": {
-                    "url": "https://github.com/carlo/jquery-base64/raw/master/jquery.base64.js",
-                    "type": "file",
-                    "shasum": "7f0ba311c1676b1b730b29b06e1a9e9e55760acc"
-                },
-                "require": {
-                    "composer/installers": "~1.0"
-                },
-                "extra": {
-                    "installer-name": "base64"
-                }
-            }
-        },
-        {
-            "type": "package",
-            "package": {
                 "name": "tildeio/rsvpjs-min-file",
                 "type": "vanilla-plugin",
                 "version": "3.0.18",
@@ -214,12 +170,8 @@
                 "sencha/extjs-gpl",
                 "moment/moment-min-file",
                 "moment/moment-timezone-min-file",
-                "jquery/jquery-min-file",
                 "tildeio/rsvpjs-min-file",
                 "plotly/plotly"
-            ],
-            "html/gui/lib/jquery-plugins/{$name}": [
-                "carlo/jquery-base64-file"
             ],
             "external_libraries/{$name}": [
                 "zendframework/zendframework-minimal"

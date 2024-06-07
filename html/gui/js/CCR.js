@@ -687,6 +687,38 @@ XDMoD.utils.format = {
     }
 };
 
+// Taken from: https://github.com/HubSpot/YouMightNotNeedjQuery, which
+// is available under the MIT license.
+// Recommended by @versable on https://github.com/ubccr/xdmod/pull/1542
+XDMoD.utils.deepExtend = function extend(out, ...arguments_) {
+  if (!out) {
+    return {};
+  }
+
+  for (let i = 0; i < arguments_.length; i++) {
+    const obj = arguments_[i];
+    if (!obj) {
+      continue;
+    }
+
+    Object.entries(obj).forEach(([key, value]) => {
+      switch (Object.prototype.toString.call(value)) {
+        case '[object Object]':
+          out[key] = out[key] || {};
+          out[key] = XDMoD.utils.deepExtend(out[key], value);
+          break;
+        case '[object Array]':
+          out[key] = XDMoD.utils.deepExtend(new Array(value.length), value);
+          break;
+        default:
+          out[key] = value;
+      }
+    });
+  }
+
+  return out;
+};
+
 // =====================================================================
 
 Ext.Ajax.timeout = 86400000;
