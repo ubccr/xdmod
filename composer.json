@@ -23,7 +23,7 @@
         "tildeio/rsvpjs-min-file": "^3.0.18",
         "ubccr/simplesamlphp-module-authglobus": "^1.3",
         "ubccr/simplesamlphp-module-authoidcoauth2": "^1.1",
-        "phpoffice/phpword": "*",
+        "phpoffice/phpword": "^1.2.0",
         "monolog/monolog": "^1.25",
         "plotly/plotly": "^2.29.1",
         "kassner/log-parser": "~1.5",
