@@ -269,7 +269,7 @@ class Entity extends Loggable
     {
         // We can't quote non-strings so....
         if (!is_string($identifier)) {
-            return $identifier;
+            throw new \Exception('Unable to quote non-string identifier.');
         }
 
         // Don't quote the identifier if it's already been quoted
