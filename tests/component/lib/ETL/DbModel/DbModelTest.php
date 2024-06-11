@@ -32,7 +32,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
      * @return Nothing
      */
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         self::$testArtifactInputPath = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/');
         self::$testArtifactOutputPath = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/output/');
@@ -51,7 +51,7 @@ class DbModelTest extends \ComponentTests\ETL\BaseEtlTest
      * @return Nothing
      */
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         self::$endpoint->getHandle()->execute('DROP TABLE IF EXISTS `test`.`modify_table_test`');
     }
