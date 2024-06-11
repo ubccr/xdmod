@@ -135,7 +135,7 @@ class Loggable
             }
 
             if ( array_key_exists('log_level', $options) && ! empty($options['log_level']) ) {
-                $logLevel = $logMessage['log_level'];
+                $logLevel = $options['log_level'];
             }
         }
 
