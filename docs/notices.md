@@ -14,6 +14,7 @@ where denoted. These software products are free for commercial use.
   available under the [GPL 3.0][gpl3].
 - [Zend Framework 1.12.0](http://framework.zend.com/), which is available
   under the [New BSD License][new-bsd].
+- [jQuery](http://jquery.com/), which is available under the [jQuery](http://jquery.com/), which is available under the [MIT License][mit].
 - [youmightnotneedjquery](https://github.com/HubSpot/YouMightNotNeedjQuery),
   which is available under the [MIT License][mit].
 - [RSVP.js](https://github.com/tildeio/rsvp.js), which is available

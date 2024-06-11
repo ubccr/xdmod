@@ -11,6 +11,11 @@ License: New BSD License
 Author:  Zend Technologies USA, Inc.
 Link:    http://framework.zend.com/
 
+Name:    jQuery
+License: MIT license
+Author:  jQuery Foundation and other contributors
+Link:    http://jquery.com/
+
 Name:    youmightnotneedjquery
 License: MIT license
 Author:  HubSpot, Inc.
