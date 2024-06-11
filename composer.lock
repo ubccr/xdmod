@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8310aef5e587c7e64fa8f16d75aa5f64",
+    "content-hash": "b994f14779723df57886c3554447e305",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -764,6 +764,26 @@
             },
             "abandoned": "simplesamlphp/twig-configurable-i18n",
             "time": "2016-10-03T12:34:15+00:00"
+        },
+        {
+            "name": "jquery/jquery-min-file",
+            "version": "3.7.1",
+            "dist": {
+                "type": "file",
+                "url": "https://code.jquery.com/jquery-3.7.1.min.js",
+                "shasum": "ee48592d1fff952fcf06ce0b666ed4785493afdc"
+            },
+            "require": {
+                "composer/installers": "~1.0"
+            },
+            "type": "vanilla-plugin",
+            "extra": {
+                "installer-name": "jquery"
+            },
+            "license": [
+                "MIT"
+            ],
+            "homepage": "https://jquery.com"
         },
         {
             "name": "justinrainbow/json-schema",
