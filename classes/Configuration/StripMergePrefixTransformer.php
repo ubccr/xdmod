@@ -39,7 +39,7 @@ class StripMergePrefixTransformer extends Loggable implements iConfigFileKeyTran
     /**
      * @see iConfigFileKeyTransformer::transform()
      */
-    public function transform(&$key, &$value, stdClass $obj, Configuration $config)
+    public function transform(&$key, &$value, stdClass $obj, Configuration $config, $exceptionLogLevel)
     {
         $key = substr($key, 1);
 

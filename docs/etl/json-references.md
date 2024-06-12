@@ -153,40 +153,6 @@ transformers to process matching keys will be used.
    3c. If a transformer returns `false` do not process any other transformers.
    3d. Recursively traverse keys in the returned JSON and apply transformers to the result.
 
-### Transformer Interface Definition
-
-Transformers must implement the `iConfigFileKeyTransformer` interface.
-
-```php
-interface iConfigFileKeyTransformer {
-    /* ------------------------------------------------------------------------------------------
-     * Return TRUE if the key is supported by this transformer
-     *
-     * @param string $key Key to check
-     *
-     * @return TRUE if they key is processed by this transformer
-     * ------------------------------------------------------------------------------------------
-     */
-
-    public function keyMatches($key);
-
-    /* ------------------------------------------------------------------------------------------
-     * Transform the data. Both the key and the value may be modified and will be returned
-     * by reference.
-     *
-     * @param string $key Reference to the key, may be altered.
-     * @param mixed $value Reference to the value (scalar, object, array), may be altered.
-     * @param stdClass $obj The object where the key was found.
-     * @param Configuration $config The Configuration object that called this method.
-     *
-     * @return FALSE if transfomer processing should stop for this key, TRUE otherwise.
-     * ------------------------------------------------------------------------------------------
-     */
-     
-    public function transform(&$key, &$value, stdClass $obj, Configuration $config);
-}
-```
-
 ### Comment Transformer
 
 The comment transformer strips comments from the JSON. Any key starting with a `#` is considered a
