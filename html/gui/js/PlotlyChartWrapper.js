@@ -59,12 +59,17 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
 
         // Remove titles and credits from thumbnail plots
-        if (baseChartOptions.layout.thumbnail) {
+        if (baseChartOptions.realmOverview) {
             const endIndex = baseChartOptions.layout.annotations.findIndex((elem) => elem.name === 'data_label');
             if (endIndex === -1) {
                 baseChartOptions.layout.annotations = [];
             }
             baseChartOptions.layout.annotations.splice(0, endIndex);
+        }
+        // Remove title for summary and dashboard charts
+        if (baseChartOptions.summary || baseChartOptions.dashboard) {
+            // Title is always first in annotation array
+            baseChartOptions.layout.annotations.shift();
         }
         // Set tickmode to auto for thumbnail plots. Large amount of tick labels for thumbnail plots cause them
         // to lag.
