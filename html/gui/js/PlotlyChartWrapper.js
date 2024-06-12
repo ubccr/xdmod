@@ -66,11 +66,6 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             }
             baseChartOptions.layout.annotations.splice(0, endIndex);
         }
-        // Remove title for summary (not dashboard because the subtitle is set as the title)
-        if (baseChartOptions.summary) {
-            // Title is always first in annotation array
-            baseChartOptions.layout.annotations.shift();
-        }
         // Set tickmode to auto for thumbnail plots. Large amount of tick labels for thumbnail plots cause them
         // to lag.
         if (baseChartOptions.layout.thumbnail) {
