@@ -182,7 +182,7 @@ interface iConfigFileKeyTransformer {
      * @return FALSE if transfomer processing should stop for this key, TRUE otherwise.
      * ------------------------------------------------------------------------------------------
      */
-     
+
     public function transform(&$key, &$value, stdClass $obj, Configuration $config);
 }
 ```
