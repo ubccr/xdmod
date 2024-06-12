@@ -34,6 +34,7 @@
  * @method string  getClazz()
  * @method void    setClazz($clazz)
  */
+#[\AllowDynamicProperties]
 class GroupBy extends DBObject
 {
 

@@ -24,12 +24,12 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
      const LOG_MODULE = 'data-warehouse-export';
 
     /**
-     * @var DataWarehouse\Export\QueryHandler
+     * @var QueryHandler
      */
     private $queryHandler;
 
     /**
-     * @var DataWarehouse\Export\RealmManager
+     * @var RealmManager
      */
     private $realmManager;
 
@@ -96,7 +96,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         // We need to wrap the token authentication because we want the token authentication to be optional, proceeding
         // to the normal session authentication if a token is not provided.
         try {
-            $user = $this->authenticateToken($request);
+            $user = $this->authenticateToken($request, $app);
         } catch (Exception $e) {
             // NOOP
         }

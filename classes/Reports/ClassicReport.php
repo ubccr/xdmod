@@ -8,6 +8,8 @@ class ClassicReport
     private $fonts = array();
     private $phpWord = null;
 
+    protected $settings;
+
     public function __construct($settings)
     {
         $this->settings = $settings;

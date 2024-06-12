@@ -35,6 +35,8 @@ class OracleDB extends PDODB
      * ------------------------------------------------------------------------------------------
      */
 
+    protected string $_dsn;
+
     public function __construct($db_host, $db_port, $db_name, $db_username, $db_password, $dsn_extra = null)
     {
         // At a minimum we must have either the (db_name) or the (db_host, db_name)

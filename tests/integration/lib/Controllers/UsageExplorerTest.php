@@ -121,8 +121,8 @@ class UsageExplorerTest extends TokenAuthTest
 
         $response = $this->helper->post('/controllers/user_interface.php', null, array('operation' => 'get_tabs', 'public_user' => 'true'));
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
 
         $dwdata = $response[0];
 
@@ -160,8 +160,8 @@ believe that you should be able to see this information, then please select
 "Submit Support Request" in the "Contact Us" menu to request access.
 EOF;
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 403);
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(403, $response[1]['http_code']);
         $this->assertEquals($response[0]['message'], $expectedErrorMessage);
     }
 
@@ -386,7 +386,7 @@ EOF
         $response = $this->helper->post('/controllers/user_interface.php', null, $view);
 
         $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
-        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertEquals(200, $response[1]['http_code']);
 
         $plotdata = json_decode($response[0], true);
         $dataseries = $plotdata['data'][0]['hc_jsonstore']['data'];
@@ -402,7 +402,7 @@ EOF
         $this->assertCount(1, $dataseries[0]['y']);
         $this->assertArrayHasKey('y', $dataseries[0]);
 
-        $this->assertEquals($expected, $dataseries[0]['y'][0], '', 1.0e-6);
+        $this->assertEqualsWithDelta($expected, $dataseries[0]['y'][0], 1.0e-6, '');
     }
 
     /**
@@ -417,7 +417,7 @@ EOF
         $response = $this->helper->post('/controllers/user_interface.php', null, $input);
 
         $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
-        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertEquals(200, $response[1]['http_code']);
 
         $plotdata = json_decode(UsageExplorerHelper::demanglePlotData($response[0]), true);
 
@@ -495,7 +495,7 @@ EOF;
 
         $response = $this->helper->post('/controllers/user_interface.php', null, $chartConfig);
 
-        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertEquals(200, $response[1]['http_code']);
 
         $actualContentType = $response[1]['content_type'];
         $this->assertEquals($expectedMimeType, $actualContentType);
@@ -628,8 +628,8 @@ EOF;
 
         $response = $this->helper->post('/controllers/user_interface.php', null, json_decode($data, true));
 
-        $this->assertEquals($response[1]['content_type'], 'application/json');
-        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertEquals('application/json', $response[1]['content_type']);
+        $this->assertEquals(200, $response[1]['http_code']);
 
         $menus = $response[0];
 
@@ -672,7 +672,7 @@ EOF;
 
         $response = $this->helper->post('/controllers/user_interface.php', null, $chartSettings);
 
-        $this->assertEquals($response[1]['http_code'], 200);
+        $this->assertEquals(200, $response[1]['http_code']);
 
         $plotdata = json_decode(UsageExplorerHelper::demanglePlotData($response[0]), true);
 

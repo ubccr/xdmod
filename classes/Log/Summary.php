@@ -196,7 +196,7 @@ class Summary
      * @param bool $queryRecordCounts Flag indicating whether or not a query of records from the log
      *   tables should be made. Defaults to FALSE so we only do this expensive query when needed.
      *
-     * @return The Summary class.
+     * @return Summary Summary class.
      */
 
     public static function factory($ident, $queryRecordCounts = FALSE)

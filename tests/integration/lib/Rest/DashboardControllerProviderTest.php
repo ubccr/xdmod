@@ -134,7 +134,7 @@ class DashboardControllerProviderTest extends BaseUserAdminTest
                         $expectedValue = (float)$value[0];
                         $actualValue = (float)$actualData[$fieldName][0];
 
-                        $this->assertEquals($expectedValue, $actualValue, "Failed equivalency for: $fieldName", 1.0e-8);
+                        $this->assertEqualsWithDelta($expectedValue, $actualValue,  1.0e-8, "Failed equivalency for: $fieldName");
                     } else {
                         $this->assertEquals($value, $actualData[$fieldName]);
                     }

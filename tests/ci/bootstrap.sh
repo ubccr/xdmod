@@ -4,10 +4,10 @@
 # docker instances. However, since it is designed to test a real install, the
 # set of commands that are run would work on a real production system.
 
-BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-REF_SOURCE=`realpath $BASEDIR/../artifacts/xdmod/referencedata`
-REPODIR=`realpath $BASEDIR/../../`
-REF_DIR=/var/tmp/referencedata
+export BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+export REF_SOURCE=`realpath $BASEDIR/../artifacts/xdmod/referencedata`
+export REPODIR=`realpath $BASEDIR/../../`
+export REF_DIR=/var/tmp/referencedata
 
 function copy_template_httpd_conf {
     cp /usr/share/xdmod/templates/apache.conf /etc/httpd/conf.d/xdmod.conf

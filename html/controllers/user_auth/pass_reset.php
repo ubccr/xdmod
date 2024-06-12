@@ -38,7 +38,7 @@ try {
 
     $site_address
         = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
-    $resetUrl = "${site_address}password_reset.php?rid=$rid";
+    $resetUrl = "{$site_address}password_reset.php?rid=$rid";
 
     MailWrapper::sendTemplate(
         'password_reset',

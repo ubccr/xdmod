@@ -23,6 +23,7 @@ class CsvFileWriterTest extends TestCase
      * @var LoggerInterface
      */
     private static $logger;
+    protected TestFiles $testFiles;
 
     /**
      * Create logger.

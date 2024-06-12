@@ -71,7 +71,7 @@ class RegressionTestHelper extends XdmodTestHelper
      *
      * @var float
      */
-    private static $delta = 1.0e-8;
+    private static $delta = 1.0e-12;
 
     /**
      * Value close enough to zero to be considered zero.
@@ -478,11 +478,18 @@ class RegressionTestHelper extends XdmodTestHelper
             [$outputDir, $referenceFileName]
         );
 
-        if (file_exists($referenceFile)) {
+        if (file_exists($referenceFile) && is_file($referenceFile)) {
             $reference = file_get_contents($referenceFile);
             if ($reference === $data) {
                 return true;
             }
+        } else {
+            echo sprintf(
+                "\nCannot read reference file %s [exists: %s, is_file: %s]\n",
+                $referenceFile,
+                file_exists($referenceFile) ? 'true' : 'false',
+                is_file($referenceFile) ? 'true' : 'false'
+            );
         }
 
         $outputFile = implode(

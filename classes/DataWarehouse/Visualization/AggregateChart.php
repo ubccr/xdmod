@@ -24,7 +24,8 @@ class AggregateChart
     protected $_aggregationUnit;
     protected $_startDate;
     protected $_endDate;
-
+    protected $_legend_location;
+    protected $_hasLegend;
     protected $_total;
 
     protected $_dashStyles = array(
@@ -69,6 +70,14 @@ class AggregateChart
     protected $user;
 
     protected $_colorGenerator;
+
+    /**
+     * @var mixed|null
+     */
+    protected mixed $limit;
+
+    protected mixed $show_filters;
+    x
     /**
      * The role restrictions string builder used by this chart.
      *
@@ -82,6 +91,8 @@ class AggregateChart
     // Constructor for AggregateChart class.
     //
     // ---------------------------------------------------------
+
+
     public function __construct(
         $aggregation_unit,
         $start_date,

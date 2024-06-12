@@ -63,6 +63,7 @@ class PDODBSynchronizingIngestor implements Ingestor
      * @var LoggerInterface
      */
     protected $logger;
+    protected array $insertColumns;
 
     /**
      * Constructor.

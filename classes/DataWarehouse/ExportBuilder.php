@@ -304,7 +304,7 @@ class ExportBuilder
         $fp = fopen('php://temp/maxmemory:104857600', 'w');
 
         if(!$fp) {
-            throw \Exception("Unable to open temporary file for csv file export");
+            throw new \Exception("Unable to open temporary file for csv file export");
         }
 
         foreach ($exportedDatas as $exportedData) {

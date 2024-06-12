@@ -9,12 +9,10 @@
 require __DIR__ . '/../configuration/linker.php';
 restore_exception_handler();
 
-use \Exception;
 use CCR\Log;
-use ETL\EtlConfiguration;
-use ETL\EtlConfigurationOptions;
-use ETL\Table\Table;
-use ETL\Table\AggregationTable;
+use ETL\Configuration\EtlConfiguration;
+use ETL\DbModel\Table;
+use ETL\DbModel\AggregationTable;
 
 $supportedFormats = array("json", "sql");
 
@@ -215,7 +213,7 @@ $outputStr = NULL;
 
 try {
   switch ( $scriptOptions['operation'] ) {
-    
+
   case 'dump-discovered':
     if ( NULL !== $discoveredTable ) {
       $outputStr = ( "json" == $scriptOptions['output-format']
@@ -223,7 +221,7 @@ try {
                      : "DELIMITER ;;\n" . implode("\n;;\n", $discoveredTable->getCreateSql($scriptOptions['include-schema'])) . "\n;;" );
     }
     break;
-    
+
   case 'dump-parsed':
     if ( NULL !== $parsedTable ) {
       $outputStr = ( "json" == $scriptOptions['output-format']
@@ -232,7 +230,7 @@ try {
                    : "DELIMITER ;;\n" . implode("\n;;\n", $parsedTable->getCreateSql($scriptOptions['include-schema'])) . "\n;;" );
     }
     break;
-    
+
   case 'dump-alter':
     if ( NULL !== $discoveredTable && NULL !== $parsedTable ) {
       if ( "json" == $scriptOptions['output-format'] ) usage_and_exit("JSON format not supported for ALTER TABLE");
@@ -240,7 +238,7 @@ try {
       if ( $alterSqlList ) $outputStr = "DELIMITER ;;\n" . implode("\n;;\n", $alterSqlList) . "\n;;";
     }
     break;
-    
+
   default:
     usage_and_exit("Unknown operation");
     break;

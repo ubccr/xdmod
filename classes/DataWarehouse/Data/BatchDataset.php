@@ -241,7 +241,7 @@ class BatchDataset extends Loggable implements Iterator
     /**
      * Get the next row of data.
      *
-     * @return array
+     * @return array|false false if unable to retrieve a row from this classes statement handle.
      */
     private function getNextRow()
     {

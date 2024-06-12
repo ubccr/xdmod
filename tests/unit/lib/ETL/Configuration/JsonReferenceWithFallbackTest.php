@@ -4,8 +4,10 @@ namespace UnitTests\ETL\Configuration;
 use CCR\Log;
 use Configuration\Configuration;
 use Configuration\JsonReferenceWithFallbackTransformer;
+use Exception;
+use PHPUnit\Framework\TestCase;
 
-class JsonReferenceWithFallbackTest extends \PHPUnit_Framework_TestCase
+class JsonReferenceWithFallbackTest extends TestCase
 {
 
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
@@ -17,7 +19,7 @@ class JsonReferenceWithFallbackTest extends \PHPUnit_Framework_TestCase
     protected static $transformer = null;
     protected static $config = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
       // Set up a logger so we can get warnings and error messages from the ETL infrastructure
         $conf = array(
@@ -33,12 +35,10 @@ class JsonReferenceWithFallbackTest extends \PHPUnit_Framework_TestCase
         self::$transformer = new JsonReferenceWithFallbackTransformer($logger);
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage References cannot be mixed with other keys in an object: "$ref-with-fallback"
-     */
     public function testMixedRefs()
     {
+        $this->expectExceptionMessage("References cannot be mixed with other keys in an object: \"\$ref-with-fallback\"");
+        $this->expectException(Exception::class);
         $this->runTransformTest([self::VALID_FILE], null, ['foo' => 'bar']);
     }
 
@@ -53,11 +53,13 @@ class JsonReferenceWithFallbackTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideInvalidValue
-     * @expectedException Exception
-     * @expectedExceptionMessage Value of "$ref-with-fallback" must be a non-empty, non-associative array of strings
+     *
+     *
      */
     public function testInvalidValue($value)
     {
+        $this->expectExceptionMessage("Value of \"\$ref-with-fallback\" must be a non-empty, non-associative array of strings");
+        $this->expectException(Exception::class);
         $this->runTransformTest($value);
     }
 
@@ -77,11 +79,13 @@ class JsonReferenceWithFallbackTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideLastFileDNE
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp /Failed to open file '[^']+file_does_not_exist.txt': file_get_contents\([^)]+\): failed to open stream: No such file or directory/
+     *
+     *
      */
     public function testLastFileDNE($value)
     {
+        $this->expectExceptionMessageMatches("/Failed to open file '[^']+file_does_not_exist.txt': file_get_contents\([^)]+\): failed to open stream: No such file or directory/");
+        $this->expectException(Exception::class);
         $this->runTransformTest($value);
     }
 
@@ -96,11 +100,13 @@ class JsonReferenceWithFallbackTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider provideLastFileBadUrl
-     * @expectedException Exception
-     * @expectedExceptionMessage Unable to extract path from URL: badscheme://string
+     *
+     *
      */
     public function testLastFileBadUrl($value)
     {
+        $this->expectExceptionMessage("Unable to extract path from URL: badscheme://string");
+        $this->expectException(Exception::class);
         $this->runTransformTest($value);
     }
 
@@ -113,12 +119,10 @@ class JsonReferenceWithFallbackTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage JSON pointer '/invalid_pointer' references a nonexistent value in file rfc6901.json
-     */
     public function testInvalidPointer()
     {
+        $this->expectExceptionMessage("JSON pointer '/invalid_pointer' references a nonexistent value in file rfc6901.json");
+        $this->expectException(Exception::class);
         $this->runTransformTest([self::VALID_FILE . '#/invalid_pointer']);
     }
 
@@ -153,12 +157,10 @@ class JsonReferenceWithFallbackTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage Undefined macros in URL reference: FILE_EXTENSION in string 'rfc6901.${FILE_EXTENSION}#/bar'
-     */
     public function testUndefinedVariable()
     {
+        $this->expectExceptionMessage("Undefined macros in URL reference: FILE_EXTENSION in string 'rfc6901.{\$FILE_EXTENSION}#/bar'");
+        $this->expectException(Exception::class);
         self::$config->getVariableStore()->FILENAME = 'rfc6901';
 
         $this->runTransformTest(['${FILENAME}.${FILE_EXTENSION}#/bar']);

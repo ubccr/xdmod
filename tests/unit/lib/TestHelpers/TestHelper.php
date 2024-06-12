@@ -2,6 +2,9 @@
 
 namespace UnitTests\TestHelpers;
 
+use ReflectionException;
+use ReflectionMethod;
+
 /**
  * Provides helper functions for completing tests.
  */
@@ -14,9 +17,10 @@ class TestHelper
      *
      * See: https://stackoverflow.com/a/2798203
      *
-     * @param  mixed  $classOrObject A class or object with a method to unlock.
-     * @param  string $methodName    The name of the method to unlock.
+     * @param mixed $classOrObject A class or object with a method to unlock.
+     * @param string $methodName The name of the method to unlock.
      * @return ReflectionMethod      A reflection of the unlocked method.
+     * @throws ReflectionException
      */
     public static function unlockMethod($classOrObject, $methodName)
     {

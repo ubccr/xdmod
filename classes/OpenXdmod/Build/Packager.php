@@ -871,8 +871,8 @@ class Packager
     /** Check to see if a file or directory is to be excluded from the build
      * because of the configuration settings.
      *
-     * @param filePath path of file to check
-     * @return true if the file is to be excluded false otherwise.
+     * @param string $filePath path of file to check
+     * @return boolean true if the file is to be excluded false otherwise.
      */
     private function isFilePathExcluded($filePath)
     {

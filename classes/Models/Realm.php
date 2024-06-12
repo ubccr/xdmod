@@ -17,6 +17,7 @@
  * @method string  getSchemaName()
  * @method void    setSchemaName($schemaName)
  */
+#[\AllowDynamicProperties]
 class Realm extends DBObject
 {
     protected $PROP_MAP = array(

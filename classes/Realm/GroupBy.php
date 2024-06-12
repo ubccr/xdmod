@@ -252,13 +252,13 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         $this->realm = $realm;
 
         if ( empty($shortName) ) {
-            $this->logger->logAndThrowException('GroupBy short name not provided');
+            $this->logAndThrowException('GroupBy short name not provided');
         } elseif ( ! is_string($shortName) ) {
-            $this->logger->logAndThrowException(
+            $this->logAndThrowException(
                 sprintf('GroupBy short name must be a string, %s provided: %s', $shortName, gettype($shortName))
             );
         } elseif ( null === $config ) {
-            $this->logger->logAndThrowException('No GroupBy configuration provided');
+            $this->logAndThrowException('No GroupBy configuration provided');
         }
 
         // Verify the types of the various configuration options

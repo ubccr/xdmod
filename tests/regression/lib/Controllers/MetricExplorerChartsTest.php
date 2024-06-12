@@ -189,7 +189,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
 
         foreach ($series as $s) {
             $this->assertEquals($sdata['name'], $s->name);
-            $this->assertEquals($sdata['y'], $s->y[0], '', 1.0E-6);
+            $this->assertEqualsWithDelta($sdata['y'], $s->y[0],  1.0E-6, '');
             $sdata = next($expected['series_data']);
         }
 

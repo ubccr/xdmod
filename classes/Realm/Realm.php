@@ -374,7 +374,7 @@ class Realm extends \CCR\Loggable implements iRealm
             // use late static binding. For other classes use the class name specified unless the
             // configuration explicitly provides a class name.
 
-            $factoryClassName = ('Realm' == $className ? 'static' : $className);
+            $factoryClassName = ('Realm' == $className ? self::class : $className);
             if ( 'Realm' != $className && isset($configObj->class) ) {
                 if ( ! class_exists($configObj->class) ) {
                     $msg = sprintf("Attempt to instantiate undefined %s class %s", $className, $configObj->class);

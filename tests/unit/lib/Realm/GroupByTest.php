@@ -121,7 +121,7 @@ class GroupByTest extends \PHPUnit\Framework\TestCase
         $realm = Realm::factory('Cloud', self::$logger);
         $obj = $realm->getGroupByObject('username');
 
-        $this->assertEquals($obj->getName(), 'System Username', 'getName()');
+        $this->assertEquals('System Username', $obj->getName(), 'getName()');
     }
 
     /**
@@ -240,55 +240,55 @@ SQL;
         $this->assertEquals($expected, $generated, 'getAttributeValuesQuery()->getSql()');
 
         $generated = $obj->getDefaultDatasetType();
-        $this->assertEquals($generated, 'aggregate', 'getDefaultDatasetType()');
+        $this->assertEquals('aggregate', $generated, 'getDefaultDatasetType()');
 
         $generated = $obj->getDefaultDisplayType();
-        $this->assertEquals($generated, 'line', 'getDefaultDisplayType()');
+        $this->assertEquals('line', $generated, 'getDefaultDisplayType()');
 
         $generated = $obj->getDefaultDisplayType('aggregate');
-        $this->assertEquals($generated, 'h_bar', 'getDefaultDisplayType()');
+        $this->assertEquals('h_bar', $generated, 'getDefaultDisplayType()');
 
         $generated = $obj->getDefaultCombineMethod();
-        $this->assertEquals($generated, 'stack', 'getDefaultCombineMethod()');
+        $this->assertEquals('stack', $generated, 'getDefaultCombineMethod()');
 
         $generated = $obj->getDefaultShowLegend();
-        $this->assertEquals($generated, 'y', 'getDefaultShowLegend()');
+        $this->assertEquals('y', $generated, 'getDefaultShowLegend()');
 
         $generated = $obj->getDefaultLimit();
-        $this->assertEquals($generated, 10, 'getDefaultLimit()');
+        $this->assertEquals(10, $generated, 'getDefaultLimit()');
 
         $generated = $obj->getDefaultLimit(true);
-        $this->assertEquals($generated, 3, 'getDefaultLimit()');
+        $this->assertEquals(3, $generated, 'getDefaultLimit()');
 
         $generated = $obj->getDefaultOffset();
-        $this->assertEquals($generated, 0, 'getDefaultOffset()');
+        $this->assertEquals(0, $generated, 'getDefaultOffset()');
 
         $generated = $obj->getDefaultLogScale();
-        $this->assertEquals($generated, 'n', 'getDefaultLogScale()');
+        $this->assertEquals('n', $generated, 'getDefaultLogScale()');
 
         $generated = $obj->getDefaultShowTrendLine();
-        $this->assertEquals($generated, 'n', 'getDefaultShowTrendLine()');
+        $this->assertEquals('n', $generated, 'getDefaultShowTrendLine()');
 
         $generated = $obj->getDefaultShowErrorBars();
-        $this->assertEquals($generated, 'n', 'getDefaultShowErrorBars()');
+        $this->assertEquals('n', $generated, 'getDefaultShowErrorBars()');
 
         $generated = $obj->getDefaultShowGuideLines();
-        $this->assertEquals($generated, 'y', 'getDefaultShowGuideLines()');
+        $this->assertEquals('y', $generated, 'getDefaultShowGuideLines()');
 
         $generated = $obj->getDefaultShowAggregateLabels();
-        $this->assertEquals($generated, 'n', 'getDefaultShowAggregateLabels()');
+        $this->assertEquals('n', $generated, 'getDefaultShowAggregateLabels()');
 
         $generated = $obj->getDefaultShowErrorLabels();
-        $this->assertEquals($generated, 'n', 'getDefaultShowErrorLabels()');
+        $this->assertEquals('n', $generated, 'getDefaultShowErrorLabels()');
 
         $generated = $obj->getDefaultEnableErrors();
-        $this->assertEquals($generated, 'y', 'getDefaultEnableErrors()');
+        $this->assertEquals('y', $generated, 'getDefaultEnableErrors()');
 
         $generated = $obj->getDefaultEnableTrendLine();
-        $this->assertEquals($generated, 'y', 'getDefaultEnableTrendLine()');
+        $this->assertEquals('y', $generated, 'getDefaultEnableTrendLine()');
 
         $generated = $obj->getCategory();
-        $this->assertEquals($generated, 'uncategorized', 'getCategory()');
+        $this->assertEquals('uncategorized', $generated, 'getCategory()');
     }
 
     /**
@@ -325,13 +325,13 @@ SQL;
         $obj = $realm->getGroupByObject('configuration');
 
         $generated = $obj->getDefaultDisplayType();
-        $this->assertEquals($generated, 'area', 'getDefaultDisplayType()');
+        $this->assertEquals('area', $generated, 'getDefaultDisplayType()');
 
         $generated = $obj->getDefaultDisplayType('timeseries');
-        $this->assertEquals($generated, 'area', 'getDefaultDisplayType(timeseries)');
+        $this->assertEquals('area', $generated, 'getDefaultDisplayType(timeseries)');
 
         $generated = $obj->getDefaultDisplayType('aggregate');
-        $this->assertEquals($generated, 'bar', 'getDefaultDisplayType(aggregate)');
+        $this->assertEquals('bar', $generated, 'getDefaultDisplayType(aggregate)');
     }
 
     /**
@@ -361,18 +361,18 @@ SQL;
 
         // String
         $generated = $obj->getDefaultDatasetType();
-        $this->assertEquals($generated, 'custom_dataset_type', 'getDefaultDatasetType()');
+        $this->assertEquals('custom_dataset_type', $generated, 'getDefaultDatasetType()');
 
         // Object
         $generated = $obj->getDefaultDisplayType('aggregate');
-        $this->assertEquals($generated, 'bar', 'getDefaultDisplayType()');
+        $this->assertEquals('bar', $generated, 'getDefaultDisplayType()');
 
         // Integer
         $generated = $obj->getDefaultOffset();
-        $this->assertEquals($generated, 5, 'getDefaultCombineMethod()');
+        $this->assertEquals(5, $generated, 'getDefaultCombineMethod()');
 
         // Boolean
         $generated = $obj->getDefaultShowLegend();
-        $this->assertEquals($generated, 'n', 'getDefaultShowLegend()');
+        $this->assertEquals('n', $generated, 'getDefaultShowLegend()');
     }
 }

@@ -2,6 +2,7 @@
 namespace DataWarehouse\Query;
 
 use Configuration\XdmodConfiguration;
+use DomainException;
 
 /**
  * @author Amin Ghadersohi
@@ -335,9 +336,9 @@ abstract class TimeAggregationUnit
     /**
      * Compute the time period covered by a given datapoint.
      *
-     * @param unixtimestamp of start of period (seconds since the epoch).
-     * @param period to cover (day, month, quarter, year).
-     * @return the start and end dates coverted by the time point
+     * @param int|float $time_point of start of period (seconds since the epoch).
+     * @param string $period period to cover (day, month, quarter, year).
+     * @return array start and end dates coverted by the time point
      * @throws DomainException if specified time is invalid or period is invalid
      */
     public static function getRawTimePeriod($time_point, $period)
@@ -346,11 +347,11 @@ abstract class TimeAggregationUnit
         $end_dt = \DateTime::createFromFormat('U', "$time_point");
 
         if ($start_dt === false) {
-            throw new \DomainException("Invalid value for time point");
+            throw new DomainException("Invalid value for time point");
         }
 
         if (!static::isTimeAggregationUnitName($period)) {
-            throw new \DomainException("Invalid time period");
+            throw new DomainException("Invalid time period");
         }
 
         switch ($period) {

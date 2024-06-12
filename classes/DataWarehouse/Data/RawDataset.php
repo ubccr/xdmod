@@ -6,6 +6,7 @@ class RawDataset
 {
     private $query;
     private $query_results;
+    protected mixed $userType;
 
     public function __construct(&$query, $user)
     {

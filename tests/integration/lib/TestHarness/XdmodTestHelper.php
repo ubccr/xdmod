@@ -13,6 +13,10 @@ class XdmodTestHelper
     private $curl;
     private $cookiefile;
     private $userrole = 'public';
+    /**
+     * @var array|mixed
+     */
+    protected mixed $responseHeaders;
 
     public function __construct($config = array())
     {
@@ -171,7 +175,7 @@ class XdmodTestHelper
 
         $form = $xpath->query("//form[@action]");
         if ($form->length != 1) {
-            throw \Exception('Unexpected number of form elements in html');
+            throw new \Exception('Unexpected number of form elements in html');
         }
         $action = $form->item(0)->getAttribute('action');
 

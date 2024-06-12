@@ -14,6 +14,7 @@ use Models\Services\Parameters;
 use Models\Services\Realms;
 use PDO;
 use Silex\Application;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\ControllerCollection;
 
@@ -360,7 +361,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *
      * @param Request $request
      * @param Application $app
-     * @return array in the format array( boolean success, string message)
+     * @return JsonResponse
      * @throws AccessDeniedException
      * @throws BadRequestHttpException
      * @throws NotFoundHttpException
@@ -744,7 +745,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param Request     $request The request used to make this call.
      * @param Application $app     The router application.
      *
-     * @return json object
+     * @return JsonResponse object
      */
     public function getAggregateData(Request $request, Application $app)
     {
@@ -1427,8 +1428,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param mixed $jobId the unique identifier for the job.
      * @param int $start the start offset (for store paging).
      * @param int $limit the number of records to return (for store paging).
-     * @return json in Extjs.store parsable format.
-     * @throws NotFoundHttpException
+     * @return JsonResponse in Extjs.store parsable format.
+     * @throws NotFoundHttpException|AccessDeniedException
      */
     protected function getJobPeers(Application $app, XDUser $user, $realm, $jobId, $start, $limit)
     {
@@ -2131,7 +2132,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     public function getRawData(Request $request, Application $app)
     {
-        $user = parent::authenticateToken($request);
+        $user = parent::authenticateToken($request, $app);
         $params = $this->validateRawDataParams($request, $user);
         $realmManager = new RealmManager();
         $queryClass = $realmManager->getRawDataQueryClass($params['realm']);

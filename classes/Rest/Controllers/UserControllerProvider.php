@@ -7,6 +7,7 @@ use Configuration\Configuration;
 use Models\Services\Organizations;
 use PhpOffice\PhpWord\Exception\Exception;
 use Silex\Application;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
@@ -74,7 +75,7 @@ class UserControllerProvider extends BaseControllerProvider
      *
      * @param Request $request The request used to make this call.
      * @param Application $app The router application.
-     * @return array                Response data containing the following info:
+     * @return JsonResponse                Response data containing the following info:
      *                              success: A boolean indicating if the call was successful.
      *                              results: An object containing data about
      *                                       the current user.
@@ -96,9 +97,9 @@ class UserControllerProvider extends BaseControllerProvider
      *
      * @param Request $request The request used to make this call.
      * @param Application $app The router application.
-     * @return array                Response data containing the following info:
-     *                              success: A boolean indicating if the call was successful.
-     *                              message
+     * @return JsonResponse    Response data containing the following info:
+     *                         success: A boolean indicating if the call was successful.
+     *                         message
      */
     public function updateCurrentUser(Request $request, Application $app)
     {
@@ -130,7 +131,7 @@ class UserControllerProvider extends BaseControllerProvider
      *
      * @param Request $request
      * @param Application $app
-     * @return mixed
+     * @return JsonResponse
      * @throws \Exception
      */
     public function getCurrentAPIToken(Request $request, Application $app)

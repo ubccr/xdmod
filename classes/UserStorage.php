@@ -3,6 +3,8 @@
 class UserStorage
 {
     const MAX_RECORDS = 2000;
+    protected mixed $_user;
+    protected mixed $_container;
 
     public function __construct($user, $container)
     {

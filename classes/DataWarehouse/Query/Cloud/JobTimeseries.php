@@ -17,6 +17,11 @@ use CCR\DB;
 
 class JobTimeseries
 {
+    /**
+     * @var DB\iDatabase|mixed
+     */
+    protected mixed $db;
+
     public function __construct() {
         $this->db = DB::factory('datawarehouse');
     }

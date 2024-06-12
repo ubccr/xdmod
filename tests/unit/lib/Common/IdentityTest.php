@@ -52,18 +52,18 @@ class IdentityTest extends \PHPUnit\Framework\TestCase
 
     public function testGetName()
     {
-        $this->assertEquals($this->_identity->getName(), 'identity_name', "This should pass" );
-        $this->assertEquals($this->_identity1->getName(), '', "This should pass" );
+        $this->assertEquals('identity_name', $this->_identity->getName(), "This should pass" );
+        $this->assertEquals('', $this->_identity1->getName(), "This should pass" );
     }
 
     public function testSetName()
     {
         $this->_identity1->setName('mock_name');
-        $this->assertEquals($this->_identity1->getName(), 'mock_name', "This should pass" );
+        $this->assertEquals('mock_name', $this->_identity1->getName(), "This should pass" );
     }
 
     public function testToString()
     {
-        $this->assertEquals($this->_identity->__toString(), 'identity_name', "This should pass" );
+        $this->assertEquals('identity_name', $this->_identity->__toString(), "This should pass" );
     }
 }

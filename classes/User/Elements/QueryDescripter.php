@@ -53,6 +53,10 @@ class QueryDescripter
      * @var bool
      */
     private $_disable_menu;
+    /**
+     * @var mixed|\Realm\GroupBy|null
+     */
+    protected mixed $groupByInstance;
 
     public function __construct(
         $realm_name,

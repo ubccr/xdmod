@@ -406,7 +406,7 @@ class MySQLHelper
      * @param int $port MySQL server port number.
      * @param string $username MySQL username.
      * @param string $password MySQL password.
-     * @param string $localHost Host that the user will connect from.
+     * @param string $xdmodHost Host that the user will connect from.
      * @param string $dbUsername User granting privileges to.
      * @param string $dbPassword User password.
      */
@@ -415,7 +415,7 @@ class MySQLHelper
         $port,
         $username,
         $password,
-        $localHost,
+        $xdmodHost,
         $dbUsername,
         $dbPassword
     ) {
@@ -429,8 +429,8 @@ class MySQLHelper
             . " CREATE ROUTINE, ALTER ROUTINE, EVENT, RELOAD, FILE,"
             . " CREATE TABLESPACE, PROCESS, REFERENCES,"
             . " LOCK TABLES"
-            . " ON *.* TO '$dbUsername'@'$localHost'"
-            . " IDENTIFIED BY '$dbPassword';FLUSH PRIVILEGES;";
+            . " ON *.* TO '$dbUsername'@'$xdmodHost';"
+            . "FLUSH PRIVILEGES;";
 
         static::staticExecuteStatement(
             $host,

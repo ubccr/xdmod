@@ -12,21 +12,14 @@ use Exception;
 use UnexpectedValueException;
 
 /**
- * Global INI data.
- *
- * @var array|null
- */
-$iniData = null;
-
-/**
  * Parse the configuration file information for the requested section
  * and option.  Note that the configuration information is cached the
  * first time that this function is called unless the $cache is set to
  * false.
  *
- * @param $section Desired configuration section
- * @param $option Desired option within the section
- * @param $useCachedOptions Cache the parsed options file after the
+ * @param string  $section Desired configuration section
+ * @param string  $option Desired option within the section
+ * @param boolean $useCachedOptions Cache the parsed options file after the
  *     first call to this function.  Set to true by default.  Setting
  *     this to false will cause the file to be parsed again.
  *
@@ -61,9 +54,9 @@ function getConfiguration($section, $option, $useCachedOptions = true)
  *
  * @see getConfiguration
  *
- * @param $section Desired configuration section
- * @param $option Desired option within the section
- * @param $useCachedOptions Cache the parsed options file after the
+ * @param string $section Desired configuration section
+ * @param string $option Desired option within the section
+ * @param boolean $useCachedOptions Cache the parsed options file after the
  *     first call to this function.  Set to true by default.  Setting
  *     this to false will cause the file to be parsed again.
  *
@@ -84,9 +77,8 @@ function getConfigurationUrlBase($section, $option, $useCachedOptions = true)
  * Same as getConfiguration however it returns the whole section as
  * an associative array.
  *
- * @param $section Desired configuration section
- * @param $option Desired option within the section
- * @param $useCachedOptions Cache the parsed options file after the
+ * @param string $section Desired configuration section
+ * @param boolean $useCachedOptions Cache the parsed options file after the
  *     first call to this function.  Set to true by default.  Setting
  *     this to false will cause the file to be parsed again.
  *
@@ -299,75 +291,6 @@ function array_get(array $a, $key, $default = null) {
 }
 
 /**
- * Replace a key's value in an array and return its old value or a default if not present.
- *
- * @param  array  $a   The array in which the key's value will be replaced.
- * @param  mixed  $key The key for the value being replaced.
- * @param  mixed  $newValue The new value to insert into the array.
- * @param  mixed  $default (Optional) The default to return if the key was
- *                         not present. (Defaults to null.)
- * @return mixed       The old value for the key or the given default if the
- *                     key was not present.
- */
-function array_replace_key_value(array &$a, $key, $newValue, $default = null) {
-    $oldValue = array_get($a, $key, $default);
-    $a[$key] = $newValue;
-    return $oldValue;
-}
-
-/**
- * Locates a value for a parameter ($param) in a string ($haystack) with
- * the format  /param1=value/param2=value/.…
- * or param1=value&param2=value&…
- *
- * If no match is found, an empty string is returned
- */
-function getParameterIn($param, $haystack)
-{
-    $num_matches = preg_match("/$param=(.+)/", $haystack, $matches);
-
-    $param_value = '';
-
-    if ($num_matches > 0) {
-        $frags = explode('&', str_replace('/', '&', $matches[1]));
-        $param_value = $frags[0];
-    }
-
-    return $param_value;
-}
-
-/**
- * Create an XML error message
- *
- * @param $dom Document object model that the error will be inserted into
- * @param $nodeRoot Root of the error node
- * @param $code Error code
- * @param $message Error message
- *
- * @returns true if successful
- */
-function generateError($dom, $nodeRoot, $code, $message)
-{
-    \xd_domdocument\createElement($dom, $nodeRoot, "code", $code);
-    \xd_domdocument\createElement($dom, $nodeRoot, "reason", $message);
-
-    return true;
-}
-
-/**
- * Print a message, then "delete" it.
- */
-function printAndDelete($message)
-{
-    $message_length = strlen($message);
-
-    print $message;
-    print str_repeat(chr(8), $message_length);
-
-    return $message_length;
-}
-
-/**
  * Check for a center logo.
  *
  * @param bool $apply_css If true output CSS for the logo.
@@ -443,10 +366,9 @@ function filter_var($value, $filter = FILTER_DEFAULT, $options = null)
  * If the specified path is not already fully qualified (e.g., /var/tmp) then prepend the
  * specified base path to the path.
  *
- * @param $path A string containing a path
- * @param $base_bath A string containing the base path to be prepended to relative paths
- *
- * @return A fully qualified path, with the base path prepended to a relative path
+ * @param string $path A string containing a path
+ * @param string $base_path
+ * @return string A fully qualified path, with the base path prepended to a relative path
  */
 
 function qualify_path($path, $base_path)
@@ -499,49 +421,20 @@ function resolve_path(?string $path): ?string
 }  // resolve_path()
 
 /**
- * Verify that an object contains all of the properties specified in the $propertyList
- *
- * @param stdClass $obj The object to examine
- * @param array $propertyList The list of required properties
- * @param array $missing Optional reference to an array that will contain a list of the
- *   missing properties.
- *
- * @return TRUE if the object contains all of the required properties, FALSE otherwise.
- */
-
-function verify_required_object_properties($obj, array $propertyList, array &$missing = null)
-{
-    if ( ! is_object($obj) ) {
-        throw new Exception(sprintf("First argument must be an object, %s given", gettype($obj)));
-    }
-
-    $missing = array();
-
-    foreach ( $propertyList as $p ) {
-        if ( ! isset($obj->$p) ) {
-            $missing[] = $p;
-        }
-    }
-
-    return 0 == count($missing);
-
-}  // verify_required_object_properties()
-
-/**
  * Verify the types of object properties, optionally skipping properties that are not
  * present in the object.  Property types must match the PHP is_*() methods (e.g.,
  * is_int(), is_object(), is_string()) and will generate a warning message a function
  * corresponding to the specified type does not exist.
  *
- * @param stdClass $obj The object to examine
- * @param array $typeList An associative array where the keys are property names and
+ * @param \stdClass $obj The object to examine
+ * @param array $propertyList An associative array where the keys are property names and
  *   the values are property types.
- * @param array $messages Optional reference to an array that will contain a list of
+ * @param array|null $messages Optional reference to an array that will contain a list of
  *   messages regarding the property types.
  * @param boolean $skipMissingProperties If set to FALSE, properties that are not present in
  *   the object generate an error. If set to TRUE missing properties are silently skipped,
  *
- * @return TRUE if all properties were present and their type checks passed, FALSE
+ * @return boolean TRUE if all properties were present and their type checks passed, FALSE
  *   otherwise.
  */
 

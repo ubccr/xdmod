@@ -2,6 +2,7 @@
 
 namespace IntegrationTests\TestHarness;
 
+use CCR\DB\MySQLDB;
 use Exception;
 use CCR\DB;
 
@@ -13,7 +14,7 @@ class PeopleHelper
     /**
      * modw database handle.
      *
-     * @var CCR\DB\MySQLDB
+     * @var MySQLDB
      */
     private $dbh;
 
