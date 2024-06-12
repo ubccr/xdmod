@@ -412,7 +412,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
                     return result;
                 };
-                const chartJSON = JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4);      
+                const chartJSON = JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4);
                 menu.add({
                     text: 'View chart json',
                     iconCls: 'json_file',
