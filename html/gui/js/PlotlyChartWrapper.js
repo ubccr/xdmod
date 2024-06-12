@@ -66,8 +66,8 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             }
             baseChartOptions.layout.annotations.splice(0, endIndex);
         }
-        // Remove title for summary and dashboard charts
-        if (baseChartOptions.summary || baseChartOptions.dashboard) {
+        // Remove title for summary (not dashboard because the subtitle is set as the title)
+        if (baseChartOptions.summary) {
             // Title is always first in annotation array
             baseChartOptions.layout.annotations.shift();
         }

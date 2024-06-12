@@ -426,8 +426,8 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             closeAction: 'destroy',
                             items: [{
                                 autoScroll: true,
-                                html: '<pre>' + Ext.util.Format.htmlEncode(chartJSON), null, 4)) + '</pre>'
-                            }]
+                                html: `<pre>${Ext.util.Format.htmlEncode(chartJSON)}</pre>`
+                            }],
                             tools: [{
                                 id: 'save',
                                 qtip: 'Copy Chart JSON',
@@ -454,7 +454,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             items: [{
                                 autoScroll: true,
                                 html: `<pre>${Ext.util.Format.htmlEncode(chartLayoutJSON)}</pre>`
-                            }]
+                            }],
                             tools: [{
                                 id: 'save',
                                 qtip: 'Copy Chart Layout',
@@ -481,7 +481,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             items: [{
                                 autoScroll: true,
                                 html: `<pre>${Ext.util.Format.htmlEncode(chartDataJSON)}</pre>`
-                            }]
+                            }],
                             tools: [{
                                 id: 'save',
                                 qtip: 'Copy Chart Data',
