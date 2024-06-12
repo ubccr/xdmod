@@ -9,7 +9,7 @@
         "greenlion/php-sql-parser": "~4.2",
         "ircmaxell/password-compat": "~1",
         "justinrainbow/json-schema": "~5.2",
-        "jquery/jquery-min-file":"^3.7",
+        "jquery/jquery-min-file":"^3.7.1",
         "moment/moment-min-file": "^2.13.0",
         "moment/moment-timezone-min-file": "^0.5.4",
         "paragonie/random_compat": "~2.0",
