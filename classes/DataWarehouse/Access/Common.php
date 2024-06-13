@@ -198,9 +198,9 @@ class Common
     protected function getTitle()
     {
         return
-            isset($this->request['title']) && $this->request['title'] != ''
+            isset($this->request['title'])
             ? $this->request['title']
-            : null;
+            : '';
     }
 
     protected function getLimit()
