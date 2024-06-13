@@ -2,6 +2,7 @@
 
 namespace UnitTests\NewRest\Controllers;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use Rest\Controllers\BaseControllerProvider;
 
 class BaseControllerTest extends \PHPUnit\Framework\TestCase
@@ -138,7 +139,7 @@ class BaseControllerTest extends \PHPUnit\Framework\TestCase
      *
      * @param array $roles an array of strings representing the
      *                              roles / acls this user is assigned
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return MockObject
      */
     protected function createUser(array $roles)
     {

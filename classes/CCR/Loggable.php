@@ -78,8 +78,8 @@ class Loggable
      * Helper function to log errors in a consistent format and provide a mechanism to
      * supply additional, optional, parameters for greater detail.
      *
-     * @param $message An human-readable error message
-     * @param $options An optional array of additional details. Information will typically
+     * @param string $message An human-readable error message
+     * @param array|null $options An optional array of additional details. Information will typically
      *   be added to the exception message as well as the log file. Currently supported
      *   options are:
      *   'log_level' => Override the default \CCR\Log::ERR with another log level
@@ -149,7 +149,7 @@ class Loggable
     /**
      * Generate a string representation of this class.
      *
-     * @return A string representation of the endpoint
+     * @return string A string representation of the endpoint
      */
 
     public function __toString()

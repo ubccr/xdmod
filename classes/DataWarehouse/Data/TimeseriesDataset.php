@@ -72,7 +72,7 @@ class TimeseriesDataset
         $seriesIds = array();
 
         while($row = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
-            $seriesIds[] = "${row[$groupIdColumn]}";
+            $seriesIds[] = "{$row[$groupIdColumn]}";
         }
 
         return $seriesIds;
@@ -244,7 +244,7 @@ class TimeseriesDataset
      * @param string  $where_name        The id of the GroupBy class that is being used.
      * @param integer $normalizeBy       The total number of distinct groups in the data.
      * @param array   $whereExcludeArray Array of values to exclude from the summary calculation.
-     * @return SimpleDataset
+     * @return SimpleData
      */
     protected function getSummarizedColumn(
         $column_name,
@@ -331,7 +331,7 @@ class TimeseriesDataset
     /**
      * Get the total number of series in the dataset. The count is determined from the
      * aggregate version of the supplied timeseries query.
-     * @return the number of data series in this dataset.
+     * @return int the number of data series in this dataset.
      */
     public function getUniqueCount()
     {

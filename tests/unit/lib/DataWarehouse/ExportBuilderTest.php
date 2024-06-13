@@ -4,6 +4,11 @@ namespace UnitTests\DataWarehouse;
 
 class ExportBuilderTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @var array|array[]
+     */
+    protected array $_dummydata;
+
     public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         $this->_dummydata = array(array(

@@ -1,10 +1,10 @@
 [
     {
         "code": "recex",
-        "shared_jobs": "0"
+        "shared_jobs": 0
     },
     {
         "code": "torx",
-        "shared_jobs": "0"
+        "shared_jobs": 0
     }
 ]

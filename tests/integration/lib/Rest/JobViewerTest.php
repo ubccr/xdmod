@@ -261,8 +261,8 @@ class JobViewerTest extends BaseTest
         $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
 
         $this->assertArrayHasKey('success', $result[0]);
-        $this->assertEquals($result[0]['success'], false);
-        $this->assertEquals($result[1]['http_code'], 400);
+        $this->assertEquals(false, $result[0]['success']);
+        $this->assertEquals(400, $result[1]['http_code']);
 
         $this->xdmodhelper->logout();
     }

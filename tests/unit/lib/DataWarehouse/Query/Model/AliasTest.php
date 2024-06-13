@@ -29,18 +29,18 @@ class AliasTest extends \PHPUnit\Framework\TestCase
 
     public function testGetName()
     {
-        $this->assertEquals($this->_alias->getName(), 'alias_name', "This should pass" );
+        $this->assertEquals('alias_name',$this->_alias->getName(), "This should pass" );
 
     }
 
     public function testSetName()
     {
         $this->_alias1->setName('mock_name');
-        $this->assertEquals($this->_alias1->getName(), 'mock_name', "This should pass" );
+        $this->assertEquals('mock_name', $this->_alias1->getName(), "This should pass" );
     }
 
     public function testToString()
     {
-        $this->assertEquals($this->_alias->__toString(), 'alias_name', "This should pass" );
+        $this->assertEquals('alias_name',$this->_alias->__toString(), "This should pass" );
     }
 }

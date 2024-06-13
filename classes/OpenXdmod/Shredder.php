@@ -10,6 +10,7 @@ namespace OpenXdmod;
 use CCR\Log;
 use Configuration\XdmodConfiguration;
 use Exception;
+use Ingestor;
 use PDOException;
 use CCR\DB\iDatabase;
 use PDODBMultiIngestor;

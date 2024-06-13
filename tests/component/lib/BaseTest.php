@@ -53,6 +53,7 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
     const DEFAULT_EMAIL_ADDRESS_SUFFIX = "@test.com";
 
     private static $ENV;
+    protected TestFiles $testFiles;
 
     public static function setupBeforeClass(): void
     {

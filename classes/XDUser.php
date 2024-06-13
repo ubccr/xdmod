@@ -955,7 +955,7 @@ SQL;
         }
 
         $update_data['username'] = $this->_username;
-        $includePassword = strlen($this->_password) <= CHARLIM_PASSWORD;
+        $includePassword = isset($this->_password) && strlen($this->_password) <= CHARLIM_PASSWORD;
         if ($includePassword) {
             if ($this->_password == "" || is_null($this->_password)) {
                 $update_data['password'] = NULL;
@@ -2305,7 +2305,7 @@ SQL;
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $ignored = array(
             '_pdo', '_primary_role', '_publicUser', '_timeCreated','_timeUpdated',

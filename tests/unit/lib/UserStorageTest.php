@@ -26,7 +26,7 @@ class UserStorageTest extends \PHPUnit\Framework\TestCase
         $res = $ustore->insert($input);
 
         $this->assertArrayHasKey('test', $res);
-        $this->assertEquals($res['test'], 1);
+        $this->assertEquals(1, $res['test']);
         $this->assertArrayHasKey('recordid', $res);
 
         $output = $ustore->get();
@@ -35,8 +35,8 @@ class UserStorageTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $output);
 
         $this->assertArrayHasKey('test', $output[0]);
-        $this->assertEquals($output[0]['test'], 1);
-        $this->assertEquals($output[0]['test'], 1);
+        $this->assertEquals(1, $output[0]['test']);
+        $this->assertEquals(1, $output[0]['test']);
 
     }
 
@@ -201,12 +201,12 @@ class UserStorageTest extends \PHPUnit\Framework\TestCase
         $ustore = new \UserStorage($mockuser, "TEST");
 
         $result = $ustore->delById(1234);
-        $this->assertEquals($result, 0);
+        $this->assertEquals(0, $result);
 
         $this->upsertHelper($ustore, 123);
 
         $result = $ustore->delById(1234);
-        $this->assertEquals($result, 1);
+        $this->assertEquals(1, $result);
     }
 
     public function testDel() {

@@ -25,7 +25,7 @@ abstract class aDataEndpoint extends aEtlObject
 
     /**
      * @var string A unique key that can be used to identify this endpoint. Typically some
-     * combination of type and name.
+     * combination of type and nat me.
      */
     protected $key = null;
 
@@ -79,7 +79,7 @@ abstract class aDataEndpoint extends aEtlObject
      *  @see iDataEndpoint::getKey()
      */
 
-    public function getKey()
+    public function getKey(): ?string
     {
         return $this->key;
     }

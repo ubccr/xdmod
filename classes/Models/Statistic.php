@@ -26,6 +26,7 @@
  * @method boolean getVisible()
  * @method void    setVisible($visible)
  */
+#[\AllowDynamicProperties]
 class Statistic extends DBObject
 {
     protected $PROP_MAP = array(

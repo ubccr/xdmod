@@ -311,7 +311,7 @@ class FilterListBuilder extends Loggable
      *
      * @param  iQuery   $realmQuery A Query of the class of the desired result.
      * @param  iGroupBy $groupBy    The GroupBy to construct the Query around.
-     * @return Query               A Query constructed around $groupBy.
+     * @return iQuery               A Query constructed around $groupBy.
      */
     private function createDimensionQuery(iQuery $realmQuery, iGroupBy $groupBy)
     {

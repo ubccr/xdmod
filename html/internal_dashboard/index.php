@@ -45,7 +45,9 @@ require_once 'user_check.php';
   <script type="text/javascript" src="../gui/lib/CheckColumn.js"></script>
 
   <script type="text/javascript">
-    var dashboard_user_full_name = <?php echo json_encode($user->getFormalName()); ?>;
+    var dashboard_user_full_name = <?php if (!empty($user)) {
+        echo json_encode($user->getFormalName());
+    } ?>;
   </script>
 
   <!-- Globals -->

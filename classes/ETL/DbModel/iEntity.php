@@ -98,7 +98,7 @@ interface iEntity
      * ------------------------------------------------------------------------------------------
      */
 
-    public function quote($identifier);
+    public function quote(string $identifier): string;
 
     /* ------------------------------------------------------------------------------------------
      * Generate a simple representation of this entity's data properties as a stdClass

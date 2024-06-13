@@ -3,6 +3,7 @@
 namespace Rest\Controllers;
 
 use DateTime;
+use Exception;
 use Models\Services\Tokens;
 use Rest\Utilities\Authentication;
 use Rest\Utilities\Authorization;
@@ -15,6 +16,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use XDUser;
 
 /**
  * Class BaseControllerProvider
@@ -170,10 +172,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * @param Application $app that will be used to facilitate returning a
      *                         json response if information is found to be
      *                         missing.
-     * @return \Symfony\Component\HttpFoundation\JsonResponse if and only if
-     *                         the user is missing a token or an ip.
+     * @return void if and only if the user is missing a token or an ip.
      *
-     * @throws Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
+     * @throws UnauthorizedHttpException
      */
     public static function authenticate(Request $request, Application $app)
     {
@@ -203,11 +204,12 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                            'authorized'. If not specified, then only
      *                            whether or not the user is logged in will
      *                            be checked.
-     * @return \XDUser The user that was checked and is authorized according to
+     * @return XDUser The user that was checked and is authorized according to
      *                the given parameters.
      *
-     * @throws  Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
-     *          Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
+     * @throws UnauthorizedHttpException
+     * @throws AccessDeniedHttpException
+     * @throws Exception
      */
     public function authorize(Request $request, array $requirements = array())
     {
@@ -236,7 +238,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * Retrieve the XDMoD user from a request object.
      *
      * @param  Request $request The request to retrieve a user from.
-     * @return \XDUser           The user who made the request.
+     * @return XDUser           The user who made the request.
      */
     protected function getUserFromRequest(Request $request)
     {
@@ -759,9 +761,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * Attempt to authorize the the provided `$request` via an included API Token.
      *
      * @param Request $request
-     * @return \XDUser
+     * @return XDUser
      * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
-     * @throws \Exception if the user's token from the db does not validate against the provided token.
+     * @throws Exception if the user's token from the db does not validate against the provided token.
      */
     protected function authenticateToken($request)
     {

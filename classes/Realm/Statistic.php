@@ -148,7 +148,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
      * extend Loggable, which has a public constructor.
      *
      * @param string $shortName The short name for this statistic
-     * @param stdClass $config An object contaning the configuration specificaiton.
+     * @param \stdClass $config An object contaning the configuration specificaiton.
      * @param Realm $realm Realm object that this GroupBy will belong to.
      * @param LoggerInterface|null $logger A Monolog Logger instance that will be utilized during processing.
      */
@@ -165,13 +165,13 @@ class Statistic extends \CCR\Loggable implements iStatistic
         $this->moduleName = $realm->getModuleName();
 
         if ( empty($shortName) ) {
-            $this->logger->logAndThrowException('Statistic short name not provided');
+            $this->logAndThrowException('Statistic short name not provided');
         } elseif ( ! is_string($shortName) ) {
-            $this->logger->logAndThrowException(
+            $this->logAndThrowException(
                 sprintf('Statistic short name must be a string, %s provided: %s', $shortName, gettype($shortName))
             );
         } elseif ( null === $config ) {
-            $this->logger->logAndThrowException('No Statistic configuration provided');
+            $this->logAndThrowException('No Statistic configuration provided');
         }
 
         // Verify the types of the various configuration options

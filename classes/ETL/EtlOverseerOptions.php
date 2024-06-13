@@ -81,6 +81,9 @@ class EtlOverseerOptions extends \CCR\Loggable
     // Enhanced output
     private $verbose = false;
 
+
+    private $resourceCodeToIdMapSql = array();
+
     // Restrictions may be placed on the query by the ETL Overseer. For example, start_date,
     // end_date, resources, etc. These keys identify the supported restrictions and are used to set
     // them for a query.

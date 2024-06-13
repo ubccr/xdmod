@@ -876,8 +876,8 @@ function processAcls(iDatabase $db, $module, array $realms, array $acls, array $
  * @param array     $dimensions  an array of group_by names that indicate the
  *                               default filtering behavior this acl has on a
  *                               users data.
- * @return int|null null if the acl was not able to be created or the acl_id if
- *                       it was created or exists.
+ * @return int|null|void null if the acl was not able to be created or the acl_id if
+ *                       it was created or exists. void if this is a dry run.
  **/
 function processAcl(iDatabase $db, $module, $name, $display, $type = null, $hierarchies = null, $dimensions = null)
 {
@@ -1248,8 +1248,8 @@ function processTabs(iDatabase $db, $module, $acl, array $tabs, array $enabledRe
  * @param string    $module the module name the tab is to be associated with.
  * @param string    $tab    the name to use when creating said tab.
  *
- * @return int|null null if the tab could not be created. int if the tab was
- *                       created or already existed.
+ * @return int|null|void null if the tab could not be created. int if the tab was
+ *                       created or already existed. void if this is a dry run.
  **/
 function createTab(iDatabase $db, $module, $tab)
 {

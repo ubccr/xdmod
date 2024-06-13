@@ -229,6 +229,7 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
 
         // ---------------------------------
 
+        /*meta.value = column.renderer.call(column.scope, record.data[column.name], meta, record, rowIndex, i, store);*/
         var customRenderer = function (val, metaData, record, rowIndex, colIndex, store) {
             var entryData = store.getAt(rowIndex).data;
 
@@ -242,7 +243,7 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
             }
 
             var emailAddress = '';
-            if (val) {
+            if (val && typeof val === 'string' || val instanceof String && val.indexOf(';') !== -1) {
                 emailAddress = val.split(';')[0];
             }
 

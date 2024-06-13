@@ -1,7 +1,5 @@
 <?php namespace Models;
 
-use CCR\DB;
-
 /**
  * Class Acl
  *
@@ -32,6 +30,7 @@ use CCR\DB;
  * @method integer getOrganizationId()
  * @method void    setOrganizationId($organizationId)
  */
+#[\AllowDynamicProperties]
 class Acl extends DBObject
 {
     protected $PROP_MAP = array(

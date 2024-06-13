@@ -265,11 +265,16 @@ class Entity extends Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function quote($identifier)
+    public function quote(string $identifier): string
     {
         // We can't quote non-strings so....
         if (!is_string($identifier)) {
             throw new \Exception('Unable to quote non-string identifier.');
+        }
+
+        // Don't quote if there is no system quote character.
+        if (!isset($this->systemQuoteChar)) {
+            return $identifier;
         }
 
         // Don't quote the identifier if it's already been quoted

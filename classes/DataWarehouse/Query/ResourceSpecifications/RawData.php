@@ -17,14 +17,7 @@ use CCR\DB;
 class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query\iQuery
 {
     public function __construct(
-        $realmId,
-        $aggregationUnitName,
-        $startDate,
-        $endDate,
-        $groupById = null,
-        $statisticId = null,
-        array $parameters = array()
-    ) {
+        $realmId, $aggregationUnitName, $startDate, $endDate, $groupById = null, $statisticId = null, array $parameters = array(), LoggerInterface $logger = null) {
         $realmId = 'ResourceSpecifications';
         $schema = 'modw_aggregates';
         $dataTablePrefix = 'resourcespecsfact_by_';

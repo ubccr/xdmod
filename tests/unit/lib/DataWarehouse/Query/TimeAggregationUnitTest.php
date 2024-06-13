@@ -49,18 +49,18 @@ class TimeAggregationUnitTest extends \PHPUnit\Framework\TestCase
     public function testDeriveAggregationUnitName()
     {
         $aggname = \DataWarehouse\Query\TimeAggregationUnit::deriveAggregationUnitName('auto', '2016-01-01', '2016-01-30');
-        $this->assertEquals($aggname, 'day');
+        $this->assertEquals('day', $aggname);
 
         $aggname = \DataWarehouse\Query\TimeAggregationUnit::deriveAggregationUnitName('auto', '2016-01-01', '2016-06-30');
-        $this->assertEquals($aggname, 'day');
+        $this->assertEquals('day', $aggname);
 
         $aggname = \DataWarehouse\Query\TimeAggregationUnit::deriveAggregationUnitName('auto', '2016-01-01', '2016-07-01');
-        $this->assertEquals($aggname, 'month');
+        $this->assertEquals('month', $aggname);
 
         $aggname = \DataWarehouse\Query\TimeAggregationUnit::deriveAggregationUnitName('auto', '2006-01-01', '2015-12-31');
-        $this->assertEquals($aggname, 'month');
+        $this->assertEquals('month', $aggname);
 
         $aggname = \DataWarehouse\Query\TimeAggregationUnit::deriveAggregationUnitName('auto', '2006-01-01', '2016-01-01');
-        $this->assertEquals($aggname, 'quarter');
+        $this->assertEquals('quarter', $aggname);
     }
 }

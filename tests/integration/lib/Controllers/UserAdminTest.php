@@ -474,10 +474,10 @@ class UserAdminTest extends BaseUserAdminTest
     }
 
     /**
-     * The @returns for this is misleading.
-     * technically it returns an array of arrays of a single string
-     * however the funtion that gets called from this only ever gets the string
-     * @return string
+     * Provides the test cases for `testGetDwDescripters`. The format being an array of array's
+     * is the format required by PHPUnit tests.
+     *
+     * @return array an array of array's that contain a single string each.
      * @throws \Exception
      */
     public function provideGetDwDescripters()

@@ -495,7 +495,7 @@ function substitutePaths($dirs)
     $fileDirRegexGroup = '(__DIR__|dirname\s*\(\s*__FILE__\s*\))';
 
     substituteInDir($destDir . $dirs['bin'], array(
-        "#${fileDirRegexGroup}\s*\.\s*'/\.\./configuration/linker\.php'#"
+        "#{$fileDirRegexGroup}\s*\.\s*'/\.\./configuration/linker\.php'#"
         => "'" . $dirs['data'] . "/configuration/linker.php'",
         '/__XDMOD_SHARE_PATH__/' => $dirs['data'],
         '/__XDMOD_LIB_PATH__/'   => $dirs['lib'],
@@ -504,9 +504,9 @@ function substitutePaths($dirs)
     ));
 
     substituteInDir($destDir . $dirs['lib'], array(
-        "#${fileDirRegexGroup}\s*\.\s*'/\.\./html/tmp'#"
+        "#{$fileDirRegexGroup}\s*\.\s*'/\.\./html/tmp'#"
         => "'" . $dirs['data'] . "/html/tmp'",
-        "#${fileDirRegexGroup}\s*\.\s*'/\.\./configuration/linker\.php'#"
+        "#{$fileDirRegexGroup}\s*\.\s*'/\.\./configuration/linker\.php'#"
         => "'" . $dirs['data'] . "/configuration/linker.php'",
     ));
 

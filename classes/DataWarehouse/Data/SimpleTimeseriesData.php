@@ -43,7 +43,7 @@ class SimpleTimeseriesData extends SimpleData
     public function getStartTs()
     {
         return $this->_start_ts;
-    } 
+    }
 
     /**
      *  JMS June 2015
@@ -51,7 +51,7 @@ class SimpleTimeseriesData extends SimpleData
     public function setStartTs( $ts )
     {
         $this->_start_ts = $ts;
-    } 
+    }
 
     /**
      *  JMS June 2015
@@ -84,17 +84,6 @@ class SimpleTimeseriesData extends SimpleData
     {
         $this->_group_id= $g;
     }
-
-    public function getChartTimes()
-    {
-        $chartTimes = array();
-
-        foreach ($this->_start_ts as $timestamp) {
-            $chartTimes[] = chartTime2($timestamp);
-        }
-
-        return $chartTimes;
-    } // function getChartTimes()
 
     public function makeUnique()
     {
@@ -164,20 +153,20 @@ class SimpleTimeseriesData extends SimpleData
 
     // -----------------------------
     // summarize()
-    // 
+    //
     // was known as add() in TimeseriesData
     // enables summarization of datasets
-    // so that a set of timeseries datasets 
+    // so that a set of timeseries datasets
     // can be reported as a single column
-    // 
+    //
     // Depending on the stat alias, we take
     // min, max, or sum of ts datasets.
-    // Averaging is done elsewhere (see 
+    // Averaging is done elsewhere (see
     // class @TimeseriesChart)
     //
     // NOTE that all errors get set == 0.
     // This is consistent with previous implementation.
-    // 
+    //
     // JMS 24 July 15
     // -----------------------------
     public function summarize(SimpleTimeseriesData $d)
@@ -216,7 +205,7 @@ class SimpleTimeseriesData extends SimpleData
         $this->setErrors($sems);
     } // summarize
 
-    // Helper function for debugging 
+    // Helper function for debugging
     // JMS April 2015
     public function __toString() {
 
@@ -227,6 +216,6 @@ class SimpleTimeseriesData extends SimpleData
             . "groupId: " . $this->getGroupId() . "\n";
         return $retval;
 
-    } // __toString() 
+    } // __toString()
 
 } // class SimpleTimeseriesData

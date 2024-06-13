@@ -452,7 +452,7 @@ class PDODBMultiIngestor implements Ingestor
     protected function loadProcessingConfig($configFilePath)
     {
         if (! is_file($configFilePath)) {
-            throw new Exception("'$configPath' is missing. If no processing is needed, use an empty array.");
+            throw new Exception("'$configFilePath' is missing. If no processing is needed, use an empty array.");
         }
 
         $configFileContents = @file_get_contents($configFilePath);

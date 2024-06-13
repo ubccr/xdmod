@@ -93,7 +93,7 @@ function getSvgViaChromiumHelper($html, $width, $height){
     $tmpHtmlFile = $tmpFile . '.html';
     if ($tmpFile === false || rename($tmpFile, $tmpHtmlFile) === false) {
         @unlink($tmpFile);
-        throw \Exception('Error creating temporary html file for chromium');
+        throw new \Exception('Error creating temporary html file for chromium');
     }
     file_put_contents($tmpHtmlFile, $html);
 

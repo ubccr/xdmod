@@ -3,6 +3,8 @@
 class UserStorage
 {
     const MAX_RECORDS = 2000;
+    protected mixed $_user;
+    protected mixed $_container;
 
     public function __construct($user, $container)
     {
@@ -66,14 +68,14 @@ class UserStorage
 
     private function _getnewid(&$storage)
     {
-        $newid = ($storage['maxid'] + 1) % PHP_INT_MAX;
+        $newid = intval(($storage['maxid'] + 1)) % PHP_INT_MAX;
         while(isset($storage['data'][$newid])) {
             $newid = ($newid + 1) % PHP_INT_MAX;
         }
         $storage['maxid'] = $newid;
         return $newid;
     }
-            
+
     public function upsert($id, $data)
     {
         $userProfile = $this->_user->getProfile();

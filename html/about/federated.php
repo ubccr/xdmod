@@ -98,7 +98,7 @@ elseif ($role === 'hub'){
         );
         $derived++;
     }
-    $lastCloudResults = $db->query('SELECT * FROM ' . implode($lastCloudQuery, ' UNION ALL SELECT * FROM '));
+    $lastCloudResults = $db->query('SELECT * FROM ' . implode($lastCloudQuery, [' UNION ALL SELECT * FROM ']));
     foreach ($lastCloudResults as $result) {
         $instances[$result['prefix']]['lastCloudEvent'] = $result['event_ts'];
     }

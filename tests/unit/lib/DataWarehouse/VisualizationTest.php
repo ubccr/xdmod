@@ -28,7 +28,7 @@ class VisualizationTest extends \PHPUnit\Framework\TestCase
 
         $v = \DataWarehouse\Visualization::getColors($count);
 
-        $this->assertEquals(count($v), 65);
+        $this->assertEquals(65, count($v));
     }
 
     public function testGetFewColours()

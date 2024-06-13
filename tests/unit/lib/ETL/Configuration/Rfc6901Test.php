@@ -58,7 +58,7 @@ class Rfc6901Test extends \PHPUnit\Framework\TestCase
 
         // A null key means replace the entire object with the transformed value
         $this->assertNull($key);
-        $this->assertEquals($value, 99);
+        $this->assertEquals(99, $value);
     }
 
     /**
@@ -91,7 +91,7 @@ class Rfc6901Test extends \PHPUnit\Framework\TestCase
 
         // A null key means replace the entire object with the transformed value
         $this->assertNull($key);
-        $this->assertEquals($value, 'two');
+        $this->assertEquals('two', $value);
     }
 
     /**
@@ -107,7 +107,7 @@ class Rfc6901Test extends \PHPUnit\Framework\TestCase
 
         // A null key means replace the entire object with the transformed value
         $this->assertNull($key);
-        $this->assertEquals($value, 5);
+        $this->assertEquals(5, $value);
     }
 
      /**
@@ -123,7 +123,7 @@ class Rfc6901Test extends \PHPUnit\Framework\TestCase
 
         // A null key means replace the entire object with the transformed value
         $this->assertNull($key);
-        $this->assertEquals($value, 'specialchar');
+        $this->assertEquals('specialchar', $value);
     }
 
      /**

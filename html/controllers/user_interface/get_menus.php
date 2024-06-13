@@ -119,7 +119,7 @@ try {
                     // the list of realms associated with this $nodeId
                     $nodeRealms = (
                     isset($categoryReturnData[$nodeId])
-                        ? $categoryReturnData[$nodeId]['realm'] . ",${realm_name}"
+                        ? $categoryReturnData[$nodeId]['realm'] . ",{$realm_name}"
                         : $realm_name
                     );
 

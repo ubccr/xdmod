@@ -132,12 +132,19 @@ class UsageChartsTest extends \PHPUnit\Framework\TestCase
         $response = self::$helper->post('/controllers/user_interface.php', $postvars, $input);
 
         $imageData = $response[0];
+
         $actualHash = $this->phash($input['format'], $imageData);
 
         if ($expectedHash === false || getenv('REG_TEST_FORCE_GENERATION') === '1') {
             self::$imagehashes[$testName] = $actualHash;
             $this->markTestSkipped('Created Expected output for ' . $testName);
         } else {
+            if ($expectedHash !== $actualHash) {
+                $expected = substr(trim($expectedHash), 0, 16);
+                $actual = substr(trim($actualHash), 0, 16);
+                $fileName = sprintf('/tmp/actualdata-%s-%s', $expected, $actual);
+                file_put_contents($fileName, $imageData);
+            }
             $this->assertEquals($expectedHash, $actualHash, $testName);
         }
     }
@@ -147,7 +154,7 @@ class UsageChartsTest extends \PHPUnit\Framework\TestCase
         $testName = '';
         foreach ($settings as $key => $value) {
             $reference[$key] = $value;
-            $testName .= "${key}=${value}/";
+            $testName .= "{$key}={$value}/";
         }
 
         $hash = false;

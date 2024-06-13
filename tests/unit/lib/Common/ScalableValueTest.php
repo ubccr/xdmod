@@ -25,7 +25,7 @@ class ScalableValueTest extends \PHPUnit\Framework\TestCase
 
     public function testGet()
     {
-        $this->assertEquals($this->_scalableValue->get(false), 10, "This should pass" );
+        $this->assertEquals(10, $this->_scalableValue->get(false), "This should pass" );
         $this->assertEquals($this->_scalableValue->get(true), 10 * pow(.5, .2), "This should pass" );
     }
 }

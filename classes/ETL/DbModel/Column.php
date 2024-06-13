@@ -202,9 +202,9 @@ class Column extends NamedEntity implements iEntity
             if (
                 (
                     (null === $srcDefault && null === $srcExtra)
-                    || ('current_timestamp' === strtolower($srcDefault) && 'on update current_timestamp' === strtolower($srcExtra))
+                    || (isset($srcDefault) && isset($srcExtra) && 'current_timestamp' === strtolower($srcDefault) && 'on update current_timestamp' === strtolower($srcExtra))
                 )
-                && ('current_timestamp' != strtolower($destDefault) || null === $destExtra)
+                && (isset($destDefault) && 'current_timestamp' != strtolower($destDefault) || null === $destExtra)
             ) {
                 $this->logCompareFailure('timestamp', "$srcDefault $srcExtra", "$destDefault $destExtra", $this->name);
                 return -1;
