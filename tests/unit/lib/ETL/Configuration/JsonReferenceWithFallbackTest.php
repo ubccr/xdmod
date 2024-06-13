@@ -35,10 +35,12 @@ class JsonReferenceWithFallbackTest extends TestCase
         self::$transformer = new JsonReferenceWithFallbackTransformer($logger);
     }
 
+    /**
+     */
     public function testMixedRefs()
     {
-        $this->expectExceptionMessage("References cannot be mixed with other keys in an object: \"\$ref-with-fallback\"");
         $this->expectException(Exception::class);
+        $this->expectExceptionMessage('References cannot be mixed with other keys in an object: "$ref-with-fallback"');
         $this->runTransformTest([self::VALID_FILE], null, ['foo' => 'bar']);
     }
 
@@ -53,13 +55,11 @@ class JsonReferenceWithFallbackTest extends TestCase
 
     /**
      * @dataProvider provideInvalidValue
-     *
-     *
      */
     public function testInvalidValue($value)
     {
-        $this->expectExceptionMessage("Value of \"\$ref-with-fallback\" must be a non-empty, non-associative array of strings");
         $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Value of "$ref-with-fallback" must be a non-empty, non-associative array of strings');
         $this->runTransformTest($value);
     }
 
@@ -79,13 +79,11 @@ class JsonReferenceWithFallbackTest extends TestCase
 
     /**
      * @dataProvider provideLastFileDNE
-     *
-     *
      */
     public function testLastFileDNE($value)
     {
-        $this->expectExceptionMessageMatches("/Failed to open file '[^']+file_does_not_exist.txt': file_get_contents\([^)]+\): failed to open stream: No such file or directory/");
         $this->expectException(Exception::class);
+        $this->expectExceptionMessageMatches("/Failed to open file '[^']+file_does_not_exist.txt': file_get_contents\([^)]+\): Failed to open stream: No such file or directory/");
         $this->runTransformTest($value);
     }
 
@@ -100,8 +98,6 @@ class JsonReferenceWithFallbackTest extends TestCase
 
     /**
      * @dataProvider provideLastFileBadUrl
-     *
-     *
      */
     public function testLastFileBadUrl($value)
     {
@@ -119,6 +115,8 @@ class JsonReferenceWithFallbackTest extends TestCase
         ];
     }
 
+    /**
+     */
     public function testInvalidPointer()
     {
         $this->expectExceptionMessage("JSON pointer '/invalid_pointer' references a nonexistent value in file rfc6901.json");
@@ -157,10 +155,12 @@ class JsonReferenceWithFallbackTest extends TestCase
         ];
     }
 
+    /**
+     */
     public function testUndefinedVariable()
     {
-        $this->expectExceptionMessage("Undefined macros in URL reference: FILE_EXTENSION in string 'rfc6901.{\$FILE_EXTENSION}#/bar'");
         $this->expectException(Exception::class);
+        $this->expectExceptionMessage("Undefined macros in URL reference: FILE_EXTENSION in string 'rfc6901.\${FILE_EXTENSION}#/bar'");
         self::$config->getVariableStore()->FILENAME = 'rfc6901';
 
         $this->runTransformTest(['${FILENAME}.${FILE_EXTENSION}#/bar']);
