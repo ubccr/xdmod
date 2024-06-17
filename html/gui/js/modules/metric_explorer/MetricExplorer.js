@@ -414,13 +414,13 @@
                         };
 
                         var generatePythonCode = function(config) {
-                            console.log(config);
                             var duration =  config.start_date && config.endDate ? config.start_date + "', '" + config.endDate : config.timeframe_label ? config.timeframe_label : "Previous Month";
                             var data_type = ((config.timeseries === true ? "timeseries" : "aggregate") || "timeseries");
                             var aggregation_unit = (config.aggregation_unit || "Auto");
                             var swap_xy = config.swap_xy;
                             let filters = "";
                             let filterDict = {};
+                            let subTitle= "";
                             let data_calls="import pandas as pd\n#Call to Data Anylitics Framework requesting data \nwith dw:";
             
                             for (let i = 0; i < config.global_filters.total; i++) {
@@ -432,12 +432,13 @@
                                     filterDict[id] = [value];
                                 }
                             }
-                            let subTitle= "";
+                            
                             for (let id in filterDict) {
                                 let values = filterDict[id].join("', '");
                                 filters += "\n\t\t'" + id + "': ('" + values + "'),";
                                 subTitle += id +": "+ values.replace(/'/g, "");
                             }
+                            
                             for( let i=0;i<config.data_series.total;i++){
                                 var realm = (config.data_series.data[i].realm || "Jobs");
                                 var metric = (config.data_series.data[i].metric || "CPU Hours: Total");
