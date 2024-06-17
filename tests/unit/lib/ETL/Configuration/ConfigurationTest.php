@@ -11,15 +11,16 @@ namespace UnitTests\ETL\Configuration;
 
 use CCR\Log;
 use Configuration\Configuration;
+use Exception;
 
-class ConfigurationTest extends \PHPUnit_Framework_TestCase
+class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
 
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
       // Set up a logger so we can get warnings and error messages from the ETL infrastructure
         $conf = array(
@@ -34,11 +35,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     /**
      * Test JSON parse errors
      *
-     * @expectedException Exception
+     *
      */
 
     public function testJsonParseError()
     {
+        $this->expectException(\Exception::class);
         Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/parse_error.json');
     }
 
@@ -97,11 +99,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     /**
      * Test inclusion of a reference with fully qualified path names.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testBadFragment()
     {
+        $this->expectException(\Exception::class);
         Configuration::factory(self::TEST_ARTIFACT_INPUT_PATH . '/rfc6901_bad_fragment.json');
     }
 
@@ -289,11 +292,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
     /**
      * Test calling Configuration::__construct() directly, which is not allowed.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testCallConfigurationConstructor()
     {
+        $this->expectException(Exception::class);
         new Configuration(
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json'
         );
@@ -333,11 +337,12 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
      * Test the JSON reference with overwrite in the following scenarios:
      * - No '$overwrite' key present
      *
-     * @expectedException Exception
+     *
      */
 
     public function testJsonReferenceWithOverwriteWithNoOverwriteDirective()
     {
+        $this->expectException(Exception::class);
         Configuration::factory(
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_missing_json_overwrite_key.json',
             null,

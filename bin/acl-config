@@ -1519,7 +1519,7 @@ SQL;
             $inserted = 0;
             while ($row = $statement->fetch(PDO::FETCH_NUM) ) {
                 $inserted += 1;
-                if (fwrite($bulkdatafile, join($row, ',') . "\n") === false) {
+                if (fwrite($bulkdatafile, join(',', $row) . "\n") === false) {
                     throw new \Exception('Error writing to temporary file');
                 }
             }

@@ -64,6 +64,7 @@
 
 namespace Configuration;
 
+use CCR\Log;
 use CCR\Loggable;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
@@ -698,6 +699,7 @@ class Configuration extends Loggable implements iConfiguration
     {
         $this->addKeyTransformer(new CommentTransformer($this->logger));
         $this->addKeyTransformer(new JsonReferenceTransformer($this->logger));
+        $this->addKeyTransformer(new JsonReferenceWithFallbackTransformer($this->logger));
         $this->addKeyTransformer(new JsonReferenceWithOverwriteTransformer($this->logger));
         $this->addKeyTransformer(new StripMergePrefixTransformer($this->logger));
         $this->addKeyTransformer(new IncludeTransformer($this->logger));
@@ -995,7 +997,7 @@ class Configuration extends Loggable implements iConfiguration
                 }
 
                 try {
-                    $stop = ( ! $transformer->transform($transformKey, $value, $obj, $this) );
+                    $stop = ( ! $transformer->transform($transformKey, $value, $obj, $this, Log::ERR) );
                 } catch ( Exception $e ) {
                     throw new Exception(sprintf("%s: %s", $this->filename, $e->getMessage()));
                 }

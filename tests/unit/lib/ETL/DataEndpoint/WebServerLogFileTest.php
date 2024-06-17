@@ -5,9 +5,10 @@ namespace UnitTests\ETL\DataEndpoint;
 use CCR\Log;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class WebServerLogFileTest extends \PHPUnit_Framework_TestCase
+class WebServerLogFileTest extends TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input/webserverlogfile";
 
@@ -16,7 +17,7 @@ class WebServerLogFileTest extends \PHPUnit_Framework_TestCase
      */
     private static $logger = null;
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure

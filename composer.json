@@ -3,7 +3,7 @@
         "COMMENT": "If kassner/log-parser is updated to version >2.1.1, then the call to web_parser->addPattern in classes/ETL/DataEndpoint/WebServerLogFile.php (added in https://github.com/ubccr/xdmod/pull/1816) can be removed along with this 'extra' section."
     },
     "require": {
-        "php": "^5.4 || ^7.2",
+        "php": "^7.4",
         "egulias/email-validator": "^1.2",
         "google/recaptcha": "~1.1",
         "greenlion/php-sql-parser": "~4.2",
@@ -12,29 +12,30 @@
         "moment/moment-min-file": "^2.13.0",
         "moment/moment-timezone-min-file": "^0.5.4",
         "paragonie/random_compat": "~2.0",
-        "phpmailer/phpmailer": "^5.2",
+        "phpmailer/phpmailer": "~6.9",
         "robrichards/xmlseclibs": "~3.0",
         "sencha/extjs-gpl": "3.4.*",
         "silex/silex": "~1.2",
-        "simplesamlphp/simplesamlphp": "~1",
+        "simplesamlphp/simplesamlphp": "^1.16",
         "symfony/polyfill-php56": "~1.11",
         "symfony/process": "~2.0",
         "taq/pdooci": "^1.0",
         "tildeio/rsvpjs-min-file": "^3.0.18",
         "ubccr/simplesamlphp-module-authglobus": "^1.3",
         "ubccr/simplesamlphp-module-authoidcoauth2": "^1.1",
-        "phpoffice/phpword": "^0.17.0",
+        "phpoffice/phpword": "^1.2.0",
         "monolog/monolog": "^1.25",
         "plotly/plotly": "^2.29.1",
         "kassner/log-parser": "~1.5",
         "geoip2/geoip2": "~2.0",
         "ua-parser/uap-php": "^3.9",
-        "mongodb/mongodb": "^1.11"
+        "mongodb/mongodb": "^1.14"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.8",
+        "phpunit/phpunit": "^9.0",
         "ccampbell/chromephp": "^4.1",
-        "swaggest/json-schema": "^0.12.41"
+        "swaggest/json-schema": "^0.12.41",
+        "dms/phpunit-arraysubset-asserts": "^0.5.0"
     },
     "repositories": [
         {

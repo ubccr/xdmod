@@ -6,13 +6,14 @@
 namespace UnitTests\Realm;
 
 use CCR\Log as Logger;
+use Exception;
 use Realm\Realm;
 
-class StatisticTest extends \PHPUnit_Framework_TestCase
+class StatisticTest extends \PHPUnit\Framework\TestCase
 {
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
@@ -38,11 +39,12 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
     /**
      * (1) Invalid realm name.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testInvalidStatistic()
     {
+        $this->expectException(Exception::class);
         $realm = Realm::factory('Jobs', self::$logger);
         $realm->getStatisticObject('DoesNotExist');
     }
@@ -128,11 +130,12 @@ class StatisticTest extends \PHPUnit_Framework_TestCase
     /**
      * (5) Test retrieval of a disabled statistic.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testGetDisabledStatisticObject()
     {
+        $this->expectException(Exception::class);
         $realm = Realm::factory('Cloud', self::$logger);
         $realm->getStatisticObject('disabled_core_time');
     }
