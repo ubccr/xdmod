@@ -51,7 +51,7 @@ class IncludeTest extends \PHPUnit\Framework\TestCase
         $key = '$include';
         $value = 'file_does_not_exist.txt';
         $obj = (object) array($key => $value);
-        self::$transformer->transform($key, $value, $obj, self::$config);
+        self::$transformer->transform($key, $value, $obj, self::$config, Log::ERR);
     }
 
     /**
@@ -66,7 +66,7 @@ class IncludeTest extends \PHPUnit\Framework\TestCase
         $key = '$include';
         $value = 'badscheme://string';
         $obj = (object) array($key => $value);
-        self::$transformer->transform($key, $value, $obj, self::$config);
+        self::$transformer->transform($key, $value, $obj, self::$config, Log::ERR);
     }
 
     /**
@@ -79,7 +79,7 @@ class IncludeTest extends \PHPUnit\Framework\TestCase
         $value = 'etl_sql.d/query.sql';
         $obj = (object) array($key => $value);
         $expected = file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/' . $value);
-        self::$transformer->transform($key, $value, $obj, self::$config);
+        self::$transformer->transform($key, $value, $obj, self::$config, Log::ERR);
 
         // A null key means replace the entire value object with the transformed value
         $this->assertNull($key);
@@ -98,7 +98,7 @@ class IncludeTest extends \PHPUnit\Framework\TestCase
         $key = '$include';
         $value = '${SUBDIR}/${FILENAME}.sql';
         $obj = (object) array($key => $value);
-        self::$transformer->transform($key, $value, $obj, self::$config);
+        self::$transformer->transform($key, $value, $obj, self::$config, Log::ERR);
 
         $expected = file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/etl_sql.d/query.sql');
         $this->assertNull($key);

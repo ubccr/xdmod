@@ -9,6 +9,7 @@
 
 namespace UnitTests\ETL\Configuration;
 
+use CCR\Log;
 use Configuration\Configuration;
 use Configuration\JsonReferenceTransformer;
 use Exception;
@@ -41,7 +42,7 @@ class Rfc6901Test extends \PHPUnit\Framework\TestCase
         $key = '$ref';
         $value = 'rfc6901.json#/wehavenobananastoday';
         $obj = (object) array($key => $value);
-        $this->transformer->transform($key, $value, $obj, $this->config);
+        $this->transformer->transform($key, $value, $obj, $this->config, Log::ERR);
     }
 
     /**
@@ -53,7 +54,7 @@ class Rfc6901Test extends \PHPUnit\Framework\TestCase
         $key = '$ref';
         $value = 'rfc6901.json#/bar';
         $obj = (object) array($key => $value);
-        $this->transformer->transform($key, $value, $obj, $this->config);
+        $this->transformer->transform($key, $value, $obj, $this->config, Log::ERR);
 
         // A null key means replace the entire object with the transformed value
         $this->assertNull($key);
@@ -69,7 +70,7 @@ class Rfc6901Test extends \PHPUnit\Framework\TestCase
         $key = '$ref';
         $value = 'rfc6901.json#/key1';
         $obj = (object) array($key => $value);
-        $this->transformer->transform($key, $value, $obj, $this->config);
+        $this->transformer->transform($key, $value, $obj, $this->config, Log::ERR);
 
         // A null key means replace the entire object with the transformed value
         $this->assertNull($key);
@@ -86,7 +87,7 @@ class Rfc6901Test extends \PHPUnit\Framework\TestCase
         $key = '$ref';
         $value = 'rfc6901.json#/foo/1';
         $obj = (object) array($key => $value);
-        $this->transformer->transform($key, $value, $obj, $this->config);
+        $this->transformer->transform($key, $value, $obj, $this->config, Log::ERR);
 
         // A null key means replace the entire object with the transformed value
         $this->assertNull($key);
@@ -102,7 +103,7 @@ class Rfc6901Test extends \PHPUnit\Framework\TestCase
         $key = '$ref';
         $value = 'rfc6901.json#/key1/key2/key3/-';
         $obj = (object) array($key => $value);
-        $this->transformer->transform($key, $value, $obj, $this->config);
+        $this->transformer->transform($key, $value, $obj, $this->config, Log::ERR);
 
         // A null key means replace the entire object with the transformed value
         $this->assertNull($key);
@@ -118,7 +119,7 @@ class Rfc6901Test extends \PHPUnit\Framework\TestCase
         $key = '$ref';
         $value = 'rfc6901.json#/a~1b';
         $obj = (object) array($key => $value);
-        $this->transformer->transform($key, $value, $obj, $this->config);
+        $this->transformer->transform($key, $value, $obj, $this->config, Log::ERR);
 
         // A null key means replace the entire object with the transformed value
         $this->assertNull($key);
@@ -137,6 +138,6 @@ class Rfc6901Test extends \PHPUnit\Framework\TestCase
         $key = '$ref';
         $value = 'rfc6901.json#/does-not-exist';
         $obj = (object) array($key => $value);
-        $this->transformer->transform($key, $value, $obj, $this->config);
+        $this->transformer->transform($key, $value, $obj, $this->config, Log::ERR);
     }
 }  // class Rfc6901Test

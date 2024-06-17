@@ -12,6 +12,7 @@
 namespace Configuration;
 
 use stdClass;
+use CCR\Log;
 use CCR\Loggable;
 use ETL\JsonPointer;
 
@@ -36,7 +37,7 @@ class JsonReferenceTransformer extends aUrlTransformer implements iConfigFileKey
      * ------------------------------------------------------------------------------------------
      */
 
-    public function transform(&$key, &$value, stdClass $obj, Configuration $config)
+    public function transform(&$key, &$value, stdClass $obj, Configuration $config, $exceptionLogLevel)
     {
         // JSON references (see https://tools.ietf.org/html/draft-pbryan-zyp-json-ref-0)
         // constitute an entire object, for example:
@@ -77,12 +78,13 @@ class JsonReferenceTransformer extends aUrlTransformer implements iConfigFileKey
 
         if( count(get_object_vars($obj)) != 1 ) {
             $this->logAndThrowException(
-                sprintf('References cannot be mixed with other keys in an object: "%s": "%s"', $key, $value)
+                sprintf('References cannot be mixed with other keys in an object: "%s": "%s"', $key, $value),
+                array('log_level' => $exceptionLogLevel)
             );
         }
 
         $parsedUrl = null;
-        $contents = $this->getContentsFromUrl($value, $config);
+        $contents = $this->getContentsFromUrl($value, $config, $exceptionLogLevel);
         $fragment = ( array_key_exists('fragment', $this->parsedUrl) ? $this->parsedUrl['fragment'] : '' );
         $key = null;
 
@@ -90,12 +92,20 @@ class JsonReferenceTransformer extends aUrlTransformer implements iConfigFileKey
             $value = JsonPointer::extractFragment($contents, $fragment);
         } catch ( \Exception $e ) {
             // Re-throw the exception with additional file information
-            throw new \Exception(sprintf("%s in file %s", $e->getMessage(), $this->parsedUrl['path']));
+            $this->logAndThrowException(
+                sprintf(
+                    "%s in file %s",
+                    $e->getMessage(),
+                    $this->parsedUrl['path']
+                ),
+                array('log_level' => $exceptionLogLevel)
+            );
         }
 
         if ( false === $value ) {
             $this->logAndThrowException(
-                sprintf("Error processing JSON pointer: %s", $fragment)
+                sprintf("Error processing JSON pointer: %s", $fragment),
+                array('log_level' => $exceptionLogLevel)
             );
             return false;
         }
