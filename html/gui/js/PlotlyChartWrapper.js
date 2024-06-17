@@ -48,6 +48,10 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     } else {
         if (baseChartOptions.metricExplorer) {
             configs.showTips = false;
+            // Check for empty custom titles. If so make sure title is empty string
+            if (!baseChartOptions.layout.annotations[0].text) {
+                baseChartOptions.layout.annotations[0].text = '';
+            }
         }
 
         if (baseChartOptions.data[0].type === 'pie') {
