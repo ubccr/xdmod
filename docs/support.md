@@ -5,18 +5,12 @@ title: Support
 Support Lifecycle
 -----------------
 
-In general, Open XDMoD has two major releases each year and each major version will receive support
+In general, Open XDMoD has one or two major releases each year, and each major version will receive support
  for one year from the time of initial release.  This includes security fixes and other critical updates in
 addition to limited access to our support team.
 
-Note that there was only one major release of Open XDMoD in 2022 due to the team supporting the
-transition from the [XD Metrics Service](https://www.nsf.gov/awardsearch/showAward?AWD_ID=1445806)
- to [ACCESS Metrics](https://metrics.access-ci.org). The 10.0 release of
-Open XDMoD therefore has a longer than typical support time.
-
 | Version | Release Date       | End of Support      |
 |---------|--------------------|---------------------|
-| 10.0    | March 10, 2022     | September 10, 2023  |
 | 10.5    | September 03, 2023 | September 03, 2024* |
 
 **\* Note: CentOS 7 will officially reach end of life on June 30, 2024, and as such so will our official support for el7 XDMoD.**
