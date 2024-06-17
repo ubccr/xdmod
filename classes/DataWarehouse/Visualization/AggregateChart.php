@@ -1134,7 +1134,7 @@ class AggregateChart
                     'y' => $this->_swapXY ? $xValues : $yValues,
                     'drillable' => $drillable,
                     'yaxis' => "y{$yIndex}",
-                    'offsetgroup' => "y{$yIndex}",
+                    'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$legendRank}",
                     'legendgroup' => $data_description_index,
                     'legendrank' => $legendRank - 1,
                     'traceorder' => $legendRank,

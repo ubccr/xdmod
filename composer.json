@@ -9,6 +9,7 @@
         "greenlion/php-sql-parser": "~4.2",
         "ircmaxell/password-compat": "~1",
         "justinrainbow/json-schema": "~5.2",
+        "jquery/jquery-min-file":"^3.7.1",
         "moment/moment-min-file": "^2.13.0",
         "moment/moment-timezone-min-file": "^0.5.4",
         "paragonie/random_compat": "~2.0",
@@ -125,6 +126,27 @@
         {
             "type": "package",
             "package": {
+                "name": "jquery/jquery-min-file",
+                "type": "vanilla-plugin",
+                "version": "3.7.1",
+                "license": "MIT",
+                "homepage": "https://jquery.com",
+                "dist": {
+                    "url": "https://code.jquery.com/jquery-3.7.1.min.js",
+                    "type": "file",
+                    "shasum": "ee48592d1fff952fcf06ce0b666ed4785493afdc"
+                },
+                "require": {
+                    "composer/installers": "~1.0"
+                },
+                "extra": {
+                    "installer-name": "jquery"
+                }
+            }
+        },
+        {
+            "type": "package",
+            "package": {
                 "name": "tildeio/rsvpjs-min-file",
                 "type": "vanilla-plugin",
                 "version": "3.0.18",
@@ -171,6 +193,7 @@
                 "sencha/extjs-gpl",
                 "moment/moment-min-file",
                 "moment/moment-timezone-min-file",
+                "jquery/jquery-min-file",
                 "tildeio/rsvpjs-min-file",
                 "plotly/plotly"
             ],

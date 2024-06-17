@@ -94,6 +94,7 @@ if ($rid === false) {
          ExtJS::loadSupportScripts('gui/lib');
       ?>
 	  
+      <script type="text/javascript" src="gui/lib/jquery/jquery-3.7.1.min.js"></script>
       <script type="text/javascript" src="gui/lib/PasswordStrengthMeter.js"></script>
       
       <link rel="stylesheet" type="text/css" href="gui/css/PasswordReset.css">
