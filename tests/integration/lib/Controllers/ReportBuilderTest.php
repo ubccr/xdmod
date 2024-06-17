@@ -52,7 +52,7 @@ class ReportBuilderTest extends BaseTest
         'http_code' => 200
     );
 
-    protected function setUp()
+    protected function setup(): void
     {
         $this->verbose = getenv('TEST_VERBOSE');
         if (!isset($this->verbose)) {

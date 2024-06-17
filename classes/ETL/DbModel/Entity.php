@@ -267,10 +267,14 @@ class Entity extends Loggable
 
     public function quote($identifier)
     {
-        // Don't quote the identifier if it's already been quoted
+        // We can't quote non-strings so....
+        if (!is_string($identifier)) {
+            throw new \Exception('Unable to quote non-string identifier.');
+        }
 
-        if (0 === strpos($identifier, $this->systemQuoteChar)
-            && (strlen($identifier) - 1) === strrpos($identifier, $this->systemQuoteChar) ) {
+        // Don't quote the identifier if it's already been quoted
+        if (str_starts_with($identifier, $this->systemQuoteChar)
+            && str_ends_with($identifier, $this->systemQuoteChar)) {
             return $identifier;
         } else {
             return $this->systemQuoteChar . $identifier . $this->systemQuoteChar;

@@ -7,6 +7,7 @@
 
 namespace Configuration;
 
+use CCR\Log;
 use CCR\Loggable;
 use Psr\Log\LoggerInterface;
 
@@ -60,13 +61,14 @@ abstract class aUrlTransformer extends Loggable
      *
      * @param string $url The URL to process
      * @param Configuration $config The Configuration object that called this method
+     * @param $exceptionLogLevel The level to use for logging any exceptions
      *
      * @return The contents of the file referenced by the URL
      * @throws Exception if there was an error parsing the URL or accessing the file
      * ------------------------------------------------------------------------------------------
      */
 
-    public function getContentsFromUrl($url, Configuration $config)
+    public function getContentsFromUrl($url, Configuration $config, $exceptionLogLevel)
     {
 
         $url = $config->getVariableStore()->substitute(
@@ -81,7 +83,8 @@ abstract class aUrlTransformer extends Loggable
 
         if ( empty($this->parsedUrl['path']) ) {
             $this->logAndThrowException(
-                sprintf("(%s) Unable to extract path from URL: %s", get_class($this), $url)
+                sprintf("(%s) Unable to extract path from URL: %s", get_class($this), $url),
+                array('log_level' => $exceptionLogLevel)
             );
         }
 
@@ -105,7 +108,8 @@ abstract class aUrlTransformer extends Loggable
         if ( false === $contents ) {
             $error = error_get_last();
             $this->logAndThrowException(
-                sprintf("Failed to open file '%s'%s", $path, (null !== $error ? ": " . $error['message'] : ""))
+                sprintf("Failed to open file '%s'%s", $path, (null !== $error ? ": " . $error['message'] : "")),
+                array('log_level' => $exceptionLogLevel)
             );
         }
 

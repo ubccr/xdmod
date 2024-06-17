@@ -103,6 +103,7 @@
     },
     "commands": {
         "pre_build": [
+            "sed -i 's/SimpleSAML_Error_Assertion::installHandler();//g' vendor/simplesamlphp/simplesamlphp/www/_include.php",
             "user_manual_builder/setup.sh",
             "user_manual_builder/build_user_manual.sh --builddir user_manual_builder/ --destdir html/user_manual/"
         ]

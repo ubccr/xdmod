@@ -9,9 +9,9 @@ class WarehouseControllerProviderTest extends TokenAuthTest
 {
     private static $helper;
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
         self::$helper = new XdmodTestHelper();
     }
 

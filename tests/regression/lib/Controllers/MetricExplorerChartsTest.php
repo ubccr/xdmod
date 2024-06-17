@@ -5,11 +5,11 @@ namespace RegressionTests\Controllers;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
-class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
+class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
 {
     private static $chartFilterTestData = array();
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         // This is used to write expected results file for the
         // testChartFilters test. The output file is just written to
@@ -465,7 +465,7 @@ class MetricExplorerChartsTest extends \PHPUnit_Framework_TestCase
                 if (count($testConfig['settings']['filter_values']) === 1) {
                     $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' =  ' . $testConfig['settings']['filter_values'][0] ;
                 } else {
-                    $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' = ( ' . implode($testConfig['settings']['filter_values'], ',  ') . ' )';
+                    $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' = ( ' . implode(', ', $testConfig['settings']['filter_values']) . ' )';
                 }
 
                 $output[] = $testConfig;
