@@ -48,9 +48,10 @@ interface iConfigFileKeyTransformer
      * @param mixed $value Reference to the value (scalar, object, array), may be altered.
      * @param stdClass $obj The object where the key was found.
      * @param Configuration $config The Configuration object that called this method.
+     * @param int $exceptionLogLevel The level to use for logging exceptions.
      *
      * @return FALSE if transfomer processing should stop for this key, TRUE otherwise.
      * ------------------------------------------------------------------------------------------
      */
-    public function transform(&$key, &$value, stdClass $obj, Configuration $config);
+    public function transform(&$key, &$value, stdClass $obj, Configuration $config, $exceptionLogLevel);
 }  // interface iConfigFileKeyTransformer

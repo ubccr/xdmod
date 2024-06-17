@@ -46,7 +46,7 @@ class CommentTransformer extends Loggable implements iConfigFileKeyTransformer
      * ------------------------------------------------------------------------------------------
      */
 
-    public function transform(&$key, &$value, stdClass $obj, Configuration $config)
+    public function transform(&$key, &$value, stdClass $obj, Configuration $config, $exceptionLogLevel)
     {
         $key = null;
         $value = null;

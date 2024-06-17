@@ -274,7 +274,7 @@ class ExportBuilder
      * @return array(headers => array of http headers, results => the encoded data to send)
      */
     public static function export(
-        array $exportedDatas = array(),
+        array $exportedDatas,
         $format,
         $inline = true,
         $filename = 'data'

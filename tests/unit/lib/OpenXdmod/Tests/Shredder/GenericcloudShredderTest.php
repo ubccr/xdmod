@@ -12,11 +12,11 @@ use OpenXdmod\Shredder;
 /**
  * PBS shredder test class.
  */
-class GenericcloudShredderTest extends \PHPUnit_Framework_TestCase
+class GenericcloudShredderTest extends \PHPUnit\Framework\TestCase
 {
     protected $db;
 
-    public function setUp()
+    public function setup(): void
     {
         $this->db = new NullDB();
     }
@@ -36,7 +36,7 @@ class GenericcloudShredderTest extends \PHPUnit_Framework_TestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Genericcloud')
             ->setConstructorArgs(array($this->db))
-            ->setMethods(array('getResourceConfig'))
+            ->onlyMethods(array('getResourceConfig'))
             ->getMock();
 
         $shredder

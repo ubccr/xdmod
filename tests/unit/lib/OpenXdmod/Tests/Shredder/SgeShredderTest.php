@@ -28,7 +28,7 @@ class SgeShredderTest extends JobShredderBaseTestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Sge')
             ->disableOriginalConstructor()
-            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->onlyMethods(array('insertRow', 'getResourceConfig'))
             ->getMock();
 
         $shredder

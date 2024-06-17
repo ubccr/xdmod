@@ -60,14 +60,14 @@ abstract class Visualization
         srand();
         return $ret;
     }
-    
+
     public static function HSVtoRGB(array $hsv)
     {
         list($H, $S, $V) = $hsv;
         //1
         $H *= 6;
-        //2
-        $I = floor($H);
+        //2 NOTE: we cast to int so that the switch below works as intended in PHP8
+        $I = (int)floor($H);
         $F = $H - $I;
         //3
         $M = $V * (1 - $S);

@@ -23,6 +23,7 @@
 
 namespace Configuration;
 
+use CCR\Log;
 use stdClass;
 
 class JsonReferenceWithOverwriteTransformer extends JsonReferenceTransformer implements iConfigFileKeyTransformer
@@ -44,7 +45,7 @@ class JsonReferenceWithOverwriteTransformer extends JsonReferenceTransformer imp
      * @see iConfigFileKeyTransformer::transform()
      */
 
-    public function transform(&$key, &$value, stdClass $obj, Configuration $config)
+    public function transform(&$key, &$value, stdClass $obj, Configuration $config, $exceptionLogLevel)
     {
         $overwriteKey = '$overwrite';
         $overwriteDirectives = array();
@@ -59,11 +60,14 @@ class JsonReferenceWithOverwriteTransformer extends JsonReferenceTransformer imp
         } else {
             // If the reference with overwrite was specified, it must contain the overwrite
             // directive!
-            $this->logAndThrowException(sprintf("Expected '%s' directive not found", $overwriteKey));
+            $this->logAndThrowException(
+                sprintf("Expected '%s' directive not found", $overwriteKey),
+                array('log_level' => $exceptionLogLevel)
+            );
         }
 
         $jsonRefUrl = $value;
-        parent::transform($key, $value, $obj, $config);
+        parent::transform($key, $value, $obj, $config, $exceptionLogLevel);
 
         if ( ! is_object($value) ) {
             $this->logger->warning(

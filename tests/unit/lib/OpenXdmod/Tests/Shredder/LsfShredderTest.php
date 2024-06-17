@@ -5,6 +5,7 @@
 
 namespace UnitTests\OpenXdmod\Tests\Shredder;
 
+use DMS\PHPUnitExtensions\ArraySubset\Constraint\ArraySubset;
 use OpenXdmod\Shredder;
 
 /**
@@ -28,7 +29,7 @@ class LsfShredderTest extends JobShredderBaseTestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Lsf')
             ->disableOriginalConstructor()
-            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->onlyMethods(array('insertRow', 'getResourceConfig'))
             ->getMock();
 
         $shredder
@@ -61,12 +62,13 @@ class LsfShredderTest extends JobShredderBaseTestCase
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Lsf')
             ->setConstructorArgs([$this->db])
-            ->setMethods(array('insertRow', 'getResourceConfig'))
+            ->onlyMethods(array('insertRow', 'getResourceConfig'))
             ->getMock();
         $shredder
             ->expects($this->once())
             ->method('insertRow')
-            ->with(new \PHPUnit_Framework_Constraint_ArraySubset($job));
+            ->with(new ArraySubset($job));
+
         $shredder
             ->method('getResourceConfig')
             ->willReturn(array());

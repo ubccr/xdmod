@@ -210,12 +210,11 @@ class XDUserTest extends BaseTest
         $this->assertNull($roles);
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage A user must have at least one role.
-     */
     public function testSetRolesEmpty()
     {
+        $this->expectExceptionMessage("A user must have at least one role.");
+        $this->expectException(Exception::class);
+
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
 
         $originalRoles = $user->getRoles();
@@ -256,12 +255,10 @@ class XDUserTest extends BaseTest
         $this->assertTrue(in_array(self::CENTER_DIRECTOR_ACL_NAME, $acls));
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage A user must have at least one acl.
-     */
     public function testSetAclsEmpty()
     {
+        $this->expectExceptionMessage("A user must have at least one acl.");
+        $this->expectException(Exception::class);
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
 
         $originalAcls = $user->getAcls();
@@ -419,38 +416,30 @@ class XDUserTest extends BaseTest
         $this->assertNotNull($user->getUserID());
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage User "bilbo" not found
-     */
     public function testGetUserByUserNameInvalid()
     {
+        $this->expectExceptionMessage("User \"bilbo\" not found");
+        $this->expectException(Exception::class);
         XDUser::getUserByUserName("bilbo");
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage User "" not found
-     */
     public function testGetUserByUserNameEmptyString()
     {
+        $this->expectExceptionMessage("User \"\" not found");
+        $this->expectException(Exception::class);
         XDUser::getUserByUserName("");
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage No username provided
-     */
     public function testGetUserByUserNameNull()
     {
+        $this->expectExceptionMessage("No username provided");
+        $this->expectException(Exception::class);
         XDUser::getUserByUserName(null);
     }
 
-    /**
-     * @expectedException Exception
-     **/
     public function testHasAclWithNonAclTypeShouldThrowException()
     {
+        $this->expectException(Exception::class);
         $acl = new \StdClass;
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
         $user->hasAcl($acl);
@@ -469,10 +458,11 @@ class XDUserTest extends BaseTest
     /**
      * Expect that it should complain about not having a valid user type.
      *
-     * @expectedException Exception
+     *
      **/
     public function testCreateUserWithoutUserTypeShouldFail()
     {
+        $this->expectException(Exception::class);
         $user = self::getUser(null, 'test', 'a', 'user');
 
         $this->assertEquals('0', $user->getUserID());
@@ -498,12 +488,10 @@ class XDUserTest extends BaseTest
         $this->assertNotNull($user->getUserID());
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessage At least one role must be associated with this user
-     */
     public function testCreateUserWithNoRoles()
     {
+        $this->expectExceptionMessage("At least one role must be associated with this user");
+        $this->expectException(Exception::class);
         $user = self::getUser(null, 'test', 'a', 'user', array());
         $this->assertEquals('0', $user->getUserID());
 
@@ -516,41 +504,36 @@ class XDUserTest extends BaseTest
     /**
      * Expect that it should complain about there already being a test user.
      *
-     * @expectedException Exception
+     *
      **/
     public function testCreateUserWithExistingUserNameShouldFail()
     {
+        $this->expectException(Exception::class);
         $username = array_keys(self::$users)[count(self::$users) - 1];
         $anotherUser = self::getUser(null, 'test', 'a', 'user', array(ROLE_ID_USER), ROLE_ID_USER, null, $username);
         $anotherUser->setUserType(SSO_USER_TYPE);
         $anotherUser->saveUser();
     }
 
-    /**
-     * @expectedException Exception
-     **/
     public function testSavePublicUserShouldFail()
     {
+        $this->expectException(Exception::class);
         $user = XDUser::getPublicUser();
         $user->saveUser();
     }
 
-    /**
-     * @expectedException Exception
-     **/
     public function testSaveUserWithDefaultUserType()
     {
+        $this->expectException(Exception::class);
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
         $user->setUserType(0);
         $user->saveUser();
     }
 
-    /**
-     * @expectedException Exception
-     * @expectedExceptionMessageRegExp /User "([\w\d.]+)" not found/
-     */
     public function testRemoveUser()
     {
+        $this->expectExceptionMessageMatches("/User \"([\w\d.]+)\" not found/");
+        $this->expectException(Exception::class);
         $user = self::getUser(null, 'Test', 'A', 'User', array('usr'));
         $user->setUserType(self::DEFAULT_USER_TYPE);
         $user->saveUser();
@@ -566,10 +549,11 @@ class XDUserTest extends BaseTest
     /**
      * Cannot remove the public user
      *
-     * @expectedException Exception
+     *
      **/
     public function testRemovePublicUserShouldFail()
     {
+        $this->expectException(Exception::class);
         $user = XDUser::getPublicUser();
 
         $user->removeUser();
@@ -911,7 +895,7 @@ class XDUserTest extends BaseTest
         $this->assertEquals($expected, $actual);
     }
 
-    public static function tearDownAfterClass()
+    public static function tearDownAfterClass(): void
     {
         foreach (self::$users as $userName => $user) {
             try {
