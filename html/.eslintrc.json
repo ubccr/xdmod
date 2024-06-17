@@ -17,6 +17,7 @@
     "ga": false,
     "moment": false,
     "_gaq": false,
+    "jQuery": false,
     "truncateText": false,
     "XDMoD": false,
     "Dashboard": false,
