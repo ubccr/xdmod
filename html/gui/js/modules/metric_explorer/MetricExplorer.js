@@ -412,6 +412,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
                     return result;
                 };
+                const chartJSON = JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4);
                 menu.add({
                     text: 'View chart json',
                     iconCls: 'json_file',
@@ -425,12 +426,20 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             closeAction: 'destroy',
                             items: [{
                                 autoScroll: true,
-                                html: '<pre>' + Ext.util.Format.htmlEncode(JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4)) + '</pre>'
+                                html: `<pre>${Ext.util.Format.htmlEncode(chartJSON)}</pre>`
+                            }],
+                            tools: [{
+                                id: 'save',
+                                qtip: 'Copy Chart JSON',
+                                handler: () => {
+                                    navigator.clipboard.writeText(chartJSON);
+                                }
                             }]
                         });
                         win.show();
                     }
                 });
+                const chartLayoutJSON = JSON.stringify(instance.plotlyPanel.chartOptions.layout, null, 4);
                 menu.add({
                     text: 'View Plotly JS chart layout',
                     iconCls: 'chart',
@@ -444,12 +453,20 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             closeAction: 'destroy',
                             items: [{
                                 autoScroll: true,
-                                html: `<pre>${Ext.util.Format.htmlEncode(JSON.stringify(instance.plotlyPanel.chartOptions.layout, null, 4))}</pre>`
+                                html: `<pre>${Ext.util.Format.htmlEncode(chartLayoutJSON)}</pre>`
+                            }],
+                            tools: [{
+                                id: 'save',
+                                qtip: 'Copy Chart Layout',
+                                handler: () => {
+                                    navigator.clipboard.writeText(chartLayoutJSON);
+                                }
                             }]
                         });
                         win.show();
                     }
                 });
+                const chartDataJSON = JSON.stringify(instance.plotlyPanel.chartOptions.data, null, 4);
                 menu.add({
                     text: 'View Plotly JS chart data',
                     iconCls: 'dataset',
@@ -463,7 +480,14 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             closeAction: 'destroy',
                             items: [{
                                 autoScroll: true,
-                                html: `<pre>${Ext.util.Format.htmlEncode(JSON.stringify(instance.plotlyPanel.chartOptions.data, null, 4))}</pre>`
+                                html: `<pre>${Ext.util.Format.htmlEncode(chartDataJSON)}</pre>`
+                            }],
+                            tools: [{
+                                id: 'save',
+                                qtip: 'Copy Chart Data',
+                                handler: () => {
+                                    navigator.clipboard.writeText(chartDataJSON);
+                                }
                             }]
                         });
                         win.show();

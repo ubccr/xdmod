@@ -63,7 +63,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
 
         // Remove titles and credits from thumbnail plots
-        if (baseChartOptions.layout.thumbnail) {
+        if (baseChartOptions.realmOverview) {
             const endIndex = baseChartOptions.layout.annotations.findIndex((elem) => elem.name === 'data_label');
             if (endIndex === -1) {
                 baseChartOptions.layout.annotations = [];
