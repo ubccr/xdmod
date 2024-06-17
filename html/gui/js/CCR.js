@@ -691,19 +691,7 @@ XDMoD.utils.format = {
 // is available under the MIT license.
 // Recommended by @versable on https://github.com/ubccr/xdmod/pull/1542
 XDMoD.utils.deepExtend = function extend(out, ...arguments_) {
-  if (!out) {
-    return {};
-  }
-
-  for (let i = 0; i < arguments_.length; i++) {
-    const obj = arguments_[i];
-    if (!obj) {
-      continue;
-    }
-    jQuery.extend(true, out, obj);
-  }
-
-  return out;
+  return jQuery.extend(true, out, ...arguments_);
 };
 
 // =====================================================================
