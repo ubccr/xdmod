@@ -441,6 +441,14 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
 
         marginTop += extraShift;
 
+        if ((titleIndex === -1 || chartDiv._fullLayout.annotations[titleIndex].text.length === 0) && subtitleUpdates.subtitleLineCount === 0) {
+            if (topCenter) {
+                update['legend.y'] = 1.0;
+            } else {
+                update['margin.t'] = 10;
+            }
+        }
+
         const titleYShift = (marginTop + legendHeight) - titleHeight;
 
         if (titleIndex !== -1) {
