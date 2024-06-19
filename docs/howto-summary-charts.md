@@ -2,56 +2,65 @@
 title: HOWTO Change Summary Page Charts
 ---
 
-If a user wants to add a chart to their Summary tab, they can use Metric Explorer to create a chart,
+If a user wants to add a chart to their personal Summary tab, they can use Metric Explorer to create a chart,
 then open the "Chart Options" context menu by left clicking in the chart, then check the "Show in Summary
 tab" checkbox.
 
 To change the charts that appear in users' Summary tabs by default, you'll need to create
 a chart and add its JSON definition to a list of summary charts for each user type.
-The easiest way to create a chart to add to each user's list of charts is interactively, 
-using Metric Explorer's JSON export function.
+
+The easiest way to create a JSON definition for a chart is interactively, 
+using Metric Explorer's JSON export function:
 
 * Login to Open XDMoD with a user account that has the "Developer" role.
 * Create a chart in the Metric Explorer.
 * Open the "Chart Options" context menu by left clicking in the chart.
 * Select the "View chart json" menu item.
 
-To change the charts which appear in the Summary tab for all users, you need to update the
-`roles.json` file (`/etc/xdmod/roles.json` if you installed the RPM or
-`PREFIX/etc/roles.json` if you did a manual install).
+Default summary charts are defined as lists of charts within the configuration files for user roles.
+These are located in two two different sets of locations: in the top level `roles.json` file 
+(`/etc/xdmod/roles.json` if you installed the RPM or `PREFIX/etc/roles.json` if you did a manual install), 
+and in any `.json` file located in `roles.d` (`/etc/xdmod/roles.d/*.json` or `PREFIX/xdmod/roles.d/*.json` respectively).
 
-The default summary charts (the ones included with a base intall of Open XDMoD) are included implicity 
-for any user type if `summary_charts` is empty in `roles.json` for that role. As such, 
-adding a chart to the `summary_charts` field for the role `pub`, which is non-logged-in users,
-will override the default charts.
+The base summary charts (the ones included with a base install of Open XDMoD) are included implicity 
+for any user role if the field `summary_charts` is empty or absent for that role in both `roles.json` and
+any files in `roles.d`. If `summary_charts` contains any charts, those override displaying any of the summary charts.
 
-However, the default summary charts are also explicitly defined as added charts
-for roles which inherit the `default` role (which is, by default, any logged-in users) 
-by charts stored in `roles.d/jobs.json` (`/etc/xdmod/roles.d/jobs.json` if you installed the RPM or
-`PREFIX/etc/roles.d/jobs.json` if you did a manual install) - to remove these default charts from 
-logged-in users, the `+summary_charts` field will have to be deleted in this file.
- 
-In `roles.json`, copy the chart JSON into the list of summary charts, as shown below.
+By default:
+* The role "pub" - which is applied to any users who are not logged in - has no `summary_charts` field and so implictly uses the base summary charts
+* The role "default" - which all other user roles inherit - has an empty `summary_charts` field in `roles.json`, but
+  has explicitly defined summary charts appended in `roles.d/jobs.json` equivalent to the base summary charts.
+
+This set of configuration locations lets you edit the default summary charts in many different ways.
+As an example, if you wanted to override the default charts for the "default" role, you could edit `roles.d/jobs.json`, overwriting
+the defined summary charts with the JSON pulled from Metric Explorer as described earlier. In the example below, you'd replace the `...`
+in the `+summary_charts` list with the JSON you copied.
 
 ```json
-"summary_charts": [
-    {
+{
+    "+roles": {
+        "+default": {
+            ...
+            "+summary_charts": [
+                ...
+            ]
+        }
         ...
-    },
-    {
-        ...
-    },
-    ...
-]
+    }
+}
+
 ```
+
+This would only change the summary charts for logged-in users - if you wanted to make this same change for non-logged-in users,
+you could do the same for the role "pub".
 
 There's a known issue displaying charts with no `global_filters` field
 in the Summary page. If the chart you're adding has no global filters,
 add an empty `global_filters` field as shown below 
-(see the premade ones in `jobs.json` for more examples).
+(see the premade ones in `roles.d/jobs.json` for more examples).
 
 ```json
-"summary_charts": [
+"+summary_charts": [
     {
         "global_filters": {
             "data": [],
@@ -61,9 +70,4 @@ add an empty `global_filters` field as shown below
     },
     ...
 ]
-```
-
-By default, the only `summary_chart` field in roles.json is created for the `default` role,
-which includes all logged in users. However, the `summary_charts` field can be created for any role,
-allowing for changing which charts non-logged-in users can view, or created for other roles
-to create summary charts for specific roles. 
+``` 
