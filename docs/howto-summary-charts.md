@@ -45,10 +45,10 @@ In `roles.json`, copy the chart JSON into the list of summary charts, as shown b
 ]
 ```
 
-The export functionality from Metric Explorer does not, by default,
-add an empty `global_filters` field, which in my experience is necessary to 
-add in order to avoid errors when displaying on the Summary page 
-(the premade ones in `jobs.json` all include this field).
+There's a known issue displaying charts with no `global_filters` field
+in the Summary page. If the chart you're adding has no global filters,
+add an empty `global_filters` field as shown below 
+(see the premade ones in `jobs.json` for more examples).
 
 ```json
 "summary_charts": [
