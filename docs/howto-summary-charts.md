@@ -18,7 +18,7 @@ using Metric Explorer's JSON export function:
 * Select the "View chart json" menu item.
 
 Default summary charts are defined as lists of charts within the configuration files for user roles.
-These are located in two two different sets of locations: in the top level `roles.json` file 
+These are located in two different sets of locations: in the top level `roles.json` file 
 (`/etc/xdmod/roles.json` if you installed the RPM or `PREFIX/etc/roles.json` if you did a manual install), 
 and in any `.json` file located in `roles.d` (`/etc/xdmod/roles.d/*.json` or `PREFIX/xdmod/roles.d/*.json` respectively).
 
