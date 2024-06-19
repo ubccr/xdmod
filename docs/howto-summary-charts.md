@@ -22,7 +22,7 @@ These are located in two different sets of locations: in the top level `roles.js
 (`/etc/xdmod/roles.json` if you installed the RPM or `PREFIX/etc/roles.json` if you did a manual install), 
 and in any `.json` file located in `roles.d` (`/etc/xdmod/roles.d/*.json` or `PREFIX/xdmod/roles.d/*.json` respectively).
 
-The base summary charts (the ones included with a base install of Open XDMoD) are included implicity 
+The base summary charts (the ones included with a install of Open XDMoD) are included implicity 
 for any user role if the field `summary_charts` is empty or absent for that role in both `roles.json` and
 any files in `roles.d`. If `summary_charts` contains any charts, those override displaying any of the summary charts.
 
