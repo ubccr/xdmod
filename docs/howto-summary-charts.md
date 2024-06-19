@@ -7,7 +7,7 @@ then open the "Chart Options" context menu by left clicking in the chart, then c
 tab" checkbox.
 
 To change the charts that appear in users' Summary tabs by default, you'll need to create
-a chart and add its JSON definition to a list of summary charts for each user type.
+a chart and add its JSON definition to the XDMoD configuration files.
 
 The easiest way to create a JSON definition for a chart is interactively, 
 using Metric Explorer's JSON export function:
