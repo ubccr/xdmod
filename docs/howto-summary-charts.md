@@ -27,7 +27,7 @@ for any user role if the field `summary_charts` is absent for that role in both 
 any files in `roles.d`. If `summary_charts` contains any charts, those override displaying any of the summary charts.
 
 By default:
-* The role "pub" - which is applied to any users who are not logged in - has no `summary_charts` field and so implictly uses the base summary charts
+* The role "pub" - which is applied to any users who are not logged in - has no `summary_charts` field and so implictly uses the base summary charts.
 * The role "default" - which all other user roles inherit - has an empty `summary_charts` field in `roles.json`, but
   has explicitly defined summary charts appended in `roles.d/jobs.json` equivalent to the base summary charts.
 
