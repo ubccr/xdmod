@@ -520,26 +520,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     return data_calls;
                 };
 
-                menu.add({
-                    text: 'View chart json',
-                    iconCls: 'json_file',
-                    handler: function () {
-                        var win = new Ext.Window({
-                            title: 'Chart Json',
-                            width: 800,
-                            height: 600,
-                            layout: 'fit',
-                            autoScroll: true,
-                            closeAction: 'destroy',
-                            items: [{
-                                autoScroll: true,
-                                html: '<pre>' + Ext.util.Format.htmlEncode(JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4)) + '</pre>'
-                            }]
-                        });
-                        win.show();
-                    }
-                });
-
                 const chartJSON = JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4);
                 menu.add({
                     text: 'View chart json',

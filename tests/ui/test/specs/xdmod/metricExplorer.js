@@ -57,6 +57,17 @@ describe('Metric Explorer', function metricExplorer() {
                             browser.waitForChart();
                         });
                     });
+                },
+                codeGen:function(){
+                    it('Should Display', function () {
+                        browser.waitAndClick('#hc-panelmetric_explorer', 10000);
+                        browser.waitForVisible('//div[@id="metric-explorer-chartoptions-context-menu"]//span[@class="x-menu-item-text" and text() = "View python code"]', 10000);
+                    });
+                    it('Should Generate', function() {
+                        browser.waitAndClick('#hc-panelmetric_explorer', 10000);
+                        browser.waitAndClick('//div[@id="metric-explorer-chartoptions-context-menu"]//span[@class="x-menu-item-text" and text() = "API Code"]', 10000);
+                        browser.waitForVisible('//span[@class="x-window-header-text" and text() = "Chart Json"]', 10000);
+                    });
                 }
             }
         }
@@ -193,6 +204,10 @@ describe('Metric Explorer', function metricExplorer() {
             });
             it('Undo Trend Line looks the same as previous run', function () {
                 me.checkChart(chartName, 'Node Hours: Total', expected.legend);
+            });
+            it('Click python code generation', function () {
+
+                //div[@id="metric-explorer-chartoptions-context-menu"]//span[@class="x-menu-item-text" and text() = "View chart json"]
             });
         });
     /* The following tests are disabled until such a time as they can be changed to work
