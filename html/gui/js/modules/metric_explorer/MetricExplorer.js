@@ -412,7 +412,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
                     return result;
                 };
-                var generatePythonCode = function(config) {
+                var generatePythonCode = function (config) {
                     const duration = config.start_date && config.endDate ? config.start_date + "', '" + config.endDate : config.timeframe_label ? config.timeframe_label : 'Previous Month';
                     const data_type = ((config.timeseries === true ? 'timeseries' : 'aggregate') || 'timeseries');
                     const aggregation_unit = (config.aggregation_unit || 'Auto');
@@ -435,7 +435,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     for (let id in filterDict) {
                         let values = filterDict[id].join("', '");
                         filters += "\n\t\t'" + id + "': ('" + values + "'),";
-                        subTitle += id +": "+ values.replace(/'/g, "");
+                        subTitle += id + ": " + values.replace(/'/g, "");
                     }
 
                     for( let i = 0; i<config.data_series.total; i++){
@@ -445,7 +445,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         const log_scale = config.data_series.data[i].log_scale;
                         let graph_type = config.data_series.data[i].display_type;
                         let line_shape = "";
-                        if(! graph_type){
+                        if (! graph_type){
                             graph_type = 'line';
                         }else if (graph_type === 'column') {
                             graph_type = 'bar';
@@ -471,47 +471,48 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         data_calls += "\n\t)\n";
 
                         //convert from series to dataframe
-                        if(data_type === 'aggregate'){
+                        if (data_type === 'aggregate'){
                             data_calls += '#Process the data series, combine the lower values into a single Other category, and change to series to a dataframe\n';
-                            data_calls += "\n\ttop_ten=data_"+i+".nlargest(10)";
-                            if(graph_type === "pie"){
-                                data_calls += '\n\tif(data_'+i+'.size>10):';
-                                data_calls += '\n\t\tothers_sum=data_'+i+'[~data_'+i+'.isin(top_ten)].sum()';
-                                data_calls += '\n\t\tdata_'+i+" = top_ten.combine_first(pd.Series({'Other '+str(data_"+i+'.size-10): others_sum}))\n';
+                            data_calls += "\n\ttop_ten=data_" + i + ".nlargest(10)";
+                            if (graph_type === "pie"){
+                                data_calls += '\n\tif(data_' + i + '.size>10):';
+                                data_calls += '\n\t\tothers_sum=data_' + i + '[~data_' + i + '.isin(top_ten)].sum()';
+                                data_calls += '\n\t\tdata_' + i + " = top_ten.combine_first(pd.Series({'Other '+str(data_" + i + '.size-10): others_sum}))\n';
                             }
                             else{
-                                data_calls += '\n\tdata_'+i+'=top_ten';
+                                data_calls += '\n\tdata_' + i + '=top_ten';
                             }
-                            data_calls += '\n\tdata_'+i+'=data_'+i+'.to_frame()';
-                            data_calls += '\n\tcolumns_list = data_'+i+'.columns.tolist()';
+                            data_calls += '\n\tdata_' + i + '=data_' + i + '.to_frame()';
+                            data_calls += '\n\tcolumns_list = data_' + i + '.columns.tolist()';
                         }
                         else{
                             data_calls += '#Limit the number of data items/source to at most 10 and sort by decsending\n';
-                            data_calls += '\n\tcolumns_list = data_'+i+'.columns.tolist()';
+                            data_calls += '\n\tcolumns_list = data_' + i + '.columns.tolist()';
                             data_calls += '\n\tif(len(columns_list)>10):';
-                            data_calls += '\n\t\tcolumn_sums = data_'+i+'.sum()';
+                            data_calls += '\n\t\tcolumn_sums = data_' + i + '.sum()';
                             data_calls += '\n\t\ttop_ten_columns= column_sums.nlargest(10).index.tolist()';
-                            data_calls += '\n\t\tdata_'+i+' = data_'+i+'[top_ten_columns]\n';
+                            data_calls += '\n\t\tdata_' + i + ' = data_' + i + '[top_ten_columns]\n';
                         }
 
                         if (swap_xy && graph_type !== 'pie'){
-                            data_calls += '\n\tdata_'+i+' = data_'+i+'.reset_index()';
-                            const axis = '\n\t\ty= data_'+i+'.columns[0],\n\t\tx= data_'+i+'.columns[1:],';
+                            data_calls += '\n\tdata_' + i + ' = data_' + i + '.reset_index()';
+                            const axis = '\n\t\ty= data_' + i + '.columns[0],\n\t\tx= data_' + i + '.columns[1:],';
                         }else{
-                            const axis = "\n\t\tlabels="+'{"value": dw.describe_metrics('+"'"+realm+"').loc['"+metric+"', 'label']},";
+                            const axis = "\n\t\tlabels=" + '{"value": dw.describe_metrics(' + "'" + realm + "').loc['" + metric + "', 'label']},";
                         }
 
                         data_calls += '#Format and draw the graph to the screen\n';
-                        data_calls += '\n\tplot = px.'+graph_type;
-                        data_calls += '(\n\t\tdata_'+i+',';
-                        if(graph_type === 'pie'){
+                        data_calls += '\n\tplot = px.' + graph_type;
+                        data_calls += '(\n\t\tdata_' + i + ',';
+                        if (graph_type === 'pie'){
                             data_calls += '\n\t\tvalues= columns_list[0],';
-                            data_calls += '\n\t\tnames= data_'+i+'.index,';
+                            data_calls += '\n\t\tnames= data_' + i + '.index,';
                         }
                         data_calls += axis;
-                        data_calls += "\n\t\ttitle='"+(config.title || "Untitled Query")+"&lt;br&gt;&lt;sup&gt;"+subTitle+"&lt;/sup&gt',";
-                        if(log_scale) data_calls += '\n\t\tlog_'+(swap_xy?'x':'y')+'=True,' ;
-                        data_calls += '\n\t' +line_shape +')';
+                        data_calls += "\n\t\ttitle='" + (config.title || "Untitled Query") + "&lt;br&gt;&lt;sup&gt;" + subTitle + "&lt;/sup&gt',";
+                        if (log_scale){
+                            data_calls += '\n\t\tlog_' + (swap_xy ? 'x' : 'y') + '=True,' ;}
+                        data_calls += '\n\t' + line_shape + ')';
                         data_calls += '\n\tplot.update_layout(';
                         data_calls += '\n\t\txaxis_automargin=True,';
                         data_calls += '\n\t)';
