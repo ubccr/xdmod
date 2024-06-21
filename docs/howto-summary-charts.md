@@ -20,7 +20,7 @@ using Metric Explorer's JSON export function:
 Default summary charts are defined as lists of charts within the configuration files for user roles.
 These are located in two different sets of locations: in the top level `roles.json` file 
 (`/etc/xdmod/roles.json` if you installed the RPM or `PREFIX/etc/roles.json` if you did a manual install), 
-and in any `.json` file located in `roles.d` (`/etc/xdmod/roles.d/*.json` or `PREFIX/xdmod/roles.d/*.json` respectively).
+and in some `.json` files located in `roles.d` (`/etc/xdmod/roles.d/` or `PREFIX/xdmod/roles.d/` respectively). The files that contain `+summary_charts` are typically organized into different realm configuration files such as `roles.d/jobs.json` and `roles.d/cloud.json`.
 
 The base summary charts (the ones included with a install of Open XDMoD) are included implicity 
 for any user role if the field `summary_charts` is absent for that role in both `roles.json` and
