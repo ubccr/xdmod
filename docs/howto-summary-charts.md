@@ -9,7 +9,7 @@ tab" checkbox.
 To change the charts that appear in users' Summary tabs by default, you'll need to create
 a chart and add its JSON definition to the XDMoD configuration files.
 
-The easiest way to create a JSON definition for a chart is interactively, 
+The easiest way to create a JSON definition for a chart is interactively,
 using Metric Explorer's JSON export function:
 
 * Login to Open XDMoD with a user account that has the "Developer" role.
@@ -18,15 +18,16 @@ using Metric Explorer's JSON export function:
 * Select the "View chart json" menu item.
 
 Default summary charts are defined as lists of charts within the configuration files for user roles.
-These are located in two different sets of locations: in the top level `roles.json` file 
-(`/etc/xdmod/roles.json` if you installed the RPM or `PREFIX/etc/roles.json` if you did a manual install), 
+These are located in two different sets of locations: in the top level `roles.json` file
+(`/etc/xdmod/roles.json` if you installed the RPM or `PREFIX/etc/roles.json` if you did a manual install),
 and in some `.json` files located in `roles.d` (`/etc/xdmod/roles.d/` or `PREFIX/xdmod/roles.d/` respectively). The files that contain `+summary_charts` are typically organized into different realm configuration files such as `roles.d/jobs.json` and `roles.d/cloud.json`.
 
-The base summary charts (the ones included with a install of Open XDMoD) are included implicity 
+The base summary charts (the ones included with a install of Open XDMoD) are included implicity
 for any user role if the field `summary_charts` is absent for that role in both `roles.json` and
 in `roles.d`. If `summary_charts` contains any charts, those override displaying any of the summary charts.
 
 By default:
+
 * The role "pub" - which is applied to any users who are not logged in - has no `summary_charts` field and so implictly uses the base summary charts.
 * The role "default" - which all other user roles inherit - has an empty `summary_charts` field in `roles.json`, but
   has explicitly defined summary charts appended in `roles.d/jobs.json` equivalent to the base summary charts.
@@ -56,7 +57,7 @@ you could do the same for the role "pub".
 
 There's a known issue displaying charts with no `global_filters` field
 in the Summary page. If the chart you're adding has no global filters,
-add an empty `global_filters` field as shown below 
+add an empty `global_filters` field as shown below
 (see the premade ones in `roles.d/jobs.json` for more examples).
 
 ```json
@@ -70,4 +71,4 @@ add an empty `global_filters` field as shown below
     },
     ...
 ]
-``` 
+```
