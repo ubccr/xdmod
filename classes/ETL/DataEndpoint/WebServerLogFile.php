@@ -90,9 +90,9 @@ class WebServerLogFile extends aStructuredFile implements iStructuredFile
                 $result->{"country"} = $geoip->country->isoCode;
             }
             catch (\GeoIp2\Exception\AddressNotFoundException $e) {
-                $result->{"city"} = 'unknown';
-                $result->{"subdivision"} = 'unknown';
-                $result->{"country"} = 'unknown';
+                $result->{"city"} = 'NA';
+                $result->{"subdivision"} = 'NA';
+                $result->{"country"} = 'NA';
             }
             catch (\InvalidArgumentException $e) {
                 // leave at the default value of 'N/A'
