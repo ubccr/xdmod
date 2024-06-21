@@ -24,7 +24,7 @@ and in some `.json` files located in `roles.d` (`/etc/xdmod/roles.d/` or `PREFIX
 
 The base summary charts (the ones included with a install of Open XDMoD) are included implicity 
 for any user role if the field `summary_charts` is absent for that role in both `roles.json` and
-any files in `roles.d`. If `summary_charts` contains any charts, those override displaying any of the summary charts.
+in `roles.d`. If `summary_charts` contains any charts, those override displaying any of the summary charts.
 
 By default:
 * The role "pub" - which is applied to any users who are not logged in - has no `summary_charts` field and so implictly uses the base summary charts.
