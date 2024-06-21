@@ -53,8 +53,6 @@ class JsonReferenceWithFallbackTest extends TestCase
 
     /**
      * @dataProvider provideInvalidValue
-     *
-     *
      */
     public function testInvalidValue($value)
     {
