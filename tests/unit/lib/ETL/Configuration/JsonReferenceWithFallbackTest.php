@@ -96,8 +96,6 @@ class JsonReferenceWithFallbackTest extends TestCase
 
     /**
      * @dataProvider provideLastFileBadUrl
-     *
-     *
      */
     public function testLastFileBadUrl($value)
     {
