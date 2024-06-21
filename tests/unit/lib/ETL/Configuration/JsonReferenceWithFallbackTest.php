@@ -77,8 +77,6 @@ class JsonReferenceWithFallbackTest extends TestCase
 
     /**
      * @dataProvider provideLastFileDNE
-     *
-     *
      */
     public function testLastFileDNE($value)
     {
