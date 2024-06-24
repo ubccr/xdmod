@@ -560,8 +560,8 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 menu.add({
                     text: 'View python code',
                     iconCls: 'custom_chart',
-                    handler: function () {
-                        let win = new Ext.Window({
+                    handler:  () =>{
+                        const win = new Ext.Window({
                             title: 'API Code',
                             width: 800,
                             height: 600,
