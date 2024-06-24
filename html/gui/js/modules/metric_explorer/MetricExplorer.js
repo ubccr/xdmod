@@ -414,15 +414,15 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 };
                 const generatePythonCode = function (config) {
                     let duration;
-                    if  (config.start_date && config.endDate ){
-                        duration = config.start_date + "', '" + config.endDate}
-                        else if (config.timeframe_label){
-                            duration = config.timeframe_label;
-                        } 
-                        else
-                        {
-                            duration = 'Previous Month';
-                        }
+                    if (config.start_date && config.end_date) {
+                        duration = '${config.start_date} , ${config.endDate}';
+                    }
+                    else if (config.timeframe_label) {
+                        duration = config.timeframe_label;
+                    }
+                    else {
+                        duration = 'Previous Month';
+                    }
                     const dataType = config.timeseries ? 'timeseries' : 'aggregate';
                     const aggregationUnit = config.aggregation_unit || 'Auto';
                     const swapXY = config.swap_xy;
