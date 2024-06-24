@@ -57,8 +57,7 @@ describe('Metric Explorer', function metricExplorer() {
                             browser.waitForChart();
                         });
                     });
-                },
-               
+                }
             }
         }
     };
@@ -199,9 +198,9 @@ describe('Metric Explorer', function metricExplorer() {
                 browser.waitAndClick('.xy', 10000);
                 browser.waitForVisible('//div[@id="metric-explorer-chartoptions-context-menu"]//span[@class="x-menu-item-text" and text() = "View python code"]', 10000);
             });
-            it('Should Generate Python Code', function() {
+            it('Should Generate Python Code', function () {
                 browser.waitAndClick('.xy', 10000);
-                browser.waitAndClick('//div[@id="metric-explorer-chartoptions-context-menu"]//span[@class="x-menu-item-text" and text() = "API Code"]', 10000);
+                browser.waitAndClick('//div[@id="metric-explorer-chartoptions-context-menu"]//span[@class="x-menu-item-text" and text() = "View python code"]', 10000);
                 browser.waitForVisible('//span[@class="x-window-header-text" and text() = "Chart Json"]', 10000);
             }); 
         });

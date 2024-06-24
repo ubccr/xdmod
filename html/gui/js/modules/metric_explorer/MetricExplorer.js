@@ -415,12 +415,10 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 const generatePythonCode = function (config) {
                     let duration;
                     if (config.start_date && config.end_date) {
-                        duration = '${config.start_date} , ${config.endDate}';
-                    }
-                    else if (config.timeframe_label) {
+                        duration = `${config.start_date} , ${config.endDate}`;
+                    } else if (config.timeframe_label) {
                         duration = config.timeframe_label;
-                    }
-                    else {
+                    } else {
                         duration = 'Previous Month';
                     }
                     const dataType = config.timeseries ? 'timeseries' : 'aggregate';
@@ -563,7 +561,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     text: 'View python code',
                     iconCls: 'custom_chart',
                     handler: function () {
-                        let win = new Ext.Window({
+                        const win = new Ext.Window({
                             title: 'API Code',
                             width: 800,
                             height: 600,
