@@ -199,6 +199,8 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *
      * @param Request $request A request containing user information
      *                         that is to be considered for authorization.
+     * @param bool $wantPublicUser Otional flag to indicate if public users are 
+     *                             allowed. Defaults to false.
      * @param array $requirements that a users' roles must satisfy to be
      *                            'authorized'. If not specified, then only
      *                            whether or not the user is logged in will
@@ -209,7 +211,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * @throws  Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      *          Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
      */
-    public function authorize(Request $request, array $requirements = array())
+    public function authorize(Request $request, bool $wantPublicUser = false, array $requirements = array())
     {
 
         $user = $this->getUserFromRequest($request);
@@ -218,6 +220,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         // is that the user is not a public user.
         $isPublicUser = $user->isPublicUser();
         if (empty($requirements) && $isPublicUser) {
+            if ($wantPublicUser){
+                return $user;
+            }
             throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
 

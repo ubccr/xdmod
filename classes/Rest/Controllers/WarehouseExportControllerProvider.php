@@ -102,9 +102,8 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         }
 
         if ($user === null) {
-            $user = $this->authorize($request);
+            $user = $this->authorize($request, true);
         }
-
 
         $config = RawStatisticsConfiguration::factory();
 
