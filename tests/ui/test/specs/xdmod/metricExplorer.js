@@ -195,11 +195,11 @@ describe('Metric Explorer', function metricExplorer() {
                 me.checkChart(chartName, 'Node Hours: Total', expected.legend);
             });
             it('Should Display Python Code Generation', function () {
-                browser.waitAndClick('.xy', 10000);
+                browser.waitAndClick('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]', 10000);
                 browser.waitForVisible('//div[@id="metric-explorer-chartoptions-context-menu"]//span[@class="x-menu-item-text" and text() = "View python code"]', 10000);
             });
             it('Should Generate Python Code', function () {
-                browser.waitAndClick('.xy', 10000);
+                browser.waitAndClick('.//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]', 10000);
                 browser.waitAndClick('//div[@id="metric-explorer-chartoptions-context-menu"]//span[@class="x-menu-item-text" and text() = "View python code"]', 10000);
                 browser.waitForVisible('//span[@class="x-window-header-text" and text() = "Chart Json"]', 10000);
             }); 
