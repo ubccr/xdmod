@@ -199,7 +199,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *
      * @param Request $request A request containing user information
      *                         that is to be considered for authorization.
-     * @param bool $wantPublicUser Otional flag to indicate if public users are 
+     * @param bool $wantPublicUser Optional flag to indicate if public users are 
      *                             allowed. Defaults to false.
      * @param array $requirements that a users' roles must satisfy to be
      *                            'authorized'. If not specified, then only
