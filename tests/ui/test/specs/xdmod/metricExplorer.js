@@ -195,14 +195,19 @@ describe('Metric Explorer', function metricExplorer() {
                 me.checkChart(chartName, 'Node Hours: Total', expected.legend);
             });
             it('Should Display Python Code Generation', function () {
+                browser.refresh();
                 browser.waitAndClick('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]', 10000);
+                browser.pause(2000);
                 browser.waitForVisible('//div[@id="metric-explorer-chartoptions-context-menu"]//span[@class="x-menu-item-text" and text() = "View python code"]', 10000);
             });
             it('Should Generate Python Code', function () {
+                browser.refresh();
                 browser.waitAndClick('.//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]', 10000);
+                browser.pause(2000);
                 browser.waitAndClick('//div[@id="metric-explorer-chartoptions-context-menu"]//span[@class="x-menu-item-text" and text() = "View python code"]', 10000);
+                browser.pause(2000);
                 browser.waitForVisible('//span[@class="x-window-header-text" and text() = "Chart Json"]', 10000);
-            }); 
+            });
         });
     /* The following tests are disabled until such a time as they can be changed to work
      * reliably without browser.pause()

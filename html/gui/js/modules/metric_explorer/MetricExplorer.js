@@ -495,9 +495,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         } else {
                             dataCalls += '# Limit the number of data items/source to at most 10 and sort by descending\n';
                             dataCalls += `\n\tcolumns_list = data_${i}.columns.tolist()`;
-                            dataCalls += `\n\tif (columns_list.length > 10):`;
+                            dataCalls += '\n\tif (columns_list.length > 10):';
                             dataCalls += `\n\t\tcolumn_sums = data_${i}.sum()`;
-                            dataCalls += `\n\t\ttop_ten_columns = column_sums.nlargest(10).index.tolist()`;
+                            dataCalls += '\n\t\ttop_ten_columns = column_sums.nlargest(10).index.tolist()';
                             dataCalls += `\n\t\tdata_${i} = data_${i}[top_ten_columns]\n`;
                         }
 
@@ -513,7 +513,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         dataCalls += `\n\tplot = px.${graphType}`;
                         dataCalls += `(\n\t\tdata_${i},`;
                         if (graphType === 'pie') {
-                            dataCalls += `\n\t\tvalues= columns_list[0],`;
+                            dataCalls += '\n\t\tvalues= columns_list[0],';
                             dataCalls += `\n\t\tnames= data_${i}.index,`;
                         }
                         dataCalls += axis;
@@ -561,7 +561,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     text: 'View python code',
                     iconCls: 'custom_chart',
                     handler: function () {
-                        const win = new Ext.Window({
+                        let win = new Ext.Window({
                             title: 'API Code',
                             width: 800,
                             height: 600,
