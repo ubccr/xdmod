@@ -413,7 +413,16 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     return result;
                 };
                 const generatePythonCode = function (config) {
-                    const duration = config.start_date && config.endDate ? `${config.start_date}', '${config.endDate}` : config.timeframe_label ? config.timeframe_label : 'Previous Month';
+                    let duration;
+                    if  (config.start_date && config.endDate ){
+                        duration = config.start_date + "', '" + config.endDate}
+                        else if (config.timeframe_label){
+                            duration = config.timeframe_label;
+                        } 
+                        else
+                        {
+                            duration = 'Previous Month';
+                        }
                     const dataType = config.timeseries ? 'timeseries' : 'aggregate';
                     const aggregationUnit = config.aggregation_unit || 'Auto';
                     const swapXY = config.swap_xy;
@@ -445,7 +454,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             metric = 'CPU Hours: Total',
                             group_by: dimension = 'none',
                             log_scale: logScale,
-                            display_type: displayType,
+                            display_type: displayType
                         } = config.data_series.data[i];
                         let graphType = displayType || 'line';
                         let lineShape = '';
@@ -554,7 +563,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     text: 'View python code',
                     iconCls: 'custom_chart',
                     handler: function () {
-                        var win = new Ext.Window({
+                        let win = new Ext.Window({
                             title: 'API Code',
                             width: 800,
                             height: 600,
@@ -563,7 +572,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             closeAction: 'destroy',
                             items: [{
                                 autoScroll: true,
-                                html: '<pre>Python Api code \n************************************************\n<code>' + generatePythonCode(instance.getConfig()) + '</code>\n************************************************\n <br></br>The link to the data analytisc API can be found <a href="https://github.com/ubccr/xdmod-data" target="_blank">here</a></pre>'
+                                html: `<pre>Python Api code \n************************************************\n<code>  ${generatePythonCode(instance.getConfig())} </code>\n************************************************\n <br></br>The link to the data analytisc API can be found <a href="https://github.com/ubccr/xdmod-data" target="_blank">here</a></pre>`
                             }]
                         });
                         win.show();
