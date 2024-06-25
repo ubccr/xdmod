@@ -187,7 +187,7 @@ abstract class ConfigFilesMigration extends Migration
         $file = implode(
             DIRECTORY_SEPARATOR,
             array(
-                $this->config->getBaseDir(),
+                $this->baseDir,
                 "$name.json"
             )
         );
@@ -249,7 +249,7 @@ abstract class ConfigFilesMigration extends Migration
         $file = implode(
             DIRECTORY_SEPARATOR,
             array(
-                $this->config->getBaseDir(),
+                $this->baseDir,
                 "$name.json"
             )
         );

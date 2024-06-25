@@ -35,6 +35,8 @@ abstract class Migration
      */
     protected $config;
 
+    protected $baseDir;
+
     /**
      * Logger object.
      *
@@ -56,12 +58,7 @@ abstract class Migration
 
         $this->logger = Log::singleton('null');
 
-        $this->config = Configuration::factory(
-            ".",
-            CONFIG_DIR,
-            $this->logger
-        );
-
+        $this->baseDir = CONFIG_DIR;
     }
 
     /**
