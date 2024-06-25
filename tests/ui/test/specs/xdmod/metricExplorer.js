@@ -194,18 +194,16 @@ describe('Metric Explorer', function metricExplorer() {
             it('Undo Trend Line looks the same as previous run', function () {
                 me.checkChart(chartName, 'Node Hours: Total', expected.legend);
             });
-            it('Should Display Python Code Generation', () => {
+            it('Testing Python Code Generation', () => {
+                me.clear();
+                me.loadExistingChartByName(chartName);
                 browser.waitAndClick('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]', 10000);
-                browser.pause(2000);
-                browser.waitForVisible('//div[@id="metric-explorer-chartoptions-context-menu"]//span[@class="x-menu-item-text" and text() = "View python code"]', 10000);
-            });
-            it('Should Generate Python Code', () => {
-                browser.waitAndClick('.//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]', 10000);
-                browser.pause(2000);
-                browser.waitAndClick('//div[@id="metric-explorer-chartoptions-context-menu"]//span[@class="x-menu-item-text" and text() = "View python code"]', 10000);
-                browser.pause(2000);
-                browser.waitForVisible('//span[@class="x-window-header-text" and text() = "Chart Json"]', 10000);
-            });
+                browser.waitUntilAnimEnd('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]');
+                browser.waitForVisible('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//span[contains(@class,"x-menu-item-text") and contains(text(), "View python code")]//ancestor::node()[4]/ul', 10000);
+                browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//span[contains(@class,"x-menu-item-text") and contains(text(), "View python code")]//ancestor::node()[4]/ul', 10000);
+                browser.waitUntilNotExist('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//span[contains(@class,"x-menu-item-text") and contains(text(), "View python code")]//ancestor::node()[4]/ul', 10000);
+                browser.waitForVisible('//div[contains(@class, "x-window x-resizable-pinned) and contains(@style, "position: absolute; z-index: 9003; visibility: visible; left: 356px; top: -73px; width: 705px; display: block;")]',10000);
+           });
         });
     /* The following tests are disabled until such a time as they can be changed to work
      * reliably without browser.pause()
