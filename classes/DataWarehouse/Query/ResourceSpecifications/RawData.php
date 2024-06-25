@@ -37,7 +37,8 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
             $endDate,
             $groupById,
             $statisticId,
-            $parameters
+            $parameters,
+            $logger
         );
 
         $this->setDistinct(true);
