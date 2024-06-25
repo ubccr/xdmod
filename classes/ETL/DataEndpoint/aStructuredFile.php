@@ -294,10 +294,12 @@ abstract class aStructuredFile extends File
 
         if ( null === $this->recordSeparator ) {
             while ( ! feof($fd) ) {
-                $data = fread($fd, self::DEFAULT_READ_BYTES);
-                if ( false !== $data ) {
-                    $buffer .= $data;
-                    $totalBytesRead += strlen($data);
+                if (is_file($fd)) {
+                    $data = fread($fd, self::DEFAULT_READ_BYTES);
+                    if ( false !== $data ) {
+                        $buffer .= $data;
+                        $totalBytesRead += strlen($data);
+                    }
                 }
             }
         } else {
