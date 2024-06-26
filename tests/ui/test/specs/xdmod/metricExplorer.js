@@ -195,23 +195,18 @@ describe('Metric Explorer', function metricExplorer() {
                 me.checkChart(chartName, 'Node Hours: Total', expected.legend);
             });
             it('Open Context Menu', () => {
-                me.clear();
-                me.loadExistingChartByName(chartName);
                 const elems = browser.elements('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]//*[contains(@class, "xy")]//*[contains(@class, "nsewdrag drag")]');
                 elems.value[0].doubleClick();
+                browser.waitUntilAnimEnd('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]//*[contains(@class, "xy")]//*[contains(@class, "nsewdrag drag")]', 10000);
                 browser.waitForVisible('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]//*[contains(@class, "xy")]//*[contains(@class, "nsewdrag drag")]', 10000);
             });
             it('Press Genererate code', () => {
-                browser.waitUntilAnimEnd('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]//*[contains(@class, "xy")]//*[contains(@class, "nsewdrag drag")]', 10000);
-                browser.waitAndClick(me.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
+                 browser.click(me.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
             });
             it('Check for code pop up', () => {
                 browser.waitUntilNotExist(me.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
-               
-            });
-            it('Testing Python Code Generation', () => {
                 browser.waitForVisible('//div[contains(@class, "x-window x-resizable-pinned")]//div[contains(@class, "x-window-tl")]//span[contains(text(),"API Code")]', 10000);
-           });
+            });
         });
     /* The following tests are disabled until such a time as they can be changed to work
      * reliably without browser.pause()
