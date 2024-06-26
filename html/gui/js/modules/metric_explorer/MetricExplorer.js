@@ -517,7 +517,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             dataCalls += `\n\t\tnames= data_${i}.index,`;
                         }
                         dataCalls += axis;
-                        dataCalls += `\n\t\ttitle='${config.title || 'Untitled Query'}${subTitle?`&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt`:''},`;
+                        dataCalls += `\n\t\ttitle='${config.title || 'Untitled Query'}${subTitle ? `&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt` : ''},`;
                         if (logScale) {
                             dataCalls += `\n\t\tlog_${swapXY ? 'x' : 'y'}=True,`;
                         }
