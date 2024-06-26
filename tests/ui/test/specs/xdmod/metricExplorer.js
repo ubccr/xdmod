@@ -197,11 +197,10 @@ describe('Metric Explorer', function metricExplorer() {
             it('Open Context Menu', () => {
                 const elems = browser.elements('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]//*[contains(@class, "xy")]//*[contains(@class, "nsewdrag drag")]');
                 elems.value[0].doubleClick();
-                browser.waitUntilAnimEnd('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]//*[contains(@class, "xy")]//*[contains(@class, "nsewdrag drag")]', 10000);
-                browser.waitForVisible('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]//*[contains(@class, "xy")]//*[contains(@class, "nsewdrag drag")]', 10000);
+                browser.waitForVisible(me.selectors.chart.contextMenu.menuByTitle('Chart Options:'));
             });
             it('Press Genererate code', () => {
-                 browser.click(me.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
+                browser.click(me.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
             });
             it('Check for code pop up', () => {
                 browser.waitUntilNotExist(me.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));

@@ -2226,7 +2226,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         chartLinkButton: true
 
     },
-
+ 
     show_filters: true,
     show_warnings: true,
     font_size: 3,
