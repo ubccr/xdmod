@@ -194,16 +194,19 @@ describe('Metric Explorer', function metricExplorer() {
             it('Undo Trend Line looks the same as previous run', function () {
                 me.checkChart(chartName, 'Node Hours: Total', expected.legend);
             });
-            it('a', () => {
-                browser.waitAndClick('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]', 10000);
-               
+            it('Open Context Menu', () => {
+                me.clear();
+                me.loadExistingChartByName(chartName);
+                const elems = browser.elements('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]//*[contains(@class, "xy")]//*[contains(@class, "nsewdrag drag")]');
+                elems.value[0].doubleClick();
+                browser.waitForVisible('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]//*[contains(@class, "xy")]//*[contains(@class, "nsewdrag drag")]', 10000);
             });
-            it('b', () => {
-                browser.waitUntilAnimEndAndClick(this.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
-                
+            it('Press Genererate code', () => {
+                browser.waitUntilAnimEnd('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]//*[contains(@class, "xy")]//*[contains(@class, "nsewdrag drag")]', 10000);
+                browser.waitAndClick(me.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
             });
-            it('c', () => {
-                browser.waitUntilNotExist(this.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
+            it('Check for code pop up', () => {
+                browser.waitUntilNotExist(me.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
                
             });
             it('Testing Python Code Generation', () => {
