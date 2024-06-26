@@ -195,10 +195,10 @@ describe('Metric Explorer', function metricExplorer() {
                 me.checkChart(chartName, 'Node Hours: Total', expected.legend);
             });
             it('Testing Python Code Generation', () => {
-                browser.waitAndClick('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]', 10000);
+                browser.waitAndClick('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]//*[@class="cartesianlayer"]//*[@class="gridlayer"]', 10000);
                 browser.waitUntilAnimEndAndClick(this.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
                 browser.waitUntilNotExist(this.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
-                browser.waitForVisible('//div[contains(@class, "x-window x-resizable-pinned) and contains(@style, "position: absolute; z-index: 9003; visibility: visible; left: 356px; top: -73px; width: 705px; display: block;")]', 10000);
+                browser.waitForVisible('//div[contains(@class, "x-window x-resizable-pinned")]//div[contains(@class, "x-window-tl")]//span[contains(text(),"API Code")]', 10000);
            });
         });
     /* The following tests are disabled until such a time as they can be changed to work
