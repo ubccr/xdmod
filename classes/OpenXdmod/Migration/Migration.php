@@ -29,15 +29,6 @@ abstract class Migration
     protected $newVersion;
 
     /**
-     * An empty default Configuration object.
-     *
-     * @var Configuration
-     */
-    protected $config;
-
-    protected $baseDir;
-
-    /**
      * Logger object.
      *
      * @var LoggerInterface
@@ -55,10 +46,7 @@ abstract class Migration
         $this->currentVersion = $currentVersion;
         $this->newVersion     = $newVersion;
 
-
         $this->logger = Log::singleton('null');
-
-        $this->baseDir = CONFIG_DIR;
     }
 
     /**
