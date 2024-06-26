@@ -764,11 +764,12 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * Attempt to authorize the the provided `$request` via an included API Token.
      *
      * @param Request $request
+     * @param bool $wantPublicUser An optional flag to return the public user when token is empty.
      * @return \XDUser
      * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
      * @throws \Exception if the user's token from the db does not validate against the provided token.
      */
-    protected function authenticateToken($request)
+    protected function authenticateToken($request, bool $wantPublicUser = false)
     {
         // NOTE: While we prefer token's to be pulled from the 'Authorization' header, we also support a fallback lookup
         // to the request's query params.
@@ -792,10 +793,14 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
         // If it's still empty, then no token == no access.
         if (empty($rawToken)) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                'No Token Provided.'
-            );
+            if ($wantPublicUser){
+                return $this->getUserFromRequest($request);
+            } else {
+                throw new UnauthorizedHttpException(
+                    Tokens::HEADER_KEY,
+                    'No Token Provided.'
+                );
+            }
         }
 
 
