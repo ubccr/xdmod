@@ -769,6 +769,8 @@ abstract class aRdbmsDestinationAction extends aAction
 
         foreach ( $parsedSql['SELECT'] as $item ) {
             if ( array_key_exists('alias', $item)
+                 && is_array($item['alias'])
+                 && array_key_exists('as', $item['alias'])
                  && $item['alias']['as']
                  && array_key_exists('name', $item['alias'])
             ) {

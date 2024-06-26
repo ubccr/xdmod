@@ -3,6 +3,9 @@
     "browser": true,
     "es2018": true
   },
+  "parserOptions": {
+    "sourceType": "script"
+  },
   "rules": {
     "no-underscore-dangle": "off"
   },
@@ -14,21 +17,13 @@
     "ga": false,
     "moment": false,
     "_gaq": false,
+    "jQuery": false,
     "truncateText": false,
     "XDMoD": false,
     "Dashboard": false,
     "DashboardStore": false,
     "grecaptcha": false,
     "StringUtilities": false,
-    "Plotly": false,
-    "generateChartOptions": false,
-    "getNoDataErrorConfig": false,
-    "getMultiAxisObjects": false,
-    "getClickedPoint": false,
-    "isTopLegend": false,
-    "adjustTitles": false,
-    "relayoutChart": false,
-    "overrideLegendEvent": false,
-    "lineSplit": false
+    "Plotly": false
   }
 }

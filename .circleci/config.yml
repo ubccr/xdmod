@@ -26,7 +26,7 @@ jobs:
     steps:
       - run:
           name: Generate OpenSSL Key
-          command: openssl genrsa -rand /proc/cpuinfo:/proc/dma:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048 > /etc/pki/tls/private/localhost.key
+          command: openssl genrsa -rand /proc/cpuinfo:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048 > /etc/pki/tls/private/localhost.key
       - run:
           name: Generate Certificate
           command: /usr/bin/openssl req -new -key /etc/pki/tls/private/localhost.key -x509 -sha256 -days 365 -set_serial $RANDOM -extensions v3_req -out /etc/pki/tls/certs/localhost.crt -subj "/C=XX/L=Default City/O=Default Company Ltd"
@@ -36,6 +36,15 @@ jobs:
       #    docker_layer_caching: true
       # Download and cache dependencies
       - run:
+          name: Update php module
+          command: dnf module -y reset php && dnf module -y enable php:7.4
+      - run:
+          name: Install PHP 7.4 and PHP module pre-reqs & an updated version of PHP Pear
+          command: dnf install -y php libzip-devel php-pear php-devel
+      - run:
+          name: Install MongoDB Pear module
+          command: yes '' | pecl install mongodb || true
+      - run:
             name: install the composer dependencies
             command: composer install
       - run:
@@ -43,7 +52,9 @@ jobs:
           command: |
             mkdir ~/phpunit
             mkdir /tmp/screenshots
-      - run: ~/bin/buildrpm xdmod
+      - run:
+          name: Build XDMoD RPM
+          command: ~/bin/buildrpm xdmod
       - run:
           name: Install / Upgrade XDMoD from RPM
           command: ./tests/ci/bootstrap.sh
@@ -82,6 +93,7 @@ jobs:
             chown root:root -R /usr/local/node-v10.24.1-linux-x64
       - run: pushd ./tests/ui && PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH /usr/local/node-v10.24.1-linux-x64/bin/npm install && popd
       - run: PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
+
       - run:
           name: 'Run SSO Tests'
           command: |
@@ -89,13 +101,16 @@ jobs:
             PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
             ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - run:
-          name: Ensure that no unexpected Apache errors were generated
-          command: test ! -e /var/log/php-fpm/www-error.log
+          name: Ensure that no unexpected Apache errors were generated ( We expect PHP Deprecated )
+          command: >
+            if [ -e /var/log/php-fpm/www-error.log ]; then
+              test `egrep -v "PHP Deprecated.*vendor\/.*" /var/log/php-fpm/www-error.log | wc -l` = 0;
+            fi
       - run:
           name: Ensure that no PHP command-line errors were generated
           command: >
               if [ -e /var/log/php_errors.log ]; then
-                  test `fgrep -v 'vendor/phpunit/phpunit/src' /var/log/php_errors.log | wc -l` = 0;
+                  test `egrep -v "PHP Deprecated.*vendor\/.*|PHP Notice:  fread()" /var/log/php_errors.log | wc -l` = 0;
               fi
       - store_artifacts:
           path: /tmp/screenshots

@@ -730,7 +730,14 @@ class pdoAggregator extends aAggregator
         $aggregationPeriodList = $this->getDirtyAggregationPeriods($aggregationUnit);
         $numAggregationPeriods = count($aggregationPeriodList);
         $firstPeriod = current($aggregationPeriodList);
-        $periodSize = $firstPeriod['period_end_day_id'] - $firstPeriod['period_start_day_id'];
+
+        // There are instances where $firstPeriod is a bool not an array ( when $aggregationPeriodList is empty or at the end of the array)
+        // the following code takes that into account.
+        $periodSize = 0;
+        if (!is_bool($firstPeriod)) {
+            $periodSize = $firstPeriod['period_end_day_id'] - $firstPeriod['period_start_day_id'];
+        }
+
         $batchSliceSize = $this->options->batch_aggregation_periods_per_batch;
         $tmpTableName = null;
         $qualifiedTmpTableName = null;

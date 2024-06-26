@@ -15,7 +15,7 @@ class ControllerTest extends BaseTest
      */
     protected $helper;
 
-    protected function setUp()
+    protected function setup(): void
     {
         $this->helper = new XdmodTestHelper(__DIR__ . '/../../../');
     }
@@ -488,15 +488,18 @@ class ControllerTest extends BaseTest
         $this->assertEquals($expectedContentType, $response[1]['content_type']);
         $this->assertEquals($expectedHttpCode, $response[1]['http_code']);
 
-        // the current responses are json but specify the text/html; charset=UTF-8;
-        // content_type. Where as some of the exception cases specify
-        // application/json but do not return valid json. To account for these
-        // two cases we just default to attempting to decode the response data
-        // and if that fails then just fallback to the full response body as is.
-        try {
-            $actual = json_decode($response[0], true);
-        } catch (\Exception $e) {
+        // A brief description of what the below `if-else` block is all about:
+        // - If a controller returns json data & includes the 'application/json' content type the data is converted
+        //   implicitly to an array by PHP.
+        // - On the other hand, there are some controllers that return json data but do not include the
+        //   `application/json` content type and so these are received as strings which we then attempt to `json_decode`.
+        // - Finally, if we didn't get any of the expected types of results go ahead and fail the test.
+        if (is_array($response[0])) {
             $actual = $response[0];
+        } elseif (is_string($response[0])) {
+            $actual = json_decode($response[0], true);
+        } else {
+            $this->fail(sprintf('Unrecognized response body type, expected an array or string, received: %s', get_debug_type($response[0])));
         }
 
         $expected = JSON::loadFile($expectedFileName);

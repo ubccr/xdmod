@@ -412,6 +412,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
                     return result;
                 };
+                const chartJSON = JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4);
                 menu.add({
                     text: 'View chart json',
                     iconCls: 'json_file',
@@ -425,12 +426,20 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             closeAction: 'destroy',
                             items: [{
                                 autoScroll: true,
-                                html: '<pre>' + Ext.util.Format.htmlEncode(JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4)) + '</pre>'
+                                html: `<pre>${Ext.util.Format.htmlEncode(chartJSON)}</pre>`
+                            }],
+                            tools: [{
+                                id: 'save',
+                                qtip: 'Copy Chart JSON',
+                                handler: () => {
+                                    navigator.clipboard.writeText(chartJSON);
+                                }
                             }]
                         });
                         win.show();
                     }
                 });
+                const chartLayoutJSON = JSON.stringify(instance.plotlyPanel.chartOptions.layout, null, 4);
                 menu.add({
                     text: 'View Plotly JS chart layout',
                     iconCls: 'chart',
@@ -444,12 +453,20 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             closeAction: 'destroy',
                             items: [{
                                 autoScroll: true,
-                                html: `<pre>${Ext.util.Format.htmlEncode(JSON.stringify(instance.plotlyPanel.chartOptions.layout, null, 4))}</pre>`
+                                html: `<pre>${Ext.util.Format.htmlEncode(chartLayoutJSON)}</pre>`
+                            }],
+                            tools: [{
+                                id: 'save',
+                                qtip: 'Copy Chart Layout',
+                                handler: () => {
+                                    navigator.clipboard.writeText(chartLayoutJSON);
+                                }
                             }]
                         });
                         win.show();
                     }
                 });
+                const chartDataJSON = JSON.stringify(instance.plotlyPanel.chartOptions.data, null, 4);
                 menu.add({
                     text: 'View Plotly JS chart data',
                     iconCls: 'dataset',
@@ -463,7 +480,14 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             closeAction: 'destroy',
                             items: [{
                                 autoScroll: true,
-                                html: `<pre>${Ext.util.Format.htmlEncode(JSON.stringify(instance.plotlyPanel.chartOptions.data, null, 4))}</pre>`
+                                html: `<pre>${Ext.util.Format.htmlEncode(chartDataJSON)}</pre>`
+                            }],
+                            tools: [{
+                                id: 'save',
+                                qtip: 'Copy Chart Data',
+                                handler: () => {
+                                    navigator.clipboard.writeText(chartDataJSON);
+                                }
                             }]
                         });
                         win.show();
@@ -6255,14 +6279,20 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         // ---------------------------------------------------------
 
         self.on('chart_link_clicked', function () {
-            var encodedData = window.btoa(JSON.stringify(this.getConfig()));
-            var link = window.location.protocol + '//' + window.location.host + '/#main_tab_panel:metric_explorer?config=' + encodedData;
-            var msg = 'Use the following link to share the current chart. Note that the link does not override the access controls. So if you send the link to someone who does not have access to the data, they will still not be able to see the data. <br> We recommend using Chrome or Firefox if the link does not work in Internet Explorer.<br><b>' + link + '</b>';
+            const encodedData = window.btoa(JSON.stringify(this.getConfig()));
+            const link = `${window.location.protocol}//${window.location.host}/#main_tab_panel:metric_explorer?config=${encodedData}`;
+            const msg = `Use the following link to share the current chart. Note that the link does not override the access controls. So if you send the link to someone who does not have access to the data, they will still not be able to see the data. <br><b>${link}</b>`;
             Ext.Msg.show({
                 title: 'Link to Chart',
                 minWidth: 700,
                 msg: msg,
-                buttons: Ext.Msg.OK
+                buttons: { ok: 'Copy', cancel: 'Cancel' },
+                icon: Ext.MessageBox.INFO,
+                fn: (buttonId) => {
+                    if (buttonId === 'ok') {
+                        navigator.clipboard.writeText(link);
+                    }
+                }
             });
         }); // self.on('chart_link_clicked', ...
 
