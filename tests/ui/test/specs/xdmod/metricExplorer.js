@@ -194,10 +194,19 @@ describe('Metric Explorer', function metricExplorer() {
             it('Undo Trend Line looks the same as previous run', function () {
                 me.checkChart(chartName, 'Node Hours: Total', expected.legend);
             });
-            it('Testing Python Code Generation', () => {
-                browser.waitAndClick('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]//*[@class="cartesianlayer"]//*[@class="gridlayer"]', 10000);
+            it('a', () => {
+                browser.waitAndClick('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]', 10000);
+               
+            });
+            it('b', () => {
                 browser.waitUntilAnimEndAndClick(this.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
+                
+            });
+            it('c', () => {
                 browser.waitUntilNotExist(this.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
+               
+            });
+            it('Testing Python Code Generation', () => {
                 browser.waitForVisible('//div[contains(@class, "x-window x-resizable-pinned")]//div[contains(@class, "x-window-tl")]//span[contains(text(),"API Code")]', 10000);
            });
         });
