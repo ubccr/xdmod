@@ -150,7 +150,14 @@ abstract class TokenAuthTest extends BaseTest
                         )
                     ];
                 } elseif ('rest' === $input['endpoint_type']) {
-                    $output = parent::validateAuthorizationErrorResponse(401);
+                    // If token is empty and we want Public user, test that it returns a success response.
+                    if (true === $input['wantPublicUser'] && 'empty_token' === $tokenType)  {
+                        $output = $this->validateSuccessResponse(function ($body, $assertMessage) {
+                            parent::assertSame(true, $body['success'], $assertMessage);
+                        });
+                    } else {
+                        $output = parent::validateAuthorizationErrorResponse(401);
+                    }
                 } else {
                     throw new Exception(
                         "Unknown value for endpoint_type:"
