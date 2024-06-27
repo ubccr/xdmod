@@ -49,8 +49,10 @@ section which starts at `Server: EL8, XDMoD: 10.5, PHP: 7.2`.
           ``sed -i 's|DEFINER=`xdmod`@`localhost`||g' backup.sql``
 4. Import the CentOS 7 exported database files into the Rocky 8 server's database.
     1. `mysql < backup.sql`
-5. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
-6. Next, follow the upgrade process detailed below on the Rocky 8 Server.
+5. **NOTE:** MariaDB / MySQL users are defined as `'username'@'hostname'` so if the hostname of the server that the user is connecting from changes, you will need to make sure that this change is reflected in the database.
+    1. Run the following from an account that has db admin privileges to ensure the XDMoD user is correct: `mysql -e "UPDATE mysql.user SET Host = '<insert new XDMoD web server hostname here>' WHERE username = 'xdmod';"`    
+6. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
+7. Next, follow the upgrade process detailed below on the Rocky 8 Server.
 
 ### Server: EL8, XDMoD: 10.5, PHP: 7.4
 If you have XDMoD 10.5 installed on Rocky 8 then please follow the steps below:
