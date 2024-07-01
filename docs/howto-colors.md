@@ -67,7 +67,7 @@ following JSON list adds a 8-element "snapshot" of [the Viridis color gradient](
 
 Open XDMOD indexes the colors based on the first instance of the color found in that list, 
 so any duplicate colors may wreck havoc on group-by coloring. 
-As an example, if I selected the first `123456` in the following
+As an example, selecting the first `123456` in the following
 palette would cause the next two groups in that dataset to be colored `AABBCC` and `CCBBAA`. 
 If I selected the second `123456`, though, the next two groups, would *still* be colored `AABBCC` and `CCBBAA`.
 
