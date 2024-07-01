@@ -97,3 +97,4 @@ nudging the starting point over by a value of 1 in any of the 3 RGB channels.
 		["482878"], ["440155"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"], ["FFFFFF"]
 	]
 ]
+```
