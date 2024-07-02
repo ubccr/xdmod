@@ -868,4 +868,44 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         }
         return $tests;
     }
+
+//
+    /**
+     * @dataProvider provideGetDwDescriptor
+     */
+
+    public function testGetDwDescriptor($id, $role, $input, $output)
+    {
+        parent::authenticateRequestAndValidateJson(
+            self::$helper,
+            $role,
+            $input,
+            $output
+        );
+    }
+
+    public function provideGetDwDescriptor()
+    {
+        $validInput = [
+            'path' => 'rest/warehouse/search/dw_descriptor',
+            'method' => 'get',
+            'params' => [],
+            'data' => null
+        ];
+
+        $expectedOutput = [
+            'status_code' => 200
+        ];
+
+        $tests = [
+            [
+                'get_dw_descriptor_success',
+                'usr',
+                $validInput,
+                $expectedOutput
+            ]
+        ];
+
+        return $tests;
+    }
 }
