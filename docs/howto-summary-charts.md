@@ -26,19 +26,20 @@ The base summary charts (the ones included with a install of Open XDMoD) are inc
 for any user role if the field `summary_charts` is absent for that role in both `roles.json` and
 in `roles.d`. If `summary_charts` contains any charts, those override displaying any of the summary charts.
 
-By default:
+By default, in an out-of-the-box XDMoD configuration:
 
 * The role "pub" - which is applied to any users who are not logged in - has no `summary_charts` field and so implictly uses the base summary charts.
 * The role "default" - which all other user roles inherit - has an empty `summary_charts` field in `roles.json`, but
-  has explicitly defined summary charts appended in `roles.d/jobs.json` or your custom summary chart `.json` file that are equivalent to the base summary charts.
+  has explicitly defined summary charts appended in `roles.d/jobs.json` that are equivalent to the base summary charts.
 
 The recommended method to define new summary charts is to create a new `.json` file in `roles.d` that specifically handles
-any summary chart customization, rather than using the existing `.json` files.If you wish to keep the default charts
-included with `roles.d/jobs.json` and any other files that contain `+summary_charts`, please move them to the newly created file.
+any summary chart customization, rather than using the existing `.json` files. If you'd like to keep the default charts along with
+any newly created charts, it's recommended to move the ones included with `roles.d/jobs.json` and any other files that contain `+summary_charts`,
+to your newly created `.json` file, deleting them from their original files.
 
-This set of configuration locations lets you edit the default summary charts in many different ways.
-As an example, if you wanted to override the default charts for the "default" role, you could edit your summary chart customization `.json` file in `roles.d`, overwriting
-any defined summary charts with the JSON pulled from Metric Explorer as described earlier. In the example below, you'd replace the `...`
+As an example, if you wanted to add a default chart for the "default" role,
+you would edit your summary chart customization `.json` file in `roles.d`.
+In the example below, you'd replace the `...`
 in the `+summary_charts` list with the JSON you copied.
 
 ```json
@@ -57,7 +58,7 @@ in the `+summary_charts` list with the JSON you copied.
 ```
 
 This would only change the summary charts for logged-in users - if you wanted to make this same change for non-logged-in users,
-you could do the same for the role "pub".
+you would have to do the same do the same for the role "pub", rather than just for "default".
 
 There's a known issue displaying charts with no `global_filters` field
 in the Summary page. If the chart you're adding has no global filters,
