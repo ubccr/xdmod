@@ -34,7 +34,7 @@ By default:
 
 This set of configuration locations lets you edit the default summary charts in many different ways.
 As an example, if you wanted to override the default charts for the "default" role, you could edit your summary chart customization `.json` file in `roles.d`, overwriting
-the defined summary charts with the JSON pulled from Metric Explorer as described earlier. In the example below, you'd replace the `...`
+any defined summary charts with the JSON pulled from Metric Explorer as described earlier. In the example below, you'd replace the `...`
 in the `+summary_charts` list with the JSON you copied.
 
 ```json
