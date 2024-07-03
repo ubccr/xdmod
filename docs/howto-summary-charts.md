@@ -30,7 +30,7 @@ By default:
 
 * The role "pub" - which is applied to any users who are not logged in - has no `summary_charts` field and so implictly uses the base summary charts.
 * The role "default" - which all other user roles inherit - has an empty `summary_charts` field in `roles.json`, but
-  has explicitly defined summary charts appended in `roles.d/jobs.json` equivalent to the base summary charts.
+  has explicitly defined summary charts appended in `roles.d/jobs.json` or your custom summary chart `.json` file that are equivalent to the base summary charts.
 
 This set of configuration locations lets you edit the default summary charts in many different ways.
 As an example, if you wanted to override the default charts for the "default" role, you could edit your summary chart customization `.json` file in `roles.d`, overwriting
