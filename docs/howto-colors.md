@@ -6,7 +6,7 @@ The color palette available to style chart data in Metric Explorer can be edited
 in the JSON file `colors1.json` (`/etc/xdmod/colors1.json` if you installed the RPM or
 `PREFIX/etc/colors1.json` if you did a manual install).
 
-The default version of `colors1.json` (and what is used as a fallback palette if `colors1.json` 
+The default version of `colors1.json` (and what is used as a fallback palette if `colors1.json`
 is missing or malformed) is shown below
 
 ```json
@@ -27,7 +27,7 @@ is missing or malformed) is shown below
 To change the colors available, simply edit the hexadecimal codes for any of the swatches in the palette.
 To add a new color or set of colors, make sure to keep the JSON array rectangular with the same width.
 
-As an example, to add the colors `123456` and `654321` you'd need to pad the table with other colors. 
+As an example, to add the colors `123456` and `654321` you'd need to pad the table with other colors.
 In this case, they're padded with white, which Open XDMoD skips when showing charts.
 
 ```json
@@ -65,13 +65,13 @@ following JSON list adds a 8-element "snapshot" of [the Viridis color gradient](
 ]
 ```
 
-Open XDMOD indexes the colors based on the first instance of the color found in that list, 
-so any duplicate colors may wreck havoc on group-by coloring. 
+Open XDMOD indexes the colors based on the first instance of the color found in that list,
+so any duplicate colors may wreck havoc on group-by coloring.
 As an example, selecting the first `123456` in the following
-palette would cause the next two groups in that dataset to be colored `AABBCC` and `CCBBAA`. 
+palette would cause the next two groups in that dataset to be colored `AABBCC` and `CCBBAA`.
 If I selected the second `123456`, though, the next two groups, would *still* be colored `AABBCC` and `CCBBAA`.
 
-The second palette below shows a workaround for this to add both an 8-element and 10-element Viridis gradient, by 
+The second palette below shows a workaround for this to add both an 8-element and 10-element Viridis gradient, by
 nudging the starting point over by a value of 1 in any of the 3 RGB channels.
 
 ```json
