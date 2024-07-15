@@ -99,7 +99,7 @@ class TimeseriesChart extends AggregateChart
 
         // prepare yAxisArray for each yAxis we will plot:
         $yAxisArray = array();
-
+        
         // Keep track of the unique data unit names
         $yUnitNames = array();
 
@@ -922,11 +922,12 @@ class TimeseriesChart extends AggregateChart
                                     'r' => $r,
                                     'x' => $this->_swapXY ? $trendY : $trendX,
                                     'y' => $this->_swapXY ? $trendX : $trendY,
+                                    'legendgroup' => $traceIndex,
                                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                                 );
                                 $valid = $data_description->std_err == 1 && !$data_description->log_scale;
                                 $trendline_trace['legendrank'] = $valid ? $trace['legendrank'] + 2 : $trace['legendrank'];
-                                $trendline_trace['traceorder'] = $valid ? $traceIndex - 2 : $traceIndex;
+                                $trendline_trace['traceorder'] = $valid ? $traceIndex - 2 : $legendRank;
 
                                 if ($this->_swapXY) {
                                     unset($trendline_trace['yaxis']);
