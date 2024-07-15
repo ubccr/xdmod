@@ -449,21 +449,6 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
             }
         }
 
-        if (isPie) {
-            if (chartDiv._fullData[0].text && chartDiv._fullData[0].text.length > 0) {
-               if (update['margin.t']) {
-                   update['margin.t'] += 50;
-                   marginTop += 15;
-               } else if (chartDiv._fullData[0].text.some((elem) => elem.length >= 60)) {
-                   update['margin.t'] = 110;
-                   marginTop += 30;
-               } else {
-                   update['margin.t'] = 80;
-                   marginTop += 25;
-               }
-            }
-        }
-
         const titleYShift = (marginTop + legendHeight) - titleHeight;
 
         if (titleIndex !== -1) {
