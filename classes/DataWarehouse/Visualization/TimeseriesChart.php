@@ -927,7 +927,7 @@ class TimeseriesChart extends AggregateChart
                                 );
                                 $valid = $data_description->std_err == 1 && !$data_description->log_scale;
                                 $trendline_trace['legendrank'] = $valid ? $trace['legendrank'] + 2 : $trace['legendrank'];
-                                $trendline_trace['traceorder'] = $valid ? $traceIndex - 2 : $legendRank;
+                                $trendline_trace['traceorder'] = $valid ? $legendRank - 2 : $legendRank;
 
                                 if ($this->_swapXY) {
                                     unset($trendline_trace['yaxis']);
