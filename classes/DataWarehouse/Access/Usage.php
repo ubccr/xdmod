@@ -838,7 +838,8 @@ class Usage extends Common
                     $isTrendLineSeries = \xd_utilities\string_begins_with($meDataSeries['name'], 'Trend Line: ');
                     $isStdErrSeries = \xd_utilities\string_begins_with($meDataSeries['name'], 'Std Err: ');
                     $isNullSeries = $meDataSeries['name'] == 'gap connector';
-                    $isPrimaryDataSeries = !($isTrendLineSeries || $isStdErrSeries || $isNullSeries);
+                    $isAreaFix = $meDataSeries['name'] == 'area fix';
+                    $isPrimaryDataSeries = !($isTrendLineSeries || $isStdErrSeries || $isNullSeries || $isAreaFix);
                     // If this is a primary data series, increment the rank of the
                     // current primary data series. Further, if this chart is
                     // a timeseries chart, it is sorted by value, and it is a
