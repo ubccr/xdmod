@@ -626,7 +626,7 @@ class TimeseriesChart extends AggregateChart
                             'x' => $this->_swapXY ? $yValues : $xValues,
                             'y' => $this->_swapXY ? $xValues : $yValues,
                             'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$legendRank}",
-                            'legendgroup' => $traceIndex,
+                            'legendgroup' => $legendRank,
                             'legendrank' => $legendRank,
                             'traceorder' => $legendRank,
                             'seriesData' => $seriesValues,
@@ -793,7 +793,7 @@ class TimeseriesChart extends AggregateChart
                                 'connectgaps' => true,
                                 'hoverinfo' => 'skip',
                                 'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$legendRank}",
-                                'legendgroup' => $traceIndex,
+                                'legendgroup' => $legendRank,
                                 'legendrank' => -1000,
                                 'traceorder' => -1000,
                                 'type' => 'scatter',
@@ -922,7 +922,6 @@ class TimeseriesChart extends AggregateChart
                                     'r' => $r,
                                     'x' => $this->_swapXY ? $trendY : $trendX,
                                     'y' => $this->_swapXY ? $trendX : $trendY,
-                                    'legendgroup' => $traceIndex,
                                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                                 );
                                 $valid = $data_description->std_err == 1 && !$data_description->log_scale;
