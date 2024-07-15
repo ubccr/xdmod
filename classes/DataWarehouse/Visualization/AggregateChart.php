@@ -983,7 +983,13 @@ class AggregateChart
                     $pieSum = array_sum($yValues);
                     for ($i = 0; $i < count($xValues); $i++) {
                         if ($isThumbnail || (($labelsAllocated < $labelLimit) && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
-                            $text[] = '<b>' . $xValues[$i] . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
+                            $label = $xValues[$i];
+                            // 800 width is dashboard component
+                            if (($this->_width <= 800 || $isThumbnail) && strlen($xValues[$i]) >= 70) {
+                                //$trace['automargin'] = false;
+                                $label = mb_substr($xValues[$i], 0, 40) . '...';
+                            }
+                            $text[] = '<b>' . $label . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
                             $labelsAllocated++;
                         }
                         else {
@@ -1293,6 +1299,7 @@ class AggregateChart
                         ),
                         'connectgaps' => true,
                         'hoverinfo' => 'skip',
+                        'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$legendRank}",
                         'legendgroup' => $data_description_index,
                         'legendrank' => -1000,
                         'traceorder' => -1000,
