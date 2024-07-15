@@ -99,7 +99,7 @@ class TimeseriesChart extends AggregateChart
 
         // prepare yAxisArray for each yAxis we will plot:
         $yAxisArray = array();
-        
+
         // Keep track of the unique data unit names
         $yUnitNames = array();
 
