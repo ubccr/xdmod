@@ -99,7 +99,7 @@ class TimeseriesChart extends AggregateChart
 
         // prepare yAxisArray for each yAxis we will plot:
         $yAxisArray = array();
-
+        
         // Keep track of the unique data unit names
         $yUnitNames = array();
 
@@ -149,7 +149,7 @@ class TimeseriesChart extends AggregateChart
         }
 
         $yAxisCount = count($yAxisArray);
-
+        $legendRank = 1;
         $globalFilterDescriptions = array();
 
         // ==== Big long effing loop ====
@@ -419,6 +419,7 @@ class TimeseriesChart extends AggregateChart
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
                 foreach($yAxisDataObjectsArray as $traceIndex => $yAxisDataObject)
                 {
+                    $legendRank += 2;
                     if( $yAxisDataObject != null)
                     {
                         $yAxisDataObject->joinTo($xAxisData, null);
@@ -624,10 +625,10 @@ class TimeseriesChart extends AggregateChart
                             ),
                             'x' => $this->_swapXY ? $yValues : $xValues,
                             'y' => $this->_swapXY ? $xValues : $yValues,
-                            'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$traceIndex}",
+                            'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$legendRank}",
                             'legendgroup' => $traceIndex,
-                            'legendrank' => $traceIndex,
-                            'traceorder' => $traceIndex,
+                            'legendrank' => $legendRank,
+                            'traceorder' => $legendRank,
                             'seriesData' => $seriesValues,
                             'visible' => $visible,
                             'isRemainder' => $isRemainder,
@@ -791,7 +792,7 @@ class TimeseriesChart extends AggregateChart
                                 ),
                                 'connectgaps' => true,
                                 'hoverinfo' => 'skip',
-                                'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$traceIndex}",
+                                'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$legendRank}",
                                 'legendgroup' => $traceIndex,
                                 'legendrank' => -1000,
                                 'traceorder' => -1000,
