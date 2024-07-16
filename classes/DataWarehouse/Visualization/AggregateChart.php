@@ -986,7 +986,6 @@ class AggregateChart
                             $label = $xValues[$i];
                             // 800 width is dashboard component
                             if (($this->_width <= 800 || $isThumbnail) && strlen($xValues[$i]) >= 70) {
-                                //$trace['automargin'] = false;
                                 $label = mb_substr($xValues[$i], 0, 40) . '...';
                             }
                             $text[] = '<b>' . $label . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
