@@ -16,7 +16,7 @@ Ext.namespace('XDMoD.utils');
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     const baseChartOptions = {};
-    const configs = { 
+    const configs = {
         displayModeBar: false,
         doubleClick: 'reset',
         doubleClickDelay: 500,
