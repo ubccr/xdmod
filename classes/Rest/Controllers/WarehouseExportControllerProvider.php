@@ -4,6 +4,7 @@ namespace Rest\Controllers;
 
 use CCR\DB;
 use CCR\Log;
+use Rest\Exceptions\EmptyTokenException;
 use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
@@ -96,14 +97,17 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         // We need to wrap the token authentication because we want the token authentication to be optional, proceeding
         // to the normal session authentication if a token is not provided.
         try {
-            $user = $this->authenticateToken($request, true);
-        } catch (Exception $e) {
-            // NOOP
+            $user = $this->authenticateToken($request);
+        } catch (EmptyTokenException $e) {
+            $user = $this->getUserFromRequest($request);
         }
 
-        if ($user === null) {
-            $user = $this->authorize($request, []);
-        }
+        // if ($user === null) {
+        //     $user = $this->authorize($request, []);
+        // }
+
+
+        // $user = $this->getUserFromRequest($request);
 
         $config = RawStatisticsConfiguration::factory();
 

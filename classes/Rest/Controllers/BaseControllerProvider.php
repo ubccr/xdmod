@@ -2,8 +2,11 @@
 
 namespace Rest\Controllers;
 
+use Rest\Exceptions\BadTokenException;
+use Rest\Exceptions\EmptyTokenException;
 use DateTime;
 use Models\Services\Tokens;
+use MongoDB\Exception\BadMethodCallException;
 use Rest\Utilities\Authentication;
 use Rest\Utilities\Authorization;
 use Silex\Application;
@@ -15,6 +18,7 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+
 
 /**
  * Class BaseControllerProvider
@@ -203,7 +207,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                            'authorized'. If not specified, then only
      *                            whether or not the user is logged in will
      *                            be checked.
-     * @param bool $wantPublicUser Optional flag to indicate if public users are 
+     * @param bool $wantPublicUser Optional flag to indicate if public users are
      *                             allowed. Defaults to false.
      * @return \XDUser The user that was checked and is authorized according to
      *                the given parameters.
@@ -211,7 +215,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * @throws  Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException
      *          Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException
      */
-    public function authorize(Request $request, array $requirements = array(), bool $wantPublicUser = false)
+    public function authorize(Request $request, array $requirements = array())
     {
 
         $user = $this->getUserFromRequest($request);
@@ -220,11 +224,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         // is that the user is not a public user.
         $isPublicUser = $user->isPublicUser();
         if (empty($requirements) && $isPublicUser) {
-            if ($wantPublicUser){
-                return $user;
-            }
             throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
+
 
         $authorized = $user->hasAcls($requirements);
         if ($authorized === false && !$isPublicUser) {
@@ -769,7 +771,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
      * @throws \Exception if the user's token from the db does not validate against the provided token.
      */
-    protected function authenticateToken($request, bool $wantPublicUser = false)
+    protected function authenticateToken($request)
     {
         // NOTE: While we prefer token's to be pulled from the 'Authorization' header, we also support a fallback lookup
         // to the request's query params.
@@ -793,24 +795,24 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
         // If it's still empty, then no token == no access.
         if (empty($rawToken)) {
-            if ($wantPublicUser){
-                return $this->getUserFromRequest($request);
-            } else {
-                throw new UnauthorizedHttpException(
-                    Tokens::HEADER_KEY,
-                    'No Token Provided.'
-                );
-            }
-        }
+            // if ($wantPublicUser){
+            //     return $this->getUserFromRequest($request);
+            // } else {
+            throw new EmptyTokenException(
+                Tokens::HEADER_KEY,
+                'No Token Provided.'
+            );
 
+        }
 
         // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
         $delimPosition = strpos($rawToken, Tokens::DELIMITER);
         if ($delimPosition === false) {
-            throw new UnauthorizedHttpException(
+            throw new BadTokenException(
                 Tokens::HEADER_KEY,
                 'Invalid token format.'
             );
+
         }
 
         $userId = substr($rawToken, 0, $delimPosition);

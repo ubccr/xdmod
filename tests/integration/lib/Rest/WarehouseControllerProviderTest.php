@@ -884,28 +884,79 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         );
     }
 
+    // public function provideGetDwDescriptor()
+    // {
+    //     $validInput = [
+    //         'path' => 'rest/warehouse/search/dw_descriptor',
+    //         'method' => 'get',
+    //         'params' => [],
+    //         'data' => null
+    //     ];
+
+    //     $expectedOutput = [
+    //         $this->validateSuccessResponse(function ($body, $assertMessage) {
+    //             $this->assertSame(3, $body['total'], $assertMessage);
+    //             $index = 0;
+    //             foreach (['Jobs', 'Cloud', 'ResourceSpecifications'] as $realmName) {
+    //                 $realm = $body['data'][$index];
+    //                 foreach (['id', 'name'] as $property) {
+    //                     $this->assertSame(
+    //                         $realmName,
+    //                         str_replace(' ', '', $realm[$property]),
+    //                         $assertMessage
+    //                     );
+    //                 }
+    //             }
+    //         }),
+    //     ];
+
+    //     $tests = [
+    //         [
+    //             'get_dw_descriptor_success',
+    //             'usr',
+    //             $validInput,
+    //             $expectedOutput
+    //         ]
+    //     ];
+
+    //     return $tests;
+    // }
+
+
     public function provideGetDwDescriptor()
-    {
-        $validInput = [
-            'path' => 'rest/warehouse/search/dw_descriptor',
-            'method' => 'get',
-            'params' => [],
-            'data' => null
-        ];
+{
+    $validInput = [
+        'path' => 'rest/warehouse/search/dw_descriptor',
+        'method' => 'get',
+        'params' => [],
+        'data' => null
+    ];
 
-        $expectedOutput = [
-            'status_code' => 200
-        ];
+    $expectedOutput = $this->validateSuccessResponse(function ($body, $assertMessage) {
+        $this->assertSame(3, $body['total'], $assertMessage);
+        $index = 0;
+        foreach (['Jobs', 'Cloud', 'ResourceSpecifications'] as $realmName) {
+            $realm = $body['data'][$index];
+            foreach (['id', 'name'] as $property) {
+                $this->assertSame(
+                    $realmName,
+                    str_replace(' ', '', $realm[$property]),
+                    $assertMessage
+                );
+            }
+            $index++;
+        }
+    });
 
-        $tests = [
-            [
-                'get_dw_descriptor_success',
-                'usr',
-                $validInput,
-                $expectedOutput
-            ]
-        ];
+    $tests = [
+        [
+            'get_dw_descriptor_success',
+            'usr',
+            $validInput,
+            $expectedOutput
+        ]
+    ];
 
-        return $tests;
-    }
+    return $tests;
+}
 }
