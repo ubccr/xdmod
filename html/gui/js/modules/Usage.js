@@ -1011,8 +1011,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             updateDisabledMenus.call(this, true);
             const node = tree.getSelectionModel().getSelectedNode();
 
-            if (node != null) { 
-                return; 
+            if (node != null) {
+                return;
             }
 
             const root = tree.getRootNode();
