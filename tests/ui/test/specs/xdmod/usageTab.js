@@ -61,6 +61,7 @@ describe('Usage', function () {
         describe('(Public User)', function () {
             it('Selected', function () {
                 usg.selectTab();
+                browser.refresh();
                 browser.waitForChart();
                 browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
 
