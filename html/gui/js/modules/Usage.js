@@ -955,58 +955,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
-        function selectFirstNode() {
-
-            updateDisabledMenus.call(this, true);
-
-            var node = tree.getSelectionModel().getSelectedNode();
-
-            if (node != null) return;
-
-            var root = tree.getRootNode();
-
-             //Try grab url and load chart accordingly, otherwise load default
-            const url = window.location.href;
-            if (url) {
-                 const substringToRemove = /https:\/\/[^\/]+\/#tg_usage\?node=/;
-                 let chartSettings = url.replace(substringToRemove, '');
-                 if( chartSettings.includes('statistic_')){
-                 const realmsMetric = root.childNodes;
-                 let selectedRealmMetric = null;
-
-                 for (let realm of realmsMetric) {
-                     let transformedId = realm.id.replace('group_by_', 'statistic_');
-                     if (chartSettings.includes(transformedId)) {
-                         selectedRealmMetric = realm;
-                         chartSettings = chartSettings.replace(transformedId+'_', '');
-                         break;
-                     }
-                }
-                if (selectedRealmMetric){
-                    tree.expandPath(selectedRealmMetric.getPath(), null, function (success) {
-                            if (success) {
-                            var jobCountNode = selectedRealmMetric.findChild("statistic", chartSettings);
-                            if (jobCountNode && !jobCountNode.disabled) {
-                                tree.getSelectionModel().select(jobCountNode);
-                                return;
-                            }
-                        }
-                    });
-                }
-                }
-                else{
-                    defaultSelectFirstNode();
-                }
-            } else if (root.hasChildNodes()) {
-
-                defaultSelectFirstNode();
-
-            } //if (root.hasChildNodes())
-
-        } //selectFirstNode
-
-        // ---------------------------------------------------------
-
         function defaultSelectFirstNode() {
             updateDisabledMenus.call(this, true);
 
@@ -1056,6 +1004,58 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
             } //if (root.hasChildNodes())
         } //defaultSelectFirstNode
+
+        // ---------------------------------------------------------
+
+        function selectFirstNode() {
+
+            updateDisabledMenus.call(this, true);
+
+            var node = tree.getSelectionModel().getSelectedNode();
+
+            if (node != null) return;
+
+            var root = tree.getRootNode();
+
+            //Try grab url and load chart accordingly, otherwise load default
+            const url = window.location.href;
+            if (url) {
+                const substringToRemove = /https:\/\/[^\/]+\/#tg_usage\?node=/;
+                let chartSettings = url.replace(substringToRemove, '');
+                if (chartSettings.includes('statistic_')) {
+                const realmsMetric = root.childNodes;
+                let selectedRealmMetric = null;
+
+                realmsMetric.some(realm => {
+                    let transformedId = realm.id.replace('group_by_', 'statistic_');
+                    if (chartSettings.includes(transformedId)) {
+                        selectedRealmMetric = realm;
+                        chartSettings = chartSettings.replace(transformedId + '_', '');
+                        return true; 
+                    }
+                    return false;
+                });
+                
+                if (selectedRealmMetric) {
+                    tree.expandPath(selectedRealmMetric.getPath(), null, function (success) {
+                            if (success) {
+                            var jobCountNode = selectedRealmMetric.findChild('statistic', chartSettings);
+                            if (jobCountNode && !jobCountNode.disabled) {
+                                tree.getSelectionModel().select(jobCountNode);
+                                return;
+                            }
+                        }
+                    });
+                }
+                }
+                else {
+                    defaultSelectFirstNode();
+                }
+            } else if (root.hasChildNodes()) {
+                defaultSelectFirstNode();
+            }
+
+        } //selectFirstNode
 
         // ---------------------------------------------------------
 
