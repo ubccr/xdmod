@@ -1037,12 +1037,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 });
 
                     if (selectedRealmMetric) {
-                        tree.expandPath(selectedRealmMetric.getPath(), null, function (success) {
+                        tree.expandPath(selectedRealmMetric.getPath(), null, (success) => {
                                 if (success) {
                                 const jobCountNode = selectedRealmMetric.findChild('statistic', chartSettings);
                                 if (jobCountNode && !jobCountNode.disabled) {
                                     tree.getSelectionModel().select(jobCountNode);
-                                    return;
                                 }
                             }
                         });
