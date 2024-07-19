@@ -71,9 +71,6 @@ As an example, selecting the first `123456` in the following
 palette would cause the next two groups in that dataset to be colored `AABBCC` and `CCBBAA`.
 Selecting the second `123456` in the palette would result in the next two groups *still* being colored `AABBCC` and `CCBBAA`.
 
-The second palette below shows a workaround for this to add both an 8-element and 10-element Viridis gradient, by
-nudging the starting point over by a value of 1 in any of the 3 RGB channels.
-
 ```json
 [
 	[
@@ -81,6 +78,10 @@ nudging the starting point over by a value of 1 in any of the 3 RGB channels.
 	]
 ]
 ```
+
+The palette below shows a workaround for this problem in order to add both an 8-element and 10-element Viridis gradient.
+This is done by nudging the starting point over by a value of 1 in any of the 3 RGB channels. In this example, the starting point of the
+8-element gradient is `FDE725`, and the starting point of the 10-element gradient is `FDE726`.
 
 ```json
 [
