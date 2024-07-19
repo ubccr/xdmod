@@ -1002,8 +1002,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                 } //if(child)
 
-            } //if (root.hasChildNodes())
-        } //defaultSelectFirstNode
+            } // if (root.hasChildNodes())
+        } // defaultSelectFirstNode
 
         // ---------------------------------------------------------
 
@@ -1011,11 +1011,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
             updateDisabledMenus.call(this, true);
 
-            var node = tree.getSelectionModel().getSelectedNode();
+            const node = tree.getSelectionModel().getSelectedNode();
 
-            if (node != null) return;
+            if (node != null) {return};
 
-            var root = tree.getRootNode();
+            const root = tree.getRootNode();
 
             //Try grab url and load chart accordingly, otherwise load default
             const url = window.location.href;
@@ -1027,26 +1027,26 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 let selectedRealmMetric = null;
 
                 realmsMetric.some(realm => {
-                    let transformedId = realm.id.replace('group_by_', 'statistic_');
+                    const transformedId = realm.id.replace('group_by_', 'statistic_');
                     if (chartSettings.includes(transformedId)) {
                         selectedRealmMetric = realm;
-                        chartSettings = chartSettings.replace(transformedId + '_', '');
-                        return true; 
+                        chartSettings = chartSettings.replace('${transformedId}_', '');
+                        return true;
                     }
                     return false;
                 });
-                
-                if (selectedRealmMetric) {
-                    tree.expandPath(selectedRealmMetric.getPath(), null, function (success) {
-                            if (success) {
-                            var jobCountNode = selectedRealmMetric.findChild('statistic', chartSettings);
-                            if (jobCountNode && !jobCountNode.disabled) {
-                                tree.getSelectionModel().select(jobCountNode);
-                                return;
+
+                    if (selectedRealmMetric) {
+                        tree.expandPath(selectedRealmMetric.getPath(), null, function (success) {
+                                if (success) {
+                                var jobCountNode = selectedRealmMetric.findChild('statistic', chartSettings);
+                                if (jobCountNode && !jobCountNode.disabled) {
+                                    tree.getSelectionModel().select(jobCountNode);
+                                    return;
+                                }
                             }
-                        }
-                    });
-                }
+                        });
+                    }
                 }
                 else {
                     defaultSelectFirstNode();
@@ -1065,7 +1065,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
         });
 
         tree.on('expandnode', function (node) {
-
             if (node.attributes.node_type == 'group_by') {
 
                 if (node.attributes.chartSettings) {
