@@ -1008,29 +1008,29 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
         // ---------------------------------------------------------
 
         function selectFirstNode() {
-
             updateDisabledMenus.call(this, true);
-
             const node = tree.getSelectionModel().getSelectedNode();
 
-            if (node != null) {return};
+            if (node != null) { 
+                return; 
+            }
 
             const root = tree.getRootNode();
 
-            //Try grab url and load chart accordingly, otherwise load default
+            // Try grab url and load chart accordingly, otherwise load default
             const url = window.location.href;
             if (url) {
-                const substringToRemove = /https:\/\/[^\/]+\/#tg_usage\?node=/;
+                const substringToRemove = /https:\/\/[^/]+\/#tg_usage\?node=/;
                 let chartSettings = url.replace(substringToRemove, '');
                 if (chartSettings.includes('statistic_')) {
                 const realmsMetric = root.childNodes;
                 let selectedRealmMetric = null;
 
-                realmsMetric.some(realm => {
+                realmsMetric.some((realm) => {
                     const transformedId = realm.id.replace('group_by_', 'statistic_');
                     if (chartSettings.includes(transformedId)) {
                         selectedRealmMetric = realm;
-                        chartSettings = chartSettings.replace('${transformedId}_', '');
+                        chartSettings = chartSettings.replace(`${transformedId}_`, '');
                         return true;
                     }
                     return false;
@@ -1039,7 +1039,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                     if (selectedRealmMetric) {
                         tree.expandPath(selectedRealmMetric.getPath(), null, function (success) {
                                 if (success) {
-                                var jobCountNode = selectedRealmMetric.findChild('statistic', chartSettings);
+                                const jobCountNode = selectedRealmMetric.findChild('statistic', chartSettings);
                                 if (jobCountNode && !jobCountNode.disabled) {
                                     tree.getSelectionModel().select(jobCountNode);
                                     return;
@@ -1047,8 +1047,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             }
                         });
                     }
-                }
-                else {
+                } else {
                     defaultSelectFirstNode();
                 }
             } else if (root.hasChildNodes()) {
