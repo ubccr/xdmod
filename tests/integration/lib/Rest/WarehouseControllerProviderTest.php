@@ -869,94 +869,62 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         return $tests;
     }
 
-//
+
     /**
      * @dataProvider provideGetDwDescriptor
      */
 
-    public function testGetDwDescriptor($id, $role, $input, $output)
+    public function testGetDwDescriptor($role, $tokenType)
     {
-        parent::authenticateRequestAndValidateJson(
-            self::$helper,
+        parent::runTokenAuthTest(
             $role,
-            $input,
-            $output
+            $tokenType,
+            [
+                'path' => 'rest/warehouse/search/dw_descripter',
+                'method' => 'get',
+                'params' => null,
+                'data' => null,
+                'endpoint_type' => 'rest',
+                'authentication_type' => 'token_optional',
+                'wantPublicUser' => true
+            ],
+            parent::validateSuccessResponse(function ($body, $assertMessage) {
+                $this->assertSame(1, $body['totalCount'], $assertMessage);
+                foreach (['Jobs', 'Cloud', 'ResourceSpecifications', 'Storage'] as $realmName) {
+                    $realm = $body['data'][0]['realms'][$realmName];
+                    foreach (['metrics', 'dimensions'] as $key) {
+                        $this->assertArrayHasKey(
+                            $key,
+                            $realm,
+                            $assertMessage . ": {$key} should be present in {$realmName}"
+                        );
+                        foreach ($realm[$key] as $elementName => $element) {
+                            foreach (['text', 'info'] as $string) {
+                                $this->assertIsString(
+                                    $element[$string],
+                                    $assertMessage . ": {$string} of {$elementName} in {$key} should be a string"
+                                );
+                                $this->assertNotEmpty(
+                                    $element[$string],
+                                    $assertMessage . ": {$string} of {$elementName} in {$key} should not be empty"
+                                );
+                            }
+                        }
+                    }
+                }
+            })
         );
     }
 
-    // public function provideGetDwDescriptor()
-    // {
-    //     $validInput = [
-    //         'path' => 'rest/warehouse/search/dw_descriptor',
-    //         'method' => 'get',
-    //         'params' => [],
-    //         'data' => null
-    //     ];
+    public function provideGetDwDescriptor() {
+        return [
+            ['pub', 'empty_token'],
+            ['pub', 'malformed_token'],
+            ['usr', 'invalid_token'],
+            ['usr', 'expired_token'],
+            ['usr', 'revoked_token'],
+            ['usr', 'valid_token']
+        ];
+    }
 
-    //     $expectedOutput = [
-    //         $this->validateSuccessResponse(function ($body, $assertMessage) {
-    //             $this->assertSame(3, $body['total'], $assertMessage);
-    //             $index = 0;
-    //             foreach (['Jobs', 'Cloud', 'ResourceSpecifications'] as $realmName) {
-    //                 $realm = $body['data'][$index];
-    //                 foreach (['id', 'name'] as $property) {
-    //                     $this->assertSame(
-    //                         $realmName,
-    //                         str_replace(' ', '', $realm[$property]),
-    //                         $assertMessage
-    //                     );
-    //                 }
-    //             }
-    //         }),
-    //     ];
-
-    //     $tests = [
-    //         [
-    //             'get_dw_descriptor_success',
-    //             'usr',
-    //             $validInput,
-    //             $expectedOutput
-    //         ]
-    //     ];
-
-    //     return $tests;
-    // }
-
-
-    public function provideGetDwDescriptor()
-{
-    $validInput = [
-        'path' => 'rest/warehouse/search/dw_descriptor',
-        'method' => 'get',
-        'params' => [],
-        'data' => null
-    ];
-
-    $expectedOutput = $this->validateSuccessResponse(function ($body, $assertMessage) {
-        $this->assertSame(3, $body['total'], $assertMessage);
-        $index = 0;
-        foreach (['Jobs', 'Cloud', 'ResourceSpecifications'] as $realmName) {
-            $realm = $body['data'][$index];
-            foreach (['id', 'name'] as $property) {
-                $this->assertSame(
-                    $realmName,
-                    str_replace(' ', '', $realm[$property]),
-                    $assertMessage
-                );
-            }
-            $index++;
-        }
-    });
-
-    $tests = [
-        [
-            'get_dw_descriptor_success',
-            'usr',
-            $validInput,
-            $expectedOutput
-        ]
-    ];
-
-    return $tests;
-}
 }

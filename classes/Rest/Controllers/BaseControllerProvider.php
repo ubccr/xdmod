@@ -795,9 +795,6 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
         // If it's still empty, then no token == no access.
         if (empty($rawToken)) {
-            // if ($wantPublicUser){
-            //     return $this->getUserFromRequest($request);
-            // } else {
             throw new EmptyTokenException(
                 Tokens::HEADER_KEY,
                 'No Token Provided.'

@@ -27,6 +27,9 @@ use DataWarehouse\Access\MetricExplorer;
 use DataWarehouse\Access\Usage;
 use stdClass;
 
+use Rest\Exceptions\BadTokenException;
+use Rest\Exceptions\EmptyTokenException;
+
 /**
  * @SuppressWarnings(PHPMD.StaticAccess)
  **/
@@ -2505,12 +2508,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $user = null;
         try {
             $user = $this->authenticateToken($request);
+        } catch (EmptyTokenException $e) {
+            $user = $this->getUserFromRequest($request);
         } catch (Exception $e) {
-            // NOOP
-        }
-
-        if ($user === null) {
-            $user = $this->authorize($request, [], true);
+            throw new BadTokenException('xdmod', "An error was encountered while attempting to process the requested authorization procedure.");
         }
 
         $roles = $user->getAllRoles(true);
@@ -2633,13 +2634,13 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         return $app->json (
-            [
+            [   'success' => true,
                 'totalCount' => 1,
                 'data' => array(
                     array(
                         'realms' => $combinedRealmDescriptors,
                     ),
-                )
+                ),
             ]
         );
     }
