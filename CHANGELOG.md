@@ -1,5 +1,32 @@
 # Open XDMoD Change Log
 
+## 2024-XX-XX v11.0.0
+- Important Notes
+    - Open XDMoD is now no longer bundled with any non-commercial licenses. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the non-commercial license required from the Highcharts library. Please refer to the [license notices](https://open.xdmod.org/11.0/notices.html) for more information about the open source licenses bundled with Open XDMoD.
+- New Features
+    - General
+        - Chart axes are draggable to adjust the chart range. For charts in the Metric Explorer, the axis range can be reset to the default through the axis context menu. For other charts, the chart can be reset to the default by double-clicking.
+        - Rendering support for a subset of HTML tags and entities in a chart's main title. Unsupported tags/entities will render as plain text instead of HTML. The following HTML tags are supported: `<br>`, `<b>`, `<i>`, `<sup>`, and `<sub>`. The following entities are supported: Greek letters (recommended Unicode format, e.g., `&#x3BC;` for lowercase mu), some mathematical symbols (e.g., `&plusmn;` for ±), and degrees (`&deg;`).
+- Enhancements
+    - User Manual
+        - Changed user manual source pages from .docx to .rst. These pages are now stored in version control in the base XDMoD repository.
+        - Improved user manual build process from internal scripts to Sphinx. This build process is now done as part of the base XDMoD build.
+        - Updated theme from ExtJS to ReadTheDocs.
+    - Metric Explorer
+        - Added copy to clipboard option when generating a link to the current chart.
+    - Job Viewer
+        - Added copy to clipboard option when getting a shareable link to a job.
+- Uncategorized
+    - Chart Feature Changes
+        - For line charts, the context menu for a data series is brought up by clicking on its points, not its lines. As before, the context menu can also be brought up by clicking on it in the legend.
+        - The button for resetting the chart zoom in Metric Explorer charts appears in the chart context menus instead of a button on the chart. Resetting the chart zoom for charts in all other tabs now requires a double click on the plotting area instead of a button on the chart.
+    - Chart Features Removed
+        - The ability to change the layering order for charts with multiple axes.
+        - Hover animations.
+        - Shadow.
+    - Known Issues
+        - Charts exported as images can have legend displacement based on the chart size. The current workaround is to make the exported chart larger until the legend fits. Customizing legend entry names to be shorter may also help.
+        - Chart legend double-click feature is disabled due to an interaction with legend single-click events.
 ## 2023-09-11 v10.5.0
 - Bug Fixes
     - Cloud

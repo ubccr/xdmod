@@ -1,0 +1,10 @@
+title
+"CPU Node Hours: Allocated: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+"Resource Type","CPU Node Hours: Allocated"
+"High-performance computing",1987200.0000
+---------

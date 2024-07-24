@@ -9,9 +9,9 @@ class WarehouseControllerProviderTest extends TokenAuthTest
 {
     private static $helper;
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
         self::$helper = new XdmodTestHelper();
     }
 
@@ -867,31 +867,5 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             ];
         }
         return $tests;
-    }
-
-    /**
-     * @dataProvider provideTokenAuthTestData
-     */
-    public function testGetRawDataLimit($role, $tokenType)
-    {
-        parent::runTokenAuthTest(
-            $role,
-            $tokenType,
-            [
-                'path' => 'rest/warehouse/raw-data/limit',
-                'method' => 'get',
-                'params' => null,
-                'data' => null,
-                'endpoint_type' => 'rest',
-                'authentication_type' => 'token_required'
-            ],
-            parent::validateSuccessResponse(function ($body, $assertMessage) {
-                $this->assertGreaterThan(
-                    0,
-                    $body['data'],
-                    $assertMessage
-                );
-            })
-        );
     }
 }

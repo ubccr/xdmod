@@ -89,30 +89,34 @@ class MetricExplorer {
                 title: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] #me_chart_title'
             },
             chart: {
-                svg: '//div[@id="metric_explorer"]//div[@class="highcharts-container"]//*[local-name() = "svg"]',
+                svg: '//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]',
                 titleByText: function (title) {
-                    return module.exports.selectors.chart.svg + '/*[name()="text" and contains(@class, "title")]/*[name()="tspan" and contains(text(),"' + title + '")]';
+                    return module.exports.selectors.chart.svg + '/*[name()="g" and contains(@class, "infolayer")]//*[name()="g" and contains(@class, "annotation") and @data-index="0"]//*[local-name() = "text" and contains(text(),"' + title + '")]';
                 },
                 credits: function () {
-                    return module.exports.selectors.chart.svg + '/*[name()="text"]/*[name()="tspan" and contains(text(),"Powered by XDMoD")]';
+                    return module.exports.selectors.chart.svg + '/*[name()="g" and contains(@class, "infolayer")]//*[name()="g" and contains(@class, "annotation") and @data-index="2"]//*[name()="text"and contains(text(),"Powered by XDMoD")]';
                 },
                 yAxisTitle: function () {
-                    return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "highcharts-axis")]/*[name() = "text" and contains(@class,"highcharts-yaxis-title")]';
+                    return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "g-ytitle")]/*[name() = "text" and contains(@class,"ytitle")]';
                 },
                 legend: function () {
-                    return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "highcharts-legend-item")]/*[name()="text"]';
+                    return module.exports.selectors.chart.svg + '//*[name() = "g" and contains(@class, "legend")]//*[name()="text" and contains(@class, "legendtext")]';
                 },
+                legendContent: (name) => `${module.exports.selectors.chart.svg}//*[name() = "text" and contains(@class, "legendtext") and contains(text(), "${name}")]`,
                 seriesMarkers: function (seriesId) {
-                    return module.exports.selectors.chart.svg + '//*[local-name() = "g" and contains(@class, "highcharts-series-' + seriesId.toString() + '") and contains(@class, "highcharts-markers")]/*[local-name() = "path"]';
+                    switch (seriesId) {
+                        case 0:
+                            return `${module.exports.selectors.chart.svg}//*[name()="g" and @class="cartesianlayer"]//*[name()="g" and @class="points"]//*[name()="path" and @class="point"]`;
+                        default:
+                            return `${module.exports.selectors.chart.svg}//*[name()="g" and contains(@class, "xy${seriesId}")]//*[name()="path" and @class="point"]`;
+                    }
                 },
-                title: '#hc-panelmetric_explorer svg .undefinedtitle',
+                title: () => `(${module.exports.selectors.chart.svg})[2]//*[name()="g" and @data-index="0" and contains(@class, "annotation")]//*[name()="text"]`,
                 titleInput: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] input[type=text]',
                 titleOkButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:first-child button',
                 titleCancelButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibility: visible"] table.x-btn.x-btn-noicon.x-box-item:last-child button',
                 contextMenu: {
-                    menuByTitle: function (title) {
-                        return '//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//span[contains(@class, "menu-title") and contains(text(), "' + title + '")]//ancestor::node()[4]/ul';
-                    },
+                    menuByTitle: (title) => '//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//span[contains(@class, "menu-title") and contains(text(), "' + title + '")]//ancestor::node()[4]/ul',
                     menuItemByText: function (menuTitle, itemText) {
                         return module.exports.selectors.chart.contextMenu.menuByTitle(menuTitle) + '//li/a//span[text()="' + itemText + '"]';
                     },
@@ -208,13 +212,11 @@ class MetricExplorer {
                 browser.elementIdClick(checkboxes.value[i].ELEMENT);
             }
         }
-        this.waitForChartToChange(function () {
-            browser.waitAndClick(filterByDialogBox + '//button[@class=" x-btn-text" and contains(text(), "Ok")]');
-        });
+        browser.waitAndClick(filterByDialogBox + '//button[@class=" x-btn-text" and contains(text(), "Ok")]');
         expect(browser.element(this.selectors.chart.svg + '//*[name()="text" and @class="undefinedsubtitle"]')).to.exist;
     }
     editFiltersFromToolbar(name) {
-        let subtitleSelector = this.selectors.chart.svg + '//*[name()="text" and @class="undefinedsubtitle"]';
+        let subtitleSelector = this.selectors.chart.svg + '/*[name()="g" and contains(@class, "infolayer")]//*[name()="g" and contains(@class, "annotation") and @data-index="1"]';
         for (let i = 0; i < 100; i++) {
             if (browser.isVisible('//div[@id="grid_filters_metric_explorer"]')) {
                 break;
@@ -223,9 +225,7 @@ class MetricExplorer {
         }
         browser.waitAndClick(this.selectors.filters.toolbar.byName(name));
         browser.waitUntilNotExist(this.selectors.filters.toolbar.byName(name));
-        this.waitForChartToChange(function () {
-            browser.waitAndClick('//div[@id="grid_filters_metric_explorer"]//button[@class=" x-btn-text" and contains(text(), "Apply")]');
-        });
+        browser.waitAndClick('//div[@id="grid_filters_metric_explorer"]//button[@class=" x-btn-text" and contains(text(), "Apply")]');
         browser.waitUntilNotExist(subtitleSelector + `//*[contains(text(), "${name}")]`);
     }
     cancelFiltersFromToolbar() {
@@ -260,11 +260,9 @@ class MetricExplorer {
                 browser.elementIdClick(checkboxes.value[i].ELEMENT);
             }
         }
-        this.waitForChartToChange(function () {
-            browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Ok")]');
-            browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
-        });
-        browser.waitForExist(this.selectors.chart.legend() + `//*[contains(text(), "${name}")]`);
+        browser.waitAndClick('//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//button[@class=" x-btn-text" and contains(text(), "Ok")]');
+        browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
+        browser.waitForExist(this.selectors.chart.legendContent(name));
     }
     editFiltersFromDataSeriesDefinition(name) {
         this.clickLogoAndWaitForMask();
@@ -275,7 +273,7 @@ class MetricExplorer {
         browser.waitForChart();
         browser.waitAndClick(this.selectors.dataSeriesDefinition.dialogBox + '//div[contains(@class, "x-panel-header")]');
         browser.waitAndClick(this.selectors.dataSeriesDefinition.addButton);
-        browser.waitUntilNotExist(this.selectors.chart.legend() + `//*[contains(text(), "${name}")]`);
+        browser.waitUntilNotExist(this.selectors.chart.legendContent(name));
     }
     cancelFiltersFromDataSeriesDefinition() {
         this.clickLogoAndWaitForMask();
@@ -348,10 +346,8 @@ class MetricExplorer {
         browser.waitForVisible(this.selectors.toolbar.buttonByName('Load Chart'));
         browser.click(this.selectors.toolbar.buttonByName('Load Chart'));
         browser.waitForVisible(this.selectors.load.dialog);
-        this.waitForChartToChange(function () {
-            browser.waitAndClick(this.selectors.load.chartByName(name));
-            browser.waitForInvisible(this.selectors.load.dialog);
-        });
+        browser.waitAndClick(this.selectors.load.chartByName(name));
+        browser.waitForInvisible(this.selectors.load.dialog);
         browser.waitUntilAnimEnd(this.selectors.catalog.expandButton, 5000, 50);
     }
     checkChart(chartTitle, yAxisLabel, legend, isValidChart = true) {
@@ -547,12 +543,8 @@ class MetricExplorer {
     }
 
     clickFirstDataPoint() {
-        var elems = browser.elements(this.selectors.chart.seriesMarkers(0));
-        // Data points are returned in reverse order.
-        // for some unknown reason the first point click gets intercepted by the series
-        // menu.
-        elems.value[0].click();
-        elems.value[elems.value.length - 1].click();
+        const elems = browser.elements(this.selectors.chart.seriesMarkers(0));
+        elems.value[0].doubleClick();
     }
 
     /**

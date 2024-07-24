@@ -6,6 +6,6 @@ start,end
 2016-12-22,2017-01-01
 ---------
 Month,"[Engineering] Screwdriver Utilization (%)","[Mathematical and Physical Sciences] Screwdriver Utilization (%)","[Computer and Information Science and Engineering] Screwdriver Utilization (%)","[Social, Behavioral, and Economic Sciences] Screwdriver Utilization (%)","[Geosciences] Screwdriver Utilization (%)","[Biological Sciences] Screwdriver Utilization (%)","[Humanities/Arts] Screwdriver Utilization (%)"
-2016-12,5.965119181,6.061232544,3.247579470,3.097382067,0.404845126,0.644895891,0.485449208
-2017-01,0.119601354,0.102900112,0.408156651,0.058276100,0.321204035,0.059711927,0.005039464
+2016-12,5.9651,6.0612,3.2476,3.0974,0.4048,0.6449,0.4854
+2017-01,0.1196,0.1029,0.4082,0.0583,0.3212,0.0597,0.0050
 ---------

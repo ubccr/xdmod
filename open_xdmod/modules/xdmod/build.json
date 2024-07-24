@@ -1,7 +1,7 @@
 {
     "name": "xdmod",
     "version": "11.0.0",
-    "release": "1.0",
+    "release": "rc.1",
     "files": {
         "include_paths": [
             "/"
@@ -22,12 +22,8 @@
             "/html/gui/lib/extjs/pkgs",
             "/html/gui/lib/extjs/test",
             "/html/gui/lib/extjs/welcome",
-            "/html/gui/lib/highcharts/api",
-            "/html/gui/lib/highcharts/examples",
-            "/html/gui/lib/highcharts/gfx",
-            "/html/gui/lib/highcharts/graphics",
-            "/html/gui/lib/highcharts/index.htm",
             "/html/unit_tests",
+            "/html/user_manual/sphinx_venv",
             "/user_manual_builder"
         ],
         "exclude_patterns": [
@@ -104,5 +100,12 @@
         "etc/crond": {
             "configuration/cron.conf": "xdmod"
         }
+    },
+    "commands": {
+        "pre_build": [
+            "sed -i 's/SimpleSAML_Error_Assertion::installHandler();//g' vendor/simplesamlphp/simplesamlphp/www/_include.php",
+            "user_manual_builder/setup.sh",
+            "user_manual_builder/build_user_manual.sh --builddir user_manual_builder/ --destdir html/user_manual/"
+        ]
     }
 }

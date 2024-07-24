@@ -121,6 +121,9 @@ class InternalDashboard {
                     },
                     settings: {
                         container: '//div[@id="admin_panel_user_editor"]',
+                        userDetailsHeader: function (text) {
+                            return `${self.selectors.create_manage_users.current_users.settings.container}//span[.="${text}"]`;
+                        },
                         toolbar: {
                             container: function () {
                                 return `${self.selectors.create_manage_users.current_users.settings.container}//div[contains(@class, "x-toolbar")]`;

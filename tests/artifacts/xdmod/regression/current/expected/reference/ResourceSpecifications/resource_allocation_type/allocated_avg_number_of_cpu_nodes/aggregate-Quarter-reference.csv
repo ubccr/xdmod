@@ -1,0 +1,13 @@
+title
+"Average Number of CPU Nodes: Allocated: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+"Resource Allocation Type","Average Number of CPU Nodes: Allocated"
+"CPU Allocated",776.2376
+"GPU Allocated",400.0000
+"CPU Node Allocated",400.0000
+"GPU Node Allocated",400.0000
+---------

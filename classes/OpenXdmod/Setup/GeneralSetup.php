@@ -38,10 +38,6 @@ EOT
             '/'
         );
 
-        $settings['general_user_manual']
-            = $settings['general_site_address']
-            . 'user_manual/';
-
         $this->console->displayBlankLine();
         $this->console->displayMessage(<<<"EOT"
 The email address you specify will be used as the destination for any

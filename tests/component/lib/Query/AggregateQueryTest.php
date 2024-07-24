@@ -10,7 +10,7 @@ use CCR\Log as Logger;
 use DataWarehouse\Query\AggregateQuery;
 use Psr\Log\LoggerInterface;
 
-class AggregateQueryTest extends \PHPUnit_Framework_TestCase
+class AggregateQueryTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -18,7 +18,7 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
      */
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
@@ -45,11 +45,12 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
      * Create an aggregate query with no group by or statistic. We will not be able to generate the
      * query string with no fields for the SELECT clause.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testAggregateQueryNoStatisticNoGroupBy()
     {
+        $this->expectException(\Exception::class);
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
             'day',
@@ -266,7 +267,7 @@ SQL;
         );
         $query->addStat('job_count');
 
-        // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
+        // addOrderByAndSetSortInfo() is called from ComplexDataset and TimeseriesChart and
         // prepends the metric to the ORDER BY clause. Simulate that here.
 
         $data_description = (object) array(
@@ -336,7 +337,7 @@ SQL;
         $query->addGroupBy('queue');
         $query->addStat('job_count');
 
-        // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
+        // addOrderByAndSetSortInfo() is called from ComplexDataset and TimeseriesChart and
         // prepends the metric to the ORDER BY clause. Simulate that here.
 
         $data_description = (object) array(
@@ -386,7 +387,7 @@ SQL;
         $query->addGroupBy('none');
         $query->addStat('job_count');
 
-        // addOrderByAndSetSortInfo() is called from ComplexDataset and HighChartTimeseries2 and
+        // addOrderByAndSetSortInfo() is called from ComplexDataset and TimeseriesChart and
         // prepends the metric to the ORDER BY clause. Simulate that here.
 
         $data_description = (object) array(

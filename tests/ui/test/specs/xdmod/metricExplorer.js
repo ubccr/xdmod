@@ -181,11 +181,9 @@ describe('Metric Explorer', function metricExplorer() {
                 // browser.pause(1000);
             });
             it('Show Trend Line via Chart Options', function meAddTrendLine() {
-                me.waitForChartToChange(function () {
-                    browser.waitAndClick(me.selectors.options.trendLine);
-                    me.clickSelectorAndWaitForMask(me.selectors.options.button);
-                    browser.waitForInvisible(me.selectors.options.trendLine);
-                });
+                browser.waitAndClick(me.selectors.options.trendLine);
+                me.clickSelectorAndWaitForMask(me.selectors.options.button);
+                browser.waitForInvisible(me.selectors.options.trendLine);
             });
             it('Trend Line looks the same as previous run', function () {
                 me.checkChart(chartName, 'Node Hours: Total', [expected.legend, 'Trend Line: ' + expected.legend + ' ' + expected.trend_line]);

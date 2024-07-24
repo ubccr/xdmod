@@ -378,12 +378,13 @@ XDMoD.GlobalToolbar.Help = function (tabPanel) {
             id: 'global-toolbar-help-user-manual',
             handler: function () {
                 if (tabPanel === undefined) {
-                    window.open("user_manual.php");
+                    window.open('user_manual/index.html');
                     return;
                 }
-                var searchTerms = tabPanel.getActiveTab().userManualSectionName;
-                XDMoD.TrackEvent("Portal", "Help -> User Manual Button Clicked with " + searchTerms || "no" + " tab selected");
-                window.open('user_manual.php?t=' + encodeURIComponent(searchTerms));
+
+                const { userManualSectionName } = tabPanel.getActiveTab();
+                XDMoD.TrackEvent("Portal", "Help -> User Manual Button Clicked with " + userManualSectionName || "no tab selected");
+                window.open('user_manual/' + userManualSectionName.replace(/ /g, '_') + '.html');
             }
         },
         {
@@ -686,6 +687,13 @@ XDMoD.utils.format = {
     }
 };
 
+// Taken from: https://github.com/HubSpot/YouMightNotNeedjQuery, which
+// is available under the MIT license.
+// Recommended by @versable on https://github.com/ubccr/xdmod/pull/1542
+XDMoD.utils.deepExtend = function extend(out, ...arguments_) {
+  return jQuery.extend(true, out, ...arguments_);
+};
+
 // =====================================================================
 
 Ext.Ajax.timeout = 86400000;
@@ -694,6 +702,8 @@ CCR.xdmod.ui.tokenDelimiter = ':';
 
 CCR.xdmod.ui.minChartScale = 0.5;
 CCR.xdmod.ui.maxChartScale = 5;
+
+CCR.xdmod.ui.dtickDay = 86400000;
 
 CCR.xdmod.ui.deltaChartScale = 0.2;
 
@@ -762,7 +772,7 @@ CCR.xdmod.ui.createUserManualLink = function (tags) {
 }; //CCR.xdmod.ui.createUserManualLink
 
 CCR.xdmod.ui.userManualNav = function (tags) {
-    window.open('user_manual.php?t=' + tags);
+    window.open('user_manual/' + tags.replace(/ /g, '_') + '.html');
 };
 
 CCR.xdmod.ui.shortTitle = function (name) {

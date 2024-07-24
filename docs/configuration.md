@@ -133,8 +133,8 @@ for SSL configuration information.
 The `ServerName` setting should be updated to match the server name in the SSL
 certificate.
 
-The name and port of the server must match with the `site_address` and `user_manual`
-configuration settings in `portal_settings.ini`.
+The name and port of the server must match with the `site_address`
+configuration setting in `portal_settings.ini`.
 
 The template configuration file also configures the webserver to send the `Strict-Transport-Security` HTTP Header
 to indicate to  web browsers that the Open XDMoD instance should only be accessed using HTTPS.

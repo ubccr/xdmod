@@ -18,7 +18,7 @@ class WarehouseRawDataTest extends BaseTest
     /**
      * Create the helper.
      */
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         self::$helper = new RegressionTestHelper();
     }
@@ -41,12 +41,13 @@ class WarehouseRawDataTest extends BaseTest
                     'start_date' => '2016-12-30',
                     'end_date' => '2017-01-01',
                     'realm' => 'Jobs',
-                    'offset' => '2'
+                    'offset' => '70002'
                 ],
                 'fields_and_filters' => [
                     'fields' => 'Local Job Id,Resource,PI Group',
                     'filters[resource]' => '1,2',
-                    'filters[fieldofscience]' => '10,91'
+                    'filters[fieldofscience]' => '10,91',
+                    'offset' => '2'
                 ]
             ],
             'cloud' => [
@@ -60,6 +61,19 @@ class WarehouseRawDataTest extends BaseTest
                     'fields' => 'Instance ID,PI Group,Instance Type',
                     'filters[fieldofscience]' => '59,115',
                     'filters[configuration]' => 'm1.small,m1.medium'
+                ]
+            ],
+            'resourcespecifications' => [
+                'base' => [
+                    'start_date' => '2016-12-21',
+                    'end_date' => '2017-01-07',
+                    'realm' => 'ResourceSpecifications',
+                    'offset' => '0'
+                ],
+                'fields_and_filters' => [
+                    'fields' => 'Resource ID,Resource',
+                    'filters[resource]' => '1,2',
+                    'filters[resource_type]' => '1'
                 ]
             ]
         ];

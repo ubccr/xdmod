@@ -1,0 +1,11 @@
+title
+"Average Number of GPUs: Allocated (GPU Count): by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Month,"[screw] Average Number of GPUs: Allocated (GPU Count)"
+2016-12,5200.0000
+2017-01,8000.0000
+---------

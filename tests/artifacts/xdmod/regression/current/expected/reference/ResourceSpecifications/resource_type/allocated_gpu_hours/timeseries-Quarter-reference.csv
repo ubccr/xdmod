@@ -1,0 +1,11 @@
+title
+"GPU Hours: Allocated: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Quarter,"[High-performance computing] GPU Hours: Allocated"
+"2016 Q4",2496000.0000
+"2017 Q1",17280000.0000
+---------

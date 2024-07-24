@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[white] Screwdriver Utilization (%)","[black] Screwdriver Utilization (%)","[pikelet] Screwdriver Utilization (%)","[brown] Screwdriver Utilization (%)","[roti] Screwdriver Utilization (%)","[croutons] Screwdriver Utilization (%)","[cornbread] Screwdriver Utilization (%)","[crumpet] Screwdriver Utilization (%)","[nann] Screwdriver Utilization (%)","[brioche] Screwdriver Utilization (%)","[focaccia] Screwdriver Utilization (%)","[panettone] Screwdriver Utilization (%)","[bannock] Screwdriver Utilization (%)","[chapti] Screwdriver Utilization (%)","[pita] Screwdriver Utilization (%)","[potbrood] Screwdriver Utilization (%)","[pumpernickel] Screwdriver Utilization (%)","[barm] Screwdriver Utilization (%)"
-2016,20.480610547,8.637713108,5.195708285,2.957415567,1.166315639,1.817068603,1.026054240,0.723396991,0.006553819,0.298424716,0.290932986,0.170602816,0.046282197,0.054344381,0.033439043,0.012782046,0.007551143,0.009776515
-2017,0.130551556,0.006664835,0.013979573,0.000077487,0,0.009106475,0.001060537,0.004185109,0.008949325,0.001641763,0.000819110,0,0.001506491,0,0.000131171,0.000313727,0.000061089,0.000100623
+Year,"[white] Screwdriver Utilization (%)","[black] Screwdriver Utilization (%)","[pikelet] Screwdriver Utilization (%)","[croutons] Screwdriver Utilization (%)","[roti] Screwdriver Utilization (%)","[brown] Screwdriver Utilization (%)","[cornbread] Screwdriver Utilization (%)","[crumpet] Screwdriver Utilization (%)","[brioche] Screwdriver Utilization (%)","[nann] Screwdriver Utilization (%)","[focaccia] Screwdriver Utilization (%)","[bannock] Screwdriver Utilization (%)","[panettone] Screwdriver Utilization (%)","[chapti] Screwdriver Utilization (%)","[potbrood] Screwdriver Utilization (%)","[pita] Screwdriver Utilization (%)","[pumpernickel] Screwdriver Utilization (%)","[barm] Screwdriver Utilization (%)"
+2016,20.4806,8.6377,5.1957,1.8171,1.1663,2.9574,1.0261,0.7234,0.2984,0.0066,0.2909,0.0463,0.1706,0.0543,0.0128,0.0334,0.0076,0.0098
+2017,0.1306,0.0067,0.0140,0.0091,0,0.0001,0.0011,0.0042,0.0016,0.0089,0.0008,0.0015,0,0,0.0003,0.0001,0.0001,0.0001
 ---------

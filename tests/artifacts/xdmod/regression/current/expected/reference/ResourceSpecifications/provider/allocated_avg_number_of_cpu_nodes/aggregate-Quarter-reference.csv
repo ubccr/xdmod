@@ -1,0 +1,10 @@
+title
+"Average Number of CPU Nodes: Allocated: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+"Service Provider","Average Number of CPU Nodes: Allocated"
+screw,1825.4545
+---------

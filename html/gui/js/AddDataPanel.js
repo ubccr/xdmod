@@ -22,16 +22,16 @@ Ext.apply(CCR.xdmod.ui.AddDataPanel, {
     ],
     line_types: [
         ['Solid', 'Solid', ''],
-        ['ShortDash', 'ShortDash', '6,2'],
-        ['ShortDot', 'ShortDot', '2,2'],
-        ['ShortDashDot', 'ShortDashDot', '6,2,2,2'],
-        ['ShortDashDotDot', 'ShortDashDotDot', '6,2,2,2,2,2'],
-        ['Dot', 'Dot', '2,6'],
-        ['Dash', 'Dash', '8,6'],
-        ['LongDash', 'LongDash', '16,6'],
-        ['DashDot', 'DashDot', '8,6,2,6'],
-        ['LongDashDot', 'LongDashDot', '16,6,2,6'],
-        ['LongDashDotDot', 'LongDashDotDot', '16,6,2,6,2,6']
+        ['ShortDash', 'ShortDash', '6px,2px'],
+        ['ShortDot', 'ShortDot', '2px,2px'],
+        ['ShortDashDot', 'ShortDashDot', '6px,2px,2px,2px'],
+        ['ShortDashDotDot', 'ShortDashDotDot', '6px,2px,2px,2px,2px,2px'],
+        ['Dot', 'Dot', '2px,6px'],
+        ['Dash', 'Dash', '8px,6px'],
+        ['LongDash', 'LongDash', '16px,6px'],
+        ['DashDot', 'DashDot', '8px,6px,2px,6px'],
+        ['LongDashDot', 'LongDashDot', '16px,6px,2px,6px'],
+        ['LongDashDotDot', 'LongDashDotDot', '16px,6px,2px,6px,2px,6px']
     ],
     line_widths: [
         [1, '1'],
@@ -82,8 +82,8 @@ Ext.apply(CCR.xdmod.ui.AddDataPanel, {
     },
     initRecord: function (store, config, selectedFilters, timeseries) {
         var conf = {};
-        jQuery.extend(true, conf, CCR.xdmod.ui.AddDataPanel.defaultConfig(timeseries));
-        if (config) jQuery.extend(true, conf, config);
+        XDMoD.utils.deepExtend(conf, CCR.xdmod.ui.AddDataPanel.defaultConfig(timeseries));
+        if (config) XDMoD.utils.deepExtend(conf, config);
         conf.id = CCR.randomInt(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
         conf.z_index = store.getCount();
         conf.filters = selectedFilters ? selectedFilters : {
@@ -102,7 +102,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         if (this.filtersStore) {
             this.filtersStore.each(
                 function (record) {
-                    var data = jQuery.extend({}, record.data);
+                    var data = { ...{}, ...record.data };
                     ret.push(data);
                 });
         }
@@ -129,7 +129,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             this.record = CCR.xdmod.ui.AddDataPanel.initRecord(this.store, this.config, this.getSelectedFilters(), this.timeseries);
         }
         this.originalData = {};
-        jQuery.extend(this.originalData, this.record.data);
+        this.originalData = { ...this.originalData, ...this.record.data };
         this.filtersMenu = new Ext.menu.Menu({
             showSeparator: false,
             ignoreParentClicks: true
@@ -305,7 +305,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             ])
         });
         if (this.record.data.filters) {
-            var currentFilters = jQuery.extend({}, this.record.data.filters);
+            var currentFilters = { ...{}, ...this.record.data.filters };
             this.filtersStore.loadData(currentFilters, false);
         }
         var selectAllButton = new Ext.Button({
@@ -709,8 +709,8 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             listeners: {
                 scope: this,
                 'select': function (combo, record, index) {
-                    XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Advanced -> Selected ' + combo.fieldLabel + ' using drop-down menu', record.get('id'));
-                    this.record.set('line_type', record.get('id'));
+                    XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Advanced -> Selected ' + combo.fieldLabel + ' using drop-down menu', record.get('dasharray'));
+                    this.record.set('line_type', record.get('dasharray'));
                 }
             }
         });
@@ -816,22 +816,6 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                 }
             }
         });
-        this.shadowCheckBox = new Ext.form.Checkbox({
-            fieldLabel: 'Shadow',
-            name: 'shadow',
-            xtype: 'checkbox',
-            boxLabel: 'Cast a shadow',
-            checked: this.record.data.shadow,
-            listeners: {
-                scope: this,
-                'check': function (checkbox, check) {
-                    XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Advanced -> Clicked on ' + checkbox.fieldLabel, Ext.encode({
-                        checked: check
-                    }));
-                    this.record.set('shadow', check);
-                }
-            }
-        });
         this.displayTypeConfigButton = new Ext.Button({
             flex: 1.5,
             xtype: 'button',
@@ -842,7 +826,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             menu: [{
                 bodyStyle: 'padding:5px 5px 0;',
                 xtype: 'form',
-                items: [this.lineTypeCombo, this.lineWidthCombo, this.colorCombo, this.shadowCheckBox]
+                items: [this.lineTypeCombo, this.lineWidthCombo, this.colorCombo]
             }]
         });
         var displayType = this.record.get('display_type');

@@ -4,21 +4,6 @@ title: License Notices
 
 Open XDMoD is bundled with several other open source software libraries.
 
-Non-Commercial Licenses
------------------------
-
-The following libraries are licensed using non-commercial licenses.
-These software products are not free for commercial use.
-
-- [Highcharts](http://shop.highsoft.com/highcharts.html), which is
-  available under the
-  [Creative Commons Attribution-NonCommercial 3.0][cc-by-nc-3.0] license.
-
-For more information regarding Highcharts licensing, please refer to
-their [Non Commercial Licensing FAQ][highcharts-non-commerical-faq].
-
-[highcharts-non-commerical-faq]: https://shop.highsoft.com/faq/non-commercial
-
 Open Source Licenses
 --------------------
 
@@ -29,8 +14,9 @@ where denoted. These software products are free for commercial use.
   available under the [GPL 3.0][gpl3].
 - [Zend Framework 1.12.0](http://framework.zend.com/), which is available
   under the [New BSD License][new-bsd].
-- [jQuery](http://jquery.com/), which is available under the
-  [MIT License][mit].
+- [jQuery](http://jquery.com/), which is available under the [jQuery](http://jquery.com/), which is available under the [MIT License][mit].
+- [youmightnotneedjquery](https://github.com/HubSpot/YouMightNotNeedjQuery),
+  which is available under the [MIT License][mit].
 - [RSVP.js](https://github.com/tildeio/rsvp.js), which is available
   under the [MIT License][mit].
 - [Silex](http://silex.sensiolabs.org), which is available under the
@@ -61,8 +47,6 @@ where denoted. These software products are free for commercial use.
   available under the [MIT License][mit].
 - [reCAPTCHA PHP Library](https://developers.google.com/recaptcha/old/docs/php),
   which is available under the [MIT License][mit].
-- [jquery-base64](https://github.com/carlo/jquery-base64), which is available
-  under the [MIT License][mit].
 - \*[Ext.ux.form.GroupComboBox](https://www.sencha.com/forum/showthread.php?45412-Ext-ux-form-GroupComboBox),
   which is available under a "BSD" license (it is not clear which BSD license
   is being referred to).
@@ -128,6 +112,7 @@ where denoted. These software products are free for commercial use.
 - [util-deprecate](https://github.com/TooTallNate/util-deprecate), which is available under the [MIT License][mit].
 - [winston-transport](https://github.com/winstonjs/winston-transport), which is available under the [MIT License][mit].
 - [winston](https://github.com/winstonjs/winston), which is available under the [MIT License][mit].
+- [plotly.js](https://github.com/plotly/plotly.js), which is available under the [MIT License][mit].
 
 \* = Not available under an [OSI-approved license][osi].
 

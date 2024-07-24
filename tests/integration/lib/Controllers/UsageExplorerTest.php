@@ -32,9 +32,9 @@ class UsageExplorerTest extends TokenAuthTest
 {
     private static $publicView;
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
         self::$publicView = array(
             "public_user" => "true",
             "realm" => "Jobs",
@@ -52,7 +52,7 @@ class UsageExplorerTest extends TokenAuthTest
      */
     protected $helper;
 
-    protected function setUp()
+    protected function setup(): void
     {
         $this->helper = new XdmodTestHelper();
     }
@@ -331,7 +331,7 @@ EOF
         $this->assertEquals('DESC', $firstField['sortDir']);
 
         foreach($fields as $field) {
-            $this->assertRegExp('/dimension_column_\d+/', $field['name']);
+            $this->assertMatchesRegularExpression('/dimension_column_\d+/', $field['name']);
             $this->assertEquals('float', $field['type']);
             $this->assertEquals('DESC', $field['sortDir']);
         }
@@ -340,9 +340,9 @@ EOF
         $records = $got['records'];
         $this->assertCount($recordCount, $records);
         foreach($records as $record) {
-            $this->assertRegexp('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $record['day']);
+            $this->assertMatchesRegularExpression('/[0-9]{4}-[0-9]{2}-[0-9]{2}/', $record['day']);
             foreach($record as $rkey => $rval) {
-                $this->assertRegExp('/^day|dimension_column_\d+$/', $rkey);
+                $this->assertMatchesRegularExpression('/^day|dimension_column_\d+$/', $rkey);
             }
         }
 
@@ -354,9 +354,9 @@ EOF
         $this->assertEquals(array('header' => 'Day', 'width' => 150, 'dataIndex' => 'day', 'sortable' => 1, 'editable' => false, 'locked' => 1), $firstCol);
 
         foreach($columns as $column) {
-            $this->assertRegExp('/^\[[^\]]+\] Job Size: Max \(Core Count\)$/', $column['header']);
+            $this->assertMatchesRegularExpression('/^\[[^\]]+\] Job Size: Max \(Core Count\)$/', $column['header']);
             $this->assertEquals(140, $column['width']);
-            $this->assertRegExp('/^dimension_column_\d+$/', $column['dataIndex']);
+            $this->assertMatchesRegularExpression('/^dimension_column_\d+$/', $column['dataIndex']);
             $this->assertEquals(1, $column['sortable']);
             $this->assertEquals(false, $column['editable']);
             $this->assertEquals('right', $column['align']);
@@ -389,14 +389,20 @@ EOF
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode($response[0], true);
-        $dataseries = $plotdata['data'][0]['hc_jsonstore']['series'];
+        $dataseries = $plotdata['data'][0]['hc_jsonstore']['data'];
 
-        $this->assertCount(1, $dataseries);
-        $this->assertArrayHasKey('data', $dataseries[0]);
-        $this->assertCount(1, $dataseries[0]['data']);
-        $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
+        $primaryTraces = array();
+        for ($i = 0; $i < count($dataseries); $i++) {
+            if (strcmp($dataseries[$i]['name'], 'area fix') != 0 && strcmp($dataseries[$i]['name'], 'gap connector') != 0) {
+                $primaryTraces[] = $dataseries[$i];
+            }
+        }
+        $this->assertCount(1, $primaryTraces);
+        $this->assertArrayHasKey('y', $dataseries[0]);
+        $this->assertCount(1, $dataseries[0]['y']);
+        $this->assertArrayHasKey('y', $dataseries[0]);
 
-        $this->assertEquals($expected, $dataseries[0]['data'][0]['y'], '', 1.0e-6);
+        $this->assertEquals($expected, $dataseries[0]['y'][0], '', 1.0e-6);
     }
 
     /**
@@ -672,9 +678,16 @@ EOF;
 
         $this->assertTrue($plotdata['success']);
 
-        $this->assertCount(count($expectedNames), $plotdata['data'][0]['hc_jsonstore']['series']);
+        $actualNames = array();
 
-        foreach($plotdata['data'][0]['hc_jsonstore']['series'] as $seriesIdx => $seriesData) {
+        foreach($plotdata['data'][0]['hc_jsonstore']['data'] as $seriesIdx => $seriesData) {
+            if (strcmp($seriesData['name'], 'area fix') != 0 && strcmp($seriesData['name'], 'gap connector') != 0) {
+                $actualNames[] = $seriesData;
+            }
+        }
+        $this->assertCount(count($expectedNames), $actualNames);
+
+        foreach($actualNames as $seriesIdx => $seriesData) {
             $this->assertEquals(($seriesIdx + 1) . '. ' . $expectedNames[$seriesIdx] . '*', $seriesData['name']);
         }
     }

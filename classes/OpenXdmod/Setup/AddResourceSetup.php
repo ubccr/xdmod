@@ -112,7 +112,7 @@ EOT
                 $gpu_nodes = 0;
             }
 
-            $gpus = $this->console->prompt('How many total GPU processors (gpu cores) does this resource have?');
+            $gpus = $this->console->prompt('How many total GPUs does this resource have?');
             if (empty($gpus) || !is_numeric($gpus)) {
                 $gpus = 0;
             }

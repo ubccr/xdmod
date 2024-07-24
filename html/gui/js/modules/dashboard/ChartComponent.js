@@ -42,9 +42,9 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
 
         this.title += ' - ' + this.config.chart.start_date + ' to ' + this.config.chart.end_date;
 
-        var highchartConfig = {};
-        jQuery.extend(true, highchartConfig, this.config.chart);
-        highchartConfig.title = '';
+        var chartConfig = {};
+        XDMoD.utils.deepExtend(chartConfig, this.config.chart);
+        chartConfig.title = '';
 
         this.store = new CCR.xdmod.CustomJsonStore({
             chartCmp: self,
@@ -126,6 +126,8 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
                 'tooltip',
                 'legend',
                 'series',
+                'data',
+                'layout',
                 'dimensions',
                 'metrics',
                 'plotOptions',
@@ -135,26 +137,19 @@ XDMoD.Module.Dashboard.ChartComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
             baseParams: {
                 operation: 'get_data',
                 showContextMenu: false,
-                config: Ext.util.JSON.encode(highchartConfig),
+                config: Ext.util.JSON.encode(chartConfig),
                 format: 'hc_jsonstore',
                 public_user: CCR.xdmod.publicUser,
-                aggregation_unit: highchartConfig.aggregation_unit,
+                aggregation_unit: chartConfig.aggregation_unit,
                 width: this.width,
                 height: this.height
             }
         });
 
-        this.items = [new CCR.xdmod.ui.HighChartPanel({
+        this.items = [new CCR.xdmod.ui.PlotlyPanel({
             credits: false,
-            chartOptions: {
-                chart: {
-                    animation: CCR.xdmod.publicUser === true
-                },
-                plotOptions: {
-                    series: {
-                        animation: CCR.xdmod.publicUser === true
-                    }
-                }
+            baseChartOptions: {
+                dashboard: true
             },
             store: this.store,
             listeners: {

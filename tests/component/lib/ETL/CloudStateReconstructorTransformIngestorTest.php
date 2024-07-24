@@ -13,7 +13,7 @@ use ETL\Configuration\EtlConfiguration;
  * Test Cloud State FSM
  */
 
-class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_TestCase
+class CloudStateReconstructorTransformIngestorTest extends \PHPUnit\Framework\TestCase
 {
     private $event_start_res01 = array(
         "resource_id" => 12,
@@ -92,7 +92,7 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
 
     private $fsm;
 
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         $configFile = realpath(BASE_DIR . '/tests/artifacts/xdmod/etlv2/configuration/input/xdmod_etl_config_8.0.0.json');
 
@@ -103,6 +103,7 @@ class CloudStateReconstructorTransformIngestorTest extends \PHPUnit_Framework_Te
         $conf = EtlConfiguration::factory($configFile);
 
         $this->fsm = new CloudStateReconstructorTransformIngestor($options, $conf);
+        parent::__construct($name, $data, $dataName);
     }
 
     // happy path

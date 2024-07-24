@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[Engineering] Screwdriver Utilization (%)","[Mathematical and Physical Sciences] Screwdriver Utilization (%)","[Computer and Information Science and Engineering] Screwdriver Utilization (%)","[Social, Behavioral, and Economic Sciences] Screwdriver Utilization (%)","[Geosciences] Screwdriver Utilization (%)","[Biological Sciences] Screwdriver Utilization (%)","[Humanities/Arts] Screwdriver Utilization (%)"
-"2016 Q4",5.965119181,6.061232544,3.247579470,3.097382067,0.404845126,0.644895891,0.485449208
-"2017 Q1",0.041196022,0.035443372,0.140587291,0.020072879,0.110636945,0.020567441,0.001735815
+Quarter,"[Engineering] Screwdriver Utilization (%)","[Computer and Information Science and Engineering] Screwdriver Utilization (%)","[Mathematical and Physical Sciences] Screwdriver Utilization (%)","[Social, Behavioral, and Economic Sciences] Screwdriver Utilization (%)","[Geosciences] Screwdriver Utilization (%)","[Biological Sciences] Screwdriver Utilization (%)","[Humanities/Arts] Screwdriver Utilization (%)"
+"2016 Q4",5.9651,3.2476,6.0612,3.0974,0.4048,0.6449,0.4854
+"2017 Q1",0.0412,0.1406,0.0354,0.0201,0.1106,0.0206,0.0017
 ---------

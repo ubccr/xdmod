@@ -1,0 +1,13 @@
+title
+"CPU Node Hours: Total: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+"Resource Allocation Type","CPU Node Hours: Total"
+"CPU Allocated",748800.0000
+"GPU Node Allocated",489600.0000
+"CPU Node Allocated",393600.0000
+"GPU Allocated",355200.0000
+---------

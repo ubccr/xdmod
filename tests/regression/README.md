@@ -15,7 +15,7 @@ Run the tests with `./runtests.sh`.
 Run this command on an installed and working Open XDMoD instance:
 
 ```sh
-XDMOD_REALMS='jobs,storage,cloud' REG_TEST_FORCE_GENERATION=1 REG_TEST_ALL=1 ./runtests.sh
+XDMOD_REALMS='jobs,storage,cloud,resourcespecifications' REG_TEST_FORCE_GENERATION=1 REG_TEST_ALL=1 ./runtests.sh
 ```
 
 This will generate the expected test output data in

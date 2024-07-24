@@ -14,6 +14,7 @@
             "gpu_processor_count": "rs.gpu_processor_count",
             "gpu_processor_count_per_node": "rs.gpu_processor_count_per_node",
             "su_available_per_day": "rs.su_available_per_day",
+            "normalization_factor": "rs.normalization_factor",
             "comments": "rs.comments"
         },
         "joins": [

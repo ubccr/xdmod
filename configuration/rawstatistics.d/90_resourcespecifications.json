@@ -1,0 +1,212 @@
+{
+    "+realms": [
+      {
+        "name": "ResourceSpecifications",
+        "display": "ResourceSpecifications"
+      }
+    ],
+    "ResourceSpecifications": {
+        "tables": [
+          {
+            "schema": "modw_aggregates",
+            "name": "resourcespecsfact_by_day_resourcespecslist",
+            "alias": "rsa",
+            "join": {
+                "primaryKey": "agg_id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "id"
+            }
+          },
+          {
+            "schema": "modw",
+            "name": "resourcespecs",
+            "alias": "rs",
+            "join": {
+                "primaryKey": "resourcespec_id",
+                "foreignTableAlias": "rsa",
+                "foreignKey": "resourcespec_id"
+            }
+          },
+          {
+              "schema": "modw",
+              "name": "resourcefact",
+              "alias": "rf",
+              "join": {
+                  "primaryKey": "id",
+                  "foreignTableAlias": "rs",
+                  "foreignKey": "resource_id"
+              }
+          },
+          {
+              "schema": "modw",
+              "name": "resourcetype",
+              "alias": "rt",
+              "join": {
+                  "primaryKey": "id",
+                  "foreignTableAlias": "rf",
+                  "foreignKey": "resourcetype_id"
+              }
+          },
+          {
+              "schema": "modw",
+              "name": "organization",
+              "alias": "org",
+              "join": {
+                  "primaryKey": "id",
+                  "foreignTableAlias": "rf",
+                  "foreignKey": "organization_id"
+              }
+          },
+          {
+              "schema": "modw",
+              "name": "resource_allocation_type",
+              "alias": "rat",
+              "join": {
+                  "primaryKey": "resource_allocation_type_id",
+                  "foreignTableAlias": "rf",
+                  "foreignKey": "resource_allocation_type_id"
+              }
+          },
+          {
+              "schema": "modw",
+              "name": "resource_allocated",
+              "alias": "ra",
+              "join": {
+                  "primaryKey": "resource_id",
+                  "foreignTableAlias": "rf",
+                  "foreignKey": "id"
+              }
+          }
+        ],
+        "fields": [
+          {
+              "name": "Resource ID",
+              "tableAlias": "rf",
+              "column": "id",
+              "group": "Administration",
+              "documentation": "The ID of the resource within XDMoD",
+              "batchExport": true
+          },
+          {
+              "name": "Resource",
+              "tableAlias": "rf",
+              "column": "name",
+              "group": "Administration",
+              "documentation": "The name of the resource",
+              "batchExport": true
+          },
+          {
+              "name": "Resource Allocation Type",
+              "tableAlias": "rat",
+              "column": "resource_allocation_type_description",
+              "group": "Administration",
+              "documentation": "How the resource is allocated; such as Node, CPU, or GPU",
+              "batchExport": true
+          },
+          {
+              "name": "Start Time",
+              "tableAlias": "rs",
+              "column": "start_date_ts",
+              "group": "Administration",
+              "documentation": "The start time for the resource specification (Unix timestamp, in the XDMoD portal's time zone)",
+              "batchExport": true
+          },
+          {
+              "name": "End Time",
+              "tableAlias": "rs",
+              "column": "end_date_ts",
+              "group": "Administration",
+              "documentation": "The end time for the resource specification (Unix timestamp, in the XDMoD portal's time zone)",
+              "batchExport": true
+          },
+          {
+              "name": "CPU Processor Count",
+              "tableAlias": "rs",
+              "column": "cpu_processor_count",
+              "group": "Administration",
+              "documentation": "The number of CPUs for the resource",
+              "batchExport": true
+          },
+          {
+              "name": "CPU Node Count",
+              "tableAlias": "rs",
+              "column": "cpu_node_count",
+              "group": "Administration",
+              "documentation": "The number of CPU nodes for the resource",
+              "batchExport": true
+          },
+          {
+              "name": "CPU Processors Per Node",
+              "tableAlias": "rs",
+              "column": "cpu_processor_count_per_node",
+              "group": "Administration",
+              "documentation": "The number of CPUs per node",
+              "batchExport": true
+          },
+          {
+              "name": "GPU Count",
+              "tableAlias": "rs",
+              "column": "gpu_processor_count",
+              "group": "Requested Resource",
+              "documentation": "The number of GPUs for the resource",
+              "batchExport": true
+          },
+          {
+              "name": "GPU Node Count",
+              "tableAlias": "rs",
+              "column": "gpu_node_count",
+              "group": "Requested Resource",
+              "documentation": "The number of GPU nodes for the resource",
+              "batchExport": true
+          },
+          {
+              "name": "GPUs Per Node",
+              "tableAlias": "rs",
+              "column": "gpu_processor_count_per_node",
+              "group": "Administration",
+              "documentation": "The number of GPUs per node",
+              "batchExport": true
+          },
+          {
+              "name": "Normalization Factor",
+              "tableAlias": "rs",
+              "column": "normalization_factor",
+              "group": "Administration",
+              "documentation": "The normalization factor for a resource. This helps compare capacity across resources",
+              "batchExport": true
+          },
+          {
+              "name": "SUs Available",
+              "tableAlias": "rs",
+              "column": "su_available_per_day",
+              "group": "Administration",
+              "documentation": "The number of service units (SUs) available per day",
+              "batchExport": true
+          },
+          {
+              "name": "Resource Type",
+              "tableAlias": "rt",
+              "column": "description",
+              "group": "Administration",
+              "documentation": "The type of the resource",
+              "batchExport": true
+          },
+          {
+              "name": "Organization",
+              "tableAlias": "org",
+              "column": "name",
+              "group": "Administration",
+              "documentation": "The organization to which the resource belongs",
+              "batchExport": true
+          },
+          {
+              "name": "Percent Allocated",
+              "tableAlias": "ra",
+              "column": "percent",
+              "group": "Administration",
+              "documentation": "The percent of the resource that is allocated to ${ORGANIZATION_NAME}",
+              "batchExport": true
+          }
+        ]
+    }
+}

@@ -28,11 +28,7 @@ require_once 'user_check.php';
   <script type="text/javascript" src="../gui/lib/internet-explorer-polyfills.js"></script>
   <?php ExtJS::loadSupportScripts('../gui/lib'); ?>
   <script type="text/javascript" src="../gui/lib/ext-oldie-history-patch.js"></script>
-  <script type="text/javascript" src="../gui/lib/jquery/jquery-1.12.4.min.js"></script>
-
-  <script type="text/javascript">
-    jQuery.noConflict();
-  </script>
+  <script type="text/javascript" src="../gui/lib/jquery/jquery-3.7.1.min.js"></script>
 
   <link rel="stylesheet" type="text/css" href="../gui/css/viewer.css">
 
@@ -67,6 +63,7 @@ require_once 'user_check.php';
   <!-- Libraries -->
 
   <script type="text/javascript" src="../gui/js/libraries/utilities.js"></script>
+  <script type="text/javascript" src="../gui/js/libraries/PlotlyUtilities.js"></script>
 
   <script type="text/javascript" src="../gui/js/SessionManager.js"></script>
 
@@ -105,13 +102,9 @@ require_once 'user_check.php';
   <!--[if lte IE 8]>
   <link rel="stylesheet" type="text/css" href="../gui/css/common_ie8.css" />
   <![endif]-->
-
-  <script type="text/javascript" src="../gui/lib/highcharts/js/highcharts.src.js"></script>
-  <script type="text/javascript" src="../gui/lib/highcharts/js/highcharts-more.js"></script>
-  <script type="text/javascript" src="../gui/lib/highchartsDateformats.src.js"></script>
-
-  <script type="text/javascript" src="../gui/js/HighChartPanel.js"></script>
-
+  <script type="text/javascript" src="../gui/lib/plotly/plotly-2.29.1.min.js"></script>
+  <script type="text/javascript" src="../gui/js/PlotlyPanel.js"></script>
+  <script type="text/javascript" src="../gui/js/PlotlyChartWrapper.js"></script>
   <link rel="stylesheet" type="text/css" href="../gui/css/ChartDragDrop.css" />
 
   <script type="text/javascript" src="../gui/js/CustomJsonStore.js"></script>

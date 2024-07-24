@@ -756,6 +756,8 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
     }
 
     /**
+     * Attempt to authorize the the provided `$request` via an included API Token.
+     *
      * @param Request $request
      * @return \XDUser
      * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
@@ -765,12 +767,25 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
     {
         // NOTE: While we prefer token's to be pulled from the 'Authorization' header, we also support a fallback lookup
         // to the request's query params.
-        $authorizationHeader = $request->headers->get('Authorization');
+
+        // Also, we check `getallheaders` because for some reason Silex seems to gobble up the `Authorization` header.
+        $allHeaders = getallheaders();
+
+        $authorizationHeader = null;
+        if ($request->headers->has('Authorization')) {
+            $authorizationHeader = $request->headers->get('Authorization');
+        } elseif (array_key_exists('Authorization', $allHeaders)) {
+            $authorizationHeader = $allHeaders['Authorization'];
+        }
+
+        // Fall back to getting the token from the request(PATH,GET,BODY).
         if (empty($authorizationHeader) || strpos($authorizationHeader, Tokens::HEADER_KEY) === false) {
             $rawToken = $request->get(Tokens::HEADER_KEY);
         } else {
             $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1);
         }
+
+        // If it's still empty, then no token == no access.
         if (empty($rawToken)) {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,

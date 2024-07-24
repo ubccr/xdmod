@@ -1,0 +1,11 @@
+title
+"CPU Node Hours: Allocated: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Month,"[robertson] CPU Node Hours: Allocated","[pozidriv] CPU Node Hours: Allocated","[phillips] CPU Node Hours: Allocated","[mortorq] CPU Node Hours: Allocated","[frearson] CPU Node Hours: Allocated"
+2016-12,192000.0000,105600.0000,96000.0000,57600.0000,48000.0000
+2017-01,297600.0000,297600.0000,297600.0000,297600.0000,297600.0000
+---------

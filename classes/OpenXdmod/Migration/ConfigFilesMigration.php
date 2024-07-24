@@ -138,7 +138,11 @@ abstract class ConfigFilesMigration extends Migration
         // portal_settings file.
         foreach ($data as $sectionName => $sectionData) {
             foreach ($sectionData as $key => $value) {
-                $settings[$sectionName . '_' . $key] = $value;
+                $settings[$sectionName . '_' . $key] = str_replace(
+                    '"',
+                    '\\"',
+                    $value
+                );
             }
         }
 
@@ -183,7 +187,7 @@ abstract class ConfigFilesMigration extends Migration
         $file = implode(
             DIRECTORY_SEPARATOR,
             array(
-                $this->config->getBaseDir(),
+                CONFIG_DIR,
                 "$name.json"
             )
         );
@@ -245,7 +249,7 @@ abstract class ConfigFilesMigration extends Migration
         $file = implode(
             DIRECTORY_SEPARATOR,
             array(
-                $this->config->getBaseDir(),
+                CONFIG_DIR,
                 "$name.json"
             )
         );

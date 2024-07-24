@@ -1,7 +1,13 @@
 {
   "env": {
     "browser": true,
-    "es6": true
+    "es2018": true
+  },
+  "parserOptions": {
+    "sourceType": "script"
+  },
+  "rules": {
+    "no-underscore-dangle": "off"
   },
   "globals": {
     "AppKernel": false,
@@ -12,14 +18,12 @@
     "moment": false,
     "_gaq": false,
     "jQuery": false,
-    "Highcharts": false,
     "truncateText": false,
     "XDMoD": false,
     "Dashboard": false,
     "DashboardStore": false,
     "grecaptcha": false,
     "StringUtilities": false,
-    "Plotly": false,
-    "generateChartOptions": false
+    "Plotly": false
   }
 }

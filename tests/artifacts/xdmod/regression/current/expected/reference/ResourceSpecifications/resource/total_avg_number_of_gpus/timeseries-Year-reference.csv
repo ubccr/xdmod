@@ -1,0 +1,11 @@
+title
+"Average Number of GPUs: Total (GPU Count): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Year,"[mortorq] Average Number of GPUs: Total (GPU Count)","[robertson] Average Number of GPUs: Total (GPU Count)","[frearson] Average Number of GPUs: Total (GPU Count)","[phillips] Average Number of GPUs: Total (GPU Count)","[pozidriv] Average Number of GPUs: Total (GPU Count)"
+2016,4000.0000,4000.0000,0.0000,0.0000,0.0000
+2017,4000.0000,4000.0000,0.0000,0.0000,0.0000
+---------

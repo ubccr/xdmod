@@ -1,0 +1,10 @@
+title
+"GPU Node Hours: Total: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+"Resource Type","GPU Node Hours: Total"
+"High-performance computing",844800.0000
+---------

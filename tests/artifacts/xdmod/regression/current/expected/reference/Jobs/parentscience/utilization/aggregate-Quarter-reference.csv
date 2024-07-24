@@ -6,22 +6,22 @@ start,end
 2016-12-22,2017-01-01
 ---------
 Department,"Screwdriver Utilization (%)"
-"Electrical and Communication Systems",7.996563302
-"Microelectronic Information Processing Systems",7.045400200
-Chemistry,5.034870667
-"Social and Economic Science",3.697753541
-"Mechanical and Structural Systems",2.469226755
-"Mathematical Sciences",2.320357575
-"Design and Manufacturing Systems",1.952309791
-"Materials Research",1.928480779
-"Astronomical Sciences",1.334094194
-"Chemical, Thermal Systems",1.241095960
-"Molecular Biosciences",0.975800558
-"Polar Programs",0.763918892
-Arts,0.718562564
-"Earth Sciences",0.624199781
-Physics,0.150465278
-"Environmental Biology",0.143763994
-"Atmospheric Sciences",0.136788721
-"Computer and Computation Research",0.009549400
+"Electrical and Communication Systems",0.8338
+"Microelectronic Information Processing Systems",0.7045
+Chemistry,0.4836
+"Social and Economic Science",0.3388
+"Mathematical Sciences",0.2027
+"Design and Manufacturing Systems",0.1952
+"Materials Research",0.1765
+"Mechanical and Structural Systems",0.1560
+"Chemical, Thermal Systems",0.1241
+"Astronomical Sciences",0.1221
+"Molecular Biosciences",0.1022
+"Polar Programs",0.0722
+Arts,0.0628
+"Earth Sciences",0.0545
+Physics,0.0150
+"Environmental Biology",0.0144
+"Atmospheric Sciences",0.0137
+"Computer and Computation Research",0.0010
 ---------

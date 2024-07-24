@@ -80,7 +80,7 @@
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
+                    "name": "Shredder/Staging Database",
                     "config": "database",
                     "schema": "mod_shredder"
                 }
@@ -134,7 +134,7 @@
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
+                    "name": "HPCDB",
                     "config": "database",
                     "schema": "mod_hpcdb"
                 }
@@ -158,7 +158,7 @@
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
+                    "name": "HPCDB",
                     "config": "database",
                     "schema": "mod_hpcdb"
                 }
@@ -177,7 +177,7 @@
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
+                    "name": "HPCDB",
                     "config": "database",
                     "schema": "mod_hpcdb"
                 }
@@ -197,7 +197,7 @@
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
+                    "name": "HPCDB",
                     "config": "database",
                     "schema": "mod_hpcdb"
                 }
@@ -216,7 +216,7 @@
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
+                    "name": "HPCDB",
                     "config": "database",
                     "schema": "mod_hpcdb"
                 }
@@ -234,14 +234,14 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "Shredder/Staging Database",
+                    "name": "HPCDB",
                     "config": "database",
                     "schema": "mod_hpcdb"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw"
                 }
             }
@@ -253,14 +253,14 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "Shredder/Staging Database",
+                    "name": "HPCDB",
                     "config": "database",
                     "schema": "mod_hpcdb"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw"
                 }
             }
@@ -272,14 +272,14 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "Shredder/Staging Database",
+                    "name": "HPCDB",
                     "config": "database",
                     "schema": "mod_hpcdb"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw"
                 }
             }
@@ -291,14 +291,14 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "Shredder/Staging Database",
+                    "name": "HPCDB",
                     "config": "database",
                     "schema": "mod_hpcdb"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw"
                 }
             }
@@ -310,14 +310,14 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "Shredder/Staging Database",
+                    "name": "HPCDB",
                     "config": "database",
                     "schema": "mod_hpcdb"
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw"
                 }
             }
@@ -327,6 +327,7 @@
             "class": "SimpleAggregator",
             "namespace": "ETL\\Aggregator",
             "options_class": "AggregatorOptions",
+            "truncate_destination": true,
             "description": "Aggregate resource specification records.",
             "definition_file": "resource_specifications/resource_specs_aggregation_by_day.json",
             "table_prefix": "resourcespecsfact_by_",
@@ -334,18 +335,17 @@
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw",
                     "create_schema_if_not_exists": true
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
+                    "name": "Aggregates Database",
+                    "config": "datawarehouse",
                     "schema": "modw_aggregates",
-                    "create_schema_if_not_exists": true,
-                    "truncate_destination": false
+                    "create_schema_if_not_exists": true
                 }
             }
         },
@@ -354,25 +354,25 @@
             "class": "SimpleAggregator",
             "namespace": "ETL\\Aggregator",
             "options_class": "AggregatorOptions",
+            "truncate_destination": true,
             "description": "Aggregate resource specification records.",
-            "definition_file": "resource_specifications/resource_specs_aggregation_by_day.json",
+            "definition_file": "resource_specifications/resource_specs_aggregation.json",
             "table_prefix": "resourcespecsfact_by_",
             "aggregation_units": ["month", "quarter", "year"],
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "modw",
                     "create_schema_if_not_exists": true
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
+                    "name": "Aggregates Database",
+                    "config": "datawarehouse",
                     "schema": "modw_aggregates",
-                    "create_schema_if_not_exists": true,
-                    "truncate_destination": false
+                    "create_schema_if_not_exists": true
                 }
             }
         },
@@ -381,27 +381,51 @@
             "namespace": "ETL\\Ingestor",
             "class": "ExplodeTransformIngestor",
             "options_class": "IngestorOptions",
-            "definition_file": "resource_specifications/resourcespecs_by_day_resourcespecslist.json",
+            "truncate_destination": true,
+            "definition_file": "resource_specifications/resourcespecsfact_by_day_resourcespecslist.json",
             "description": "Populate the resourcespecs list table, which contains the back references from the resource specs aggregates table to the resourcespecs table",
             "endpoints": {
                 "source": {
                     "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
+                    "name": "Aggregates Database",
+                    "config": "datawarehouse",
                     "schema": "modw_aggregates",
                     "create_schema_if_not_exists": true
                 },
                 "destination": {
                     "type": "mysql",
-                    "name": "XDMoD Database",
-                    "config": "database",
+                    "name": "Aggregates Database",
+                    "config": "datawarehouse",
                     "schema": "modw_aggregates",
-                    "create_schema_if_not_exists": true,
-                    "truncate_destination": false
+                    "create_schema_if_not_exists": true
                 }
             },
             "explode_column": {
                 "resourcespecs_id_list": "resourcespec_id"
+            }
+        },
+        {
+            "name": "cleanup-log_table",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "description": "Add username values where able and remove escaped characters to make it more readable",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "migration/cleanup_log_table.sql"
+            ],
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_logger"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Database",
+                    "config": "database",
+                    "schema": "mod_logger"
+                }
             }
         }
     ]

@@ -2,16 +2,17 @@
 
 namespace Rest\Controllers;
 
+use CCR\DB;
 use CCR\Log;
 use Configuration\XdmodConfiguration;
 use DataWarehouse\Data\BatchDataset;
 use DataWarehouse\Export\RealmManager;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
-use DataWarehouse\Query\Model\WhereCondition;
 use Exception;
 use Models\Services\Acls;
 use Models\Services\Parameters;
 use Models\Services\Realms;
+use PDO;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Silex\ControllerCollection;
@@ -335,9 +336,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $controller
             ->get("$root/raw-data", "$current::getRawData");
-
-        $controller
-            ->get("$root/raw-data/limit", "$current::getRawDataLimit");
     }
 
     /**
@@ -1974,7 +1972,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             'timezone' => $data['schema']['timezone']
         );
 
-        $chartImage = \xd_charting\exportHighchart($chartConfig, $settings['width'], $settings['height'], $settings['scale'], $type, $globalConfig, $settings['fileMetadata'], true);
+        $chartImage = \xd_charting\exportChart($chartConfig, $settings['width'], $settings['height'], $settings['scale'], $type, $globalConfig, $settings['fileMetadata']);
         $chartFilename = $settings['fileMetadata']['title'] . '.' . $type;
         $mimeOverride = $type == 'svg' ? 'image/svg+xml' : null;
 
@@ -2110,20 +2108,20 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *
      * It can also contain the following optional parameters:
      * - fields: list of aliases of fields to get (if not provided, all
-     *           fields are gotten).
+     *           fields are obtained).
      * - filters: mapping of dimension names to their possible values.
      *            Results will only be included whose values for each of the
      *            given dimensions match one of the corresponding given values.
      * - offset: starting row index of data to get.
      *
-     * If successful, the response will include the following keys:
-     * - success: true.
-     * - fields: array containing the 'display' property of each field gotten.
-     * - data: array of arrays containing the field values gotten.
+     * If successful, the response will be a JSON text sequence. The first line
+     * will be an array containing the `display` property of each obtained
+     * field. Subsequent lines will be arrays containing the obtained field
+     * values for each record.
      *
      * @param Request $request
      * @param Application $app
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
      * @throws BadRequestHttpException if any of the required parameters are
      *                                 not included; if an invalid start date,
      *                                 end date, realm, field alias, or filter
@@ -2135,51 +2133,64 @@ class WarehouseControllerProvider extends BaseControllerProvider
     {
         $user = parent::authenticateToken($request);
         $params = $this->validateRawDataParams($request, $user);
-        $query = $this->getRawDataQuery($params);
+        $realmManager = new RealmManager();
+        $queryClass = $realmManager->getRawDataQueryClass($params['realm']);
         $logger = $this->getRawDataLogger();
-        $limit = $this->getConfiguredRawDataLimit();
-        $dataset = $this->getRawBatchDataset(
+        $streamCallback = function () use (
             $user,
             $params,
-            $query,
-            $logger,
-            $limit
+            $queryClass,
+            $logger
+        ) {
+            $reachedOffset = false;
+            $i = 1;
+            $offset = $params['offset'];
+            // Jobs realm has a performance improvement by querying one day at
+            // a time.
+            if ('Jobs' === $params['realm']) {
+                $currentDate = $params['start_date'];
+                while ($currentDate <= $params['end_date']) {
+                    $this->echoRawData(
+                        $queryClass,
+                        $currentDate,
+                        $currentDate,
+                        $currentDate === $params['start_date'],
+                        $currentDate === $params['end_date'],
+                        $params,
+                        $user,
+                        $logger,
+                        $reachedOffset,
+                        $i,
+                        $offset
+                    );
+                    $currentDate = date(
+                        'Y-m-d',
+                        strtotime("$currentDate + 1 day")
+                    );
+                }
+            } else {
+                // All other realms query the entire date range in a single
+                // query.
+                $this->echoRawData(
+                    $queryClass,
+                    $params['start_date'],
+                    $params['end_date'],
+                    true,
+                    true,
+                    $params,
+                    $user,
+                    $logger,
+                    $reachedOffset,
+                    $i,
+                    $offset
+                );
+            }
+        };
+        return $app->stream(
+            $streamCallback,
+            200,
+            ['Content-Type' => 'application/json-seq']
         );
-        $data = $this->parseRawBatchDataset($dataset);
-        return $app->json([
-            'success' => true,
-            'fields' => $dataset->getHeader(),
-            'data' => $data
-        ]);
-    }
-
-    /**
-     * Endpoint to get the maximum number of rows that can be returned in a
-     * single response from the raw data endpoint (@see getRawData()). Requires
-     * API token authorization.
-     *
-     * No parameters.
-     *
-     * If successful, the response will include the following keys:
-     * - success: true.
-     * - data: integer value obtained from the 'rest_raw_row_limit' setting in
-     *         the 'datawarehouse' section of the portal_settings.ini
-     *         configuration file.
-     *
-     * @param Request $request
-     * @param Application $app
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     * @throws Exception if there is no setting for 'rest_raw_row_limit' in
-     *                   the 'datawarehouse' section of portal_settings.ini.
-     */
-    public function getRawDataLimit(Request $request, Application $app)
-    {
-        parent::authenticateToken($request);
-        $limit = $this->getConfiguredRawDataLimit();
-        return $app->json([
-            'success' => true,
-            'data' => $limit
-        ]);
     }
 
     /**
@@ -2215,29 +2226,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Get the corresponding query for a request to get raw data with the given
-     * parameters.
-     *
-     * @param array $params validated parameters
-     *                      (@see validateRawDataParams()).
-     * @return \DataWarehouse\Query\RawQuery
-     */
-    private function getRawDataQuery($params)
-    {
-        $realmManager = new RealmManager();
-        $className = $realmManager->getRawDataQueryClass($params['realm']);
-        $query = new $className(
-            [
-                'start_date' => $params['start_date'],
-                'end_date' => $params['end_date']
-            ],
-            'batch'
-        );
-        $query = $this->setRawDataQueryFilters($query, $params);
-        return $query;
-    }
-
-    /**
      * Generate a database logger for the raw data queries.
      *
      * @return \CCR\Logger
@@ -2255,21 +2243,77 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Get the value configured in the portal settings for the maximum number
-     * of rows that can be returned in a single response from the raw data
-     * endpoint.
+     * Perform an unbuffered database query and echo the result as a JSON text sequence, flushing every 10000 rows.
      *
-     * @return int
-     * @throws Exception if the 'datawarehouse' section and/or the
-     *                   'rest_raw_row_limit' option have not been set in the
-     *                   portal configuration.
+     * @param string $queryClass the fully qualified name of the query class.
+     * @param string $startDate the start date of the query in ISO 8601 format.
+     * @param string $endDate the end date of the query in ISO 8601 format.
+     * @param bool $isFirstQueryInSeries if true, echo an array with the `display` header of each field before
+     *                                   echoing the data.
+     * @param bool $isLastQueryInSeries if true, switch back to MySQL buffered query mode after echoing the last row.
+     * @param array $params validated parameter values from @see validateRawDataParams().
+     * @param XDUser $user the user making the request.
+     * @param \CCR\Logger $logger used to log the database request.
+     * @param bool $reachedOffset if true, the requested offset row has been already been reached so don't keep
+     *                            checking for it, instead just echo all rows. Otherwise, keep checking for the
+     *                            offset row and only start echoing rows once it is reached.
+     * @param int $i the number of rows iterated so far plus one — used to keep track of whether the offset has been
+     *               reached and when to flush.
+     * @param int $offset the number of rows to ignore before echoing.
+     * @return null
+     * @throws Exception if $startDate or $endDate are invalid ISO 8601 dates, if there is an error connecting to
+     *                   or querying the database, or if invalid fields have been specified in the query parameters.
      */
-    private function getConfiguredRawDataLimit()
-    {
-        return intval(\xd_utilities\getConfiguration(
-            'datawarehouse',
-            'rest_raw_row_limit'
-        ));
+    private function echoRawData(
+        $queryClass,
+        $startDate,
+        $endDate,
+        $isFirstQueryInSeries,
+        $isLastQueryInSeries,
+        $params,
+        $user,
+        $logger,
+        &$reachedOffset,
+        &$i,
+        &$offset
+    ) {
+        $query = new $queryClass(
+            [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ],
+            'batch'
+        );
+        $query = $this->setRawDataQueryFilters($query, $params);
+        $dataset = $this->getRawBatchDataset(
+            $user,
+            $params,
+            $query,
+            $logger
+        );
+        $pdo = DB::factory($query->_db_profile)->handle();
+        if ($isFirstQueryInSeries) {
+            $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
+            echo "\036" . json_encode($dataset->getHeader()) . "\n";
+        }
+        foreach ($dataset as $row) {
+            if ($reachedOffset || $i > $offset) {
+                $reachedOffset = true;
+                echo "\036" . json_encode($row) . "\n";
+            }
+            if (10000 === $i) {
+                ob_flush();
+                flush();
+                $i = 0;
+                if (!$reachedOffset) {
+                    $offset -= 10000;
+                }
+            }
+            $i++;
+        }
+        if ($isLastQueryInSeries) {
+            $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+        }
     }
 
     /**
@@ -2279,26 +2323,22 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param array $params validated parameter values.
      * @param \DataWarehouse\Query\RawQuery $query
      * @param \CCR\Logger
-     * @param int $limit maximum number of rows to get.
      * @return BatchDataset
-     * @throws Exception if the 'fields' parameter contains invalid field
+     * @throws Exception if the `fields` parameter contains invalid field
      *                   aliases.
      */
     private function getRawBatchDataset(
         $user,
         $params,
         $query,
-        $logger,
-        $limit
+        $logger
     ) {
         try {
             $dataset = new BatchDataset(
                 $query,
                 $user,
                 $logger,
-                $params['fields'],
-                $limit,
-                $params['offset']
+                $params['fields']
             );
             return $dataset;
         } catch (Exception $e) {
@@ -2311,22 +2351,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Parse the given dataset into an array of records.
-     *
-     * @param BatchDataset $dataset
-     * @return array of records obtained by iterating over the dataset.
-     */
-    private function parseRawBatchDataset($dataset)
-    {
-        $data = [];
-        foreach ($dataset as $record) {
-            $data[] = $record;
-        }
-        return $data;
-    }
-
-    /**
-     * Validate the 'start_date' and 'end_date' parameters of the given request
+     * Validate the `start_date` and `end_date` parameters of the given request
      * to the raw data endpoint (@see getRawData()).
      *
      * @param Request $request
@@ -2359,8 +2384,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
     /**
      * Get the array of field aliases from the given request to the raw data
-     * endpoint (@see getRawData()), e.g., the parameter 'fields=foo,bar,baz'
-     * results in ['foo', 'bar', 'baz'].
+     * endpoint (@see getRawData()), e.g., the parameter `fields=foo,bar,baz`
+     * results in `['foo', 'bar', 'baz']`.
      *
      * @param Request $request
      * @return array|null containing the field aliases parsed from the request,
@@ -2377,9 +2402,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Validate the optional 'filters' parameter of the given request to the
+     * Validate the optional `filters` parameter of the given request to the
      * raw data endpoint (@see getRawData()), e.g., the parameter
-     * 'filters[foo]=bar,baz' results in ['foo' => ['bar', 'baz']].
+     * `filters[foo]=bar,baz` results in `['foo' => ['bar', 'baz']]`.
      *
      * @param Request $request
      * @param array $queryDescripters the set of dimensions the user is
@@ -2414,7 +2439,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * dimension does not match any of the provided values.
      *
      * @param \DataWarehouse\Query\RawQuery $query
-     * @param array $params containing a 'filters' key whose value is an
+     * @param array $params containing a `filters` key whose value is an
      *                      associative array of dimensions and dimension
      *                      values.
      * @return \DataWarehouse\Query\RawQuery the query with the filters
@@ -2441,10 +2466,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Validate a specific filter from the 'filters' parameter of a request to
+     * Validate a specific filter from the `filters` parameter of a request to
      * the raw data endpoint (@see getRawData()), and return the parsed array
-     * of values for that filter (e.g., 'foo,bar,baz' becomes ['foo', 'bar',
-     * 'baz']).
+     * of values for that filter (e.g., `foo,bar,baz` becomes `['foo', 'bar',
+     * 'baz']`).
      *
      * @param Request $request
      * @param array $queryDescripters the set of dimensions the user is

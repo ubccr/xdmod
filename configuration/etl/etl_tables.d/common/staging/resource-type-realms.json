@@ -18,7 +18,7 @@
             },
             {
                 "name": "realm",
-                "type": "varchar(16)",
+                "type": "varchar(255)",
                 "nullable": false
             }
         ],

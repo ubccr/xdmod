@@ -1,86 +1,100 @@
 {
     "#": "Aggregation of resource specification data",
-        "table_definition": {
-            "$ref": "${table_definition_dir}/resource_specifications/resourcespecsfact_by_.json#/table_definition"
+    "table_definition": {
+        "$ref": "${table_definition_dir}/resource_specifications/resourcespecsfact_by_.json#/table_definition"
+    },
+    "aggregation_period_query": {
+        "overseer_restrictions": {
+            "last_modified_start_date": "last_modified >= ${VALUE}",
+            "last_modified_end_date": "last_modified <= ${VALUE}",
+            "include_only_resource_codes": "r.resource_id IN ${VALUE}",
+            "exclude_resource_codes": "r.resource_id NOT IN ${VALUE}"
+        }
+    },
+    "destination_query": {
+        "overseer_restrictions": {
+            "include_only_resource_codes": "r.resource_id IN ${VALUE}",
+            "exclude_resource_codes": "r.resource_id NOT IN ${VALUE}"
+        }
+    },
+    "source_query": {
+        "overseer_restrictions": {
+            "include_only_resource_codes": "r.resource_id IN ${VALUE}",
+            "exclude_resource_codes": "r.resource_id NOT IN ${VALUE}"
         },
-        "aggregation_period_query": {
-            "overseer_restrictions": {
-                "last_modified_start_date": "last_modified >= ${VALUE}",
-                "last_modified_end_date": "last_modified <= ${VALUE}",
-                "include_only_resource_codes": "r.resource_id IN ${VALUE}",
-                "exclude_resource_codes": "r.resource_id NOT IN ${VALUE}"
-            }
+        "records": {
+            "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
+            "year": "${:YEAR_VALUE}",
+            "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
+            "record_resource_id": "r.resource_id",
+            "total_cpu_core_time": "COALESCE(SUM((${resource_specs_duration}) * r.cpu_processor_count), 0)",
+            "allocated_cpu_core_time": "COALESCE(SUM((${resource_specs_duration}) * r.cpu_processor_count * ra.percent) / 100.0, 0)",
+            "total_gpu_time": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_processor_count), 0)",
+            "allocated_gpu_time": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_processor_count * ra.percent) / 100.0, 0)",
+            "total_cpu_node_time": "COALESCE(SUM((${resource_specs_duration}) * r.cpu_node_count), 0)",
+            "allocated_cpu_node_time": "COALESCE(SUM((${resource_specs_duration}) * r.cpu_node_count * ra.percent) / 100.0, 0)",
+            "total_gpu_node_time": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_node_count), 0)",
+            "allocated_gpu_node_time": "COALESCE(SUM((${resource_specs_duration}) * r.gpu_node_count * ra.percent) / 100.0, 0)",
+            "total_su_available": "COALESCE(SUM((${resource_specs_duration}) * r.su_available_per_day), 0)",
+            "allocated_su_available": "COALESCE(SUM((${resource_specs_duration}) * r.su_available_per_day * ra.percent) / 100.0, 0)",
+            "total_normalized_su_available": "COALESCE(SUM((${resource_specs_duration}) * r.su_available_per_day * r.normalization_factor), 0)",
+            "allocated_normalized_su_available": "COALESCE(SUM((${resource_specs_duration}) * r.su_available_per_day * r.normalization_factor * ra.percent) / 100.0, 0)",
+            "resourcetype_id": "COALESCE(rf.resourcetype_id, -1)",
+            "resource_organization_id": "COALESCE(rf.organization_id, -1)",
+            "resource_state_id": "COALESCE(org.state_id, -1)",
+            "resource_country_id": "COALESCE(org.country_id, -1)",
+            "organizationtype_id": "COALESCE(org.organizationtype_id, -1)",
+            "resource_allocation_type_id": "COALESCE(rf.resource_allocation_type_id, -1)"
         },
-        "destination_query": {
-            "overseer_restrictions": {
-                "include_only_resource_codes": "r.resource_id IN ${VALUE}",
-                "exclude_resource_codes": "r.resource_id NOT IN ${VALUE}"
-            }
-        },
-        "source_query": {
-            "overseer_restrictions": {
-                "include_only_resource_codes": "r.resource_id IN ${VALUE}",
-                "exclude_resource_codes": "r.resource_id NOT IN ${VALUE}"
+        "groupby": [
+            "${AGGREGATION_UNIT}_id",
+            "year",
+            "${AGGREGATION_UNIT}",
+            "record_resource_id",
+            "resourcetype_id",
+            "resource_organization_id",
+            "resource_state_id",
+            "resource_country_id",
+            "organizationtype_id",
+            "resource_allocation_type_id"
+        ],
+        "joins": [{
+                "name": "resourcespecs",
+                "alias": "r",
+                "schema": "${SOURCE_SCHEMA}"
             },
-            "records": {
-                "${AGGREGATION_UNIT}_id": "${:PERIOD_ID}",
-                "year": "${:YEAR_VALUE}",
-                "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
-                "resource_id": "r.resource_id",
-                "cpu_cores_available": "SUM(r.cpu_processor_count)",
-                "gpu_cores_available": "SUM(r.gpu_processor_count)",
-                "cpu_nodes_available": "SUM(r.cpu_node_count)",
-                "gpu_nodes_available": "SUM(r.gpu_node_count)",
-                "core_time_available": "COALESCE(SUM(GREATEST(0, 1 + LEAST(r.end_date_ts, ${:PERIOD_END_TS}) - GREATEST(r.start_date_ts, ${:PERIOD_START_TS})) * r.cpu_processor_count * ra.percent / 100.0), 0)",
-                "gpu_time_available": "COALESCE(SUM(GREATEST(0, 1 + LEAST(r.end_date_ts, ${:PERIOD_END_TS}) - GREATEST(r.start_date_ts, ${:PERIOD_START_TS})) * r.gpu_processor_count * ra.percent / 100.0), 0)",
-                "su_available": "COALESCE(SUM(r.su_available_per_day), 0)",
-                "resourcetype_id": "COALESCE(rf.resourcetype_id, -1)",
-                "organization_id": "COALESCE(rf.organization_id, -1)",
-                "resource_state_id": "COALESCE(org.state_id, -1)",
-                "resource_country_id": "COALESCE(org.country_id, -1)",
-                "organizationtype_id": "COALESCE(org.organizationtype_id, -1)",
-                "resource_allocation_type_id": "COALESCE(rf.resource_allocation_type_id, -1)"
+            {
+                "name": "resource_allocated",
+                "alias": "ra",
+                "schema": "${SOURCE_SCHEMA}",
+                "on": "r.resource_id = ra.resource_id AND ra.start_day_id <= ${:PERIOD_END_DAY_ID} AND ra.end_day_id >= ${:PERIOD_START_DAY_ID} AND ra.start_day_id <= r.end_day_id AND ra.end_day_id >= r.start_day_id"
             },
-            "groupby": [
-              "${AGGREGATION_UNIT}_id",
-              "year",
-              "${AGGREGATION_UNIT}",
-              "resource_id",
-              "resourcetype_id",
-              "organization_id",
-              "resource_state_id",
-              "resource_country_id",
-              "organizationtype_id",
-              "resource_allocation_type_id"
-            ],
-            "joins":[
-              {
-                  "name": "resourcespecs",
-                  "alias": "r",
-                  "schema": "${SOURCE_SCHEMA}"
-              },
-              {
-                  "name": "resource_allocated",
-                  "alias": "ra",
-                  "schema": "${SOURCE_SCHEMA}",
-                  "on": "r.resource_id = ra.resource_id AND r.start_day_id = ra.start_day_id AND r.end_day_id = ra.end_day_id"
-              },
-              {
-                  "#": "Exclude non compute resources (Storage, User Support, etc) from the resources specifications aggregation. The ID's map to the modw.resourcetype table",
-                  "name": "resourcefact",
-                  "alias": "rf",
-                  "schema": "${SOURCE_SCHEMA}",
-                  "on": "r.resource_id = rf.id AND rf.resourcetype_id NOT IN (8,9,10,11,12)"
-              },
-              {
-                  "name": "organization",
-                  "alias": "org",
-                  "schema": "${SOURCE_SCHEMA}",
-                  "on": "rf.organization_id = org.id"
-              }
-            ],
-            "where": [
-              "(r.start_day_id <= ${:PERIOD_END_DAY_ID} AND r.end_day_id >= ${:PERIOD_START_DAY_ID})"
-          ]
-     }
+            {
+                "name": "resourcefact",
+                "alias": "rf",
+                "schema": "${SOURCE_SCHEMA}",
+                "on": "r.resource_id = rf.id"
+            },
+            {
+                "name": "resourcetype",
+                "alias": "rt",
+                "schema": "${SOURCE_SCHEMA}",
+                "#": "Exclude non compute resources (Storage, User Support, etc) from the resources specifications aggregation.",
+                "on": "rf.resourcetype_id = rt.id AND rt.abbrev IN ('UNK', 'HPC', 'HTC', 'DIC', 'Grid', 'Cloud', 'Vis', 'VM')"
+            },
+            {
+                "name": "organization",
+                "alias": "org",
+                "schema": "${SOURCE_SCHEMA}",
+                "on": "rf.organization_id = org.id"
+            }
+        ],
+        "where": [
+            "(r.start_day_id <= ${:PERIOD_END_DAY_ID} AND r.end_day_id >= ${:PERIOD_START_DAY_ID})"
+        ],
+        "macros": [{
+            "name": "resource_specs_duration",
+            "file": "resource_specs_time_diff.sql"
+        }]
+    }
 }

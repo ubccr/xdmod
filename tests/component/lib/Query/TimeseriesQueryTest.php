@@ -9,12 +9,12 @@ namespace ComponentTests\Query;
 use CCR\Log as Logger;
 use DataWarehouse\Query\AggregateQuery;
 
-class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
+class TimeseriesQueryTest extends \PHPUnit\Framework\TestCase
 {
 
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
@@ -38,9 +38,9 @@ class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * Simulate execution of a TimeseriesQuery. HighChartTimeseries2 creates a timeseries query and
+     * Simulate execution of a TimeseriesQuery. TimeseriesChart creates a timeseries query and
      * then passes it into a SimpleTimeseriesDataset which executes an aggregate query to get all
-     * dimension values.  The timeseries query is then executed using the values of the aggregate
+     * dimension values. The timeseries query is then executed using the values of the aggregate
      * query in the HAVING clause via the SimpleTimeseriesDataIterator.
      */
 
@@ -57,7 +57,7 @@ class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
             self::$logger
         );
 
-        // Simulate HighChartTimeseries2 configure
+        // Simulate TimeseriesChart configure
 
         $data_description = (object) array(
             'sort_type' => 'value_desc',

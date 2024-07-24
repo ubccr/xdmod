@@ -53,14 +53,48 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
                 url: this.panelSettings.url,
                 listeners: {
                     exception: function (proxy, type, action, options, response) {
-                        while (self.chart.series.length > 0) {
-                            self.chart.series[0].remove(true);
-                        }
-                        var text = self.chart.renderer.text('ERROR ' + response.status + ' ' + response.statusText, self.chart.plotLeft + 23, self.chart.plotTop + 10).add();
-                        var box = text.getBBox();
-                        self.chart.renderer.image('/gui/images/about_16.png', box.x - 23, box.y - 1, 16, 16).add();
-                        self.chart.hideLoading();
-                        self.chart.redraw();
+                        var update = {
+                            annotations: [
+                                {
+                                    text: 'ERROR ' + response.status + ' ' + response.statusText,
+                                    align: 'center',
+                                    xref: 'paper',
+                                    yref: 'paper',
+                                    font: {
+                                        size: 12,
+                                        family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                                    },
+                                    x: 0.5,
+                                    y: 0.5,
+                                    showarrow: false
+                                }
+                            ],
+                            images: [
+                                {
+                                    source: '/gui/images/about_16.png',
+                                    align: 'center',
+                                    xref: 'paper',
+                                    yref: 'paper',
+                                    x: 0.45,
+                                    y: 0.55,
+                                    sizex: 0.1,
+                                    sizey: 0.1
+                                }
+                            ],
+                            xaxis: {
+                                showgrid: false,
+                                showline: false,
+                                showticklabels: false,
+                                zeroline: false
+                            },
+                            yaxis: {
+                                showgrid: false,
+                                showline: false,
+                                showticklabels: false,
+                                zeroline: false
+                            }
+                        };
+                        this.chart = Plotly.react(this.id, [], update, { staticPlot: true });
                     }
                 }
             }),
@@ -75,7 +109,7 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
             }
         };
 
-        var storeSettings = jQuery.extend(true, {}, defaultStoreSettings, this.panelSettings.store);
+        var storeSettings = XDMoD.utils.deepExtend({}, defaultStoreSettings, this.panelSettings.store);
 
         this.store = new Ext.data.JsonStore(storeSettings);
 
