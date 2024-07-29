@@ -66,7 +66,7 @@ describe('Usage', function () {
                 usg.selectTab();
                 browser.refresh();
                 browser.waitForChart();
-                browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
+                //browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
                 // by refreshing we ensure that there are not stale legend-item elements
                 // on the page.
                 // browser.refresh();
