@@ -69,6 +69,7 @@ describe('Usage', function () {
                 // by refreshing we ensure that there are not stale legend-item elements
                 // on the page.
                 browser.refresh();
+                browser.waitForChart();
                 browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
             });
             it('Set a known start and end date', function meSetStartEnd() {
