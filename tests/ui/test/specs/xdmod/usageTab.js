@@ -1,6 +1,7 @@
 var logIn = require('./loginPage.page.js');
 var usg = require('./usageTab.page.js');
-var xdmod = require('./xdmod.page.js'); 
+var xdmodPage = require('./xdmod.page.js');
+
 var expected = global.testHelpers.artifacts.getArtifact('usage');
 var XDMOD_REALMS = process.env.XDMOD_REALMS;
 describe('Usage', function () {
@@ -61,7 +62,7 @@ describe('Usage', function () {
         logIn.logout();
         describe('(Public User)', function () {
             it('Selected', function () {
-                xdmod.selectTab("tg_summary");
+                xdmodPage.selectTab('tg_summary');
                 usg.selectTab();
                 browser.refresh();
                 browser.waitForChart();

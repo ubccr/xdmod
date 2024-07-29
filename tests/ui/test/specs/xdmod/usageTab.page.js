@@ -99,7 +99,7 @@ class Usage {
      */
     refresh() {
         browser.click(this.refreshButton);
-        browser.waitForAllInvisible(this.mask);
+        //browser.waitForAllInvisible(this.mask);
     }
 
     /**
