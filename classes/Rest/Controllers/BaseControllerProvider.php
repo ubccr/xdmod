@@ -6,7 +6,6 @@ use Rest\Exceptions\BadTokenException;
 use Rest\Exceptions\EmptyTokenException;
 use DateTime;
 use Models\Services\Tokens;
-use MongoDB\Exception\BadMethodCallException;
 use Rest\Utilities\Authentication;
 use Rest\Utilities\Authorization;
 use Silex\Application;
@@ -207,8 +206,6 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *                            'authorized'. If not specified, then only
      *                            whether or not the user is logged in will
      *                            be checked.
-     * @param bool $wantPublicUser Optional flag to indicate if public users are
-     *                             allowed. Defaults to false.
      * @return \XDUser The user that was checked and is authorized according to
      *                the given parameters.
      *
@@ -766,9 +763,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * Attempt to authorize the the provided `$request` via an included API Token.
      *
      * @param Request $request
-     * @param bool $wantPublicUser An optional flag to return the public user when token is empty.
      * @return \XDUser
-     * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
+     * @throws EmptyTokenException if the provided token is empty, or there is not a provided token.
+     * @throws BadTokenException if the provided token is in an invalid format.
      * @throws \Exception if the user's token from the db does not validate against the provided token.
      */
     protected function authenticateToken($request)
