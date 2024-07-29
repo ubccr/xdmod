@@ -201,7 +201,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                 'data' => null,
                 'endpoint_type' => 'rest',
                 'authentication_type' => 'token_optional',
-                'wantPublicUser' => true
+                'want_public_user' => true
             ],
             parent::validateSuccessResponse(function ($body, $assertMessage) {
                 $this->assertSame(3, $body['total'], $assertMessage);
