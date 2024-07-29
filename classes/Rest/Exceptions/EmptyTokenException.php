@@ -21,4 +21,3 @@ class EmptyTokenException extends HttpException
         parent::__construct(401, $message, $previous, $headers, $code);
     }
 }
-

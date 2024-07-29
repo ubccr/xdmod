@@ -2503,8 +2503,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
 
-    public function getDwDescipter (Request $request, Application $app)
-    {
+    public function getDwDescipter(Request $request, Application $app){
         $user = null;
         try {
             $user = $this->authenticateToken($request);
@@ -2520,23 +2519,20 @@ class WarehouseControllerProvider extends BaseControllerProvider
         foreach ($roles as $activeRole) {
             $shortRole = $activeRole;
             $us_pos = strpos($shortRole, '_');
-            if ($us_pos > 0)
-            {
-            $shortRole = substr($shortRole, 0, $us_pos);
+            if ($us_pos > 0){
+                $shortRole = substr($shortRole, 0, $us_pos);
             }
 
             if (array_key_exists($shortRole, $roleDescriptors)) {
                 continue;
             }
 
-
             $realms = array();
             $groupByObjects = array();
             $realmObjects = Realms::getRealmObjectsForUser($user);
             $query_descripter_realms = Acls::getQueryDescripters($user);
 
-            foreach($query_descripter_realms as $query_descripter_realm => $query_descripter_groups)
-            {
+            foreach($query_descripter_realms as $query_descripter_realm => $query_descripter_groups){
 
                 $category = DataWarehouse::getCategoryForRealm($query_descripter_realm);
                 if ($category === null) {
@@ -2633,7 +2629,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             }
         }
 
-        return $app->json (
+        return $app->json(
             [   'success' => true,
                 'totalCount' => 1,
                 'data' => array(
@@ -2645,5 +2641,3 @@ class WarehouseControllerProvider extends BaseControllerProvider
         );
     }
 }
-
-

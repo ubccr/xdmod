@@ -926,5 +926,4 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             ['usr', 'valid_token']
         ];
     }
-
 }
