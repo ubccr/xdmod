@@ -12,13 +12,13 @@
             {
                 "name": "prefix",
                 "type": "varchar(191)",
-                "comment": "generally fqdn with . replaced by - 191 limit due to utf8mb4",
+                "comment": "generally fqdn with . replaced by - 191 limit due to utf8",
                 "nullable": true
             },
             {
                 "name": "timezone",
                 "type": "varchar(191)",
-                "comment": "Timezone of the instance - 191 limit due to utf8mb4",
+                "comment": "Timezone of the instance - 191 limit due to utf8",
                 "nullable": true
             },
             {

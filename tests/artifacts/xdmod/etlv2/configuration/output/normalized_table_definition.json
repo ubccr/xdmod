@@ -2,7 +2,7 @@
   "comment": "",
   "engine": "myisam",
   "charset": "utf8",
-  "collation": "utf8_general_ci",
+  "collation": "utf8_unicode_ci",
   "columns": [
     {
       "type": "int(11) unsigned",
@@ -18,7 +18,7 @@
     {
       "type": "varchar(40)",
       "charset": "utf8",
-      "collation": "utf8_general_ci",
+      "collation": "utf8_unicode_ci",
       "nullable": true,
       "default": null,
       "extra": null,
@@ -29,7 +29,7 @@
     {
       "type": "varchar(16)",
       "charset": "utf8",
-      "collation": "utf8_general_ci",
+      "collation": "utf8_unicode_ci",
       "nullable": false,
       "default": "first name",
       "extra": null,
@@ -40,7 +40,7 @@
     {
       "type": "enum('Sample1','sample2')",
       "charset": "utf8",
-      "collation": "utf8_general_ci",
+      "collation": "utf8_unicode_ci",
       "nullable": true,
       "default": null,
       "extra": null,
@@ -75,7 +75,7 @@
       "event": "INSERT",
       "table": "normalize_table_test",
       "body": "BEGIN\nSET @resource = CONCAT(@resource, 'X');\nEND",
-      "definer": "xdmod@localhost",
+      "definer": "xdmod@xdmod.xdmod_default",
       "schema": "test",
       "name": "mytrigger"
     }

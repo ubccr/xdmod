@@ -2,6 +2,7 @@
 
 namespace OpenXdmod\Shared;
 
+use CCR\DB;
 use CCR\DB\MySQLHelper;
 use OpenXdmod\Setup\Console;
 
@@ -24,6 +25,7 @@ class DatabaseHelper
      * @param Console $console (Optional) The console to use to prompt the user.
      *                         If not provided, one will be obtained.
      */
+
     public static function createDatabases(
         $username,
         $password,
@@ -35,23 +37,50 @@ class DatabaseHelper
             $console = Console::factory();
         }
 
-        $console->displayMessage(
-            'Creating User ' . $settings['db_user']
+        $rows = MySQLHelper::userExists(
+            $settings['db_host'],
+            $settings['db_port'],
+            $username,
+            $password,
+            $settings['db_user'],
+            $settings['xdmod_host']
         );
-        // TODO: If db_host is not localhost, need to set $localHost to
-        // the correct hostname or IP address.
-        $localHost = $settings['db_host'];
-
+        $console->displayMessage(
+                'rows retuned' . $rows
+        );
+        if ($rows == false) {
+            $console->displayMessage(
+                'Creating User ' . $settings['db_user']
+            );
+            $console->displayMessage(
+                'Creating User with ' . $settings['db_user'] . ' on host ' . $settings['xdmod_host'] . ' with password ' . $settings['db_pass']
+            );
+            MySQLHelper::staticExecuteStatement(
+                $settings['db_host'],
+                $settings['db_port'],
+                $username,
+                $password,
+                null,
+                sprintf(
+                    "CREATE USER '%s'@'%s' IDENTIFIED BY '%s';",
+                    $settings['db_user'],
+                    $settings['xdmod_host'],
+                    $settings['db_pass'],
+                )
+            );
+            $console->displayMessage(
+                'Created User'
+            );
+        }
         MySQLHelper::grantAllPrivileges(
             $settings['db_host'],
             $settings['db_port'],
             $username,
             $password,
-            $localHost,
+            $settings['xdmod_host'],
             $settings['db_user'],
             $settings['db_pass']
         );
-
         foreach ($databases as $database) {
             $console->displayBlankLine();
 
@@ -97,10 +126,6 @@ class DatabaseHelper
                 $database
             );
 
-            // TODO: If db_host is not localhost, need to set $localHost to
-            // the correct hostname or IP address.
-            $localHost = $settings['db_host'];
-
             $console->displayMessage(
                 "Granting privileges on database `$database`."
             );
@@ -110,7 +135,7 @@ class DatabaseHelper
                 $username,
                 $password,
                 $database,
-                $localHost,
+                $settings['xdmod_host'],
                 $settings['db_user'],
                 $settings['db_pass']
             );
