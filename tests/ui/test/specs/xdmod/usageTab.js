@@ -62,9 +62,9 @@ describe('Usage', function () {
         logIn.logout();
         describe('(Public User)', function () {
             it('Selected', function () {
-                // xdmodPage.selectTab('tg_summary');
-                // usg.selectTab();
-                // browser.refresh();
+                xdmodPage.selectTab('tg_summary');
+                usg.selectTab();
+                browser.refresh();
                 // browser.waitForChart();
                 //browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
                 // by refreshing we ensure that there are not stale legend-item elements
