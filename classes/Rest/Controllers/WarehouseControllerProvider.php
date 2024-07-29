@@ -342,7 +342,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             ->get("$root/raw-data", "$current::getRawData");
 
         $controller
-            ->get("$root/search/dw_descripter", "$current::getDwDescipter");
+            ->get("$root/search/dw_descripter", "$current::getDwDescripter");
     }
 
     /**
@@ -2503,7 +2503,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
 
-    public function getDwDescipter(Request $request, Application $app){
+    public function getDwDescripter(Request $request, Application $app){
         $user = null;
         try {
             $user = $this->authenticateToken($request);

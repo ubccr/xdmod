@@ -151,7 +151,7 @@ abstract class TokenAuthTest extends BaseTest
                     ];
                 } elseif ('rest' === $input['endpoint_type']) {
                     // If token is empty and we want Public user, test that it returns a success response.
-                    if (true === $input['wantPublicUser'] && 'empty_token' === $tokenType)  {
+                    if (true === $input['want_public_user'] && 'empty_token' === $tokenType)  {
                         $output = $this->validateSuccessResponse(function ($body, $assertMessage) {
                             parent::assertSame(true, $body['success'], $assertMessage);
                         });

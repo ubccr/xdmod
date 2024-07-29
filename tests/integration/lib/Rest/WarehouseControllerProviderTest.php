@@ -871,10 +871,10 @@ class WarehouseControllerProviderTest extends TokenAuthTest
 
 
     /**
-     * @dataProvider provideGetDwDescriptor
+     * @dataProvider provideGetDwDescripter
      */
 
-    public function testGetDwDescriptor($role, $tokenType)
+    public function testGetDwDescripter($role, $tokenType)
     {
         parent::runTokenAuthTest(
             $role,
@@ -886,7 +886,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                 'data' => null,
                 'endpoint_type' => 'rest',
                 'authentication_type' => 'token_optional',
-                'wantPublicUser' => true
+                'want_public_user' => true
             ],
             parent::validateSuccessResponse(function ($body, $assertMessage) {
                 $this->assertSame(1, $body['totalCount'], $assertMessage);
@@ -916,7 +916,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         );
     }
 
-    public function provideGetDwDescriptor() {
+    public function provideGetDwDescripter() {
         return [
             ['pub', 'empty_token'],
             ['pub', 'malformed_token'],
