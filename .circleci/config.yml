@@ -24,7 +24,26 @@ jobs:
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
     steps:
+      - run:
+          name: Generate OpenSSL Key
+          command: openssl genrsa -rand /proc/cpuinfo:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048 > /etc/pki/tls/private/localhost.key
+      - run:
+          name: Generate Certificate
+          command: /usr/bin/openssl req -new -key /etc/pki/tls/private/localhost.key -x509 -sha256 -days 365 -set_serial $RANDOM -extensions v3_req -out /etc/pki/tls/certs/localhost.crt -subj "/C=XX/L=Default City/O=Default Company Ltd"
       - checkout
+      # We need to update our acct before we can enable docker layer caching
+      #- setup_remote_docker:
+      #    docker_layer_caching: true
+      # Download and cache dependencies
+      - run:
+          name: Update php module
+          command: dnf module -y reset php && dnf module -y enable php:7.4
+      - run:
+          name: Install PHP 7.4 and PHP module pre-reqs & an updated version of PHP Pear
+          command: dnf install -y php libzip-devel php-pear php-devel
+      - run:
+          name: Install MongoDB Pear module
+          command: yes '' | pecl install mongodb || true
       - run:
             name: install the composer dependencies
             command: composer install
