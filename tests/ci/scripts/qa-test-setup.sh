@@ -18,11 +18,14 @@ if [[ "$XDMOD_TEST_MODE" == "upgrade" ]]; then
     # Switch to the repo root
     pushd $XDMOD_SOURCE_DIR >/dev/null || exit 1
 
+    OLD_COMPOSER="$COMPOSER"
     # Specify composer.json for xdmod-qa so xdmod dev-dependencies aren't removed.
     export COMPOSER="$HOME/.qa/composer.json"
 
     # Setup the xdmod-qa environment / requirements.
     $HOME/.qa/scripts/install.sh
+
+    export COMPOSER="$OLD_COMPOSER"
 
     # Run the xdmod-qa tests.
     $HOME/.qa/scripts/build.sh
