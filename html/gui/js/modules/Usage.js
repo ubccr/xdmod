@@ -1017,34 +1017,50 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
             const root = tree.getRootNode();
 
-            // Try grab url and load chart accordingly, otherwise load default
+            // Try to grab the URL and load the chart accordingly, otherwise load default
             const url = window.location.href;
             if (url) {
                 const substringToRemove = /https:\/\/[^/]+\/#tg_usage\?node=/;
                 let chartSettings = url.replace(substringToRemove, '');
                 if (chartSettings.includes('statistic_')) {
-                const realmsMetric = root.childNodes;
-                let selectedRealmMetric = null;
-
-                realmsMetric.some((realm) => {
-                    const transformedId = realm.id.replace('group_by_', 'statistic_');
-                    if (chartSettings.includes(transformedId)) {
-                        selectedRealmMetric = realm;
-                        chartSettings = chartSettings.replace(`${transformedId}_`, '');
-                        return true;
-                    }
-                    return false;
-                });
-
+                    const realmsMetric = root.childNodes;
+                    let selectedRealmMetric = null;
+                    realmsMetric.sort((a, b) => b.id.length - a.id.length);
+                    realmsMetric.some((realm) => {
+                        const transformedId = realm.id.replace('group_by_', 'statistic_');
+                        if (chartSettings.includes(transformedId)) {
+                            selectedRealmMetric = realm;
+                            chartSettings = chartSettings.replace(`${transformedId}_`, '');
+                            return true;
+                        }
+                        return false;
+                    });
                     if (selectedRealmMetric) {
                         tree.expandPath(selectedRealmMetric.getPath(), null, (success) => {
                                 if (success) {
-                                const jobCountNode = selectedRealmMetric.findChild('statistic', chartSettings);
-                                if (jobCountNode && !jobCountNode.disabled) {
-                                    tree.getSelectionModel().select(jobCountNode);
+                                    let jobCountNode = null;
+                                    selectedRealmMetric.childNodes.sort((a, b) => b.attributes.statistic.length - a.attributes.statistic.length);
+                                    selectedRealmMetric.childNodes.some((child) => {
+                                    const stat = child.attributes.statistic;
+                                    if (chartSettings.includes(stat)){
+                                        jobCountNode = child;
+                                        chartSettings = chartSettings.replace(`${stat}_`, ''); 
+                                        return true;
+                                    }
+                                    return false;
+                                    });
+                                   chartSettings
+                                    if (jobCountNode && !jobCountNode.disabled) {
+                                        tree.getSelectionModel().select(jobCountNode);
+                                    } else {
+                                        defaultSelectFirstNode();
+                                    }
+                                }else {
+                                    defaultSelectFirstNode();
                                 }
-                            }
                         });
+                    } else {
+                        defaultSelectFirstNode();
                     }
                 } else {
                     defaultSelectFirstNode();
@@ -1052,12 +1068,12 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             } else if (root.hasChildNodes()) {
                 defaultSelectFirstNode();
             }
-
         } //selectFirstNode
 
         // ---------------------------------------------------------
 
         tree.loader.on('load', selectFirstNode, this, {
+
             buffer: 500,
             single: true
         });
