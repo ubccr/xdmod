@@ -1,4 +1,3 @@
-
 var logIn = require('./loginPage.page.js');
 var usg = require('./usageTab.page.js');
 var expected = global.testHelpers.artifacts.getArtifact('usage');
