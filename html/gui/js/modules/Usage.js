@@ -1042,20 +1042,19 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     selectedRealmMetric.childNodes.sort((a, b) => b.attributes.statistic.length - a.attributes.statistic.length);
                                     selectedRealmMetric.childNodes.some((child) => {
                                     const stat = child.attributes.statistic;
-                                    if (chartSettings.includes(stat)){
+                                    if (chartSettings.includes(stat)) {
                                         jobCountNode = child;
-                                        chartSettings = chartSettings.replace(`${stat}_`, ''); 
+                                        chartSettings = chartSettings.replace(`${stat}_`, '');
                                         return true;
                                     }
                                     return false;
                                     });
-                                   chartSettings
                                     if (jobCountNode && !jobCountNode.disabled) {
                                         tree.getSelectionModel().select(jobCountNode);
                                     } else {
                                         defaultSelectFirstNode();
                                     }
-                                }else {
+                                } else {
                                     defaultSelectFirstNode();
                                 }
                         });
