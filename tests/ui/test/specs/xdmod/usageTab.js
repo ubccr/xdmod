@@ -62,16 +62,16 @@ describe('Usage', function () {
         logIn.logout();
         describe('(Public User)', function () {
             it('Selected', function () {
-                xdmodPage.selectTab('tg_summary');
-                usg.selectTab();
+               
                 browser.refresh();
-                // browser.waitForChart();
-                //browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
+                usg.refresh();
+                browser.waitForChart();
+                browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
                 // by refreshing we ensure that there are not stale legend-item elements
                 // on the page.
-                // browser.refresh();
-                // browser.waitForChart();
-                // browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
+                browser.refresh();
+                browser.waitForChart();
+                browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
             });
             it('Set a known start and end date', function meSetStartEnd() {
                 usg.setStartDate(baselineDate.start);
