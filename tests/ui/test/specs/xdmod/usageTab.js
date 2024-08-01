@@ -1,7 +1,6 @@
+
 var logIn = require('./loginPage.page.js');
 var usg = require('./usageTab.page.js');
-var xdmodPage = require('./xdmod.page.js');
-
 var expected = global.testHelpers.artifacts.getArtifact('usage');
 var XDMOD_REALMS = process.env.XDMOD_REALMS;
 describe('Usage', function () {
@@ -62,15 +61,13 @@ describe('Usage', function () {
         logIn.logout();
         describe('(Public User)', function () {
             it('Selected', function () {
-               
-                browser.refresh();
-                usg.refresh();
+                usg.selectTab();
                 browser.waitForChart();
                 browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
+
                 // by refreshing we ensure that there are not stale legend-item elements
                 // on the page.
                 browser.refresh();
-                browser.waitForChart();
                 browser.waitForExist(usg.chartByTitle(expected.centerdirector.default_chart_title, true));
             });
             it('Set a known start and end date', function meSetStartEnd() {
