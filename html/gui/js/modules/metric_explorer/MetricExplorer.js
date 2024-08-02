@@ -515,7 +515,7 @@ if(data_${i}.size > 10):
     plot = px.${graphType}(
     data_${i}, ${(graphType === 'pie') ? `\nvalues= columns_list[0],\n names= data_${i}.index,` : ''}
     ${axis}
-    title=\'${config.title || 'Untitled Query'}\',${subTitle ? '\n&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt,' : ''}${logScale ? `log_${swapXY ? 'x' : 'y'}=True,` : ''}${lineShape}
+    title=\'${config.title || 'Untitled Query'}\',${subTitle ? `\n&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt,` : ''}${logScale ? `log_${swapXY ? 'x' : 'y'}=True,` : ''}${lineShape}
     )
     plot.update_layout(
         xaxis_automargin=True,
