@@ -442,7 +442,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             subTitle += `${id}: ${values.replace(/'/g, '')}`;
                         }
                     }
-                    let multiChart = [];
+                    const multiChart = [];
                     for (let i = 0; i < config.data_series.total; i += 1) {
                         const {
                             realm = 'Jobs',
@@ -476,7 +476,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         if (dataType === 'aggregate') {
                             let graph;
                             if (graphType === 'pie') {
-                                graph =  `
+                                graph = `
 if(data_${i}.size > 10):
     others_sum=data_${i}[~data_${i}.isin(top_ten)].sum()
     data_${i} = top_ten.combine_first(pd.Series({'Other ' + String(data_${i}.size - 10): others_sum}))\n`;
@@ -489,7 +489,6 @@ if(data_${i}.size > 10):
     ${graph}
     data_${i} = data_${i}.to_frame()
     columns_list = data_${i}.columns.tolist()`;
-
                         } else {
                             dataView = `
 \n# Limit the number of data items/source to at most 10 and sort by descending';
@@ -500,7 +499,7 @@ if(data_${i}.size > 10):
         data_${i} = data_${i}[top_ten_columns]\n`;
                         }
 
-                        const chart =`
+                        const chart = `
     data_${i} = dw.get_data(
         duration=('${duration}'),
         realm='${realm}',
@@ -511,10 +510,10 @@ if(data_${i}.size > 10):
         aggregation_unit='${aggregationUnit}',
     )\n
     ${dataView}
-    ${(swapXY && graphType !== 'pie')?`\tdata_${i} = data_${i}.reset_index()` :''}
+    ${(swapXY && graphType !== 'pie') ? `\tdata_${i} = data_${i}.reset_index()` : ''}
 # Format and draw the graph to the screen\n
     plot = px.${graphType}(
-    data_${i}, ${(graphType === 'pie')? `\nvalues= columns_list[0],\n names= data_${i}.index,`: ''}
+    data_${i}, ${(graphType === 'pie') ? `\nvalues= columns_list[0],\n names= data_${i}.index,` : ''}
     ${axis}
     title='${config.title || 'Untitled Query'}',${subTitle ? '\n&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt,' : ''}${logScale ? `log_${swapXY ? 'x' : 'y'}=True,` :''}
     ${lineShape}
@@ -523,15 +522,15 @@ if(data_${i}.size > 10):
         xaxis_automargin=True,
     )
     plot.show()\n`;
-                        multiChart[i]=chart;
+                        multiChart[i] = chart;
                     }
                     let dataCalls = `
 import pandas as pd
 # Call to Data Analytics Framework requesting data 
 with dw:`;
-                for (let chart of multiChart) {
+                multiChart.forEach(chart => {
                     dataCalls += chart;
-                }
+                });
                 return dataCalls;
                 };
 
