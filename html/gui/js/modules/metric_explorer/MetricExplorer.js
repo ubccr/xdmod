@@ -427,8 +427,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     let filters = '';
                     const filterDict = {};
                     let subTitle = '';
-                    let dataCalls = 'import pandas as pd\n\n# Call to Data Analytics Framework requesting data \nwith dw:';
-
                     for (let i = 0; i < config.global_filters.total; i += 1) {
                         const { dimension_id: id, value_name: value } = config.global_filters.data[i];
                         if (filterDict[id]) {
@@ -437,7 +435,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             filterDict[id] = [value];
                         }
                     }
-
                     for (const id in filterDict) {
                         if (Object.prototype.hasOwnProperty.call(filterDict, id)) {
                             const values = filterDict[id].join("', '");
@@ -445,7 +442,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             subTitle += `${id}: ${values.replace(/'/g, '')}`;
                         }
                     }
-
+                    let multiChart = [];
                     for (let i = 0; i < config.data_series.total; i += 1) {
                         const {
                             realm = 'Jobs',
@@ -456,7 +453,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         } = config.data_series.data[i];
                         let graphType = displayType || 'line';
                         let lineShape = '';
-
                         if (graphType === 'column') {
                             graphType = 'bar';
                             lineShape = "barmode='group',";
@@ -469,65 +465,74 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             graphType = 'area';
                             lineShape = "\nline_shape='spline',";
                         }
-
-                        dataCalls += `\n\tdata_${i} = dw.get_data(`;
-                        dataCalls += `\n\t\tduration=('${duration}'),`;
-                        dataCalls += `\n\t\trealm='${realm}',`;
-                        dataCalls += `\n\t\tmetric='${metric}',`;
-                        dataCalls += `\n\t\tdimension='${dimension}',`;
-                        dataCalls += `\n\t\tfilters={${filters}},`;
-                        dataCalls += `\n\t\tdataset_type='${dataType}',`;
-                        dataCalls += `\n\t\taggregation_unit='${aggregationUnit}',`;
-                        dataCalls += '\n\t)\n';
-
-                        if (dataType === 'aggregate') {
-                            dataCalls += '\n# Process the data series, combine the lower values into a single Other category, and change to series to a dataframe';
-                            dataCalls += `\n\ttop_ten=data_${i}.nlargest(10)`;
-                            if (graphType === 'pie') {
-                                dataCalls += `\n\tif(data_${i}.size > 10):`;
-                                dataCalls += `\n\t\tothers_sum=data_${i}[~data_${i}.isin(top_ten)].sum()`;
-                                dataCalls += `\n\t\tdata_${i} = top_ten.combine_first(pd.Series({'Other ' + String(data_${i}.size - 10): others_sum}))\n`;
-                            } else {
-                                dataCalls += `\n\tdata_${i} = top_ten`;
-                            }
-                            dataCalls += `\n\tdata_${i} = data_${i}.to_frame()`;
-                            dataCalls += `\n\tcolumns_list = data_${i}.columns.tolist()`;
-                        } else {
-                            dataCalls += '\n# Limit the number of data items/source to at most 10 and sort by descending';
-                            dataCalls += `\n\tcolumns_list = data_${i}.columns.tolist()`;
-                            dataCalls += '\n\tif (columns_list.length > 10):';
-                            dataCalls += `\n\t\tcolumn_sums = data_${i}.sum()`;
-                            dataCalls += '\n\t\ttop_ten_columns = column_sums.nlargest(10).index.tolist()';
-                            dataCalls += `\n\t\tdata_${i} = data_${i}[top_ten_columns]\n`;
-                        }
-
                         let axis = '';
                         if (swapXY && graphType !== 'pie') {
-                            dataCalls += `\n\tdata_${i} = data_${i}.reset_index()`;
-                            axis = `\n\t\ty= data_${i}.columns[0],\n\t\tx= data_${i}.columns[1:],`;
+                            axis = `\ty= data_${i}.columns[0],\n\tx= data_${i}.columns[1:],`;
                         } else {
-                            axis = `\n\t\tlabels={"value": dw.describe_metrics('${realm}').loc['${metric}', 'label']},`;
+                            axis = `labels={"value": dw.describe_metrics('${realm}').loc['${metric}', 'label']},`;
+                        }
+                        let dataView;
+
+                        if (dataType === 'aggregate') {
+                            let graph;
+                            if (graphType === 'pie') {
+                                graph =  `
+if(data_${i}.size > 10):
+    others_sum=data_${i}[~data_${i}.isin(top_ten)].sum()
+    data_${i} = top_ten.combine_first(pd.Series({'Other ' + String(data_${i}.size - 10): others_sum}))\n`;
+                            } else {
+                                graph = `\n\tdata_${i} = top_ten`;
+                            }
+                            dataView = `
+\n# Process the data series, combine the lower values into a single Other category, and change to series to a dataframe
+    top_ten=data_${i}.nlargest(10)
+    ${graph}
+    data_${i} = data_${i}.to_frame()
+    columns_list = data_${i}.columns.tolist()`;
+
+                        } else {
+                            dataView = `
+\n# Limit the number of data items/source to at most 10 and sort by descending';
+    columns_list = data_${i}.columns.tolist()
+    if (len(columns_list) > 10):
+        column_sums = data_${i}.sum()
+        top_ten_columns = column_sums.nlargest(10).index.tolist()
+        data_${i} = data_${i}[top_ten_columns]\n`;
                         }
 
-                        dataCalls += '# Format and draw the graph to the screen\n';
-                        dataCalls += `\n\tplot = px.${graphType}`;
-                        dataCalls += `(\n\t\tdata_${i},`;
-                        if (graphType === 'pie') {
-                            dataCalls += '\n\t\tvalues= columns_list[0],';
-                            dataCalls += `\n\t\tnames= data_${i}.index,`;
-                        }
-                        dataCalls += axis;
-                        dataCalls += `\n\t\ttitle='${config.title || 'Untitled Query'}${subTitle ? `&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt` : ''},`;
-                        if (logScale) {
-                            dataCalls += `\n\t\tlog_${swapXY ? 'x' : 'y'}=True,`;
-                        }
-                        dataCalls += `\n\t${lineShape})`;
-                        dataCalls += '\n\tplot.update_layout(';
-                        dataCalls += '\n\t\txaxis_automargin=True,';
-                        dataCalls += '\n\t)';
-                        dataCalls += '\n\tplot.show()\n';
+                        const chart =`
+    data_${i} = dw.get_data(
+        duration=('${duration}'),
+        realm='${realm}',
+        metric='${metric}',
+        dimension='${dimension}',
+        filters={${filters}},
+        dataset_type='${dataType}',
+        aggregation_unit='${aggregationUnit}',
+    )\n
+    ${dataView}
+    ${(swapXY && graphType !== 'pie')?`\tdata_${i} = data_${i}.reset_index()` :''}
+# Format and draw the graph to the screen\n
+    plot = px.${graphType}(
+    data_${i}, ${(graphType === 'pie')? `\nvalues= columns_list[0],\n names= data_${i}.index,`: ''}
+    ${axis}
+    title='${config.title || 'Untitled Query'}',${subTitle ? '\n&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt,' : ''}${logScale ? `log_${swapXY ? 'x' : 'y'}=True,` :''}
+    ${lineShape}
+    )
+    plot.update_layout(
+        xaxis_automargin=True,
+    )
+    plot.show()\n`;
+                        multiChart[i]=chart;
                     }
-                    return dataCalls;
+                    let dataCalls = `
+import pandas as pd
+# Call to Data Analytics Framework requesting data 
+with dw:`;
+                for (let chart of multiChart) {
+                    dataCalls += chart;
+                }
+                return dataCalls;
                 };
 
                 const chartJSON = JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4);
@@ -2226,7 +2231,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         chartLinkButton: true
 
     },
- 
     show_filters: true,
     show_warnings: true,
     font_size: 3,
