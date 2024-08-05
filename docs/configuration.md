@@ -493,7 +493,7 @@ this should be set to `true`.
 For cloud resources the timezone is not used and times are converted to
 the local timezone that the server is in.
 
-The `resource_allocation_type` option indicated how this resource is allocated
+The `resource_allocation_type` option indicates how this resource is allocated
 to users, such as by CPU, GPU or Node. By default, there are 4 possible values,
 `CPU`, `CPUNode`, `GPU`, `GPUNode`.
 
@@ -538,7 +538,7 @@ multiple entries are required for that resource to calculate an accurate
 utilization metric.
 
 Note that the `end_date` is necessary for resources with multiple entries and
-still active. The `end_date` should not be include for the last entry for a
+still active. The `end_date` should not be included for the last entry for a
 resource. A `start_date` is necessary for all entries.
 
 It is also possible to change the utilization metric by specifying a
@@ -609,7 +609,7 @@ This file typically should not be changed.
 
 ### resource_allocation_types.json
 
-Defines how a resource is allocated to user.  Each resource in `resources.json`
+Defines how a resource is allocated to users.  Each resource in `resources.json`
 should reference a resource allocation type from this file. This file typically
 should not be changed.
 
