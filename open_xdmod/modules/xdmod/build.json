@@ -104,6 +104,12 @@
     "commands": {
         "pre_build": [
             "sed -i 's/SimpleSAML_Error_Assertion::installHandler();//g' vendor/simplesamlphp/simplesamlphp/www/_include.php",
+            "rm -rf vendor/",
+            "composer install",
+            "patch vendor/simplesamlphp/simplesamlphp/www/errorreport.php < open_xdmod/modules/xdmod/assets/simplesamlphp-CVE-2020-5225.patch",
+            "patch vendor/simplesamlphp/simplesamlphp/www/module.php < open_xdmod/modules/xdmod/assets/simplesamlphp-CVE-2020-5301.patch",
+            "patch vendor/simplesamlphp/simplesamlphp/lib/SimpleSAML/Utils/HTTP.php < open_xdmod/modules/xdmod/assets/simplesamlphp-SSPSA_201907-01_HTTP.patch",
+            "patch vendor/simplesamlphp/simplesamlphp/modules/core/www/postredirect.php < open_xdmod/modules/xdmod/assets/simplesamlphp-SSPSA_201907-01_postredirect.patch",
             "user_manual_builder/setup.sh",
             "user_manual_builder/build_user_manual.sh --builddir user_manual_builder/ --destdir html/user_manual/"
         ]
