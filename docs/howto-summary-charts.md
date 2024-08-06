@@ -2,72 +2,78 @@
 title: HOWTO Change Summary Page Charts
 ---
 
-To change the default charts for all users you need to update the
-`roles.json` file (`/etc/xdmod/roles.json` if you installed the RPM or
-`PREFIX/etc/roles.json` if you did a manual install) and change the JSON
-for the charts. Since it is not obvious how to do this, I suggest
-looking at the JSON created from the Metric Explorer for the changes you
-need to make in `roles.json`.
+If a user wants to add a chart to their personal Summary tab, they can use Metric Explorer to create a chart,
+then open the "Chart Options" context menu by left clicking in the chart, then check the "Show in Summary
+tab" checkbox.
 
-First, log into the portal and create the desired charts using the
-Metric Explorer.  You can add this chart to the summary page, but only
-for that user, by checking "Show in Summary Tab".
+To change the charts that appear in users' Summary tabs by default, you'll need to create
+a chart and add its JSON definition to the XDMoD configuration files.
 
-After saving the chart, select from the table `UserProfiles` in the
-database `moddb`.
+The easiest way to create a JSON definition for a chart is interactively,
+using Metric Explorer's JSON export function:
 
-    mysql> SELECT * FROM moddb.UserProfiles;
+* Login to Open XDMoD with a user account that has the "Developer" role.
+* Create a chart in the Metric Explorer.
+* Open the "Chart Options" context menu by left clicking in the chart.
+* Select the "View chart json" menu item.
 
-This will show the user profile data for all users including the chart
-JSON serialized by PHP. If you are unsure of your `user_id`, check the
-`Users` table.
+Default summary charts are defined as lists of charts within the configuration files for user roles.
+These are located in two different sets of locations: in the top level `roles.json` file
+(`/etc/xdmod/roles.json` if you installed the RPM or `PREFIX/etc/roles.json` if you did a manual install),
+and in any `.json` files located in `roles.d` (`/etc/xdmod/roles.d/` or `PREFIX/xdmod/roles.d/` respectively).
 
-    mysql> SELECT id, username FROM moddb.Users;
+The base summary charts (the ones included with a install of Open XDMoD) are included implicity
+for any user role if the field `summary_charts` is absent for that role in both `roles.json` and
+in `roles.d`. If `summary_charts` contains any charts, those override displaying any of the summary charts.
 
-Next you'll need to deserialize the data then examine the JSON.  Copy
-this code into a file and run it with the data from your user profile:
+By default, in an out-of-the-box XDMoD configuration:
 
-```php
-<?php
-$data = 'a:1:{....'; // Copy your data into this variable.
-$profile = unserialize($data);
-$queries = json_decode($profile['queries'], true);
-foreach ($queries as $name => $query) {
-    echo $name, ":\n";
-    echo $query['config'], "\n\n";
+* The role "pub" - which is applied to any users who are not logged in - has no `summary_charts` field and so implictly uses the base summary charts.
+* The role "default" - which all other user roles inherit - has an empty `summary_charts` field in `roles.json`, but
+  has explicitly defined summary charts appended in `roles.d/jobs.json` that are equivalent to the base summary charts.
+
+The recommended method to define new summary charts is to create a new `.json` file in `roles.d` that specifically handles
+any summary chart customization, rather than using the existing `.json` files. If you'd like to keep the default charts along with
+any newly created charts, it's recommended to move the ones included with `roles.d/jobs.json` and any other files that contain `+summary_charts`,
+to your newly created `.json` file, deleting them from their original files.
+
+As an example, if you wanted to add a default chart for the "default" role,
+you would edit your summary chart customization `.json` file in `roles.d`.
+In the example below, you'd replace the `...`
+in the `+summary_charts` list with the JSON you copied.
+
+```json
+{
+    "+roles": {
+        "+default": {
+            ...
+            "+summary_charts": [
+                ...
+            ]
+        }
+        ...
+    }
 }
+
 ```
 
-This will output the JSON for each chart saved for the user the data was
-copied from.  Find the chart that you want to add to the default summary
-page and copy it into `summary_charts` section of `roles.json`.  Add the
-JSON object list after the name of the chart.
+This would only change the summary charts for logged-in users - if you wanted to make this same change for non-logged-in users,
+you would have to do the same do the same for the role "pub", rather than just for "default".
+
+There's a known issue displaying charts with no `global_filters` field
+in the Summary page. If the chart you're adding has no global filters,
+add an empty `global_filters` field as shown below
+(see the premade ones in `roles.d/jobs.json` for more examples).
 
 ```json
-"summary_charts": [
+"+summary_charts": [
     {
-        ...
-    },
-    {
+        "global_filters": {
+            "data": [],
+            "total": 0
+        },
         ...
     },
     ...
 ]
 ```
-
-You should also add a title to JSON for the chart that will be displayed
-on the summary page.
-
-```json
-"summary_charts": [
-    {
-        "title": "Chart Title",
-        ...
-    },
-    ...
-]
-```
-
-Note that it is possible to have a different set of charts for different
-roles, but the default configuration uses a single set of charts for all
-roles.
