@@ -1017,56 +1017,48 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
             const root = tree.getRootNode();
 
-            // Try to grab the URL and load the chart accordingly, otherwise load default
-            const url = window.location.href;
-            if (url) {
-                const substringToRemove = /https:\/\/[^/]+\/#tg_usage\?node=/;
-                let chartSettings = url.replace(substringToRemove, '');
-                if (chartSettings.includes('statistic_')) {
-                    const realmsMetric = root.childNodes;
-                    let selectedRealmMetric = null;
-                    realmsMetric.sort((a, b) => b.id.length - a.id.length);
-                    realmsMetric.some((realm) => {
-                        const transformedId = realm.id.replace('group_by_', 'statistic_');
-                        if (chartSettings.includes(transformedId)) {
-                            selectedRealmMetric = realm;
-                            chartSettings = chartSettings.replace(`${transformedId}_`, '');
-                            return true;
-                        }
-                        return false;
-                    });
-                    if (selectedRealmMetric) {
-                        tree.expandPath(selectedRealmMetric.getPath(), null, (success) => {
-                                if (success) {
-                                    let jobCountNode = null;
-                                    selectedRealmMetric.childNodes.sort((a, b) => b.attributes.statistic.length - a.attributes.statistic.length);
-                                    selectedRealmMetric.childNodes.some((child) => {
-                                    const stat = child.attributes.statistic;
-                                    if (chartSettings.includes(stat)) {
-                                        jobCountNode = child;
-                                        chartSettings = chartSettings.replace(`${stat}_`, '');
-                                        return true;
-                                    }
-                                    return false;
-                                    });
-                                    if (jobCountNode && !jobCountNode.disabled) {
-                                        tree.getSelectionModel().select(jobCountNode);
-                                    } else {
-                                        defaultSelectFirstNode();
-                                    }
-                                } else {
-                                    defaultSelectFirstNode();
-                                }
-                        });
-                    } else {
-                        defaultSelectFirstNode();
-                    }
-                } else {
-                    defaultSelectFirstNode();
-                }
-            } else if (root.hasChildNodes()) {
-                defaultSelectFirstNode();
-            }
+          // Try to grab the URL and load the chart accordingly, otherwise load default
+          const url = window.location.href;
+          const substringToRemove = /(.*)#tg_usage\?node=/;
+          let treeNode = url.replace(substringToRemove, '');
+          let selectedDimension = null;
+          const dimensions = XDMoD.utils.deepExtend([{}], root.childNodes);
+          dimensions.sort((a, b) => b.id.length - a.id.length);
+          dimensions.some((dimension) => {
+              if (treeNode.startsWith('group_by_') && treeNode === dimension.id) {
+                      return tree.getSelectionModel().select(dimension);
+              }
+              const transformedId = dimension.id.replace('group_by_', 'statistic_');
+              if (treeNode.includes(transformedId)) {
+                  selectedDimension = dimension;
+                  treeNode = treeNode.replace(`${transformedId}_`, '');
+                  return true;
+              }
+          });
+          if (selectedDimension) {
+              tree.expandPath(selectedDimension.getPath(), null, (success) => {
+                  if (success) {
+                      let jobCountNode = null;
+                      selectedDimension.childNodes.sort((a, b) => b.attributes.statistic.length - a.attributes.statistic.length);
+                      selectedDimension.childNodes.some((child) => {
+                          const stat = child.attributes.statistic;
+                          if (treeNode.includes(stat)) {
+                              jobCountNode = child;
+                              return true;
+                          }
+                      });
+                      if (jobCountNode && !jobCountNode.disabled) {
+                          return tree.getSelectionModel().select(jobCountNode);
+                      } else {
+                          defaultSelectFirstNode();
+                      }
+                  } else {
+                      defaultSelectFirstNode();
+                  }
+              });
+          } else {
+              defaultSelectFirstNode();
+          }
         } //selectFirstNode
 
         // ---------------------------------------------------------
