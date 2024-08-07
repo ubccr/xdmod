@@ -2128,6 +2128,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *                                 key is provided; if the end date is
      *                                 before the start date; or if the offset
      *                                 is negative.
+     * @throws AccessDeniedException if the user does not have permission to
+     *                               get raw data from the requested realm.
      */
     public function getRawData(Request $request, Application $app)
     {
@@ -2201,6 +2203,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param XDUser $user
      * @return array of validated parameter values.
      * @throws BadRequestHttpException if any of the parameters are invalid.
+     * @throws AccessDeniedException if the user does not have permission to
+     *                               get raw data from the requested realm.
      */
     private function validateRawDataParams($request, $user)
     {
