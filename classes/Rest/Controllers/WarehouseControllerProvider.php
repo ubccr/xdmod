@@ -2126,8 +2126,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *                                 not included; if an invalid start date,
      *                                 end date, realm, field alias, or filter
      *                                 key is provided; if the end date is
-     *                                 before the start date; or if the offset
-     *                                 is negative.
+     *                                 before the start date; if the offset is
+     *                                 negative; or if the requested realm is
+     *                                 not configured to provide raw data.
      */
     public function getRawData(Request $request, Application $app)
     {
@@ -2135,6 +2136,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $params = $this->validateRawDataParams($request, $user);
         $realmManager = new RealmManager();
         $queryClass = $realmManager->getRawDataQueryClass($params['realm']);
+        if (!class_exists($queryClass)) {
+            throw new BadRequestHttpException('The requested realm is not configured to provide raw data.');
+        }
         $logger = $this->getRawDataLogger();
         $streamCallback = function () use (
             $user,

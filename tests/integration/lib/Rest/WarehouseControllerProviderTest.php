@@ -831,6 +831,11 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                 parent::validateBadRequestResponse('Invalid realm.')
             ],
             [
+                'realm_not_configured',
+                ['realm' => 'Storage'],
+                parent::validateBadRequestResponse('The requested realm is not configured to provide raw data.')
+            ],
+            [
                 'invalid_fields',
                 ['fields' => 'foo,bar;'],
                 parent::validateBadRequestResponse(
