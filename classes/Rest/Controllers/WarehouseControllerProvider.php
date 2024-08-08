@@ -2126,9 +2126,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *                                 not included; if an invalid start date,
      *                                 end date, realm, field alias, or filter
      *                                 key is provided; if the end date is
-     *                                 before the start date; if the offset is
-     *                                 negative; or if the requested realm is
-     *                                 not configured to provide raw data.
+     *                                 before the start date; or if the offset
+     *                                 is negative.
+     * @throws AccessDeniedException if the user does not have permission to
+     *                               get raw data from the requested realm.
      */
     public function getRawData(Request $request, Application $app)
     {
@@ -2136,9 +2137,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $params = $this->validateRawDataParams($request, $user);
         $realmManager = new RealmManager();
         $queryClass = $realmManager->getRawDataQueryClass($params['realm']);
-        if (!class_exists($queryClass)) {
-            throw new BadRequestHttpException('The requested realm is not configured to provide raw data.');
-        }
         $logger = $this->getRawDataLogger();
         $streamCallback = function () use (
             $user,
@@ -2205,6 +2203,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param XDUser $user
      * @return array of validated parameter values.
      * @throws BadRequestHttpException if any of the parameters are invalid.
+     * @throws AccessDeniedException if the user does not have permission to
+     *                               get raw data from the requested realm.
      */
     private function validateRawDataParams($request, $user)
     {
@@ -2213,9 +2213,27 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $params['start_date'], $params['end_date']
         ) = $this->validateRawDataDateParams($request);
         $params['realm'] = $this->getStringParam($request, 'realm', true);
+        $allRealmNames = self::getRealmNames(Realms::getRealms());
+        if (!in_array($params['realm'], $allRealmNames)) {
+            throw new BadRequestHttpException(
+                'No realm exists with the requested name.'
+            );
+        }
+        $realmManager = new RealmManager();
+        $allBatchExportRealms = self::getRealmNames(
+            $realmManager->getRealms()
+        );
+        if (!in_array($params['realm'], $allBatchExportRealms)) {
+            throw new BadRequestHttpException(
+                'The requested realm is not configured to provide raw data.'
+            );
+        }
         $queryDescripters = Acls::getQueryDescripters($user, $params['realm']);
         if (empty($queryDescripters)) {
-            throw new BadRequestHttpException('Invalid realm.');
+            throw new AccessDeniedException(
+                'Your user account does not have permission to get raw data'
+                . ' from the requested realm.'
+            );
         }
         $params['fields'] = $this->getRawDataFieldsArray($request);
         $params['filters'] = $this->validateRawDataFiltersParams(
@@ -2384,6 +2402,22 @@ class WarehouseControllerProvider extends BaseControllerProvider
             );
         }
         return [$startDate->format('Y-m-d'), $endDate->format('Y-m-d')];
+    }
+
+    /**
+     * Given an array of realms, return an array of just the names of the
+     * realms. Used for request parameter validation.
+     *
+     * @param array $realms array of Realm\Realm objects.
+     * @return array of string realm names.
+     */
+    private static function getRealmNames(array $realms) {
+        return array_map(
+            function ($realm) {
+                return $realm->getName();
+            },
+            $realms
+        );
     }
 
     /**
