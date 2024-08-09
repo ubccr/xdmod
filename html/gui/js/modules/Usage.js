@@ -1071,6 +1071,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
         });
 
         tree.on('expandnode', function (node) {
+
             if (node.attributes.node_type == 'group_by') {
 
                 if (node.attributes.chartSettings) {
