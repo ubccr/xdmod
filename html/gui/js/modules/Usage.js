@@ -1051,11 +1051,12 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         });
                         if (jobCountNode && !jobCountNode.disabled) {
                             return tree.getSelectionModel().select(jobCountNode);
-                        } 
+                        }
                         defaultSelectFirstNode();
-                        
+                        return;
                     } else {
                         defaultSelectFirstNode();
+                        return;
                     }
                 });
             } else {
