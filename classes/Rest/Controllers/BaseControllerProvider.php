@@ -505,8 +505,14 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             $default,
             FILTER_CALLBACK,
             array(
-                "options" => function ($value) {
+                "options" => function ($value) use ($name) {
                     $value_dt = DateTime::createFromFormat('U', $value);
+
+                    $lastErrors = DateTime::getLastErrors();
+                    if ($lastErrors['warning_count'] > 0 || $lastErrors['error_count'] > 0) {
+                        throw new BadRequestHttpException("Invalid value for $name. Must be a(n) Unix timestamp.");
+                    }
+
                     if ($value_dt === false) {
                         return null;
                     }
@@ -551,8 +557,14 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             $default,
             FILTER_CALLBACK,
             [
-                'options' => function ($value) {
+                'options' => function ($value) use ($name) {
                     $value_dt = \DateTime::createFromFormat('Y-m-d', $value);
+
+                    $lastErrors = DateTime::getLastErrors();
+                    if ($lastErrors['warning_count'] > 0 || $lastErrors['error_count'] > 0) {
+                        throw new BadRequestHttpException("Invalid value for $name. Must be a(n) ISO 8601 Date.");
+                    }
+
                     if ($value_dt === false) {
                         return null;
                     }
