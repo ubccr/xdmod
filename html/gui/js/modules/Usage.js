@@ -1018,47 +1018,49 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             const root = tree.getRootNode();
 
           // Try to grab the URL and load the chart accordingly, otherwise load default
-          const url = window.location.href;
-          const substringToRemove = /(.*)#tg_usage\?node=/;
-          let treeNode = url.replace(substringToRemove, '');
-          let selectedDimension = null;
-          const dimensions = XDMoD.utils.deepExtend([{}], root.childNodes);
-          dimensions.sort((a, b) => b.id.length - a.id.length);
-          dimensions.some((dimension) => {
-              if (treeNode.startsWith('group_by_') && treeNode === dimension.id) {
-                      return tree.getSelectionModel().select(dimension);
-              }
-              const transformedId = dimension.id.replace('group_by_', 'statistic_');
-              if (treeNode.includes(transformedId)) {
-                  selectedDimension = dimension;
-                  treeNode = treeNode.replace(`${transformedId}_`, '');
-                  return true;
-              }
-          });
-          if (selectedDimension) {
-              tree.expandPath(selectedDimension.getPath(), null, (success) => {
-                  if (success) {
-                      let jobCountNode = null;
-                      selectedDimension.childNodes.sort((a, b) => b.attributes.statistic.length - a.attributes.statistic.length);
-                      selectedDimension.childNodes.some((child) => {
-                          const stat = child.attributes.statistic;
-                          if (treeNode.includes(stat)) {
-                              jobCountNode = child;
-                              return true;
-                          }
-                      });
-                      if (jobCountNode && !jobCountNode.disabled) {
-                          return tree.getSelectionModel().select(jobCountNode);
-                      } else {
-                          defaultSelectFirstNode();
-                      }
-                  } else {
-                      defaultSelectFirstNode();
-                  }
-              });
-          } else {
-              defaultSelectFirstNode();
-          }
+            const url = window.location.href;
+            const substringToRemove = /(.*)#tg_usage\?node=/;
+            let treeNode = url.replace(substringToRemove, '');
+            let selectedDimension = null;
+            const dimensions = XDMoD.utils.deepExtend([{}], root.childNodes);
+            dimensions.sort((a, b) => b.id.length - a.id.length);
+            dimensions.some((dimension) => {
+                if (treeNode.startsWith('group_by_') && treeNode === dimension.id) {
+                        return tree.getSelectionModel().select(dimension);
+                }
+                const transformedId = dimension.id.replace('group_by_', 'statistic_');
+                if (treeNode.includes(transformedId)) {
+                    selectedDimension = dimension;
+                    treeNode = treeNode.replace(`${transformedId}_`, '');
+                    return true;
+                }
+                return false;
+            });
+            if (selectedDimension) {
+                tree.expandPath(selectedDimension.getPath(), null, (success) => {
+                    if (success) {
+                        let jobCountNode = null;
+                        selectedDimension.childNodes.sort((a, b) => b.attributes.statistic.length - a.attributes.statistic.length);
+                        selectedDimension.childNodes.some((child) => {
+                            const stat = child.attributes.statistic;
+                            if (treeNode.includes(stat)) {
+                                jobCountNode = child;
+                                return true;
+                            }
+                            return false;
+                        });
+                        if (jobCountNode && !jobCountNode.disabled) {
+                            return tree.getSelectionModel().select(jobCountNode);
+                        } 
+                        defaultSelectFirstNode();
+                        
+                    } else {
+                        defaultSelectFirstNode();
+                    }
+                });
+            } else {
+                defaultSelectFirstNode();
+            }
         } //selectFirstNode
 
         // ---------------------------------------------------------
