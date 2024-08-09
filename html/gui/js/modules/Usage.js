@@ -1054,10 +1054,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         }
                         defaultSelectFirstNode();
                         return false;
-                    } else {
-                        defaultSelectFirstNode();
-                        return false;
                     }
+                    defaultSelectFirstNode();
+                    return false;
                 });
             } else {
                 defaultSelectFirstNode();
@@ -1067,7 +1066,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
         // ---------------------------------------------------------
 
         tree.loader.on('load', selectFirstNode, this, {
-
             buffer: 500,
             single: true
         });
