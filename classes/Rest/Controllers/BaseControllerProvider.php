@@ -557,21 +557,32 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             $default,
             FILTER_CALLBACK,
             [
-                'options' => function ($value) use ($name) {
+                'options' => function ($value) {
                     $value_dt = \DateTime::createFromFormat('Y-m-d', $value);
 
                     $lastErrors = DateTime::getLastErrors();
 
-                    // Depending on the version of PHP the value returned is different. This makes one less change needed
-                    // to support PHP 8.* in the future.
-                    // https://www.php.net/manual/en/datetimeimmutable.getlasterrors.php#refsect1-datetimeimmutable.getlasterrors-changelog
-                    if (version_compare(PHP_VERSION, '8.2.0') >= 0) {
-                        $hasWarningsOrErrors = $lastErrors;
-                    } else {
-                        $hasWarningsOrErrors = $lastErrors['warning_count'] > 0;
-                    }
-
-                    if ($value_dt === false || $hasWarningsOrErrors) {
+                    /* For PHP versions less than 8.2.0 $lastErrors will always be an array w/ the properties:
+                     * warning_count, warnings, error_count, and errors. For versions >= 8.2.0, it will return false if
+                     * there are no errors else it will return as it did pre-8.2.0.
+                     *
+                     * The below `if` statement takes this into account by ensuring that we specifically check for when
+                     * $value_dt is not false ( i.e. is a DateTime object ) but we do have 1 or more warnings which
+                     * indicates that the value of $value_dt is most likely not what it's expected to be.
+                     *
+                     * Example: parsing the date `2024-01-99` results in a $value_dt of:
+                     * DateTime('2024-04-08')
+                     * and a $lastError of:
+                     * [
+                     *     'warning_count' => 1,
+                     *     'warnings' => [
+                     *         10 => 'The parsed date was invalid'
+                     *     ],
+                     *     'error_count' => 0,
+                     *     'errors' => []
+                     * ]
+                     */
+                    if ($value_dt === false || (is_array($lastErrors) && $lastErrors['warning_count'] > 0)) {
                         return null;
                     }
                     return $value_dt;
