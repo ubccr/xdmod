@@ -565,8 +565,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
                     // Depending on the version of PHP the value returned is different. This makes one less change needed
                     // to support PHP 8.* in the future.
                     // https://www.php.net/manual/en/datetimeimmutable.getlasterrors.php#refsect1-datetimeimmutable.getlasterrors-changelog
-                    if (version_compare(PHP_VERSION, '8.2.0') >= 0)
-                    {
+                    if (version_compare(PHP_VERSION, '8.2.0') >= 0) {
                         $hasWarningsOrErrors = $lastErrors;
                     } else {
                         $hasWarningsOrErrors = $lastErrors['warning_count'] > 0;
