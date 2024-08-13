@@ -590,8 +590,8 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
                         // We can skip tests:
                         //   - Strings can be strings, so skip that test.
                         //   - Invalid dates should only be tested on date params.
-                        if (('invalid_date' === $id && 'date_params' !== $key) ||
-                            ('string' === $id && 'string_params' === $key)) {
+                        if (('string' === $id && 'string_params' === $key) ||
+                            ('invalid_date' === $id && 'date_params' !== $key) ) {
                             continue;
                         }
 

@@ -561,11 +561,18 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
                     $value_dt = \DateTime::createFromFormat('Y-m-d', $value);
 
                     $lastErrors = DateTime::getLastErrors();
-                    if ($lastErrors['warning_count'] > 0 || $lastErrors['error_count'] > 0) {
-                        throw new BadRequestHttpException("Invalid value for $name. Must be a(n) ISO 8601 Date.");
+
+                    // Depending on the version of PHP the value returned is different. This makes one less change needed
+                    // to support PHP 8.* in the future.
+                    // https://www.php.net/manual/en/datetimeimmutable.getlasterrors.php#refsect1-datetimeimmutable.getlasterrors-changelog
+                    if (version_compare(PHP_VERSION, '8.2.0') >= 0)
+                    {
+                        $hasWarningsOrErrors = $lastErrors;
+                    } else {
+                        $hasWarningsOrErrors = $lastErrors['warning_count'] > 0;
                     }
 
-                    if ($value_dt === false) {
+                    if ($value_dt === false || $hasWarningsOrErrors) {
                         return null;
                     }
                     return $value_dt;
