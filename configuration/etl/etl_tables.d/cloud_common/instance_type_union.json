@@ -16,7 +16,7 @@
             {
                 "name": "instance_type_id",
                 "type": "int(11)",
-                "default": -1,
+                "default": 1,
                 "nullable": true,
                 "comment": "Resource to which this type belongs"
             },
