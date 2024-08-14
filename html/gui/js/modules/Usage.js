@@ -956,7 +956,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
         // ---------------------------------------------------------
 
         function defaultSelectFirstNode() {
-        
+
             updateDisabledMenus.call(this, true);
 
             var node = tree.getSelectionModel().getSelectedNode();
