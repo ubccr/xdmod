@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by System Username"
+"Screwdriver CPU Utilization (%): by System Username"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"System Username","Screwdriver Utilization (%)"
+"System Username","Screwdriver CPU Utilization (%)"
 meapi,1.3871
 aytinis,1.3011
 moorh,0.6345
