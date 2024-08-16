@@ -124,7 +124,7 @@ describe('Report Generator', function () {
                     realm: 'Jobs',
                     startDate: previousQuarterStartDate,
                     endDate: previousQuarterEndDate,
-                    title: 'PREVIOUS QUARTER: Percent Utilization',
+                    title: 'PREVIOUS QUARTER: CPU Percent Utilization',
                     drillDetails: '',
                     timeframeType: 'Previous quarter'
                 },
@@ -132,7 +132,7 @@ describe('Report Generator', function () {
                     realm: 'Jobs',
                     startDate: yearToDateStartDate,
                     endDate: yearToDateEndDate,
-                    title: 'YEAR TO DATE: Percent Utilization',
+                    title: 'YEAR TO DATE: Percent CPU Utilization',
                     drillDetails: '',
                     timeframeType: 'Year to date'
                 },
