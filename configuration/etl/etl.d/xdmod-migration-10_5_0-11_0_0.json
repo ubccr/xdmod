@@ -7,7 +7,27 @@
             "options_class": "IngestorOptions"
         }
     },
-    "migration-10_5_0-11_0_0": [{
+    "migration-10_5_0-11_0_0": [
+        {
+            "name": "report-templates-charts",
+            "definition_file": "xdb/report-template-charts.json",
+            "description": "report-template-charts + data",
+            "class": "StructuredFileIngestor",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "report-template-charts",
+                    "path": "xdb/report-template-charts.json"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
+        },
+        {
             "name": "resource-allocation-types",
             "description": "Ingest resource allocation types file",
             "definition_file": "common/staging/resource-allocation-type.json",
