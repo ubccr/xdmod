@@ -812,7 +812,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      * @return DateTime|null If the creation of a DateTime was successful without warning then an instance of DateTime
      * will be returned, else null;
      */
-    private static function filterDate(string $value, string $format='Y-m-d'): ?DateTime
+    private static function filterDate(string $value, string $format = 'Y-m-d'): ?DateTime
     {
         $dateTime = \DateTime::createFromFormat($format, $value);
 
