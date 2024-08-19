@@ -687,7 +687,6 @@ class TimeseriesChart extends AggregateChart
                             $trace['hovertemplate'] = $lookupDataSeriesName . ": <b>%{x:,.{$decimals}f}</b> <extra></extra>";
 
                             if (!$swapXYDone) {
-                                $xAxis['type'] = $data_description->log_scale ? 'log' : '-';
                                 $xAxis['autorange'] = 'reversed';
                                 $xAxis['tickangle'] = 0;
                                 $yAxis['side'] = ($yAxisIndex % 2 != 0) ? 'top' : 'bottom';
@@ -713,13 +712,15 @@ class TimeseriesChart extends AggregateChart
                                 $xAxis['tickmode'] = $this->_chart['layout']['xaxis']['tickmode'];
                                 $xAxis['tick0'] = $this->_chart['layout']['xaxis']['tick0'];
                                 $xAxis['dtick'] = $this->_chart['layout']['xaxis']['dtick'];
+                                $xAxis['type'] = $this->_chart['layout']['xaxis']['type'];
 
-                                $this->_chart['layout']["{$xAxisName}"] = $yAxis;
+                                $this->_chart['layout'][$xAxisName] = $yAxis;
                                 $this->_chart['layout']['yaxis'] = $xAxis;
                                 $swapXYDone = true;
                             }
                             if ($yAxisIndex > 0) {
                                 unset($this->_chart['layout']["{$yAxisName}"]);
+                                $this->_chart['layout']['xaxis']['type'] = $yAxis['type'];
                             }
                         }
 
