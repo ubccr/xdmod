@@ -392,6 +392,7 @@ class TimeseriesChart extends AggregateChart
                         'rangemode' => 'tozero',
                         'hoverformat' => $this->getDateFormat(),
                         'tickmode' => 'linear',
+                        'timeseries' => true,
                         'nticks' => 20,
                         'spikedash' => 'solid',
                         'spikethickness' => 1,
@@ -645,34 +646,30 @@ class TimeseriesChart extends AggregateChart
                         // Set date tick interval
                         $this->_chart['layout']['xaxis']['dtick'] = $pointInterval;
                         $this->_chart['layout']['xaxis']['tick0'] = $xValues[0];
+                        $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
                         $value_count = count($xValues);
 
                         if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
+                            $this->_chart['layout']['xaxis']['type'] = 'category';
+                            $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
                             if ($value_count > 12) {
                                 $this->_chart['layout']['xaxis']['tickangle'] = -90;
-                            }
-                            if ($value_count > 7) {
-                                $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
-
                             }
                         }
 
                         if ($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') {
-                            $this->_chart['layout']['xaxis']['dtick'] = "M1";
-                            if ($value_count > 12) {
-                                $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
-                            }
+                            $month_dtick = max(round($value_count / 12), 1);
+                            $this->_chart['layout']['xaxis']['dtick'] = "M{$month_dtick}";
                         }
 
                         if ($this->_aggregationUnit == 'Quarter' || $this->_aggregationUnit == 'quarter') {
-                            $this->_chart['layout']['xaxis']['dtick'] = $value_count > 20 ? "M6" : "M3";
+                            $quarter_dtick = 3 * ceil(max(ceil($value_count / 4), 1) / 3.5);
+                            $this->_chart['layout']['xaxis']['dtick'] = "M{$quarter_dtick}";
                         }
 
                         if ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year') {
-                            $this->_chart['layout']['xaxis']['dtick'] = "M12";
-                            if ($value_count > 10) {
-                                $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
-                            }
+                            $year_dtick = ceil($value_count / 15) * 12;
+                            $this->_chart['layout']['xaxis']['dtick'] = "M{$year_dtick}";
                         }
 
                         // Set swap axis
@@ -848,7 +845,6 @@ class TimeseriesChart extends AggregateChart
                                     $this->_chart['data'][$idx]['text'] = $text;
                                 }
                             } else {
-                                $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
                                 $this->configureDataLabels(
                                     $data_description,
                                     $error_info,
