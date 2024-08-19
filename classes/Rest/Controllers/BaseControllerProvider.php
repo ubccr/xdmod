@@ -814,9 +814,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      */
     private static function filterDate(string $value, string $format = 'Y-m-d'): ?DateTime
     {
-        $dateTime = \DateTime::createFromFormat($format, $value);
+        $dateTime = DateTime::createFromFormat($format, $value);
 
-        $lastErrors = \DateTime::getLastErrors();
+        $lastErrors = DateTime::getLastErrors();
 
         /* For PHP versions less than 8.2.0 $lastErrors will always be an array w/ the properties:
          * warning_count, warnings, error_count, and errors. For versions >= 8.2.0, it will return false if
