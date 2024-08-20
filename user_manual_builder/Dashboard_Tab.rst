@@ -117,7 +117,7 @@ dragging the title bar of a component (:numref:`dashboard_rearrange_layout`). Th
 settings are saved automatically and persist between logins. The layout
 can be reset to default using the “Reset to default” button in the
 Settings tab of the “My Profile” dialog (:numref:`dashboard_reset_default`). The My Profile
-dialog is accessed via the “My Profile” button on the top left of the
+dialog is accessed via the “My Profile” button on the top right of the
 XDMoD portal. Full-width dashboard components cannot be moved.
 
 .. figure:: media/image80.png
@@ -132,7 +132,7 @@ XDMoD portal. Full-width dashboard components cannot be moved.
    :width: 66%
 
    The dashboard layout can be reset to the default value
-   using the button available in the Settings tab of the Profile dialog.
+   using the button available in the Settings tab of the My Profile dialog.
 
 Chart Component
 -------------------
