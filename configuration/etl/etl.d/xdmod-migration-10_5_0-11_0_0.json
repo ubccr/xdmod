@@ -5,8 +5,36 @@
             "namespace": "ETL\\Ingestor",
             "class": "DatabaseIngestor",
             "options_class": "IngestorOptions"
+        },
+        "cloud-migration-10-5-0_11-0-0": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ManageTables",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud Database",
+                    "config": "database",
+                    "schema": "modw_cloud"
+                },
+                "source": {
+                    "type": "mysql",
+                    "name": "Cloud Databaes",
+                    "config": "database",
+                    "schema": "modw_cloud"
+                }
+            }
         }
     },
+    "cloud-migration-10-5-0_11-0-0": [
+        {
+            "name": "UpdateInstanceTypeUnion",
+            "description": "Update instance type union table.",
+            "definition_file_list": [
+                "cloud_common/instance_type_union.json"
+            ]
+        }
+    ],
     "migration-10_5_0-11_0_0": [
         {
             "name": "report-templates-charts",
