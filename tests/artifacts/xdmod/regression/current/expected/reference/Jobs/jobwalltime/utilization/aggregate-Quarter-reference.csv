@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Job Wall Time"
+"Screwdriver CPU Utilization (%): by Job Wall Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Wall Time","Screwdriver Utilization (%)"
+"Job Wall Time","Screwdriver CPU Utilization (%)"
 "0 - 1s",0.0000
 "1 - 30s",0.0012
 "30s - 30min",0.1086
