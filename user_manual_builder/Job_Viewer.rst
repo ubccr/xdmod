@@ -125,8 +125,9 @@ here are normalized with values near 1 (displayed in green) indicating a
 good value and values near 0 (displayed in red) indicating a poor value
 for the metric. We note that not all jobs should be expected to have
 good values for all metrics. The default metrics that are displayed are
-CPU User Balance, Homogeneity, Memory Headroom and CPU User (see Figure
-10-5). CPU User Balance indicates how well balanced the usage is between
+CPU User Balance, Homogeneity, Memory Headroom and CPU User (see
+:numref:`job_viewer_information`).
+CPU User Balance indicates how well balanced the usage is between
 the various cores in the job based on the fraction of time each core
 spends in CPU user mode. CPU User Balance is defined as
 

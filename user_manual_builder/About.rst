@@ -2,7 +2,7 @@ My Profile, About, Roadmap, Contact and Help
 ===============================================
 
 On the upper right side of the XDMoD page, there are a series of five
-buttons that allow the user to set his profile, get more information
+buttons that allow you to set your profile, get more information
 about XDMoD, view the XDMoD Roadmap, contact the XDMoD developers and
 seek help.
 
@@ -19,10 +19,6 @@ My Profile Button
 My profile allows you to view and update general settings pertaining to
 your account. To access your profile, click on the **My Profile** button
 located in the upper right section of the portal.
-
-Your current role will be displayed in the title bar of the **My
-Profile** window. In the figure above, for example, it shows the user is
-a **Program Officer**.
 
 The first section in the **My Profile** window contains **User
 Information** such as: First Name, Last Name, and Email Address. All of
@@ -51,6 +47,16 @@ follow.
 
       Role Delegation Menu
 
+Also in the **My Profile** window is a tab that allows you to create an
+**API Token** to use with the
+`Data Analytics Framework <https://pypi.org/project/xdmod-data>`_
+(:numref:`api_token_menu`).
+
+.. figure:: media/image137.png
+   :name: api_token_menu
+
+   API Token Menu
+
 About Button
 -----------------
 
@@ -72,9 +78,9 @@ Contact Button
 
    Contact Us Button
 
-Selecting the contact button will bring up a window that allows the user
-to send a message to the XDMoD team. The user must fill in his name,
-email address and his message.
+Selecting the contact button will bring up a window that allows you
+to send a message to the XDMoD team. You must fill in your name,
+email address, and message.
 
 .. figure:: media/image79.png
    :name: my_profile_contact_window
@@ -114,7 +120,7 @@ simply want to view the Roadmap you can select the various Trello cards
 shown in :numref:`about_trello_roadmap` for further details about each roadmap task.
 You can also “vote” for a feature in the roadmap that you would
 particularly like to use. To do this Sign Up or Log In to Trello (upper
-right corner Figure 15-6). Then clicking on any roadmap feature such as
+right corner :numref:`about_trello_roadmap`). Then clicking on any roadmap feature such as
 X-Y plot capacity, will give you access to the Vote box, as shown in
 :numref:`about_roadmap_voting`.
 
@@ -126,9 +132,9 @@ X-Y plot capacity, will give you access to the Vote box, as shown in
 .. figure:: media/image119.png
    :name: about_trello_roadmap
 
-   XDMD Roadmap on Trello.com
+   XDMoD Roadmap on Trello.com
 
 .. figure:: media/image54.png
    :name: about_roadmap_voting
 
-   Voting for a feature in the XDMD Roadmap on Trello.com
+   Voting for a feature in the XDMoD Roadmap on Trello.com
