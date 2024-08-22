@@ -74,4 +74,4 @@ for idx, chart in enumerate(saved_charts_data['data']):
             f.write(chart_response.content)
 ```
 
-The default image format is `svg`, but `png` and `pdf` formats are also supported. Refer to the XDMoD [Metric Explorer Tab Controller API](rest.html#tag/Metric-Explorer/paths/~1controllers~1metric_explorer.php/post) `get_data` operation information on the request body schema.
+The default image format is `svg`, but `png` and `pdf` formats are also supported. Refer to the XDMoD [Metric Explorer Tab Controller API](rest.html#tag/Metric-Explorer/paths/~1controllers~1metric_explorer.php/post) `get_data` operation for more information on the request body schema.
