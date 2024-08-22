@@ -6,10 +6,11 @@ The following python script can be used to export your saved metric explorer cha
 
 Before running the script,
 
-1. Replace `YOUR_CENTER_URL` within the script with the appropriate information
 1. Create a `.env` file with your local XDMoD account credentials in the same directory as the script
+1. Declare `center_url` within the script with the appropriate information
+1. Confirm the `image_format` within the script.
 
-Running the script will export your saved metric explorer charts to the current working directory. The format of the exported image can be changed, the default used here is `svg`.
+Running the script will export your saved metric explorer charts to the current working directory.
 
 ```python
 #!/usr/bin/env python3
@@ -23,10 +24,12 @@ load_dotenv()
 
 username = os.getenv('XDMOD_USERNAME')
 password = os.getenv('XDMOD_PASSWORD')
+center_url = ""
+image_format = "svg"
 
 session = requests.Session()
 
-auth_response = session.post('YOUR_CENTER_URL/rest/auth/login', auth=(username, password))
+auth_response = session.post(f'{center_url}/rest/auth/login', auth=(username, password))
 
 if auth_response.status_code != 200:
     print('Authentication failed. Check provided credentials and check if you have a local XDMoD account')
@@ -40,7 +43,7 @@ header = {
   'Content-Type': 'application/x-www-form-urlencoded'
 }
 
-saved_charts = session.get('YOUR_CENTER_URL/rest/v1/metrics/explorer/queries', headers=header, cookies=session.cookies)
+saved_charts = session.get(f'{center_url}/rest/v1/metrics/explorer/queries', headers=header, cookies=session.cookies)
 saved_charts_data = saved_charts.json()
 
 for idx, chart in enumerate(saved_charts_data['data']):
@@ -59,15 +62,16 @@ for idx, chart in enumerate(saved_charts_data['data']):
 
         chart_json['operation'] = "get_data"
         chart_json['controller_module'] = "metric_explorer"
-        chart_json['format'] = "svg"
+        chart_json['show_title'] = "y"
+        chart_json['format'] = image_format
         chart_json['width'] = 916
         chart_json['height'] = 484
 
-        chart_response = session.post('YOUR_CENTER_URL/controllers/metric_explorer.php', data=chart_json, headers=header, cookies=session.cookies)
-        chart_name = f"{chart['name']}.{chart_json['format']}" if ('name' in chart) else f"xdmod_API_export_{idx}.{chart_json['format']}"
+        chart_response = session.post(f'{center_url}/controllers/metric_explorer.php', data=chart_json, headers=header, cookies=session.cookies)
+        chart_name = f"{chart['name']}.{image_format}" if ('name' in chart) else f"xdmod_API_export_{idx}.{image_format}"
 
-        with open(chart_name, "w") as f:
-            f.write(chart_response.text)
+        with open(chart_name, "wb") as f:
+            f.write(chart_response.content)
 ```
 
-The format of the exported image can be changed, the default used here is `svg`. Refer to the XDMoD [Metric Explorer Tab Controller API](rest.html#tag/Metric-Explorer/paths/~1controllers~1metric_explorer.php/post) `get_data` operation information on the request body schema.
+The defualt image format is `svg`, but `png` and `pdf` formats are also supported. Refer to the XDMoD [Metric Explorer Tab Controller API](rest.html#tag/Metric-Explorer/paths/~1controllers~1metric_explorer.php/post) `get_data` operation information on the request body schema.
