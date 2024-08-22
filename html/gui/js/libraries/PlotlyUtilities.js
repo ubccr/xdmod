@@ -495,7 +495,7 @@ function overrideLegendEvent(chartDiv) {
         const visibleData = evt.fullData.filter((trace) => trace.name !== 'gap connector' && trace.name !== 'area fix' && trace.visible === true);
         const axis = (evt.layout.swapXY ? 'y' : 'x') + 'axis';
         let tickType;
-        if (evt.layout[axis].type === 'date') {
+        if (evt.layout[axis].timeseries) {
             if (
                 (
                     evt.layout[axis].dtick === CCR.xdmod.ui.dtickDay
@@ -507,10 +507,10 @@ function overrideLegendEvent(chartDiv) {
             ) {
                 tickType = 'auto';
             } else {
-                tickType = 'date';
+                tickType = 'linear';
             }
         } else {
-            tickType = 'category';
+            tickType = 'array';
         }
         Plotly.relayout(chartDiv, { [`${axis}.tickmode`]: tickType });
 
