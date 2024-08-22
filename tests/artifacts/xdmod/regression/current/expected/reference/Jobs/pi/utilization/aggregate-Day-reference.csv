@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by PI"
+"Screwdriver CPU Utilization (%): by PI"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-PI,"Screwdriver Utilization (%)"
+PI,"Screwdriver CPU Utilization (%)"
 "Scaup, Lesser",7.3085
 Fieldfare,6.9780
 Moorhen,6.3451

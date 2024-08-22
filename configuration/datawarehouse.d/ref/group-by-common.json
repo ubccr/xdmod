@@ -152,7 +152,7 @@
             }
         },
         "category": "Administrative",
-        "description_html": "A person who is on a PIs allocation, hence able run jobs on resources.",
+        "description_html": "A person who is on a PIs allocation, hence able to run jobs on resources.",
         "name": "User"
     },
     "pi": {
