@@ -617,6 +617,7 @@ class AggregateChart
             'spikethickness' => 1,
             'spikecolor' => '#c0c0c0',
             'standoff' => 25,
+            'timeseries' => false,
             'categoryarray' => $this->_xAxisDataObject->getValues()
         );
 
