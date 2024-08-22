@@ -18,9 +18,9 @@ addition to limited access to our support team.
 Supported Operating Systems
 ---------------------------
 
-Rocky 8 and CentOS 7 are the officially supported operating systems for Open XDMoD.  If you
+Rocky 8 is the officially supported operating system for Open XDMoD.  If you
 are using a different operating system and encounter an issue, please install Open
-XDMoD on either of these operating systems and reproduce the issue in that environment before requesting
+XDMoD on this operating system and reproduce the issue in that environment before requesting
 support.
 
 Requesting Support
