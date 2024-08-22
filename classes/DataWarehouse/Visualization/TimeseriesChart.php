@@ -718,9 +718,9 @@ class TimeseriesChart extends AggregateChart
                                 $this->_chart['layout']['yaxis'] = $xAxis;
                                 $swapXYDone = true;
                             }
+                            $this->_chart['layout']['xaxis']['type'] = $yAxis['type'];
                             if ($yAxisIndex > 0) {
                                 unset($this->_chart['layout']["{$yAxisName}"]);
-                                $this->_chart['layout']['xaxis']['type'] = $yAxis['type'];
                             }
                         }
 
