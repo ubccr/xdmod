@@ -9,9 +9,12 @@ In general, Open XDMoD has one or two major releases each year, and each major v
  for one year from the time of initial release.  This includes security fixes and other critical updates in
 addition to limited access to our support team.
 
-| Version | Release Date       | End of Support      |
-|---------|--------------------|---------------------|
-| 10.5    | September 03, 2023 | September 03, 2024* |
+Note that the 10.5 release has a longer than typical support window due to a later than typical release date
+for 11.0.
+
+| Version | Release Date       | End of Support    |
+|---------|--------------------|-------------------|
+| 10.5    | September 03, 2023 | October 31, 2024* |
 
 **\* Note: CentOS 7 officially reached end of life on June 30, 2024, and as such so did our official support for el7 XDMoD.**
 
