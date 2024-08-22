@@ -13,7 +13,7 @@ addition to limited access to our support team.
 |---------|--------------------|---------------------|
 | 10.5    | September 03, 2023 | September 03, 2024* |
 
-**\* Note: CentOS 7 will officially reach end of life on June 30, 2024, and as such so will our official support for el7 XDMoD.**
+**\* Note: CentOS 7 officially reached end of life on June 30, 2024, and as such so did our official support for el7 XDMoD.**
 
 Supported Operating Systems
 ---------------------------
