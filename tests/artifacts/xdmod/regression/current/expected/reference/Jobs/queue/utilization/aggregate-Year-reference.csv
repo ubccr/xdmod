@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Queue"
+"Screwdriver CPU Utilization (%): by Queue"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Queue,"Screwdriver Utilization (%)"
+Queue,"Screwdriver CPU Utilization (%)"
 white,1.1877
 black,0.1918
 pikelet,0.0978

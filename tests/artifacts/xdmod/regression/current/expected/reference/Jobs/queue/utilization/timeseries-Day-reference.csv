@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Queue"
+"Screwdriver CPU Utilization (%): by Queue"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[white] Screwdriver Utilization (%)","[black] Screwdriver Utilization (%)","[pikelet] Screwdriver Utilization (%)","[brown] Screwdriver Utilization (%)","[roti] Screwdriver Utilization (%)","[croutons] Screwdriver Utilization (%)","[cornbread] Screwdriver Utilization (%)","[crumpet] Screwdriver Utilization (%)","[nann] Screwdriver Utilization (%)","[brioche] Screwdriver Utilization (%)","[focaccia] Screwdriver Utilization (%)","[panettone] Screwdriver Utilization (%)","[bannock] Screwdriver Utilization (%)","[chapti] Screwdriver Utilization (%)","[pita] Screwdriver Utilization (%)","[potbrood] Screwdriver Utilization (%)","[pumpernickel] Screwdriver Utilization (%)","[barm] Screwdriver Utilization (%)"
+Day,"[white] Screwdriver CPU Utilization (%)","[black] Screwdriver CPU Utilization (%)","[pikelet] Screwdriver CPU Utilization (%)","[brown] Screwdriver CPU Utilization (%)","[roti] Screwdriver CPU Utilization (%)","[croutons] Screwdriver CPU Utilization (%)","[cornbread] Screwdriver CPU Utilization (%)","[crumpet] Screwdriver CPU Utilization (%)","[nann] Screwdriver CPU Utilization (%)","[brioche] Screwdriver CPU Utilization (%)","[focaccia] Screwdriver CPU Utilization (%)","[panettone] Screwdriver CPU Utilization (%)","[bannock] Screwdriver CPU Utilization (%)","[chapti] Screwdriver CPU Utilization (%)","[pita] Screwdriver CPU Utilization (%)","[potbrood] Screwdriver CPU Utilization (%)","[pumpernickel] Screwdriver CPU Utilization (%)","[barm] Screwdriver CPU Utilization (%)"
 2016-12-22,0,0,0,0,0,0.2118,0,0,0,0,0.2093,0,0,0,0,0,0,0
 2016-12-23,0,0,0,0,0,0.3000,0.0090,0,0,0,0.3000,0,0,0,0,0,0,0
 2016-12-24,0,0,0,0,0,0.3000,0.0250,0,0,0,0.3000,0,0,0,0,0,0,0

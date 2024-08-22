@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Department"
+"Screwdriver CPU Utilization (%): by Department"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[Electrical and Communication Systems] Screwdriver Utilization (%)","[Microelectronic Information Processing Systems] Screwdriver Utilization (%)","[Chemistry] Screwdriver Utilization (%)","[Social and Economic Science] Screwdriver Utilization (%)","[Mechanical and Structural Systems] Screwdriver Utilization (%)","[Mathematical Sciences] Screwdriver Utilization (%)","[Design and Manufacturing Systems] Screwdriver Utilization (%)","[Materials Research] Screwdriver Utilization (%)","[Astronomical Sciences] Screwdriver Utilization (%)","[Chemical, Thermal Systems] Screwdriver Utilization (%)","[Molecular Biosciences] Screwdriver Utilization (%)","[Polar Programs] Screwdriver Utilization (%)","[Arts] Screwdriver Utilization (%)","[Earth Sciences] Screwdriver Utilization (%)","[Physics] Screwdriver Utilization (%)","[Environmental Biology] Screwdriver Utilization (%)","[Atmospheric Sciences] Screwdriver Utilization (%)","[Computer and Computation Research] Screwdriver Utilization (%)"
+Day,"[Electrical and Communication Systems] Screwdriver CPU Utilization (%)","[Microelectronic Information Processing Systems] Screwdriver CPU Utilization (%)","[Chemistry] Screwdriver CPU Utilization (%)","[Social and Economic Science] Screwdriver CPU Utilization (%)","[Mechanical and Structural Systems] Screwdriver CPU Utilization (%)","[Mathematical Sciences] Screwdriver CPU Utilization (%)","[Design and Manufacturing Systems] Screwdriver CPU Utilization (%)","[Materials Research] Screwdriver CPU Utilization (%)","[Astronomical Sciences] Screwdriver CPU Utilization (%)","[Chemical, Thermal Systems] Screwdriver CPU Utilization (%)","[Molecular Biosciences] Screwdriver CPU Utilization (%)","[Polar Programs] Screwdriver CPU Utilization (%)","[Arts] Screwdriver CPU Utilization (%)","[Earth Sciences] Screwdriver CPU Utilization (%)","[Physics] Screwdriver CPU Utilization (%)","[Environmental Biology] Screwdriver CPU Utilization (%)","[Atmospheric Sciences] Screwdriver CPU Utilization (%)","[Computer and Computation Research] Screwdriver CPU Utilization (%)"
 2016-12-22,0,0,0.2118,0,0,0,0,0,0,0,0.2093,0,0,0,0,0,0,0
 2016-12-23,0,0,0.3000,0,0,0,0,0,0.0090,0,0.3000,0,0,0,0,0,0,0
 2016-12-24,0,0,0.3000,0,0,0,0,0,0.0250,0,0.3000,0,0,0,0,0,0,0

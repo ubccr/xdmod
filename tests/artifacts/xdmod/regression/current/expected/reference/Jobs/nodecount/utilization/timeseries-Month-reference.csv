@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Node Count"
+"Screwdriver CPU Utilization (%): by Node Count"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Month,"[1] Screwdriver Utilization (%)","[8] Screwdriver Utilization (%)","[12] Screwdriver Utilization (%)","[7] Screwdriver Utilization (%)","[6] Screwdriver Utilization (%)","[28] Screwdriver Utilization (%)","[2] Screwdriver Utilization (%)","[5] Screwdriver Utilization (%)","[4] Screwdriver Utilization (%)","[20] Screwdriver Utilization (%)","[3] Screwdriver Utilization (%)","[14] Screwdriver Utilization (%)","[16] Screwdriver Utilization (%)","[9] Screwdriver Utilization (%)","[24] Screwdriver Utilization (%)"
+Month,"[1] Screwdriver CPU Utilization (%)","[8] Screwdriver CPU Utilization (%)","[12] Screwdriver CPU Utilization (%)","[7] Screwdriver CPU Utilization (%)","[6] Screwdriver CPU Utilization (%)","[28] Screwdriver CPU Utilization (%)","[2] Screwdriver CPU Utilization (%)","[5] Screwdriver CPU Utilization (%)","[4] Screwdriver CPU Utilization (%)","[20] Screwdriver CPU Utilization (%)","[3] Screwdriver CPU Utilization (%)","[14] Screwdriver CPU Utilization (%)","[16] Screwdriver CPU Utilization (%)","[9] Screwdriver CPU Utilization (%)","[24] Screwdriver CPU Utilization (%)"
 2016-12,7.3961,5.7708,5.2745,4.6261,1.5170,0.6610,0.6735,0.4124,0.3416,0.0751,0.0365,0.0588,0.0019,0.0015,0.0003
 2017-01,0.3681,0.1448,0,0,0.0473,0,0.0732,0.0436,0.0147,0.0001,0.0204,0,0.0004,0,0
 ---------
