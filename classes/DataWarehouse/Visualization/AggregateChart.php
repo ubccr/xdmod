@@ -1234,7 +1234,7 @@ class AggregateChart
                     $trace['xaxis'] = "x{$yIndex}";
 
                     if (!$swapXYDone) {
-                        $xtmp = $this->_chart['layout']["{$xAxisName}"];
+                        $xtmp = $this->_chart['layout']['xaxis'];
                         $ytmp = $this->_chart['layout']["{$yAxisName}"];
                         $this->_chart['layout']['yaxis'] = $xtmp;
                         $this->_chart['layout']["{$xAxisName}"] = $ytmp;
