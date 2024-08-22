@@ -1,6 +1,6 @@
 You can use the XDMoD API to image export your saved metric explorer charts. A local XDMoD account is **required** to authenticate through the API.
 
-The following python script can be used to export your saved metric explorer charts. The `dotenv` library is recommend when authenticating through XDMoD API. You can install the `dotenv` library using:
+The following Python script will export your saved metric explorer charts. The `dotenv` library is recommended when authenticating through XDMoD API. You can install the `dotenv` library using:
 
 `$ pip install python-dotenv`
 
@@ -10,7 +10,7 @@ Before running the script,
 1. Declare `center_url` within the script with the appropriate information
 1. Confirm the `image_format` within the script.
 
-Running the script will export your saved metric explorer charts to the current working directory.
+The script will export your saved metric explorer charts to the current working directory.
 
 ```python
 #!/usr/bin/env python3
@@ -74,4 +74,4 @@ for idx, chart in enumerate(saved_charts_data['data']):
             f.write(chart_response.content)
 ```
 
-The defualt image format is `svg`, but `png` and `pdf` formats are also supported. Refer to the XDMoD [Metric Explorer Tab Controller API](rest.html#tag/Metric-Explorer/paths/~1controllers~1metric_explorer.php/post) `get_data` operation information on the request body schema.
+The default image format is `svg`, but `png` and `pdf` formats are also supported. Refer to the XDMoD [Metric Explorer Tab Controller API](rest.html#tag/Metric-Explorer/paths/~1controllers~1metric_explorer.php/post) `get_data` operation information on the request body schema.
