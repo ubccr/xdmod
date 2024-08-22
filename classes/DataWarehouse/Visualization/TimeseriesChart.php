@@ -365,9 +365,6 @@ class TimeseriesChart extends AggregateChart
                     {
                         $xAxisLabel = '';
                     }
-                    $start_ts = strtotime($this->_startDate)*1000;
-                    $end_ts = strtotime($this->_endDate)*1000;
-                    $expectedDataPointCount = ($end_ts - $start_ts) / $pointInterval;
                     $xAxis = array(
                         'automargin' => true,
                         'layer' => 'below traces',
