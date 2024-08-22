@@ -288,55 +288,36 @@ Managing Filters
 .. table::
    :widths: 75 25
 
-   +----------------------------------------------+-----------------------+
-   | .. figure:: media/image38.png                | As mentioned in the   |
-   |    :name: metric_explorer_filters            | previous section,     |
-   |                                              | filters allow you to  |
-   |    Filters section of Metric Explorer        | focus on a subset of  |
-   |                                              | the data. To apply    |
-   |                                              | filters to your data, |
-   |                                              | you can either        |
-   |                                              | consult the *Local    |
-   |                                              | Filters* section of   |
-   |                                              | the *Data Series      |
-   |                                              | Definition* dialog    |
-   |                                              | (see **Figure         |
-   |                                              | 8-10**), or make use  |
-   |                                              | of *Global Filters*   |
-   |                                              | (see **Figure         |
-   |                                              | 8-11**).              |
-   |                                              |                       |
-   |                                              | *Local* Filters are   |
-   |                                              | solely tailored to a  |
-   |                                              | single data series,   |
-   |                                              | whereas *Global*      |
-   |                                              | Filters are applied   |
-   |                                              | to all the data       |
-   |                                              | series you have       |
-   |                                              | introduced into the   |
-   |                                              | **Data** section of   |
-   |                                              | the Metric Explorer.  |
-   |                                              |                       |
-   |                                              | To create a filter,   |
-   |                                              | click on the *Add     |
-   |                                              | Filter* button (as    |
-   |                                              | highlighted in        |
-   |                                              | **Figure 8-11**).     |
-   |                                              | Doing so will provide |
-   |                                              | you with a list of    |
-   |                                              | dimensions (or        |
-   |                                              | parameters) you can   |
-   |                                              | filter with. Once you |
-   |                                              | have selected a       |
-   |                                              | dimension, you will   |
-   |                                              | be presented with a   |
-   |                                              | dialog allowing you   |
-   |                                              | to navigate, search,  |
-   |                                              | and select parameter  |
-   |                                              | values. Click on OK   |
-   |                                              | to apply any selected |
-   |                                              | filters.              |
-   +----------------------------------------------+-----------------------+
+   +----------------------------------------------+---------------------------------------+
+   | .. figure:: media/image38.png                | As mentioned in the previous section, |
+   |    :name: metric_explorer_filters            | filters allow you to focus on a       |
+   |                                              | subset of the data. To apply filters  |
+   |    Filters section of Metric Explorer        | to your data, you can either consult  |
+   |                                              | the *Local Filters* section of the    |
+   |                                              | *Data Series Definition* dialog (see  |
+   |                                              | :numref:`metric_explorer_filters`),   |
+   |                                              | or make use of *Global Filters* (see  |
+   |                                              | :numref:`metric_filter_logic`).       |
+   |                                              |                                       |
+   |                                              | *Local* Filters are solely tailored   |
+   |                                              | to a single data series, whereas      |
+   |                                              | *Global* Filters are applied to all   |
+   |                                              | the data series you have introduced   |
+   |                                              | into the **Data** section of the      |
+   |                                              | Metric Explorer.                      |
+   |                                              |                                       |
+   |                                              | To create a filter, click on the *Add |
+   |                                              | Filter* button (as highlighted in     |
+   |                                              | :numref:`metric_filter_logic`). Doing |
+   |                                              | so will provide you with a list of    |
+   |                                              | dimensions (or parameters) you can    |
+   |                                              | filter with. Once you have selected a |
+   |                                              | dimension, you will be presented with |
+   |                                              | a dialog allowing you to navigate,    |
+   |                                              | search, and select parameter values.  |
+   |                                              | Click on OK to apply any selected     |
+   |                                              | filters.                              |
+   +----------------------------------------------+---------------------------------------+
 
 .. table::
    :widths: 75 25

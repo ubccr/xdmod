@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Resource Type"
+"Screwdriver CPU Utilization (%): by Resource Type"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[High-performance computing] Screwdriver Utilization (%)"
+Day,"[High-performance computing] Screwdriver CPU Utilization (%)"
 2016-12-22,0.2106
 2016-12-23,0.3045
 2016-12-24,0.3125
