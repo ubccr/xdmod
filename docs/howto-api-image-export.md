@@ -4,7 +4,12 @@ The following python script can be used to export your saved metric explorer cha
 
 `$ pip install python-dotenv`
 
-Running the script will export your saved metric explorer charts to the current working directory. The format of the exported image can be changed, the default used here is `svg`. Refer to the XDMoD Metric Explorer Tab Controller [API documentation](rest.html#tag/Metric-Explorer/paths/~1controllers~1metric_explorer.php/post) section for more information. The operation used here is `get_data`.
+Before running the script,
+
+1. Replace `YOUR_CENTER_URL` within the script with the appropriate information
+1. Create a `.env` file with your local XDMoD account credentials in the same directory as the script
+
+Running the script will export your saved metric explorer charts to the current working directory. The format of the exported image can be changed, the default used here is `svg`.
 
 ```python
 #!/usr/bin/env python3
@@ -55,6 +60,8 @@ for idx, chart in enumerate(saved_charts_data['data']):
         chart_json['operation'] = "get_data"
         chart_json['controller_module'] = "metric_explorer"
         chart_json['format'] = "svg"
+        chart_json['width'] = 916
+        chart_json['height'] = 484
 
         chart_response = session.post('YOUR_CENTER_URL/controllers/metric_explorer.php', data=chart_json, headers=header, cookies=session.cookies)
         chart_name = f"{chart['name']}.{chart_json['format']}" if ('name' in chart) else f"xdmod_API_export_{idx}.{chart_json['format']}"
@@ -62,3 +69,5 @@ for idx, chart in enumerate(saved_charts_data['data']):
         with open(chart_name, "w") as f:
             f.write(chart_response.text)
 ```
+
+The format of the exported image can be changed, the default used here is `svg`. Refer to the XDMoD [Metric Explorer Tab Controller API](rest.html#tag/Metric-Explorer/paths/~1controllers~1metric_explorer.php/post) `get_data` operation information on the request body schema.
