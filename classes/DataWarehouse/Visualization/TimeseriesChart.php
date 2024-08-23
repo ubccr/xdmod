@@ -365,9 +365,6 @@ class TimeseriesChart extends AggregateChart
                     {
                         $xAxisLabel = '';
                     }
-                    $start_ts = strtotime($this->_startDate)*1000;
-                    $end_ts = strtotime($this->_endDate)*1000;
-                    $expectedDataPointCount = ($end_ts - $start_ts) / $pointInterval;
                     $xAxis = array(
                         'automargin' => true,
                         'layer' => 'below traces',
@@ -387,7 +384,6 @@ class TimeseriesChart extends AggregateChart
                         ),
                         'ticksuffix' => ' ',
                         'tickformat' => $this->getDateFormat(),
-                        'tickangle' => $xAxisData->getName() != 'Year' && $expectedDataPointCount > 25 ? -90 : 0,
                         'type' => 'date',
                         'rangemode' => 'tozero',
                         'hoverformat' => $this->getDateFormat(),
@@ -497,7 +493,6 @@ class TimeseriesChart extends AggregateChart
                             if($this->_swapXY)
                             {
                                 $trace['textangle'] = 90;
-                                $this->_chart['layout']['xaxis']['tickangle'] = 0;
                             } else {
                                 $trace['textangle'] = -90;
                             }
@@ -652,9 +647,6 @@ class TimeseriesChart extends AggregateChart
                         if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
                             $this->_chart['layout']['xaxis']['type'] = 'category';
                             $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
-                            if ($value_count > 12) {
-                                $this->_chart['layout']['xaxis']['tickangle'] = -90;
-                            }
                         }
 
                         if ($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') {
@@ -688,7 +680,6 @@ class TimeseriesChart extends AggregateChart
 
                             if (!$swapXYDone) {
                                 $xAxis['autorange'] = 'reversed';
-                                $xAxis['tickangle'] = 0;
                                 $yAxis['side'] = ($yAxisIndex % 2 != 0) ? 'top' : 'bottom';
                                 if ($yAxis['side'] == 'top') {
                                     $yAxis['title']['standoff'] = 0;
