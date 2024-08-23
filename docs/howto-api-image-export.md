@@ -1,16 +1,20 @@
 You can use the XDMoD API to image export your saved metric explorer charts. A local XDMoD account is **required** to authenticate through the API.
 
-The following Python script will export your saved metric explorer charts. The `dotenv` library is recommended when authenticating through XDMoD API. You can install the `dotenv` library using:
+The following Python script will export your saved metric explorer charts. The `dotenv` and `requests` libraries are used when authenticating through the XDMoD API. You can install these libraries through:
 
-`$ pip install python-dotenv`
+```shell
+pip install python-dotenv
+pip install requests
+```
 
 Before running the script,
 
-1. Create a `.env` file with your local XDMoD account credentials in the same directory as the script
+1. Install the required dependencies listed above.
+1. Create a `.env` file with your local XDMoD account credentials in the same directory as the script.
 1. Update `site_address` within the script with site address associated with your XDMoD instance.
 1. Confirm the `image_format` within the script.
 
-The script will export your saved metric explorer charts to the current working directory.
+The script will export your saved metric explorer charts to the current working directory. **\*Note:** Replace `<XDMOD_URL_HERE>` with your site address.
 
 ```python
 #!/usr/bin/env python3
@@ -24,7 +28,7 @@ load_dotenv()
 
 username = os.getenv('XDMOD_USERNAME')
 password = os.getenv('XDMOD_PASSWORD')
-site_address = ""
+site_address = "<XDMOD_URL_HERE>"
 image_format = "svg"
 
 session = requests.Session()
