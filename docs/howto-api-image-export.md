@@ -50,15 +50,16 @@ for idx, chart in enumerate(saved_charts_data['data']):
     if 'config' in chart:
         chart_json = json.loads(chart['config'])
         for attribute in chart_json:
-            if (isinstance(chart_json[attribute], dict)):
+            chart_parameter = chart_json[attribute]
+            if (isinstance(chart_parameter, dict)):
                 if 'data' in attribute:
-                    encoded_str = urllib.parse.quote_plus(str(chart_json[attribute]['data']))
+                    encoded_str = urllib.parse.quote_plus(str(chart_parameter['data']))
                 else:
-                    encoded_str = urllib.parse.quote_plus(str(chart_json[attribute]))
+                    encoded_str = urllib.parse.quote_plus(str(chart_parameter))
                 encoded_str = encoded_str.replace('%27','%22').replace('False', 'false').replace('True', 'true').replace('None', 'null')
                 chart_json[attribute] = encoded_str
-            if chart_json[attribute] in (True, False, None):
-                chart_json[attribute] = str(chart_json[attribute]).replace('False', 'false').replace('True', 'true').replace('None', 'null')
+            if chart_parameter in (True, False, None):
+                chart_json[attribute] = str(chart_parameter).replace('False', 'false').replace('True', 'true').replace('None', 'null')
 
         chart_json['operation'] = "get_data"
         chart_json['controller_module'] = "metric_explorer"
