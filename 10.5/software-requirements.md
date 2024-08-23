@@ -104,7 +104,7 @@ dnf module -y install nodejs:16
 need to run the following:
 ```shell
 dnf install -y php-devel
-pecl install mongodb
+pecl install mongodb-1.16.2
 echo "extension=mongodb.so" > /etc/php.d/40-mongodb.ini
 ```
 
