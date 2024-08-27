@@ -206,5 +206,5 @@ You should now be able to go to the `Authentication` tab and test the `xdmod-sp`
 If you are using the forumsys example to test the username / password to use will be tesla / password
 
 [forumsys-ldap]: http://www.forumsys.com/tutorials/integration-how-to/ldap/online-ldap-test-server/
-[ssp-idp]: https://simplesamlphp.org/docs/latest/simplesamlphp-idp.html
-[ssp-ldap]: https://simplesamlphp.org/docs/1.17/ldap/ldap.html
+[ssp-idp]: https://simplesamlphp.org/docs/stable/simplesamlphp-idp.html
+[ssp-ldap]: https://simplesamlphp.org/docs/contrib_modules/ldap/ldap.html
