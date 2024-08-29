@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Job Size"
+"Screwdriver CPU Utilization (%): by Job Size"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Size","Screwdriver Utilization (%)"
+"Job Size","Screwdriver CPU Utilization (%)"
 1,2.0972
 2,0.0719
 "3 - 4",0.1854

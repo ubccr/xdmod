@@ -33,36 +33,34 @@ usage and analytics associated with design. Usage analytics compare
 resources allocated for a job to measured usage for the job. Design
 analytics determine if jobs are using resources in an efficient manner
 consistent with their design. :numref:`efficiency_analytics_table` below lists the available
-analytics for the XDMoD 10.0 release and the associated description for
-that analytic.
+analytics and the associated description for each analytic.
 
 
 .. _efficiency_analytics_table:
 
-.. table:: Analytics available for display in the Efficiency Tab for XDMoD 10.0 Release.
+.. table:: Analytics available for display in the Efficiency Tab.
 
-   +------------+-------------------------------------------+------------+
-   | **         | **Description**                           | **         |
-   | Analytic** |                                           | Category** |
-   +============+===========================================+============+
-   | CPU Usage  | Measures the percentage of time that the  | Usage      |
-   |            | CPU cores were idle.                      |            |
-   +------------+-------------------------------------------+------------+
-   | GPU Usage  | Measures the percentage of time that the  | Usage      |
-   |            | GPUs were busy.                           |            |
-   +------------+-------------------------------------------+------------+
-   | Memory     | Measures the overall highest memory usage | Usage      |
-   | Usage      | for jobs.                                 |            |
-   +------------+-------------------------------------------+------------+
-   | H          | Measures how uniform the work rate of the | Usage      |
-   | omogeneity | job is.                                   |            |
-   +------------+-------------------------------------------+------------+
-   | Wall Time  | Measures how well used wall time matches  | Design     |
-   | Accuracy   | requested wall time.                      |            |
-   +------------+-------------------------------------------+------------+
-   | Short Jobs | Measures the number of jobs that ran for  | Design     |
-   |            | 30 seconds or less.                       |            |
-   +------------+-------------------------------------------+------------+
+   +--------------+-------------------------------------------+--------------+
+   | **Analytic** | **Description**                           | **Category** |
+   +==============+===========================================+==============+
+   | CPU Usage    | Measures the percentage of time that the  | Usage        |
+   |              | CPU cores were idle.                      |              |
+   +--------------+-------------------------------------------+--------------+
+   | GPU Usage    | Measures the percentage of time that the  | Usage        |
+   |              | GPUs were busy.                           |              |
+   +--------------+-------------------------------------------+--------------+
+   | Memory       | Measures the overall highest memory usage | Usage        |
+   | Usage        | for jobs.                                 |              |
+   +--------------+-------------------------------------------+--------------+
+   | Homogeneity  | Measures how uniform the work rate of the | Usage        |
+   |              | job is.                                   |              |
+   +--------------+-------------------------------------------+--------------+
+   | Wall Time    | Measures how well used wall time matches  | Design       |
+   | Accuracy     | requested wall time.                      |              |
+   +--------------+-------------------------------------------+--------------+
+   | Short Jobs   | Measures the number of jobs that ran for  | Design       |
+   |              | 30 seconds or less.                       |              |
+   +--------------+-------------------------------------------+--------------+
 
 .. _scatter_plot_view:
 
