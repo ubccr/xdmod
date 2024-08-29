@@ -10,7 +10,7 @@ See the [Software Requirements](software-requirements.html) for details.
 Install the RPM
 ---------------
 
-    # dnf install xdmod-{{ page.sw_version }}-1.0.el8.noarch.rpm
+    # yum install xdmod-{{ page.sw_version }}-1.0.el7.noarch.rpm
 
 Configure Open XDMoD
 --------------------
