@@ -495,7 +495,8 @@ the local timezone that the server is in.
 
 The `resource_allocation_type` option indicates how this resource is allocated
 to users, such as by CPU, GPU or Node. By default, there are 4 possible values,
-`CPU`, `CPUNode`, `GPU`, `GPUNode`.
+`CPU`, `CPUNode`, `GPU`, `GPUNode`. `CPUNode` denotes a system that allocates a
+node of CPU's to users.
 
 ```json
 [
@@ -524,7 +525,8 @@ to users, such as by CPU, GPU or Node. By default, there are 4 possible values,
     {
         "resource": "resource4",
         "name": "Resource 4",
-        "resource_type": "Cloud"
+        "resource_type": "Cloud",
+        "resource_allocation_type": "CPU",
     }
 ]
 ```
