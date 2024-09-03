@@ -45,7 +45,7 @@ for this file are ingested into the XDMoD database when `xdmod-ingestor` is run.
 
 ## Dimensions available for grouping
 - Resource
-  - A resource is defined as any compute infrastructure.
+  - A resource is a remote computer that can run jobs.
 - Resource Type
   - A categorization of resources into by their general capabilities.
 - Resource Allocation Type
