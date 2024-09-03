@@ -120,13 +120,13 @@ The source of data for the Resource Specifications realm is the `resource_specs.
 file is ingested when `xdmod-ingestor` is run. The only extra command needed for this realm is to
 aggregate the data.
 
-    Set timestamp:
+Set timestamp:
 
-        $ last_modified_start_date=$(date +'%F %T')
+    $ last_modified_start_date=$(date +'%F %T')
 
-    Aggregate:
+Aggregate:
 
-        $ xdmod-ingestor --aggregate=resourcespecs --last-modified-start-date "$last_modified_start_date"
+    $ xdmod-ingestor --aggregate=resourcespecs --last-modified-start-date "$last_modified_start_date"
 
 Help
 ----

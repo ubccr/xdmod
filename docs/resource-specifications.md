@@ -6,8 +6,8 @@ title: Resource Specifications Realm
 - A full working installation of XDMoD. [XDMoD install instructions](install.html)
 
 ## What is the Resource Specifications realm?
-The Resource Specifications realm in Open XDMoD provides a way to track the changes in computing capacity over time, such as the number of CPUs and GPUs as well as CPU Hours, GPU Hours and other metrics. The source for this data is the `resource_specs.json` configuration file [Configuration Guide](configuration.md). The data
-for this file is ingested into the XDMoD database when `xdmod-ingestor` is run. The only extra command needed is to aggregate the data using the [`xdmod-ingestor`](ingestor.md) command. Please see the `xdmod-ingestor` guide for further information.
+The Resource Specifications realm in Open XDMoD provides a way to track the changes in computing capacity over time, such as the number of CPUs and GPUs as well as CPU Hours, GPU Hours and other metrics. The source for this data is the `resource_specs.json` configuration file (see the [Configuration Guide](configuration.md)). The data
+for this file are ingested into the XDMoD database when `xdmod-ingestor` is run. The only extra command needed is to aggregate the data using the `xdmod-ingestor` command. Please see the [`xdmod-ingestor` guide](ingestor.md) for further information.
 
 ## Available metrics
 - Average Number of CPU Cores: Allocated (Core Count)
@@ -17,7 +17,7 @@ for this file is ingested into the XDMoD database when `xdmod-ingestor` is run. 
 - Average Number of CPU Nodes: Allocated
   - The average number of allocated CPU nodes available per day during the days in which the resource(s) were operational during the selected time period. This does not take into account downtimes or outages of resources.
 - Average Number of CPU Nodes: Total
-  - The average number of CPU nodes per day during the days in which the resource(s) were operational during selected time period. This does not take into account downtimes, outages of resources, or the percent of a resource allocated.
+  - The average number of CPU nodes per day during the days in which the resource(s) were operational during the selected time period. This does not take into account downtimes, outages of resources, or the percent of a resource allocated.
 - Average Number of GPU Nodes: Allocated
   - The average number of allocated GPU nodes available per day during the days in which the resource(s) were operational during the selected time period. This does not take into account downtimes or outages of resources.
 - Average Number of GPU Nodes: Total
