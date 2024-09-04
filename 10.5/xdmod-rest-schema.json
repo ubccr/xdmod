@@ -1,3 +1,6 @@
+---
+layout: null
+---
 {
     "openapi": "3.0.3",
     "info": {
@@ -17,7 +20,7 @@
             "backgroundColor": "#FFFFFF",
             "altText": ""
         },
-        "version": "10.0.0"
+        "version": "{{ page.sw_version }}"
     },
     "servers": [
         {
