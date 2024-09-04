@@ -123,9 +123,9 @@ date should have been set when running `xdmod-ingestor` for Job, Storage, or Clo
 the `last-modified-start-date` value should be set to a time before the last time `xdmod-ingestor`
 was run for the Jobs, Storage, or Cloud realm
 
-    Aggregate:
+Aggregate:
 
-        $ xdmod-ingestor --aggregate=resourcespecs --last-modified-start-date "$last_modified_start_date"
+    $ xdmod-ingestor --aggregate=resourcespecs --last-modified-start-date "$last_modified_start_date"
 
 Help
 ----
