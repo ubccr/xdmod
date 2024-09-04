@@ -80,7 +80,7 @@ PHP Warning:  PHP Startup: Unable to load dynamic library 'mongodb.so' (tried: /
 
 Install the mongodb PHP Pear package
 ```shell
-$ yes '' | pecl install mongodb
+$ yes '' | pecl install mongodb-1.18.1
 ```
 
 You may now continue with the standard upgrade steps below.
