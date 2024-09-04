@@ -33,6 +33,8 @@ More information on how to set these up can be found in the [SimpleSAMLphp Servi
 
 Information on how to set up SimpleSAMLphp to use Globus Auth can be found in the [simplesamlphp-module-authglobus documentation][ssp-globusconfig]
 
+Information on how to set up SimpleSAMLphp to use OpenID Connect can be found in the [OpenID Connect Configuration][ssp-openidc]
+
 You will need to modify the `config.php` file and make sure you modify the `metadata.sources` and the `certdir` keys to have the **full path** to directories containing the configurations:
 
 **note** make sure the file has opening `<?php`
@@ -267,8 +269,9 @@ see [Integrations][integrations] for more information
 
 [integrations]: integrations.html
 [ssp]: https://simplesamlphp.org/
-[ssp-config]: https://simplesamlphp.org/docs/latest/simplesamlphp-sp.html
+[ssp-config]: https://simplesamlphp.org/docs/stable/simplesamlphp-sp.html
 [ssp-globusconfig]: https://github.com/ubccr/simplesamlphp-module-authglobus
-[ssp-idp-remote]: https://simplesamlphp.org/docs/latest/simplesamlphp-reference-idp-remote.html
-[ssp-apache]: https://simplesamlphp.org/docs/latest/simplesamlphp-install.html#configuring-apache
+[ssp-openidc]: openidc.html
+[ssp-idp-remote]: https://simplesamlphp.org/docs/stable/simplesamlphp-reference-idp-remote.html
+[ssp-apache]: https://simplesamlphp.org/docs/stable/simplesamlphp-install.html#configuring-apache-section_4
 [saml-idp]: https://github.com/mcguinness/saml-idp/
