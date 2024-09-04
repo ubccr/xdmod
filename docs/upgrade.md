@@ -18,8 +18,8 @@ General Upgrade Notes
   upgrade script.  The version number will be changed by the upgrade
   script.
 - If you have installed any additional Open XDMoD packages (e.g.
-  `xdmod-appkernels` or `xdmod-supremm`), upgrade those to the latest
-  version before running `xdmod-upgrade`.
+  `xdmod-appkernels`, `xdmod-supremm`, or `xdmod-ondemand`), upgrade those to
+  the latest version before running `xdmod-upgrade`.
 
 RPM Upgrade Process
 -------------------
@@ -91,8 +91,8 @@ Download available at [GitHub][github-latest-release].
 
     # dnf install xdmod-{{ page.sw_version }}-1.0.el8.noarch.rpm
 
-Likewise, install the latest `xdmod-appkernels` or `xdmod-supremm` RPM
-files if you have those installed.
+Likewise, install the latest `xdmod-appkernels`, `xdmod-supremm`, and/or
+`xdmod-ondemand` RPM files if you have those modules installed.
 
 After upgrading the package you may need to manually merge any files
 that you have manually changed before the upgrade.  You do not need to
@@ -123,8 +123,8 @@ Download available at [GitHub][github-latest-release].
 
 ### Extract and Install Source Package
 
-    $ tar zxvf xdmod-{{ page.sw_version }}.tar.gz
-    $ cd xdmod-{{ page.sw_version }}
+    # tar zxvf xdmod-{{ page.sw_version }}.tar.gz
+    # cd xdmod-{{ page.sw_version }}
     # ./install --prefix=/opt/xdmod-{{ page.sw_version }}
 
 Likewise, install the latest `xdmod-appkernels` or `xdmod-supremm`
