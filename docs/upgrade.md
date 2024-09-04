@@ -31,7 +31,7 @@ are upgrading from both CentOS 7 and Rocky 8. If you run into any problems durin
 ticket to `ccr-xdmod-help@buffalo.edu` and we will do our best to help.
 
 
-### Server: EL7, XDMoD: 10.5, PHP: 5.4
+### Server: EL7, XDMoD: 10.5, PHP: 5.4, MySQL or MariaDB 5.5
 If you are still using CentOS 7 and are wanting to upgrade to XDMoD 11.0 on Rocky or Alma 8, please follow the steps below.
 At the end of this process you should expect to have a working XDMoD 10.5.0 installation on a Rocky 8 server that
 contains all of your current data. After which you can then follow the upgrade procedure that immediately follows this
@@ -49,10 +49,12 @@ section which starts at `Server: EL8, XDMoD: 10.5, PHP: 7.2`.
           ``sed -i 's|DEFINER=`xdmod`@`localhost`||g' backup.sql``
 4. Import the CentOS 7 exported database files into the Rocky 8 server's database.
     1. `mysql < backup.sql`
-5. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
-6. Next, follow the upgrade process detailed below on the Rocky 8 Server.
+5. **NOTE:** MariaDB / MySQL users are defined as `'username'@'hostname'` so if the hostname of the new Rocky 8 web server is different than the hostname of the old CentOS 7 web server, you will need to make sure that this change is reflected in the database.
+    1. Run the following from an account that has db admin privileges to ensure the XDMoD user is correct: `mysql -e "UPDATE mysql.user SET Host = '<insert new XDMoD web server hostname here>' WHERE username = 'xdmod';"`
+6. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
+7. Next, follow the upgrade process detailed below on the Rocky 8 Server.
 
-### Server: EL8, XDMoD: 10.5, PHP: 7.4
+### Server: EL8, XDMoD: 10.5, PHP: 7.4, MariaDB 10.3
 If you have XDMoD 10.5 installed on Rocky 8 then please follow the steps below:
 
 Update the PHP module to 7.4
@@ -78,7 +80,7 @@ PHP Warning:  PHP Startup: Unable to load dynamic library 'mongodb.so' (tried: /
 
 Install the mongodb PHP Pear package
 ```shell
-$ yes '' | pecl install mongodb
+$ yes '' | pecl install mongodb-1.18.1
 ```
 
 You may now continue with the standard upgrade steps below.
