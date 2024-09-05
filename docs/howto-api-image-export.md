@@ -7,7 +7,7 @@ Before running the script,
     XDMOD_PASSWORD=<password>
     ```
 1. Update the value of `site_address` at the top of the script with the URL associated with your XDMoD portal.
-1. Update the value of `export_path` at the top of the script with the desired directory path where the images will be written.
+1. Update the value of `export_dir` at the top of the script with the desired directory path where the images will be written.
 1. Confirm the desired values for `image_format`, `width`, and `height` at the top of the script. The default image format is `svg`, but `png` and `pdf` formats are also supported.
 
 By default, the script will download all of your saved Metric Explorer charts. You can have it instead download a single chart by providing the `-n` or `--name` option followed by the name of the saved chart.
