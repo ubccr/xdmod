@@ -25,10 +25,10 @@ from dotenv import load_dotenv
 import sys
 
 site_address = ''
-export_dir = '.'
+export_dir = ''
 image_format = 'svg'
-image_width = 916
-image_height = 484
+width = 916
+height = 484
 
 if site_address == '':
     print('Please edit the script to specify a site_address.', file=sys.stderr)
@@ -86,8 +86,8 @@ for idx, chart in enumerate(saved_charts_data['data']):
         chart_json['controller_module'] = "metric_explorer"
         chart_json['show_title'] = "y"
         chart_json['format'] = image_format
-        chart_json['width'] = image_width
-        chart_json['height'] = image_height
+        chart_json['width'] = width
+        chart_json['height'] = height
 
         chart_response = session.post(f'{site_address}/controllers/metric_explorer.php', data=chart_json, headers=header)
         chart_name = f"{chart['name']}.{image_format}" if ('name' in chart) else f"xdmod_API_export_{idx}.{image_format}"
