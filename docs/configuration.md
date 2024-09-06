@@ -8,11 +8,13 @@ Setup Script
 Open XDMoD includes a setup script to help you configure your
 installation.  This script will prompt you for information needed to
 configure Open XDMoD and update your configuration files accordingly.
+
 **Important notes**: You will need to set `sql_mode = ''` in your MySQL server
 configuration before running the setup script (see the MySQL Configuration
 section below). If you have modified your configuration files manually, be sure
-to make backups before running the setup script. The setup script is run with
-this command:
+to make backups before running the setup script.
+
+The setup script is run with this command:
 
     # xdmod-setup
 
