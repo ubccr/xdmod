@@ -119,7 +119,7 @@ Aggregate:
 The source of data for the Resource Specifications realm is the `resource_specs.json` file. This
 file is ingested any time `xdmod-ingestor` is run and the `--aggregate` flag is not specified. The
 only step needed for this realm is to aggregate the data. If you recently ingested Jobs, Storage,
-or Cloud data, you may have already set the `last-modified-start-date` shell variable. Otherwise,
+or Cloud data, you may have already set the `$last_modified_start_date` shell variable. Otherwise,
 you should set the last modified start date to a time before the last time `xdmod-ingestor` was
 run after you edited the `resource_specs.json` file.
 
