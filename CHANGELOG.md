@@ -26,7 +26,6 @@
     - Remove obsolete XSEDE-specific code ([\#1773](https://github.com/ubccr/xdmod/pull/1773))
 - Bug Fixes
     - Escape double quotes when migrating portal settings. ([\#1814](https://github.com/ubccr/xdmod/pull/1814))
-    - Fix raw data job query duplicates. ([\#1800](https://github.com/ubccr/xdmod/pull/1800))
     - Fix API token expiration message. ([\#1817](https://github.com/ubccr/xdmod/pull/1817))
     - Fixing Token Header Auth ([\#1863](https://github.com/ubccr/xdmod/pull/1863))
     - Fix typo in rest endpoint data validation check ([\#1782](https://github.com/ubccr/xdmod/pull/1782))
