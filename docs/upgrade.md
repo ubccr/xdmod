@@ -26,7 +26,7 @@ RPM Upgrade Process
 
 # !!! XDMoD 11.0 Upgrade Process Changes !!!
 
-XDMoD 11.0 no longer supports the obsolete Centos 7 O/S. XDMoD 11.0 is supported on
+XDMoD 11.0 no longer supports the obsolete Centos 7 OS. XDMoD 11.0 is supported on
 Rocky 8 with the PHP version 7.4 that [is supported until May 2029](https://access.redhat.com/support/policy/updates/rhel-app-streams-life-cycle#rhel8_full_life_application_streams).
 
 We support the following upgrade paths:
@@ -179,7 +179,7 @@ the "Release Notes" in the "About" tab in the XDMoD portal.
 ### Configuration File Changes
 
 TODO Greg to add stuff here about resource specs file changes.
-TODO Aaron to add stuff about portal settings changes for DAF
+For the [Data Analytics Framework](data-analytics-framework.md), the REST endpoint for retrieving raw data will now stream all the data as a JSON text sequence rather than returning a single JSON object that had a certain limited number of rows (default 10,000) configured by the `rest_raw_row_limit` setting in `portal_settings.ini`. This setting is no longer needed, so it will be removed when `xdmod-upgrade` is run.
 
 ### Database Changes
 
