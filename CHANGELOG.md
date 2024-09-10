@@ -2,7 +2,7 @@
 
 ## 2024-XX-XX v11.0.0
 - Important Notes
-    - Open XDMoD is now no longer bundled with libraries that have license restrictions for commercial or government use. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the non-commercial license required from the Highcharts library. Please refer to the [license notices](https://open.xdmod.org/11.0/notices.html) for more information about the open source licenses bundled with Open XDMoD.
+    - Open XDMoD is now no longer bundled with libraries that have license restrictions for commercial or government use. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the license required from the Highcharts library. Please refer to the [license notices](https://open.xdmod.org/11.0/notices.html) for more information about the open source licenses bundled with Open XDMoD.
 
 - Enhancements
     - Improve performance of Data Analytics Framework API calls for raw data ([\#1792](https://github.com/ubccr/xdmod/pull/1792)), [\#1780](https://github.com/ubccr/xdmod/pull/1780),  [\#1779](https://github.com/ubccr/xdmod/pull/1779))
