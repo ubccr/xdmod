@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%)"
+"Screwdriver CPU Utilization (%)"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[Screwdriver] Screwdriver Utilization (%)"
+Day,"[Screwdriver] Screwdriver CPU Utilization (%)"
 2016-12-22,0.2106
 2016-12-23,0.3045
 2016-12-24,0.3125

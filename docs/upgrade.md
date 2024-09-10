@@ -18,8 +18,8 @@ General Upgrade Notes
   upgrade script.  The version number will be changed by the upgrade
   script.
 - If you have installed any additional Open XDMoD packages (e.g.
-  `xdmod-appkernels` or `xdmod-supremm`), upgrade those to the latest
-  version before running `xdmod-upgrade`.
+  `xdmod-appkernels`, `xdmod-supremm`, or `xdmod-ondemand`), upgrade those to
+  the latest version before running `xdmod-upgrade`.
 
 RPM Upgrade Process
 -------------------
@@ -37,8 +37,9 @@ If you run into any problems during your upgrade process, please submit a
 ticket to `ccr-xdmod-help@buffalo.edu` and we will do our best to help.
 
 
-### Server: EL7, XDMoD: 10.5, PHP: 5.4
+### Server: EL7, XDMoD: 10.5, PHP: 5.4, MySQL or MariaDB 5.5
 If you are using CentOS 7 and will upgrade to XDMoD 11.0 on Rocky or Alma 8, please follow the steps below.
+
 At the end of this process you should expect to have a working XDMoD 10.5.0 installation on a Rocky 8 server that
 contains all of your current data. After which you can then follow the upgrade procedure that immediately follows this
 section which starts at `Server: EL8, XDMoD: 10.5, PHP: 7.2`.
@@ -55,10 +56,13 @@ section which starts at `Server: EL8, XDMoD: 10.5, PHP: 7.2`.
           ``sed -i 's|DEFINER=`xdmod`@`localhost`||g' backup.sql``
 4. Import the CentOS 7 exported database files into the Rocky 8 server's database.
     1. `mysql < backup.sql`
-5. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
-6. Next, follow the upgrade process detailed below on the Rocky 8 Server.
+5. **NOTE:** MariaDB / MySQL users are defined as `'username'@'hostname'` so if the hostname of the new Rocky 8 web server is different than the hostname of the old CentOS 7 web server, you will need to make sure that this change is reflected in the database.
+    1. Run the following from an account that has db admin privileges to ensure the XDMoD user is correct: `mysql -e "UPDATE mysql.user SET Host = '<insert new XDMoD web server hostname here>' WHERE username = 'xdmod';"`
+6. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
+7. Next, follow the upgrade process detailed below on the Rocky 8 Server.
 
-### Server: EL8, XDMoD: 10.5, PHP: 7.2
+### Server: EL8, XDMoD: 10.5, PHP: 7.2, MariaDB 10.3
+
 If you have XDMoD 10.5 installed on Rocky 8 then please follow the steps below:
 
 Update the PHP module to 7.4
@@ -84,7 +88,7 @@ PHP Warning:  PHP Startup: Unable to load dynamic library 'mongodb.so' (tried: /
 
 Install the mongodb PHP Pear package
 ```shell
-$ yes '' | pecl install mongodb
+$ yes '' | pecl install mongodb-1.18.1
 ```
 
 You may now continue with the standard upgrade steps below.
@@ -97,8 +101,8 @@ Download available at [GitHub][github-latest-release].
 
     # dnf install xdmod-{{ page.sw_version }}-1.0.el8.noarch.rpm
 
-Likewise, install the latest `xdmod-appkernels` or `xdmod-supremm` RPM
-files if you have those installed.
+Likewise, install the latest `xdmod-appkernels`, `xdmod-supremm`, and/or
+`xdmod-ondemand` RPM files if you have those modules installed.
 
 After upgrading the package you may need to manually merge any files
 that you have manually changed before the upgrade.  You do not need to
@@ -129,8 +133,8 @@ Download available at [GitHub][github-latest-release].
 
 ### Extract and Install Source Package
 
-    $ tar zxvf xdmod-{{ page.sw_version }}.tar.gz
-    $ cd xdmod-{{ page.sw_version }}
+    # tar zxvf xdmod-{{ page.sw_version }}.tar.gz
+    # cd xdmod-{{ page.sw_version }}
     # ./install --prefix=/opt/xdmod-{{ page.sw_version }}
 
 Likewise, install the latest `xdmod-appkernels` or `xdmod-supremm`
@@ -178,12 +182,10 @@ the "Release Notes" in the "About" tab in the XDMoD portal.
 
 ### Configuration File Changes
 
-TODO Greg to add stuff here about resource specs file changes.
 For the [Data Analytics Framework](data-analytics-framework.md), the REST endpoint for retrieving raw data will now stream all the data as a JSON text sequence rather than returning a single JSON object that had a certain limited number of rows (default 10,000) configured by the `rest_raw_row_limit` setting in `portal_settings.ini`. This setting is no longer needed, so it will be removed when `xdmod-upgrade` is run.
 
 ### Database Changes
 
-TODO Greg to add stuff here about resource specs database changes.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration
