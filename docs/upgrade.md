@@ -31,7 +31,7 @@ Rocky 8 with the PHP version 7.4 that [is supported until May 2029](https://acce
 
 We support the following upgrade paths:
 - XDMoD 10.5 on Centos 7 to XDMoD 11.0 on Rocky 8
-- XDMoD 10.5 on Rocky 8, php 7.2 to XDMoD 11.0 on Rocky 8 php 7.4
+- XDMoD 10.5 on Rocky 8, PHP 7.2 to XDMoD 11.0 on Rocky 8, PHP 7.4
 
 If you run into any problems during your upgrade process, please submit a
 ticket to `ccr-xdmod-help@buffalo.edu` and we will do our best to help.
