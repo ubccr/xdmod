@@ -220,7 +220,7 @@ similar to clicking on the data series in the chart itself.
 
 Clicking on a y-axis label will open a dialog box next to the clicked label.
 Through this dialog box you can adjust the minium and maximum range for any of the y axes on the plot.
-You can reset the range by clicking on the 'Reset Range' button in the dialog box or by erasing the minimum and maximum values.
+You can reset the range by clicking on the 'Reset Range' button or by erasing the minimum and maximum values.
 Additionally, you can enable log scaling of that y-axis.
 
 .. figure:: media/metric_explorer_yaxis_context_menu.png
@@ -247,7 +247,7 @@ a point in the plot. The only option that is excluded is the 'Show Raw Data' opt
    You can interact with a data series context menu by clicking on its respective legend entry.
 
 For Metric Explorer charts, the zoom level of the plot is reset differently than the other tabs.
-The zoom level can be reset through either data series or chart context menus.
+The zoom level can be reset through either the data series or chart context menus.
 To access these menus you must either click on a data point or an empty space in the plot, respectively.
 
 .. figure:: media/metric_explorer_reset_zoom.png
