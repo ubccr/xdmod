@@ -73,7 +73,7 @@ $ dnf module -y enable php:7.4
 
 Install PHP 7.4 and some require pre-reqs for PHP Pear packages
 ```shell
-$ dnf install -y php libzip-devel php-pear php-devel
+$ dnf install -y php make libzip-devel php-pear php-devel
 ```
 
 Some Notes:
