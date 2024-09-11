@@ -172,6 +172,34 @@ The `xdmod-upgrade` script will add settings to `portal_settings.ini` to support
 * A new section `[api_token]` will be added with `expiration_interval = "6 months"`.
 * `rest_raw_row_limit = "10000"` will be added to the `[warehouse]` section.
 
+New fields have been added to the `resources.json` and `resource_specs.json` files to support the new `Resource Specifications` realm.
+
+The `resources.json` file include a new field `resource_allocation_type`. The `resource_allocation_type` field indicates how this resource is allocated to users, such as by CPU, GPU or Node. The upgrade process will default this value to `CPU`. After the upgrade process is complete, you can change this value to other acceptable value. The list of acceptable values is listed in the [Configuration Guide](configuration.md).
+
+The `resource_specs.json` file adds new files to specify information about GPU's inlcuded in a system. Below is an example of the new format, which includes the new GPU fields.
+
+```json
+[
+    {
+        "resource": "resource1",
+        "start_date": "2016-12-27",
+        "cpu_node_count": 400,
+        "cpu_processor_count": 4000,
+        "cpu_ppn": 10,
+        "gpu_node_count": 0,
+        "gpu_processor_count": 0,
+        "gpu_ppn": 0,
+        "end_date": "2017-12-01"
+    }
+]
+```
+
+The values for the GPU fields will default to 0 during the upgrade process. After the upgrade process, you can edit this file to include more accurate GPU information.
+
+If you have multiple entries for a resource, please make sure the `start_date` and `end_date` for each entry are accurate. Also note that if a resource has multiple entries, you may omit the `end_date` from the last entry. The first entry for each resource needs a `start_date`; if you have not provided one, one will be automatically set based on the earliest database fact for the resource (e.g., earliest submitted job, earliest cloud VM start time, earliest storage entry start date, etc.). See the [Configuration Guide](configuration.md) for more information.
+
+After editing either the `resources.json` or `resource_specs.json` file, `xdmod-ingestor` should be run to make sure the new information is ingested into Open XDMoD.
+
 ### Database Changes
 
 The `xdmod-upgrade` script will create the new `moddb.user_tokens` table to support API tokens for the new [Data Analytics Framework](data-analytics-framework.md).
