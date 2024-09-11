@@ -1,32 +1,43 @@
 # Open XDMoD Change Log
 
-## 2024-XX-XX v11.0.0
+## 2024-09-11 v11.0.0
 - Important Notes
-    - Open XDMoD is now no longer bundled with any non-commercial licenses. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the non-commercial license required from the Highcharts library. Please refer to the [license notices](https://open.xdmod.org/11.0/notices.html) for more information about the open source licenses bundled with Open XDMoD.
-- New Features
-    - General
-        - Chart axes are draggable to adjust the chart range. For charts in the Metric Explorer, the axis range can be reset to the default through the axis context menu. For other charts, the chart can be reset to the default by double-clicking.
-        - Rendering support for a subset of HTML tags and entities in a chart's main title. Unsupported tags/entities will render as plain text instead of HTML. The following HTML tags are supported: `<br>`, `<b>`, `<i>`, `<sup>`, and `<sub>`. The following entities are supported: Greek letters (recommended Unicode format, e.g., `&#x3BC;` for lowercase mu), some mathematical symbols (e.g., `&plusmn;` for ±), and degrees (`&deg;`).
+    - Open XDMoD is now no longer bundled with libraries that have license restrictions for commercial or government use. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the license required from the Highcharts library. Please refer to the [license notices](https://open.xdmod.org/11.0/notices.html) for more information about the open source licenses bundled with Open XDMoD.
+
 - Enhancements
-    - User Manual
-        - Changed user manual source pages from .docx to .rst. These pages are now stored in version control in the base XDMoD repository.
-        - Improved user manual build process from internal scripts to Sphinx. This build process is now done as part of the base XDMoD build.
-        - Updated theme from ExtJS to ReadTheDocs.
-    - Metric Explorer
-        - Added copy to clipboard option when generating a link to the current chart.
-    - Job Viewer
-        - Added copy to clipboard option when getting a shareable link to a job.
+    - Improve performance of Data Analytics Framework API calls for raw data ([\#1792](https://github.com/ubccr/xdmod/pull/1792), [\#1780](https://github.com/ubccr/xdmod/pull/1780), [\#1800](https://github.com/ubccr/xdmod/pull/1800), [\#1779](https://github.com/ubccr/xdmod/pull/1779))
+    - Add resource specifications realm ([\#1849](https://github.com/ubccr/xdmod/pull/1849), [\#1837](https://github.com/ubccr/xdmod/pull/1837), [\#1836](https://github.com/ubccr/xdmod/pull/1836), [\#1828](https://github.com/ubccr/xdmod/pull/1828), [\#1801](https://github.com/ubccr/xdmod/pull/1801), [\#1799](https://github.com/ubccr/xdmod/pull/1799), [\#1786](https://github.com/ubccr/xdmod/pull/1786))
+    - Change charting library to Plotly ([\#1869](https://github.com/ubccr/xdmod/pull/1869), [\#1866](https://github.com/ubccr/xdmod/pull/1866), [\#1864](https://github.com/ubccr/xdmod/pull/1864), [\#1850](https://github.com/ubccr/xdmod/pull/1850), [\#1822](https://github.com/ubccr/xdmod/pull/1822), [\#1846](https://github.com/ubccr/xdmod/pull/1846), [\#1791](https://github.com/ubccr/xdmod/pull/1791), [\#1899](https://github.com/ubccr/xdmod/pull/1899), [\#1900](https://github.com/ubccr/xdmod/pull/1900), [\#1902](https://github.com/ubccr/xdmod/pull/1902))
+    - Add Metric Explorer copy to clipboard button ([\#1859](https://github.com/ubccr/xdmod/pull/1859))
+    - Change warehouse raw data endpoint to respond with JSON text sequence. ([\#1858](https://github.com/ubccr/xdmod/pull/1858))
+    - Update description of Job Size: Normalized statistic ([\#1856](https://github.com/ubccr/xdmod/pull/1856))
+    - Add visualization of null values in Job Viewer charts ([\#1851](https://github.com/ubccr/xdmod/pull/1851))
+    - Add configuration setting for the ETL process log database output ([\#1848](https://github.com/ubccr/xdmod/pull/1848), [\#1827](https://github.com/ubccr/xdmod/pull/1827))
+    - Improve UI display when the database is down or otherwise unreachable from the webserver ([\#1793](https://github.com/ubccr/xdmod/pull/1793))
+    - Update log table SQL migration query to be more efficient ([\#1886](https://github.com/ubccr/xdmod/pull/1886))
+    - Provide more helpful error codes and messages for warehouse raw data REST requests ([\#1894](https://github.com/ubccr/xdmod/pull/1894), [\#1895](https://github.com/ubccr/xdmod/pull/1895))
+- Maintenance / Code Quality
+    - Updates for compatibility with PHP 7.4 ([\#1873](https://github.com/ubccr/xdmod/pull/1873), [\#1875](https://github.com/ubccr/xdmod/pull/1875), [\#1877](https://github.com/ubccr/xdmod/pull/1877), [\#1806](https://github.com/ubccr/xdmod/pull/1806))
+    - Remove `jquery-base64` from NOTICE ([\#1853](https://github.com/ubccr/xdmod/pull/1853))
+    - Update Rest Logging to include the username ([\#1809](https://github.com/ubccr/xdmod/pull/1809))
+    - Replace redundant exception classes with ones provided by Symfony. ([\#1798](https://github.com/ubccr/xdmod/pull/1798))
+    - Updates to support the OnDemand module enhancements ([\#1874](https://github.com/ubccr/xdmod/pull/1874), [\#1824](https://github.com/ubccr/xdmod/pull/1824), [\#1816](https://github.com/ubccr/xdmod/pull/1816), [\#1854](https://github.com/ubccr/xdmod/pull/1854), [\#1852](https://github.com/ubccr/xdmod/pull/1852), [\#1838](https://github.com/ubccr/xdmod/pull/1838))
+    - Remove obsolete XSEDE-specific code ([\#1773](https://github.com/ubccr/xdmod/pull/1773))
+    - Patch for symfony/http-foundation: CVE-2019-10913 ([\#1893](https://github.com/ubccr/xdmod/pull/1893))
+- Bug Fixes
+    - Escape double quotes when migrating portal settings. ([\#1814](https://github.com/ubccr/xdmod/pull/1814))
+    - Fix API token expiration message ([\#1817](https://github.com/ubccr/xdmod/pull/1817))
+    - Fix Token Header Auth ([\#1863](https://github.com/ubccr/xdmod/pull/1863))
+    - Fix typo in rest endpoint data validation check ([\#1782](https://github.com/ubccr/xdmod/pull/1782))
+    - Change etlv2 endpoint config value used for migration etlv2 actions ([\#1826](https://github.com/ubccr/xdmod/pull/1826))
+    - Add logic to catch invalid datetime values in REST requests ([\#1896](https://github.com/ubccr/xdmod/pull/1896))
+    - Add default value for `modw_cloud.instance_type_union` table ([\#1897](https://github.com/ubccr/xdmod/pull/1897))
 - Uncategorized
-    - Chart Feature Changes
-        - For line charts, the context menu for a data series is brought up by clicking on its points, not its lines. As before, the context menu can also be brought up by clicking on it in the legend.
-        - The button for resetting the chart zoom in Metric Explorer charts appears in the chart context menus instead of a button on the chart. Resetting the chart zoom for charts in all other tabs now requires a double click on the plotting area instead of a button on the chart.
-    - Chart Features Removed
-        - The ability to change the layering order for charts with multiple axes.
-        - Hover animations.
-        - Shadow.
-    - Known Issues
-        - Charts exported as images can have legend displacement based on the chart size. The current workaround is to make the exported chart larger until the legend fits. Customizing legend entry names to be shorter may also help.
-        - Chart legend double-click feature is disabled due to an interaction with legend single-click events.
+    - Add explicit ordering for Job Viewer analytics panel. ([\#1804](https://github.com/ubccr/xdmod/pull/1804))
+    - Change User Manual generator to use Sphinx ([\#1839](https://github.com/ubccr/xdmod/pull/1839))
+    - Update user manual content ([\#1845](https://github.com/ubccr/xdmod/pull/1845), [\#1901](https://github.com/ubccr/xdmod/pull/1901))
+    - Change name of Utilization metric to CPU Utilization ([\#1898](https://github.com/ubccr/xdmod/pull/1898))
+
 ## 2023-09-11 v10.5.0
 - Bug Fixes
     - Cloud
