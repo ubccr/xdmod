@@ -25,14 +25,21 @@ RPM Upgrade Process
 -------------------
 
 # !!! XDMoD 11.0 Upgrade Process Changes !!!
-Due to our ongoing modernization efforts XDMoD 11.0 will require PHP 7.4. To accommodate this change there are a few
-additional steps required that are outside the typical upgrade process. Below we have included the upgrade steps if you
-are upgrading from both CentOS 7 and Rocky 8. If you run into any problems during your upgrade process, please submit a
+
+XDMoD 11.0 no longer supports the obsolete Centos 7 OS. XDMoD 11.0 is supported on
+Rocky 8 with the PHP version 7.4 that [is supported until May 2029](https://access.redhat.com/support/policy/updates/rhel-app-streams-life-cycle#rhel8_full_life_application_streams).
+
+We support the following upgrade paths:
+- XDMoD 10.5 on Centos 7 to XDMoD 11.0 on Rocky 8
+- XDMoD 10.5 on Rocky 8, PHP 7.2 to XDMoD 11.0 on Rocky 8, PHP 7.4
+
+If you run into any problems during your upgrade process, please submit a
 ticket to `ccr-xdmod-help@buffalo.edu` and we will do our best to help.
 
 
 ### Server: EL7, XDMoD: 10.5, PHP: 5.4, MySQL or MariaDB 5.5
-If you are still using CentOS 7 and are wanting to upgrade to XDMoD 11.0 on Rocky or Alma 8, please follow the steps below.
+If you are using CentOS 7 and will upgrade to XDMoD 11.0 on Rocky or Alma 8, please follow the steps below.
+
 At the end of this process you should expect to have a working XDMoD 10.5.0 installation on a Rocky 8 server that
 contains all of your current data. After which you can then follow the upgrade procedure that immediately follows this
 section which starts at `Server: EL8, XDMoD: 10.5, PHP: 7.2`.
@@ -54,7 +61,8 @@ section which starts at `Server: EL8, XDMoD: 10.5, PHP: 7.2`.
 6. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
 7. Next, follow the upgrade process detailed below on the Rocky 8 Server.
 
-### Server: EL8, XDMoD: 10.5, PHP: 7.4, MariaDB 10.3
+### Server: EL8, XDMoD: 10.5, PHP: 7.2, MariaDB 10.3
+
 If you have XDMoD 10.5 installed on Rocky 8 then please follow the steps below:
 
 Update the PHP module to 7.4
@@ -164,17 +172,20 @@ Additional 11.0.0 Upgrade Notes
 Open XDMoD 11.0.0 is a major release that includes new features along with many
 enhancements and bug fixes.
 
-Open XDMoD is now no longer bundled with any non-commercial licenses. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the non-commercial license required from the Highcharts library. Please refer to the [license notices](notices.md) for more information about the open source licenses bundled with Open XDMoD. For more information please refer to [release notes](https://github.com/ubccr/xdmod/releases) for Open XDMoD 11.0.
+Open XDMoD is now no longer bundled with libraries that have license
+restrictions for commercial or government use. The charting library used in
+Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to
+[Plotly JS](https://plotly.com/javascript/), an open source library.
+Please refer to the [license notices](notices.md) for more information about the open source licenses bundled with Open XDMoD.
+ For more information please refer to [release notes](https://github.com/ubccr/xdmod/releases) for Open XDMoD 11.0 or under
+the "Release Notes" in the "About" tab in the XDMoD portal.
 
 ### Configuration File Changes
 
-The `xdmod-upgrade` script will add settings to `portal_settings.ini` to support the new [Data Analytics Framework](data-analytics-framework.md):
-* A new section `[api_token]` will be added with `expiration_interval = "6 months"`.
-* `rest_raw_row_limit = "10000"` will be added to the `[warehouse]` section.
+For the [Data Analytics Framework](data-analytics-framework.md), the REST endpoint for retrieving raw data will now stream all the data as a JSON text sequence rather than returning a single JSON object that had a certain limited number of rows (default 10,000) configured by the `rest_raw_row_limit` setting in `portal_settings.ini`. This setting is no longer needed, so it will be removed when `xdmod-upgrade` is run.
 
 ### Database Changes
 
-The `xdmod-upgrade` script will create the new `moddb.user_tokens` table to support API tokens for the new [Data Analytics Framework](data-analytics-framework.md).
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration
