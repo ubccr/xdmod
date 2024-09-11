@@ -184,6 +184,34 @@ the "Release Notes" in the "About" tab in the XDMoD portal.
 
 For the [Data Analytics Framework](data-analytics-framework.md), the REST endpoint for retrieving raw data will now stream all the data as a JSON text sequence rather than returning a single JSON object that had a certain limited number of rows (default 10,000) configured by the `rest_raw_row_limit` setting in `portal_settings.ini`. This setting is no longer needed, so it will be removed when `xdmod-upgrade` is run.
 
+New fields have been added to the `resources.json` and `resource_specs.json` files to support the new `Resource Specifications` realm.
+
+The `resources.json` file include a new field `resource_allocation_type`. The `resource_allocation_type` field indicates how this resource is allocated to users, such as by CPU, GPU or Node. The upgrade process will default this value to `CPU`. After the upgrade process is complete, you can change this value to other acceptable value. The list of acceptable values is listed in the [Configuration Guide](configuration.md).
+
+The `resource_specs.json` file adds new files to specify information about GPU's inlcuded in a system. Below is an example of the new format, which includes the new GPU fields.
+
+```json
+[
+    {
+        "resource": "resource1",
+        "start_date": "2016-12-27",
+        "cpu_node_count": 400,
+        "cpu_processor_count": 4000,
+        "cpu_ppn": 10,
+        "gpu_node_count": 0,
+        "gpu_processor_count": 0,
+        "gpu_ppn": 0,
+        "end_date": "2017-12-01"
+    }
+]
+```
+
+The values for the GPU fields will default to 0 during the upgrade process. After the upgrade process, you can edit this file to include more accurate GPU information.
+
+If you have multiple entries for a resource, please make sure the `start_date` and `end_date` for each entry are accurate. Also note that if a resource has multiple entries, you may omit the `end_date` from the last entry. The first entry for each resource needs a `start_date`; if you have not provided one, one will be automatically set based on the earliest database fact for the resource (e.g., earliest submitted job, earliest cloud VM start time, earliest storage entry start date, etc.). See the [Configuration Guide](configuration.md) for more information.
+
+After editing either the `resources.json` or `resource_specs.json` file, `xdmod-ingestor` should be run to make sure the new information is ingested into Open XDMoD.
+
 ### Database Changes
 
 
