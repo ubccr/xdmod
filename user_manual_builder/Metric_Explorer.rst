@@ -216,7 +216,7 @@ Basic Chart Features
 Metric Explorer charts have additional features compared to the charts in other tabs.
 The chart y and x axis have context menus that allow you to adjust the range and duration, respectively.
 The chart legend entries can be used to access the data series context menu,
-similar to clicking on the data series in the chart itself. 
+similar to clicking on the data series in the chart itself.
 
 Clicking on a y-axis label will open a dialog box next to the clicked label.
 Through this dialog box you can adjust the minium and maximum range for any of the y axes on the plot.
