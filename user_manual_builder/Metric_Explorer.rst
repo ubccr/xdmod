@@ -211,6 +211,50 @@ display format.
 
    In the Metric Explorer Plots can easily be changed directly by clicking on them.
 
+Basic Chart Features
+-------------------------
+Metric Explorer charts have additional features compared to the charts in other tabs.
+The chart y and x axis have context menus that allow you to adjust the range and duration, respectively.
+The chart legend entries can be used to access the data series context menu,
+similar to clicking on the data series in the chart itself. 
+
+Clicking on a y-axis label will open a dialog box next to the clicked label.
+Through this dialog box you can adjust the minium and maximum range for any of the y axes on the plot.
+You can reset the range by clicking on the 'Reset Range' button in the dialog box or by erasing the minimum and maximum values.
+Additionally, you can enable log scaling of that y-axis.
+
+.. figure:: media/metric_explorer_yaxis_context_menu.png
+   :name: metric_explorer_yaxis_context_menu
+
+   You can adjust the range and enable log scaling by clicking on a y-axis label.
+
+Clicking on a x-axis label will open a dialog box next to the clicked label.
+Through this dialog box you can adjust the time duration set for the chart.
+The options available replicate the duration toolbar.
+
+.. figure:: media/metric_explorer_xaxis_context_menu.png
+   :name: metric_explorer_xaxis_context_menu
+
+   You can adjust the time duration by clicking on a x-axis label.
+
+Clicking on a legend entry will open a dialog box next to the clicked entry.
+The context menu provided through the legend entry is the same as clicking on
+a point in the plot. The only option that is excluded is the 'Show Raw Data' option.
+
+.. figure:: media/metric_explorer_legend_context_menu.png
+   :name: metric_explorer_legend_context_menu
+
+   You can interact with a data series context menu by clicking on its respective legend entry.
+
+For Metric Explorer charts, the zoom level of the plot is reset differently than the other tabs.
+The zoom level can be reset through either data series or chart context menus.
+To access these menus you must either click on a data point or an empty space in the plot, respectively.
+
+.. figure:: media/metric_explorer_reset_zoom.png
+   :name: metric_explorer_reset_zoom
+
+   You can reset the zoom level of a chart through either the data series or chart context menus.
+
 Managing Data Series
 -------------------------
 
