@@ -180,6 +180,12 @@ Please refer to the [license notices](notices.md) for more information about the
  For more information please refer to [release notes](https://github.com/ubccr/xdmod/releases) for Open XDMoD 11.0 or under
 the "Release Notes" in the "About" tab in the XDMoD portal.
 
+After the upgrade, if you wish to use the
+[`xdmod-data`](https://github.com/ubccr/xdmod-data) Python package to retrieve
+data from your Open XDMoD installation, you will need `xdmod-data` version
+1.0.1 or greater. To upgrade the package to the latest version, use `pip
+install --upgrade xdmod-data`.
+
 ### Configuration File Changes
 
 For the [Data Analytics Framework](data-analytics-framework.md), the REST endpoint for retrieving raw data will now stream all the data as a JSON text sequence rather than returning a single JSON object that had a certain limited number of rows (default 10,000) configured by the `rest_raw_row_limit` setting in `portal_settings.ini`. This setting is no longer needed, so it will be removed when `xdmod-upgrade` is run.
