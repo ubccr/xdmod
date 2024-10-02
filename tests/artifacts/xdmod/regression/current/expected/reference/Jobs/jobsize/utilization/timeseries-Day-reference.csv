@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Job Size"
+"Screwdriver CPU Utilization (%): by Job Size"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[1] Screwdriver Utilization (%)","[2] Screwdriver Utilization (%)","[3 - 4] Screwdriver Utilization (%)","[5 - 8] Screwdriver Utilization (%)","[9 - 16] Screwdriver Utilization (%)","[17 - 32] Screwdriver Utilization (%)","[33 - 64] Screwdriver Utilization (%)","[65 - 128] Screwdriver Utilization (%)","[129 - 256] Screwdriver Utilization (%)","[257 - 512] Screwdriver Utilization (%)"
+Day,"[1] Screwdriver CPU Utilization (%)","[2] Screwdriver CPU Utilization (%)","[3 - 4] Screwdriver CPU Utilization (%)","[5 - 8] Screwdriver CPU Utilization (%)","[9 - 16] Screwdriver CPU Utilization (%)","[17 - 32] Screwdriver CPU Utilization (%)","[33 - 64] Screwdriver CPU Utilization (%)","[65 - 128] Screwdriver CPU Utilization (%)","[129 - 256] Screwdriver CPU Utilization (%)","[257 - 512] Screwdriver CPU Utilization (%)"
 2016-12-22,0,0,0,0,0.2106,0,0,0,0,0
 2016-12-23,0.0090,0,0,0,0.3000,0,0,0,0,0
 2016-12-24,0.0250,0,0,0,0.3000,0,0,0,0,0

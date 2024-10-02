@@ -493,31 +493,41 @@ this should be set to `true`.
 For cloud resources the timezone is not used and times are converted to
 the local timezone that the server is in.
 
+The `resource_allocation_type` option indicates how this resource is allocated
+to users, such as by CPU, GPU or Node. By default, there are 4 possible values,
+`CPU`, `CPUNode`, `GPU`, and `GPUNode`. `CPUNode` denotes a resource that allocates
+nodes of CPUs to users, whereas `CPU` denotes a resource that allocates individual CPUs
+to users.
+
 ```json
 [
     {
         "resource": "resource1",
         "name": "Resource 1",
         "description": "Our first HPC resource",
-        "resource_type": "HPC"
+        "resource_type": "HPC",
+        "resource_allocation_type": "CPUNode"
     },
     {
         "resource": "resource2",
         "name": "Resource 2",
         "resource_type": "HPC",
-        "pi_column": "account_name"
+        "pi_column": "account_name",
+        "resource_allocation_type": "GPU"
     },
     {
         "resource": "resource3",
         "name": "Resource 3",
         "resource_type": "HPC",
         "timezone": "US/Eastern",
+        "resource_allocation_type": "CPU",
         "shared_jobs": true
     },
     {
         "resource": "resource4",
         "name": "Resource 4",
-        "resource_type": "Cloud"
+        "resource_type": "Cloud",
+        "resource_allocation_type": "CPU",
     }
 ]
 ```
@@ -530,10 +540,9 @@ the number of nodes and processors in a resource have changed over time,
 multiple entries are required for that resource to calculate an accurate
 utilization metric.
 
-Note that if there is a single entry for a resource, both the
-`start_date` and `end_date` may be omitted.  If a resource has multiple
-entries, the `start_date` may be omitted from the first and `end_date`
-may be omitted from the last.
+Note that the `end_date` is necessary for resources with multiple entries and
+still active. The `end_date` should not be included for the last entry for a
+resource. A `start_date` is necessary for all entries.
 
 It is also possible to change the utilization metric by specifying a
 percent allocated (see `percent_allocated` below).  The utilization will
@@ -548,34 +557,49 @@ warehouse.  If this data is omitted, it is assumed that the resource is
 [
     {
         "resource": "resource1",
-        "nodes": 64,
-        "processors": 1024,
-        "ppn": 16
+        "start_date": "2016-12-27",
+        "cpu_node_count": 400,
+        "cpu_processor_count": 4000,
+        "cpu_ppn": 10,
+        "gpu_node_count": 0,
+        "gpu_processor_count": 0,
+        "gpu_ppn": 0,
+        "end_date": "2017-12-01"
     },
     {
-        "resource": "resource2",
-        "end_date": "2013-12-31",
-        "nodes": 32,
-        "processors": 256,
-        "ppn": 8
+        "resource": "frearson",
+        "start_date": "2017-12-02",
+        "cpu_node_count": 800,
+        "cpu_processor_count": 8000,
+        "cpu_ppn": 10,
+        "gpu_node_count": 0,
+        "gpu_processor_count": 0,
+        "gpu_ppn": 0,
+        "end_date": "2018-01-01"
     },
     {
-        "resource": "resource2",
-        "start_date": "2014-01-01",
-        "end_date": "2014-01-15",
-        "nodes": 64,
-        "processors": 512,
-        "ppn": 8,
+        "resource": "frearson",
+        "start_date": "2018-01-02",
+        "cpu_node_count": 800,
+        "cpu_processor_count": 8000,
+        "cpu_ppn": 10,
+        "gpu_node_count": 10,
+        "gpu_processor_count": 100,
+        "gpu_ppn": 10,
+        "end_date": "2019-01-01",
         "percent_allocated": 100
-    }
+    },
     {
-        "resource": "resource2",
-        "start_date": "2014-01-16",
-        "nodes": 65,
-        "processors": 520,
-        "ppn": 8,
+        "resource": "frearson",
+        "start_date": "2019-01-02",
+        "cpu_node_count": 800,
+        "cpu_processor_count": 8000,
+        "cpu_ppn": 10,
+        "gpu_node_count": 10,
+        "gpu_processor_count": 100,
+        "gpu_ppn": 10,
         "percent_allocated": 90
-    }
+    },
 ]
 ```
 
@@ -585,6 +609,12 @@ warehouse.  If this data is omitted, it is assumed that the resource is
 Defines resource types and associates resource types with realms.  Each
 resource in `resources.json` should reference a resource type from this file.
 This file typically should not be changed.
+
+### resource_allocation_types.json
+
+Defines how a resource is allocated to users.  Each resource in `resources.json`
+should reference a resource allocation type from this file. This file typically
+should not be changed.
 
 ### update_check.json
 

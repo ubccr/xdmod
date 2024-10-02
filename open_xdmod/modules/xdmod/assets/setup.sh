@@ -7,10 +7,8 @@ assets_dir="$(
 module_dir="$assets_dir/.."
 xdmod_dir="$module_dir/../../.."
 
-echo Installing composer managed dependencies
-cd $xdmod_dir
-composer install --no-dev
-
+pushd "$xdmod_dir" || exit
 echo Installing npm managed dependencies
 npm install --production --prefix etl/js
 npm install --production --prefix background_scripts/chrome-helper
+popd || exit

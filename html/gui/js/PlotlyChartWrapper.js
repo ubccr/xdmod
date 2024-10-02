@@ -80,11 +80,11 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         if (baseChartOptions.layout.thumbnail) {
             const axesLabels = getMultiAxisObjects(baseChartOptions.layout);
             if (baseChartOptions.swapXY) {
-                if (baseChartOptions.layout.yaxis.type === 'date') {
+                if (baseChartOptions.layout.yaxis.timeseries) {
                     baseChartOptions.layout.yaxis.nticks = 5;
                     baseChartOptions.layout.yaxis.tickangle = -90;
                 }
-            } else if (baseChartOptions.layout.xaxis.type === 'date') {
+            } else if (baseChartOptions.layout.xaxis.timeseries) {
                 baseChartOptions.layout.xaxis.nticks = 5;
                 baseChartOptions.layout.xaxis.tickangle = -90;
             }
