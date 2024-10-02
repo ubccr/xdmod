@@ -3,7 +3,7 @@
 <p>Below is a list of Open XDMoD releases with major features and bug fixes listed.</p>
 
 <h2 id="2024-XX-XX-v11-0-0">2024-XX-XX v11.0.0</h2>
-<p><strong>IMPORTANT NOTE:</strong>Open XDMoD is now no longer bundled with libraries that have license restrictions for commercial or government use. The charting library used in Open XDMoD has changed from <a href="https://www.highcharts.com/">Highcharts</a> to <a href="https://plotly.com/javascript/">Plotly JS</a>, an open source library. Please refer to the <a href="https://open.xdmod.org/11.0/notices.html">license notices</a> for more information about the open source licenses bundled with Open XDMoD.
+<p><strong>IMPORTANT NOTE:</strong> Open XDMoD is now no longer bundled with libraries that have license restrictions for commercial or government use. The charting library used in Open XDMoD has changed from <a href="https://www.highcharts.com/">Highcharts</a> to <a href="https://plotly.com/javascript/">Plotly JS</a>, an open source library. Please refer to the <a href="https://open.xdmod.org/11.0/notices.html">license notices</a> for more information about the open source licenses bundled with Open XDMoD.
 This chart library change brings some new features to the interface and some minor changes:
 </p>
 <ul>
@@ -35,23 +35,71 @@ This chart library change brings some new features to the interface and some min
     </li>
 </ul>
 
-<p>Other changes to Open XDMoD are:</p>
+<p>Other changes to Open XDMoD 11.0.0 are:</p>
 <ul>
-    <li><p>New Features</p>
     <li><p>Enhancements</p>
         <ul>
-            <li>Metric Explorer<ul>
-                <li>Added copy to clipboard option when generating a link to the current chart.</li>
-            </ul>
+            <li>Data Analytics Framework
+                <ul>
+                    <li>Improve performance of API calls for raw data.</li>
+                    <li>Change raw data endpoint to respond with a JSON text sequence.</li>
+                    <li>Provide more helpful error codes and messages for raw data requests.</li>
+                </ul>
             </li>
-            <li>Job Viewer<ul>
-                <li>Added copy to clipboard option when getting a shareable link to a job.</li>
-            </ul>
+            <li>ETL
+                <ul>
+                    <li>Add an option <code>--log-to-database no</code> to <code>etl_overseer.php</code></li>
+                    <li>Update log table SQL query to be more efficient.</li>
+                </ul>
+            </li>
+            <li>General
+                <ul>
+                    <li>Update the description of the "Job Size: Normalized" metric in the Jobs realm.</li>
+                    <li>Improve the UI display when the database is down or otherwise unreachable from the web server.</li>
+                </ul>
+            </li>
+            <li>Job Viewer
+                <ul>
+                    <li>Add a copy to clipboard option when getting a shareable link to a job.</li>
+                    <li>Add dashed lines for null data in Job Viewer charts.</li>
+                </ul>
+            </li>
+            <li>Metric Explorer
+                <ul>
+                    <li>Add a copy to clipboard option when generating a link to the current chart.</li>
+                </ul>
+            </li>
+            <li>Resource Specifications
+                <ul>
+                    <li>Add new Resource Specifications realm.</li>
+                </ul>
             </li>
         </ul>
     </li>
-    <li>Uncategorized<ul>
-    </ul>
+    <li><p>Bug Fixes</p>
+        <ul>
+            <li>Escape double quotes when migrating portal settings.</li>
+            <li>Fix API token expiration message.</li>
+            <li>Fix API token header authentication.</li>
+            <li>Fix REST date validation.</li>
+            <li>Add default value for <code>modw_cloud.instance_type_union</code> table.</li>
+        </ul>
+    </li>
+    <li><p>Maintenance / Code Quality</p>
+        <ul>
+            <li>Update for compatibility with PHP 7.4.</li>
+            <li>Include username in REST logging.</li>
+            <li>Replace redundant exception classes with ones provided by Symfony.</li>
+            <li>Update to support OnDemand module enhancements.</li>
+            <li>Remove obsolete XSEDE-specific code.</li>
+            <li>Add a patch for symfony/http-foundation: CVE-2019-10913.</li>
+        </ul>
+    </li>
+    <li><p>Uncategorized</p>
+        <ul>
+            <li>Change the User Manual generator to use Sphinx.</li>
+            <li>Change the name of the "Utilization" metric in the Jobs realm to "CPU Utilization."</li>
+        </ul>
     </li>
 </ul>
 <h2 id="2023-09-11-v10-5-0">2023-09-11 v10.5.0</h2>
