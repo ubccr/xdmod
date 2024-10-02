@@ -188,7 +188,19 @@ install --upgrade xdmod-data`.
 
 ### Configuration File Changes
 
-For the [Data Analytics Framework](data-analytics-framework.md), the REST endpoint for retrieving raw data will now stream all the data as a JSON text sequence rather than returning a single JSON object that had a certain limited number of rows (default 10,000) configured by the `rest_raw_row_limit` setting in `portal_settings.ini`. This setting is no longer needed, so it will be removed when `xdmod-upgrade` is run.
+#### `portal_settings.ini`
+
+For the [Data Analytics Framework](data-analytics-framework.md), the REST
+endpoint for retrieving raw data will now stream all the data as a JSON text
+sequence rather than returning a single JSON object that had a certain limited
+number of rows (default 10,000) configured by the `rest_raw_row_limit` setting.
+This setting is no longer needed, so it will be removed during the upgrade.
+
+The user manual is now built using the Python Sphinx library, which makes the
+`user_manual` setting no longer needed, so it will be removed during the
+upgrade.
+
+#### `resources.json` and `resource_specs.json`
 
 New fields have been added to the `resources.json` and `resource_specs.json` files to support the new `Resource Specifications` realm.
 
@@ -218,7 +230,82 @@ If you have multiple entries for a resource, please make sure the `start_date` a
 
 After editing either the `resources.json` or `resource_specs.json` file, `xdmod-ingestor` should be run to make sure the new information is ingested into Open XDMoD.
 
+#### Other configuration files
+
+During the upgrade, various configuration files are updated in
+`datawarehouse.d`, `etl`, and `rawstatistics.d`.
+
 ### Database Changes
+
+During the upgrade, the following changes will be made to database tables.
+
+#### `modw_aggregates`
+
+- New tables will be created for `resourcespecsfact_by_day`,
+  `resourcespecsfact_by_month`, `resourcespecsfact_by_quarter`,
+  `resourcespecsfact_by_year`, and
+  `resourcespecsfact_by_day_resourcespecslist`; and these will be populated
+  with data from `modw`.
+
+#### `modw`
+
+- A table will be added for `resource_allocation_type` and populated with data
+  from `mod_hpcdb`.
+- The `resource_allocated` table will have columns added for `start_day_id`
+  and `end_day_id` and will be populated with data from `mod_hpcdb`.
+- The `resourcefact` table will have a column added for
+  `resource_allocation_type_id` and will be populated with data from
+  `mod_hpcdb`.
+- The `resourcespecs` table will have its `processors` column renamed
+  `cpu_processor_count`; its `q_nodes` column renamed `cpu_node_count`; its
+  `q_ppn` column renamed `cpu_processor_count_per_node`; columns added for
+  `resourcespec_id`, `start_day_id`, `end_day_id`, `gpu_processor_count`,
+  `gpu_node_count`, `gpu_processor_count_per_node`, `su_available_per_day`,
+  `su_available_per_day`, and `last_modified`; a unique index added
+  containing `resourcespec_id`; and it will be populated with data from
+  `mod_hpcdb`.
+
+#### `mod_hpcdb`
+
+- The `hpcdb_resource_allocated` table will have its `idx_resource`
+  index updated to add the `start_date_ts` column and to be a unique index, and
+  it will be populated with data from `mod_shredder`.
+- The `hpcdb_resource_allocation_types` table will be created and populated
+  with data from `mod_shredder`.
+- The `hpcdb_resource_specs` table will have its `node_count` column
+  renamed to `cpu_node_count`; its `cpu_count` column renamed to
+  `cpu_processor_count`; its `cpu_count_per_node` column renamed to
+  `cpu_processor_count_per_node`; columns added for `gpu_node_count`,
+  `gpu_processor_count`, `gpu_processor_count_per_node`,
+  `su_available_per_day`, and `normalization_factor`; and it will be populated
+  with data from `mod_shredder`.
+- The `hpcdb_resources` table will have a column added for
+  `resource_allocation_type_id` and will be populated with data from
+  `mod_shredder`.
+
+#### `mod_shredder`
+
+- A table will be added for `staging_resource_allocation_type` and populated
+  with data from the `resource_allocation_types.json` configuration file.
+- The `staging_resource_config` table will have a column added for
+  `resource_allocation_type_abbrev` and will be populated with data from the
+  `resources.json` configuration file.
+- The `staging_resource_spec` table will have its `nodes` column renamed
+  `cpu_node_count`, its `processors` column renamed
+  `cpu_processor_count`, its `ppn` column renamed
+  `cpu_processor_count_per_node`, and columns added for `gpu_node_count`,
+  `gpu_processor_count`, `gpu_processor_count_per_node`,
+  `su_available_per_day`, and `normalization_factor`.
+- The `staging_resource_type_realms` table will have its `realm`
+  column changed from type `varchar(16)` to `varchar(255)`.
+
+#### `moddb`
+- Charts in `ReportTemplateCharts` will have their titles updated to say
+  `CPU Utilization` instead of just `Utilization`.
+
+#### `modw_cloud`
+- The `modw_cloud.instance_type_union` table will have the default value for
+  the `instance_type_id` column set to `NULL`.
 
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
