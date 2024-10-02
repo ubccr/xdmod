@@ -16,7 +16,7 @@ This chart library change brings some new features to the interface and some min
     </li>
     <li><p>Changes</p>
          <ul>
-            <li>Charts no longer allow series context menus to appear when clicking on the lines connecting data points. Series context menus only appear when clicking data points or the legend entry (for Metric Explorer charts)</li>
+            <li>Charts no longer allow series context menus to appear when clicking on the lines connecting data points. Series context menus only appear when clicking data points or the legend entry (for Metric Explorer charts).</li>
             <li>The button for resetting the chart zoom in Metric Explorer charts appears in the chart context menus instead of a button on the chart. Resetting the chart zoom for charts in all other tabs now requires a double click on the plotting area instead of a button on the chart.</li>
         </ul>
     </li>
@@ -42,14 +42,14 @@ This chart library change brings some new features to the interface and some min
             <li>Data Analytics Framework
                 <ul>
                     <li>Improve performance of API calls for raw data.</li>
-                    <li>Change raw data endpoint to respond with a JSON text sequence.</li>
+                    <li>Change the raw data endpoint to respond with a JSON text sequence instead of one large JSON object.</li>
                     <li>Provide more helpful error codes and messages for raw data requests.</li>
                 </ul>
             </li>
             <li>ETL
                 <ul>
-                    <li>Add an option <code>--log-to-database no</code> to <code>etl_overseer.php</code></li>
-                    <li>Update log table SQL query to be more efficient.</li>
+                    <li>Add an option to <code>etl_overseer.php</code> for turning off writing the ETL process log to the database.</li>
+                    <li>Update a log table SQL query to be more efficient.</li>
                 </ul>
             </li>
             <li>General
@@ -82,13 +82,13 @@ This chart library change brings some new features to the interface and some min
             <li>Fix API token expiration message.</li>
             <li>Fix API token header authentication.</li>
             <li>Fix REST date validation.</li>
-            <li>Add default value for <code>modw_cloud.instance_type_union</code> table.</li>
+            <li>Add a default value for the <code>modw_cloud.instance_type_union</code> table.</li>
         </ul>
     </li>
     <li><p>Maintenance / Code Quality</p>
         <ul>
             <li>Update for compatibility with PHP 7.4.</li>
-            <li>Include username in REST logging.</li>
+            <li>Include usernames in REST logging.</li>
             <li>Replace redundant exception classes with ones provided by Symfony.</li>
             <li>Update to support OnDemand module enhancements.</li>
             <li>Remove obsolete XSEDE-specific code.</li>
