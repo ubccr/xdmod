@@ -167,8 +167,8 @@
     },
     "utilization": {
         "$overwrite": {
-            "description_html": "The percentage of the ${ORGANIZATION_NAME} obligation of a resource that has been utilized by ${ORGANIZATION_NAME} ${REALM_NAME} jobs.<br/><i> ${ORGANIZATION_NAME} Utilization:</i> The ratio of the total CPU hours consumed by ${ORGANIZATION_NAME} jobs over a given time period divided by the total CPU hours that the system is contractually required to provide to ${ORGANIZATION_NAME} during that period. It does not include non-${ORGANIZATION_NAME} jobs.<br/>It is worth noting that this value is a rough estimate in certain cases where the resource providers don't provide accurate records of their system specifications, over time.",
-            "name": "${ORGANIZATION_NAME} Utilization via ${REALM_NAME}"
+            "description_html": "The percentage of the ${ORGANIZATION_NAME} obligation of a resource that has been utilized by ${ORGANIZATION_NAME} ${REALM_NAME} jobs.<br/><i> ${ORGANIZATION_NAME} CPU Utilization:</i> The ratio of the total CPU hours consumed by ${ORGANIZATION_NAME} jobs over a given time period divided by the total CPU hours that the system is contractually required to provide to ${ORGANIZATION_NAME} during that period. It does not include non-${ORGANIZATION_NAME} jobs.<br/>It is worth noting that this value is a rough estimate in certain cases where the resource providers don't provide accurate records of their system specifications, over time.",
+            "name": "${ORGANIZATION_NAME} CPU Utilization via ${REALM_NAME}"
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/utilization"
     }

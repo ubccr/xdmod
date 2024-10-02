@@ -301,7 +301,7 @@
             }
         },
         "category": "Administrative",
-        "description_html": "A categorization of VM based on their state, ex. Active, Inactve, etc.",
+        "description_html": "A categorization of VM based on their state, ex. Active, Inactive, etc.",
         "name": "VM State"
     },
     "year": {

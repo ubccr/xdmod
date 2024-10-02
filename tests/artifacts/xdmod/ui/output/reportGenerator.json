@@ -31,7 +31,7 @@
             "realm": "Jobs",
             "startDate": "previousQuarterStartDate",
             "endDate": "previousQuarterEndDate",
-            "title": "PREVIOUS QUARTER: Percent Utilization",
+            "title": "PREVIOUS QUARTER: Percent CPU Utilization",
             "drillDetails": "",
             "timeframeType": "Previous quarter"
           },
@@ -39,7 +39,7 @@
             "realm": "Jobs",
             "startDate": "yearToDateStartDate",
             "endDate": "yearToDateEndDate",
-            "title": "YEAR TO DATE: Percent Utilization",
+            "title": "YEAR TO DATE: Percent CPU Utilization",
             "drillDetails": "",
             "timeframeType": "Year to date"
           },
