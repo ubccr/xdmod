@@ -101,6 +101,81 @@ This chart library change brings some new features to the interface and some min
             <li>Change the name of the "Utilization" metric in the Jobs realm to "CPU Utilization."</li>
         </ul>
     </li>
+    <li><p>Optional Modules</p>
+        <ul>
+            <li><p>Application Kernels</p>
+                <ul>
+                    <li>Maintenance / Code Quality
+                        <ul>
+                            <li>Update for compatibility with PHP 7.4.</li>
+                            <li>Update for compatibility with new Resource Specifications realm.</li>
+                            <li>Replace jQuery with native JavaScript.</li>
+                        </ul>
+                    </li>
+                    <li>Bug Fixes
+                        <ul>
+                            <li>Add a default argument for <code>AppKernelLevel::detect</code>.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li><p>Job Performance (SUPReMM)</p>
+                <ul>
+                    <li>Enhancements
+                        <ul>
+                            <li>Add a GPU Count dimension.</li>
+                            <li>Add CDO, DFTB+, Libra, MOM6, NEXMD, and ROMS to the list of community applications.</li>
+                            <li>Make application name data available through both the Data Export tab and the Data Analytics Framework.</li>
+                        </ul>
+                    </li>
+                    <li>Bug Fixes
+                        <ul>
+                            <li>Order scatter plot data by usage instead of the efficiency statistic.</li>
+                            <li>Fix &gt;100% values for wall time accuracy.</li>
+                            <li>Fix filter values not appearing in autocomplete.</li>
+                            <li>Fix bugs with <code>NAN</code> values from timeseries data.</li>
+                        </ul>
+                    </li>
+                    <li>Maintenance / Code Quality
+                        <ul>
+                            <li>Update for compatibility with PHP 7.4.</li>
+                            <li>Replace redundant exception classes with ones provided by Symfony.</li>
+                            <li>Remove jQuery as a dependency.</li>
+                            <li>Update jsPlumb dependency.</li>
+                        </ul>
+                    </li>
+                    <li>Miscellaneous
+                        <ul>
+                            <li>Use the portal's time zone for raw data query dates instead of UTC.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li><p>Open OnDemand</p>
+                <ul>
+                    <li>Enhancements
+                        <ul>
+                            <li>Change how page loads, sessions, and applications are counted and categorized. See the
+                                <a href="https://ondemand.xdmod.org/11.0/upgrade.html" target="_blank" rel="noopener noreferrer">upgrade guide</a>
+                                for details.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Bug Fixes
+                        <ul>
+                            <li>Fix how unknown locations are displayed.</li>
+                        </ul>
+                    </li>
+                    <li>Maintenance / Code Quality
+                        <ul>
+                            <li>Update descriptions for metrics, dimensions, and aggregate tables.</li>
+                            <li>Speed up aggregation.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
 </ul>
 <h2 id="2023-09-11-v10-5-0">2023-09-11 v10.5.0</h2>
 <ul>
