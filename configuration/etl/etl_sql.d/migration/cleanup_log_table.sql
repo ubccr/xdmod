@@ -6,11 +6,8 @@ UPDATE mod_logger.log_table as lt JOIN (SELECT
                                         FROM mod_logger.log_table as l2
                                         WHERE
                                               l2.ident IN ('rest.logger.db', 'controller.log')
-                                          AND l2.priority = 6) AS data JOIN moddb.SessionManager sm ON sm.session_token = data.token JOIN moddb.Users u ON u.id = sm.user_id
+                                          AND l2.priority = 6) AS data on data.id = lt.id JOIN moddb.SessionManager sm ON sm.session_token = data.token JOIN moddb.Users u ON u.id = sm.user_id
 SET lt.message = JSON_REPLACE(lt.message, '$.data.username', u.username)
-WHERE
-      lt.ident IN ('rest.logger.db', 'controller.log')
-  AND lt.priority = 6;
 //
 /* backfill for removing the extra escaping for the other ident types */
 UPDATE mod_logger.log_table lt

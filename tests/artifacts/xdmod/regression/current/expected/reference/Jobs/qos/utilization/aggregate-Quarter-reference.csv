@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by QOS"
+"Screwdriver CPU Utilization (%): by QOS"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-QOS,"Screwdriver Utilization (%)"
+QOS,"Screwdriver CPU Utilization (%)"
 curry,3.5275
 banana-cream,0.7643
 derby,0.6575

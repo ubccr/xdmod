@@ -115,10 +115,10 @@ component.
 The layout of the half-width dashboard components can be customized by
 dragging the title bar of a component (:numref:`dashboard_rearrange_layout`). The layout
 settings are saved automatically and persist between logins. The layout
-can be reset to default using the “Reset to default” button in the
-Settings tab of the “My Profile” dialog (:numref:`dashboard_reset_default`). The My Profile
-dialog is accessed via the “My Profile” button on the top left of the
-XDMoD portal. Full-width dashboard components cannot be moved.
+can be reset to default using the **Reset to default** button in the
+**Settings** tab of the **My Profile** dialog (:numref:`dashboard_reset_default`).
+The **My Profile** dialog is accessed via the **My Profile** button on the top
+right of the XDMoD portal. Full-width dashboard components cannot be moved.
 
 .. figure:: media/image80.png
    :name: dashboard_rearrange_layout
@@ -132,7 +132,8 @@ XDMoD portal. Full-width dashboard components cannot be moved.
    :width: 66%
 
    The dashboard layout can be reset to the default value
-   using the button available in the Settings tab of the Profile dialog.
+   using the button available in the **Settings** tab of the **My Profile**
+   dialog.
 
 Chart Component
 -------------------
@@ -151,15 +152,15 @@ component will open the chart in the Metric Explorer.
 
 The default chart configuration settings are controlled by the
 :only:`<Open>Open` XDMoD system administrator. Extra charts can be added
-to the dashboard via the Metric Explorer. Charts are added via the “Show
-in Summary tab” checkbox in the Metric Explorer basic chart options (see
+to the dashboard via the Metric Explorer. Charts are added via the **Show
+in Summary tab** checkbox in the Metric Explorer basic chart options (see
 :numref:`Section %s<basic_chart_options>` for more information).
 
 It is also possible to edit the default charts via the Metric Explorer.
 Click the wheel icon on the top right of the chart component to open the
 chart in the Metric Explorer. You can then edit the chart in the Metric
 Explorer and save the chart *without* changing the chart name field or
-deselecting the “Show in Summary tab” checkbox. To reset a system chart
+deselecting the **Show in Summary tab** checkbox. To reset a system chart
 to the default just delete it from the list of save charts in the Metric
 Explorer.
 
@@ -229,7 +230,7 @@ the data are obtained from the Jobs realm and the component will display
 The information displayed in the Jobs component is restricted by XDMoD’s
 role based access controls. A summary of the data available is shown in
 :only:`<Open>{open_account_restrictions}`:only:`<XSEDE>{xsede_account_restrictions}`
-below. The “Filter by Person” widget is not displayed for
+below. The **Filter by Person** widget is not displayed for
 the user role since it is superfluous.
 
 .. figure:: media/image64.png
@@ -237,7 +238,7 @@ the user role since it is superfluous.
 
    Annotated example of the Jobs component. The User role
    does not have permission to list other users jobs and does not have the
-   “\ *Filter by Person”* widget. The Job overall CPU usage information is
+   **Filter by Person** widget. The Job overall CPU usage information is
    only available if the optional Job Performance (SUPReMM) XDMoD module is
    installed.
 
