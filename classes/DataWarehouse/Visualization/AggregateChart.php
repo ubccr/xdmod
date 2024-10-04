@@ -173,6 +173,7 @@ class AggregateChart
                     'traceorder' => 'normal'
                 ),
                 'hovermode' => $this->_hideTooltip ? false : 'x unified',
+                'hoverdistance' => 1,
                 'hoverlabel' => array(
                     'align' => 'left',
                     'bgcolor' => 'rgba(255, 255, 255, 0.8)',
