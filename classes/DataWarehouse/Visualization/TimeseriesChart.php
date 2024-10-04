@@ -149,7 +149,7 @@ class TimeseriesChart extends AggregateChart
         }
 
         $yAxisCount = count($yAxisArray);
-
+        $legendRank = 1;
         $globalFilterDescriptions = array();
 
         // ==== Big long effing loop ====
@@ -419,6 +419,7 @@ class TimeseriesChart extends AggregateChart
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
                 foreach($yAxisDataObjectsArray as $traceIndex => $yAxisDataObject)
                 {
+                    $legendRank += 2;
                     if( $yAxisDataObject != null)
                     {
                         $yAxisDataObject->joinTo($xAxisData, null);
@@ -624,10 +625,10 @@ class TimeseriesChart extends AggregateChart
                             ),
                             'x' => $this->_swapXY ? $yValues : $xValues,
                             'y' => $this->_swapXY ? $xValues : $yValues,
-                            'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$traceIndex}",
-                            'legendgroup' => $traceIndex,
-                            'legendrank' => $traceIndex,
-                            'traceorder' => $traceIndex,
+                            'offsetgroup' => $yAxisCount > 1 ? "group{$yIndex}{$legendRank}" : "group{$legendRank}",
+                            'legendgroup' => $legendRank,
+                            'legendrank' => $legendRank,
+                            'traceorder' => $legendRank,
                             'seriesData' => $seriesValues,
                             'visible' => $visible,
                             'isRemainder' => $isRemainder,
@@ -791,8 +792,8 @@ class TimeseriesChart extends AggregateChart
                                 ),
                                 'connectgaps' => true,
                                 'hoverinfo' => 'skip',
-                                'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$traceIndex}",
-                                'legendgroup' => $traceIndex,
+                                'offsetgroup' => $yAxisCount > 1 ? "group{$yIndex}{$legendRank}" : "group{$legendRank}",
+                                'legendgroup' => $legendRank,
                                 'legendrank' => -1000,
                                 'traceorder' => -1000,
                                 'type' => 'scatter',
@@ -925,7 +926,7 @@ class TimeseriesChart extends AggregateChart
                                 );
                                 $valid = $data_description->std_err == 1 && !$data_description->log_scale;
                                 $trendline_trace['legendrank'] = $valid ? $trace['legendrank'] + 2 : $trace['legendrank'];
-                                $trendline_trace['traceorder'] = $valid ? $traceIndex - 2 : $traceIndex;
+                                $trendline_trace['traceorder'] = $valid ? $legendRank - 2 : $legendRank;
 
                                 if ($this->_swapXY) {
                                     unset($trendline_trace['yaxis']);
