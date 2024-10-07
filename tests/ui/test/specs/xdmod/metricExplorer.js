@@ -194,6 +194,18 @@ describe('Metric Explorer', function metricExplorer() {
             it('Undo Trend Line looks the same as previous run', function () {
                 me.checkChart(chartName, 'Node Hours: Total', expected.legend);
             });
+            it('Open Context Menu', () => {
+                const elems = browser.elements('//div[@id="metric_explorer"]//div[contains(@class, "plot-container")]//*[local-name() = "svg"]/*[name()="g" and contains(@class, "draglayer")]//*[contains(@class, "xy")]//*[contains(@class, "nsewdrag drag")]');
+                elems.value[0].doubleClick();
+                browser.waitForVisible(me.selectors.chart.contextMenu.menuByTitle('Chart Options:'));
+            });
+            it('Press Genererate code', () => {
+                browser.click(me.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
+            });
+            it('Check for code pop up', () => {
+                browser.waitUntilNotExist(me.selectors.chart.contextMenu.menuItemByText('Chart Options:', 'View python code'));
+                browser.waitForVisible('//div[contains(@class, "x-window x-resizable-pinned")]//div[contains(@class, "x-window-tl")]//span[contains(text(),"API Code")]', 10000);
+            });
         });
     /* The following tests are disabled until such a time as they can be changed to work
      * reliably without browser.pause()
