@@ -101,15 +101,12 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <?php
 
-    $meta_description = "XDMoD is a comprehensive auditing framework for ACCESS, the follow-on to NSF's XSEDE and TeraGrid programs.  " .
-        "XDMoD provides detailed information on resource utilization and performance across all resource providers.";
-
-    $meta_keywords = "xdmod, xsede, analytics, metrics on demand, hpc, visualization, statistics, reporting, auditing, nsf, resources, resource providers";
+    $meta_description = "XDMoD (XD Metrics on Demand) is a comprehensive auditing framework for NSF's ACCESS program, the follow-on to NSF's XSEDE and TeraGrid programs.  " .
+        "XDMoD provides statistics, analytics, visualization, and reporting of cyberinfrastructure/HPC resource utilization and performance across multiple resource providers.";
 
     ?>
 
     <meta name="description" content="<?php print $meta_description; ?>"/>
-    <meta name="keywords" content="<?php print $meta_keywords; ?>">
 
     <title><?php print $page_title; ?></title>
 
