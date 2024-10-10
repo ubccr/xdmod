@@ -109,7 +109,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     ?>
 
     <meta name="description" content="<?php print $meta_description; ?>"/>
-    <meta name="keywords" content="<?php print $meta_keywords; ?>"/>
+    <meta name="keywords" content="<?php print $meta_keywords; ?>">
 
     <title><?php print $page_title; ?></title>
 
