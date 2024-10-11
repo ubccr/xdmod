@@ -247,9 +247,9 @@ During the upgrade, the following changes will be made to database tables.
   `resource_allocation_type_abbrev` and will be populated with data from the
   `resources.json` configuration file.
 - The `staging_resource_spec` table will have the following columns renamed:
-    - `nodes` renamed to `cpu_node_count`
-    - `processors` renamed to `cpu_processor_count`
-    - `ppn` renamed to `cpu_processor_count_per_node`
+    - `nodes` → `cpu_node_count`
+    - `processors` → `cpu_processor_count`
+    - `ppn` → `cpu_processor_count_per_node`
 - The `staging_resource_spec` table will have the following columns added:
     - `gpu_node_count`
     - `gpu_processor_count`
@@ -268,9 +268,9 @@ The following tables will be changed and populated with data from
   index updated to add the `start_date_ts` column and to be a unique index.
 - The `hpcdb_resource_allocation_types` table will be created.
 - The `hpcdb_resource_specs` table will have the following columns renamed:
-    - `node_count` renamed to `cpu_node_count`
-    - `cpu_count` renamed to `cpu_processor_count`
-    - `cpu_count_per_node` renamed to `cpu_processor_count_per_node`
+    - `node_count` → `cpu_node_count`
+    - `cpu_count` → `cpu_processor_count`
+    - `cpu_count_per_node` → `cpu_processor_count_per_node`
 - The `hpcdb_resource_specs` table will have the following columns added:
     - `gpu_node_count`
     - `gpu_processor_count`
@@ -290,9 +290,9 @@ The following tables will be changed and populated with data from `mod_hpcdb`:
 - The `resourcefact` table will have a column added for
   `resource_allocation_type_id`.
 - The `resourcespecs` table will have the following columns renamed:
-    - `processors` renamed to `cpu_processor_count`
-    - `q_nodes` renamed to `cpu_node_count`
-    - `q_ppn` renamed to `cpu_processor_count_per_node`
+    - `processors` → `cpu_processor_count`
+    - `q_nodes` → `cpu_node_count`
+    - `q_ppn` → `cpu_processor_count_per_node`
 - The `resourcespecs` table will have the following columns added:
     - `resourcespec_id`
     - `start_day_id`
