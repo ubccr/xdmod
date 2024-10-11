@@ -204,9 +204,9 @@ upgrade.
 
 New fields have been added to the `resources.json` and `resource_specs.json` files to support the new `Resource Specifications` realm.
 
-The `resources.json` file include a new field `resource_allocation_type`. The `resource_allocation_type` field indicates how this resource is allocated to users, such as by CPU, GPU or Node. The upgrade process will default this value to `CPU`. After the upgrade process is complete, you can change this value to other acceptable value. The list of acceptable values is listed in the [Configuration Guide](configuration.md).
+The `resources.json` file includes a new field `resource_allocation_type`. The `resource_allocation_type` field indicates how this resource is allocated to users, such as by CPU, GPU or Node. The upgrade process will default this value to `CPU`. After the upgrade process is complete, you can change this value to another acceptable value. The list of acceptable values is listed in the [Configuration Guide](configuration.md).
 
-The `resource_specs.json` file adds new files to specify information about GPU's inlcuded in a system. Below is an example of the new format, which includes the new GPU fields.
+The `resource_specs.json` file adds new fields to specify information about GPUs included in a system. Below is an example of the new format, which includes the new GPU fields.
 
 ```json
 [
@@ -241,11 +241,12 @@ During the upgrade, the following changes will be made to database tables.
 
 #### `modw_aggregates`
 
-- New tables will be created for `resourcespecsfact_by_day`,
-  `resourcespecsfact_by_month`, `resourcespecsfact_by_quarter`,
-  `resourcespecsfact_by_year`, and
-  `resourcespecsfact_by_day_resourcespecslist`; and these will be populated
-  with data from `modw`.
+- New tables will be created and populated with data from `modw`:
+    - `resourcespecsfact_by_day`
+    - `resourcespecsfact_by_month`
+    - `resourcespecsfact_by_quarter`
+    - `resourcespecsfact_by_year`
+    - `resourcespecsfact_by_day_resourcespecslist`
 
 #### `modw`
 
