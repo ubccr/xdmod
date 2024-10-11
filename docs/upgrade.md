@@ -239,6 +239,73 @@ During the upgrade, various configuration files are updated in
 
 During the upgrade, the following changes will be made to database tables.
 
+#### `mod_shredder`
+
+- A table will be added for `staging_resource_allocation_type` and populated
+  with data from the `resource_allocation_types.json` configuration file.
+- The `staging_resource_config` table will have a column added for
+  `resource_allocation_type_abbrev` and will be populated with data from the
+  `resources.json` configuration file.
+- The `staging_resource_spec` table will have the following columns renamed:
+    - `nodes` renamed to `cpu_node_count`
+    - `processors` renamed to `cpu_processor_count`
+    - `ppn` renamed to `cpu_processor_count_per_node`
+- The `staging_resource_spec` table will have the following columns added:
+    - `gpu_node_count`
+    - `gpu_processor_count`
+    - `gpu_processor_count_per_node`
+    - `su_available_per_day`
+    - `normalization_factor`
+- The `staging_resource_type_realms` table will have its `realm`
+  column changed from type `varchar(16)` to `varchar(255)`.
+
+#### `mod_hpcdb`
+
+The following tables will be changed and populated with data from
+`mod_shredder`:
+
+- The `hpcdb_resource_allocated` table will have its `idx_resource`
+  index updated to add the `start_date_ts` column and to be a unique index.
+- The `hpcdb_resource_allocation_types` table will be created.
+- The `hpcdb_resource_specs` table will have the following columns renamed:
+    - `node_count` renamed to `cpu_node_count`
+    - `cpu_count` renamed to `cpu_processor_count`
+    - `cpu_count_per_node` renamed to `cpu_processor_count_per_node`
+- The `hpcdb_resource_specs` table will have the following columns added:
+    - `gpu_node_count`
+    - `gpu_processor_count`
+    - `gpu_processor_count_per_node`
+    - `su_available_per_day`
+    - `normalization_factor`
+- The `hpcdb_resources` table will have a column added for
+  `resource_allocation_type_id`.
+
+#### `modw`
+
+The following tables will be changed and populated with data from `mod_hpcdb`:
+
+- A table will be created for `resource_allocation_type`.
+- The `resource_allocated` table will have columns added for `start_day_id`
+  and `end_day_id`.
+- The `resourcefact` table will have a column added for
+  `resource_allocation_type_id`.
+- The `resourcespecs` table will have the following columns renamed:
+    - `processors` renamed to `cpu_processor_count`
+    - `q_nodes` renamed to `cpu_node_count`
+    - `q_ppn` renamed to `cpu_processor_count_per_node`
+- The `resourcespecs` table will have the following columns added:
+    - `resourcespec_id`
+    - `start_day_id`
+    - `end_day_id`
+    - `gpu_processor_count`
+    - `gpu_node_count`
+    - `gpu_processor_count_per_node`
+    - `su_available_per_day`
+    - `su_available_per_day`
+    - `last_modified`
+- The `resourcespecs` table will have a unique index added containing
+  `resourcespec_id`.
+
 #### `modw_aggregates`
 
 - New tables will be created and populated with data from `modw`:
@@ -247,58 +314,6 @@ During the upgrade, the following changes will be made to database tables.
     - `resourcespecsfact_by_quarter`
     - `resourcespecsfact_by_year`
     - `resourcespecsfact_by_day_resourcespecslist`
-
-#### `modw`
-
-- A table will be added for `resource_allocation_type` and populated with data
-  from `mod_hpcdb`.
-- The `resource_allocated` table will have columns added for `start_day_id`
-  and `end_day_id` and will be populated with data from `mod_hpcdb`.
-- The `resourcefact` table will have a column added for
-  `resource_allocation_type_id` and will be populated with data from
-  `mod_hpcdb`.
-- The `resourcespecs` table will have its `processors` column renamed
-  `cpu_processor_count`; its `q_nodes` column renamed `cpu_node_count`; its
-  `q_ppn` column renamed `cpu_processor_count_per_node`; columns added for
-  `resourcespec_id`, `start_day_id`, `end_day_id`, `gpu_processor_count`,
-  `gpu_node_count`, `gpu_processor_count_per_node`, `su_available_per_day`,
-  `su_available_per_day`, and `last_modified`; a unique index added
-  containing `resourcespec_id`; and it will be populated with data from
-  `mod_hpcdb`.
-
-#### `mod_hpcdb`
-
-- The `hpcdb_resource_allocated` table will have its `idx_resource`
-  index updated to add the `start_date_ts` column and to be a unique index, and
-  it will be populated with data from `mod_shredder`.
-- The `hpcdb_resource_allocation_types` table will be created and populated
-  with data from `mod_shredder`.
-- The `hpcdb_resource_specs` table will have its `node_count` column
-  renamed to `cpu_node_count`; its `cpu_count` column renamed to
-  `cpu_processor_count`; its `cpu_count_per_node` column renamed to
-  `cpu_processor_count_per_node`; columns added for `gpu_node_count`,
-  `gpu_processor_count`, `gpu_processor_count_per_node`,
-  `su_available_per_day`, and `normalization_factor`; and it will be populated
-  with data from `mod_shredder`.
-- The `hpcdb_resources` table will have a column added for
-  `resource_allocation_type_id` and will be populated with data from
-  `mod_shredder`.
-
-#### `mod_shredder`
-
-- A table will be added for `staging_resource_allocation_type` and populated
-  with data from the `resource_allocation_types.json` configuration file.
-- The `staging_resource_config` table will have a column added for
-  `resource_allocation_type_abbrev` and will be populated with data from the
-  `resources.json` configuration file.
-- The `staging_resource_spec` table will have its `nodes` column renamed
-  `cpu_node_count`, its `processors` column renamed
-  `cpu_processor_count`, its `ppn` column renamed
-  `cpu_processor_count_per_node`, and columns added for `gpu_node_count`,
-  `gpu_processor_count`, `gpu_processor_count_per_node`,
-  `su_available_per_day`, and `normalization_factor`.
-- The `staging_resource_type_realms` table will have its `realm`
-  column changed from type `varchar(16)` to `varchar(255)`.
 
 #### `moddb`
 - Charts in `ReportTemplateCharts` will have their titles updated to say
