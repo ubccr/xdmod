@@ -180,11 +180,11 @@ Please refer to the [license notices](notices.md) for more information about the
  For more information please refer to [release notes](https://github.com/ubccr/xdmod/releases) for Open XDMoD 11.0 or under
 the "Release Notes" in the "About" tab in the XDMoD portal.
 
-After the upgrade, if you wish to use the
+After the upgrade, users wishing to use the
 [`xdmod-data`](https://github.com/ubccr/xdmod-data) Python package to retrieve
-data from your Open XDMoD installation, you will need `xdmod-data` version
-1.0.1 or greater. To upgrade the package to the latest version, use `pip
-install --upgrade xdmod-data`.
+data from your Open XDMoD installation will need `xdmod-data` version
+1.0.1 or greater. To upgrade the package to the latest version, users can run
+`pip install --upgrade xdmod-data`.
 
 ### Configuration File Changes
 
