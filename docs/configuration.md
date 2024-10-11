@@ -10,7 +10,7 @@ Before running the interactive `xdmod-setup` script, ensure the following:
 - The base XDMoD software and any desired XDMoD submodules have been installed
   following the [Installation Guide](install.md).
 - The MariaDB server is configured per the instructions below and is
-  running. 
+  running.
 
 MariaDB Configuration
 ---------------------
