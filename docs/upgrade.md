@@ -183,8 +183,8 @@ the "Release Notes" in the "About" tab in the XDMoD portal.
 After the upgrade, users wishing to use the
 [`xdmod-data`](https://github.com/ubccr/xdmod-data) Python package to retrieve
 data from your Open XDMoD installation will need `xdmod-data` version
-1.0.1 or greater. To upgrade the package to the latest version, users can run
-`pip install --upgrade xdmod-data`.
+1.0.1 or greater. To upgrade the Python package to the latest version, users
+can run `pip install --upgrade xdmod-data`.
 
 ### Configuration File Changes
 
