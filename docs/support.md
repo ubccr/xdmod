@@ -14,7 +14,8 @@ for 11.0.
 
 | Version | Release Date       | End of Support    |
 |---------|--------------------|-------------------|
-| 10.5    | September 03, 2023 | March 31, 2025* |
+| 11.0    | October XX, 2024   | October XX, 2025  |
+| 10.5    | September 03, 2023 | March 31, 2025*   |
 
 **\* Note: CentOS 7 officially reached end of life on June 30, 2024, and as such so did our official support for el7 XDMoD.**
 
