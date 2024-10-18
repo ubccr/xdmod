@@ -114,7 +114,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <title><?php print $page_title; ?></title>
 
     <link rel="shortcut icon" href="gui/icons/favicon_static.ico"/>
-    <script type="text/javascript" src="gui/lib/internet-explorer-polyfills.js"></script>
+    <script type="text/javascript" src="gui/lib/internet-explorer-polyfills.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php if (!$userLoggedIn): ?>
         <script type="text/javascript">
             /**
@@ -128,43 +128,43 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php
     ExtJS::loadSupportScripts('gui/lib');
     ?>
-    <script type="text/javascript" src="gui/lib/ext-oldie-history-patch.js"></script>
-    <script type="text/javascript" src="gui/lib/jquery/jquery-3.7.1.min.js"></script>
+    <script type="text/javascript" src="gui/lib/ext-oldie-history-patch.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/lib/jquery/jquery-3.7.1.min.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
     <link rel="stylesheet" type="text/css" href="gui/css/viewer.css">
     <link rel="stylesheet" type="text/css" href="gui/css/helptour.css">
 
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/lib/RowExpander.js"></script>
+        <script type="text/javascript" src="gui/lib/RowExpander.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
 
     <!-- Non-GUI JS Class Definitions -->
-    <script type="text/javascript" src="js_classes/DateUtilities.js"></script>
+    <script type="text/javascript" src="js_classes/DateUtilities.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="js_classes/StringUtilities.js"></script>
+        <script type="text/javascript" src="js_classes/StringUtilities.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
 
     <!-- Globals -->
     <script type="text/javascript" src="gui/js/Error.js.php"></script>
-    <script type="text/javascript" src="gui/js/globals.js"></script>
-    <script type="text/javascript" src="gui/js/StringExtensions.js"></script>
+    <script type="text/javascript" src="gui/js/globals.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/StringExtensions.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <!-- Plugins -->
-    <script type="text/javascript" src="gui/js/plugins/ContextSensitiveHelper.js"></script>
-    <script type="text/javascript" src="gui/js/plugins/CollapsedPanelTitlePlugin.js"></script>
+    <script type="text/javascript" src="gui/js/plugins/ContextSensitiveHelper.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/plugins/CollapsedPanelTitlePlugin.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
     <!-- Libraries -->
-    <script type="text/javascript" src="gui/js/libraries/utilities.js"></script>
-    <script type="text/javascript" src="gui/js/libraries/PlotlyUtilities.js"></script>
+    <script type="text/javascript" src="gui/js/libraries/utilities.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/libraries/PlotlyUtilities.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
-    <script type="text/javascript" src="gui/js/SessionManager.js"></script>
+    <script type="text/javascript" src="gui/js/SessionManager.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
     <!-- RESTProxy -->
 
-    <script type="text/javascript" src="gui/js/RESTProxy.js"></script>
+    <script type="text/javascript" src="gui/js/RESTProxy.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <script type="text/javascript">
         <?php \xd_rest\printJavascriptVariables(); ?>
     </script>
-    <script type="text/javascript" src="gui/js/REST.js"></script>
+    <script type="text/javascript" src="gui/js/REST.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
     <link rel="stylesheet" type="text/css" href="gui/css/MultiSelect.css"/>
     <link rel="stylesheet" type="text/css" href="gui/lib/extjs/examples/ux/css/Spinner.css"/>
@@ -177,44 +177,44 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <?php endif; ?>
 
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/LockingGridView.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/ProgressBarPager.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridSorter.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridColumnResizer.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridNodeUI.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridLoader.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridColumns.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGrid.js"></script>
-        <script type="text/javascript" src="gui/lib/extjs/examples/ux/GroupTabPanel.js"></script>
-        <script type="text/javascript" src="../gui/lib/extjs/examples/ux/GroupTab.js"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/LockingGridView.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/ProgressBarPager.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridSorter.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridColumnResizer.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridNodeUI.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridLoader.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGridColumns.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/treegrid/TreeGrid.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/lib/extjs/examples/ux/GroupTabPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="../gui/lib/extjs/examples/ux/GroupTab.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
 
-    <script type="text/javascript" src="gui/lib/MultiSelect.js"></script>
-    <script type="text/javascript" src="gui/lib/ItemSelector.js"></script>
-    <script type="text/javascript" src="gui/js/modules/HelpTip.js"></script>
-    <script type="text/javascript" src="gui/js/modules/HelpTipTour.js"></script>
+    <script type="text/javascript" src="gui/lib/MultiSelect.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/lib/ItemSelector.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/modules/HelpTip.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/modules/HelpTipTour.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
-    <script type="text/javascript" src="gui/lib/NumberFormat.js"></script>
-    <script type="text/javascript" src="gui/js/multiline-tree-nodes.js"></script>
+    <script type="text/javascript" src="gui/lib/NumberFormat.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/multiline-tree-nodes.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
-    <script type="text/javascript" src="gui/lib/MessageWindow.js"></script>
+    <script type="text/javascript" src="gui/lib/MessageWindow.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
-    <script type="text/javascript" src="gui/js/CCR.js"></script>
-    <script type="text/javascript" src="gui/js/PlotlyChartWrapper.js"></script>
+    <script type="text/javascript" src="gui/js/CCR.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/PlotlyChartWrapper.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
-    <script type="text/javascript" src="gui/lib/printer/Printer-all.js"></script>
+    <script type="text/javascript" src="gui/lib/printer/Printer-all.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
-    <script type="text/javascript" src="gui/js/TGUserDropDown.js"></script>
+    <script type="text/javascript" src="gui/js/TGUserDropDown.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/LoginPrompt.js"></script>
+        <script type="text/javascript" src="gui/js/LoginPrompt.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
 
-    <script type="text/javascript" src="gui/lib/CheckColumn.js"></script>
-    <script type="text/javascript" src="gui/lib/ClearableComboBox.js"></script>
+    <script type="text/javascript" src="gui/lib/CheckColumn.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/lib/ClearableComboBox.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
-    <script type="text/javascript" src="gui/js/ContainerMask.js"></script>
-    <script type="text/javascript" src="gui/js/ContainerBodyMask.js"></script>
+    <script type="text/javascript" src="gui/js/ContainerMask.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/ContainerBodyMask.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
     <link rel="stylesheet" type="text/css" href="gui/css/MetricExplorer.css"/>
     <link rel="stylesheet" type="text/css" href="gui/css/common.css"/>
@@ -375,18 +375,18 @@ JS;
         <!-- Profile Editor -->
 
         <link rel="stylesheet" type="text/css" href="gui/css/ProfileEditor.css"/>
-        <script type="text/javascript" src="gui/js/profile_editor/ProfileGeneralSettings.js"></script>
-        <script type="text/javascript" src="gui/js/profile_editor/ProfileRoleDelegation.js"></script>
-        <script type="text/javascript" src="gui/js/profile_editor/ProfileApiToken.js"></script>
-        <script type="text/javascript" src="gui/js/profile_editor/ProfileEditor.js"></script>
+        <script type="text/javascript" src="gui/js/profile_editor/ProfileGeneralSettings.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/profile_editor/ProfileRoleDelegation.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/profile_editor/ProfileApiToken.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/profile_editor/ProfileEditor.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
 
     <!-- Data Warehouse -->
-    <script type="text/javascript" src="gui/js/common/data_warehouse/AddFilterWindow.js"></script>
-    <script type="text/javascript" src="gui/js/common/data_warehouse/FilterStore.js"></script>
-    <script type="text/javascript" src="gui/js/common/data_warehouse/QuickFilterStore.js"></script>
-    <script type="text/javascript" src="gui/js/common/data_warehouse/QuickFilterButton.js"></script>
-    <script type="text/javascript" src="gui/js/common/data_warehouse/QuickFilterToolbar.js"></script>
+    <script type="text/javascript" src="gui/js/common/data_warehouse/AddFilterWindow.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/common/data_warehouse/FilterStore.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/common/data_warehouse/QuickFilterStore.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/common/data_warehouse/QuickFilterButton.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/common/data_warehouse/QuickFilterToolbar.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
     <!-- Reporting  -->
 
@@ -397,121 +397,121 @@ JS;
     <?php endif; ?>
 
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/report_builder/ChartThumbPreview.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportExportMenu.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportCloneMenu.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ChartDateEditor.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/Reporting.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportManager.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/AvailableCharts.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/SaveReportAsDialog.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportCreatorGrid.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportCreator.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportsOverview.js"></script>
-        <script type="text/javascript" src="gui/js/report_builder/ReportPreview.js"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ChartThumbPreview.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportExportMenu.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportCloneMenu.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ChartDateEditor.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/report_builder/Reporting.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportManager.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/report_builder/AvailableCharts.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/report_builder/SaveReportAsDialog.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportCreatorGrid.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportCreator.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportsOverview.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/report_builder/ReportPreview.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
 
-    <script type="text/javascript" src="gui/lib/moment/moment.min.js"></script>
-    <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
+    <script type="text/javascript" src="gui/lib/moment/moment.min.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/lib/moment-timezone/moment-timezone-with-data.min.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
-    <script type="text/javascript" src="gui/lib/plotly/plotly-2.29.1.min.js"></script>
+    <script type="text/javascript" src="gui/lib/plotly/plotly-2.29.1.min.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
-    <script type="text/javascript" src="gui/js/PlotlyPanel.js"></script>
+    <script type="text/javascript" src="gui/js/PlotlyPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
     <?php if ($userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/ChartDragDrop.css"/>
     <?php endif; ?>
 
-    <script type="text/javascript" src="gui/js/CustomJsonStore.js"></script>
-    <script type="text/javascript" src="gui/lib/Portal.js"></script>
-    <script type="text/javascript" src="gui/lib/PortalColumn.js"></script>
-    <script type="text/javascript" src="gui/lib/Portlet.js"></script>
-    <script type="text/javascript" src="gui/js/Portlet.js"></script>
+    <script type="text/javascript" src="gui/js/CustomJsonStore.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/lib/Portal.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/lib/PortalColumn.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/lib/Portlet.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/Portlet.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php if ($userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/TreeCheckbox.css"/>
         <link rel="stylesheet" type="text/css" href="gui/css/TriStateNodeUI.css"/>
 
-        <script type="text/javascript" src="gui/js/TreeCheckbox.js"></script>
-        <script type="text/javascript" src="gui/js/TriStateNodeUI.js"></script>
+        <script type="text/javascript" src="gui/js/TreeCheckbox.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/TriStateNodeUI.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
 
-    <script type="text/javascript" src="gui/js/RESTTree.js"></script>
-    <script type="text/javascript" src="gui/js/BufferView.js"></script>
-    <script type="text/javascript" src="gui/lib/Spinner.js"></script>
-    <script type="text/javascript" src="gui/lib/SpinnerField.js"></script>
-    <script type="text/javascript" src="gui/js/CustomCheckItem.js"></script>
-    <script type="text/javascript" src="gui/js/CustomDateField.js"></script>
-    <script type="text/javascript" src="gui/js/CustomSplitButton.js"></script>
+    <script type="text/javascript" src="gui/js/RESTTree.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/BufferView.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/lib/Spinner.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/lib/SpinnerField.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/CustomCheckItem.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/CustomDateField.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/CustomSplitButton.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/CustomTwinTriggerField.js"></script>
+        <script type="text/javascript" src="gui/js/CustomTwinTriggerField.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
-    <script type="text/javascript" src="gui/js/CustomRowNumberer.js"></script>
-    <script type="text/javascript" src="gui/js/CustomPagingToolbar.js"></script>
-    <script type="text/javascript" src="gui/js/DynamicGridPanel.js"></script>
-    <script type="text/javascript" src="gui/js/DurationToolbar.js"></script>
-    <script type="text/javascript" src="gui/js/ChartConfigMenu.js"></script>
-    <script type="text/javascript" src="gui/js/ChartToolbar.js"></script>
-    <script type="text/javascript" src="gui/js/DrillDownMenu.js"></script>
+    <script type="text/javascript" src="gui/js/CustomRowNumberer.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/CustomPagingToolbar.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/DynamicGridPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/DurationToolbar.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/ChartConfigMenu.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/ChartToolbar.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/DrillDownMenu.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
-    <script type="text/javascript" src="gui/js/ChartDragDrop.js"></script>
-    <script type="text/javascript" src="gui/lib/extjs/examples/ux/DataView-more.js"></script>
-    <script type="text/javascript" src="gui/js/FilterDimensionPanel.js"></script>
-    <script type="text/javascript" src="gui/lib/extjs/examples/ux/Spotlight.js"></script>
+    <script type="text/javascript" src="gui/js/ChartDragDrop.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/lib/extjs/examples/ux/DataView-more.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/js/FilterDimensionPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+    <script type="text/javascript" src="gui/lib/extjs/examples/ux/Spotlight.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/CustomMenu.js"></script>
-        <script type="text/javascript" src="gui/js/AddDataPanel.js"></script>
+        <script type="text/javascript" src="gui/js/CustomMenu.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/AddDataPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
 
-    <script type="text/javascript" src="gui/js/ExportPanel.js"></script>
+    <script type="text/javascript" src="gui/js/ExportPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
-    <script type="text/javascript" src="gui/js/CaptchaField.js"></script>
+    <script type="text/javascript" src="gui/js/CaptchaField.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php if (!$userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/SignUpDialog.js"></script>
+        <script type="text/javascript" src="gui/js/SignUpDialog.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
-    <script type="text/javascript" src="gui/js/ContactDialog.js"></script>
+    <script type="text/javascript" src="gui/js/ContactDialog.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/RealTimeValidatingTextField.js"></script>
+        <script type="text/javascript" src="gui/js/RealTimeValidatingTextField.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
 
-    <script type="text/javascript" src="gui/js/PortalModule.js"></script>
+    <script type="text/javascript" src="gui/js/PortalModule.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
     <?php /* Modules used by both XSEDE and Open XDMoD. */ ?>
 
     <?php if ($userLoggedIn && isset($features['user_dashboard']) && filter_var($features['user_dashboard'], FILTER_VALIDATE_BOOLEAN)): ?>
-        <script type="text/javascript" src="gui/js/modules/Dashboard.js"></script>
+        <script type="text/javascript" src="gui/js/modules/Dashboard.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php else: ?>
-        <script type="text/javascript" src="gui/js/modules/Summary.js"></script>
+        <script type="text/javascript" src="gui/js/modules/Summary.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
 
-    <script type="text/javascript" src="gui/js/modules/Usage.js"></script>
+    <script type="text/javascript" src="gui/js/modules/Usage.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/modules/ReportGenerator.js"></script>
-        <script type="text/javascript" src="gui/js/modules/DataExport.js"></script>
+        <script type="text/javascript" src="gui/js/modules/ReportGenerator.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/DataExport.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
-    <script type="text/javascript" src="gui/js/modules/About.js"></script>
+    <script type="text/javascript" src="gui/js/modules/About.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
     <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/js/modules/metric_explorer/MetricExplorer.js"></script>
-        <script type="text/javascript" src="gui/js/modules/metric_explorer/StatusButton.js"></script>
-        <script type="text/javascript" src="gui/js/ChangeStack.js"></script>
+        <script type="text/javascript" src="gui/js/modules/metric_explorer/MetricExplorer.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/metric_explorer/StatusButton.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/ChangeStack.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
     <?php /* Single Job Viewer */ ?>
     <?php if (!empty($rawDataRealms)): ?>
-        <script type="text/javascript" src="gui/js/modules/job_viewer/JobViewer.js"></script>
-        <script type="text/javascript" src="gui/js/modules/job_viewer/ChartPanel.js"></script>
-        <script type="text/javascript" src="gui/js/modules/job_viewer/ChartTab.js"></script>
-        <script type="text/javascript" src="gui/js/modules/job_viewer/GanttChart.js"></script>
-        <script type="text/javascript" src="gui/js/modules/job_viewer/VMStateChartPanel.js"></script>
-        <script type="text/javascript" src="gui/js/modules/job_viewer/AnalyticChartPanel.js"></script>
-        <script type="text/javascript" src="gui/js/modules/job_viewer/TimeSeriesStore.js"></script>
-        <script type="text/javascript" src="gui/js/modules/job_viewer/SearchPanel.js"></script>
-        <script type="text/javascript" src="gui/js/modules/job_viewer/SearchHistoryTree.js"></script>
-        <script type="text/javascript" src="gui/js/modules/job_viewer/SearchHistoryPanel.js"></script>
-        <script type="text/javascript" src="gui/js/modules/job_viewer/JobPanel.js"></script>
-        <script type="text/javascript" src="gui/js/modules/job_viewer/NestedViewPanel.js"></script>
-        <script type="text/javascript" src="gui/lib/rsvp/rsvp-1979d5ad89293dadbe7656dd53d152f7426fa35e.min.js"></script>
-        <script type="text/javascript" src="gui/lib/groupdataview.js"></script>
-        <script type="text/javascript" src="gui/lib/groupcombo.js"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/JobViewer.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/ChartPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/ChartTab.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/GanttChart.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/VMStateChartPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/AnalyticChartPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/TimeSeriesStore.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/SearchPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/SearchHistoryTree.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/SearchHistoryPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/JobPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/js/modules/job_viewer/NestedViewPanel.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/lib/rsvp/rsvp-1979d5ad89293dadbe7656dd53d152f7426fa35e.min.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/lib/groupdataview.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
+        <script type="text/javascript" src="gui/lib/groupcombo.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
     <?php endif; ?>
     <?php endif; ?>
 
@@ -519,7 +519,7 @@ JS;
     xd_utilities\checkForCenterLogo();
     ?>
 
-    <script type="text/javascript" src="gui/js/Viewer.js"></script>
+    <script type="text/javascript" src="gui/js/Viewer.js?version=<?php print OPEN_XDMOD_VERSION; ?>"></script>
 
     <?php
     require_once dirname(__FILE__) . '/gaq.php';
