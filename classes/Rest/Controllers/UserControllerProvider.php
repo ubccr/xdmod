@@ -4,6 +4,7 @@ namespace Rest\Controllers;
 
 use CCR\DB;
 use Configuration\Configuration;
+use Firebase\JWT\JWT;
 use Models\Services\Organizations;
 use PhpOffice\PhpWord\Exception\Exception;
 use Silex\Application;
@@ -67,6 +68,7 @@ class UserControllerProvider extends BaseControllerProvider
         $controller->get("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::getCurrentAPIToken');
         $controller->post("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::createAPIToken');
         $controller->delete("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::revokeAPIToken');
+        $controller->post("$root/current/api/jsonwebtoken", '\Rest\Controllers\UserControllerProvider::createJSONWebToken');
     }
 
     /**
@@ -206,6 +208,47 @@ class UserControllerProvider extends BaseControllerProvider
 
         // If the `revokeToken` failed for some reason then we let the user know.
         throw new Exception('Unable to revoke API token.');
+    }
+
+    /**
+     * This endpoint will attempt to create a new JSON Web Token for the requesting user. To successfully call this endpoint
+     * a user must fulfill the following requirements:
+     *   - They have authenticated to XDMoD via one of the supported methods.
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return Response
+     * @throws \Exception if there is a problem retrieving a database connection.
+     */
+    public function createJSONWebToken(Request $request, Application $app)
+    {
+        $user = $this->authorize($request);
+
+        $secretKey  = \xd_utilities\getConfiguration('json_web_token', 'secret_key');
+        $tokenId    = base64_encode(random_bytes(16));
+        $issuedAt   = new \DateTimeImmutable();
+        $expire     = $issuedAt->modify('+6 minutes')->getTimestamp();
+        $username   = $user->getUserName();
+
+        $data = [
+            'iat'  => $issuedAt->getTimestamp(),
+            'jti'  => $tokenId,
+            'iss'  => $serverName,
+            'nbf'  => $issuedAt->getTimestamp(),
+            'exp'  => $expire,
+            'upn'  => $username
+        ];
+
+        $jwt = JWT::encode(
+            $data,
+            $secretKey,
+            'HS512'
+        );
+
+        return $app->json(array(
+            'success' => true,
+            'data' => $jwt
+        ));
     }
 
     /**

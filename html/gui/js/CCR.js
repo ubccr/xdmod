@@ -141,6 +141,18 @@ XDMoD.GlobalToolbar.Dashboard = {
 }; //XDMoD.GlobalToolbar.Dashboard
 
 // -------------------------------------------------
+XDMoD.GlobalToolbar.JupyterHub = {
+    text: 'JupyterHub',
+    scale: 'small',
+    iconCls: 'btn_jupyterhub',
+    id: 'global-toolbar-jupyterhub',
+    tooltip: 'Redirect to JupyterHub.',
+    handler: function () {
+        CCR.xdmod.initJupyterHub();
+    } //handler
+
+}; //XDMoD.GlobalToolbar.JupyterHub
+// -------------------------------------------------
 
 XDMoD.GlobalToolbar.SignUp = {
     text: 'Sign Up',
@@ -1614,6 +1626,32 @@ CCR.xdmod.initDashboard = function () {
         }
     });
 }; //CCR.xdmod.initDashboard
+
+CCR.xdmod.initJupyterHub = function () {
+
+    // Opening the window before the AJAX request is necessary to prevent
+    // it being treated as a popup. Solution from: http://stackoverflow.com/a/20822754
+    var jupyterhubWindow = window.open("", "_blank");
+    jupyterhubWindow.focus();
+
+    Ext.Ajax.request({
+        url: 'rest/users/current/api/jsonwebtoken',
+        method: 'POST',
+        callback: function (options, success, response) {
+            if (success && CCR.checkJSONResponseSuccess(response)) {
+                jupyterhubWindow.location.href = 'hub';
+                console.log(response);
+            }
+            else {
+                dashboardWindow.close();
+                window.focus();
+                CCR.xdmod.ui.presentFailureResponse(response, {
+                    title: 'JupyterHub'
+                });
+            }
+        }
+    });
+}; //CCR.xdmod.initJupyterHub
 
 // -----------------------------------
 

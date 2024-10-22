@@ -302,6 +302,7 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
             welcome_message = 'Hello, <b id="welcome_message">' + Ext.util.Format.htmlEncode(CCR.xdmod.ui.fullName) + '</b> ' + additionalWelcomeDetails + ' (<a href="javascript:CCR.xdmod.ui.actionLogout()" id="logout_link">logout</a>)';
             if (CCR.xdmod.ui.isManager) {
                 userToolbar.push(XDMoD.GlobalToolbar.Dashboard);
+                userToolbar.push(XDMoD.GlobalToolbar.JupyterHub);
             }
             userToolbar.push(XDMoD.GlobalToolbar.Profile);
         }
