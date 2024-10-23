@@ -1635,7 +1635,7 @@ CCR.xdmod.initJupyterHub = function () {
         callback: function (options, success, response) {
             if (success && CCR.checkJSONResponseSuccess(response)) {
                 var responsedata = Ext.util.JSON.decode(response.responseText);
-                var jsonwebtoken = jsonData.data;
+                var jsonwebtoken = responsedata.data;
                 CCR.xdmod.redirectToJupyterHub(jsonwebtoken);
             }
             else {
@@ -1652,7 +1652,7 @@ CCR.xdmod.initJupyterHub = function () {
 CCR.xdmod.redirectToJupyterHub = function(jsonwebtoken) {
 
     Ext.Ajax.request({
-        url: 'rest/jupyterhub',
+        url: 'rest/jupyterhub/jupyterhub',
         method: 'POST',
         params: {
             'jsonwebtoken': jsonwebtoken
