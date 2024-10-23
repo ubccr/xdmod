@@ -242,7 +242,7 @@ class UserControllerProvider extends BaseControllerProvider
         $jwt = JWT::encode(
             $data,
             $secretKey,
-            'HS512'
+            'HS256'
         );
 
         return $app->json(array(

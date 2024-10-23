@@ -1639,7 +1639,6 @@ CCR.xdmod.initJupyterHub = function () {
                 CCR.xdmod.redirectToJupyterHub(jsonwebtoken);
             }
             else {
-                dashboardWindow.close();
                 window.focus();
                 CCR.xdmod.ui.presentFailureResponse(response, {
                     title: 'JupyterHub'
@@ -1651,11 +1650,20 @@ CCR.xdmod.initJupyterHub = function () {
 
 CCR.xdmod.redirectToJupyterHub = function(jsonwebtoken) {
 
+    var jupyterHubWindow;
+
     Ext.Ajax.request({
-        url: 'rest/jupyterhub/jupyterhub',
-        method: 'POST',
-        params: {
-            'jsonwebtoken': jsonwebtoken
+        url: 'hub',
+        method: 'GET',
+        headers: {
+            'Authorization': 'bearer ' + jsonwebtoken
+        },
+        success: function() {
+            jupyterHubWindow = window.open("hub");
+            window.focus();
+        },
+        failure: function() {
+            console.log('Unsuccessful redirect to JupyterHub instance.')
         }
     });
 };
