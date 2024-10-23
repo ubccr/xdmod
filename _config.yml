@@ -33,7 +33,6 @@ version_list:
 unsupported_version_list:
   - "10.0"
   - "9.5"
-  - "9.0"
 
 # For each version the variable `sw_version` should be set to latest release
 # version of Open XDMoD (e.g. "8.1.2") and `prev_sw_version` should be set to
