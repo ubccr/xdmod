@@ -1634,9 +1634,9 @@ CCR.xdmod.initJupyterHub = function () {
         method: 'POST',
         callback: function (options, success, response) {
             if (success && CCR.checkJSONResponseSuccess(response)) {
-                var responsedata = Ext.util.JSON.decode(result.responseText);
-                var jsonwebtoken = jsonData.data.result.data;
-                console.log(jsonwebtoken);
+                var responsedata = Ext.util.JSON.decode(response.responseText);
+                var jsonwebtoken = jsonData.data;
+                CCR.xdmod.redirectToJupyterHub(jsonwebtoken);
             }
             else {
                 dashboardWindow.close();
@@ -1648,6 +1648,17 @@ CCR.xdmod.initJupyterHub = function () {
         }
     });
 }; //CCR.xdmod.initJupyterHub
+
+CCR.xdmod.redirectToJupyterHub = function(jsonwebtoken) {
+
+    Ext.Ajax.request({
+        url: 'rest/jupyterhub',
+        method: 'POST',
+        params: {
+            'jsonwebtoken': jsonwebtoken
+        }
+    });
+};
 
 // -----------------------------------
 
