@@ -1,3 +1,3 @@
 ---
-redirect_to: /10.5/docs-conventions.html
+redirect_to: /11.0/docs-conventions.html
 ---

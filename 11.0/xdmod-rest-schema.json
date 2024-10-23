@@ -1,0 +1,3598 @@
+---
+layout: null
+---
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "XDMoD",
+        "description": "XDMoD is an open source tool to facilitate the management of high performance computing resources. It is widely deployed at academic, industrial and governmental HPC centers. Open XDMoD's management capabilities include monitoring standard metrics such as utilization, providing quality of service metrics designed to proactively identify underperforming system hardware and software, and reporting job level performance data for every job running on the HPC system without the need to recompile applications.",
+        "contact": {
+            "name": "API Support",
+            "url": "https://open.xdmod.org/support.html",
+            "email": "ccr-xdmod-help@buffalo.edu"
+        },
+        "license": {
+            "name": "GNU Lesser General Public License v3.0",
+            "url": "https://www.gnu.org/licenses/lgpl-3.0.txt"
+        },
+        "x-logo": {
+            "url": "https://open.xdmod.org/xdmod-jekyll-theme/assets/images/xdmod_logo.png",
+            "backgroundColor": "#FFFFFF",
+            "altText": ""
+        },
+        "version": "{{ page.sw_version }}"
+    },
+    "servers": [
+        {
+            "url": "https://xdmod.ccr.buffalo.edu/",
+            "description": "Production server"
+        }
+    ],
+    "components": {
+        "parameters": {
+            "offset": {
+                "name": "offset",
+                "in": "query",
+                "description": "The starting offset for the data in the result set",
+                "schema": {
+                    "type": "integer",
+                    "format": "int32"
+                }
+            },
+            "limit": {
+                "name": "limit",
+                "in": "query",
+                "description": "The maximum number of results to return.",
+                "schema": {
+                    "type": "integer",
+                    "format": "int32"
+                }
+            },
+            "realm": {
+                "name": "realm",
+                "in": "query",
+                "required": true,
+                "description": "The data realm to query",
+                "schema": {
+                    "type": "string"
+                },
+                "example": "Jobs"
+            },
+            "dimension": {
+                "name": "dimension",
+                "in": "path",
+                "required": true,
+                "description": "The dimension to query",
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "start_date": {
+                "name": "start_date",
+                "in": "query",
+                "required": true,
+                "description": "Start date of requested data in the portal's local time zone in YYYY-MM-DD format.",
+                "schema": {
+                    "type": "string",
+                    "format": "date"
+                }
+            },
+            "end_date": {
+                "name": "end_date",
+                "in": "query",
+                "required": true,
+                "description": "End date of requested data in the portal's local time zone in YYYY-MM-DD format.",
+                "schema": {
+                    "type": "string",
+                    "format": "date"
+                }
+            }
+        },
+        "schemas": {
+            "get_data": {
+             "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "operation": {
+                    "type": "string",
+                    "enum": [ "get_data" ]
+                  },
+                  "aggregation_unit": {
+                    "type": "string",
+                    "description": "Set to the time binning for the query ('day', 'month', 'quarter', etc.) or 'Auto' to use the bin choice determined by the selected time interval."
+                  },
+                  "controller_module": {
+                    "type": "string",
+                    "enum": [ "metric_explorer" ]
+                  },
+                  "data_series": {
+                    "type": "string"
+                  },
+                  "defaultDatasetConfig": {
+                    "type": "string"
+                  },
+                  "end_date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "The end date for the query. Must be in the form YYYY-MM-DD"
+                  },
+                  "featured": {
+                    "type": "string",
+                    "format": "boolean"
+                  },
+                  "font_size": {
+                    "type": "string",
+                    "format": "integer"
+                  },
+                  "format": {
+                    "type": "string"
+                  },
+                  "global_filters": {
+                    "type": "string"
+                  },
+                  "height": {
+                    "type": "string",
+                    "format": "integer"
+                  },
+                  "hide_tooltip": {
+                    "type": "string",
+                    "format": "boolean"
+                  },
+                  "legend": {
+                    "type": "string"
+                  },
+                  "legend_type": {
+                    "type": "string"
+                  },
+                  "limit": {
+                    "type": "string",
+                    "format": "integer"
+                  },
+                  "scale": {
+                    "type": "string",
+                    "format": "integer",
+                    "description": "Sets the scaling of the chart width and height."
+                  },
+                  "share_y_axis": {
+                    "type": "string",
+                    "format": "boolean"
+                  },
+                  "showContextMenu": {
+                    "type": "string"
+                  },
+                  "show_filters": {
+                    "type": "string",
+                    "format": "boolean"
+                  },
+                  "show_guide_lines": {
+                    "type": "string"
+                  },
+                  "show_remainder": {
+                    "type": "string",
+                    "format": "boolean"
+                  },
+                  "show_title": {
+                    "type": "string"
+                  },
+                  "show_warnings": {
+                    "type": "string",
+                    "format": "boolean"
+                  },
+                  "start": {
+                    "type": "string",
+                    "format": "integer"
+                  },
+                  "start_date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "The start date for the query. Must be in the form YYYY-MM-DD"
+                  },
+                  "swap_xy": {
+                    "type": "string",
+                    "format": "boolean"
+                  },
+                  "timeframe_label": {
+                    "type": "string",
+                    "description": "This should be set to the URL encoded value of the timeframe label from the DurationSelector. This value is used by the report generator tab."
+                  },
+                  "timeseries": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "trendLineEnabled": {
+                    "type": "string"
+                  },
+                  "width": {
+                    "type": "string",
+                    "format": "integer"
+                  },
+                  "x_axis": {
+                    "type": "string"
+                  },
+                  "y_axis": {
+                    "type": "string"
+                  }
+                },
+                "required": ["operation", "controller_module" ]
+            },
+            "get_charts": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                    "operation",
+                    "realm",
+                    "group_by",
+                    "statistic"
+                ],
+                "properties": {
+                    "operation": {
+                        "type": "string",
+                        "enum": [ "get_charts" ]
+                    },
+                    "controller_module": {
+                        "type": "string",
+                        "enum": [ "user_interface" ]
+                    },
+                    "public_user": {
+                        "type": "string",
+                        "format": "boolean",
+                        "description": "whether to show the information that the public user can see. Encoded as `true` or `false`."
+                    },
+                    "realm": {
+                        "type": "string",
+                        "description": "Specifies the data realm to query."
+                    },
+                    "group_by": {
+                        "type": "string",
+                        "description": "Specifies the identifier for the group by to use in the query."
+                    },
+                    "statistic": {
+                        "type": "string",
+                        "description": "Specifies the identifier for the statistics to use in the query."
+                    },
+                    "start_date": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "The start date for the query. Must be in the form YYYY-MM-DD"
+                    },
+                    "end_date": {
+                        "type": "string",
+                        "format": "date",
+                        "description": "The end date for the query. Must be in the form YYYY-MM-DD"
+                    },
+                    "timeframe_label": {
+                        "type": "string",
+                        "description": "This should be set to the URL encoded value of the timeframe label from the DurationSelector. This value is used by the report generator tab."
+                    },
+                    "scale": {
+                        "type": "string",
+                        "format": "integer",
+                        "description": "Sets the scaling of the chart width and height."
+                    },
+                    "aggregation_unit": {
+                        "type": "string",
+                        "description": "Set to the time binning for the query ('day', 'month', 'quarter', etc.) or 'Auto' to use the bin choice determined by the selected time interval."
+                    },
+                    "dataset_type": {
+                        "type": "string",
+                        "enum": ["timeseries", "aggregate"],
+                        "description": "The dataset type. Set to `timeseries` for timeseries data and `aggregate` for aggregated data."
+                    },
+                    "thumbnail": {
+                        "type": "string",
+                        "description": "Whether to render the chart using default settings for a thumbnail view. In thumbnail view the chart title and subtitle are not show. Set to `y` to enable thumbnail rendering or `n` for normal rendering.",
+                        "enum": ["y", "n"]
+                    },
+                    "query_group": {
+                        "type": "string",
+                        "description": "The query group is deprecated and not used."
+                    },
+                    "display_type": {
+                        "type": "string",
+                        "enum": ["line", "area", "bar", "h_bar", "pie", "datasheet"],
+                        "description": "Sets the chart plot type. The `area` plot type is not valid for aggregate plots. The horizontal bar `h_bar` and pie chart `pie` settings are not valid for timeseries plots."
+                    },
+                    "combine_type": {
+                        "type": "string",
+                        "enum": ["side", "stack", "percentage"],
+                        "description": "Sets the combine mode for the plots. This option is ignored for display type of `line` and `datasheet`."
+                    },
+                    "limit": {
+                        "type": "string",
+                        "format": "integer",
+                        "description": ""
+                    },
+                    "offset": {
+                        "type": "string",
+                        "format": "integer",
+                        "description": ""
+                    },
+                    "log_scale": {
+                        "type": "string",
+                        "description": "Boolean encoded as either `y` or `n`",
+                        "enum": ["y", "n"]
+                    },
+                    "show_guide_lines": {
+                        "type": "string",
+                        "description": "Boolean encoded as either `y` or `n`",
+                        "enum": ["y", "n"]
+                    },
+                    "show_trend_line": {
+                        "type": "string",
+                        "description": "Boolean encoded as either `y` or `n`",
+                        "enum": ["y", "n"]
+                    },
+                    "show_error_bars": {
+                        "type": "string",
+                        "description": "Boolean encoded as either `y` or `n`",
+                        "enum": ["y", "n"]
+                    },
+                    "show_aggregate_labels": {
+                        "type": "string",
+                        "description": "Boolean encoded as either `y` or `n`",
+                        "enum": ["y", "n"]
+                    },
+                    "show_error_labels": {
+                        "type": "string",
+                        "description": "Boolean encoded as either `y` or `n`",
+                        "enum": ["y", "n"]
+                    },
+                    "hide_tooltip": {
+                        "type": "boolean",
+                        "description": ""
+                    },
+                    "show_title": {
+                        "type": "string",
+                        "description": "Boolean encoded as either `y` or `n`",
+                        "enum": ["y", "n"]
+                    },
+                    "width": {
+                        "type": "string",
+                        "format": "integer",
+                        "description": ""
+                    },
+                    "height": {
+                        "type": "string",
+                        "format": "integer",
+                        "description": ""
+                    },
+                    "legend_type": {
+                        "type": "string",
+                        "description": "bottom_center"
+                    },
+                    "font_size": {
+                        "type": "string",
+                        "format": "integer",
+                        "description": ""
+                    }
+                }
+            },
+            "get_menus": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "operation": {
+                        "type": "string",
+                        "enum": [ "get_menus" ]
+                    },
+                    "node": {
+                        "type": "string",
+                        "description": "Specifies a node in the tree. Set this to 'category_' to specify the root node."
+                    },
+                    "public_user": {
+                        "type": "boolean",
+                        "description": "whether to show the information that the public user can see"
+                    },
+                    "category": {
+                        "type": "string",
+                        "description": "Comma delimited list of categories. This is only used if node is set to category_"
+                    },
+                    "group_by": {
+                        "type": "string",
+                        "description": "The identifier for the group_by. This parameter is required when querying a 'group by' node in the tree. Group by nodes have a node identifier that starts with the string 'group_by'."
+                    },
+                    "query_group": {
+                        "type": "string",
+                        "description": "The query group is deprecated and not used."
+                    }
+                },
+                "required": [
+                    "operation",
+                    "node"
+                ]
+            },
+            "get_tabs": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "operation": {
+                        "type": "string",
+                        "enum": [ "get_tabs" ]
+                    },
+                    "public_user": {
+                        "type": "boolean",
+                        "description": "whether to show the information that the public user can see"
+                    }
+                },
+                "required": [
+                    "operation"
+                ]
+            },
+            "extstore": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
+                    },
+                    "success": {
+                        "type": "boolean"
+                    },
+                    "total": {
+                        "type": "integer"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "success",
+                    "total",
+                    "data"
+                ]
+            },
+            "extstore-error": {
+                "type": "object",
+                "properties": {
+                    "success": {
+                        "type": "boolean",
+                        "enum": [false]
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                },
+                "required": [
+                    "success",
+                    "message"
+                ]
+            },
+            "warehouse-error": {
+                "type": "object",
+                "title": "error",
+                "properties": {
+                    "success":  {
+                        "type": "boolean",
+                        "enum": [ false ]
+                    },
+                    "count": {
+                        "type": "integer",
+                        "enum": [ 0 ]
+                    },
+                    "total": {
+                        "type": "integer",
+                        "enum": [ 0 ]
+                    },
+                    "totalCount": {
+                        "type": "integer",
+                        "enum": [ 0 ]
+                    },
+                    "results": {
+                        "type": "array",
+                        "items": {},
+                        "maxItems": 0
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {},
+                        "maxItems": 0
+                    },
+                    "message": {
+                        "type": "string",
+                        "description": "Error message"
+                    },
+                    "code": {
+                        "type": "integer",
+                        "description": "Error code"
+                    }
+                },
+                "required": [
+                    "success",
+                    "count",
+                    "total",
+                    "totalCount",
+                    "results",
+                    "data",
+                    "message",
+                    "code"
+                ]
+            }
+        },
+        "responses": {
+            "api-token-404": {
+                "description": "Not Found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "allOf": [
+                                { "$ref": "#/components/schemas/warehouse-error" },
+                                {
+                                    "properties": {
+                                        "message": {
+                                            "enum": [ "API token not found." ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "cookie_xdmod_token": {
+                "type": "apiKey",
+                "description": "API token via a cookie",
+                "name": "xdmod_token",
+                "in": "cookie"
+            },
+            "query_param_token": {
+                "type": "apiKey",
+                "description": "API token via a query parameter",
+                "name": "token",
+                "in": "query"
+            },
+            "http_bearer": {
+                "type": "http",
+                "scheme": "bearer",
+                "description": "API token via HTTP header `Authorization: Bearer <token>`"
+            },
+            "query_param_bearer": {
+                "type": "apiKey",
+                "in": "query",
+                "name": "Bearer",
+                "description": "API token via a query parameter or POST field"
+            }
+        },
+        "examples": {
+            "empty-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "No Token Provided.",
+                    "code": 0
+                }
+            },
+            "malformed-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "Invalid token format.",
+                    "code": 0
+                }
+            },
+            "invalid-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "Invalid API token.",
+                    "code": 0
+                }
+            },
+            "expired-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "The API Token has expired.",
+                    "code": 0
+                }
+            }
+        }
+    },
+    "security": [
+        { "cookie_xdmod_token": [] },
+        { "query_param_token": [] }
+    ],
+    "paths": {
+        "/controllers/user_interface.php": {
+            "post": {
+                "tags": [
+                    "Usage Explorer",
+                    "Data Analytics Framework"
+                ],
+                "summary": "Usage Tab Controller",
+                "deprecated": true,
+                "description": "The usage tab uses a controller style API. A single URL is used with a mandatory `operation` form parameter to determine which action to perform. This controller endpoint is deprecated and will be removed in a future release of XDMoD.",
+                "security": [
+                    { "cookie_xdmod_token": [] },
+                    { "query_param_token": [] },
+                    { "http_bearer": [] },
+                    { "query_param_bearer": [] }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "oneOf": [
+                                    { "$ref": "#/components/schemas/get_charts" },
+                                    { "$ref": "#/components/schemas/get_menus" },
+                                    {"$ref": "#/components/schemas/get_tabs" }
+                                ]
+                            },
+                            "examples": {
+                                "Get Chart Json": {
+                                    "summary": "Chart JSON",
+                                    "description": "Example of how to get a JSON object containing the chart configuration, metric data and metadata used by the Usage Tab to display an interactive chart",
+                                    "value": {
+                                        "public_user": "false",
+                                        "realm": "Jobs",
+                                        "group_by": "none",
+                                        "statistic": "total_cpu_hours",
+                                        "start_date": "2021-07-01",
+                                        "end_date": "2021-07-31",
+                                        "timeframe_label": "Previous%20month",
+                                        "scale": "1",
+                                        "aggregation_unit": "Auto",
+                                        "dataset_type": "timeseries",
+                                        "thumbnail": "n",
+                                        "query_group": "tg_usage",
+                                        "display_type": "line",
+                                        "combine_type": "stack",
+                                        "limit": "10",
+                                        "offset": "0",
+                                        "log_scale": "n",
+                                        "show_guide_lines": "y",
+                                        "show_trend_line": "n",
+                                        "show_error_bars": "n",
+                                        "show_aggregate_labels": "n",
+                                        "show_error_labels": "n",
+                                        "hide_tooltip": "false",
+                                        "show_title": "y",
+                                        "width": "984",
+                                        "height": "465",
+                                        "legend_type": "bottom_center",
+                                        "font_size": "3",
+                                        "operation": "get_charts",
+                                        "controller_module": "user_interface"
+                                    }
+                                },
+                                "Get Tabs": {
+                                    "summary": "List tabs",
+                                    "description": "Example of how to get the list of tabs for a logged in user.",
+                                    "value": {
+                                        "operation": "get_tabs",
+                                        "public_user": false
+                                    }
+                                },
+                                "Get Root Node": {
+                                    "summary": "Tree root",
+                                    "description": "Example of how to get the list of nodes under the root.",
+                                    "value": {
+                                        "operation": "get_menus",
+                                        "node": "category_",
+                                        "public_user": false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/controllers/metric_explorer.php": {
+            "post": {
+                "tags": [
+                    "Metric Explorer",
+                    "Data Analytics Framework"
+                ],
+                "summary": "Metric Explorer Tab Controller",
+                "deprecated": true,
+                "description": "The metric explorer tab uses a controller style API for some operation. A single URL is used with a mandatory `operation` form parameter to determine which action to perform. This controller endpoint is deprecated and will be removed in a future release of XDMoD.",
+                "security": [
+                    { "cookie_xdmod_token": [] },
+                    { "query_param_token": [] },
+                    { "http_bearer": [] },
+                    { "query_param_bearer": [] }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/x-www-form-urlencoded": {
+                            "schema": {
+                                "oneOf": [
+                                    {
+                                        "type": "object",
+                                        "additionalProperties": false,
+                                        "properties": {
+                                            "operation": {
+                                                "type": "string",
+                                                "enum": [ "get_dw_descripter" ]
+                                            }
+                                        },
+                                        "required": ["operation"],
+                                        "title": "get_dw_descripter"
+                                    },
+                                    { "$ref": "#/components/schemas/get_data" }
+                                ]
+                            },
+                            "examples": {
+                                "dw_descripter": {
+                                    "summary": "DW Descriptor",
+                                    "description": "Example of how to obtain the contents of the metric catalog",
+                                    "value": {
+                                        "operation": "get_dw_descripter"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": ""
+                    }
+                }
+            }
+        },
+        "/admin/reset_user_tour_viewed": {
+            "post": {
+                "tags": [
+                    "Miscellaneous"
+                ],
+                "summary": "Reset User Tour viewed status",
+                "description": "",
+                "operationId": "post-admin-reset_user_tour_viewed",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app_kernels/details": {
+            "get": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-app_kernels-details",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app_kernels/datasets": {
+            "get": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-app_kernels-datasets",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app_kernels/plots": {
+            "get": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-app_kernels-plots",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app_kernels/control_regions": {
+            "get": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-app_kernels-control_regions",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "post-app_kernels-control_regions",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "put-app_kernels-control_regions",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "delete-app_kernels-control_regions",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app_kernels/notifications": {
+            "get": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-app_kernels-notifications",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "put-app_kernels-notifications",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app_kernels/notifications/default": {
+            "get": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-app_kernels-notifications-default",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app_kernels/notifications/send": {
+            "get": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-app_kernels-notifications-send",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app_kernels/resources": {
+            "get": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-app_kernels-resources",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app_kernels/app_kernels": {
+            "get": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-app_kernels-app_kernels",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app_kernels/performance_map": {
+            "get": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-app_kernels-performance_map",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app_kernels/success_rate": {
+            "get": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-app_kernels-success_rate",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/app_kernels/performance_map/raw": {
+            "get": {
+                "tags": [
+                    "Application Kernels"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-app_kernels-performance_map-raw",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/login": {
+            "post": {
+                "tags": [
+                    "Authentication API"
+                ],
+                "summary": "Login",
+                "description": "",
+                "operationId": "post-auth-login",
+                "security": [{}],
+                "parameters": [{
+                    "name": "username",
+                    "in": "query",
+                    "required": true,
+                    "description": "The username of the local XDMoD user account.",
+                    "schema": {
+                        "type": "string"
+                    }
+                }, {
+                    "name": "password",
+                    "in": "query",
+                    "required": true,
+                    "description": "The password for the local XDMoD user account.",
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "results": {
+                                            "type": "object",
+                                            "additionalProperties": false,
+                                            "properties": {
+                                                "token": {
+                                                    "description": "The authentication token to use API requests.",
+                                                    "type": "string"
+                                                },
+                                                "name":  {
+                                                    "description": "The name of the person associated with the local XDMoD account.",
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/logout": {
+            "post": {
+                "tags": [
+                    "Authentication API"
+                ],
+                "summary": "Logout",
+                "description": "",
+                "operationId": "post-auth-logout",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "Human readable message indicating if logout was successful"
+                                        }
+                                    },
+                                    "example": {
+                                        "success": true,
+                                        "message": "User logged out successfully"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/idpredirect": {
+            "get": {
+                "tags": [
+                    "Authentication API"
+                ],
+                "summary": "IDP redirect",
+                "security": [{}],
+                "description": "Return an IDP redirect URL for SSO login.",
+                "operationId": "get-auth-idpredirect",
+                "parameters": [{
+                    "name": "returnTo",
+                    "description": "The location to redirect to after authentication is completed.",
+                    "in": "query",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "description": "The URL to open",
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/components": {
+            "get": {
+                "tags": [
+                    "Dashboard Tab"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-dashboard-components",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/layout": {
+            "post": {
+                "tags": [
+                    "Dashboard Tab"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "post-dashboard-layout",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Dashboard Tab"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "delete-dashboard-layout",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/rolereport": {
+            "get": {
+                "tags": [
+                    "Dashboard Tab"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-dashboard-rolereport",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/savedchartsreports": {
+            "get": {
+                "tags": [
+                    "Dashboard Tab"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-dashboard-savedchartsreports",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/viewedUserTour": {
+            "post": {
+                "tags": [
+                    "Dashboard Tab"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "post-dashboard-viewedUserTour",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Dashboard Tab"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-dashboard-viewedUserTour",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/dashboard/statistics": {
+            "get": {
+                "tags": [
+                    "Dashboard Tab"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-dashboard-statistics",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/metrics/explorer/queries": {
+            "get": {
+                "tags": [
+                    "Metric Explorer"
+                ],
+                "summary": "Load all saved charts",
+                "description": "Returns all saved chart.",
+                "operationId": "get-metrics-explorer-queries",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Metric Explorer"
+                ],
+                "summary": "Save a new chart.",
+                "description": "",
+                "operationId": "post-metrics-explorer-queries",
+                "parameters": [{
+                        "name": "data",
+                        "in": "query",
+                        "required": true,
+                        "description": "The chart configuration data as a JSON encoded string.",
+                        "schema": {
+                            "type": "string"
+                        }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/metrics/explorer/queries/{id}": {
+            "get": {
+                "tags": [
+                    "Metric Explorer"
+                ],
+                "summary": "Load chart configuration",
+                "description": "This endpoint is used by the Metric Explorer tab to retrieve the configuation information for a saved chart.",
+                "operationId": "get-metrics-explorer-queries-{id}",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "The stored chart identifier",
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Metric Explorer"
+                ],
+                "summary": "Save changes to an existing chart.",
+                "description": "",
+                "operationId": "post-metrics-explorer-queries-{id}",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "The stored chart identifier",
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                    }, {
+                        "name": "data",
+                        "in": "query",
+                        "required": true,
+                        "description": "The chart configuration data as a JSON encoded string.",
+                        "schema": {
+                            "type": "string"
+                        }
+                }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Metric Explorer"
+                ],
+                "summary": "Delete a saved chart.",
+                "description": "",
+                "operationId": "delete-metrics-explorer-queries-{id}",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "The stored chart identifier",
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/persons/{id}/organization": {
+            "get": {
+                "tags": [
+                    "People"
+                ],
+                "summary": "Get the organization identifier for a person.",
+                "operationId": "get-persons-{id}-organization",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "The numerical person identifier",
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "results": {
+                                            "type": "array",
+                                            "minLength": 1,
+                                            "maxLength": 1,
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "integer"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "success": {
+                                            "type": "boolean"
+                                        }
+                                    },
+                                    "required": [
+                                        "success",
+                                        "results"
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/summary_statistics/valid": {
+            "get": {
+                "tags": [
+                    "Summary Statistics"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-summary_statistics-valid",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/summary_statistics/past_usage": {
+            "get": {
+                "tags": [
+                    "Summary Statistics"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-summary_statistics-past_usage",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/supremm_dataflow/resources": {
+            "get": {
+                "tags": [
+                    "Job Performance DFD"
+                ],
+                "summary": "List resources",
+                "description": "Get the list of resources that have job performance data. This is used by the data flow diagram (DFD) tab in XDMoD's admin dashboard.",
+                "operationId": "get-supremm_dataflow-resources",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/supremm_dataflow/dbstats": {
+            "get": {
+                "tags": [
+                    "Job Performance DFD"
+                ],
+                "summary": "Database statistics",
+                "description": "Get the database statistics for a resource that has job performance data. This is used by the data flow diagram (DFD) tab in XDMoD's admin dashboard.",
+                "operationId": "get-supremm_dataflow-dbstats",
+                "parameters": [{
+                    "name": "resource_id",
+                    "in": "query",
+                    "required": true,
+                    "description": "The identifier for the resource that has job performance data.",
+                    "schema": {
+                        "type": "integer"
+                    }
+                }, {
+                    "name": "db_id",
+                    "in": "query",
+                    "required": true,
+                    "description": "Which database to query",
+                    "schema": {
+                        "type": "string",
+                        "enum": ["summarydb", "accountdb", "jobfact", "aggregates", "nodearchives", "accountfact"]
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/current": {
+            "get": {
+                "tags": [
+                    "Miscellaneous"
+                ],
+                "summary": "Get XDMoD user account information.",
+                "description": "",
+                "operationId": "get-users-current",
+                "parameters": [
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Miscellaneous"
+                ],
+                "summary": "Update XDMoD user information.",
+                "description": "",
+                "operationId": "patch-users-current",
+                "parameters": [{
+                    "name": "first_name",
+                    "description": "The first name of the user",
+                    "in": "query",
+                    "schema": {
+                        "type": "string"
+                    }
+                }, {
+                    "name": "last_name",
+                    "description": "The last name of the user",
+                    "in": "query",
+                    "schema": {
+                        "type": "string"
+                    }
+                }, {
+                    "name": "email_address",
+                    "description": "The user's email address. XDMoD uses this address when sending reports and notifications.",
+                    "in": "query",
+                    "schema": {
+                        "type": "string",
+                        "format": "email"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "description": "Human readable message indicating if profile update was successful"
+                                        }
+                                    },
+                                    "example": {
+                                        "success": true,
+                                        "message": "User profile updated successfully"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/current/api/token": {
+            "get": {
+                "tags": [
+                    "Data Analytics Framework",
+                    "Authentication",
+                    "Authorization"
+                ],
+                "summary": "Retrieve the API token of the currently logged in user",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Invalid token data returned."
+                                            ]
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "created_on": {
+                                                    "type": "string"
+                                                },
+                                                "expires_on": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "An unauthorized request to this endpoint.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "enum": [false]
+                                        },
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "totalCount": {
+                                            "type": "integer"
+                                        },
+                                        "results": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "message": {
+                                            "enum": ["An error was encountered while attempting to process the requested authorization procedure."]
+                                        },
+                                        "code": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+
+                        }
+                    },
+                    "404": { "$ref": "#/components/responses/api-token-404" }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Data Analytics Framework",
+                    "Authentication",
+                    "Authorization"
+                ],
+                "summary": "Create a new API token for the currently logged in user",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "enum": [
+                                                "Unable to create a new API token."
+                                            ]
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "token": {
+                                                    "type": "string"
+                                                },
+                                                "expiration_date": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "An unauthorized request to this endpoint.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "enum": [false]
+                                        },
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "totalCount": {
+                                            "type": "integer"
+                                        },
+                                        "results": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "message": {
+                                            "enum": [
+                                                "An error was encountered while attempting to process the requested authorization procedure."
+                                            ]
+                                        },
+                                        "code": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "409": {
+                        "description": "Conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error" },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "enum": [ "Token already exists." ]
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Data Analytics Framework",
+                    "Authentication",
+                    "Authorization"
+                ],
+                "summary": "Revoke the API token for the currently logged in user",
+                "description": "",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean"
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "enum": [
+                                                "Token successfully revoked."
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "An unauthorized request to this endpoint.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success": {
+                                            "enum": [
+                                                false
+                                            ]
+                                        },
+                                        "count": {
+                                            "type": "integer"
+                                        },
+                                        "total": {
+                                            "type": "integer"
+                                        },
+                                        "totalCount": {
+                                            "type": "integer"
+                                        },
+                                        "results": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {}
+                                        },
+                                        "message": {
+                                            "enum": [
+                                                "An error was encountered while attempting to process the requested authorization procedure."
+                                            ]
+                                        },
+                                        "code": {
+                                            "type": "integer"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": { "$ref": "#/components/responses/api-token-404" },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error" },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "enum": [ "Unable to revoke API token." ]
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/search/history": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-search-history",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "post-warehouse-search-history",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "delete-warehouse-search-history",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/search/history/{id}": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-search-history-{id}",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "The history request identifier",
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }, {
+                    "$ref": "#/components/parameters/realm"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "post-warehouse-search-history-{id}",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "The history request identifier",
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }, {
+                    "$ref": "#/components/parameters/realm"
+                }, {
+                    "name": "data",
+                    "in": "query",
+                    "required": true,
+                    "description": "Json encoded string that contains the data",
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "put-warehouse-search-history-{id}",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "The history request identifier",
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }, {
+                    "$ref": "#/components/parameters/realm"
+                }, {
+                    "name": "data",
+                    "in": "query",
+                    "required": true,
+                    "description": "Json encoded string that contains the data",
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "delete-warehouse-search-history-{id}",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "The history request identifier",
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }, {
+                    "$ref": "#/components/parameters/realm"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/search/jobs": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-search-jobs",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/search/jobs/{action}": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-search-jobs-{action}",
+                "parameters": [{
+                    "name": "action",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "post-warehouse-search-jobs-{action}",
+                "parameters": [{
+                    "name": "action",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/search/cloud/{action}": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-search-cloud-{action}",
+                "parameters": [{
+                    "name": "action",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "post-warehouse-search-cloud-{action}",
+                "parameters": [{
+                    "name": "action",
+                    "in": "path",
+                    "required": true,
+                    "schema": {
+                        "type": "string"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/realms": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-realms",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/dimensions": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-dimensions",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/dimensions/{dimension}": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "Get the possible values for a dimension",
+                "description": "",
+                "operationId": "get-warehouse-dimensions-{dimension}",
+                "parameters": [{
+                    "$ref": "#/components/parameters/dimension"
+                }, {
+                    "$ref": "#/components/parameters/limit"
+                }, {
+                    "$ref": "#/components/parameters/offset"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/dimensions/{dimension}/name": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-dimensions-{dimension}-name",
+                "parameters": [{
+                    "$ref": "#/components/parameters/dimension"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/dimensions/{dimension}/values/{valueId}/name": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-dimensions-{dimension}-values-{valueId}-name",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/dimension"
+                    },
+                    {
+                        "name": "valueId",
+                        "in": "path",
+                        "required": true,
+                        "description": "The value of the corresponding dimension",
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/quick_filters": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-quick_filters",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/aggregation_units": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-aggregation_units",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/datasets/types": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-datasets-types",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/datasets/output_formats": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-datasets-output_formats",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/datasets": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-datasets",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/aggregatedata": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-aggregatedata",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/plots/formats/output": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-plots-formats-output",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/plots/types/display": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-plots-types-display",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/plots/types/combine": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-plots-types-combine",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/plots": {
+            "get": {
+                "tags": [
+                    "Data Warehouse"
+                ],
+                "summary": "",
+                "description": "",
+                "operationId": "get-warehouse-plots",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/raw-data": {
+            "get": {
+                "tags": [
+                    "Data Warehouse",
+                    "Data Analytics Framework"
+                ],
+                "summary": "Get raw data from the data warehouse",
+                "description": "On success, returns a stream of content type `application/json-seq` containing one line with an array containing the `display` property of each obtained field followed by one line for each obtained record with an array containing the obtained field values for that record. Each line starts with an ASCII Record Separator character and ends with an ASCII Line Feed character.",
+                "operationId": "get-warehouse-raw-data",
+                "security": [
+                    { "http_bearer": [] },
+                    { "query_param_bearer": [] }
+                ],
+                "parameters": [
+                    { "$ref": "#/components/parameters/start_date" },
+                    { "$ref": "#/components/parameters/end_date" },
+                    { "$ref": "#/components/parameters/realm" },
+                    {
+                        "in": "query",
+                        "name": "fields",
+                        "required": false,
+                        "description": "Identifiers of fields to get",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string"
+                            },
+                            "example": [ "Nodes", "Wall Time" ]
+                        },
+                        "explode": false
+                    },
+                    {
+                        "in": "query",
+                        "name": "filters",
+                        "required": false,
+                        "description": "A mapping of dimension identifiers to their possible values. Results will only be included whose values for each of the given dimensions match one of the corresponding given values.",
+                        "style": "deepObject",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "x-additionalPropertiesName": "dimension identifier",
+                                "type": "string",
+                                "format": "comma-separated list"
+                            }
+                        },
+                        "example": {
+                            "fieldofscience": "177",
+                            "provider": "848,856"
+                        }
+                    },
+                    {
+                        "in": "query",
+                        "name": "offset",
+                        "required": false,
+                        "description": "Starting row index",
+                        "schema": {
+                            "type": "integer",
+                            "default": 0,
+                            "minimum": 0
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json-seq": {}
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/warehouse-error"
+                                },
+                                "examples": {
+                                    "no-start-date": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "start_date is a required parameter",
+                                            "code": 0
+                                        }
+                                    },
+                                    "no-end-date": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "end_date is a required parameter",
+                                            "code": 0
+                                        }
+                                    },
+                                    "start-date-malformed": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid value for start_date. Must be a(n) ISO 8601 Date.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "no-realm": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "realm is a required parameter.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "end-date-malformed": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid value for end_date. Must be a(n) ISO 8601 Date.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "end-before-start": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "End date cannot be less than start date.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "invalid-realm": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid realm.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "invalid-fields": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid fields specified: 'foo', 'bar'.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "invalid-filter-key": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid filter key 'foo'.",
+                                            "code": 0
+                                        }
+                                    },
+                                    "negative-offset": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Offset must be non-negative.",
+                                            "code": 0
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/warehouse-error"
+                                },
+                                "examples": {
+                                    "empty-token": {
+                                        "$ref": "#/components/examples/empty-token"
+                                    },
+                                    "malformed-token": {
+                                        "$ref": "#/components/examples/malformed-token"
+                                    },
+                                    "invalid-token": {
+                                        "$ref": "#/components/examples/invalid-token"
+                                    },
+                                    "expired-token": {
+                                        "$ref": "#/components/examples/expired-token"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/export/realms": {
+            "get": {
+                "tags": [
+                    "Data Export"
+                ],
+                "summary": "Get list of realms available for data export",
+                "operationId": "get-warehouse-export-realms",
+                "responses": {
+                    "200": {
+                        "description": "List of realms",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "enum": [ true ]
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "Realm identifier",
+                                                        "type": "string"
+                                                    },
+                                                    "name": {
+                                                        "description": "Realm name",
+                                                        "type": "string"
+                                                    },
+                                                    "fields": {
+                                                        "description": "Realm export fields",
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                                "name": {
+                                                                    "description": "Field name",
+                                                                    "type": "string"
+                                                                },
+                                                                "alias": {
+                                                                    "description": "Field alias",
+                                                                    "type": "string"
+                                                                },
+                                                                "display": {
+                                                                    "description": "Field display name",
+                                                                    "type": "string"
+                                                                },
+                                                                "anonymize": {
+                                                                    "description": "Will this field be anonymized in the export?",
+                                                                    "type": "boolean"
+                                                                },
+                                                                "documentation": {
+                                                                    "description": "Field description",
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/export/request": {
+            "post": {
+                "tags": [
+                    "Data Export"
+                ],
+                "summary": "Create a data export request",
+                "operationId": "post-warehouse-export-request",
+                "parameters": [
+                    { "$ref": "#/components/parameters/realm" },
+                    { "$ref": "#/components/parameters/start_date" },
+                    { "$ref": "#/components/parameters/end_date" },
+                    {
+                        "name": "format",
+                        "in": "query",
+                        "required": true,
+                        "description": "Export file format",
+                        "schema": {
+                            "type": "string",
+                            "enum": [
+                                "CSV",
+                                "JSON"
+                            ]
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The export request identifier",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "enum": [ true ]
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "The export request identifier",
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/export/requests": {
+            "get": {
+                "tags": [
+                    "Data Export"
+                ],
+                "summary": "Get list of data export requests",
+                "description": "",
+                "operationId": "get-warehouse-export-requests",
+                "responses": {
+                    "200": {
+                        "description": "List of data export requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "enum": [ true ]
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "id": {
+                                                        "type": "string"
+                                                    },
+                                                    "realm": {
+                                                        "description": "Realm identifier",
+                                                        "type": "string"
+                                                    },
+                                                    "start_date": {
+                                                        "description": "Start date of requested data",
+                                                        "type": "string",
+                                                        "format": "date"
+                                                    },
+                                                    "end_date": {
+                                                        "description": "End date of requested data",
+                                                        "type": "string",
+                                                        "format": "date"
+                                                    },
+                                                    "export_succeeded": {
+                                                        "description": "Did the export succeed?",
+                                                        "nullable": true,
+                                                        "type": "integer",
+                                                        "format": "int32",
+                                                        "minimum": 0,
+                                                        "maximum": 1
+                                                    },
+                                                    "export_expired": {
+                                                        "description": "Is the export expired?",
+                                                        "type": "integer",
+                                                        "format": "int32",
+                                                        "minimum": 0,
+                                                        "maximum": 1
+                                                    },
+                                                    "export_expires_datetime": {
+                                                        "description": "Data export expiration date",
+                                                        "nullable": true,
+                                                        "type": "string",
+                                                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                                                    },
+                                                    "export_created_datetime": {
+                                                        "description": "Data export creation date",
+                                                        "nullable": true,
+                                                        "type": "string",
+                                                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                                                    },
+                                                    "export_file_format": {
+                                                        "description": "Data export file type",
+                                                        "enum": [
+                                                            "CSV",
+                                                            "JSON"
+                                                        ]
+                                                    },
+                                                    "requested_datetime": {
+                                                        "description": "Data export request creation date",
+                                                        "type": "string",
+                                                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                                                    },
+                                                    "downloaded_datetime": {
+                                                        "description": "Data export (first) download date",
+                                                        "nullable": true,
+                                                        "type": "string",
+                                                        "pattern": "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}$"
+                                                    },
+                                                    "state": {
+                                                        "description": "Data export state",
+                                                        "type": "string",
+                                                        "enum": [
+                                                            "Submitted",
+                                                            "Available",
+                                                            "Failed",
+                                                            "Expired"
+                                                        ]
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Data Export"
+                ],
+                "summary": "Delete multiple existing export requests",
+                "operationId": "delete-warehouse-export-requests",
+                "requestBody": {
+                    "description": "List of identifiers for export requests",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "description": "The identifier for the export request",
+                                    "type": "integer",
+                                    "format": "int32"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "List of identifiers for deleted export requests",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "enum": [ true ]
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "The identifier for the export request",
+                                                        "type": "integer",
+                                                        "format": "int32"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data export request not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/export/download/{id}": {
+            "get": {
+                "tags": [
+                    "Data Export"
+                ],
+                "summary": "Download bulk exported data.",
+                "description": "Request a zip archive containing the data associated with the requested export identifier.",
+                "operationId": "get-warehouse-export-download-{id}",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "The export request identifier",
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "A zip archive containing the exported data.",
+                        "content": {
+                            "application/zip": {
+                                "schema": {
+                                    "type": "string",
+                                    "format": "binary"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data export request not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/warehouse/export/request/{id}": {
+            "delete": {
+                "tags": [
+                    "Data Export"
+                ],
+                "summary": "Delete an existing export request.",
+                "operationId": "delete-warehouse-export-request-{id}",
+                "parameters": [{
+                    "name": "id",
+                    "in": "path",
+                    "required": true,
+                    "description": "The identifier for the export request",
+                    "schema": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "List of deleted request identifiers",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "additionalProperties": false,
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "enum": [ true ]
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "id": {
+                                                        "description": "The identifier for the export request",
+                                                        "type": "integer",
+                                                        "format": "int32"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "total": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Data export request not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/extstore-error"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,3 +1,3 @@
 ---
-redirect_to: /10.5/data-analytics-framework.html
+redirect_to: /11.0/data-analytics-framework.html
 ---
