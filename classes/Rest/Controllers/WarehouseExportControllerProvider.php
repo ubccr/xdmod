@@ -4,6 +4,8 @@ namespace Rest\Controllers;
 
 use CCR\DB;
 use CCR\Log;
+use Rest\Exceptions\BadTokenException;
+use Rest\Exceptions\EmptyTokenException;
 use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
@@ -97,14 +99,11 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         // to the normal session authentication if a token is not provided.
         try {
             $user = $this->authenticateToken($request);
+        } catch (EmptyTokenException $e) {
+            $user = $this->getUserFromRequest($request);
         } catch (Exception $e) {
-            // NOOP
+            throw new BadTokenException('xdmod', "An error was encountered while attempting to process the requested authorization procedure.");
         }
-
-        if ($user === null) {
-            $user = $this->authorize($request);
-        }
-
 
         $config = RawStatisticsConfiguration::factory();
 

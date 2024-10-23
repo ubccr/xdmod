@@ -873,4 +873,62 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         }
         return $tests;
     }
+
+
+    /**
+     * @dataProvider provideGetDwDescripter
+     */
+
+    public function testGetDwDescripter($role, $tokenType)
+    {
+        parent::runTokenAuthTest(
+            $role,
+            $tokenType,
+            [
+                'path' => 'rest/warehouse/search/dw_descripter',
+                'method' => 'get',
+                'params' => null,
+                'data' => null,
+                'endpoint_type' => 'rest',
+                'authentication_type' => 'token_optional',
+                'want_public_user' => true
+            ],
+            parent::validateSuccessResponse(function ($body, $assertMessage) {
+                $this->assertSame(1, $body['totalCount'], $assertMessage);
+                foreach (['Jobs', 'Cloud', 'ResourceSpecifications', 'Storage'] as $realmName) {
+                    $realm = $body['data'][0]['realms'][$realmName];
+                    foreach (['metrics', 'dimensions'] as $key) {
+                        $this->assertArrayHasKey(
+                            $key,
+                            $realm,
+                            $assertMessage . ": {$key} should be present in {$realmName}"
+                        );
+                        foreach ($realm[$key] as $elementName => $element) {
+                            foreach (['text', 'info'] as $string) {
+                                $this->assertIsString(
+                                    $element[$string],
+                                    $assertMessage . ": {$string} of {$elementName} in {$key} should be a string"
+                                );
+                                $this->assertNotEmpty(
+                                    $element[$string],
+                                    $assertMessage . ": {$string} of {$elementName} in {$key} should not be empty"
+                                );
+                            }
+                        }
+                    }
+                }
+            })
+        );
+    }
+
+    public function provideGetDwDescripter() {
+        return [
+            ['pub', 'empty_token'],
+            ['pub', 'malformed_token'],
+            ['usr', 'invalid_token'],
+            ['usr', 'expired_token'],
+            ['usr', 'revoked_token'],
+            ['usr', 'valid_token']
+        ];
+    }
 }
