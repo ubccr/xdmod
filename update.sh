@@ -3,7 +3,7 @@
 
 set -e
 
-branches="xdmod11.0 xdmod10.5"
+branches="xdmod11.0 xdmod10.5 xdmod10.0"
 latest="xdmod11.0"
 
 SED=sed
