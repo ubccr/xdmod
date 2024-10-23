@@ -1,3 +1,3 @@
 ---
-redirect_to: /10.5/hardware-requirements.html
+redirect_to: /11.0/hardware-requirements.html
 ---

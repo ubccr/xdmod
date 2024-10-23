@@ -1,0 +1,109 @@
+toc:
+  - title: About
+    subfolderitems:
+      - page: Overview
+        url: /11.0/
+      - page: License Notices
+        url: /11.0/notices.html
+      - page: Architecture
+        url: /11.0/architecture.html
+      - page: Roadmap
+        url: https://trello.com/b/mdFESh6j
+      - page: Documentation Conventions
+        url: /11.0/docs-conventions.html
+  - title: Support
+    subfolderitems:
+      - page: Support
+        url: /11.0/support.html
+  - title: Download
+    subfolderitems:
+      - page: Latest Release
+        url: /11.0/latest-releases.html
+      - page: GitHub Project Page
+        url: https://github.com/ubccr/xdmod/
+  - title: Installing
+    subfolderitems:
+      - page: Software Requirements
+        url: /11.0/software-requirements.html
+      - page: Hardware Requirements
+        url: /11.0/hardware-requirements.html
+      - page: Installation Guides
+        url: /11.0/install.html
+        subsubfolderitems:
+          - page: RPM Installation Guide
+            url: /11.0/install-rpm.html
+          - page: Source Installation Guide
+            url: /11.0/install-source.html
+      - page: Configuration Guide
+        url: /11.0/configuration.html
+      - page: Single Sign On Authentication
+        url: /11.0/simpleSAMLphp.html
+        subsubfolderitems:
+          - page: LDAP Authentication
+            url: /11.0/simpleSAMLphp-ldap.html
+      - page: Upgrade Guide
+        url: /11.0/upgrade.html
+      - page: Gateways Realm (alpha)
+        url: /11.0/gateways-realm.html
+  - title: Using
+    subfolderitems:
+      - page: Shredder Guide
+        url: /11.0/shredder.html
+      - page: Ingestor Guide
+        url: /11.0/ingestor.html
+      - page: User/PI Names Guide
+        url: /11.0/user-names.html
+      - page: Hierarchy Guide
+        url: /11.0/hierarchy.html
+      - page: Logo Image Notes
+        url: /11.0/logo-image.html
+      - page: Command Reference
+        url: /11.0/commands.html
+      - page: HOWTOs
+        url: /11.0/howto.html
+      - page: Frequently Asked Questions
+        url: /11.0/faq.html
+      - page: Troubleshooting
+        url: /11.0/troubleshooting.html
+      - page: Cloud Metrics
+        url: /11.0/cloud.html
+      - page: Resource Specifications Metrics
+        url: /11.0/resource-specifications.html
+      - page: Storage Metrics
+        url: /11.0/storage.html
+      - page: GPU Metrics
+        url: /11.0/gpu-metrics.html
+      - page: Data Warehouse Export
+        url: /11.0/dw-export.html
+      - page: User Dashboard Guide
+        url: /11.0/dashboard.html
+      - page: Data Analytics Framework
+        url: /11.0/data-analytics-framework.html
+  - title: Resource Manager Notes
+    subfolderitems:
+      - page: Slurm
+        url: /11.0/resource-manager-slurm.html
+      - page: SGE/Grid Engine
+        url: /11.0/resource-manager-sge.html
+      - page: Univa Grid Engine
+        url: /11.0/resource-manager-uge.html
+      - page: PBS/TORQUE
+        url: /11.0/resource-manager-pbs.html
+      - page: LSF
+        url: /11.0/resource-manager-lsf.html
+  - title: Optional modules
+    subfolderitems:
+      - page: Application Kernels
+        url: http://appkernels.xdmod.org/ak-overview.html
+      - page: Job Performance (SUPReMM)
+        url: http://supremm.xdmod.org/supremm-overview.html
+      - page: Open OnDemand
+        url: https://ondemand.xdmod.org/
+  - title: Developing
+    subfolderitems:
+      - page: Code Organization
+        url: /11.0/dev-code-organization.html
+      - page: User Dashboard Components
+        url: /11.0/dashboard-devel.html
+      - page: Rest API
+        url: /11.0/rest.html

@@ -1,3 +1,3 @@
 ---
-redirect_to: /10.5/install.html
+redirect_to: /11.0/install.html
 ---

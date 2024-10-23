@@ -1,3 +1,3 @@
 ---
-redirect_to: /10.5/software-requirements.html
+redirect_to: /11.0/software-requirements.html
 ---

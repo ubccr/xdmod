@@ -1,3 +1,3 @@
 ---
-redirect_to: /10.5/dashboard.html
+redirect_to: /11.0/dashboard.html
 ---

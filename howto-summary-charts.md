@@ -1,3 +1,3 @@
 ---
-redirect_to: /10.5/howto-summary-charts.html
+redirect_to: /11.0/howto-summary-charts.html
 ---
