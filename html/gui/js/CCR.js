@@ -1629,18 +1629,14 @@ CCR.xdmod.initDashboard = function () {
 
 CCR.xdmod.initJupyterHub = function () {
 
-    // Opening the window before the AJAX request is necessary to prevent
-    // it being treated as a popup. Solution from: http://stackoverflow.com/a/20822754
-    var jupyterhubWindow = window.open("", "_blank");
-    jupyterhubWindow.focus();
-
     Ext.Ajax.request({
         url: 'rest/users/current/api/jsonwebtoken',
         method: 'POST',
         callback: function (options, success, response) {
             if (success && CCR.checkJSONResponseSuccess(response)) {
-                jupyterhubWindow.location.href = 'hub';
-                console.log(response);
+                var responsedata = Ext.util.JSON.decode(result.responseText);
+                var jsonwebtoken = jsonData.data.result.data;
+                console.log(jsonwebtoken);
             }
             else {
                 dashboardWindow.close();
