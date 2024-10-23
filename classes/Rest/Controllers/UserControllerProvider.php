@@ -211,9 +211,6 @@ class UserControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * This endpoint will attempt to create a new JSON Web Token for the requesting user. To successfully call this endpoint
-     * a user must fulfill the following requirements:
-     *   - They have authenticated to XDMoD via one of the supported methods.
      *
      * @param Request $request
      * @param Application $app
