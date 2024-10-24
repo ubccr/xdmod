@@ -184,8 +184,8 @@
     background-image: url(../images/icon_dashboard.png) !important;
 }
 
-.btn_jupyterhub {
-    background-image: url(../images/icon_jupyterhub.png) !important;
+.btn_jupyterlab {
+    background-image: url(../images/icon_jupyterlab.png) !important;
 }
 
 .add_chart {

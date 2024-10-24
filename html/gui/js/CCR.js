@@ -141,17 +141,17 @@ XDMoD.GlobalToolbar.Dashboard = {
 }; //XDMoD.GlobalToolbar.Dashboard
 
 // -------------------------------------------------
-XDMoD.GlobalToolbar.JupyterHub = {
-    text: 'JupyterHub',
+XDMoD.GlobalToolbar.JupyterLab = {
+    text: 'JupyterLab',
     scale: 'small',
-    iconCls: 'btn_jupyterhub',
-    id: 'global-toolbar-jupyterhub',
-    tooltip: 'Redirect to JupyterHub.',
+    iconCls: 'btn_jupyterlab',
+    id: 'global-toolbar-jupyterlab',
+    tooltip: 'Launch JupyterLab.',
     handler: function () {
-        CCR.xdmod.initJupyterHub();
+        CCR.xdmod.initJupyterLab();
     } //handler
 
-}; //XDMoD.GlobalToolbar.JupyterHub
+}; //XDMoD.GlobalToolbar.JupyterLab
 // -------------------------------------------------
 
 XDMoD.GlobalToolbar.SignUp = {
@@ -1627,7 +1627,7 @@ CCR.xdmod.initDashboard = function () {
     });
 }; //CCR.xdmod.initDashboard
 
-CCR.xdmod.initJupyterHub = function () {
+CCR.xdmod.initJupyterLab = function () {
 
     Ext.Ajax.request({
         url: 'rest/users/current/api/jsonwebtoken',
@@ -1636,21 +1636,21 @@ CCR.xdmod.initJupyterHub = function () {
             if (success && CCR.checkJSONResponseSuccess(response)) {
                 var responsedata = Ext.util.JSON.decode(response.responseText);
                 var jsonwebtoken = responsedata.data;
-                CCR.xdmod.redirectToJupyterHub(jsonwebtoken);
+                CCR.xdmod.redirectToJupyterLab(jsonwebtoken);
             }
             else {
                 window.focus();
                 CCR.xdmod.ui.presentFailureResponse(response, {
-                    title: 'JupyterHub'
+                    title: 'JupyterLab'
                 });
             }
         }
     });
-}; //CCR.xdmod.initJupyterHub
+}; //CCR.xdmod.initJupyterLab
 
-CCR.xdmod.redirectToJupyterHub = function(jsonwebtoken) {
+CCR.xdmod.redirectToJupyterLab = function(jsonwebtoken) {
 
-    var jupyterHubWindow;
+    var jupyterLabWindow;
 
     Ext.Ajax.request({
         url: 'hub',
@@ -1663,10 +1663,10 @@ CCR.xdmod.redirectToJupyterHub = function(jsonwebtoken) {
             window.focus();
         },
         failure: function() {
-            console.log('Unsuccessful redirect to JupyterHub instance.')
+            console.log('Unable to start JupyterLab.')
         }
     });
-};
+}; //CCR.xdmod.redirectToJupyterLab
 
 // -----------------------------------
 
