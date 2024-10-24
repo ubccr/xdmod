@@ -9,7 +9,7 @@ Open XDMoD requires the following software:
     - [mod_ssl][]
     - [mod_headers][]
 - [MariaDB][]/[MySQL][] 5.5.3+, MariaDB 10.3.17+
-- [PHP][] 5.4+, 7.2+, (PHP 8 not supported)
+- [PHP][] 7.2+, (PHP 8 not supported)
     - [PDO][]
     - [MySQL PDO Driver][pdo-mysql]
     - [GD][php-gd]
@@ -62,32 +62,11 @@ Open XDMoD requires the following software:
 Linux Distribution Packages
 ---------------------------
 
-Open XDMoD can be run on any Linux distribution, but has been tested on
-CentOS 7.
+Open XDMoD is developed and tested with servers running Rocky 8 Linux. The Open XDMoD team
+use Rocky 8 for their production Open XDMoD software instances.
 
-Most of the requirements can be installed with the package managers
-available from these distributions.
-
-### CentOS 7
-
-**NOTE**: The package list below includes packages included with
-[EPEL](https://fedoraproject.org/wiki/EPEL).  This repository can be
-added with this command for CentOS 7:
-
-    # yum install epel-release
-
-    # yum install httpd php php-cli php-mysql php-gd php-pdo php-xml \
-                  libreoffice \
-                  nodejs \
-                  mariadb-server mariadb cronie logrotate \
-                  perl-Image-ExifTool php-mbstring php-pecl-apcu jq \
-                  chromium-headless librsvg2-tools
-
-**NOTE**: After installing Apache and MySQL you must make sure that they
-are running.  CentOS may not start these services and they will not
-start after a reboot unless you have configured them to do so.
-
-**NOTE**: APCu is optional, but highly recommended as it provides enhanced performance.
+Rocky 8 is the preferred Linux distribution, however Open XDMoD should be able to run on any Linux distribution
+ that has the appropriate versions of the software dependencies available.
 
 ### Rocky 8+
 ```sh
@@ -109,8 +88,7 @@ dnf module -y reset nodejs
 dnf module -y install nodejs:16
 ```
 
-**NOTE**: The method to install the system level mongodb drivers has changed for Rocky 8. To account for this, you will
-need to run the following:
+**NOTE**: The php mongodb drivers are not available as RPMs and must be installed using PECL as follows:
 ```shell
 dnf install -y php-devel
 pecl install mongodb-1.16.2
@@ -136,13 +114,16 @@ Additional Notes
 ### PHP
 
 Open XDMoD is tested to work with the versions of PHP that is supplied with
-Centos 7 (PHP 5.4.16) and Rocky 8 (PHP 7.2.24).  Open XDMoD is not compatible
-with PHP 8 at this time.
+Rocky 8 (PHP 7.2.24).  Open XDMoD {{ page.sw_version }} is not compatible
+with PHP 8.
 
-Some Linux distributions (including CentOS) do not set the timezone used
+Some Linux distributions (including Rocky 8) do not set the timezone used
 by PHP in their default configuration.  This will result in many warning
-messages from PHP.  You should set the timezone in your `php.ini` file
-by adding the following, but substituting your timezone:
+messages from PHP and will cause data corruption in the XDMoD datawarehouse
+if the PHP timezone is different from the OS or Mariadb timezone.
+
+_You must set the timezone in your `php.ini` file
+by adding the following, but substituting your timezone_:
 
 ```ini
 date.timezone = America/New_York
@@ -150,14 +131,14 @@ date.timezone = America/New_York
 
 The PHP website contains the full list of supported [timezones][].
 
-Production Open XDMoD instances should use HTTPS, which is enabled via the webserver
+Open XDMoD instances must use HTTPS. HTTP is not supported. HTTPS is enabled via the webserver
 configuration (see below).
 
 [timezones]: https://secure.php.net/manual/en/timezones.php
 
 ### Apache
 
-Production instances of Open XDMoD should use HTTPS. This requires
+Open XDMoD must use HTTPS. This requires
 the `mod_ssl` module be installed and enabled. The `mod_headers` module
 is also recommended so that the [HTTP Strict-Transport-Security](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Strict-Transport-Security)
 header can be set on the webserver.
@@ -169,7 +150,7 @@ network access.
 
 ### MySQL
 
-Open XDMoD is tested to work with MariaDB 5.5.60 and 10.3.28, and may be
+Open XDMoD is tested to work with MariaDB 10.3.28, and may be
 compatible with more recent releases of MySQL and MariaDB.  Open XDMoD is
 not compatible with MySQL 8.0 at this time.
 
@@ -184,5 +165,10 @@ Open XDMoD has been tested with `chromium-headless` from EPEL, `chromium` from E
 
 ### SELinux
 
-Open XDMoD does not work with the default CentOS
-SELinux security policy.  You will need to disable SELinux.
+The default SELinux policy on Rocky 8 does not give sufficient permission
+to the webserver software to perform all tasks required by Open XDMoD,
+such as connecting to the MariaDB and MongoDB databases, and running the image export
+tools.
+
+It is recommended to either disable SELinux, or to follow the [RedHat SELinux](https://docs.redhat.com/en/documentation/red_hat_enterprise_linux/8/html/using_selinux/index)
+documentation to create an SELinux policy for your server.
