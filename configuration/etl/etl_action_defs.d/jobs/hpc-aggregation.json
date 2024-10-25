@@ -136,7 +136,8 @@
                 "name": "resourcefact",
                 "schema": "${UTILITY_SCHEMA}",
                 "alias": "task_resource",
-                "on": "task_resource.id = task.resource_id"
+                "on": "task_resource.id = task.resource_id",
+                "type": "STRAIGHT"
             }
         ],
         "where": [
