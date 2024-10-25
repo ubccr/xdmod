@@ -9,7 +9,7 @@ Open XDMoD requires the following software:
     - [mod_ssl][]
     - [mod_headers][]
 - [MariaDB][]/[MySQL][] 5.5.3+, MariaDB 10.3.17+
-- [PHP][] 7.2+, (PHP 8 not supported)
+- [PHP][] 7.4, (PHP 8 not supported)
     - [PDO][]
     - [MySQL PDO Driver][pdo-mysql]
     - [GD][php-gd]
@@ -69,14 +69,21 @@ Rocky 8 is the preferred Linux distribution, however Open XDMoD should be able t
  that has the appropriate versions of the software dependencies available.
 
 ### Rocky 8+
+
+**NOTE**: The php version that is enabled by default in Rocky 8 is php 7.2. Open XDMoD
+requires php version 7.4 that [is supported until May 2029](https://access.redhat.com/support/policy/updates/rhel-app-streams-life-cycle#rhel8_full_life_application_streams).
+```shell
+dnf module -y reset php
+dnf module -y enable php:7.4
+```
+
+The Open XDMoD RPM requires packages that are provided in EPEL.
+
 ```sh
 dnf install -y epel-release
 
-dnf install -y httpd php php-cli php-mysqlnd php-gd php-pdo php-xml \
-            php-pear libreoffice nodejs \
-            mariadb-server mariadb cronie logrotate \
-            perl-Image-ExifTool php-mbstring php-pecl-apcu jq \
-            chromium-headless librsvg2-tools
+dnf install -y php make libzip-devel php-pear php-devel \
+            mariadb-server mariadb
 ```
 
 **NOTE**: The nodejs version that is enabled by default in Rocky 8 is nodejs 10. Open
@@ -90,7 +97,6 @@ dnf module -y install nodejs:16
 
 **NOTE**: The php mongodb drivers are not available as RPMs and must be installed using PECL as follows:
 ```shell
-dnf install -y php-devel
 pecl install mongodb-1.16.2
 echo "extension=mongodb.so" > /etc/php.d/40-mongodb.ini
 ```
@@ -114,7 +120,7 @@ Additional Notes
 ### PHP
 
 Open XDMoD is tested to work with the versions of PHP that is supplied with
-Rocky 8 (PHP 7.2.24).  Open XDMoD {{ page.sw_version }} is not compatible
+Rocky 8 (PHP 7.4.24).  Open XDMoD {{ page.sw_version }} is not compatible
 with PHP 8.
 
 Some Linux distributions (including Rocky 8) do not set the timezone used
