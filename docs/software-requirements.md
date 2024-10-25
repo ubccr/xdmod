@@ -120,7 +120,7 @@ Additional Notes
 ### PHP
 
 Open XDMoD is tested to work with the versions of PHP that is supplied with
-Rocky 8 (PHP 7.4.24).  Open XDMoD {{ page.sw_version }} is not compatible
+Rocky 8 (PHP 7.4.33).  Open XDMoD {{ page.sw_version }} is not compatible
 with PHP 8.
 
 Some Linux distributions (including Rocky 8) do not set the timezone used
@@ -156,7 +156,7 @@ network access.
 
 ### MySQL
 
-Open XDMoD is tested to work with MariaDB 10.3.28, and may be
+Open XDMoD is tested to work with MariaDB 10.3.39, and may be
 compatible with more recent releases of MySQL and MariaDB.  Open XDMoD is
 not compatible with MySQL 8.0 at this time.
 
