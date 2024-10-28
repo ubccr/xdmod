@@ -31,6 +31,11 @@
                 "nullable": false,
                 "comment": "DIMENSION: The resource id of the host of a VM where sessions ran."
             },{
+                "name": "resource_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The organization of the resource that the jobs ran on."
+            },{
                 "name": "account_id",
                 "type": "smallint(5) unsigned",
                 "nullable": false,
@@ -40,6 +45,11 @@
                 "type": "int(11)",
                 "nullable": false,
                 "comment": "DIMENSION: The person id associated with a VM instance."
+            },{
+                "name": "person_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The organization of the person that ran the jobs."
             },{
                 "name": "systemaccount_id",
                 "type": "int(11)",
@@ -132,6 +142,11 @@
                 "nullable": false,
                 "default": -1,
                 "comment": "DIMENSION: The PI that owns the allocations that these VM's ran under. References principalinvestigator.person_id"
+            },{
+                "name": "piperson_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "DIMENSION: The organization of the PI that owns the project that funds these jobs. References piperson.organization_id"
             },{
                 "name": "fos_id",
                 "type": "int(11)",

@@ -24,7 +24,7 @@ class DatabasesMigration extends AbstractDatabasesMigration
 
         if ($mysql_helper->tableExists('modw_cloud.event')) {
             Utilities::runEtlPipeline(
-                ['cloud-migration-10-5-0_11-0-0'],
+                ['cloud-migration-10-5-0_11-0-0','cloud-state-pipeline'],
                 $this->logger,
                 ['last-modified-start-date' => '2017-01-01 00:00:00']
             );

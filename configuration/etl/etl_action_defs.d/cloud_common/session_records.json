@@ -10,6 +10,7 @@
             "end_time": "FROM_UNIXTIME(e.end_time_ts)",
             "end_event_type_id": "e.end_event_id",
             "resource_id": "it.resource_id",
+            "resource_organization_id": "r.organization_id",
             "instance_type": "itt.instance_type",
             "instance_type_id": "itt.instance_type_id",
             "num_cores": "itt.num_cores",
@@ -23,12 +24,14 @@
             "end_day_id": "YEAR(FROM_UNIXTIME(e.end_time_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(e.end_time_ts))",
             "wallduration": "FLOOR(e.end_time_ts) - FLOOR(e.start_time_ts)",
             "person_id": "ev.person_id",
+            "person_organization_id": "p.organization_id",
             "systemaccount_id": "ev.systemaccount_id",
             "submission_venue_id": "ev.submission_venue_id",
             "domain_id": "ev.domain_id",
             "service_provider": "ev.service_provider",
             "account_id": "a.account_id",
             "principalinvestigator_person_id": "a.principalinvestigator_person_id",
+            "piperson_organization_id": "pi.organization_id",
             "fos_id": "a.fos_id",
             "host_id": "ev.host_id",
             "instance_state_id": "etype.instance_state_id"
@@ -75,6 +78,27 @@
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "etype",
                 "on": "e.start_event_id = etype.event_type_id"
+            },
+            {
+                "name": "resourcefact",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "r",
+                "type": "LEFT",
+                "on": "e.resource_id = r.id"
+            },
+            {
+                "name": "person",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "p",
+                "type": "LEFT",
+                "on": "ev.person_id = p.id"
+            },
+            {
+                "name": "person",
+                "schema": "${UTILITY_SCHEMA}",
+                "alias": "pi",
+                "type": "LEFT",
+                "on": "a.principalinvestigator_person_id = pi.id"
             }
         ],
         "orderby": [
