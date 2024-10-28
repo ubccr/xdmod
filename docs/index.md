@@ -32,7 +32,7 @@ customizable hierarchy appropriate for your organization.
 
 A version of Open XDMoD, [ACCESS XDMoD](https://xdmod.access-ci.org)
 is used to monitor the NSF-supported portfolio of advanced computing
-systems and services that are integrated with the NSF-funded [ACCESS](https://access-ci.org) program.
+systems and services that are integrated with the NSF-funded [ACCESS Program](https://access-ci.org).
 
 This material is based upon work supported by the National Science Foundation
 under Grant Numbers [OAC 2137603][nsf-2137603],
