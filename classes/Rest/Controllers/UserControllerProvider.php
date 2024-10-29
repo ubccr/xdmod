@@ -225,15 +225,13 @@ class UserControllerProvider extends BaseControllerProvider
         $tokenId    = base64_encode(random_bytes(16));
         $issuedAt   = new \DateTimeImmutable();
         $expire     = $issuedAt->modify('+6 minutes')->getTimestamp();
-        $username   = $user->getUserName();
 
         $data = [
             'iat'  => $issuedAt->getTimestamp(),
             'jti'  => $tokenId,
             'iss'  => $serverName,
-            'nbf'  => $issuedAt->getTimestamp(),
             'exp'  => $expire,
-            'upn'  => $username
+            'upn'  => $user->getUserName()
         ];
 
         $jwt = JWT::encode(
