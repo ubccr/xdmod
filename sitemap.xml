@@ -2,223 +2,223 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
         <loc>https://open.xdmod.org/11.0/</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>1.0</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/notices.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/architecture.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/docs-conventions.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/support.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/latest-releases.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/software-requirements.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/hardware-requirements.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/install.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/configuration.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/simpleSAMLphp.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/upgrade.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/gateways-realm.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/shredder.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/ingestor.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/user-names.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/hierarchy.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/logo-image.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/commands.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/howto.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/faq.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/troubleshooting.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/cloud.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/resource-specifications.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/storage.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/gpu-metrics.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/dw-export.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/dashboard.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/data-analytics-framework.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/resource-manager-slurm.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/resource-manager-sge.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/resource-manager-uge.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/resource-manager-pbs.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/resource-manager-lsf.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/dev-code-organization.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/dashboard-devel.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
     <url>
         <loc>https://open.xdmod.org/11.0/rest.html</loc>
-        <lastmod>2024-10-25</lastmod>
+        <lastmod>2024-10-29</lastmod>
         <changefreq>monthly</changefreq>
         <priority>0.5</priority>
     </url>
