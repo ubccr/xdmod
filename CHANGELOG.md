@@ -1,6 +1,6 @@
 # Open XDMoD Change Log
 
-## 2024-09-11 v11.0.0
+## 2024-09-16 v11.0.0
 - Important Notes
     - Open XDMoD is now no longer bundled with libraries that have license restrictions for commercial or government use. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the license required from the Highcharts library. Please refer to the [license notices](https://open.xdmod.org/11.0/notices.html) for more information about the open source licenses bundled with Open XDMoD.
 
