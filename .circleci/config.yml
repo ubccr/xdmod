@@ -7,7 +7,7 @@ version: 2.1
 executors:
   rocky8: &rocky8-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod-10.5.0-x86_64:rockylinux8.5-0.3
+      - image: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.9.20231119-v11.0.0-1.0-01
 jobs:
   build:
     parameters:
@@ -31,19 +31,6 @@ jobs:
           name: Generate Certificate
           command: /usr/bin/openssl req -new -key /etc/pki/tls/private/localhost.key -x509 -sha256 -days 365 -set_serial $RANDOM -extensions v3_req -out /etc/pki/tls/certs/localhost.crt -subj "/C=XX/L=Default City/O=Default Company Ltd"
       - checkout
-      # We need to update our acct before we can enable docker layer caching
-      #- setup_remote_docker:
-      #    docker_layer_caching: true
-      # Download and cache dependencies
-      - run:
-          name: Update php module
-          command: dnf module -y reset php && dnf module -y enable php:7.4
-      - run:
-          name: Install PHP 7.4 and PHP module pre-reqs & an updated version of PHP Pear
-          command: dnf install -y php libzip-devel php-pear php-devel
-      - run:
-          name: Install MongoDB Pear module
-          command: yes '' | pecl install mongodb || true
       - run:
             name: install the composer dependencies
             command: composer install
