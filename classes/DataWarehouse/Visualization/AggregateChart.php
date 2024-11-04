@@ -949,6 +949,7 @@ class AggregateChart
                 $drillable = array();
                 $text = array();
                 $colors = array();
+                $notNullCount = 0;
 
                 // to display as pie chart:
                 if($data_description->display_type == 'pie')
@@ -975,6 +976,10 @@ class AggregateChart
                             'labels' => $xValues,
                             'values' => $yValues,
                         );
+
+                        if (!is_null($value)) {
+                            $notNullCount++;
+                        }
 
                     }
                     // Dont add data labels for all pie slices. Plotly will render all labels otherwise,
@@ -1016,6 +1021,11 @@ class AggregateChart
                             'id' => $yAxisDataObject->getXId($index),
                             'label' => $yAxisDataObject->getXValue($index)
                         );
+
+                        if (!is_null($value)) {
+                            $notNullCount++;
+                        }
+
                     }
                 }
 
@@ -1086,8 +1096,8 @@ class AggregateChart
                 $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
                 // Hide markers for 32 points or greater, except when there are multiple traces then hide markers starting at 21 points.
                 // Need check for chart types that this applies to otherwise bar, scatter, and pie charts will be hidden.
-                $hideMarker = in_array($data_description->display_type, array('line', 'spline', 'area', 'areaspline'))
-                    && ($values_count >= 32 || (count($yAxisObject->series) > 1 && $values_count >= 21));
+                $showMarker = in_array($data_description->display_type, array('line', 'spline', 'area', 'areaspline'))
+                    && ($values_count < 32 || (count($yAxisObject->series) === 1 && $values_count < 21) || $notNullCount === 1);
 
                 $trace = array_merge($trace, array(
                     'automargin'=> $data_description->display_type == 'pie' ? true : null,
@@ -1107,7 +1117,7 @@ class AggregateChart
                             'color' => $lineColor,
                         ),
                         'symbol' => $this->_symbolStyles[$data_description_index % 5],
-                        'opacity' => $hideMarker ? 0.0 : 1.0
+                        'opacity' => $showMarker ? 1.0 : 0.0
                     ),
                     'line' => array(
                         'color' => $data_description->display_type == 'pie' ?
