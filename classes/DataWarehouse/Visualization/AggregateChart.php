@@ -980,7 +980,6 @@ class AggregateChart
                         if (!is_null($value)) {
                             $notNullCount++;
                         }
-
                     }
                     // Dont add data labels for all pie slices. Plotly will render all labels otherwise,
                     // which causes the margin on pie charts with many slices to break
@@ -1025,7 +1024,6 @@ class AggregateChart
                         if (!is_null($value)) {
                             $notNullCount++;
                         }
-
                     }
                 }
 

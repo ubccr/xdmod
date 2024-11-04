@@ -574,7 +574,7 @@ class TimeseriesChart extends AggregateChart
 
                         $trace = array(
                             'name' => $lookupDataSeriesName,
-                            'customdata' => $y_values_count,
+                            'customdata' => $lookupDataSeriesName,
                             'otitle' => $formattedDataSeriesName,
                             'datasetId' => $data_description->id,
                             'zIndex' => $zIndex,
