@@ -95,6 +95,9 @@ class IngestorOptions extends aOptions
             // INFILE...REPLACE INTO instead.
             "force_load_data_infile_replace_into" => false,
 
+            // Character set override to use when loading data via a file.
+            "load_data_infile_character_set" => null,
+
             // Hide all SQL warnings returned by the database.
             "hide_sql_warnings" => false,
 
