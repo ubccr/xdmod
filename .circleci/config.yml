@@ -24,12 +24,6 @@ jobs:
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
     steps:
-      - run:
-          name: Generate OpenSSL Key
-          command: openssl genrsa -rand /proc/cpuinfo:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048 > /etc/pki/tls/private/localhost.key
-      - run:
-          name: Generate Certificate
-          command: /usr/bin/openssl req -new -key /etc/pki/tls/private/localhost.key -x509 -sha256 -days 365 -set_serial $RANDOM -extensions v3_req -out /etc/pki/tls/certs/localhost.crt -subj "/C=XX/L=Default City/O=Default Company Ltd"
       - checkout
       - run:
             name: install the composer dependencies
@@ -72,20 +66,25 @@ jobs:
       - run: ./tests/integration/runtests.sh --junit-output-dir ~/phpunit
       - run: ./tests/regression/post_ingest_test.sh --junit-output-dir ~/phpunit
       - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
-      - run: pushd $HOME && rm -f chromedriver_linux64.zip && wget https://chromedriver.storage.googleapis.com/106.0.5249.61/chromedriver_linux64.zip && popd
-      - run:
-          name: 'Bodge the nodejs version to run an older one for the webdriver tests'
-          command: |
-            curl https://nodejs.org/dist/v10.24.1/node-v10.24.1-linux-x64.tar.xz | tar -xJC /usr/local
-            chown root:root -R /usr/local/node-v10.24.1-linux-x64
-      - run: pushd ./tests/ui && PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH /usr/local/node-v10.24.1-linux-x64/bin/npm install && popd
-      - run: PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
+
+      # Commenting out the WebdriverIO tests since they require an outdated
+      # version of Chrome and will be replaced by Playwright.
+      #- run: pushd $HOME && rm -f chromedriver_linux64.zip && wget https://chromedriver.storage.googleapis.com/106.0.5249.61/chromedriver_linux64.zip && popd
+      #- run:
+      #    name: 'Bodge the nodejs version to run an older one for the webdriver tests'
+      #    command: |
+      #      curl https://nodejs.org/dist/v10.24.1/node-v10.24.1-linux-x64.tar.xz | tar -xJC /usr/local
+      #      chown root:root -R /usr/local/node-v10.24.1-linux-x64
+      #- run: pushd ./tests/ui && PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH /usr/local/node-v10.24.1-linux-x64/bin/npm install && popd
+      #- run: PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
 
       - run:
           name: 'Run SSO Tests'
           command: |
             PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ci/samlSetup.sh
-            PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
+            # Commenting out the WebdriverIO tests since they require an
+            # outdated version of Chrome and will be replaced by Playwright.
+            #PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
             ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - run:
           name: Ensure that no unexpected Apache errors were generated ( We expect PHP Deprecated )
