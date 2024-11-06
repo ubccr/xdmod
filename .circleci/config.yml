@@ -68,7 +68,7 @@ jobs:
       - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
       - run:
           name: 'Install Chrome'
-          command:
+          command: |
             pushd $HOME && \
             rm -rf chrome-linux && \
             wget -O chrome-linux.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F961656%2Fchrome-linux.zip?generation=1642723767466615&alt=media" && \
