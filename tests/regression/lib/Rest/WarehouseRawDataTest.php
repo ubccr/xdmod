@@ -30,11 +30,7 @@ class WarehouseRawDataTest extends BaseTest
      */
     public function testGetRawData($testName, $input)
     {
-        $this->assertTrue(self::$helper->checkRawData(
-            $testName,
-            $input,
-            true
-        ));
+        $this->assertTrue(self::$helper->checkRawData($testName, $input));
     }
 
     public function getRawDataProvider()
