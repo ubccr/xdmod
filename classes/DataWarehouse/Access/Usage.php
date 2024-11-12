@@ -833,7 +833,7 @@ class Usage extends Common
                     $chartSortedByValue
                 ) {
                     // Determine the type of this data series.
-                    $isPrimaryDataSeries = $meDataSeries['meta']['primarySeries'];
+                    $isPrimaryDataSeries = isset($meDataSeries['meta']['primarySeries']) && $meDataSeries['meta']['primarySeries'];
                     // If this is a primary data series, increment the rank of the
                     // current primary data series. Further, if this chart is
                     // a timeseries chart, it is sorted by value, and it is a
