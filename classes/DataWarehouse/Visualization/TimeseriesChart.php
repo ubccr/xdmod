@@ -899,6 +899,10 @@ class TimeseriesChart extends AggregateChart
                                 }
                                 $trendline_trace = array(
                                     'name' => $lookupDataSeriesName,
+                                    'meta' => array(
+                                        'primarySeries' => false,
+                                        'trendlineSeries' => true
+                                    ),
                                     'otitle' => $dsn,
                                     'zIndex' => $zIndex,
                                     'datasetId' => $data_description->id,
