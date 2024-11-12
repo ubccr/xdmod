@@ -829,7 +829,7 @@ class Usage extends Common
                     $meRequestMetric,
                     $usageGroupByObject,
                     $user,
-                    $chartSortedByValue,
+                    $chartSortedByValue
                 ) {
                     // Determine the type of this data series.
                     $isTrendLineSeries = \xd_utilities\string_begins_with($meDataSeries['name'], 'Trend Line: ');
@@ -847,7 +847,7 @@ class Usage extends Common
                             && $chartSortedByValue
                             && $usageGroupBy !== 'none'
                         ) {
-                            $rank = ceil(( $meDataSeries['legendrank'] / 2 ));
+                            $rank = $meDataSeries['legendrank'] / 2;
                             $meDataSeries['name'] = "${rank}. " . $meDataSeries['name'];
                         }
                     }
