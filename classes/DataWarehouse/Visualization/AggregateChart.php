@@ -744,7 +744,7 @@ class AggregateChart
 
         $yAxisArray = $this->setAxes($summarizeDataseries, $offset, $x_axis, $font_size);
         $yAxisCount = count($yAxisArray);
-        $legendRank = 1;
+        $legendRank = 0;
 
         // ------------ prepare to plot ------------
 
@@ -894,7 +894,7 @@ class AggregateChart
             // for each of the dataseries on this yAxisObject:
             foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
             {
-                $legendRank += 2;
+                $legendRank += 1;
                 $yAxisDataObject = $yAxisDataObjectAndDescription['yAxisDataObject']; // SimpleData object
                 $data_description = $yAxisDataObjectAndDescription['data_description'];
                 $decimals = $yAxisDataObjectAndDescription['decimals'];
