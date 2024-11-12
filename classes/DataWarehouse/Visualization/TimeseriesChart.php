@@ -575,6 +575,9 @@ class TimeseriesChart extends AggregateChart
 
                         $trace = array(
                             'name' => $lookupDataSeriesName,
+                            'meta' => array(
+                                'primarySeries' => true
+                            ),
                             'customdata' => $lookupDataSeriesName,
                             'otitle' => $formattedDataSeriesName,
                             'datasetId' => $data_description->id,
@@ -720,8 +723,14 @@ class TimeseriesChart extends AggregateChart
                         if($data_description->display_type!=='line')
                         {
                             if ($trace['type']=='area' && $traceIndex == 0) {
+                                // "Area fix" trace is needed to have the ~5% padding on the
+                                // left and right side of other plots. Otherwise the first and
+                                // last values will be directly up to the end of the plotting area.
                                 $hidden_trace = array(
                                     'name' => 'area fix',
+                                    'meta' => array(
+                                        'primarySeries' => false
+                                    ),
                                     'x' => $this->_swapXY ? array_fill(0, count($xValues), 0) : $xValues,
                                     'y' => $this->_swapXY ? $xValues : array_fill(0, count($xValues), 0),
                                     'zIndex' => 0,
@@ -781,6 +790,9 @@ class TimeseriesChart extends AggregateChart
                         if (in_array(null, $yValues) && $data_description->display_type == 'line') {
                             $null_trace = array(
                                 'name' => 'gap connector',
+                                'meta' => array(
+                                    'primarySeries' => false
+                                ),
                                 'zIndex' => $zIndex,
                                 'x' => $this->_swapXY ? $yValues : $xValues,
                                 'y' => $this->_swapXY ? $xValues : $yValues,
@@ -896,6 +908,9 @@ class TimeseriesChart extends AggregateChart
                                 }
                                 $trendline_trace = array(
                                     'name' => $lookupDataSeriesName,
+                                    'meta' => array(
+                                        'primarySeries' => false
+                                    ),
                                     'otitle' => $dsn,
                                     'zIndex' => $zIndex,
                                     'datasetId' => $data_description->id,

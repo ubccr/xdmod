@@ -1092,6 +1092,9 @@ class AggregateChart
                 $trace = array_merge($trace, array(
                     'automargin'=> $data_description->display_type == 'pie' ? true : null,
                     'name' => $lookupDataSeriesName,
+                    'meta' => array(
+                        'primarySeries' => true
+                    ),
                     'customdata' => $lookupDataSeriesName,
                     'zIndex' => $zIndex,
                     'cliponaxis' => false,
@@ -1154,8 +1157,14 @@ class AggregateChart
                 if($data_description->display_type!=='line')
                 {
                     if ($trace['type']=='area' && $data_description_index == 0) {
+                        // "Area fix" trace is needed to have the ~5% padding on the
+                        // left and right side of other plots. Otherwise the first and
+                        // last values will be directly up to the end of the plotting area.
                         $hidden_trace = array(
                             'name' => 'area fix',
+                            'meta' => array(
+                                'primarySeries' => false
+                            ),
                             'x' => $this->_swapXY ? array_fill(0, count($xValues), 0) : $xValues,
                             'y' => $this->_swapXY ? $xValues : array_fill(0, count($xValues), 0),
                             'showlegend' => false,
@@ -1283,6 +1292,9 @@ class AggregateChart
                 if (in_array(null, $yValues) && $data_description->display_type == 'line') {
                     $null_trace = array(
                         'name' => 'gap connector',
+                        'meta' => array(
+                            'primarySeries' => false
+                        ),
                         'zIndex' => $zIndex,
                         'x' => $this->_swapXY ? $yValues : $xValues,
                         'y' => $this->_swapXY ? $xValues : $yValues,
@@ -1448,6 +1460,9 @@ class AggregateChart
             // create the data series description:
             $error_trace = array_merge($trace, array(
                 'name' => $lookupDataSeriesName,
+                'meta' => array(
+                    'primarySeries' => false
+                ),
                 'otitle' => $dsn,
                 'datasetId' => $data_description->id,
                 'color'=> $error_color,
