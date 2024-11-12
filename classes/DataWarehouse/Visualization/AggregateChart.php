@@ -1455,7 +1455,7 @@ class AggregateChart
             $error_trace = array_merge($trace, array(
                 'name' => $lookupDataSeriesName,
                 'meta' => array(
-                    'primarySeries' => false,
+                    'primarySeries' => false
                 ),
                 'otitle' => $dsn,
                 'datasetId' => $data_description->id,
