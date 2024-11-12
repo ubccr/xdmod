@@ -815,8 +815,6 @@ class Usage extends Common
                     },
                     $drillTargets
                 );
-                // Trace Rankings for timeseries charts
-                $traceRank = 1;
                 // For each data series...
                 array_walk($meChart['data'], function (
                     &$meDataSeries,
@@ -832,7 +830,6 @@ class Usage extends Common
                     $usageGroupByObject,
                     $user,
                     $chartSortedByValue,
-                    &$traceRank
                 ) {
                     // Determine the type of this data series.
                     $isTrendLineSeries = \xd_utilities\string_begins_with($meDataSeries['name'], 'Trend Line: ');
@@ -850,8 +847,8 @@ class Usage extends Common
                             && $chartSortedByValue
                             && $usageGroupBy !== 'none'
                         ) {
-                            $meDataSeries['name'] = "${traceRank}. " . $meDataSeries['name'];
-                            $traceRank += 1;
+                            $rank = ceil(( $meDataSeries['legendrank'] / 2 ));
+                            $meDataSeries['name'] = "${rank}. " . $meDataSeries['name'];
                         }
                     }
 

@@ -149,7 +149,7 @@ class TimeseriesChart extends AggregateChart
         }
 
         $yAxisCount = count($yAxisArray);
-        $legendRank = 1;
+        $legendRank = 0;
         $globalFilterDescriptions = array();
 
         // ==== Big long effing loop ====
