@@ -468,7 +468,7 @@ class TimeseriesChart extends AggregateChart
                         // Hide markers for 32 points or greater, except when there are multiple traces then hide markers starting at 21 points.
                         // Need check for chart types that this applies to otherwise bar, scatter, and pie charts will be hidden.
                         $hideMarker = in_array($data_description->display_type, array('line', 'spline', 'area', 'areaspline'))
-                            && ($values_count >= 32 || (count($yAxisDataObjectsArray) > 1 && $values_count >= 21) || $y_values_count === 1);
+                            && ($values_count >= 32 || (count($yAxisDataObjectsArray) > 1 && $values_count >= 21) || $y_values_count > 1);
 
                         $isRemainder = $yAxisDataObject->getGroupId() === TimeseriesDataset::SUMMARY_GROUP_ID;
 
