@@ -36,7 +36,7 @@ jobs:
           command: docker exec xdmod dnf install -y php libzip-devel php-pear php-devel
       - run:
           name: Install MongoDB Pear module
-          command: docker exec xdmod /bin/bash -c 'yes '' | pecl install mongodb || true'
+          command: docker exec xdmod /bin/bash -c 'yes '' | pecl install mongodb-1.18.1 || true'
       - run:
           name: Generate Key for XDMoD
           command: docker exec xdmod openssl genrsa -out /etc/pki/tls/private/localhost.key -rand /proc/cpuinfo:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048
