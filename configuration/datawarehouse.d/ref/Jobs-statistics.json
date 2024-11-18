@@ -121,7 +121,7 @@
         "aggregate_formula": {
             "$include": "datawarehouse.d/include/Jobs-norm-avg-proc-agg.sql"
         },
-        "description_html": "The percentage average size ${ORGANIZATION_NAME} job over total machine cores.<br><i>Normalized Job Size: </i>The percentage total number of processor cores used by a (parallel) job over the total number of cores on the machine.",
+        "description_html": "The percentage average size ${ORGANIZATION_NAME} job divided by the total number of cores in the resource where the job ran. The job normalization calculation assumes that the resource size is constant. This statistic should not be used with a time range where the resource size changes, because the statistic will be incorrect.<br><i>Normalized Job Size: </i>The ratio of the total number of processor cores used by a (parallel) job over the total number of cores on the resource.",
         "name": "Job Size: Normalized",
         "precision": 1,
         "timeseries_formula": {
@@ -264,8 +264,8 @@
     },
     "utilization": {
       "aggregate_formula": "COALESCE((SUM(agg.cpu_time) / (SELECT SUM(rsa.allocated_cpu_core_time) FROM modw_aggregates.resourcespecsfact_by_${AGGREGATION_UNIT} AS rsa WHERE rsa.${AGGREGATION_UNIT}_id BETWEEN ${MIN_DATE_ID} AND ${MAX_DATE_ID} AND FIND_IN_SET(rsa.record_resource_id, GROUP_CONCAT(DISTINCT agg.task_resource_id)) <> 0)) * 100, 0)",
-      "description_html": "The percentage of core time that a resource has been running jobs.<br/><i> ${ORGANIZATION_NAME} Utilization:</i> The ratio of the total CPU hours consumed by jobs over a given time period divided by the maximum CPU hours that the system could deliver (based on the number of cores present on the resource and the percent of the resource allocated through ${ORGANIZATION_NAME}). This value does not take into account downtimes or outages. It is just calculated based on the number of cores in the resource specifications.",
-      "name": "${ORGANIZATION_NAME} Utilization",
+      "description_html": "The percentage of core time that a resource has been running jobs.<br/><i> ${ORGANIZATION_NAME} CPU Utilization:</i> The ratio of the total CPU hours consumed by jobs over a given time period divided by the maximum CPU hours that the system could deliver (based on the number of cores present on the resource and the percent of the resource allocated through ${ORGANIZATION_NAME}). This value does not take into account downtimes or outages. It is just calculated based on the number of cores in the resource specifications.",
+      "name": "${ORGANIZATION_NAME} CPU Utilization",
       "precision": 2,
       "timeseries_formula": "COALESCE((SUM(agg.cpu_time) / (SELECT SUM(rsa.allocated_cpu_core_time) FROM modw_aggregates.resourcespecsfact_by_${AGGREGATION_UNIT} AS rsa WHERE rsa.${AGGREGATION_UNIT}_id = agg.${AGGREGATION_UNIT}_id AND FIND_IN_SET(rsa.record_resource_id, GROUP_CONCAT(DISTINCT agg.task_resource_id)) <> 0)) * 100, 0)",
       "unit": "%"

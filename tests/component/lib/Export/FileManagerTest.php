@@ -33,9 +33,9 @@ class FileManagerTest extends BaseTest
     /**
      * Create file manager and test data.
      */
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
         self::$fileManager = new FileManager();
         self::$exportDir = xd_utilities\getConfiguration(
             'data_warehouse_export',
@@ -54,12 +54,12 @@ class FileManagerTest extends BaseTest
     public function testGetExportDataFilePath($id)
     {
         $path = self::$fileManager->getExportDataFilePath($id);
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             sprintf('/^%s/', preg_quote(self::$exportDir, '/')),
             $path,
             'Path begins with export directory'
         );
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             sprintf('/\b%s\b/', preg_quote($id, '/')),
             $path,
             'Path contains ID'
@@ -75,22 +75,22 @@ class FileManagerTest extends BaseTest
     public function testGetDataFileName(array $request)
     {
         $file = self::$fileManager->getDataFileName($request);
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             sprintf('/\b%s\b/', preg_quote($request['realm'], '/')),
             $file,
             'File name contains realm name'
         );
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             sprintf('/\b%s\b/', preg_quote($request['start_date'], '/')),
             $file,
             'File name contains start date'
         );
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             sprintf('/\b%s\b/', preg_quote($request['end_date'], '/')),
             $file,
             'File name contains end date'
         );
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             sprintf(
                 '/\.%s$/',
                 preg_quote(strtolower($request['export_file_format']), '/')
@@ -109,22 +109,22 @@ class FileManagerTest extends BaseTest
     public function testGetZipFileName(array $request)
     {
         $file = self::$fileManager->getZipFileName($request);
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             sprintf('/\b%s\b/', preg_quote($request['realm'], '/')),
             $file,
             'File name contains realm name'
         );
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             sprintf('/\b%s\b/', preg_quote($request['start_date'], '/')),
             $file,
             'File name contains start date'
         );
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             sprintf('/\b%s\b/', preg_quote($request['end_date'], '/')),
             $file,
             'File name contains end date'
         );
-        $this->assertRegExp(
+        $this->assertMatchesRegularExpression(
             '/\.zip$/',
             $file,
             'File name ends with correct extension'
@@ -141,17 +141,18 @@ class FileManagerTest extends BaseTest
     {
         $dataSet = $this->getMockBuilder('\DataWarehouse\Data\BatchDataset')
             ->disableOriginalConstructor()
-            ->setMethods(['getHeader', 'current', 'key', 'next', 'rewind', 'valid'])
+            ->onlyMethods(['getHeader', 'current', 'key', 'next', 'rewind', 'valid'])
             ->getMock();
         $dataSet->method('getHeader')->willReturn(['heading1', 'heading2', 'heading3']);
         $dataSet->method('current')
          ->will($this->onConsecutiveCalls([0, 1, 2], ['a', 'b', 'c'], false));
         $dataSet->method('key')
          ->will($this->onConsecutiveCalls(1, 2, false));
-        $dataSet->method('next')->willReturn(null);
-        $dataSet->method('rewind')->willReturn(null);
         $dataSet->method('valid')
          ->will($this->onConsecutiveCalls(true, true, false));
+        $dataSet->method('next')->willReturn(null);
+        $dataSet->method('rewind')->willReturn(null);
+
 
         $format = $request['export_file_format'];
         $file = self::$fileManager->writeDataSetToFile($dataSet, $format);
@@ -212,7 +213,7 @@ class FileManagerTest extends BaseTest
         $file = self::$fileManager->getExportDataFilePath($request['id']);
         $this->assertFileExists($file);
         self::$fileManager->removeExportFile($request['id']);
-        $this->assertFileNotExists($file);
+        $this->assertFileDoesNotExist($file);
     }
 
     /**
@@ -233,7 +234,7 @@ class FileManagerTest extends BaseTest
         self::$fileManager->removeDeletedRequests($deletedRequestIds);
         foreach ($deletedRequestIds as $id) {
             $file = self::$fileManager->getExportDataFilePath($id);
-            $this->assertFileNotExists($file);
+            $this->assertFileDoesNotExist($file);
         }
         foreach ($availableRequestIds as $id) {
             $file = self::$fileManager->getExportDataFilePath($id);

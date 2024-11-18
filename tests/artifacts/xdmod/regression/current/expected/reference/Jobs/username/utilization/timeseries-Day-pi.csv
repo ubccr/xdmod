@@ -1,12 +1,12 @@
 title
-"Screwdriver Utilization (%): by System Username"
+"Screwdriver CPU Utilization (%): by System Username"
 parameters
 
 "*Restricted To: PI = Tern, C OR User = Tern, C"
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[ovenb] Screwdriver Utilization (%)","[swath] Screwdriver Utilization (%)","[ybsbu] Screwdriver Utilization (%)","[sante] Screwdriver Utilization (%)","[litst] Screwdriver Utilization (%)","[savsp] Screwdriver Utilization (%)"
+Day,"[ovenb] Screwdriver CPU Utilization (%)","[swath] Screwdriver CPU Utilization (%)","[ybsbu] Screwdriver CPU Utilization (%)","[sante] Screwdriver CPU Utilization (%)","[litst] Screwdriver CPU Utilization (%)","[savsp] Screwdriver CPU Utilization (%)"
 2016-12-23,0,0,0,0.0090,0,0
 2016-12-24,0,0,0,0.0250,0,0
 2016-12-25,0,0,0,0.0250,0,0

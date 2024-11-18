@@ -60,7 +60,7 @@ then
     chown -R mysql:mysql /var/log/mariadb
     chown -R mysql:mysql /var/run/mariadb
 
-    yum -y install ~/rpmbuild/RPMS/*/*.rpm
+    dnf install -y ~/rpmbuild/RPMS/*/*.rpm
     mysql_install_db --user mysql
 
     if [ -f /etc/my.cnf.d/mariadb-server.cnf.rpmsave ]; then
@@ -160,7 +160,8 @@ fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
-    yum -y install ~/rpmbuild/RPMS/*/*.rpm
+    # Install the newly built RPM.
+    dnf -y install ~/rpmbuild/RPMS/*/*.rpm
 
     copy_template_httpd_conf
     sed -i 's#http://localhost:8080#https://localhost#' /etc/xdmod/portal_settings.ini

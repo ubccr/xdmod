@@ -5,7 +5,8 @@
  * @return {String} s - Subtitle text
  * @return {Integer} wrapWidth - word wrap boundary
  */
-function lineSplit(s, wrapWidth) { // eslint-disable-line no-unused-vars
+/* exported lineSplit */
+function lineSplit(s, wrapWidth) {
     return s.match(new RegExp(`([^\\n]{1,${wrapWidth}})(?=\\s|$)`, 'g'));
 }
 /**
@@ -13,7 +14,8 @@ function lineSplit(s, wrapWidth) { // eslint-disable-line no-unused-vars
  *
  * @return {Object} errorLayout - Plotly JS layout configuration
  */
-function getNoDataErrorConfig() { // eslint-disable-line no-unused-vars
+/* exported getNoDataErrorConfig */
+function getNoDataErrorConfig() {
     const errorLayout = {
         images: [
             {
@@ -52,19 +54,19 @@ function getNoDataErrorConfig() { // eslint-disable-line no-unused-vars
  * @param  {Object} Record containing chart data
  *
  */
-function generateChartOptions(record, params) { // eslint-disable-line no-unused-vars
-    var args = params || {};
+/* exported generateChartOptions */
+function generateChartOptions(record, params = null) {
     var colors = ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970',
         '#f28f43', '#77a1e5', '#c42525', '#a6c96a'];
     var mainTitleFontSize = 16;
     var axisLabelFontSize = 11;
     var axisTitleFontSize = 12;
     var lineWidth = 2;
-    if (args) {
-        mainTitleFontSize = args.mainTitleFontSize;
-        axisLabelFontSize = args.axisLabelFontSize;
-        axisTitleFontSize = args.axisTitleFontSize;
-        lineWidth = args.lineWidth;
+    if (params) {
+        mainTitleFontSize = params.mainTitleFontSize;
+        axisLabelFontSize = params.axisLabelFontSize;
+        axisTitleFontSize = params.axisTitleFontSize;
+        lineWidth = params.lineWidth;
     }
     var data = [];
     var isEnvelope = false;
@@ -124,6 +126,24 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
             trace.marker.size = 20;
             trace.mode = 'markers';
             delete trace.line;
+        }
+
+        if (y.includes(null)) {
+            data.push({
+                name: 'null connector',
+                line: {
+                    color: color,
+                    dash: 'dash',
+                    width: lineWidth
+                },
+                mode: 'lines',
+                type: 'scatter',
+                connectgaps: true,
+                hoverinfo: 'skip',
+                showlegend: false,
+                x: x,
+                y: y
+            });
         }
 
         data.push(trace);
@@ -216,14 +236,15 @@ function generateChartOptions(record, params) { // eslint-disable-line no-unused
     return { data, layout };
 }
 /**
- * Returns array of axis layout keys for the axis that represents
- * the range of the data
+ * Returns the point clicked on in a chart click event.
+ * Needed to determine which point was clicked for unified hovermode.
  *
  * @param  {Object} clickEvent - Plotly JS click event object.
  * @param  {Array} traceDivs - Array of chart series svg elements
  * @return {Object} point from Plotly JS click event
  */
-function getClickedPoint(evt, traces) { // eslint-disable-line no-unused-vars
+/* exported getClickedPoint */
+function getClickedPoint(evt, traces) {
     if ((traces && traces.length === 0) || (evt.points && evt.points.length === 0)) {
         return null;
     }
@@ -257,7 +278,8 @@ function getClickedPoint(evt, traces) { // eslint-disable-line no-unused-vars
  * @param  {Object} layout - Plotly JS layout configuration object.
  * @return {Array} multiAxes - Array of Plotly JS layout keys
  */
-function getMultiAxisObjects(layout) { // eslint-disable-line no-unused-vars
+/* exported getMultiAxisObjects */
+function getMultiAxisObjects(layout) {
     const multiAxes = [];
     const layoutKeys = Object.keys(layout);
     const axisKeyStart = (layout.swapXY ? 'x' : 'y') + 'axis';
@@ -292,7 +314,7 @@ function isTopLegend(layout) {
  * @param  {Boolean} firstRender - Indicates if is initial render or resize event
  * @return {Object} update - Contains Plotly JS relayout updates and subtitle line count
  */
-function adjustSubtitle(layout, subtitleIndex, legendTopCenter, firstRender) { // eslint-disable-line no-unused-vars
+function adjustSubtitle(layout, subtitleIndex, legendTopCenter, firstRender) {
     let prevLineCount = layout.annotations[1].text.match(/<br \/>/g);
     if (prevLineCount) {
         prevLineCount = prevLineCount.length;
@@ -330,7 +352,8 @@ function adjustSubtitle(layout, subtitleIndex, legendTopCenter, firstRender) { /
  * @param  {Boolean} firstRender - Indicates if is initial render or resize event
  * @return {Object} update - Layout object passed to Plotly.relayout
  */
-function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = false) { // eslint-disable-line no-unused-vars
+/* exported relayoutChart */
+function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = false) {
     let update = {};
     if (chartDiv._fullLayout.annotations.length > 0) {
         const topCenter = isTopLegend(chartDiv._fullLayout);
@@ -418,6 +441,14 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
 
         marginTop += extraShift;
 
+        if ((titleIndex === -1 || chartDiv._fullLayout.annotations[titleIndex].text.length === 0) && subtitleUpdates.subtitleLineCount === 0) {
+            if (topCenter) {
+                update['legend.y'] = 1.0;
+            } else {
+                update['margin.t'] = 10;
+            }
+        }
+
         const titleYShift = (marginTop + legendHeight) - titleHeight;
 
         if (titleIndex !== -1) {
@@ -441,8 +472,8 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
             update[`annotations[${creditsIndex}].xshift`] = marginRight - pieChartXShift - exportShift;
         }
         if (restrictedIndex !== -1) {
-           update[`annotations[${restrictedIndex}].yshift`] = shiftYDown;
-           update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift - exportShift) * -1;
+            update[`annotations[${restrictedIndex}].yshift`] = shiftYDown;
+            update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift - exportShift) * -1;
         }
     }
     return update;
@@ -455,7 +486,8 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
  *
  * @param  {Object} chartDiv - Plotly JS chart div.
  */
-function overrideLegendEvent(chartDiv) { // eslint-disable-line no-unused-vars
+/* exported overrideLegendEvent */
+function overrideLegendEvent(chartDiv) {
     chartDiv.on('plotly_legendclick', (evt) => {
         // First check if all traces are hidden.
         // There is a bug with tick text manually set.
@@ -463,7 +495,7 @@ function overrideLegendEvent(chartDiv) { // eslint-disable-line no-unused-vars
         const visibleData = evt.fullData.filter((trace) => trace.name !== 'gap connector' && trace.name !== 'area fix' && trace.visible === true);
         const axis = (evt.layout.swapXY ? 'y' : 'x') + 'axis';
         let tickType;
-        if (evt.layout[axis].type === 'date') {
+        if (evt.layout[axis].timeseries) {
             if (
                 (
                     evt.layout[axis].dtick === CCR.xdmod.ui.dtickDay
@@ -475,10 +507,10 @@ function overrideLegendEvent(chartDiv) { // eslint-disable-line no-unused-vars
             ) {
                 tickType = 'auto';
             } else {
-                tickType = 'date';
+                tickType = 'linear';
             }
         } else {
-            tickType = 'category';
+            tickType = 'array';
         }
         Plotly.relayout(chartDiv, { [`${axis}.tickmode`]: tickType });
 

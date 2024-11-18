@@ -29,6 +29,18 @@ jobs:
           name: Docker Compose corresponding OS file
           command: docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
       - run:
+          name: Update php module
+          command: dnf module -y reset php && dnf module -y enable php:7.4
+      - run:
+          name: Install PHP 7.4 and PHP module pre-reqs & an updated version of PHP Pear
+          command: dnf install -y php libzip-devel php-pear php-devel
+      - run:
+          name: Install MongoDB Pear module
+          command: yes '' | pecl install mongodb || true
+      - run:
+          name: install the composer dependencies
+          command: composer install
+      - run:
           name: Generate Key for XDMoD
           command: docker exec xdmod openssl genrsa -out /etc/pki/tls/private/localhost.key -rand /proc/cpuinfo:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048
       - run:

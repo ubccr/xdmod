@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Department"
+"Screwdriver CPU Utilization (%): by Department"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Department,"Screwdriver Utilization (%)"
+Department,"Screwdriver CPU Utilization (%)"
 "Electrical and Communication Systems",0.2312
 "Microelectronic Information Processing Systems",0.2013
 Chemistry,0.1304

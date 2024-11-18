@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Resource"
+"Screwdriver CPU Utilization (%): by Resource"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[robertson] Screwdriver Utilization (%)","[frearson] Screwdriver Utilization (%)","[mortorq] Screwdriver Utilization (%)","[pozidriv] Screwdriver Utilization (%)","[phillips] Screwdriver Utilization (%)"
+Quarter,"[robertson] Screwdriver CPU Utilization (%)","[frearson] Screwdriver CPU Utilization (%)","[mortorq] Screwdriver CPU Utilization (%)","[pozidriv] Screwdriver CPU Utilization (%)","[phillips] Screwdriver CPU Utilization (%)"
 "2016 Q4",21.6673,43.9171,11.7551,6.2745,1.0411
 "2017 Q1",0.5310,0.0793,0.1106,0.0663,0.0205
 ---------

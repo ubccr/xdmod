@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by User"
+"Screwdriver CPU Utilization (%): by User"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-User,"Screwdriver Utilization (%)"
+User,"Screwdriver CPU Utilization (%)"
 "Pipit, Meadow",1.3871
 "Scaup, Lesser",1.3011
 Moorhen,0.6345

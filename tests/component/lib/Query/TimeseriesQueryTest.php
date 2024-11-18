@@ -9,12 +9,12 @@ namespace ComponentTests\Query;
 use CCR\Log as Logger;
 use DataWarehouse\Query\AggregateQuery;
 
-class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
+class TimeseriesQueryTest extends \PHPUnit\Framework\TestCase
 {
 
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 

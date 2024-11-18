@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by GPU Count"
+"Screwdriver CPU Utilization (%): by GPU Count"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[0] Screwdriver Utilization (%)","[2] Screwdriver Utilization (%)"
+Day,"[0] Screwdriver CPU Utilization (%)","[2] Screwdriver CPU Utilization (%)"
 2016-12-22,0.2118,0.2093
 2016-12-23,0.3090,0.3000
 2016-12-24,0.3250,0.3000

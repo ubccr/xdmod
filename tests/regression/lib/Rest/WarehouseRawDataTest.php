@@ -18,7 +18,7 @@ class WarehouseRawDataTest extends BaseTest
     /**
      * Create the helper.
      */
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         self::$helper = new RegressionTestHelper();
     }

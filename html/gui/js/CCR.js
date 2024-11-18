@@ -687,6 +687,13 @@ XDMoD.utils.format = {
     }
 };
 
+// Taken from: https://github.com/HubSpot/YouMightNotNeedjQuery, which
+// is available under the MIT license.
+// Recommended by @versable on https://github.com/ubccr/xdmod/pull/1542
+XDMoD.utils.deepExtend = function extend(out, ...arguments_) {
+  return jQuery.extend(true, out, ...arguments_);
+};
+
 // =====================================================================
 
 Ext.Ajax.timeout = 86400000;

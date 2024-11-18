@@ -54,6 +54,13 @@ class WebServerLogFile extends aStructuredFile implements iStructuredFile
         $this->web_parser->addPattern('%u', '(?P<user>(?:-|[\w\-\.@]+))');
 
         if (isset($options->log_format)) {
+            // Replace `%r` with `%m %U %H` so the request method, URL, and
+            // protocol can be parsed separately.
+            $options->log_format = str_replace(
+                '%r',
+                '%m %U %H',
+                $options->log_format
+            );
             $this->web_parser->setFormat($options->log_format);
         }
 
@@ -83,9 +90,9 @@ class WebServerLogFile extends aStructuredFile implements iStructuredFile
                 $result->{"country"} = $geoip->country->isoCode;
             }
             catch (\GeoIp2\Exception\AddressNotFoundException $e) {
-                $result->{"city"} = 'unknown';
-                $result->{"subdivision"} = 'unknown';
-                $result->{"country"} = 'unknown';
+                $result->{"city"} = 'NA';
+                $result->{"subdivision"} = 'NA';
+                $result->{"country"} = 'NA';
             }
             catch (\InvalidArgumentException $e) {
                 // leave at the default value of 'N/A'

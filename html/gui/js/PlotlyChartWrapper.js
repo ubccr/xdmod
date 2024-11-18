@@ -17,7 +17,7 @@ Ext.namespace('XDMoD.utils');
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     const baseChartOptions = {};
     const configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500 };
-    jQuery.extend(true, baseChartOptions, chartOptions);
+    XDMoD.utils.deepExtend(baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
 
     // Configure plot for 'No Data' image. We want to wipe the layout object except for a couple things
@@ -48,6 +48,10 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     } else {
         if (baseChartOptions.metricExplorer) {
             configs.showTips = false;
+            // Check for empty custom titles. If so make sure title is empty string
+            if (!baseChartOptions.layout.annotations[0].text) {
+                baseChartOptions.layout.annotations[0].text = '';
+            }
         }
 
         if (baseChartOptions.data[0].type === 'pie') {
@@ -59,7 +63,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
 
         // Remove titles and credits from thumbnail plots
-        if (baseChartOptions.layout.thumbnail) {
+        if (baseChartOptions.realmOverview) {
             const endIndex = baseChartOptions.layout.annotations.findIndex((elem) => elem.name === 'data_label');
             if (endIndex === -1) {
                 baseChartOptions.layout.annotations = [];
@@ -68,12 +72,16 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
         // Set tickmode to auto for thumbnail plots. Large amount of tick labels for thumbnail plots cause them
         // to lag.
-        if (baseChartOptions.layout.thumbnail && baseChartOptions.layout.xaxis.type !== 'category') {
+        if (baseChartOptions.layout.thumbnail) {
             const axesLabels = getMultiAxisObjects(baseChartOptions.layout);
             if (baseChartOptions.swapXY) {
-                baseChartOptions.layout.yaxis.nticks = 5;
-            } else {
+                if (baseChartOptions.layout.yaxis.timeseries) {
+                    baseChartOptions.layout.yaxis.nticks = 5;
+                    baseChartOptions.layout.yaxis.tickangle = -90;
+                }
+            } else if (baseChartOptions.layout.xaxis.timeseries) {
                 baseChartOptions.layout.xaxis.nticks = 5;
+                baseChartOptions.layout.xaxis.tickangle = -90;
             }
             for (let i = 0; i < axesLabels.length; i++) {
                 baseChartOptions.layout[axesLabels[i]].nticks = 5;

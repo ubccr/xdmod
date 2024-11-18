@@ -12,12 +12,8 @@ BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}__PRERELEASE__-%{relea
 BuildArch:     noarch
 BuildRequires: php-cli
 Requires:      httpd mod_ssl
-%{?el8:Requires: mariadb >= 10.3.17}
-%{?el8:Requires: php >= 7.2 php-cli php-mysqlnd php-pdo php-gd php-xml php-mbstring php-zip php-posix}
-%{?el8:Requires: php-pecl-apcu php-json}
-%{?el7:Requires: mariadb >= 5.5.3}
-%{?el7:Requires: php >= 5.4 php-cli php-mysql php-pdo php-gd php-xml php-mbstring}
-%{?el7:Requires: php-pecl-apcu}
+Requires:      php >= 7.4 php-cli php-mysqlnd php-pdo php-gd php-xml php-mbstring php-zip php-posix
+Requires:      php-pecl-apcu php-json
 Requires:      libreoffice-writer
 Requires:      chromium-headless >= 111
 Requires:      librsvg2-tools
@@ -101,6 +97,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0570,apache,xdmod) %{xdmod_export_dir}
 
 %changelog
+* Mon Sep 16 2024 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 11.0.0-1.0
+    - Release 11.0.0
+    - Update `php` dependencies for PHP 7.4
 * Mon Sep 11 2023 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 10.5.0-1.0
     - Release 10.5.0
     - Add support for checking rpm install state in check-config

@@ -617,6 +617,7 @@ class AggregateChart
             'spikethickness' => 1,
             'spikecolor' => '#c0c0c0',
             'standoff' => 25,
+            'timeseries' => false,
             'categoryarray' => $this->_xAxisDataObject->getValues()
         );
 
@@ -1083,6 +1084,10 @@ class AggregateChart
                 }
 
                 $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
+                // Hide markers for 32 points or greater, except when there are multiple traces then hide markers starting at 21 points.
+                // Need check for chart types that this applies to otherwise bar, scatter, and pie charts will be hidden.
+                $hideMarker = in_array($data_description->display_type, array('line', 'spline', 'area', 'areaspline'))
+                    && ($values_count >= 32 || (count($yAxisObject->series) > 1 && $values_count >= 21));
 
                 $trace = array_merge($trace, array(
                     'automargin'=> $data_description->display_type == 'pie' ? true : null,
@@ -1102,6 +1107,7 @@ class AggregateChart
                             'color' => $lineColor,
                         ),
                         'symbol' => $this->_symbolStyles[$data_description_index % 5],
+                        'opacity' => $hideMarker ? 0.0 : 1.0
                     ),
                     'line' => array(
                         'color' => $data_description->display_type == 'pie' ?
@@ -1129,7 +1135,7 @@ class AggregateChart
                     'y' => $this->_swapXY ? $xValues : $yValues,
                     'drillable' => $drillable,
                     'yaxis' => "y{$yIndex}",
-                    'offsetgroup' => "y{$yIndex}",
+                    'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$legendRank}",
                     'legendgroup' => $data_description_index,
                     'legendrank' => $legendRank - 1,
                     'traceorder' => $legendRank,
@@ -1199,12 +1205,10 @@ class AggregateChart
                     {
                         $trace['stackgroup'] = 'one';
                         $this->_chart['layout']['barmode'] = 'stack';
-                        $trace['stackgaps'] = 'interpolate'; //connect nulls
                     }
                     elseif($data_description->combine_type=='percent' && !$data_description->log_scale)
                     {
                         $trace['stackgroup'] = 'one';
-                        $trace['stackgaps'] = 'interpolate';
                         $trace['groupnorm'] = 'percent';
                         if ($trace['type'] == 'bar') {
                             $this->_chart['layout']['barmode'] = 'stack';
@@ -1231,7 +1235,7 @@ class AggregateChart
                     $trace['xaxis'] = "x{$yIndex}";
 
                     if (!$swapXYDone) {
-                        $xtmp = $this->_chart['layout']["{$xAxisName}"];
+                        $xtmp = $this->_chart['layout']['xaxis'];
                         $ytmp = $this->_chart['layout']["{$yAxisName}"];
                         $this->_chart['layout']['yaxis'] = $xtmp;
                         $this->_chart['layout']["{$xAxisName}"] = $ytmp;
@@ -1553,7 +1557,7 @@ class AggregateChart
             'bgcolor' => '#DFDFDF',
             'showarrow' => false,
             'x' => 0.0,
-            'y' => 1.0,
+            'y' => 0.0,
         );
     }
 

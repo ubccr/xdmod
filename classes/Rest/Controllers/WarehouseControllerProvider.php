@@ -2108,26 +2108,28 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *
      * It can also contain the following optional parameters:
      * - fields: list of aliases of fields to get (if not provided, all
-     *           fields are gotten).
+     *           fields are obtained).
      * - filters: mapping of dimension names to their possible values.
      *            Results will only be included whose values for each of the
      *            given dimensions match one of the corresponding given values.
      * - offset: starting row index of data to get.
      *
-     * If successful, the response will include the following keys:
-     * - success: true.
-     * - fields: array containing the 'display' property of each field gotten.
-     * - data: array of arrays containing the field values gotten.
+     * If successful, the response will be a JSON text sequence. The first line
+     * will be an array containing the `display` property of each obtained
+     * field. Subsequent lines will be arrays containing the obtained field
+     * values for each record.
      *
      * @param Request $request
      * @param Application $app
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @return \Symfony\Component\HttpFoundation\StreamedResponse
      * @throws BadRequestHttpException if any of the required parameters are
      *                                 not included; if an invalid start date,
      *                                 end date, realm, field alias, or filter
      *                                 key is provided; if the end date is
      *                                 before the start date; or if the offset
      *                                 is negative.
+     * @throws AccessDeniedException if the user does not have permission to
+     *                               get raw data from the requested realm.
      */
     public function getRawData(Request $request, Application $app)
     {
@@ -2145,7 +2147,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $reachedOffset = false;
             $i = 1;
             $offset = $params['offset'];
-            $echoedFirstRow = false;
             // Jobs realm has a performance improvement by querying one day at
             // a time.
             if ('Jobs' === $params['realm']) {
@@ -2162,8 +2163,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                         $logger,
                         $reachedOffset,
                         $i,
-                        $offset,
-                        $echoedFirstRow
+                        $offset
                     );
                     $currentDate = date(
                         'Y-m-d',
@@ -2184,15 +2184,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
                     $logger,
                     $reachedOffset,
                     $i,
-                    $offset,
-                    $echoedFirstRow
+                    $offset
                 );
             }
         };
         return $app->stream(
             $streamCallback,
             200,
-            ['Content-Type' => 'application/json']
+            ['Content-Type' => 'application/json-seq']
         );
     }
 
@@ -2204,6 +2203,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param XDUser $user
      * @return array of validated parameter values.
      * @throws BadRequestHttpException if any of the parameters are invalid.
+     * @throws AccessDeniedException if the user does not have permission to
+     *                               get raw data from the requested realm.
      */
     private function validateRawDataParams($request, $user)
     {
@@ -2212,9 +2213,27 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $params['start_date'], $params['end_date']
         ) = $this->validateRawDataDateParams($request);
         $params['realm'] = $this->getStringParam($request, 'realm', true);
+        $allRealmNames = self::getRealmNames(Realms::getRealms());
+        if (!in_array($params['realm'], $allRealmNames)) {
+            throw new BadRequestHttpException(
+                'No realm exists with the requested name.'
+            );
+        }
+        $realmManager = new RealmManager();
+        $allBatchExportRealms = self::getRealmNames(
+            $realmManager->getRealms()
+        );
+        if (!in_array($params['realm'], $allBatchExportRealms)) {
+            throw new BadRequestHttpException(
+                'The requested realm is not configured to provide raw data.'
+            );
+        }
         $queryDescripters = Acls::getQueryDescripters($user, $params['realm']);
         if (empty($queryDescripters)) {
-            throw new BadRequestHttpException('Invalid realm.');
+            throw new AccessDeniedException(
+                'Your user account does not have permission to get raw data'
+                . ' from the requested realm.'
+            );
         }
         $params['fields'] = $this->getRawDataFieldsArray($request);
         $params['filters'] = $this->validateRawDataFiltersParams(
@@ -2246,15 +2265,14 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Perform an unbuffered database query and echo the result as JSON, flushing every 10000 rows.
+     * Perform an unbuffered database query and echo the result as a JSON text sequence, flushing every 10000 rows.
      *
      * @param string $queryClass the fully qualified name of the query class.
      * @param string $startDate the start date of the query in ISO 8601 format.
      * @param string $endDate the end date of the query in ISO 8601 format.
-     * @param bool $isFirstQueryInSeries if true, echo the JSON prolog before echoing the data. Otherwise, just echo
-     *                                   the data.
-     * @param bool $isLastQueryInSeries if true, echo the JSON epilog after echoing the data. Otherwise, just echo
-     *                                  the data.
+     * @param bool $isFirstQueryInSeries if true, echo an array with the `display` header of each field before
+     *                                   echoing the data.
+     * @param bool $isLastQueryInSeries if true, switch back to MySQL buffered query mode after echoing the last row.
      * @param array $params validated parameter values from @see validateRawDataParams().
      * @param XDUser $user the user making the request.
      * @param \CCR\Logger $logger used to log the database request.
@@ -2264,8 +2282,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param int $i the number of rows iterated so far plus one — used to keep track of whether the offset has been
      *               reached and when to flush.
      * @param int $offset the number of rows to ignore before echoing.
-     * @param bool $echoedFirstRow if true, the first row has already been echoed, so echo a comma before the next
-     *                             one. Otherwise, don't echo the comma.
      * @return null
      * @throws Exception if $startDate or $endDate are invalid ISO 8601 dates, if there is an error connecting to
      *                   or querying the database, or if invalid fields have been specified in the query parameters.
@@ -2281,8 +2297,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $logger,
         &$reachedOffset,
         &$i,
-        &$offset,
-        &$echoedFirstRow
+        &$offset
     ) {
         $query = new $queryClass(
             [
@@ -2301,19 +2316,12 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $pdo = DB::factory($query->_db_profile)->handle();
         if ($isFirstQueryInSeries) {
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
-            echo '{"success":true,"fields":'
-                . json_encode($dataset->getHeader())
-                . ',"data":[';
+            echo "\036" . json_encode($dataset->getHeader()) . "\n";
         }
         foreach ($dataset as $row) {
             if ($reachedOffset || $i > $offset) {
                 $reachedOffset = true;
-                if ($echoedFirstRow) {
-                    echo ',';
-                }
-                echo "\n";
-                echo json_encode($row);
-                $echoedFirstRow = true;
+                echo "\036" . json_encode($row) . "\n";
             }
             if (10000 === $i) {
                 ob_flush();
@@ -2326,7 +2334,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $i++;
         }
         if ($isLastQueryInSeries) {
-            echo ']}';
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         }
     }
@@ -2339,7 +2346,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @param \DataWarehouse\Query\RawQuery $query
      * @param \CCR\Logger
      * @return BatchDataset
-     * @throws Exception if the 'fields' parameter contains invalid field
+     * @throws Exception if the `fields` parameter contains invalid field
      *                   aliases.
      */
     private function getRawBatchDataset(
@@ -2366,7 +2373,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Validate the 'start_date' and 'end_date' parameters of the given request
+     * Validate the `start_date` and `end_date` parameters of the given request
      * to the raw data endpoint (@see getRawData()).
      *
      * @param Request $request
@@ -2398,9 +2405,25 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
+     * Given an array of realms, return an array of just the names of the
+     * realms. Used for request parameter validation.
+     *
+     * @param array $realms array of Realm\Realm objects.
+     * @return array of string realm names.
+     */
+    private static function getRealmNames(array $realms) {
+        return array_map(
+            function ($realm) {
+                return $realm->getName();
+            },
+            $realms
+        );
+    }
+
+    /**
      * Get the array of field aliases from the given request to the raw data
-     * endpoint (@see getRawData()), e.g., the parameter 'fields=foo,bar,baz'
-     * results in ['foo', 'bar', 'baz'].
+     * endpoint (@see getRawData()), e.g., the parameter `fields=foo,bar,baz`
+     * results in `['foo', 'bar', 'baz']`.
      *
      * @param Request $request
      * @return array|null containing the field aliases parsed from the request,
@@ -2417,9 +2440,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Validate the optional 'filters' parameter of the given request to the
+     * Validate the optional `filters` parameter of the given request to the
      * raw data endpoint (@see getRawData()), e.g., the parameter
-     * 'filters[foo]=bar,baz' results in ['foo' => ['bar', 'baz']].
+     * `filters[foo]=bar,baz` results in `['foo' => ['bar', 'baz']]`.
      *
      * @param Request $request
      * @param array $queryDescripters the set of dimensions the user is
@@ -2454,7 +2477,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * dimension does not match any of the provided values.
      *
      * @param \DataWarehouse\Query\RawQuery $query
-     * @param array $params containing a 'filters' key whose value is an
+     * @param array $params containing a `filters` key whose value is an
      *                      associative array of dimensions and dimension
      *                      values.
      * @return \DataWarehouse\Query\RawQuery the query with the filters
@@ -2481,10 +2504,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Validate a specific filter from the 'filters' parameter of a request to
+     * Validate a specific filter from the `filters` parameter of a request to
      * the raw data endpoint (@see getRawData()), and return the parsed array
-     * of values for that filter (e.g., 'foo,bar,baz' becomes ['foo', 'bar',
-     * 'baz']).
+     * of values for that filter (e.g., `foo,bar,baz` becomes `['foo', 'bar',
+     * 'baz']`).
      *
      * @param Request $request
      * @param array $queryDescripters the set of dimensions the user is

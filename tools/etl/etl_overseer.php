@@ -70,6 +70,8 @@ $scriptOptions = array(
     'lock-dir'          => null,
     // Optional ETL lock file prefix
     'lock-file-prefix'  => null,
+    // Whether the logger should write to the database
+    'log-to-database'   => true,
     // Previous number of days to ingest
     'number-of-days'    => null,
     // List of options to add to or override individual action options
@@ -144,7 +146,8 @@ $options = array(
     'x:'  => 'exclude-resource-codes:',
     'y:'  => 'last-modified-end-date:',
     ''    => 'lock-dir',
-    ''    => 'lock-file-prefix'
+    ''    => 'lock-file-prefix',
+    ''    => 'log-to-database:'
     );
 
 $args = getopt(implode('', array_keys($options)), $options);
@@ -349,6 +352,10 @@ foreach ($args as $arg => $value) {
             $scriptOptions['lock-prefix'] = $value;
             break;
 
+        case 'log-to-database':
+            $scriptOptions['log-to-database'] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            break;
+
         case 'h':
         case 'help':
             usage_and_exit();
@@ -385,7 +392,8 @@ foreach ( $argv as $index => $arg ) {
 
 $conf = array(
     'emailSubject' => gethostname() . ': XDMOD: Data Warehouse: Federated ETL Log',
-    'mail' => false
+    'mail' => false,
+    'db' => $scriptOptions['log-to-database']
 );
 
 if ( null !== $scriptOptions['verbosity'] ) {
@@ -688,6 +696,9 @@ Usage: {$argv[0]}
 
     -m, --last-modified-start-date
     ETL last modified start date, used by some actions. Defaults to the start of the ETL process (e.g., "now").
+
+        --log-to-database {yes, no}
+    Whether to enable writing the ETL process log to the database. Defaults to "yes".
 
     -n, --number-of-days
     Number of days that the action will operate on.

@@ -4,7 +4,7 @@ namespace IntegrationTests\Database;
 
 use CCR\DB;
 use CCR\Json;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 use IntegrationTests\BaseTest;
 use Configuration\XdmodConfiguration;
 

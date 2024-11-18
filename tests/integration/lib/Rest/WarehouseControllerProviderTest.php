@@ -9,9 +9,9 @@ class WarehouseControllerProviderTest extends TokenAuthTest
 {
     private static $helper;
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
         self::$helper = new XdmodTestHelper();
     }
 
@@ -828,7 +828,12 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             [
                 'invalid_realm',
                 ['realm' => 'foo'],
-                parent::validateBadRequestResponse('Invalid realm.')
+                parent::validateBadRequestResponse('No realm exists with the requested name.')
+            ],
+            [
+                'realm_not_configured',
+                ['realm' => 'Storage'],
+                parent::validateBadRequestResponse('The requested realm is not configured to provide raw data.')
             ],
             [
                 'invalid_fields',

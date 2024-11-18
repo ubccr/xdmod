@@ -4,12 +4,12 @@ namespace IntegrationTests\Database;
 
 use CCR\DB;
 use CCR\DB\MySQLHelper;
-use PHPUnit_Framework_TestCase;
+use \PHPUnit\Framework\TestCase;
 
 /**
  * Test the data warehouse export database table.
  */
-class DataWarehouseExportTest extends PHPUnit_Framework_TestCase
+class DataWarehouseExportTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Name of the data warehouse export batch requests table.
@@ -22,7 +22,7 @@ class DataWarehouseExportTest extends PHPUnit_Framework_TestCase
     /** @var \CCR\DB\MySQLHelper */
     private $dbHelper;
 
-    public function setUp()
+    public function setup(): void
     {
         $this->db = DB::factory('database');
         $this->dbHelper = MySQLHelper::factory($this->db);
