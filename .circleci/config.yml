@@ -36,7 +36,7 @@ jobs:
           command: docker exec xdmod dnf install -y php libzip-devel php-pear php-devel
       - run:
           name: Install MongoDB Pear module
-          command: docker exec xdmod /bin/bash -c 'yes '' | pecl install --configureoptions 'enable-mongodb-developer-flags="yes"' mongodb-1.18.1 || true'
+          command: docker exec xdmod /bin/bash -c 'yes '' | pecl install mongodb || true'
       - run:
           name: Add MongoDB to php modules
           command: docker exec xdmod echo "extension=mongodb.so" > /etc/php.d/40-mongodb.ini
