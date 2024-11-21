@@ -3,8 +3,8 @@
         "schema": "mod_logger",
         "name": "log_level",
         "engine": "InnoDB",
-        "charset": "latin1",
-        "collation": "latin1_swedish_ci",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
         "columns": [
             {
                 "name": "log_level_id",

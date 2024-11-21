@@ -176,8 +176,6 @@ class SlurmShredderTest extends JobShredderBaseTestCase
      */
     public function testUtf8MultibyteCharsParsing($line, $job)
     {
-        $jobName = mb_convert_encoding($job['job_name'], 'ISO-8859-1', 'UTF-8');
-
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Slurm')
             ->setConstructorArgs([$this->db])
