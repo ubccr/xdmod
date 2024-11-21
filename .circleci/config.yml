@@ -33,7 +33,7 @@ jobs:
       - run:
           name: Fix SQL configuration
           command: |
-            sed 's/^sql_mode =$/sql_mode = STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION/g' /etc/my.cnf.d/server.cnf
+            sed -i 's/^sql_mode =$/sql_mode = STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION/g' /etc/my.cnf.d/server.cnf
             echo "character_set_server = utf8" >> /etc/my.cnf.d/server.cnf
       - checkout
       # We need to update our acct before we can enable docker layer caching
