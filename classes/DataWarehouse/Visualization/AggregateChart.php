@@ -981,11 +981,12 @@ class AggregateChart
                     // which causes the margin on pie charts with many slices to break
                     $labelLimit = 12;
                     $labelsAllocated = 0;
+                    $isDashboard = $this->width < \DataWarehouse\Visualization::$default_width;
                     $pieSum = array_sum($yValues);
                     for ($i = 0; $i < count($xValues); $i++) {
-                        if ($isThumbnail || (($labelsAllocated < $labelLimit) && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
+                        if ($isDashboard || (($labelsAllocated < $labelLimit) && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
                             $label = $xValues[$i];
-                            if ($isThumbnail && strlen($xValues[$i]) >= 70) {
+                            if (strlen($xValues[$i]) >= 70) {
                                 $label = mb_substr($xValues[$i], 0, 40) . '...';
                             }
                             $text[] = '<b>' . $label . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
