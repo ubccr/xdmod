@@ -25,7 +25,7 @@ from dotenv import load_dotenv
 import sys
 
 site_address = ''
-export_dir = ''
+export_dir = '.'
 image_format = 'svg'
 width = 916
 height = 484
