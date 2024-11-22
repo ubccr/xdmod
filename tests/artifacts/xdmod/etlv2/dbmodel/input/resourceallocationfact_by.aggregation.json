@@ -3,8 +3,6 @@
     "name": "resourceallocationfact_by_",
     "table_prefix": "resourceallocationfact_by_",
     "engine": "MyISAM",
-    "charset": null,
-    "collation": null,
     "comment": "Resource Allocation facts aggregated by ${AGGREGATION_UNIT}.",
     "columns": [
       {
