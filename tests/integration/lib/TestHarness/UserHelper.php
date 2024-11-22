@@ -19,8 +19,8 @@ class UserHelper
      * @param array|null  $acls
      * @param string|null $primaryRole
      * @param string|null $email
-     * @param string|null $organizationId
-     * @param string|null $personId
+     * @param int         $organizationId
+     * @param int         $personId
      * @return XDUser
      * @throws \Exception
      */
@@ -33,8 +33,8 @@ class UserHelper
         array $acls = null,
         $primaryRole = null,
         $email = null,
-        $organizationId = null,
-        $personId = null
+        $organizationId = -1,
+        $personId = -1
     ) {
         $acls = isset($acls) ? $acls : array(ROLE_ID_USER);
         $primaryRole = isset($primaryRole) ? $primaryRole : ROLE_ID_USER;
