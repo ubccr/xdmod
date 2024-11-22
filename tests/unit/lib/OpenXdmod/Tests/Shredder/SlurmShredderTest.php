@@ -184,7 +184,7 @@ class SlurmShredderTest extends JobShredderBaseTestCase
         $shredder
             ->expects($this->once())
             ->method('insertRow')
-            ->with(new ArraySubset(['job_name' => $job['job_name']));
+            ->with(new ArraySubset(['job_name' => $job['job_name']]));
 
         $shredder->setLogger($this->logger);
         $shredder->shredLine($line);
