@@ -31,7 +31,7 @@
             "avg_logical_usage": "AVG(sf.logical_usage)",
             "sum_logical_usage": "SUM(CAST(sf.logical_usage AS DECIMAL(30,0)))",
             "sum_squared_logical_usage": "SUM(CAST(sf.logical_usage AS DECIMAL(60,0)) * CAST(sf.logical_usage AS DECIMAL(60,0)))",
-            "avg_physical_usage": "AVG(sf.physical_usage)",
+            "avg_physical_usage": "AVG(COALESCE(sf.physical_usage, 0))",
             "sum_physical_usage": "SUM(CAST(sf.physical_usage AS DECIMAL(30,0)))",
             "sum_squared_physical_usage": "SUM(CAST(sf.physical_usage AS DECIMAL(60,0)) * CAST(sf.physical_usage AS DECIMAL(60,0)))",
             "avg_soft_threshold": "AVG(sf.soft_threshold)",
