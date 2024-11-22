@@ -10,7 +10,7 @@ class ReportGenerator extends Common
     const REPORT_DATE_REGEX =  '/^[0-9]{4}(-[0-9]{2}){2}$/';
     const REPORT_FORMATS_REGEX = '/^doc|pdf$/';
     const REPORT_SCHEDULE_REGEX = '/^Once|Daily|Weekly|Monthly|Quarterly|Semi-annually|Annually$/';
-    const REPORT_DELIVERY_REGEX = '/^E-Mail$/';
+    const REPORT_DELIVERY_REGEX = '/^E-mail$/';
 
     /* Patterns related to report charts */
     const REPORT_CHART_TYPE_REGEX = '/^chart_pool|volatile|report|cached$/';
