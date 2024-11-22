@@ -991,7 +991,7 @@ class AggregateChart
                         if ($pieSize <= $labelLimit ||
                            ($labelsAllocated < $labelLimit && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
                             $label = $xValues[$i];
-                            if ($this->width < \DataWarehouse\Visualization::$default_width && strlen($xValues[$i]) >= 70) {
+                            if ($this->_width < \DataWarehouse\Visualization::$default_width && strlen($xValues[$i]) >= 70) {
                                 $label = mb_substr($xValues[$i], 0, 40) . '...';
                             }
                             $text[] = '<b>' . $label . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
