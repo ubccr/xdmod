@@ -8,6 +8,7 @@
     "source_query": {
         "records": {
             "instance_type": "raw.instance_type",
+            "instance_type_id": 0,
             "resource_id": "raw.resource_id",
             "display": "raw.display",
             "description": "raw.description",
