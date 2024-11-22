@@ -1119,7 +1119,7 @@ class AggregateChart
                             'color' => $lineColor,
                         ),
                         'symbol' => $this->_symbolStyles[$data_description_index % 5],
-                        'opacity' => $showMarker
+                        'opacity' => $showMarker ? 1.0 : 0.0
                     ),
                     'line' => array(
                         'color' => $data_description->display_type == 'pie' ?

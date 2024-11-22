@@ -580,7 +580,7 @@ class TimeseriesChart extends AggregateChart
                                     'color' => $lineColor
                                 ),
                                 'symbol' => $this->_symbolStyles[$traceIndex % 5],
-                                'opacity' => $showMarker
+                                'opacity' => $showMarker ? 1.0 : 0.0
                             ),
                             'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
                             'line' => array(
