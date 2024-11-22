@@ -983,16 +983,15 @@ class AggregateChart
                     $labelsAllocated = 0;
                     $pieSize = count($xValues);
                     $pieSum = array_sum($yValues);
-                    $isNotDefaultSizePlot = $this->width < \DataWarehouse\Visualization::$default_width;
                     for ($i = 0; $i < $pieSize; $i++) {
                         // For all pie charts, include labels when there are less slices than label limit.
                         // For all pie charts, allocated labels up to the limit (12) and exlude labels of
                         // small pie slices (< 2% of total data) to improve visibility.
-                        // For thumbnail and dashboard pie charts, truncate long data labels to improve visibility.
+                        // For pie charts that are less than the default plot size, truncate long data labels to improve visibility.
                         if ($pieSize <= $labelLimit ||
                            ($labelsAllocated < $labelLimit && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
                             $label = $xValues[$i];
-                            if ($isNotDefaultSizePlot && strlen($xValues[$i]) >= 70) {
+                            if ($this->width < \DataWarehouse\Visualization::$default_width && strlen($xValues[$i]) >= 70) {
                                 $label = mb_substr($xValues[$i], 0, 40) . '...';
                             }
                             $text[] = '<b>' . $label . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
