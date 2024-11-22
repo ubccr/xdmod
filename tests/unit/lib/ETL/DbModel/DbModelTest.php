@@ -78,6 +78,8 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
     {
         $config = (object) array(
             'name' => "table_no_schema",
+            'charset' => null,
+            'collation' => null,
             'columns' => array(
                 (object) array(
                     'name' => 'column1',
