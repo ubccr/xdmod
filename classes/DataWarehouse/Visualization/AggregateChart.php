@@ -981,12 +981,18 @@ class AggregateChart
                     // which causes the margin on pie charts with many slices to break
                     $labelLimit = 12;
                     $labelsAllocated = 0;
-                    $isDashboard = $this->width < \DataWarehouse\Visualization::$default_width;
+                    $pieSize = count($xValues);
                     $pieSum = array_sum($yValues);
-                    for ($i = 0; $i < count($xValues); $i++) {
-                        if ($isDashboard || (($labelsAllocated < $labelLimit) && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
+                    $isNotDefaultSizePlot = $this->width < \DataWarehouse\Visualization::$default_width;
+                    for ($i = 0; $i < $pieSize; $i++) {
+                        // For all pie charts, include labels when there are less slices than label limit.
+                        // For all pie charts, allocated labels up to the limit (12) and exlude labels of
+                        // small pie slices (< 2% of total data) to improve visibility.
+                        // For thumbnail and dashboard charts, truncate long data labels to improve visibility.
+                        if (($isNotDefaultSizePlot || $pieSize <= $labelLimit) &&
+                           ($labelsAllocated < $labelLimit && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
                             $label = $xValues[$i];
-                            if (strlen($xValues[$i]) >= 70) {
+                            if ($isNotDefaultSizePlot && strlen($xValues[$i]) >= 70) {
                                 $label = mb_substr($xValues[$i], 0, 40) . '...';
                             }
                             $text[] = '<b>' . $label . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
