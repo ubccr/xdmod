@@ -626,6 +626,10 @@ abstract class aRdbmsDestinationAction extends aAction
             $sqlList[] = "SET FOREIGN_KEY_CHECKS = 0";
         }
 
+        if ( $this->options->hide_sql_warnings || $this->options->hide_sql_warning_codes ) {
+            $sqlList[] = "SET SQL_MODE = ''";
+        }
+
         $this->executeSqlList($sqlList, $this->destinationEndpoint, "Pre-execute tasks");
 
         return true;
