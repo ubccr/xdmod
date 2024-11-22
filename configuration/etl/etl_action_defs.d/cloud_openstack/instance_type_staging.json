@@ -10,6 +10,7 @@
     "source_query": {
         "records": {
             "resource_id": "staging.resource_id",
+            "instance_type_id": "staging.instance_type_id",
             "instance_type": "staging.instance_type",
             "display": "staging.display",
             "description": "staging.description",
