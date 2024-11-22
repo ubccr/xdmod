@@ -988,7 +988,7 @@ class AggregateChart
                         // For all pie charts, include labels when there are less slices than label limit.
                         // For all pie charts, allocated labels up to the limit (12) and exlude labels of
                         // small pie slices (< 2% of total data) to improve visibility.
-                        // For thumbnail and dashboard charts, truncate long data labels to improve visibility.
+                        // For thumbnail and dashboard pie charts, truncate long data labels to improve visibility.
                         if (($isNotDefaultSizePlot || $pieSize <= $labelLimit) &&
                            ($labelsAllocated < $labelLimit && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
                             $label = $xValues[$i];
