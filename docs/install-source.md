@@ -5,8 +5,7 @@ title: Source Installation Guide
 Install Source Package
 ----------------------
 
-If installing from the `el7` source, replace `el8` with `el7` below. Change the
-installation prefix as desired.  The default installation prefix is
+Change the installation prefix as desired.  The default installation prefix is
 `/usr/local/xdmod`.  These instructions assume you are installing Open
 XDMoD in `/opt/xdmod`.
 
