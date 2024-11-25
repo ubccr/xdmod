@@ -1,6 +1,8 @@
 # Open XDMoD Change Log
 
 ## v11.0.1 development branch
+- Bug Fixes
+    - Fixed "side-by-side" grouping option for bar charts with data from different realms. ([\#1883](https://github.com/ubccr/xdmod/pull/1883))
 
 ## 2024-09-16 v11.0.0
 - Important Notes
