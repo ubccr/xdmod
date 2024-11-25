@@ -39,7 +39,7 @@ defaults:
       prev_sw_version: "10.5.0"
       sw_version: "11.0.1"
       style: "effervescence"
-      tocversion: "v11_0toc"
+      tocversion: "v11_5toc"
 
 # Build settings
 markdown: kramdown
