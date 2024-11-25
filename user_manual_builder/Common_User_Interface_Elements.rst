@@ -391,7 +391,7 @@ origin of the chart.
 Every chart in XDMoD can zoom along a specific axis by click and dragging the cursor vertically or horizontally to zoom by the y-axis and x-axis, respectively.
 When adjusting the zoom along a specific axis you will be able to adjust the range of the data based on how far you drag your cursor. Every chart in XDMoD can also
 zoom along both the x and y axis adjusting the range for both. For most charts in XDMoD, the zoom level can be reset by double clicking on an empty area of the plot.
-The only exception is charts in the Metric Explorer tab (see :ref:`Metric Explorer <metric_explorer>`).
+The only exception are charts in the Metric Explorer tab (see :ref:`Metric Explorer <metric_explorer>`).
 
 .. figure:: media/plot_vertical_zoom.png
    :name: plot_vertical_zoom
