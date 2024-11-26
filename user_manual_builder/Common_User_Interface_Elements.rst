@@ -358,7 +358,7 @@ y-axis or x-axis, respectively. When adjusting the zoom along a specific axis
 you will be able to adjust the range of the data based on how far you drag
 your cursor. Every chart in XDMoD can also zoom along both the x and y axis
 adjusting the range for both. For most charts in XDMoD, the zoom level can
-be reset by double clicking on an empty area of the plot.The only exception
+be reset by double clicking on an empty area of the plot. The only exception
 is for charts in the :ref:`Metric Explorer <metric_explorer>` tab, where you
 can reset the zoom by clicking on the chart and choosing the "Reset Zoom"
 option from the context menu.
