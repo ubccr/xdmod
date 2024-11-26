@@ -1,0 +1,146 @@
+{
+    "module": "xdmod",
+    "defaults": {
+        "global": {
+            "class": "ManageTables",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "moddb",
+                    "create_schema_if_not_exists": true
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "XDMoD Database",
+                    "config": "database",
+                    "schema": "moddb",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        }
+    },
+    "migration-11_0_0-11_5_0": [
+        {
+            "name": "update-moddb-tables",
+            "description": "Update managed tables in moddb",
+            "definition_file_list": [
+                "xdb/account-requests.json",
+                "xdb/api-keys.json",
+                "xdb/chart-pool.json",
+                "xdb/colors.json",
+                "xdb/exception-email-addresses.json",
+                "xdb/report-charts.json",
+                "xdb/report-template-charts.json",
+                "xdb/report-templates.json",
+                "xdb/reports.json",
+                "xdb/restx509.json",
+                "xdb/session-manager.json",
+                "xdb/users.json",
+                "xdb/user-profiles.json",
+                "xdb/user-types.json",
+                "xdb/version-check.json",
+                "xdb/batch-export-requests.json"
+            ]
+        },
+        {
+            "name": "update-shredder-tables",
+            "description": "Update managed tables in mod_shredder",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            },
+            "definition_file_list": [
+                "jobs/shredder/job-lsf.json",
+                "jobs/shredder/job-pbs.json",
+                "jobs/shredder/job-sge.json",
+                "jobs/shredder/job.json",
+                "storage/staging/mountpoint.json",
+                "storage/staging/usage.json"
+            ]
+        },
+        {
+            "name": "update-log-tables",
+            "description": "Update managed tables in mod_logger",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Logging Database",
+                    "config": "database",
+                    "schema": "mod_logger"
+                }
+            },
+            "definition_file_list": [
+                "logger/log_id_seq.json",
+                "logger/log_level.json",
+                "logger/log_table.json"
+            ]
+        },
+        {
+            "name": "update-cloud-tables",
+            "description": "Update managed tables in modw_cloud",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud Database",
+                    "config": "database",
+                    "schema": "modw_cloud"
+                }
+            },
+            "definition_file_list": [
+                 "cloud_common/domains.json"
+            ]
+        },
+        {
+            "name": "update-modw-tables",
+            "description": "Update managed tables in modw",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Datawarehouse database",
+                    "config": "database",
+                    "schema": "modw"
+                }
+            },
+            "definition_file_list": [
+                "jobs/job_request_info.json",
+                "jobs/job_task_countable.json",
+                "jobs/meta_job.json",
+                "jobs/meta_job_record.json",
+                "jobs/xdw/processor-buckets.json",
+                "jobs/xdw/error-descriptions.json",
+                "jobs/job_record_type.json",
+                "jobs/job_task_type.json",
+                "jobs/submission_venue.json",
+                "jobs/countable_type.json",
+                "jobs/xdw/job-times.json",
+                "jobs/xdw/gpu-buckets.json",
+                "common/staging/resource-type.json",
+                "jobs/xdw/job-wait-times.json",
+                "jobs/xdw/federation-instances.json",
+                "jobs/unit.json",
+                "jobs/xdw/days.json",
+                "jobs/xdw/months.json",
+                "jobs/xdw/quarters.json",
+                "jobs/xdw/years.json"
+            ]
+        },
+        {
+            "name": "update-nonmanaged-tables",
+            "description": "Update tables in modw that are not managed by etlv2",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                    "migrations/11.0.0-11.5.0/mod_shredder/shredded_job_slurm.sql"
+            ]
+        }
+    ]
+}

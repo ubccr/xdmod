@@ -48,10 +48,10 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
         'engine'   => null,
 
         // Optional table default character set
-        'charset'  => null,
+        'charset'  => 'utf8',
 
         // Optional table collation
-        'collation' => null,
+        'collation' => 'utf8_unicode_ci',
 
         // Associative array where the keys are column names and the values are Column objects
         'columns'  => array(),
@@ -837,11 +837,15 @@ ORDER BY trigger_name ASC";
         }
 
         if ( null !== $destination->charset && $this->charset != $destination->charset ) {
-            $alterList[] = sprintf("CHARSET = %s", $destination->charset);
-        }
-
-        if ( null !== $destination->collation && $this->collation != $destination->collation ) {
-            $alterList[] = sprintf("COLLATE = %s", $destination->collation);
+            $collation_definition = '';
+            if ($destination->collation !== null) {
+                $collation_definition = ' COLLATE ' . $destination->collation;
+            }
+            $alterList[] = sprintf("CONVERT TO CHARACTER SET %s %s", $destination->charset, $collation_definition);
+        } else {
+            if ( null !== $destination->collation && $this->collation != $destination->collation ) {
+                $alterList[] = sprintf("COLLATE = %s", $destination->collation);
+            }
         }
 
         if ( $this->comment != $destination->comment ) {

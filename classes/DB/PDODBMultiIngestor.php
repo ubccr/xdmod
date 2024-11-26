@@ -29,7 +29,7 @@ class PDODBMultiIngestor implements Ingestor
      * If set to null then the mysql defaults will be used.
      * This is only used in LOAD INFILE mode.
      */
-    protected $_character_set = null;
+    protected $_character_set = 'utf8';
 
     /**
      * Helper instance for destination database.

@@ -90,6 +90,11 @@ jobs:
             PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
             ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
       - run:
+          name: 'Run Post Install / Upgrade Tests'
+          command: |
+            ./tests/post/bootstrap.sh
+            ./tests/post/runtests.sh
+      - run:
           name: Ensure that no unexpected Apache errors were generated ( We expect PHP Deprecated )
           command: >
             if [ -e /var/log/php-fpm/www-error.log ]; then
