@@ -9,7 +9,7 @@ use IntegrationTests\TestHarness\TestFiles;
 /**
  * Test data warehouse export file.
  */
-class FileWriterTest extends TestCase
+class FileWriterFactoryTest extends TestCase
 {
     /**
      * Test artifacts path.
