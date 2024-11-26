@@ -604,6 +604,15 @@ class pdoIngestor extends aIngestor
             // Keys are table columns (destination) and values are query result columns (source)
             $destColumnList = array_keys($destFieldToSourceFieldMap);
 
+            // The mysql documentation claims that file contents are interpreted using the character set
+            // in the character_set_database system variable. However, I was not able to get this to work
+            // Explicitly setting the CHARACTER SET does appear to work though.
+
+            $characterSetOverride = '';
+            if ( $this->options->load_data_infile_character_set ) {
+                $characterSetOverride = "CHARACTER SET '" . $this->options->load_data_infile_character_set . "' ";
+            }
+
             // The default method for ingestion is INSERT INTO ON DUPLICATE KEY UPDATE because tests
             // have shown an approx 40% performance improvement when updating existing data over
             // REPLACE INTO.  REPLACE INTO also may cause issues with auto increment keys because
@@ -615,6 +624,7 @@ class pdoIngestor extends aIngestor
 
             if ( $this->options->force_load_data_infile_replace_into ) {
                 $loadStatement = "LOAD DATA LOCAL INFILE '$infileName' replace into table $qualifiedDestTableName "
+                    . $characterSetOverride
                     . "FIELDS TERMINATED BY " . sprintf("0x%02x", ord($this->fieldSeparator))
                     . " OPTIONALLY ENCLOSED BY " . sprintf("0x%02x", ord($this->stringEnclosure))
                     . " ESCAPED BY " . sprintf("0x%02x", ord($this->escapeChar))
@@ -639,6 +649,7 @@ class pdoIngestor extends aIngestor
                 $loadStatement = "CREATE TABLE $tmpTable LIKE $qualifiedDestTableName; "
                     . "ALTER TABLE $tmpTable DISABLE KEYS; "
                     . "LOAD DATA LOCAL INFILE '$infileName' INTO TABLE $tmpTable "
+                    . $characterSetOverride
                     . "FIELDS TERMINATED BY " . sprintf("0x%02x", ord($this->fieldSeparator))
                     . " OPTIONALLY ENCLOSED BY " . sprintf("0x%02x", ord($this->stringEnclosure))
                     . " ESCAPED BY " . sprintf("0x%02x", ord($this->escapeChar))
