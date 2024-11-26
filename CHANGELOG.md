@@ -1,5 +1,7 @@
 # Open XDMoD Change Log
 
+## XXXX-XX-XX v11.5.0
+
 ## 2025-08-19 v11.0.2
 
 - New Features
