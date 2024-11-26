@@ -352,6 +352,27 @@ the chart. The chart shown in :numref:`chart_viewer` is from the
 Resource* category is expanded, followed by selection of the *XD SUs
 Charged: Per Job* metric.
 
+Every chart in XDMoD can zoom along a specific axis by clicking and dragging
+the cursor in a straight line vertically or horizontally to zoom along the
+y-axis or x-axis, respectively. When adjusting the zoom along a specific axis
+you will be able to adjust the range of the data based on how far you drag
+your cursor. Every chart in XDMoD can also zoom along both the x and y axis
+adjusting the range for both. For most charts in XDMoD, the zoom level can
+be reset by double clicking on an empty area of the plot.The only exception
+is for charts in the :ref:`Metric Explorer <metric_explorer>` tab, where you
+can reset the zoom by clicking on the chart and choosing the "Reset Zoom"
+option from the context menu.
+
+.. figure:: media/plot_vertical_zoom.png
+   :name: plot_vertical_zoom
+
+   Example of adjusting the zoom along the y-axis (vertically).
+
+.. figure:: media/plot_horizontal_zoom.png
+   :name: plot_horizontal_zoom
+
+   Example of adjusting the zoom along the x-axis (horizontally).
+
 Drilldowns: Most of the charts displayed in XDMoD have a drill-down
 capability, which will allow users to click on a data series (bar, line,
 pie slice, etc.) and acquire more detailed information about the
@@ -387,21 +408,6 @@ origin of the chart.
    :name: drilldown_chart_example
 
    Example of a drilldown chart
-
-Every chart in XDMoD can zoom along a specific axis by click and dragging the cursor vertically or horizontally to zoom by the y-axis and x-axis, respectively.
-When adjusting the zoom along a specific axis you will be able to adjust the range of the data based on how far you drag your cursor. Every chart in XDMoD can also
-zoom along both the x and y axis adjusting the range for both. For most charts in XDMoD, the zoom level can be reset by double clicking on an empty area of the plot.
-The only exception are charts in the Metric Explorer tab (see :ref:`Metric Explorer <metric_explorer>`).
-
-.. figure:: media/plot_vertical_zoom.png
-   :name: plot_vertical_zoom
-
-   Example of adjusting the zoom along the y-axis (vertically).
-
-.. figure:: media/plot_horizontal_zoom.png
-   :name: plot_horizontal_zoom
-
-   Example of adjusting the zoom along the x-axis (horizontally).
 
 Chart Viewer Tools
 ~~~~~~~~~~~~~~~~~~~~~~~
