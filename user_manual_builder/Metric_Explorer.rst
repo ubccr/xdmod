@@ -202,9 +202,9 @@ Basic Chart Options
 
 In the present version of the Metric Explorer, you can easily change
 plots by simply clicking on the data series in the chart. A dialog box
-opens (:numref:`metric_explorer_plot_rename`) allowing a wide range of
-changes, including adding another metric, drilling downs, and options
-that alter the display format.
+opens (:numref:`metric_explorer_plot_rename`) allowing a wide range of changes, including
+adding another metric, drilling downs, and options that alter the
+display format.
 
 .. figure:: media/image5.png
    :name: metric_explorer_plot_rename
