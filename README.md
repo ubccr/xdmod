@@ -238,16 +238,13 @@ clone it or create a symbolic link to it at `open_xdmod/modules/supremm`.
 
 #### Source
 
-This process has been tested on CentOS 7. Known issues are documented in the
+This process has been tested on Rocky 8. Known issues are documented in the
 [Building FAQ](#building-faq) below. If you run into any issues not listed
 below on these or any other platforms, please let us know. The tested version
-of composer is 1.10.25 on CentOS 7 and 2.4.2 on Rocky 8.
+of composer is 2.6.0 on Rocky 8.
 
   1. Change directory to the root of the Open XDMoD repository.
   1. Install Composer dependencies for Open XDMoD.
-      - `export COMPOSER=composer-el[7|8].json`
-        - use `el7` if you are building this on CentOS7 w/ PHP5.4
-        - use `el8` if you are building this on CentOS8 ( or equivalent ) w/ PHP7.2
       - `composer install`
       - Depending on the versions of various software installed on your system,
         you may run into errors. If you do, see the [Building FAQ](#building-faq)
@@ -261,7 +258,7 @@ The resulting tarball will be located in `open_xdmod/build`.
 
 #### RPM
 
-This process has been tested on CentOS 7. Known issues are documented in the
+This process has been tested on Rocky 8. Known issues are documented in the
 [Building FAQ](#building-faq) below. If you run into any issues not listed
 below on these or any other platforms, please let us know.
 
@@ -286,20 +283,6 @@ substitute accordingly.
 The resulting RPM will be located in `~/rpmbuild/RPMS/noarch`.
 
 ### Building FAQ
-
-#### Why is Composer unable to download some files?
-
-Certain combinations of PHP and Composer do not handle redirects over HTTPS
-correctly. This is known to affect the version of PHP that CentOS 6 supplies
-combined with current stable versions of Composer (as of this writing, 1.3.2).
-To get things working, try one or more steps below.
-
-  1. Update Composer to a newer version.
-  1. If the above did not work or is not feasible, you can globally disable
-     HTTPS in Composer by running `composer config -g disable-tls true`. While
-     disabling HTTPS is not recommended by the Composer developers or us, all
-     dependencies downloaded using XDMoD's config files will be checked
-     against checksums to help prevent against tampering.
 
 #### Why is Composer failing to unzip Ext JS?
 
