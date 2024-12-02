@@ -1,6 +1,6 @@
 <?php
 /**
- * Update database from version 10.5.0 to 11.0.0
+ * Update database from version 11.0.0 to 11.5.0
  */
 
 namespace OpenXdmod\Migration\Version1050To1100;
@@ -11,7 +11,7 @@ use CCR\DB\MySQLHelper;
 use ETL\Utilities;
 
 /**
- * Migrate databases from version 10.5.0 to 11.0.0
+ * Migrate databases from version 11.0.0 to 11.5.0
  */
 class DatabasesMigration extends AbstractDatabasesMigration
 {

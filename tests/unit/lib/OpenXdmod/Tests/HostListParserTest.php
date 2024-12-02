@@ -11,7 +11,7 @@ use Xdmod\HostListParser;
 /**
  * HostListParser test class.
  */
-class HostListTest extends \PHPUnit\Framework\TestCase
+class HostListParserTest extends \PHPUnit\Framework\TestCase
 {
 
     private $parser;
