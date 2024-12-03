@@ -4,6 +4,7 @@
     "name": "domains",
     "engine": "InnoDB",
     "charset": "utf8",
+    "collation": "utf8_unicode_ci",
     "comment": "Which domains are currently being tracked by the Cloud realm",
     "columns": [
       {
