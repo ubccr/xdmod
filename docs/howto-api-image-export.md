@@ -82,16 +82,17 @@ for idx, chart in enumerate(saved_charts_data['data']):
             if chart_parameter in (True, False, None):
                 chart_json[attribute] = str(chart_parameter).replace('False', 'false').replace('True', 'true').replace('None', 'null')
 
-        chart_json['operation'] = "get_data"
-        chart_json['controller_module'] = "metric_explorer"
-        chart_json['show_title'] = "y"
+        chart_json['operation'] = 'get_data'
+        chart_json['controller_module'] = 'metric_explorer'
+        chart_json['show_title'] = 'y'
         chart_json['format'] = image_format
         chart_json['width'] = width
         chart_json['height'] = height
 
         chart_response = session.post(f'{site_address}/controllers/metric_explorer.php', data=chart_json, headers=header)
-        chart_name = f"{chart['name']}.{image_format}" if ('name' in chart) else f"xdmod_API_export_{idx}.{image_format}"
+        chart_name = f"{chart['name']}.{image_format}" if ('name' in chart) else f'xdmod_API_export_{idx}.{image_format}'
 
-        with open(export_dir + '/' + chart_name, "wb") as f:
+        with open(export_dir + '/' + chart_name, 'wb') as f:
             f.write(chart_response.content)
+            print('Wrote ' + export_dir + '/' + chart_name)
 ```
