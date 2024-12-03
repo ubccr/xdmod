@@ -16,7 +16,12 @@ Ext.namespace('XDMoD.utils');
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     const baseChartOptions = {};
-    const configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500 };
+    const configs = {
+        displayModeBar: false,
+        doubleClick: 'reset',
+        doubleClickDelay: 500,
+        showAxisRangeEntryBoxes: false
+    };
     XDMoD.utils.deepExtend(baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
 
