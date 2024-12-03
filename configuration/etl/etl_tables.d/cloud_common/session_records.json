@@ -23,7 +23,8 @@
             {
                 "name": "resource_organization_id",
                 "type": "int(11)",
-                "nullable": false
+                "nullable": false,
+                "default": -1
             },
             {
                 "name": "start_time",
@@ -115,7 +116,8 @@
             {
                 "name": "person_organization_id",
                 "type": "int(11)",
-                "nullable": false
+                "nullable": false,
+                "default": -1
             },
             {
                 "name": "systemaccount_id",

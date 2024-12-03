@@ -3,7 +3,7 @@
  * Update database from version 11.0.0 to 11.5.0
  */
 
-namespace OpenXdmod\Migration\Version1050To1100;
+namespace OpenXdmod\Migration\Version1100To1150;
 
 use OpenXdmod\Migration\DatabasesMigration as AbstractDatabasesMigration;
 use CCR\DB;
@@ -24,9 +24,9 @@ class DatabasesMigration extends AbstractDatabasesMigration
 
         if ($mysql_helper->tableExists('modw_cloud.event')) {
             Utilities::runEtlPipeline(
-                ['cloud-migration-10-5-0_11-0-0','cloud-state-pipeline'],
+                ['cloud-migration-11-0-0_11-5-0','cloud-state-pipeline'],
                 $this->logger,
-                ['last-modified-start-date' => '2017-01-01 00:00:00']
+                ['last-modified-start-date' => '2016-01-01 00:00:00']
             );
         }
     }
