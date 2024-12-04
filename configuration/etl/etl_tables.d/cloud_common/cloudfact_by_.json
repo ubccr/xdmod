@@ -40,7 +40,7 @@
                 "type": "int(11)",
                 "nullable": false,
                 "default": -1,
-                "comment": "DIMENSION: The organization of the person that ran the jobs."
+                "comment": "DIMENSION: The organization of the person to whom the VM is assigned."
             },{
                 "name": "systemaccount_id",
                 "type": "int(11)",

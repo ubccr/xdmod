@@ -99,7 +99,7 @@
                 "type": "LEFT",
                 "on": "a.principalinvestigator_person_id = pi.id"
             }
-          ],
+        ],
         "orderby": [
             "resource_id ASC, instance_id ASC, start_time_ts ASC"
         ]
