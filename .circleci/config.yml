@@ -24,9 +24,6 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Add MongoDB to php modules
-          command: docker exec xdmod echo "extension=mongodb.so" > /etc/php.d/40-mongodb.ini
-      - run:
           name: Generate Key for XDMoD
           command: docker exec xdmod openssl genrsa -out /etc/pki/tls/private/localhost.key -rand /proc/cpuinfo:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048
       - run:
