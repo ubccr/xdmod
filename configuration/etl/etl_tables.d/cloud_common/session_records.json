@@ -21,6 +21,12 @@
                 "nullable": false
             },
             {
+                "name": "resource_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1
+            },
+            {
                 "name": "start_time",
                 "type": "datetime",
                 "nullable": false
@@ -108,6 +114,12 @@
                 "nullable": true
             },
             {
+                "name": "person_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1
+            },
+            {
                 "name": "systemaccount_id",
                 "type": "int(11)",
                 "nullable": true
@@ -145,6 +157,12 @@
                 "nullable": false,
                 "default": -1,
                 "comment": "DIMENSION: The PI that owns the allocations that these VM's ran under. References principalinvestigator.person_id"
+            },
+            {
+                "name": "piperson_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "default": -1
             },
             {
                 "name": "fos_id",

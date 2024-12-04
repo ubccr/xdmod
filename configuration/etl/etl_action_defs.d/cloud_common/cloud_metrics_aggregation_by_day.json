@@ -27,8 +27,10 @@
                 "year": "${:YEAR_VALUE}",
                 "${AGGREGATION_UNIT}": "${:PERIOD_VALUE}",
                 "host_resource_id": "sr.resource_id",
+                "resource_organization_id": "sr.resource_organization_id",
                 "account_id": "sr.account_id",
                 "person_id": "sr.person_id",
+                "person_organization_id": "sr.person_organization_id",
                 "systemaccount_id": "sr.systemaccount_id",
                 "processorbucket_id": "sr.processorbucket_id",
                 "memorybucket_id": "sr.memorybucket_id",
@@ -47,6 +49,7 @@
                 "domain_id": "sr.domain_id",
                 "service_provider": "sr.service_provider",
                 "principalinvestigator_person_id": "sr.principalinvestigator_person_id",
+                "piperson_organization_id": "sr.piperson_organization_id",
                 "fos_id": "sr.fos_id",
                 "instance_state_id": "sr.instance_state_id",
                 "session_id_list": "GROUP_CONCAT(sr.session_id)"
@@ -56,6 +59,7 @@
               "year",
               "${AGGREGATION_UNIT}",
               "host_resource_id",
+              "resource_organization_id",
               "service_provider",
               "processorbucket_id",
               "memorybucket_id",
@@ -66,8 +70,10 @@
               "domain_id",
               "service_provider",
               "principalinvestigator_person_id",
+              "piperson_organization_id",
               "fos_id",
               "person_id",
+              "person_organization_id",
               "instance_state_id"
             ],
             "joins":[
