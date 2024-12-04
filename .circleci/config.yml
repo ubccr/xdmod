@@ -23,6 +23,11 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      # We need to update our acct before we can enable docker layer caching
+      #    docker_layer_caching: true
+      - run:
+          name: Docker Compose corresponding OS file
+          command: docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
       - run:
           name: Generate Key for XDMoD
           command: docker exec xdmod openssl genrsa -out /etc/pki/tls/private/localhost.key -rand /proc/cpuinfo:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048
