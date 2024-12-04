@@ -143,7 +143,7 @@
                 "type": "int(11)",
                 "nullable": false,
                 "default": -1,
-                "comment": "DIMENSION: The organization of the PI that owns the project that funds these jobs. References piperson.organization_id"
+                "comment": "DIMENSION: The organization of the PI that owns the project that funds these VMs. References piperson.organization_id"
             },{
                 "name": "fos_id",
                 "type": "int(11)",
