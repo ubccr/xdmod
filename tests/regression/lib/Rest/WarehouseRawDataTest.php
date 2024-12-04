@@ -37,7 +37,6 @@ class WarehouseRawDataTest extends BaseTest
     {
         $realmParams = [
             'jobs' => [
-                'sort' => false,
                 'base' => [
                     'start_date' => '2016-12-30',
                     'end_date' => '2017-01-01',
@@ -52,7 +51,6 @@ class WarehouseRawDataTest extends BaseTest
                 ]
             ],
             'cloud' => [
-                'sort' => false,
                 'base' => [
                     'start_date' => '2018-04-29',
                     'end_date' => '2019-06-26',
@@ -66,7 +64,6 @@ class WarehouseRawDataTest extends BaseTest
                 ]
             ],
             'resourcespecifications' => [
-                'sort' => false,
                 'base' => [
                     'start_date' => '2016-12-21',
                     'end_date' => '2017-01-07',

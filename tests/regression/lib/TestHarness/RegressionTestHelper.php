@@ -539,8 +539,7 @@ class RegressionTestHelper extends XdmodTestHelper
                     $testFileName,
                     array_merge(
                         $baseInput,
-                        ['params' => $params['base']],
-                        ['sort' => $params['sort']]
+                        ['params' => $params['base']]
                     )
                 ];
                 $testParams[] = [
@@ -550,8 +549,7 @@ class RegressionTestHelper extends XdmodTestHelper
                         ['params' => array_merge(
                             $params['base'],
                             $params['fields_and_filters']
-                        )],
-                        ['sort' => $params['sort']]
+                        )]
                     )
                 ];
             }
@@ -599,7 +597,6 @@ class RegressionTestHelper extends XdmodTestHelper
             $role
         );
 
-        $sort = array_key_exists('sort', $input) && $input['sort'];
         $data = str_replace("\x1e", '', $response[0]);
         if ($sort) {
             $lines = explode("\n", rtrim($data));
