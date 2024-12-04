@@ -66,7 +66,7 @@ class WarehouseRawDataTest extends BaseTest
                 ]
             ],
             'resourcespecifications' => [
-                'sort' => true,
+                'sort' => false,
                 'base' => [
                     'start_date' => '2016-12-21',
                     'end_date' => '2017-01-07',
