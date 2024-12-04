@@ -1,0 +1,26 @@
+[
+    {
+        "label": "E-Mail Address",
+        "type": "text",
+        "updated": "btest@test.example.com",
+        "original": "btest@example.com"
+    },
+    {
+        "label": "User Type",
+        "type": "dropdown",
+        "updated": "Testing",
+        "original": "External"
+    },
+    {
+        "label": "Map To",
+        "type": "dropdown",
+        "updated": "Auk, Great",
+        "original": "Unknown, Unknown"
+    },
+    {
+        "label": "Institution",
+        "type": "dropdown",
+        "updated": "Unknown Organization",
+        "original": "Screwdriver"
+    }
+]
