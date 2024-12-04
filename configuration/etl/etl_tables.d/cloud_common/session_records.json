@@ -21,12 +21,6 @@
                 "nullable": false
             },
             {
-                "name": "resource_organization_id",
-                "type": "int(11)",
-                "nullable": false,
-                "default": -1
-            },
-            {
                 "name": "start_time",
                 "type": "datetime",
                 "nullable": false
