@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.37.1-focal
+FROM mcr.microsoft.com/playwright:v1.48.2-focal
 
 ENV GIT_BRANCH=${GIT_BRANCH:-playwright_poc}
 ENV GIT_USER=${GIT_USER:-ubccr}
