@@ -23,20 +23,6 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      # We need to update our acct before we can enable docker layer caching
-      #    docker_layer_caching: true
-      - run:
-          name: Docker Compose corresponding OS file
-          command: docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
-      - run:
-          name: Update php module
-          command: docker exec xdmod /bin/bash -c 'dnf module -y reset php && dnf module -y enable php:7.4'
-      - run:
-          name: Install PHP 7.4 and PHP module pre-reqs & an updated version of PHP Pear
-          command: docker exec xdmod dnf install -y php libzip-devel php-pear php-devel
-      - run:
-          name: Install MongoDB Pear module
-          command: docker exec xdmod /bin/bash -c 'yes '' | pecl install mongodb || true'
       - run:
           name: Add MongoDB to php modules
           command: docker exec xdmod echo "extension=mongodb.so" > /etc/php.d/40-mongodb.ini
