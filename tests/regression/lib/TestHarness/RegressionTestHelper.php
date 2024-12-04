@@ -596,7 +596,6 @@ class RegressionTestHelper extends XdmodTestHelper
             $input,
             $role
         );
-
         $data = str_replace("\x1e", '', $response[0]);
         if ($sort) {
             $lines = explode("\n", rtrim($data));
