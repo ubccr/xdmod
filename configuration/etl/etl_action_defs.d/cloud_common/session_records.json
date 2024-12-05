@@ -10,7 +10,6 @@
             "end_time": "FROM_UNIXTIME(e.end_time_ts)",
             "end_event_type_id": "e.end_event_id",
             "resource_id": "it.resource_id",
-            "resource_organization_id": "r.organization_id",
             "instance_type": "itt.instance_type",
             "instance_type_id": "itt.instance_type_id",
             "num_cores": "itt.num_cores",
