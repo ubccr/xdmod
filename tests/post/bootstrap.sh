@@ -1,6 +1,15 @@
 #!/bin/bash
 
+BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REF_DIR=/var/tmp/posttests
+
+# Copy test artifacts
+if [ ! -e $REF_DIR ];
+then
+   mkdir -p $REF_DIR
+   cp $BASEDIR/../artifacts/xdmod/post/*.log $REF_DIR
+   cat $BASEDIR/../artifacts/xdmod/referencedata/names.csv $BASEDIR/../artifacts/xdmod/post/names-utf8.csv > $REF_DIR/names.csv
+fi
 
 if [[ "$XDMOD_REALMS" == *"jobs"* ]];
 then
