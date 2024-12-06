@@ -48,10 +48,10 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
         'engine'   => null,
 
         // Optional table default character set
-        'charset'  => null,
+        'charset'  => 'utf8',
 
         // Optional table collation
-        'collation' => null,
+        'collation' => 'utf8_unicode_ci',
 
         // Associative array where the keys are column names and the values are Column objects
         'columns'  => array(),
