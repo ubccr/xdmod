@@ -43,7 +43,7 @@ class MetricExplorerControllerTest extends TestCase
     {
         $helper = new XdmodTestHelper();
         $helper->authenticate('cd');
-     
+
         $config = <<<EOF
 {
     "show_title": "y",
