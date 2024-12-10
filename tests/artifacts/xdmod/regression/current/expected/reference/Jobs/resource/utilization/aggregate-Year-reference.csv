@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Resource"
+"Screwdriver CPU Utilization (%): by Resource"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Resource,"Screwdriver Utilization (%)"
+Resource,"Screwdriver CPU Utilization (%)"
 robertson,1.2497
 frearson,0.6128
 mortorq,0.2169

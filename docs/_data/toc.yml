@@ -67,6 +67,8 @@ toc:
         url: /troubleshooting.html
       - page: Cloud Metrics
         url: /cloud.html
+      - page: Resource Specifications Metrics
+        url: /resource-specifications.html
       - page: Storage Metrics
         url: /storage.html
       - page: GPU Metrics
