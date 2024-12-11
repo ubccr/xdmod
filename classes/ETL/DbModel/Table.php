@@ -837,7 +837,7 @@ ORDER BY trigger_name ASC";
         }
 
         if ( null !== $destination->charset && $this->charset != $destination->charset ) {
-            $alterList[] = sprintf("CHARSET = %s", $destination->charset);
+            $alterList[] = sprintf("CONVERT TO CHARACTER SET %s", $destination->charset);
         }
 
         if ( null !== $destination->collation && $this->collation != $destination->collation ) {
