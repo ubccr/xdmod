@@ -837,11 +837,15 @@ ORDER BY trigger_name ASC";
         }
 
         if ( null !== $destination->charset && $this->charset != $destination->charset ) {
-            $alterList[] = sprintf("CONVERT TO CHARACTER SET %s", $destination->charset);
-        }
-
-        if ( null !== $destination->collation && $this->collation != $destination->collation ) {
-            $alterList[] = sprintf("COLLATE = %s", $destination->collation);
+            $collation_definition = '';
+            if ($destination->collation !== null) {
+                $collation_definition = ' COLLATE ' . $destination->collation;
+            }
+            $alterList[] = sprintf("CONVERT TO CHARACTER SET %s %s", $destination->charset, $collation_definition);
+        } else {
+            if ( null !== $destination->collation && $this->collation != $destination->collation ) {
+                $alterList[] = sprintf("COLLATE = %s", $destination->collation);
+            }
         }
 
         if ( $this->comment != $destination->comment ) {
