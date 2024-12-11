@@ -68,7 +68,7 @@ class UserControllerProvider extends BaseControllerProvider
         $controller->get("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::getCurrentAPIToken');
         $controller->post("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::createAPIToken');
         $controller->delete("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::revokeAPIToken');
-        $controller->post("$root/current/api/jsonwebtoken", '\Rest\Controllers\UserControllerProvider::createJSONWebToken');
+        $controller->get("$root/current/api/jsonwebtoken", '\Rest\Controllers\UserControllerProvider::createJSONWebToken');
     }
 
     /**
@@ -229,7 +229,6 @@ class UserControllerProvider extends BaseControllerProvider
         $data = [
             'iat'  => $issuedAt->getTimestamp(),
             'jti'  => $tokenId,
-            'iss'  => $serverName,
             'exp'  => $expire,
             'upn'  => $user->getUserName()
         ];

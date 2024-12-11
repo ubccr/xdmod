@@ -1628,45 +1628,9 @@ CCR.xdmod.initDashboard = function () {
 }; //CCR.xdmod.initDashboard
 
 CCR.xdmod.initJupyterLab = function () {
-
-    Ext.Ajax.request({
-        url: 'rest/users/current/api/jsonwebtoken',
-        method: 'POST',
-        callback: function (options, success, response) {
-            if (success && CCR.checkJSONResponseSuccess(response)) {
-                var responsedata = Ext.util.JSON.decode(response.responseText);
-                var jsonwebtoken = responsedata.data;
-                CCR.xdmod.redirectToJupyterLab(jsonwebtoken);
-            }
-            else {
-                window.focus();
-                CCR.xdmod.ui.presentFailureResponse(response, {
-                    title: 'JupyterLab'
-                });
-            }
-        }
-    });
+    window.open("hub");
+    window.focus();
 }; //CCR.xdmod.initJupyterLab
-
-CCR.xdmod.redirectToJupyterLab = function(jsonwebtoken) {
-
-    var jupyterLabWindow;
-
-    Ext.Ajax.request({
-        url: 'hub',
-        method: 'GET',
-        headers: {
-            'Authorization': 'bearer ' + jsonwebtoken
-        },
-        success: function() {
-            jupyterHubWindow = window.open("hub");
-            window.focus();
-        },
-        failure: function() {
-            console.log('Unable to start JupyterLab.')
-        }
-    });
-}; //CCR.xdmod.redirectToJupyterLab
 
 // -----------------------------------
 
