@@ -45,7 +45,7 @@
                 "xdb/version-check.json",
                 "xdb/batch-export-requests.json"
             ]
-		},
+        },
         {
             "name": "update-shredder-tables",
             "description": "Update managed tables in mod_shredder",
@@ -72,7 +72,7 @@
             "endpoints": {
                 "destination": {
                     "type": "mysql",
-                    "name": "Shredder/Staging Database",
+                    "name": "Logging Database",
                     "config": "database",
                     "schema": "mod_logger"
                 }
@@ -89,7 +89,7 @@
             "endpoints": {
                 "destination": {
                     "type": "mysql",
-                    "name": "Shredder/Staging Database",
+                    "name": "Datawarehouse database",
                     "config": "database",
                     "schema": "modw"
                 }
@@ -116,6 +116,16 @@
                 "jobs/xdw/quarters.json",
                 "jobs/xdw/years.json"
             ]
+        },
+        {
+            "name": "update-nonmanaged-tables",
+            "description": "Update tables in modw that are not managed by etlv2",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                    "migrations/11.0.0-11.5.0/mod_shredder/shredded_job_slurm.sql"
+            ]
         }
-	]
+    ]
 }
