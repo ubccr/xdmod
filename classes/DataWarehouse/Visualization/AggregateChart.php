@@ -895,7 +895,7 @@ class AggregateChart
             // for each of the dataseries on this yAxisObject:
             foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
             {
-                $legendRank += 1;
+                $legendRank += 2;
                 $yAxisDataObject = $yAxisDataObjectAndDescription['yAxisDataObject']; // SimpleData object
                 $data_description = $yAxisDataObjectAndDescription['data_description'];
                 $decimals = $yAxisDataObjectAndDescription['decimals'];

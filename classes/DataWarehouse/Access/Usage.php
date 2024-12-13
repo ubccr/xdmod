@@ -845,7 +845,7 @@ class Usage extends Common
                             && $chartSortedByValue
                             && $usageGroupBy !== 'none'
                         ) {
-                            $rank = $meDataSeries['legendrank'] / 2;
+                            $rank = $meDataSeries['legendrank'] / 3;
                             $meDataSeries['name'] = "${rank}. " . $meDataSeries['name'];
                         }
                     }
