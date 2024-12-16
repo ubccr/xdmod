@@ -5,7 +5,7 @@
 
 namespace UnitTests;
 
-abstract class BaseTest extends \PHPUnit\Framework\TestCase
+abstract class TestBase extends \PHPUnit\Framework\TestCase
 {
     /**
      * Recursively filter out any keys matching one in $keyList. This is a helper function to
@@ -37,4 +37,4 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
         }
         return $input;
     }
-}  // BaseTest
+}
