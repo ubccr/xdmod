@@ -982,19 +982,18 @@ class AggregateChart
                             $visiblePoints++;
                         }
                     }
-                    // Dont add data labels for all pie slices. Plotly will render all labels otherwise,
-                    // which causes the margin on pie charts with many slices to break
                     $labelLimit = 12;
                     $labelsAllocated = 0;
-                    $pieSize = count($xValues);
                     $pieSum = array_sum($yValues);
-                    for ($i = 0; $i < $pieSize; $i++) {
-                        // For all pie charts, allocated labels up to the limit (12) and exlude labels of
-                        // small pie slices (< 2% of total data) to improve visibility.
-                        // For pie charts that are less than the default plot size, truncate long data labels to improve visibility.
+                    for ($i = 0; $i < count($xValues); $i++) {
+                    // Dont add data labels for all pie slices. Plotly will render all labels otherwise,
+                    // which causes the margin on pie charts with many slices to break.
+                    // Show all labels on thumbnail plots because slices can be difficult to hover over
+                    // due to size of plot.
                         if ($isThumbnail || ($labelsAllocated < $labelLimit && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
                             $label = $xValues[$i];
-                            if ($this->_width < \DataWarehouse\Visualization::$default_width && strlen($xValues[$i]) >= 70) {
+                            // Truncate long data labels to improve visibility.
+                            if (strlen($xValues[$i]) >= 70) {
                                 $label = mb_substr($xValues[$i], 0, 40) . '...';
                             }
                             $text[] = '<b>' . $label . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
