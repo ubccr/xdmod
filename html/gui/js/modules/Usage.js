@@ -2592,6 +2592,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                     Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
                     const update = relayoutChart(chartDiv, adjHeight, false);
                     Plotly.relayout(this.chartId, update);
+                    removeExtraTimeseriesTickLabels(chartDiv, this.chartOptions);
                 }
             }
         } //onResize

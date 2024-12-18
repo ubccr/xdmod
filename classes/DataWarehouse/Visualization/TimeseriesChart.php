@@ -387,7 +387,7 @@ class TimeseriesChart extends AggregateChart
                         'type' => 'date',
                         'rangemode' => 'tozero',
                         'hoverformat' => $this->getDateFormat(),
-                        'tickmode' => 'linear',
+                        'tickmode' => 'auto',
                         'timeseries' => true,
                         'nticks' => 20,
                         'spikedash' => 'solid',
@@ -645,7 +645,7 @@ class TimeseriesChart extends AggregateChart
                         $value_count = count($xValues);
 
                         if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
-                            $this->_chart['layout']['xaxis']['type'] = 'category';
+                            $this->_chart['layout']['xaxis']['type'] = 'date';
                             $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
                         }
 

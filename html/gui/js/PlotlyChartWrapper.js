@@ -16,7 +16,12 @@ Ext.namespace('XDMoD.utils');
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     const baseChartOptions = {};
-    const configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500 };
+    const configs = {
+        displayModeBar: false,
+        doubleClick: 'reset',
+        doubleClickDelay: 500,
+        showAxisRangeEntryBoxes: false
+    };
     XDMoD.utils.deepExtend(baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
 
@@ -92,10 +97,9 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         // for comparison idea
         baseChartOptions.data.sort((trace1, trace2) => {
             if (baseChartOptions.layout.barmode !== 'group') {
-                return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.traceorder - trace1.traceorder);
+                return Math.sign(trace2.traceorder - trace1.traceorder);
             }
-            const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.traceorder - trace2.traceorder);
-            return res;
+            return Math.sign(trace1.traceorder - trace2.traceorder);
         });
     }
 
@@ -125,11 +129,13 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
 
         if (baseChartOptions.layout.annotations.length === 0
            || (baseChartOptions.summary || baseChartOptions.dashboard || baseChartOptions.realmOverview)) {
+            removeExtraTimeseriesTickLabels(chartDiv, baseChartOptions);
             return;
         }
 
         const update = relayoutChart(chartDiv, baseChartOptions.layout.height, true);
         Plotly.relayout(baseChartOptions.renderTo, update);
+        removeExtraTimeseriesTickLabels(chartDiv, baseChartOptions);
     });
 
     return chart;
