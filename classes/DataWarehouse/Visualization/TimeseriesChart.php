@@ -298,7 +298,7 @@ class TimeseriesChart extends AggregateChart
                         ),
                         'ticksuffix' => ' ',
                         'tickprefix' => $yAxisIndex > 0 ? ' ' : null,
-                        'tickmode' => 'auto',
+                        'tickmode' => 'linear',
                         'nticks' => 10,
                         'type' => ($data_description->log_scale || $yAxisType == 'log') ? 'log' : 'linear',
                         'rangemode' => 'tozero',
@@ -645,7 +645,6 @@ class TimeseriesChart extends AggregateChart
                         $value_count = count($xValues);
 
                         if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
-                            $this->_chart['layout']['xaxis']['type'] = 'date';
                             $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
                         }
 
