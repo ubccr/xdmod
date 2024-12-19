@@ -2727,6 +2727,10 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             this.chartOptions = chartOptions;
                             var chartDiv = document.getElementById(baseChartOptions.renderTo);
 
+                            chartDiv.on('plotly_relayout', (evt) => {
+                                removeExtraTimeseriesTickLabels(chartDiv, this.chartOptions);
+                            });
+
                             chartDiv.on('plotly_click', (evt) => {
                                 let drillId;
                                 let label;
