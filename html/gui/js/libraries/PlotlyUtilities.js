@@ -543,7 +543,14 @@ function overrideLegendEvent(chartDiv) {
 
     chartDiv.on('plotly_legenddoubleclick', (evt) => false);
 }
-
+/**
+ * Removes tick labels outside the selected time interval
+ * from the domain axis of the timeseries plot.
+ *
+ * @param {Object} chartDiv - Plotly JS chart div
+ * @param {Object} baseChartOptions - Object contain Plotly JS layout and data
+ */
+/* exported removeExtraTimeseriesTickLabels */
 function removeExtraTimeseriesTickLabels(chartDiv, baseChartOptions) {
     const axis = (baseChartOptions.layout.swapXY ? 'y' : 'x') + 'axis';
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
