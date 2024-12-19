@@ -983,13 +983,20 @@ class AggregateChart
                         }
                     }
                     // Dont add data labels for all pie slices. Plotly will render all labels otherwise,
-                    // which causes the margin on pie charts with many slices to break
+                    // which causes the margin on pie charts with many slices to break.
+                    // Show all labels on thumbnail plots because slices can be difficult to hover over
+                    // due to size of plot.
                     $labelLimit = 12;
                     $labelsAllocated = 0;
                     $pieSum = array_sum($yValues);
                     for ($i = 0; $i < count($xValues); $i++) {
-                        if ($isThumbnail || (($labelsAllocated < $labelLimit) && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
-                            $text[] = '<b>' . $xValues[$i] . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
+                        if ($isThumbnail || ($labelsAllocated < $labelLimit && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
+                            $label = $xValues[$i];
+                            // Truncate long data labels to improve visibility.
+                            if (strlen($xValues[$i]) >= 70) {
+                                $label = mb_substr($xValues[$i], 0, 40) . '...';
+                            }
+                            $text[] = '<b>' . $label . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
                             $labelsAllocated++;
                         }
                         else {
