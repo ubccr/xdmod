@@ -550,9 +550,8 @@ function overrideLegendEvent(chartDiv) {
  * @param {Object} chartDiv - Plotly JS chart div
  * @param {Object} baseChartOptions - Object contain Plotly JS layout and data
  */
-/* exported removeExtraTimeseriesTickLabels */
-function removeExtraTimeseriesTickLabels(chartDiv, baseChartOptions) {
-    const axis = (baseChartOptions.layout.swapXY ? 'y' : 'x') + 'axis';
+function removeExtraTimeseriesTickLabels(chartDiv, baseChartOptions) { // eslint-disable-line no-unused-vars
+    const axis = baseChartOptions.layout.swapXY ? 'yaxis' : 'xaxis';
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
     if (!isEmpty && baseChartOptions.layout[axis].timeseries) {
         const xAxisTicks = chartDiv.getElementsByClassName(`${axis}layer-below`)[0];
@@ -568,6 +567,5 @@ function removeExtraTimeseriesTickLabels(chartDiv, baseChartOptions) {
                 currTick.remove();
             }
         }
-
     }
 }
