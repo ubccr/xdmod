@@ -24,6 +24,7 @@
     "DashboardStore": false,
     "grecaptcha": false,
     "StringUtilities": false,
-    "Plotly": false
+    "Plotly": false,
+    "removeExtraTimeseriesTickLabels": false
   }
 }
