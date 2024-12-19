@@ -550,7 +550,7 @@ function overrideLegendEvent(chartDiv) {
  * @param {Object} chartDiv - Plotly JS chart div
  * @param {Object} baseChartOptions - Object contain Plotly JS layout and data
  */
-function removeExtraTimeseriesTickLabels(chartDiv, baseChartOptions) { // eslint-disable-line no-unused-vars
+function removeExtraTimeseriesTickLabels(chartDiv, baseChartOptions) {
     const axis = baseChartOptions.layout.swapXY ? 'yaxis' : 'xaxis';
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
     if (!isEmpty && baseChartOptions.layout[axis].timeseries) {
