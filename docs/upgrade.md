@@ -323,6 +323,9 @@ The following tables will be changed and populated with data from `mod_hpcdb`:
 - The `modw_cloud.instance_type_union` table will have the default value for
   the `instance_type_id` column set to `NULL`.
 
+Additional 11.0.1 Upgrade Notes
+-------------------
+
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration

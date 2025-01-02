@@ -173,6 +173,7 @@ class AggregateChart
                     'traceorder' => 'normal'
                 ),
                 'hovermode' => $this->_hideTooltip ? false : 'x unified',
+                'hoverdistance' => 1,
                 'hoverlabel' => array(
                     'align' => 'left',
                     'bgcolor' => 'rgba(255, 255, 255, 0.8)',
@@ -942,13 +943,14 @@ class AggregateChart
                 $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
                 $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
                 $this->_chart['layout']['stdErr'] = $data_description->std_err;
+                $xValues = $this->_xAxisDataObject->getValues();
                 $trace = array();
                 $drilldown = array();
-                $xValues = array();
                 $yValues = array();
                 $drillable = array();
                 $text = array();
                 $colors = array();
+                $visiblePoints = 0;
 
                 // to display as pie chart:
                 if($data_description->display_type == 'pie')
@@ -958,7 +960,6 @@ class AggregateChart
                         // If the first value, give it the yAxisColor so we don't skip
                         // that color in the dataset. Otherwise, pick the next color.
                         $yValues[] = $value;
-                        $xValues[] = $yAxisDataObject->getXValue($index);
                         $colors[] = ($index == 0) ? $yAxisColor
                             : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT);
                         $drillable[] = true;
@@ -976,6 +977,9 @@ class AggregateChart
                             'values' => $yValues,
                         );
 
+                        if (!is_null($value)) {
+                            $visiblePoints++;
+                        }
                     }
                     // Dont add data labels for all pie slices. Plotly will render all labels otherwise,
                     // which causes the margin on pie charts with many slices to break
@@ -1007,7 +1011,6 @@ class AggregateChart
                     foreach( $yAxisDataObject->getValues() as $index => $value)
                     {
                         $yValues[] = $value;
-                        $xValues[] = $yAxisDataObject->getXValue($index);
                         $drillable[] = true;
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
@@ -1016,6 +1019,10 @@ class AggregateChart
                             'id' => $yAxisDataObject->getXId($index),
                             'label' => $yAxisDataObject->getXValue($index)
                         );
+
+                        if (!is_null($value)) {
+                            $visiblePoints++;
+                        }
                     }
                 }
 
@@ -1084,10 +1091,14 @@ class AggregateChart
                 }
 
                 $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
-                // Hide markers for 32 points or greater, except when there are multiple traces then hide markers starting at 21 points.
+
+                // Show markers if the non-thumbnail plot has less than 21 visible data points.
+                // Also show markers if there is one data point otherwise thumbnail plots with 1 non-null point will be
+                // hidden.
                 // Need check for chart types that this applies to otherwise bar, scatter, and pie charts will be hidden.
-                $hideMarker = in_array($data_description->display_type, array('line', 'spline', 'area', 'areaspline'))
-                    && ($values_count >= 32 || (count($yAxisObject->series) > 1 && $values_count >= 21));
+                $showMarker = in_array($data_description->display_type, array('scatter', 'pie', 'bar', 'h_bar', 'column'))
+                    || ($visiblePoints < 21 && !$isThumbnail)
+                    || $visiblePoints == 1;
 
                 $trace = array_merge($trace, array(
                     'automargin'=> $data_description->display_type == 'pie' ? true : null,
@@ -1107,7 +1118,7 @@ class AggregateChart
                             'color' => $lineColor,
                         ),
                         'symbol' => $this->_symbolStyles[$data_description_index % 5],
-                        'opacity' => $hideMarker ? 0.0 : 1.0
+                        'opacity' => $showMarker ? 1.0 : 0.0
                     ),
                     'line' => array(
                         'color' => $data_description->display_type == 'pie' ?
