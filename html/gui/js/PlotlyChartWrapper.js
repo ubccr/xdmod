@@ -96,8 +96,8 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         // Referenced https://stackoverflow.com/questions/45741397/javascript-sort-array-of-objects-by-2-properties
         // for comparison idea
         baseChartOptions.data.sort((trace1, trace2) => {
-            const containsBarChart = baseChartOptions.data.some((elem) => elem.type === 'bar');
-            if (containsBarChart && baseChartOptions.layout.barmode === 'stack') {
+            const containsBarSeries = baseChartOptions.data.some((elem) => elem.type === 'bar');
+            if (containsBarSeries && baseChartOptions.layout.barmode === 'stack') {
                 return Math.sign(trace2.traceorder - trace1.traceorder);
             }
             return Math.sign(trace1.traceorder - trace2.traceorder);
