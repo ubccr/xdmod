@@ -993,8 +993,8 @@ class AggregateChart
                         if ($isThumbnail || ($labelsAllocated < $labelLimit && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
                             $label = $xValues[$i];
                             // Truncate long data labels to improve visibility.
-                            if (strlen($xValues[$i]) >= 70) {
-                                $label = mb_substr($xValues[$i], 0, 40) . '...';
+                            if (mb_strlen($label) >= 60) {
+                                $label = mb_substr($xValues[$i], 0, 57) . '...';
                             }
                             $text[] = '<b>' . $label . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
                             $labelsAllocated++;
