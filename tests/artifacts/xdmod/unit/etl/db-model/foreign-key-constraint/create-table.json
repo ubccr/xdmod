@@ -46,7 +46,7 @@
             }
         },
         [
-            "CREATE TABLE IF NOT EXISTS `test` (\n  `id` int(11) NOT NULL auto_increment,\n  `other_id` int(11) NOT NULL,\n  PRIMARY KEY (`id`),\n  INDEX `idx_other_id` (`other_id`),\n  CONSTRAINT `fk_other` FOREIGN KEY (`other_id`) REFERENCES `other` (`id`)\n) ENGINE = innodb;"
+            "CREATE TABLE IF NOT EXISTS `test` (\n  `id` int(11) NOT NULL auto_increment,\n  `other_id` int(11) NOT NULL,\n  PRIMARY KEY (`id`),\n  INDEX `idx_other_id` (`other_id`),\n  CONSTRAINT `fk_other` FOREIGN KEY (`other_id`) REFERENCES `other` (`id`)\n) ENGINE = innodb CHARSET = utf8 COLLATE = utf8_unicode_ci;"
         ]
     ],
     "Table with complex foreign key constraint": [
@@ -99,7 +99,7 @@
             }
         },
         [
-            "CREATE TABLE IF NOT EXISTS `test` (\n  `id` int(11) NOT NULL auto_increment,\n  `other_id` int(11) NOT NULL,\n  PRIMARY KEY (`id`),\n  INDEX `idx_other_id` (`other_id`),\n  CONSTRAINT `fk_other` FOREIGN KEY (`other_id`) REFERENCES `mod_other`.`other` (`id`) ON DELETE SET NULL ON UPDATE CASCADE\n) ENGINE = innodb;"
+            "CREATE TABLE IF NOT EXISTS `test` (\n  `id` int(11) NOT NULL auto_increment,\n  `other_id` int(11) NOT NULL,\n  PRIMARY KEY (`id`),\n  INDEX `idx_other_id` (`other_id`),\n  CONSTRAINT `fk_other` FOREIGN KEY (`other_id`) REFERENCES `mod_other`.`other` (`id`) ON DELETE SET NULL ON UPDATE CASCADE\n) ENGINE = innodb CHARSET = utf8 COLLATE = utf8_unicode_ci;"
         ]
     ]
 }
