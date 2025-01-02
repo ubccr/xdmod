@@ -72,7 +72,8 @@
                     }
 
                     chartOptions.data.sort((trace1, trace2) => {
-                        if (chartOptions.layout.barmode !== 'group') {
+                        const containsBarChart = baseChartOptions.data.some((elem) => elem.type === 'bar');
+                        if (containsBarChart && baseChartOptions.layout.barmode === 'stack') {
                             return Math.sign(trace2.traceorder - trace1.traceorder);
                         }
                         return Math.sign(trace1.traceorder - trace2.traceorder);
