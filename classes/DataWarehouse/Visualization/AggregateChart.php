@@ -943,9 +943,9 @@ class AggregateChart
                 $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
                 $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
                 $this->_chart['layout']['stdErr'] = $data_description->std_err;
+                $xValues = $this->_xAxisDataObject->getValues();
                 $trace = array();
                 $drilldown = array();
-                $xValues = array();
                 $yValues = array();
                 $drillable = array();
                 $text = array();
@@ -960,7 +960,6 @@ class AggregateChart
                         // If the first value, give it the yAxisColor so we don't skip
                         // that color in the dataset. Otherwise, pick the next color.
                         $yValues[] = $value;
-                        $xValues[] = $yAxisDataObject->getXValue($index);
                         $colors[] = ($index == 0) ? $yAxisColor
                             : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT);
                         $drillable[] = true;
@@ -1012,7 +1011,6 @@ class AggregateChart
                     foreach( $yAxisDataObject->getValues() as $index => $value)
                     {
                         $yValues[] = $value;
-                        $xValues[] = $yAxisDataObject->getXValue($index);
                         $drillable[] = true;
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
