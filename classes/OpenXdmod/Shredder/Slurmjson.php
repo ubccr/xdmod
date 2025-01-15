@@ -186,7 +186,7 @@ class Slurmjson extends Slurm
 
     function getExitCode($jobrecord) {
 
-        $state = $jobrecord->state->current;
+        $state = $this->getJobState($jobrecord);
 
         if ($state == 'FAILED') {
             return "1:0";
@@ -209,6 +209,14 @@ class Slurmjson extends Slurm
         return "$return_code:$signal";
     }
 
+    function getJobState($jobrecord) {
+        if (is_array($jobrecord->state->current)) {
+            return $jobrecord->state->current[0];
+        }
+
+        return $jobrecord->state->current;
+    }
+
     function parseJobRecord($jobrecord) {
 
         // Skip jobs that haven't ended.
@@ -223,7 +231,7 @@ class Slurmjson extends Slurm
             return null;
         }
 
-        $jobState = $jobrecord->state->current;
+        $jobState = $this->getJobState($jobrecord);
 
         if (!in_array($jobState, self::$endedJobStates)) {
             if (in_array($jobState, self::$nonEndedJobStates)) {
