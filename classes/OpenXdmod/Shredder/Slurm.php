@@ -156,7 +156,7 @@ class Slurm extends Shredder
      *
      * @var string[]
      */
-    protected static $endedJobStates = [
+    private static $endedJobStates = [
         'BOOT_FAIL',
         'CANCELLED',
         'COMPLETED',
@@ -175,7 +175,7 @@ class Slurm extends Shredder
      *
      * @var string[]
      */
-    protected static $nonEndedJobStates = [
+    private static $nonEndedJobStates = [
         'PENDING',
         'RUNNING',
         'REQUEUED',
@@ -188,7 +188,7 @@ class Slurm extends Shredder
      *
      * @var string[]
      */
-    protected static $unknownJobStates = [];
+    private static $unknownJobStates = [];
 
     /**
      * Time zone used when parsing datetimes.
