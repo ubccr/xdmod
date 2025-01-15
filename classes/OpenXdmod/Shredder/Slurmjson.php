@@ -260,7 +260,7 @@ class Slurmjson extends Slurm
             'job_id' => $local_job_id,
             'job_array_index' => $local_job_array_index,
             'job_id_raw' => $jobrecord->job_id,
-            'cluster_name' => $jobrecord->cluster,
+            'cluster_name' => $this->getResource(),
             'partition_name' => $jobrecord->partition,
             'qos_name' => $jobrecord->qos,
             'account_name' => $jobrecord->account,
