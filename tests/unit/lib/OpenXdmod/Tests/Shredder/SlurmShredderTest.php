@@ -176,8 +176,6 @@ class SlurmShredderTest extends JobShredderBaseTestCase
      */
     public function testUtf8MultibyteCharsParsing($line, $job)
     {
-        $jobName = mb_convert_encoding($job['job_name'], 'ISO-8859-1', 'UTF-8');
-
         $shredder = $this
             ->getMockBuilder('\OpenXdmod\Shredder\Slurm')
             ->setConstructorArgs([$this->db])
@@ -186,7 +184,7 @@ class SlurmShredderTest extends JobShredderBaseTestCase
         $shredder
             ->expects($this->once())
             ->method('insertRow')
-            ->with(new ArraySubset(['job_name' => $jobName]));
+            ->with(new ArraySubset(['job_name' => $job['job_name']]));
 
         $shredder->setLogger($this->logger);
         $shredder->shredLine($line);
