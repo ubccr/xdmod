@@ -21,7 +21,7 @@ class DatabasesMigration extends AbstractDatabasesMigration
 
         $dbh = DB::factory('datawarehouse');
         $mysql_helper = MySQLHelper::factory($dbh);
-        
+
         if ($mysql_helper->tableExists('modw_cloud.event')) {
             Utilities::runEtlPipeline(
                 ['cloud-migration-11-0-0_11-0-1','cloud-state-pipeline'],
