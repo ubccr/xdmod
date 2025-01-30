@@ -24,7 +24,7 @@
     "cloud-migration-11-0-0_11-0-1": [
         {
             "name": "AddResourcePIOrganizationID",
-            "description": "Update instance type union table.",
+            "description": "Update modw_cloud.session_records table.",
             "definition_file_list": [
                 "cloud_common/session_records.json"
             ]
