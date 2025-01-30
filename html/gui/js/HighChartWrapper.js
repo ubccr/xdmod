@@ -168,7 +168,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
     }
 
-    jQuery.extend(true, baseChartOptions, chartOptions);
+    XDMoD.utils.deepExtend(baseChartOptions, chartOptions);
 
     if (extraHandlers) {
         if (extraHandlers.loadHandlers) {

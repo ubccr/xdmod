@@ -14,7 +14,7 @@ CCR.xdmod.ui.HighChartPanel = function (config) {
 }; // CCR.xdmod.ui.HighChartPanel
 
 
-// Set options globally for all charts instantiated afterwards: 
+// Set options globally for all charts instantiated afterwards:
 Highcharts.setOptions ({
     lang: {
         // commas for thousands separators
@@ -39,7 +39,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
 
         var self = this;
 
-        this.baseChartOptions = jQuery.extend(true, {}, {
+        this.baseChartOptions = XDMoD.utils.deepExtend({}, {
             chart: {
                 renderTo: this.id,
                 width: this.width,
@@ -88,12 +88,7 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
                     if (t.getCount() <= 0) {
                         return;
                     }
-                    this.chartOptions = jQuery.extend(true, {}, this.baseChartOptions, t.getAt(0).data);
-
-                    this.chartOptions.exporting.enabled = (this.exporting === true);
-                    this.chartOptions.credits.enabled = (this.credits === true);
-
-                    this.chartOptions.title.text = this.highChartsTextEncode(this.chartOptions.title.text);
+                    this.highChartsTextEncode(this.chartOptions.title.text);
                     this.isEmpty = this.chartOptions.series && this.chartOptions.series.length === 0;
 
                     this.initNewChart.call(this);
@@ -127,9 +122,9 @@ Ext.extend(CCR.xdmod.ui.HighChartPanel, Ext.Panel, {
         }
         var finalChartOptions = {};
         if (chartOptions) {
-            jQuery.extend(true, finalChartOptions, this.baseChartOptions, chartOptions);
+            XDMoD.utils.deepExtend(this.baseChartOptions, chartOptions);
         } else {
-            jQuery.extend(true, finalChartOptions, this.baseChartOptions, this.chartOptions);
+            XDMoD.utils.deepExtend(finalChartOptions, this.baseChartOptions, this.chartOptions);
         }
         this.chart = XDMoD.utils.createChart(finalChartOptions);
     },
