@@ -10,14 +10,6 @@ See [Software Requirements](software-requirements.html) for details.
 
 See [Hardware Requirements](hardware-requirements.html) for details.
 
-### Can I use Open XDMoD with Rocky Linux 8/RHEL 8?
-
-Open XDMoD 10.0 has a [beta release](https://github.com/ubccr/xdmod/releases/tag/v10.0.0-beta5-el8) version that is compatible with Rocky Linux 8.
-
-### Does Open XDMoD support PHP versions newer than PHP 5.4?
-
-Open XDMoD 10.0 has a [beta release](https://github.com/ubccr/xdmod/releases/tag/v10.0.0-beta5-el8) version that is compatible with PHP 7.2.
-
 ### How do I enable LDAP Authentication?
 
 Open XDMoD has support for [Single Sign On](simpleSAMLphp.html)

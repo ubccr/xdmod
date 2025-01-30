@@ -15,21 +15,12 @@ proc confirmUpgrade { } {
     send yes\n
 }
 
-proc confirmResourceSpecs { } {
-    expect {
-        timeout { send_user "\nFailed to get prompt\n"; exit 1 }
-        -re "\nAre you ready to continue? .*\\\] "
-    }
-    send yes\n
-}
-
 #-------------------------------------------------------------------------------
 # main body
 
 set timeout 180
 spawn "xdmod-upgrade"
 confirmUpgrade
-confirmResourceSpecs
 
 expect {
     timeout {

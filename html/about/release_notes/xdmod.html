@@ -2,10 +2,10 @@
 
 <p>Below is a list of Open XDMoD releases with major features and bug fixes listed.</p>
 
-<h2 id="2024-XX-XX-v11-0-0">2024-XX-XX v11.0.0</h2>
-<p><strong>IMPORTANT NOTE:</strong>Open XDMoD is now no longer bundled with libraries that have license restrictions for commercial or government use. The charting library used in Open XDMoD has changed from <a href="https://www.highcharts.com/">Highcharts</a> to <a href="https://plotly.com/javascript/">Plotly JS</a>, an open source library. Please refer to the <a href="https://open.xdmod.org/11.0/notices.html">license notices</a> for more information about the open source licenses bundled with Open XDMoD.
-This chart library change brings some new features to the interface and some minor changes:
+<h2 id="2024-09-16-v11-0-0">2024-09-16 v11.0.0</h2>
+<p><strong>IMPORTANT NOTE:</strong> Open XDMoD is now no longer bundled with libraries that have license restrictions for commercial or government use. The charting library used in Open XDMoD has changed from <a href="https://www.highcharts.com/">Highcharts</a> to <a href="https://plotly.com/javascript/">Plotly JS</a>, an open source library. Please refer to the <a href="https://open.xdmod.org/11.0/notices.html">license notices</a> for more information about the open source licenses bundled with Open XDMoD.
 </p>
+<p>This chart library change brings some new features to the interface and some minor changes:</p>
 <ul>
     <li><p>New Features</p>
         <ul>
@@ -16,7 +16,7 @@ This chart library change brings some new features to the interface and some min
     </li>
     <li><p>Changes</p>
          <ul>
-            <li>Charts no longer allow series context menus to appear when clicking on the lines connecting data points. Series context menus only appear when clicking data points or the legend entry (for Metric Explorer charts)</li>
+            <li>Charts no longer allow series context menus to appear when clicking on the lines connecting data points. Series context menus only appear when clicking data points or the legend entry (for Metric Explorer charts).</li>
             <li>The button for resetting the chart zoom in Metric Explorer charts appears in the chart context menus instead of a button on the chart. Resetting the chart zoom for charts in all other tabs now requires a double click on the plotting area instead of a button on the chart.</li>
         </ul>
     </li>
@@ -35,23 +35,146 @@ This chart library change brings some new features to the interface and some min
     </li>
 </ul>
 
-<p>Other changes to Open XDMoD are:</p>
+<p>Other changes to Open XDMoD 11.0.0 are:</p>
 <ul>
-    <li><p>New Features</p>
     <li><p>Enhancements</p>
         <ul>
-            <li>Metric Explorer<ul>
-                <li>Added copy to clipboard option when generating a link to the current chart.</li>
-            </ul>
+            <li>Data Analytics Framework
+                <ul>
+                    <li>Improve performance of API calls for raw data.</li>
+                    <li>Change the raw data endpoint to respond with a JSON text sequence instead of one large JSON object.</li>
+                    <li>Provide more helpful error codes and messages for raw data requests.</li>
+                </ul>
             </li>
-            <li>Job Viewer<ul>
-                <li>Added copy to clipboard option when getting a shareable link to a job.</li>
-            </ul>
+            <li>ETL
+                <ul>
+                    <li>Add an option to <code>etl_overseer.php</code> for turning off writing the ETL process log to the database.</li>
+                    <li>Update a log table SQL query to be more efficient.</li>
+                </ul>
+            </li>
+            <li>General
+                <ul>
+                    <li>Update the description of the "Job Size: Normalized" metric in the Jobs realm.</li>
+                    <li>Improve the UI display when the database is down or otherwise unreachable from the web server.</li>
+                </ul>
+            </li>
+            <li>Job Viewer
+                <ul>
+                    <li>Add a copy to clipboard option when getting a shareable link to a job.</li>
+                    <li>Add dashed lines for null data in Job Viewer charts.</li>
+                </ul>
+            </li>
+            <li>Metric Explorer
+                <ul>
+                    <li>Add a copy to clipboard option when generating a link to the current chart.</li>
+                </ul>
+            </li>
+            <li>Resource Specifications
+                <ul>
+                    <li>Add new Resource Specifications realm.</li>
+                </ul>
             </li>
         </ul>
     </li>
-    <li>Uncategorized<ul>
-    </ul>
+    <li><p>Bug Fixes</p>
+        <ul>
+            <li>Escape double quotes when migrating portal settings.</li>
+            <li>Fix API token expiration message.</li>
+            <li>Fix API token header authentication.</li>
+            <li>Fix REST date validation.</li>
+            <li>Add a default value for the <code>modw_cloud.instance_type_union</code> table.</li>
+        </ul>
+    </li>
+    <li><p>Maintenance / Code Quality</p>
+        <ul>
+            <li>Update for compatibility with PHP 7.4.</li>
+            <li>Include usernames in REST logging.</li>
+            <li>Replace redundant exception classes with ones provided by Symfony.</li>
+            <li>Update to support OnDemand module enhancements.</li>
+            <li>Remove obsolete XSEDE-specific code.</li>
+            <li>Add a patch for symfony/http-foundation: CVE-2019-10913.</li>
+        </ul>
+    </li>
+    <li><p>Uncategorized</p>
+        <ul>
+            <li>Change the User Manual generator to use Sphinx.</li>
+            <li>Change the name of the "Utilization" metric in the Jobs realm to "CPU Utilization."</li>
+        </ul>
+    </li>
+    <li><p>Optional Modules</p>
+        <ul>
+            <li><p>Application Kernels</p>
+                <ul>
+                    <li>Maintenance / Code Quality
+                        <ul>
+                            <li>Update for compatibility with PHP 7.4.</li>
+                            <li>Update for compatibility with new Resource Specifications realm.</li>
+                            <li>Replace jQuery with native JavaScript.</li>
+                        </ul>
+                    </li>
+                    <li>Bug Fixes
+                        <ul>
+                            <li>Add a default argument for <code>AppKernelLevel::detect</code>.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li><p>Job Performance (SUPReMM)</p>
+                <ul>
+                    <li>Enhancements
+                        <ul>
+                            <li>Add a GPU Count dimension.</li>
+                            <li>Add CDO, DFTB+, Libra, MOM6, NEXMD, and ROMS to the list of community applications.</li>
+                            <li>Make application name data available through both the Data Export tab and the Data Analytics Framework.</li>
+                        </ul>
+                    </li>
+                    <li>Bug Fixes
+                        <ul>
+                            <li>Order scatter plot data by usage instead of the efficiency statistic.</li>
+                            <li>Fix &gt;100% values for wall time accuracy.</li>
+                            <li>Fix filter values not appearing in autocomplete.</li>
+                            <li>Fix bugs with <code>NAN</code> values from timeseries data.</li>
+                        </ul>
+                    </li>
+                    <li>Maintenance / Code Quality
+                        <ul>
+                            <li>Update for compatibility with PHP 7.4.</li>
+                            <li>Replace redundant exception classes with ones provided by Symfony.</li>
+                            <li>Remove jQuery as a dependency.</li>
+                            <li>Update jsPlumb dependency.</li>
+                        </ul>
+                    </li>
+                    <li>Miscellaneous
+                        <ul>
+                            <li>Use the portal's time zone for raw data query dates instead of UTC.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+            <li><p>Open OnDemand</p>
+                <ul>
+                    <li>Enhancements
+                        <ul>
+                            <li>Change how page loads, sessions, and applications are counted and categorized. See the
+                                <a href="https://ondemand.xdmod.org/11.0/upgrade.html" target="_blank" rel="noopener noreferrer">upgrade guide</a>
+                                for details.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>Bug Fixes
+                        <ul>
+                            <li>Fix how unknown locations are displayed.</li>
+                        </ul>
+                    </li>
+                    <li>Maintenance / Code Quality
+                        <ul>
+                            <li>Update descriptions for metrics, dimensions, and aggregate tables.</li>
+                            <li>Add an SQL index to speed up aggregation.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </li>
+        </ul>
     </li>
 </ul>
 <h2 id="2023-09-11-v10-5-0">2023-09-11 v10.5.0</h2>
