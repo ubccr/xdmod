@@ -6337,6 +6337,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 Plotly.relayout(`plotly-panel${this.id}`, { width: adjWidth, height: adjHeight });
                 const update = relayoutChart(chartDiv, adjHeight, false);
                 Plotly.relayout(`plotly-panel${this.id}`, update);
+                removeExtraTimeseriesTickLabels(chartDiv, CCR.xdmod.ui.metricExplorer.plotlyPanel.chartOptions);
             }
         } //onResize
 
