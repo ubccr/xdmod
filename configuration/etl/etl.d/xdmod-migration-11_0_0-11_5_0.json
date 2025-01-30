@@ -9,7 +9,7 @@
     },
     "migration-11_0_0-11_5_0": [
         {
-            "name": "UpdateShreddeJobTable",
+            "name": "UpdateShredderJobTable",
             "description": "Update end_time index on mod_shredder.shredded_job.",
             "definition_file_list": [
                 "jobs/shredder/job.json"
