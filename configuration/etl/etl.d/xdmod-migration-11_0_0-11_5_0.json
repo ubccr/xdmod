@@ -10,7 +10,7 @@
     "migration-11_0_0-11_5_0": [
         {
             "name": "UpdateShreddeJobTable",
-            "description": "Update mod_shredder.shredded_job with new index.",
+            "description": "Update end_time index on mod_shredder.shredded_job.",
             "definition_file_list": [
                 "jobs/shredder/job.json"
             ],
@@ -23,7 +23,7 @@
                 },
                 "source": {
                     "type": "mysql",
-                    "name": "Shredder Databaes",
+                    "name": "Shredder Database",
                     "config": "shredder",
                     "schema": "mod_shredder"
                 }
