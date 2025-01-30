@@ -225,7 +225,7 @@ class XdmodApplicationFactory
         }
 
         // SETUP: error handler
-        $app->error(function (\Exception $e, Request $request, $code) use ($app) {
+        $app->error(function (\Exception $e, Request $request, $code) {
             if($code == 405 && strtoupper($_SERVER['REQUEST_METHOD']) === 'OPTIONS' && array_key_exists('HTTP_ORIGIN', $_SERVER)){
                 try {
                     $corsDomains = \xd_utilities\getConfiguration('cors', 'domains');
