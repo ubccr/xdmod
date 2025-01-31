@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "17fedb677e9a0759ac6e7dd79ad5ce89",
+    "content-hash": "cdd20bd2cff3efd05e153c476ae4d665",
     "packages": [
         {
             "name": "carlo/jquery-base64-file",
@@ -792,11 +792,11 @@
         },
         {
             "name": "jquery/jquery-min-file",
-            "version": "1.12.4",
+            "version": "3.7.1",
             "dist": {
                 "type": "file",
-                "url": "https://code.jquery.com/jquery-1.12.4.min.js",
-                "shasum": "5a9dcfbef655a2668e78baebeaa8dc6f41d8dabb"
+                "url": "https://code.jquery.com/jquery-3.7.1.min.js",
+                "shasum": "ee48592d1fff952fcf06ce0b666ed4785493afdc"
             },
             "require": {
                 "composer/installers": "~1.0"
@@ -4523,13 +4523,13 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
-    "platform-dev": [],
+    "platform": {},
+    "platform-dev": {},
     "platform-overrides": {
         "php": "5.4"
     },
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.6.0"
 }
