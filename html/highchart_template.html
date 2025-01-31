@@ -6,7 +6,7 @@
       <title>Highcharts Template</title>
 
       <style type="text/css">html,body{margin:0px;height:100%;}</style>
-      <script type="text/javascript" src="_html_dir_/gui/lib/jquery/jquery-1.12.4.min.js"></script>
+      <script type="text/javascript" src="_html_dir_/gui/lib/jquery/jquery-3.7.1.min.js"></script>
       <script type="text/javascript" src="_html_dir_/gui/js/StringExtensions.js"></script>
 
       <script type="text/javascript">
@@ -21,58 +21,54 @@
 
          // _ chartOptions _ is a macro that is substituted by \xd_charting\exportHighchart()
          var inputChartOptions = _chartOptions_;
-
-         $(document).ready(function() {
-
+        document.addEventListener('DOMContentLoaded', function() {
             var chartOptions = {
 
-               chart: {
-                  renderTo: 'container',
-                  animation: false
-               },
+                chart: {
+                    renderTo: 'container',
+                    animation: false
+                },
 
-               plotOptions: {
-                  series: {
-                     animation: false,
-                     turboThreshold: 0
-                  }
-               },
+                plotOptions: {
+                    series: {
+                        animation: false,
+                        turboThreshold: 0
+                    }
+                },
 
-               exporting: {
-                  width: _width_,
-                  height: _height_,
-                  sourceWidth: _width_,
-                  sourceHeight: _height_
-               }
+                exporting: {
+                    width: _width_,
+                    height: _height_,
+                    sourceWidth: _width_,
+                    sourceHeight: _height_
+                }
 
             };//chartOptions
 
-            XDMoD.utils.deepExtend(inputChartOptions,chartOptions);
+            jQuery.extend(inputChartOptions,chartOptions);
 
             // Needed to provide comma as thousands separator in export
             Highcharts.setOptions ({
-               lang: {
-                  thousandsSep: '\u002c' // the humble comma
-               }
+                lang: {
+                    thousandsSep: '\u002c' // the humble comma
+                }
             });
 
             var globalChartOptions = _globalChartOptions_;
             if (globalChartOptions) {
-               Highcharts.setOptions({
-                  global: globalChartOptions
-               });
+                Highcharts.setOptions({
+                    global: globalChartOptions
+                });
             }
 
             if (inputChartOptions.series.length == 0) {
-               inputChartOptions.title.text = 'No data available for the critera specified';
-               inputChartOptions.title.verticalAlign = 'middle';
-               inputChartOptions.title.floating = true;
-               inputChartOptions.title.style = { "color": "#333333", "fontSize": "40px" }
+                inputChartOptions.title.text = 'No data available for the critera specified';
+                inputChartOptions.title.verticalAlign = 'middle';
+                inputChartOptions.title.floating = true;
+                inputChartOptions.title.style = { "color": "#333333", "fontSize": "40px" }
             }
             chart = XDMoD.utils.createChart(inputChartOptions);
-
-         });//$(document).ready(...
-
+        });
       </script>
 
    </head>
@@ -85,6 +81,7 @@
       <script type="text/javascript" src="_html_dir_/gui/js/HighChartWrapper.js"></script>
 
       <!-- needed for getSVG() -->
+      <script type="text/javascript" src="_html_dir/gui/js/CCR.js"></script>
       <script type="text/javascript" src="_html_dir_/gui/lib/highcharts/js/modules/exporting.src.js"></script>
       <script type="text/javascript" src="_html_dir_/gui/lib/highcharts/js/highcharts-more.js"></script>
       <script type="text/javascript" src="_html_dir_/gui/lib/highchartsDottedLineNullPlot.src.js"></script>
