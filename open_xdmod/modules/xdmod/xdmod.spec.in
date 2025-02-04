@@ -101,9 +101,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0570,apache,xdmod) %{xdmod_export_dir}
 
 %changelog
-* Tue Feb 4 2025 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 10.5.1-1.0
-    - Release 10.5.1
-    - Update jQuery to 3.7.1 to address CVE-2020-11023
 * Mon Sep 11 2023 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 10.5.0-1.0
     - Release 10.5.0
     - Add support for checking rpm install state in check-config
