@@ -123,7 +123,7 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     ExtJS::loadSupportScripts('gui/lib');
     ?>
     <script type="text/javascript" src="gui/lib/ext-oldie-history-patch.js"></script>
-    <script type="text/javascript" src="gui/lib/jquery/jquery-1.12.4.min.js"></script>
+    <script type="text/javascript" src="gui/lib/jquery/jquery-3.7.1.min.js"></script>
     <?php if ($userLoggedIn): ?>
         <script type="text/javascript" src="gui/lib/jquery-plugins/base64/jquery.base64.js"></script>
     <?php endif; ?>
