@@ -1222,7 +1222,7 @@ class pdoAggregator extends aAggregator
             $periodDisplay = $periodId;
             if ( 'day' === $aggregationUnit ) {
                 $dayDateTime = \DateTime::createFromFormat('Y00z', $periodId - 1);
-                $periodDisplay .= ' ' . $dayDateTime->format('d m Y');
+                $periodDisplay .= ' ' . $dayDateTime->format('Y-m-d');
             }
             $this->logger->info("Aggregated $aggregationUnit ("
                                 . ( $numPeriodsProcessed + $aggregationPeriodOffset)
