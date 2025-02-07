@@ -85,6 +85,9 @@ jobs:
       - run: ./tests/integration/runtests.sh --junit-output-dir ~/phpunit
       - run: ./tests/regression/post_ingest_test.sh --junit-output-dir ~/phpunit
       - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
+      - run:
+          name: Ensure that no XDMoD exceptions were logged
+          command: test ! -f /root/xdmod/logs/exceptions.log
       - run: pushd $HOME && rm -f chromedriver_linux64.zip && wget https://chromedriver.storage.googleapis.com/106.0.5249.61/chromedriver_linux64.zip && popd
       - run:
           name: 'Bodge the nodejs version to run an older one for the webdriver tests'
@@ -120,6 +123,8 @@ jobs:
           path: /var/log/php-fpm
       - store_artifacts:
           path: /var/log/php_errors.log
+      - store_artifacts:
+          path: /root/xdmod/logs
       - store_test_results:
           path: ~/phpunit
 
