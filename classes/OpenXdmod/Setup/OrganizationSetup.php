@@ -8,28 +8,57 @@ namespace OpenXdmod\Setup;
 /**
  * Organization setup.
  */
-class OrganizationSetup extends SetupItem
+class OrganizationSetup extends SubMenuSetupItem
 {
 
+    protected $organizations;
+
+    public function __construct(Console $console)
+    {
+        parent::__construct($console);
+
+        $items = array(
+            new MenuItem(
+                '1',
+                'Add a new organzation',
+                new AddOrganizationSetup($this->console, $this)
+            ),
+            new MenuItem(
+                's',
+                'Save (and return to main menu)',
+                new SubMenuSaveSetup($this->console, $this)
+            ),
+        );
+
+        $this->menu = new Menu($items, $this->console, 'Organization Setup');
+    }
+
+    public function addOrganization(array $organization)
+    {
+        $this->organizations[] = $organization;
+    }
     /**
      * @inheritdoc
      */
     public function handle()
     {
-        $this->console->displaySectionHeader('Organization Setup');
+        $this->quit = false;
 
-        $org = $this->loadJsonConfig('organization');
+        //$this->console->displaySectionHeader('Organization Setup');
+        $this->organizations = $this->loadJsonConfig('organization');
 
-        $org['name'] = $this->console->prompt(
-            'Organization Name:',
-            $org['name']
-        );
+        while (!$this->quit) {
+            $this->menu->display();
+        }
+    }
 
-        $org['abbrev'] = $this->console->prompt(
-            'Organization Abbreviation:',
-            $org['abbrev']
-        );
+    public function quit()
+    {
+        $this->quit = true;
+    }
 
-        $this->saveJsonConfig($org, 'organization');
+    public function save()
+    {
+        $this->saveJsonConfig($this->organizations, 'organization');
     }
 }

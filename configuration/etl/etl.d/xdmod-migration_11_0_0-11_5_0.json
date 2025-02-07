@@ -1,0 +1,34 @@
+{
+    "module": "xdmod",
+    "defaults": {
+        "migration-11_0_0-11_5_0": {
+            "class": "ManageTables",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder Database",
+                    "config": "shredder",
+                    "schema": "mod_shredder"
+                },
+                "source": {
+                    "type": "mysql",
+                    "name": "Shredder Databaes",
+                    "config": "shredder",
+                    "schema": "mod_shredder"
+                }
+            }
+        }
+    },
+    "migration-11_0_0-11_5_0": [
+        {
+            "name": "manageOrganizationStagingTables",
+            "description": "Changes to organization tables",
+            "definition_file_list": [
+                "common/staging/organization-config.json",
+                "common/staging/organization.json"
+            ]
+        }
+    ]
+}
