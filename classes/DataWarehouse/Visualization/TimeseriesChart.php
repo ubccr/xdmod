@@ -636,7 +636,6 @@ class TimeseriesChart extends AggregateChart
                         $value_count = count($xValues);
 
                         if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
-                            $this->_chart['layout']['xaxis']['type'] = 'category';
                             $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
                         }
 
