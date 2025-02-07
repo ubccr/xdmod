@@ -1,6 +1,6 @@
 #!/bin/bash
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-XDMOD_SRC_DIR=${XDMOD_SRC_DIR:-${BASEDIR}}
+XDMOD_SRC_DIR=${XDMOD_SRC_DIR:-$BASEDIR/../../../xdmod}
 source $XDMOD_SRC_DIR/tests/ci/runtest-include.sh
 echo "Regression tests beginning:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 set -e
