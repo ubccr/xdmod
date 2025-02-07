@@ -1,0 +1,33 @@
+{
+    "module": "xdmod",
+    "defaults": {
+        "cloud-migration-11-0-0_11-0-1": {
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ManageTables",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Cloud Database",
+                    "config": "database",
+                    "schema": "modw_cloud"
+                },
+                "source": {
+                    "type": "mysql",
+                    "name": "Cloud Databaes",
+                    "config": "database",
+                    "schema": "modw_cloud"
+                }
+            }
+        }
+    },
+    "cloud-migration-11-0-0_11-0-1": [
+        {
+            "name": "AddResourcePIOrganizationID",
+            "description": "Update modw_cloud.session_records table.",
+            "definition_file_list": [
+                "cloud_common/session_records.json"
+            ]
+        }
+    ]
+}

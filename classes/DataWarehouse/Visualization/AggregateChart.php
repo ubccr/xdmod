@@ -765,18 +765,40 @@ class AggregateChart
                     }
                 }
             }
+        }
 
-            // if we have just reset summarizeDatasets, recompute limit, xAxis, and yAxis
-            // with the new limit in place. Reset dataset _total to 1 to disable paging.
-            if ($summarizeDataseries)
+        if ($summarizeDataseries)
+        {
+            // disable ME paging by setting dataset size to 1
+            $this->_total = 1;
+            foreach($yAxisArray as $yAxisIndex => $yAxisObject)
             {
-                $yAxisArray = $this->setAxes($summarizeDataseries, $offset, $x_axis, $font_size);
-                $yAxisCount = count($yAxisArray);
+                foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
+                {
+                    $yAxisDataObject = $yAxisDataObjectAndDescription['yAxisDataObject'];
+                    $data_description = $yAxisDataObjectAndDescription['data_description'];
+                    $valuesCount = $yAxisDataObject->getCount(true);
 
-                // disable ME paging by setting dataset size to 1
-                $this->_total = 1;
+                    if($valuesCount - $this->limit >= 1)
+                    {
+                        // only compute average (2nd parameter) if not drawing pie chart
+                        $yAxisDataObject->truncate($this->limit, $data_description->display_type!=='pie');
+
+                        // now merge the x labels, if needed, from multiple datasets:
+                        $mergedlabels = $yAxisDataObject->getXValues();
+                        foreach( $mergedlabels as $idx => $label) {
+                            if ($label === null) {
+                                $tmp = $this->_xAxisDataObject->getValues();
+                                $mergedlabels[$idx] = $tmp[$idx];
+                            }
+                        }
+                        $this->_xAxisDataObject->setValues($mergedlabels);
+                        $this->_xAxisDataObject->getCount(true);
+                        $this->setXAxis($x_axis, $font_size);
+                    }
+                }
             }
-        } // !$summarizeDatasets
+        }
 
         // OK, now let's plot something...
         // Each of the yAxisObjects returned from getYAxis()
@@ -902,34 +924,6 @@ class AggregateChart
                 $semDecimals = $yAxisDataObjectAndDescription['semDecimals'];
                 $filterParametersTitle =  $yAxisDataObjectAndDescription['filterParametersTitle'];
 
-                // ============= truncate (e.g. take average, min, max, sum of remaining values) ==========
-
-                // Usage tab charts and ME pie charts will have their datasets summarized as follows:
-                $dataSeriesSummarized = false;
-                if ( $summarizeDataseries )
-                {
-                        $valuesCount = $yAxisDataObject->getCount(true);
-
-                    if($valuesCount - $this->limit >= 1)
-                        {
-                        // only compute average (2nd parameter) if not drawing pie chart
-                        $yAxisDataObject->truncate($this->limit, $data_description->display_type!=='pie');
-
-                        // now merge the x labels, if needed, from multiple datasets:
-                        $mergedlabels = $yAxisDataObject->getXValues();
-                        foreach( $mergedlabels as $idx => $label) {
-                            if ($label === null) {
-                                $tmp = $this->_xAxisDataObject->getValues();
-                                $mergedlabels[$idx] = $tmp[$idx];
-                            }
-                        }
-                        $this->_xAxisDataObject->setValues($mergedlabels);
-                        $this->_xAxisDataObject->getCount(true);
-                        $this->setXAxis($x_axis, $font_size);
-                        $dataSeriesSummarized = true;
-                    }
-                } // summarizeDataseries
-
                 //  ================ set color ================
 
                 // If the first data set in the series, pick up the yAxisColorValue.
@@ -962,13 +956,14 @@ class AggregateChart
                         $yValues[] = $value;
                         $colors[] = ($index == 0) ? $yAxisColor
                             : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT);
-                        $drillable[] = true;
+                        $drillId = $yAxisDataObject->getXId($index);
+                        $drillable[] = ($drillId > -9999);
                         // N.B.: These are drilldown labels.
                         // X axis labels will be the same, but are plotted
                         // from the x axis object instance variable.
                         // See setXAxis() and _xAxisDataObject.
                         $drilldown[] = array(
-                            'id' => $yAxisDataObject->getXId($index),
+                            'id' => $drillId,
                             'label' => $yAxisDataObject->getXValue($index)
                         );
 
@@ -1017,13 +1012,15 @@ class AggregateChart
                     // set the label for each value:
                     foreach( $yAxisDataObject->getValues() as $index => $value)
                     {
+                        $drillId = $yAxisDataObject->getXId($index);
                         $yValues[] = $value;
-                        $drillable[] = true;
+                        $drillable[] = ($drillId > -9999);
+
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
                         // (Though they are the same labels...)
                         $drilldown[] = array(
-                            'id' => $yAxisDataObject->getXId($index),
+                            'id' => $drillId,
                             'label' => $yAxisDataObject->getXValue($index)
                         );
 
@@ -1031,11 +1028,6 @@ class AggregateChart
                             $visiblePoints++;
                         }
                     }
-                }
-
-                $values_count = count($yValues);
-                if ($dataSeriesSummarized && $values_count > 0) {
-                    $drillable[$values_count - 1] = false;
                 }
 
                 $zIndex = isset($data_description->z_index) ? $data_description->z_index : $data_description_index;
@@ -1259,10 +1251,14 @@ class AggregateChart
                     $trace['xaxis'] = "x{$yIndex}";
 
                     if (!$swapXYDone) {
-                        $xtmp = $this->_chart['layout']['xaxis'];
-                        $ytmp = $this->_chart['layout']["{$yAxisName}"];
-                        $this->_chart['layout']['yaxis'] = $xtmp;
-                        $this->_chart['layout']["{$xAxisName}"] = $ytmp;
+                        if ($yIndex == 1) {
+                            $xtmp = $this->_chart['layout']["{$xAxisName}"];
+                            $this->_chart['layout']["{$xAxisName}"] = $this->_chart['layout']["{$yAxisName}"];
+                            $this->_chart['layout']["{$yAxisName}"] = $xtmp;
+                        } else {
+                            $this->_chart['layout']["{$xAxisName}"] = $this->_chart['layout']["{$yAxisName}"];
+                            unset($this->_chart['layout']["{$yAxisName}"]);
+                        }
 
                         $this->_chart['layout']["{$xAxisName}"]['side'] = ($yAxisIndex % 2 != 0) ? 'top' : 'bottom';
                         if ($this->_chart['layout']["{$xAxisName}"]['side'] == 'top') {
