@@ -2,10 +2,73 @@
 
 ## XXXX-XX-XX v11.5.0
 
+- Maintenance / Code Quality
+    - Clean up CI bootstrap script
+      ([\#1954](https://github.com/ubccr/xdmod/pull/1954)).
+
 ## XXXX-XX-XX v11.0.1
 
+- Bug Fixes
+    - General
+        - Fix various bugs found when testing strict SQL modes
+          ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
+        - Remove plot range entry boxes in the corners of axes
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix displays of markers on plots with null values
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix the displayed lists of datasets when hovering over plots
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix aggregate plot x-axis labels when multiple metrics are plotted
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix pie chart data label display
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix display of plots when swapping x- and y-axes
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix display of bar and area plots with side-by-side grouping
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix ordering of the date axis on timeseries plots with varying date
+          intervals
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - ETL
+        - Add missing endpoint to the exception message in `ExecuteSql`
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix how the `pdoAggregator` class displays the day that was
+          aggregated in its logging
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+- Enhancements
+    - Cloud
+        - Add database columns for person organization ID, PI organization ID,
+          and resource organization ID to tables in the Cloud realm
+          ([\#1958](https://github.com/ubccr/xdmod/pull/1958)).
+- Documentation
+    - Update list of ACCESS MMS team members
+      ([\#1918](https://github.com/ubccr/xdmod/pull/1918),
+      [\#1919](https://github.com/ubccr/xdmod/pull/1919)).
+    - Update support information for 10.5 and 11.0
+      ([\#1926](https://github.com/ubccr/xdmod/pull/1926),
+      [\#1928](https://github.com/ubccr/xdmod/pull/1928)).
+    - Add additional information to 11.0.0 upgrade notes
+      ([\#1925](https://github.com/ubccr/xdmod/pull/1925)).
+    - Reorder configuration guide for clarity
+      ([\#1913](https://github.com/ubccr/xdmod/pull/1913)).
+    - Remove references to CentOS 7
+      ([\#1931](https://github.com/ubccr/xdmod/pull/1931),
+      [\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - Update version of MongoDB in software requirements
+      ([\#1937](https://github.com/ubccr/xdmod/pull/1937)).
+    - Update documentation of charts in the user manual
+      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - Replace references to XSEDE with ACCESS
+      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - Update the HTML metadata description of the index page
+      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - Add to the lists of publications and presentations
+      ([\#1962](https://github.com/ubccr/xdmod/pull/1962)).
 - Maintenance / Code Quality
-    - Fix PHPUnit test warnings ([\#1945](https://github.com/ubccr/xdmod/pull/1945)).
+    - Fix PHPUnit test warnings
+      ([\#1945](https://github.com/ubccr/xdmod/pull/1945)).
+    - Add missing CI testing of exceptions
+      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
 
 ## 2024-09-16 v11.0.0
 - Important Notes
