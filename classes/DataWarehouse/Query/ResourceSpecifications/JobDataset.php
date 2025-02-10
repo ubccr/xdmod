@@ -94,7 +94,7 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
         $this->addOrder(new \DataWarehouse\Query\Model\OrderBy(
             new TableField($tables['rs'], 'end_date_ts'),
             'ASC',
-            'end_date'
+            'end_date_ts'
         ));
     }
 
