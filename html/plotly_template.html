@@ -72,11 +72,11 @@
                     }
 
                     chartOptions.data.sort((trace1, trace2) => {
-                        if (chartOptions.layout.barmode !== 'group') {
-                            return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.traceorder - trace1.traceorder);
+                        const containsBarSeries = chartOptions.data.some((elem) => elem.type === 'bar');
+                        if (containsBarSeries && chartOptions.layout.barmode === 'stack') {
+                            return Math.sign(trace2.traceorder - trace1.traceorder);
                         }
-                        const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.traceorder - trace2.traceorder);
-                        return res;
+                        return Math.sign(trace1.traceorder - trace2.traceorder);
                     });
 
                 }
@@ -115,7 +115,7 @@
                 }
                 const update = relayoutChart(chartDiv, chartOptions.layout.height, true, true);
                 Plotly.relayout('container', update);
-
+                removeExtraTimeseriesTickLabels(chartDiv, chartOptions);
             });
         });
 
