@@ -2,8 +2,66 @@
 
 ## XXXX-XX-XX v11.0.1
 
+- Bug Fixes
+    - General
+        - Remove plot range entry boxes in the corners of axes
+          ([\#1887](https://github.com/ubccr/xdmod/pull/1887)).
+        - Fix displays of markers on plots with null values
+          ([\#1941](https://github.com/ubccr/xdmod/pull/1941)).
+        - Fix the displayed lists of datasets when hovering over plots
+          ([\#1921](https://github.com/ubccr/xdmod/pull/1921)).
+        - Fix aggregate plot x-axis labels when multiple metrics are plotted
+          ([\#1922](https://github.com/ubccr/xdmod/pull/1922)).
+        - Fix pie chart data label display
+          ([\#1885](https://github.com/ubccr/xdmod/pull/1885)).
+        - Fix display of plots when swapping x- and y-axes
+          ([\#1961](https://github.com/ubccr/xdmod/pull/1961)).
+        - Fix display of bar and area plots with side-by-side grouping
+          ([\#1883](https://github.com/ubccr/xdmod/pull/1883)).
+        - Fix ordering of the date axis on timeseries plots with varying date
+          intervals
+          ([\#1960](https://github.com/ubccr/xdmod/pull/1960)).
+    - ETL
+        - Add missing endpoint to the exception message in `ExecuteSql`
+          ([\#1929](https://github.com/ubccr/xdmod/pull/1929)).
+        - Fix how the `pdoAggregator` class displays the day that was
+          aggregated in its logging
+          ([\#1932](https://github.com/ubccr/xdmod/pull/1932)).
+- Enhancements
+    - Cloud
+        - Add database columns for person organization ID, PI organization ID,
+          and resource organization ID to tables in the Cloud realm
+          ([\#1957](https://github.com/ubccr/xdmod/pull/1957),
+          [\#1966](https://github.com/ubccr/xdmod/pull/1966)).
+- Documentation
+    - Update list of ACCESS MMS team members
+      ([\#1918](https://github.com/ubccr/xdmod/pull/1918),
+      [\#1919](https://github.com/ubccr/xdmod/pull/1919)).
+    - Update support information for 10.5 and 11.0
+      ([\#1926](https://github.com/ubccr/xdmod/pull/1926),
+      [\#1928](https://github.com/ubccr/xdmod/pull/1928)).
+    - Add additional information to 11.0.0 upgrade notes
+      ([\#1925](https://github.com/ubccr/xdmod/pull/1925)).
+    - Reorder configuration guide for clarity
+      ([\#1913](https://github.com/ubccr/xdmod/pull/1913)).
+    - Remove references to CentOS 7
+      ([\#1931](https://github.com/ubccr/xdmod/pull/1931),
+      [\#1933](https://github.com/ubccr/xdmod/pull/1933)).
+    - Update version of MongoDB in software requirements
+      ([\#1937](https://github.com/ubccr/xdmod/pull/1937)).
+    - Update documentation of charts in the user manual
+      ([\#1916](https://github.com/ubccr/xdmod/pull/1916)).
+    - Replace references to XSEDE with ACCESS
+      ([\#1935](https://github.com/ubccr/xdmod/pull/1935)).
+    - Update the HTML metadata description of the index page
+      ([\#1924](https://github.com/ubccr/xdmod/pull/1924)).
+    - Add to the lists of publications and presentations
+      ([\#1977](https://github.com/ubccr/xdmod/pull/1977)).
 - Maintenance / Code Quality
-    - Fix PHPUnit test warnings ([\#1944](https://github.com/ubccr/xdmod/pull/1944)).
+    - Fix PHPUnit test warnings
+      ([\#1944](https://github.com/ubccr/xdmod/pull/1944)).
+    - Add missing CI testing of exceptions
+      ([\#1903](https://github.com/ubccr/xdmod/pull/1903)).
 
 ## 2024-09-16 v11.0.0
 - Important Notes
