@@ -150,7 +150,7 @@ class TimeseriesChart extends AggregateChart
         }
 
         $yAxisCount = count($yAxisArray);
-
+        $legendRank = 0;
         $globalFilterDescriptions = array();
 
         // ==== Big long effing loop ====
@@ -420,6 +420,7 @@ class TimeseriesChart extends AggregateChart
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
                 foreach($yAxisDataObjectsArray as $traceIndex => $yAxisDataObject)
                 {
+                    $legendRank += 3;
                     if( $yAxisDataObject != null)
                     {
                         $yAxisDataObject->joinTo($xAxisData, null);
@@ -566,6 +567,9 @@ class TimeseriesChart extends AggregateChart
 
                         $trace = array(
                             'name' => $lookupDataSeriesName,
+                            'meta' => array(
+                                'primarySeries' => true
+                            ),
                             'customdata' => $lookupDataSeriesName,
                             'otitle' => $formattedDataSeriesName,
                             'datasetId' => $data_description->id,
@@ -616,10 +620,10 @@ class TimeseriesChart extends AggregateChart
                             ),
                             'x' => $this->_swapXY ? $yValues : $xValues,
                             'y' => $this->_swapXY ? $xValues : $yValues,
-                            'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$traceIndex}",
-                            'legendgroup' => $traceIndex,
-                            'legendrank' => $traceIndex,
-                            'traceorder' => $traceIndex,
+                            'offsetgroup' => $yAxisCount > 1 ? "group{$yIndex}{$legendRank}" : "group{$legendRank}",
+                            'legendgroup' => $legendRank,
+                            'legendrank' => $legendRank,
+                            'traceorder' => $legendRank,
                             'seriesData' => $seriesValues,
                             'visible' => $visible,
                             'isRemainder' => $isRemainder,
@@ -781,8 +785,8 @@ class TimeseriesChart extends AggregateChart
                                 ),
                                 'connectgaps' => true,
                                 'hoverinfo' => 'skip',
-                                'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$traceIndex}",
-                                'legendgroup' => $traceIndex,
+                                'offsetgroup' => $yAxisCount > 1 ? "group{$yIndex}{$legendRank}" : "group{$legendRank}",
+                                'legendgroup' => $legendRank,
                                 'legendrank' => -1000,
                                 'traceorder' => -1000,
                                 'type' => 'scatter',
@@ -885,6 +889,10 @@ class TimeseriesChart extends AggregateChart
                                 }
                                 $trendline_trace = array(
                                     'name' => $lookupDataSeriesName,
+                                    'meta' => array(
+                                        'primarySeries' => false,
+                                        'trendlineSeries' => true
+                                    ),
                                     'otitle' => $dsn,
                                     'zIndex' => $zIndex,
                                     'datasetId' => $data_description->id,
@@ -905,6 +913,8 @@ class TimeseriesChart extends AggregateChart
                                         'color' => $color,
                                         'width' => $data_description->line_width + $font_size/4,
                                     ),
+                                    'legendrank' => $trace['legendrank'] + 2,
+                                    'traceorder' => $trace['legendrank'] - 2,
                                     'visible' => $visible,
                                     'm' => $m,
                                     'b' => $b,
@@ -913,9 +923,6 @@ class TimeseriesChart extends AggregateChart
                                     'y' => $this->_swapXY ? $trendX : $trendY,
                                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                                 );
-                                $valid = $data_description->std_err == 1 && !$data_description->log_scale;
-                                $trendline_trace['legendrank'] = $valid ? $trace['legendrank'] + 2 : $trace['legendrank'];
-                                $trendline_trace['traceorder'] = $valid ? $traceIndex - 2 : $traceIndex;
 
                                 if ($this->_swapXY) {
                                     unset($trendline_trace['yaxis']);
