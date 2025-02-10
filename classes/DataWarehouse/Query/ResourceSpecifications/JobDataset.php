@@ -84,6 +84,18 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
             }
             $this->documentation[$alias] = $field;
         }
+
+        $this->addOrder(new \DataWarehouse\Query\Model\OrderBy(
+            new TableField($tables['rf'], 'id'),
+            'ASC',
+            'id'
+        ));
+
+        $this->addOrder(new \DataWarehouse\Query\Model\OrderBy(
+            new TableField($tables['rs'], 'end_date_ts'),
+            'ASC',
+            'end_date'
+        ));
     }
 
     public function getColumnDocumentation()
