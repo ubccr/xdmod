@@ -14,7 +14,7 @@ class AddOrganizationSetup extends SetupItem
     /**
      * Main resources setup
      *
-     * @var ResourcesSetup
+     * @var OrganizationSetup
      */
     protected $parent;
 
@@ -34,6 +34,8 @@ class AddOrganizationSetup extends SetupItem
     public function handle()
     {
       $organization = [];
+
+      $this->console->displaySectionHeader('Add a new Organization');
 
       $organization['name'] = $this->console->prompt(
           'Organization Name:'

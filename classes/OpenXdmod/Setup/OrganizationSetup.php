@@ -11,7 +11,26 @@ namespace OpenXdmod\Setup;
 class OrganizationSetup extends SubMenuSetupItem
 {
 
+    /**
+     * Organization menu.
+     *
+     * @var Menu
+     */
+    protected $menu;
+
+    /**
+     * Organization config.
+     *
+     * @var array
+     */
     protected $organizations;
+
+    /**
+     * True if setup should quit.
+     *
+     * @var bool
+     */
+    protected $quit;
 
     public function __construct(Console $console)
     {
@@ -24,6 +43,11 @@ class OrganizationSetup extends SubMenuSetupItem
                 new AddOrganizationSetup($this->console, $this)
             ),
             new MenuItem(
+                '2',
+                'List current organizations',
+                new ListOrganizationSetup($this->console, $this)
+            ),
+            new MenuItem(
                 's',
                 'Save (and return to main menu)',
                 new SubMenuSaveSetup($this->console, $this)
@@ -33,10 +57,26 @@ class OrganizationSetup extends SubMenuSetupItem
         $this->menu = new Menu($items, $this->console, 'Organization Setup');
     }
 
+    /**
+     * Add an organization to the current list
+     * 
+     * @param array $organization
+     */
     public function addOrganization(array $organization)
     {
         $this->organizations[] = $organization;
     }
+
+    /**
+     * Return the current list of organizations.
+     *
+     * @return array
+     */
+    public function getOrganizations() 
+    {
+        return $this->organizations;
+    }
+    
     /**
      * @inheritdoc
      */
