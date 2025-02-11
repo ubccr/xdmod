@@ -1,5 +1,6 @@
-### To add Noramlized Avg Processors back to XDMoD add the following json to the following locations. 
+The Normalized Avg Processor statistic is available if you add the following JSON and SQL Files to the XDMoD project.
 
+1. Add the follwing to: 
 - configuration/datawarehouse.d/ref/Job-Statistics.json
 ```json
     "normalized_avg_processors": {
@@ -17,6 +18,8 @@
 
 ```
 
+
+2. Add the following to: 
 - configuration/datawarehouse.d/ref/Gateways-Statistics.json
 ```json
  "normalized_avg_processors": {
@@ -28,8 +31,8 @@
     },
 ```
 
-### Create a jobs-norm-avg-proc-time.sql
-- configuration/datawarehouse.d/include
+3. Create a **jobs-norm-avg-proc-time.sql** in the following: 
+- configuration/datawarehouse.d/include/jobs-norm-avg-proc-time.sql
 ```sql
 100.0 *
 COALESCE(
@@ -57,7 +60,8 @@ COALESCE(
 
 ```
 
-- create a jobs-norm-avg-proc-agg.sql at configuration/datawarehouse.d/include
+4. create a **jobs-norm-avg-proc-agg.sql** at the follwing: 
+- configuration/datawarehouse.d/include/jobs-norm-avg-proc-agg.sql
 ```sql
 100.0 *
 COALESCE(
