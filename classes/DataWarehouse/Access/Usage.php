@@ -833,11 +833,8 @@ class Usage extends Common
                     $chartSortedByValue
                 ) {
                     // Determine the type of this data series.
-                    $isTrendLineSeries = \xd_utilities\string_begins_with($meDataSeries['name'], 'Trend Line: ');
-                    $isStdErrSeries = \xd_utilities\string_begins_with($meDataSeries['name'], 'Std Err: ');
-                    $isNullSeries = $meDataSeries['name'] == 'gap connector';
-                    $isPrimaryDataSeries = !($isTrendLineSeries || $isStdErrSeries || $isNullSeries);
-
+                    $isPrimaryDataSeries = isset($meDataSeries['meta']['primarySeries']) && $meDataSeries['meta']['primarySeries'];
+                    $isTrendLineSeries = isset($meDataSeries['meta']['trendlineSeries']) && $meDataSeries['meta']['trendlineSeries'];
                     // If this is a primary data series, increment the rank of the
                     // current primary data series. Further, if this chart is
                     // a timeseries chart, it is sorted by value, and it is a
@@ -848,7 +845,7 @@ class Usage extends Common
                             && $chartSortedByValue
                             && $usageGroupBy !== 'none'
                         ) {
-                            $rank = $meDataSeries['legendrank']+1;
+                            $rank = $meDataSeries['legendrank'] / 3;
                             $meDataSeries['name'] = "${rank}. " . $meDataSeries['name'];
                         }
                     }
