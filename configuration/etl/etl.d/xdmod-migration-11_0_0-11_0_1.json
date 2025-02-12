@@ -1,7 +1,7 @@
 {
     "module": "xdmod",
     "defaults": {
-        "cloud-migration-11_0_0-11_0_1": {
+        "cloud-migration-11-0-0_11-0-1": {
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
             "class": "ManageTables",
@@ -21,7 +21,7 @@
             }
         }
     },
-    "cloud-migration-11_0_0-11_0_1": [
+    "cloud-migration-11-0-0_11-0-1": [
         {
             "name": "AddResourcePIOrganizationID",
             "description": "Update modw_cloud.session_records table.",

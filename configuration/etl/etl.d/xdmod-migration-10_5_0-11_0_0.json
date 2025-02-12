@@ -1,7 +1,7 @@
 {
     "module": "xdmod",
     "defaults": {
-        "migration-10_5_1-11_0_0": {
+        "migration-10_5_0-11_0_0": {
             "namespace": "ETL\\Ingestor",
             "class": "DatabaseIngestor",
             "options_class": "IngestorOptions"
@@ -35,7 +35,7 @@
             ]
         }
     ],
-    "migration-10_5_1-11_0_0": [
+    "migration-10_5_0-11_0_0": [
         {
             "name": "report-templates-charts",
             "definition_file": "xdb/report-template-charts.json",
