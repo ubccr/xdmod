@@ -84,7 +84,6 @@ class OrganizationSetup extends SubMenuSetupItem
     {
         $this->quit = false;
 
-        //$this->console->displaySectionHeader('Organization Setup');
         $this->organizations = $this->loadJsonConfig('organization');
 
         while (!$this->quit) {

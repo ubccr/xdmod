@@ -6,13 +6,13 @@
 namespace OpenXdmod\Setup;
 
 /**
- * Resources setup sub-step for adding resources.
+ * Organization setup sub-step for adding organizations.
  */
 class AddOrganizationSetup extends SetupItem
 {
 
     /**
-     * Main resources setup
+     * Main organization setup
      *
      * @var OrganizationSetup
      */
