@@ -59,7 +59,7 @@ class OrganizationSetup extends SubMenuSetupItem
 
     /**
      * Add an organization to the current list
-     * 
+     *
      * @param array $organization
      */
     public function addOrganization(array $organization)
@@ -72,11 +72,11 @@ class OrganizationSetup extends SubMenuSetupItem
      *
      * @return array
      */
-    public function getOrganizations() 
+    public function getOrganizations()
     {
         return $this->organizations;
     }
-    
+
     /**
      * @inheritdoc
      */
