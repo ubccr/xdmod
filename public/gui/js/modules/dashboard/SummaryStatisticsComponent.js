@@ -94,7 +94,7 @@ XDMoD.Module.Dashboard.SummaryStatisticsComponent = Ext.extend(Ext.ux.Portlet, {
 
             proxy: new Ext.data.HttpProxy({
                 method: 'GET',
-                url: XDMoD.REST.url + '/summary/statistics',
+                url: XDMoD.REST.url + '/dashboard/statistics',
                 listeners: {
 
                     /**

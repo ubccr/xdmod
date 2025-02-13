@@ -33,7 +33,6 @@ class WarehouseExportController extends BaseController
     private const LOG_MODULE = 'data-warehouse-export';
 
 
-
     /**
      * @var RealmManager
      */
@@ -307,7 +306,7 @@ class WarehouseExportController extends BaseController
 
             try {
                 $requestIds = array_map(
-                    function($value) {
+                    function ($value) {
                         return is_int($value) ? $value : intval($value);
                     },
                     $requestIds
