@@ -172,5 +172,5 @@ workflows:
       - build:
           matrix:
             parameters:
-              os: [centos7, rocky8]
+              os: [rocky8]
               install-type: ["fresh_install", "upgrade"]
