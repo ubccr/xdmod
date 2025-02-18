@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>7. Dashboard Tab &mdash; XDMoD Manual 11.5.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="8. Usage Tab" href="Usage_Tab.html" />
+    <link rel="prev" title="6. Summary Tab" href="Summary_Tab.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #e0e0e0" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/xdmod_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Browser_Requirements.html">1. Browser Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">2. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Introduction.html#xdmod-user-interface-overview">2.1. XDMoD User Interface Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Obtaining_an_Account.html">3. Obtaining an Account</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Getting_Started.html">4. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Getting_Started.html#logging-in">4.1. Logging In</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Getting_Started.html#top-toolbar-and-tabs">4.2. Top Toolbar and Tabs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Common_User_Interface_Elements.html">5. Common User Interface Elements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#duration-selection-toolbar">5.1. Duration Selection Toolbar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-configuration-toolbar">5.2. Chart Configuration Toolbar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-selection-tree">5.3. Chart Selection Tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-viewer">5.4. Chart Viewer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-viewer-tools">5.4.1. Chart Viewer Tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Summary_Tab.html">6. Summary Tab</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. Dashboard Tab</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#dashboard-components-overview">7.1. Dashboard Components Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#chart-component">7.2. Chart Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#saved-charts-and-reports-component">7.3. Saved Charts and Reports Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#center-summary-component">7.4. Center Summary Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#center-report-card">7.5. Center Report Card</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#jobs-component">7.6. Jobs Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#job-efficiency-component">7.7. Job Efficiency Component</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Usage_Tab.html">8. Usage Tab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Metric_Explorer.html">9. Metric Explorer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Metric_Explorer.html#managing-charts">9.1. Managing Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Metric_Explorer.html#basic-chart-options">9.2. Basic Chart Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Metric_Explorer.html#managing-data-series">9.3. Managing Data Series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Metric_Explorer.html#managing-filters">9.4. Managing Filters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Job_Viewer.html">10. Job Viewer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Job_Viewer.html#searching-for-jobs">10.1. Searching for jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Job_Viewer.html#viewing-job-data">10.2. Viewing job data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#at-a-glance-analytics">10.2.1. At-a-glance analytics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#accounting-data">10.2.2. Accounting data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#job-script">10.2.3. Job script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#executable-information">10.2.4. Executable information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#summary-metrics">10.2.5. Summary metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#detailed-metrics">10.2.6. Detailed metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#peers">10.2.7. Peers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#timeseries-plots">10.2.8. Timeseries plots</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="App_Kernels.html">11. App Kernels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="App_Kernels.html#app-kernels-viewer">11.1. App Kernels Viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="App_Kernels.html#app-kernel-explorer">11.2. App Kernel Explorer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="App_Kernels.html#reports-tab">11.3. Reports tab</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Data_Export.html">12. Data Export</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Data_Export.html#create-data-export-request">12.1. Create Data Export Request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Data_Export.html#manage-existing-export-requests">12.2. Manage Existing Export Requests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Report_Generator.html">13. Report Generator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#selection-model">13.1. Selection Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#changing-chart-timeframes">13.2. Changing Chart Timeframes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#previewing-a-report">13.3. Previewing a Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#building-exporting-reports">13.4. Building, Exporting Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#report-templates">13.5. Report Templates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Efficiency.html">14. Efficiency</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#scatter-plot-view">14.1. Scatter Plot View</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Efficiency.html#center-staff-view">14.1.1. Center Staff View</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Efficiency.html#pi-or-normal-user-view">14.1.2. PI or Normal User View</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#histogram-view">14.2. Histogram View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#job-list">14.3. Job List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#filtering-charts">14.4. Filtering Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#selecting-duration-of-charts">14.5. Selecting Duration of Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#navigation-in-efficiency-tab">14.6. Navigation in Efficiency Tab</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="About.html">15. My Profile, About, Roadmap, Contact and Help</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="About.html#my-profile-button">15.1. My Profile Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#about-button">15.2. About Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#contact-button">15.3. Contact Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#help-menu">15.4. Help Menu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#roadmap">15.5. Roadmap</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Design_Philosophy.html">16. Design Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_I-XML_Document_Type_Definition.html">17. Appendix I-XML Document Type Definition</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #e0e0e0" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">XDMoD Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">7. </span>Dashboard Tab</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dashboard-tab">
+<h1><span class="section-number">7. </span>Dashboard Tab<a class="headerlink" href="#dashboard-tab" title="Permalink to this heading"></a></h1>
+<p><span><span>The dashboard tab is an optional replacement for the summary tab.
+The dashboard must be enabled by the XDMoD system administrator and is
+only available for logged in users.</span></span>  It displays various
+information in separate display windows called components. The
+information displayed in the dashboard varies according to the assigned
+role of each user account. <span><span></span><a class="reference internal" href="#open-dashboard-user-role"><span class="std std-numref">Table 7.1</span></a></span>
+lists the default settings for each role.</p>
+<span id="open-dashboard-user-role"></span><table class="docutils align-default" id="id5">
+<caption><span class="caption-number">Table 7.1 </span><span class="caption-text">List of dashboard components by user role. Some of the components are only available if the (optional) XDMoD module is installed</span><a class="headerlink" href="#id5" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Role</strong></p></th>
+<th class="head"><p><strong>Components
+Displayed</strong></p></th>
+<th class="head"><p><strong>XDMoD module</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Center Director</p></td>
+<td><p>Center summary</p>
+<p>Saved charts and
+reports</p>
+<p>Center Report Card</p>
+</td>
+<td><p>-</p>
+<p>-</p>
+<p>Application
+Kernels</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>Center Staff</p></td>
+<td><p>Center summary</p>
+<p>Saved charts and
+reports</p>
+<p>Job Efficiency Report</p>
+<p>Recent jobs</p>
+<p>Center Report Card</p>
+</td>
+<td><p>-</p>
+<p>-</p>
+<p>SUPReMM</p>
+<p>-</p>
+<p>Application
+Kernels</p>
+</td>
+</tr>
+<tr class="row-even"><td><p>Principal
+Investigator</p></td>
+<td><p>Recent jobs</p>
+<p>Job Efficiency Report</p>
+<p>Summary Charts</p>
+</td>
+<td><p>-</p>
+<p>SUPReMM</p>
+<p>-</p>
+</td>
+</tr>
+<tr class="row-odd"><td><p>User</p></td>
+<td><p>Recent jobs</p>
+<p>Job Efficiency Report</p>
+<p>Summary Charts</p>
+</td>
+<td><p>-</p>
+<p>SUPReMM</p>
+<p>-</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The various dashboard components are described below.</p>
+<section id="dashboard-components-overview">
+<h2><span class="section-number">7.1. </span>Dashboard Components Overview<a class="headerlink" href="#dashboard-components-overview" title="Permalink to this heading"></a></h2>
+<p>There are two categories of dashboard components: full-width components
+and half-width components. Full width components are in a fixed location
+at the top of the dashboard tab and the half-width components are
+arranged in columns. All half-width components have a title bar such as
+the example shown in <a class="reference internal" href="#dashboard-title-bar"><span class="std std-numref">Fig. 7.1</span></a>. The title bar includes the name of
+the component and, for components that show data limited by time. show
+the date range of the data. Clicking the question mark icon on the right
+of the title bar will show a help window that explains how to use the
+component.</p>
+<figure class="align-default" id="dashboard-title-bar">
+<img alt="_images/image97.png" src="_images/image97.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7.1 </span><span class="caption-text">Example title bar of a dashboard component. Typically
+the title includes information about the date range of the data. The
+question mark button on the top right is used to open a help window.
+Some components also have additional icons for component-specific
+features.</span><a class="headerlink" href="#dashboard-title-bar" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The layout of the half-width dashboard components can be customized by
+dragging the title bar of a component (<a class="reference internal" href="#dashboard-rearrange-layout"><span class="std std-numref">Fig. 7.2</span></a>). The layout
+settings are saved automatically and persist between logins. The layout
+can be reset to default using the <strong>Reset to default</strong> button in the
+<strong>Settings</strong> tab of the <strong>My Profile</strong> dialog (<a class="reference internal" href="#dashboard-reset-default"><span class="std std-numref">Fig. 7.3</span></a>).
+The <strong>My Profile</strong> dialog is accessed via the <strong>My Profile</strong> button on the top
+right of the XDMoD portal. Full-width dashboard components cannot be moved.</p>
+<figure class="align-default" id="dashboard-rearrange-layout">
+<img alt="_images/image80.png" src="_images/image80.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7.2 </span><span class="caption-text">Example of rearranging the layout of half-width
+dashboard components. A component can be moved by selecting the title
+bar and dragging into the new position.</span><a class="headerlink" href="#dashboard-rearrange-layout" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="dashboard-reset-default">
+<a class="reference internal image-reference" href="_images/image132.png"><img alt="_images/image132.png" src="_images/image132.png" style="width: 66%;" /></a>
+<figcaption>
+<p><span class="caption-number">Fig. 7.3 </span><span class="caption-text">The dashboard layout can be reset to the default value
+using the button available in the <strong>Settings</strong> tab of the <strong>My Profile</strong>
+dialog.</span><a class="headerlink" href="#dashboard-reset-default" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="chart-component">
+<h2><span class="section-number">7.2. </span>Chart Component<a class="headerlink" href="#chart-component" title="Permalink to this heading"></a></h2>
+<p>The Chart Component shows charts from the Metric Explorer. An example of
+the chart component is shown in <a class="reference internal" href="#id1"><span class="std std-numref">Fig. 7.4</span></a>. The time range of the
+chart is shown in the title bar. The wheel icon on the top right of the
+component will open the chart in the Metric Explorer.</p>
+<figure class="align-default" id="id1">
+<img alt="_images/image124.png" src="_images/image124.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7.4 </span><span class="caption-text">Example of a chart component. The time range of the
+chart is shown in the title bar. The wheel icon on the top right will
+open the chart in the Metric Explorer.</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The default chart configuration settings are controlled by the
+<span><span>Open</span></span> XDMoD system administrator. Extra charts can be added
+to the dashboard via the Metric Explorer. Charts are added via the <strong>Show
+in Summary tab</strong> checkbox in the Metric Explorer basic chart options (see
+<a class="reference internal" href="Metric_Explorer.html#basic-chart-options"><span class="std std-numref">Section 9.2</span></a> for more information).</p>
+<p>It is also possible to edit the default charts via the Metric Explorer.
+Click the wheel icon on the top right of the chart component to open the
+chart in the Metric Explorer. You can then edit the chart in the Metric
+Explorer and save the chart <em>without</em> changing the chart name field or
+deselecting the <strong>Show in Summary tab</strong> checkbox. To reset a system chart
+to the default just delete it from the list of save charts in the Metric
+Explorer.</p>
+</section>
+<section id="saved-charts-and-reports-component">
+<h2><span class="section-number">7.3. </span>Saved Charts and Reports Component<a class="headerlink" href="#saved-charts-and-reports-component" title="Permalink to this heading"></a></h2>
+<p><a class="reference internal" href="#saved-charts-and-reports"><span class="std std-numref">Fig. 7.5</span></a> shows the saved charts and reports component. This
+component lists a user’s charts that were saved in
+<a class="reference internal" href="Metric_Explorer.html#metric-explorer"><span class="std std-numref">Section 9 - Metric Explorer</span></a>
+and their reports from
+<a class="reference internal" href="Report_Generator.html#report-generator"><span class="std std-numref">Section 13 - Report Generator</span></a>.
+The list can be sorted by the name,
+type (chart or report), and last modification date. By default, the list
+is sorted by the last modification date in descending order. The user
+can filter the list by name by using the search box.</p>
+<figure class="align-default" id="saved-charts-and-reports">
+<img alt="_images/image136.png" src="_images/image136.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7.5 </span><span class="caption-text"><strong>Shows the saved charts and reports components.</strong></span><a class="headerlink" href="#saved-charts-and-reports" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="center-summary-component">
+<h2><span class="section-number">7.4. </span>Center Summary Component<a class="headerlink" href="#center-summary-component" title="Permalink to this heading"></a></h2>
+<p><a class="reference internal" href="#center-summary-report"><span class="std std-numref">Fig. 7.6</span></a> shows the center summary component. This component
+displays the thumbnails of charts from the center summary report that is
+tailored based on user role. Clicking on a thumbnail opens a modal
+containing an interactive version of the chart. The user can open the
+chart in Metric Explorer to modify it. Note that charts modified in
+Metric Explorer have to be saved and added to the center summary report
+in order to be displayed as a thumbnail in the center summary component.
+The user can control the time period of the charts by using the time
+range menu. The user can also download the charts as a PDF by clicking
+the Download Report button.</p>
+<figure class="align-default" id="center-summary-report">
+<img alt="_images/image77.png" src="_images/image77.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7.6 </span><span class="caption-text">The center summary report shows thumbnails of charts
+from the center summary report that is tailored based on user role.</span><a class="headerlink" href="#center-summary-report" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="center-report-card">
+<h2><span class="section-number">7.5. </span>Center Report Card<a class="headerlink" href="#center-report-card" title="Permalink to this heading"></a></h2>
+<p>The center report card component is provided by the optional XDMoD
+AppKernels module. The component shows a summary of the results of
+recent application kernel jobs. <a class="reference internal" href="#id2"><span class="std std-numref">Fig. 7.7</span></a> shows an annotated
+example of the center report card.</p>
+<figure class="align-default" id="id2">
+<img alt="_images/image128.png" src="_images/image128.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7.7 </span><span class="caption-text">An annotated example of the Center Report
+Card component that is available in the optional AppKernels module.</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="jobs-component">
+<h2><span class="section-number">7.6. </span>Jobs Component<a class="headerlink" href="#jobs-component" title="Permalink to this heading"></a></h2>
+<p>The Jobs component displays information about recent HPC jobs. An
+annotated example is shown in <a class="reference internal" href="#id3"><span class="std std-numref">Fig. 7.8</span></a>. The job information is
+based on the Job Performance (SUPReMM) realm if the Job Performance
+module is installed. If the Job Performance module is not installed then
+the data are obtained from the Jobs realm and the component will display
+‘N/A’ in the CPU column indicating that the cpu usage is not available.
+The information displayed in the Jobs component is restricted by XDMoD’s
+role based access controls. A summary of the data available is shown in
+<span><span></span><a class="reference internal" href="#open-account-restrictions"><span class="std std-numref">Table 7.3</span></a></span>
+below. The <strong>Filter by Person</strong> widget is not displayed for
+the user role since it is superfluous.</p>
+<figure class="align-default" id="id3">
+<img alt="_images/image64.png" src="_images/image64.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7.8 </span><span class="caption-text">Annotated example of the Jobs component. The User role
+does not have permission to list other users jobs and does not have the
+<strong>Filter by Person</strong> widget. The Job overall CPU usage information is
+only available if the optional Job Performance (SUPReMM) XDMoD module is
+installed.</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<span id="open-account-restrictions"></span><table class="docutils align-default" id="id7">
+<caption><span class="caption-number">Table 7.3 </span><span class="caption-text">Summary of the role based access control restrictions for data shown in the job component.</span><a class="headerlink" href="#id7" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>XDMoD account role</strong></p></th>
+<th class="head"><p><strong>Information available</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>User</p></td>
+<td><p>HPC jobs that were run by the
+user.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Principal Investigator</p></td>
+<td><p>HPC jobs that were run by the
+user and HPC jobs that were run
+on the PIs projects.</p></td>
+</tr>
+<tr class="row-even"><td><p>Center Staff</p></td>
+<td><p>All HPC job data.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Center Director</p></td>
+<td><p>All HPC job data.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="job-efficiency-component">
+<h2><span class="section-number">7.7. </span>Job Efficiency Component<a class="headerlink" href="#job-efficiency-component" title="Permalink to this heading"></a></h2>
+<p>The Job Efficiency component is only available if the Job Performance
+module is installed. The Job efficiency in XDMoD is defined based on a
+comparison of the resources (CPU, Memory, etc.) requested to those used
+by an HPC job. The information in the Job Efficiency component is
+subject to the same role-based access controls as the Jobs component as listed in
+<span><span></span><a class="reference internal" href="#open-account-restrictions"><span class="std std-numref">Table 7.3</span></a></span>.
+An annotated example of the component view for
+Center Staff and Center Director roles is shown in <a class="reference internal" href="#job-efficiency-1"><span class="std std-numref">Fig. 7.9</span></a>. The
+Principal Investigator role does not have a toolbar that switches the
+data grouping between user and PI. The User role example is shown in
+<a class="reference internal" href="#job-efficiency-2"><span class="std std-numref">Fig. 7.10</span></a>.</p>
+<figure class="align-default" id="job-efficiency-1">
+<img alt="_images/image91.png" src="_images/image91.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7.9 </span><span class="caption-text">Annotated example of the Job Efficiency component. The
+total number of jobs and core hours are shown broken down by efficiency
+categorization. Click on a row in the table to open a window that lists
+the jobs that were classified as inefficient.</span><a class="headerlink" href="#job-efficiency-1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="job-efficiency-2">
+<img alt="_images/image29.png" src="_images/image29.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 7.10 </span><span class="caption-text">Annotated example of the Job Efficiency component for
+XDMoD accounts with User role. The total number of jobs and core hours
+are shown broken down by efficiency categorization. Click on the bar
+chart to show the information about the jobs that are summarized.</span><a class="headerlink" href="#job-efficiency-2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Summary_Tab.html" class="btn btn-neutral float-left" title="6. Summary Tab" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Usage_Tab.html" class="btn btn-neutral float-right" title="8. Usage Tab" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 University at Buffalo Center for Computational Research.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

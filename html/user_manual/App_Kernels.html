@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>11. App Kernels &mdash; XDMoD Manual 11.5.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="12. Data Export" href="Data_Export.html" />
+    <link rel="prev" title="10. Job Viewer" href="Job_Viewer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #e0e0e0" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/xdmod_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Browser_Requirements.html">1. Browser Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">2. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Introduction.html#xdmod-user-interface-overview">2.1. XDMoD User Interface Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Obtaining_an_Account.html">3. Obtaining an Account</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Getting_Started.html">4. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Getting_Started.html#logging-in">4.1. Logging In</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Getting_Started.html#top-toolbar-and-tabs">4.2. Top Toolbar and Tabs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Common_User_Interface_Elements.html">5. Common User Interface Elements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#duration-selection-toolbar">5.1. Duration Selection Toolbar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-configuration-toolbar">5.2. Chart Configuration Toolbar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-selection-tree">5.3. Chart Selection Tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-viewer">5.4. Chart Viewer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-viewer-tools">5.4.1. Chart Viewer Tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Summary_Tab.html">6. Summary Tab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Dashboard_Tab.html">7. Dashboard Tab</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#dashboard-components-overview">7.1. Dashboard Components Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#chart-component">7.2. Chart Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#saved-charts-and-reports-component">7.3. Saved Charts and Reports Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#center-summary-component">7.4. Center Summary Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#center-report-card">7.5. Center Report Card</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#jobs-component">7.6. Jobs Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#job-efficiency-component">7.7. Job Efficiency Component</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Usage_Tab.html">8. Usage Tab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Metric_Explorer.html">9. Metric Explorer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Metric_Explorer.html#managing-charts">9.1. Managing Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Metric_Explorer.html#basic-chart-options">9.2. Basic Chart Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Metric_Explorer.html#managing-data-series">9.3. Managing Data Series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Metric_Explorer.html#managing-filters">9.4. Managing Filters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Job_Viewer.html">10. Job Viewer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Job_Viewer.html#searching-for-jobs">10.1. Searching for jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Job_Viewer.html#viewing-job-data">10.2. Viewing job data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#at-a-glance-analytics">10.2.1. At-a-glance analytics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#accounting-data">10.2.2. Accounting data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#job-script">10.2.3. Job script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#executable-information">10.2.4. Executable information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#summary-metrics">10.2.5. Summary metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#detailed-metrics">10.2.6. Detailed metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#peers">10.2.7. Peers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#timeseries-plots">10.2.8. Timeseries plots</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">11. App Kernels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#app-kernels-viewer">11.1. App Kernels Viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#app-kernel-explorer">11.2. App Kernel Explorer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reports-tab">11.3. Reports tab</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Data_Export.html">12. Data Export</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Data_Export.html#create-data-export-request">12.1. Create Data Export Request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Data_Export.html#manage-existing-export-requests">12.2. Manage Existing Export Requests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Report_Generator.html">13. Report Generator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#selection-model">13.1. Selection Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#changing-chart-timeframes">13.2. Changing Chart Timeframes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#previewing-a-report">13.3. Previewing a Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#building-exporting-reports">13.4. Building, Exporting Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#report-templates">13.5. Report Templates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Efficiency.html">14. Efficiency</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#scatter-plot-view">14.1. Scatter Plot View</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Efficiency.html#center-staff-view">14.1.1. Center Staff View</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Efficiency.html#pi-or-normal-user-view">14.1.2. PI or Normal User View</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#histogram-view">14.2. Histogram View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#job-list">14.3. Job List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#filtering-charts">14.4. Filtering Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#selecting-duration-of-charts">14.5. Selecting Duration of Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#navigation-in-efficiency-tab">14.6. Navigation in Efficiency Tab</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="About.html">15. My Profile, About, Roadmap, Contact and Help</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="About.html#my-profile-button">15.1. My Profile Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#about-button">15.2. About Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#contact-button">15.3. Contact Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#help-menu">15.4. Help Menu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#roadmap">15.5. Roadmap</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Design_Philosophy.html">16. Design Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_I-XML_Document_Type_Definition.html">17. Appendix I-XML Document Type Definition</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #e0e0e0" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">XDMoD Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">11. </span>App Kernels</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="app-kernels">
+<span id="app-kernals"></span><h1><span class="section-number">11. </span>App Kernels<a class="headerlink" href="#app-kernels" title="Permalink to this heading"></a></h1>
+<figure class="align-default" id="id1">
+<img alt="_images/image87.png" src="_images/image87.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 11.1 </span><span class="caption-text">Application Kernels</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The Application Kernels Tab consists of three subsections, each has a
+specific goal in order to make viewing Application Kernels simple and
+intuitive. The three sections consist of the <strong>Application Kernels
+Viewer</strong>, <strong>Application Kernels Explorer</strong> and the <strong>Reports</strong>
+subsidiary tabs. The section below will describe each of these
+subsidiary tabs in much greater detail</p>
+<section id="app-kernels-viewer">
+<h2><span class="section-number">11.1. </span>App Kernels Viewer<a class="headerlink" href="#app-kernels-viewer" title="Permalink to this heading"></a></h2>
+<p>The Application Kernel Viewer selector tree (<a class="reference internal" href="#id1"><span class="std std-numref">Fig. 11.1</span></a>) functions
+similarly to the chart selection tree of the Usage tab. Data is
+displayed hierarchically where the top level nodes are the names of the
+available application kernels followed by the resources on which that
+kernel was run, followed by the metrics that were generated on that
+resource, followed by the number of processing units used as shown in
+<a class="reference internal" href="#id1"><span class="std std-numref">Fig. 11.1</span></a>. Clicking on the tree nodes will display a set of
+thumbnails in the chart viewer that reflects the node’s location in the
+hierarchy - the farther down in the hierarchy that a node lies, the more
+specific the set of data displayed. The available node types are:</p>
+<ul class="simple">
+<li><dl class="simple">
+<dt>App Kernel: <a class="reference internal" href="_images/image69.png"><img alt="image30" src="_images/image69.png" style="width: 0.16667in; height: 0.16667in;" /></a> Selecting an application kernel name will load</dt><dd><p>all thumbnails associated with that kernel (all metrics for all
+resources).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Resource: <a class="reference internal" href="_images/image84.png"><img alt="image31" src="_images/image84.png" style="width: 0.16667in; height: 0.16667in;" /></a> Selecting a resource loads the thumbnails for all</dt><dd><p>the metrics collected for this resource and application kernel.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Metric <a class="reference internal" href="_images/image101.png"><img alt="image32" src="_images/image101.png" style="width: 0.16667in; height: 0.16667in;" /></a>: Selecting a metric will display the chart with a</dt><dd><p>dataset for each number of processing units.</p>
+</dd>
+</dl>
+</li>
+<li><dl class="simple">
+<dt>Processing Unit: <a class="reference internal" href="_images/image110.png"><img alt="image33" src="_images/image110.png" style="width: 0.16667in; height: 0.16667in;" /></a> Selecting the number of processing units</dt><dd><p>will display data for the specific number of processing units for
+that metric, resource, and application kernel.</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>When navigating the App Kernels Viewer subtab, targeting solely a
+specific number of node configuration will yield a comprehensive plot:</p>
+<figure class="align-default" id="app-kernel-viewer-plot">
+<img alt="_images/image47.png" src="_images/image47.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 11.2 </span><span class="caption-text">Application Kernel Viewer Plot</span><a class="headerlink" href="#app-kernel-viewer-plot" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The following table helps to analyze the plot more effectively:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Change
+Indicators</strong></p></th>
+<th class="head"><p>An exclamation point icon is shown if and whenever a
+change occurs to the execution environment of the app
+kernel (library version, compiler version, etc).</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Running
+Average</strong></p></td>
+<td><p>Shown as a dashed line on the chart. The running
+average is the linear average of the last five
+values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Control
+Band</strong></p></td>
+<td><p>A green band is shown, representing the values of the
+running average considered “In Control” at any given
+time. A control region is picked to be the first few
+points in a data set and updated whenever an
+execution environment change is detected by the app
+kernel system. The control band then is calculated by
+clustering the control region into two sets based on
+the median and then finding the average of each set.
+The two averages define the control band.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Control
+Zones</strong></p></td>
+<td><p>A red interval is shown on the plot when the control
+value falls below <strong>-0.5</strong>, indicating an out of
+control (worse than expected) running average, and a
+yellow interval when the control value is greater
+than <strong>0,</strong> indicating a better than control (better
+than expected) running average. Other running average
+values are considered “In Control”.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Control
+Plot</strong></p></td>
+<td><p>Represented as a dotted line. The control is
+calculated as the distance of the running average to
+the nearest boundary of the control band, normalized
+over the range of the control band.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Discrete
+Controls</strong></p></td>
+<td><p>Convert the control values from real numbers to
+discrete values of <strong>-1</strong>, <strong>0</strong>, <strong>1</strong>. Values less
+than zero become <strong>-1</strong> and values greater than zero
+become <strong>1</strong>.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="app-kernel-explorer">
+<h2><span class="section-number">11.2. </span>App Kernel Explorer<a class="headerlink" href="#app-kernel-explorer" title="Permalink to this heading"></a></h2>
+<figure class="align-default" id="id2">
+<img alt="App kernel explorer_no Color.png" src="_images/image16.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 11.3 </span><span class="caption-text">App Kernel Explorer</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The App Kernel Explorer (<a class="reference internal" href="#id2"><span class="std std-numref">Fig. 11.3</span></a>) allows you to conveniently
+compare performance between two or more resources, provided the
+selection of processing units and metrics. Any changes in selections
+made on the left-hand section of the Data Explorer will immediately be
+reflected in the right-hand section (<strong>Data Comparator</strong>).</p>
+<p>It is important to note that changes made in the <strong>Metrics</strong> Section
+affect the availability of options in the Resource Selector.</p>
+<p>Selections made in the <strong>Processing Units</strong> section are considered
+<em>global</em> in the sense that they are applied to every single metric
+selected. Any selections (and de-selections) made in <strong>Processing
+Units</strong> override those made for any metric. Processing units can be
+selected by clicking the check boxes.</p>
+<p>Alternatively, all possible values for either Metrics, Resources or
+Processing Units can be toggled on or off using the global selection
+boxes as shown in <a class="reference internal" href="#app-kernel-explorer-reset"><span class="std std-numref">Fig. 11.4</span></a>.</p>
+<figure class="align-default" id="app-kernel-explorer-reset">
+<img alt="_images/image89.png" src="_images/image89.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 11.4 </span><span class="caption-text">Reset buttons for App Kernel Explorer sections</span><a class="headerlink" href="#app-kernel-explorer-reset" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="reports-tab">
+<h2><span class="section-number">11.3. </span>Reports tab<a class="headerlink" href="#reports-tab" title="Permalink to this heading"></a></h2>
+<p>The Reports tab (<a class="reference internal" href="#app-kernel-reports-subtab"><span class="std std-numref">Fig. 11.5</span></a>) is used for sending reports based on a
+specific Resource and App Kernel. The first section of the Reports tab
+is for sending reports periodically. The options include daily report,
+weekly report and monthly report. Each of these time frames contains a
+pull down menu which gives a set of options indicating under what
+circumstances a report will be sent. The options include always, on any
+error, on any major error, on pattern errors or on major pattern errors.</p>
+<p>The weekly report and monthly report also have another drop down menu
+which gives options for day of the week for weekly report (e.g. Monday,
+Tuesday, etc.) and which day of the month for monthly report (e.g 1st,
+2nd, 3rd, etc.). Once all settings have been selected, you can click
+save settings in order to start sending reports.</p>
+<p>There is also an option to send reports covering specific and
+customizable date ranges via email; this can be found directly below the
+first section.</p>
+<figure class="align-default" id="app-kernel-reports-subtab">
+<img alt="Reports_App_kernels.png" src="_images/image68.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 11.5 </span><span class="caption-text">Reports Subtab</span><a class="headerlink" href="#app-kernel-reports-subtab" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Job_Viewer.html" class="btn btn-neutral float-left" title="10. Job Viewer" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Data_Export.html" class="btn btn-neutral float-right" title="12. Data Export" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 University at Buffalo Center for Computational Research.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
