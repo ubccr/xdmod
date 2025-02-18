@@ -2,28 +2,28 @@
   [
     {
       "user": "cd",
-      "organization": 2,
+      "organization": 3,
       "expected": "cd_update_organization_on_login"
     }
   ],
   [
     {
       "user": "cs",
-      "organization": 3,
+      "organization": 4,
       "expected": "cs_update_organization_on_login"
     }
   ],
   [
     {
       "user": "pi",
-      "organization": 4,
+      "organization": 5,
       "expected": "pi_update_organization_on_login"
     }
   ],
   [
     {
       "user": "usr",
-      "organization": 5,
+      "organization": 6,
       "expected": "usr_update_organization_on_login"
     }
   ]
