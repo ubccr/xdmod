@@ -7,7 +7,7 @@ version: 2.1
 executors:
   rocky8: &rocky8-executor
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.9.20231119-v11.0.0-1.0-03
+      - image: cimg/base:current
 jobs:
   build:
     parameters:
@@ -19,91 +19,143 @@ jobs:
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
       XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
+      QA_BRANCH: 'v2'
       TRAVIS_COMMIT_RANGE: << pipeline.git.base_revision >>..<<pipeline.git.revision>>
       XDMOD_IS_CORE: yes
       XDMOD_INSTALL_DIR: /xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
     steps:
       - checkout
+      - setup_remote_docker
       - run:
-            name: install the composer dependencies
-            command: composer install
+          name: Docker Compose corresponding OS file
+          command: docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
       - run:
-          name: Create Test Artifact Directories
+          name: Generate Key for XDMoD
+          command: docker exec xdmod openssl genrsa -out /etc/pki/tls/private/localhost.key -rand /proc/cpuinfo:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048
+      - run:
+          name: Generate Cert for XDMoD
+          command: docker exec xdmod /usr/bin/openssl req -new -key /etc/pki/tls/private/localhost.key -x509 -sha256 -days 365 -set_serial $RANDOM -extensions v3_req -out /etc/pki/tls/certs/localhost.crt -subj "/C=XX/L=Default City/O=Default Company Ltd"
+      - run:
+          name: Copy Files for Playwright and XDMoD containers
           command: |
+            docker cp ~/project xdmod:/xdmod
+            docker cp ~/project playwright:/xdmod
+      - run:
+          name: Create test result directories
+          command: |
+            rm -rf ~/phpunit
             mkdir ~/phpunit
+            rm -rf /tmp/screenshots
             mkdir /tmp/screenshots
       - run:
+          name: Create Test Artifact Directories in XDMoD
+          command: |
+            docker exec xdmod mkdir /root/phpunit
+            docker exec xdmod mkdir /tmp/screenshots
+      - run:
+          name: Install XDMoD Composer Dependencies
+          command: docker exec -w /xdmod xdmod composer install
+      - run:
           name: Build XDMoD RPM
-          command: ~/bin/buildrpm xdmod
+          command: docker exec -w /xdmod xdmod /root/bin/buildrpm xdmod
       - run:
-          name: Install / Upgrade XDMoD from RPM
-          command: ./tests/ci/bootstrap.sh
+          name: Install / Upgrade XDMoD from the newly created RPM
+          command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> xdmod /xdmod/tests/ci/bootstrap.sh
       - run:
-          name: Validate the newly installed / Upgraded XDMoD
-          command: ./tests/ci/validate.sh
+          name: Validate that the install / upgrade went as expected
+          command: docker exec -w /xdmod xdmod /xdmod/tests/ci/validate.sh
       - run:
-          name: Make sure that the Composer Test Dependencies are installed
-          command: composer install --no-progress
+          name: Make sure that the test dependencies are installed
+          command: docker exec -w /xdmod xdmod composer install
+      - run:
+          name: Setup the SimpleSAML server etc. so we can test SSO
+          command: docker exec xdmod /xdmod/tests/ci/samlSetup.sh
+      - when:
+          condition:
+            equal: [ << parameters.install-type >>, 'upgrade' ]
+          steps:
+            - run:
+                name: Checkout QA Repo
+                command: docker exec -w /root xdmod git clone --depth=1 --branch="$QA_BRANCH" https://github.com/ubccr/xdmod-qa.git /root/.qa
+            - run:
+                name: Install QA dependencies
+                command: docker exec -w /xdmod xdmod /root/.qa/scripts/install.sh
+            - run:
+                name: Configure xdmod as a safe directory
+                command: docker exec -w /xdmod xdmod git config --global --add safe.directory /xdmod
+            - run:
+                name: Setup remote upstream
+                command: docker exec -w /xdmod xdmod git remote add upstream https://github.com/ubccr/xdmod.git
+            - run:
+                name: Copy portal_settings.ini into place
+                command: docker exec xdmod cp /etc/xdmod/portal_settings.ini /xdmod/configuration/portal_settings.ini
+            - run:
+                name: Run QA Tests
+                command: docker exec -w /xdmod xdmod /root/.qa/scripts/build.sh
+      - run:
+          name: Make sure that the Test Dependencies are installed
+          command: docker exec -w /xdmod xdmod composer install --no-progress
+      - run:
+          name: Run Regression Tests
+          command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> -w /xdmod xdmod /xdmod/tests/regression/runtests.sh
       - run:
           name: Setup Configuration Files for Integration Tests
           command: |
-            mv ./configuration/organization.json ./configuration/organization.json.old
-            mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
-            cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
-            cp /etc/xdmod/organization.json ./configuration/organization.json
+            docker exec xdmod mv /xdmod/configuration/organization.json /xdmod/configuration/organization.json.old
+            docker exec xdmod mv /xdmod/configuration/portal_settings.ini /xdmod/configuration/portal_settings.ini.old
+            docker exec xdmod cp /etc/xdmod/portal_settings.ini /xdmod/configuration/portal_settings.ini
+            docker exec xdmod cp /etc/xdmod/organization.json /xdmod/configuration/organization.json
       - run:
-          name: Setup & Run QA Tests
+          name: Running Integration Tests
+          command: docker exec -w /xdmod xdmod /xdmod/tests/integration/runtests.sh --junit-output-dir /root/phpunit
+      - run:
+          name: Run Regression Post Ingest Tests
+          command: docker exec -w /xdmod xdmod /xdmod/tests/regression/post_ingest_test.sh --junit-output-dir /root/phpunit
+      - run:
+          name: Run Component Tests
+          command: docker exec -w /xdmod xdmod /xdmod/tests/component/runtests.sh --junit-output-dir /root/phpunit
+      - run:
+          name: Update the HTTPD config file
+          command: docker exec xdmod sed -i 's/ServerName localhost/ServerName xdmod/g' /etc/httpd/conf.d/xdmod.conf
+      - run:
+          name: Restart XDMoD's services
+          command: docker exec xdmod /root/bin/services restart
+      - run:
+          name: Run Playwright Tests
+          command: docker exec -w /xdmod/tests/playwright playwright /xdmod/tests/playwright/runtests.sh -j << parameters.os >>
+      - run:
+          name: Copy Test Results into Unit
           command: |
-            ./tests/ci/scripts/qa-test-setup.sh
+            docker cp xdmod:/root/phpunit ~/phpunit
+            docker cp xdmod:/tmp/screenshots /tmp/screenshots
+            mkdir ~/project/log
+            docker cp xdmod:/var/log/xdmod ~/project/log
+            docker cp xdmod:/var/log/php-fpm/ ~/project/log
+            docker cp playwright:/xdmod/tests/playwright/test_results-<< parameters.os >>.xml ~/phpunit
+            docker cp playwright:/xdmod/tests/playwright/test-results /tmp/screenshots
       - run:
           name: Clear out command-line PHP errors generated by composer installs
           command: >
-            if [ -e /var/log/php_errors.log ]; then
-              sed -i '/PHP Warning:  openssl_x509_parse(): illegal ASN1 data type for timestamp in - on line 4/d' /var/log/php_errors.log;
-            fi
-      - run: ./tests/regression/runtests.sh
-      - run: ./tests/integration/runtests.sh --junit-output-dir ~/phpunit
-      - run: ./tests/regression/post_ingest_test.sh --junit-output-dir ~/phpunit
-      - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
+            if [ -e ~/project/log/php_errors.log ]; then sed -i '/PHP Warning:  openssl_x509_parse(): illegal ASN1 data type for timestamp in - on line 4/d' /var/log/php_errors.log; fi
       - run:
-          name: Ensure that no XDMoD exceptions were logged
-          command: test ! -f /root/xdmod/logs/exceptions.log
-      - run:
-          name: 'Install Chromium 99'
-          command: |
-            pushd $HOME && \
-            rm -rf chrome-linux && \
-            wget -O chrome-linux.zip "https://www.googleapis.com/download/storage/v1/b/chromium-browser-snapshots/o/Linux_x64%2F961656%2Fchrome-linux.zip?generation=1642723767466615&alt=media" && \
-            unzip chrome-linux.zip && \
-            ln -s /root/chrome-linux/chrome /usr/local/bin/google-chrome && \
-            popd
-      - run:
-          name: 'Bodge the nodejs version to run an older one for the webdriver tests'
-          command: |
-            curl https://nodejs.org/dist/v10.24.1/node-v10.24.1-linux-x64.tar.xz | tar -xJC /usr/local
-            chown root:root -R /usr/local/node-v10.24.1-linux-x64
-      - run: pushd ./tests/ui && PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH /usr/local/node-v10.24.1-linux-x64/bin/npm install && popd
-      - run: PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit
-
-      - run:
-          name: 'Run SSO Tests'
-          command: |
-            PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ci/samlSetup.sh
-            PATH=/usr/local/node-v10.24.1-linux-x64/bin:$PATH ./tests/ui/runtests.sh --headless --log-junit ~/phpunit --sso
-            ./vendor/phpunit/phpunit/phpunit -c ./tests/integration/phpunit.xml.dist --testsuite sso --log-junit ~/phpunit/xdmod-sso-integration.xml
-      - run:
-          name: Ensure that no unexpected Apache errors were generated ( We expect PHP Deprecated )
+          name: Test to make sure that we don't have any unexpected apache errors
           command: >
-            if [ -e /var/log/php-fpm/www-error.log ]; then
-              test `egrep -v "PHP Deprecated.*vendor\/.*" /var/log/php-fpm/www-error.log | wc -l` = 0;
+            if [ -e ~/project/log/apache-error.log ]; then
+                test "$(fgrep -v ' [ssl:warn] ' ~/project/log/apache-error.log | wc -l)" = 0
             fi
+      - run:
+          name: Ensure that no unexpected Apache errors were generated
+          command: test ! -e ~/project/log/error.log
       - run:
           name: Ensure that no PHP command-line errors were generated
           command: >
-              if [ -e /var/log/php_errors.log ]; then
-                  test `egrep -v "PHP Deprecated.*vendor\/.*|PHP Notice:  fread()" /var/log/php_errors.log | wc -l` = 0;
-              fi
+            if [ -e ~/project/log/php_errors.log ]; then test `fgrep -v 'vendor/phpunit/phpunit/src' ~/project/log/php_errors.log | wc -l` = 0; fi
+      - run:
+          name: Run on fail status
+          command: |
+            docker cp playwright:/xdmod/tests/playwright/test-results /tmp/screenshots
+          when: on_fail
       - store_artifacts:
           path: /tmp/screenshots
       - store_artifacts:
