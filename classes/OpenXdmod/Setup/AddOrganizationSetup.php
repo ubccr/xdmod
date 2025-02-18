@@ -38,11 +38,11 @@ class AddOrganizationSetup extends SetupItem
         $this->console->displaySectionHeader('Add a new Organization');
 
         $organization['name'] = $this->console->prompt(
-          'Organization Name:'
+            'Organization Name:'
         );
 
         $organization['abbrev'] = $this->console->prompt(
-          'Organization Abbreviation:'
+            'Organization Abbreviation:'
         );
 
         $this->parent->addOrganization($organization);
