@@ -16,7 +16,7 @@ services:
         tty: true
         command: sleep infinity
     playwright:
-        image: mcr.microsoft.com/playwright:latest
+        image:  mcr.microsoft.com/playwright:v1.50.1-jammy
         hostname: playwright
         container_name: playwright
         networks:
