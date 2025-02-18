@@ -33,18 +33,18 @@ class AddOrganizationSetup extends SetupItem
      */
     public function handle()
     {
-      $organization = [];
+        $organization = [];
 
-      $this->console->displaySectionHeader('Add a new Organization');
+        $this->console->displaySectionHeader('Add a new Organization');
 
-      $organization['name'] = $this->console->prompt(
+        $organization['name'] = $this->console->prompt(
           'Organization Name:'
-      );
+        );
 
-      $organization['abbrev'] = $this->console->prompt(
+        $organization['abbrev'] = $this->console->prompt(
           'Organization Abbreviation:'
-      );
+        );
 
-      $this->parent->addOrganization($organization);
+        $this->parent->addOrganization($organization);
     }
 }
