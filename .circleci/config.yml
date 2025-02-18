@@ -22,7 +22,7 @@ jobs:
       QA_BRANCH: 'v2'
       TRAVIS_COMMIT_RANGE: << pipeline.git.base_revision >>..<<pipeline.git.revision>>
       XDMOD_IS_CORE: yes
-      XDMOD_INSTALL_DIR: /xdmod
+      XDMOD_INSTALL_DIR: /root/xdmod
       XDMOD_TEST_MODE: << parameters.install-type >>
     steps:
       - checkout
@@ -39,7 +39,7 @@ jobs:
       - run:
           name: Copy Files for Playwright and XDMoD containers
           command: |
-            docker cp ~/project xdmod:/xdmod
+            docker cp ~/project xdmod:/root/xdmod
             docker cp ~/project playwright:/xdmod
       - run:
           name: Create test result directories
