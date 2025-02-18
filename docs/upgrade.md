@@ -329,14 +329,14 @@ Additional 11.0.1 Upgrade Notes
 ### Database Changes
 
 During the upgrade, the following tables in the `modw_cloud` schema:
-    - `session_records`
-    - `cloudfact_by_day`
-    - `cloudfact_by_month`
-    - `cloudfact_by_quarter`
-    - `cloudfact_by_year`
+- `session_records`
+- `cloudfact_by_day`
+- `cloudfact_by_month`
+- `cloudfact_by_quarter`
+- `cloudfact_by_year`
 will have the following columns added:
-    - `person_organization_id`
-    - `piperson_organization_id`
+- `person_organization_id`
+- `piperson_organization_id`
 Then, the Cloud realm will be reaggregated.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
