@@ -58,7 +58,7 @@ jobs:
           command: docker exec -w /root/xdmod xdmod composer install
       - run:
           name: Build XDMoD RPM
-          command: docker exec -w /xdmod xdmod /root/bin/buildrpm xdmod
+          command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
       - run:
           name: Install / Upgrade XDMoD from the newly created RPM
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> xdmod /xdmod/tests/ci/bootstrap.sh
@@ -67,7 +67,7 @@ jobs:
           command: docker exec -w /xdmod xdmod /xdmod/tests/ci/validate.sh
       - run:
           name: Make sure that the test dependencies are installed
-          command: docker exec -w /xdmod xdmod composer install
+          command: docker exec -w xdmod xdmod composer install
       - run:
           name: Setup the SimpleSAML server etc. so we can test SSO
           command: docker exec xdmod /xdmod/tests/ci/samlSetup.sh
