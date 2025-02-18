@@ -195,8 +195,8 @@ $org_name = '';
 $org_abbrev = '';
 
 if (!empty($org)) {
-    $org_name = $org[0]['name'];
-    $org_abbrev = $org[0]['abbrev'];
+    $org_name = (array_key_exists('name', $org)) ? $org['name'] : $org[0]['name'];
+    $org_abbrev = (array_key_exists('abbrev', $org)) ? $org['abbrev'] : $org[0]['abbrev'];
 }
 
 define('ORGANIZATION_NAME', $org_name);
