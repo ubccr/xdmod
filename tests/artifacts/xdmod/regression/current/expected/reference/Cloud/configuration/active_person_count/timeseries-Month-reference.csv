@@ -1,0 +1,10 @@
+title
+"Number of Users: Active: by Instance Type"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[c1.m1] Number of Users: Active","[c1.m4] Number of Users: Active","[c2.m4] Number of Users: Active","[c4.m16] Number of Users: Active","[c2.m8] Number of Users: Active","[m1.small] Number of Users: Active"
+2018-04,3,2,2,2,1,1
+---------

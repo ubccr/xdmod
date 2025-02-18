@@ -1,0 +1,14 @@
+title
+"Number of Users: Active: by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"VM Size: Memory","Number of Users: Active"
+"< 2 GB",3
+"2 - 4 GB",3
+"8 - 16 GB",2
+"4 - 8 GB",1
+"32 - 64 GB",1
+---------
