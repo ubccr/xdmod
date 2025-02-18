@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>9. Metric Explorer &mdash; XDMoD Manual 11.5.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="10. Job Viewer" href="Job_Viewer.html" />
+    <link rel="prev" title="8. Usage Tab" href="Usage_Tab.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #e0e0e0" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/xdmod_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Browser_Requirements.html">1. Browser Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">2. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Introduction.html#xdmod-user-interface-overview">2.1. XDMoD User Interface Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Obtaining_an_Account.html">3. Obtaining an Account</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Getting_Started.html">4. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Getting_Started.html#logging-in">4.1. Logging In</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Getting_Started.html#top-toolbar-and-tabs">4.2. Top Toolbar and Tabs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Common_User_Interface_Elements.html">5. Common User Interface Elements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#duration-selection-toolbar">5.1. Duration Selection Toolbar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-configuration-toolbar">5.2. Chart Configuration Toolbar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-selection-tree">5.3. Chart Selection Tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-viewer">5.4. Chart Viewer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-viewer-tools">5.4.1. Chart Viewer Tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Summary_Tab.html">6. Summary Tab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Dashboard_Tab.html">7. Dashboard Tab</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#dashboard-components-overview">7.1. Dashboard Components Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#chart-component">7.2. Chart Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#saved-charts-and-reports-component">7.3. Saved Charts and Reports Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#center-summary-component">7.4. Center Summary Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#center-report-card">7.5. Center Report Card</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#jobs-component">7.6. Jobs Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#job-efficiency-component">7.7. Job Efficiency Component</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Usage_Tab.html">8. Usage Tab</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">9. Metric Explorer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#managing-charts">9.1. Managing Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#basic-chart-options">9.2. Basic Chart Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#additional-chart-features">9.3. Additional Chart Features</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#managing-data-series">9.4. Managing Data Series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#managing-filters">9.5. Managing Filters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Job_Viewer.html">10. Job Viewer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Job_Viewer.html#searching-for-jobs">10.1. Searching for jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Job_Viewer.html#viewing-job-data">10.2. Viewing job data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#at-a-glance-analytics">10.2.1. At-a-glance analytics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#accounting-data">10.2.2. Accounting data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#job-script">10.2.3. Job script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#executable-information">10.2.4. Executable information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#summary-metrics">10.2.5. Summary metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#detailed-metrics">10.2.6. Detailed metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#peers">10.2.7. Peers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#timeseries-plots">10.2.8. Timeseries plots</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="App_Kernels.html">11. App Kernels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="App_Kernels.html#app-kernels-viewer">11.1. App Kernels Viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="App_Kernels.html#app-kernel-explorer">11.2. App Kernel Explorer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="App_Kernels.html#reports-tab">11.3. Reports tab</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Data_Export.html">12. Data Export</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Data_Export.html#create-data-export-request">12.1. Create Data Export Request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Data_Export.html#manage-existing-export-requests">12.2. Manage Existing Export Requests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Report_Generator.html">13. Report Generator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#selection-model">13.1. Selection Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#changing-chart-timeframes">13.2. Changing Chart Timeframes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#previewing-a-report">13.3. Previewing a Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#building-exporting-reports">13.4. Building, Exporting Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#report-templates">13.5. Report Templates</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Efficiency.html">14. Efficiency</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#scatter-plot-view">14.1. Scatter Plot View</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Efficiency.html#center-staff-view">14.1.1. Center Staff View</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Efficiency.html#pi-or-normal-user-view">14.1.2. PI or Normal User View</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#histogram-view">14.2. Histogram View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#job-list">14.3. Job List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#filtering-charts">14.4. Filtering Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#selecting-duration-of-charts">14.5. Selecting Duration of Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Efficiency.html#navigation-in-efficiency-tab">14.6. Navigation in Efficiency Tab</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="About.html">15. My Profile, About, Roadmap, Contact and Help</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="About.html#my-profile-button">15.1. My Profile Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#about-button">15.2. About Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#contact-button">15.3. Contact Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#help-menu">15.4. Help Menu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#roadmap">15.5. Roadmap</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Design_Philosophy.html">16. Design Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_I-XML_Document_Type_Definition.html">17. Appendix I-XML Document Type Definition</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #e0e0e0" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">XDMoD Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">9. </span>Metric Explorer</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="metric-explorer">
+<span id="id1"></span><h1><span class="section-number">9. </span>Metric Explorer<a class="headerlink" href="#metric-explorer" title="Permalink to this heading"></a></h1>
+<p>The Metric Explorer allows you to create complex plots containing
+multiple metrics. It has many point-and-click features so you can easily
+add and filter plotted data and customize plot appearance.</p>
+<figure class="align-default" id="metric-explorer-tab">
+<img alt="_images/image82.png" src="_images/image82.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.1 </span><span class="caption-text">Metric Explorer</span><a class="headerlink" href="#metric-explorer-tab" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The <strong>Quick Filter</strong> drop-down menu in the top toolbar allows you to
+rapidly focus the information source used by the Metric Explorer. Based
+on the quick filter selected, the values that are displayed will vary.
+For example, if you are a PI, selecting the PI quick filter provides
+access to the information from all of your students’ jobs; however, if
+you select User, you see only the information from jobs that you
+submitted yourself.</p>
+<p>Other features of the top toolbar include:</p>
+<p><strong>Duration Selectors</strong>: The <a class="reference internal" href="Common_User_Interface_Elements.html#duration-selection-toolbar"><span class="std std-ref">Duration Selection Toolbar</span></a>
+is provided for selection of the desired time frame. To define a custom
+timeframe, specify a start and end date in the date fields to the right
+of the <strong>Duration</strong> drop-down menu.</p>
+<p><strong>Export Menu</strong>: Allows you to download the currently visible chart in
+graphical or datasheet form, and in various formats.</p>
+<p><strong>Print</strong>: Prepares a version of the chart for printing, and
+automatically presents you with a print dialog.</p>
+<p><strong>Available For Report</strong>: when checked, the exact chart will be included
+in the report generator’s list of available charts.</p>
+<p>For more information about the top toolbar, refer to the
+<a class="reference internal" href="Common_User_Interface_Elements.html#common-user-interface-elements"><span class="std std-ref">Common User Interface Elements</span></a> section in this document.</p>
+<p>The <strong>Chart Options</strong> region above your chart gives you ultimate
+flexibility in the amount and type of statistics you want to view at any
+time. The <strong>Chart Options</strong> region comprises five sections: Charts,
+Data, Global Filters, and Options. Any changes you make in each section
+will be immediately reflected in the chart.</p>
+<p>The <strong>Chart Viewer</strong> is the area where the chart is generated by using
+the chart settings. The chart viewer also uses a paged view. When not
+all of the data series fit on one chart, multiple charts will be
+generated. Buttons are provided above the chart for navigation through
+the charts, when needed. The maximum number of data series in the chart,
+or page size, can be configured in the chart limit input box above the
+chart.</p>
+<p>The sections that follow discuss the <strong>Chart Options</strong> region in more
+detail.</p>
+<section id="managing-charts">
+<h2><span class="section-number">9.1. </span>Managing Charts<a class="headerlink" href="#managing-charts" title="Permalink to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="metric-charts-section">
+<img alt="_images/image32.png" src="_images/image32.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.2 </span><span class="caption-text">Charts Section</span><a class="headerlink" href="#metric-charts-section" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><p>The <strong>Charts</strong> section
+(<a class="reference internal" href="#metric-charts-section"><span class="std std-numref">Fig. 9.2</span></a> a)
+allows you to manage chart
+presets. Chart presets are mappings
+between all the components involved in
+the chart (e.g. data series, filters,
+etc.) and the textual identifier you
+assign to each query.</p>
+<p>Once you click on <a class="reference internal" href="_images/image117.png"><img alt="image25" src="_images/image117.png" style="width: 0.22917in; height: 0.20833in;" /></a> to create
+a new chart, you will be presented with
+the dialog reference in
+<a class="reference internal" href="#metric-charts-section"><span class="std std-numref">Fig. 9.2</span></a> b.
+Here, you have the opportunity
+to name your chart for easy reference.</p>
+<p>Similarly, you can click on <a class="reference internal" href="_images/image109.png"><img alt="image26" src="_images/image109.png" style="width: 0.20833in; height: 0.20833in;" /></a>
+to remove a selected chart preset.</p>
+<p>In earlier versions of XDMoD, charts
+were automatically saved. However, the
+current version gives you more control
+over your charts. You must manually
+save your charts by clicking on either
+the Save or the Save As button, see
+<a class="reference internal" href="#metric-charts-section"><span class="std std-numref">Fig. 9.2</span></a> a.
+Charts or changes to
+charts that you do not explicitly save
+will be lost when you exit XDMoD. An
+Undo button allows you to cancel the
+last change, and a Redo button lets you
+cancel the effect of the last Undo.</p>
+<p>To access your saved charts, simply
+select the preset from the Load Chart
+list (<strong>Figure 9-2c</strong>). If you have
+lots of charts, you can utilize the
+Search field located in the top left of
+the Load Chart area to target specific
+charts.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="basic-chart-options">
+<span id="id2"></span><h2><span class="section-number">9.2. </span>Basic Chart Options<a class="headerlink" href="#basic-chart-options" title="Permalink to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="metric-chart-options">
+<img alt="_images/image92.png" src="_images/image92.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.3 </span><span class="caption-text">Chart Options</span><a class="headerlink" href="#metric-chart-options" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><p>The <strong>Basic Chart Options</strong>
+button can be found at the top
+right of the chart viewer
+(<a class="reference internal" href="#metric-explorer-tab"><span class="std std-numref">Fig. 9.1</span></a>).
+It allows you
+to customize general chart
+settings, see <strong>Figure 9-3</strong>.</p>
+<ul class="simple">
+<li><p>The <em>Dataset Type</em> parameter
+gives you the ability to
+customize the view of the
+data on the chart. By
+selecting Aggregate, the
+chart will display a
+collection of data series,
+each grouped by whichever
+category you decide (as
+managed in the <strong>Data</strong>
+section). By selecting
+Timeseries, the chart will
+show data over time.
+Additionally, you can set a
+title for the chart.</p></li>
+<li><p>You are also able to
+fine-tune the appearance of
+the chart. You can adjust the
+location of the legend. In
+addition, you are able to set
+the <strong>Font Size</strong> for all
+textual elements of the chart
+(e.g. axis labels, axis
+values, legend labels, chart
+title, etc.)</p></li>
+<li><p>If you wish to feature your
+chart on the Summary tab (or
+Dashboard tab) (for
+convenience purposes), check
+the <strong>Show in the Summary
+tab</strong> checkbox.</p></li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>In the present version of the Metric Explorer, you can easily change
+plots by simply clicking on the data series in the chart. A dialog box
+opens (<a class="reference internal" href="#metric-explorer-plot-rename"><span class="std std-numref">Fig. 9.4</span></a>) allowing a wide range of changes, including
+adding another metric, drilling downs, and options that alter the
+display format.</p>
+<figure class="align-default" id="metric-explorer-plot-rename">
+<img alt="_images/image5.png" src="_images/image5.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.4 </span><span class="caption-text">In the Metric Explorer Plots can easily be changed directly by clicking on them.</span><a class="headerlink" href="#metric-explorer-plot-rename" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="additional-chart-features">
+<h2><span class="section-number">9.3. </span>Additional Chart Features<a class="headerlink" href="#additional-chart-features" title="Permalink to this heading"></a></h2>
+<p>Clicking on a y-axis label will open a dialog box next to the clicked label.
+Through this dialog box you can adjust the minimum and maximum values of the
+range for any of the y-axes on the plot. You can reset these values by
+clicking on the “Reset Range” button or by erasing the values. Additionally,
+you can enable a logarithmic scale for that y-axis.</p>
+<figure class="align-default" id="metric-explorer-yaxis-context-menu">
+<img alt="_images/metric_explorer_yaxis_context_menu.png" src="_images/metric_explorer_yaxis_context_menu.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.5 </span><span class="caption-text">You can adjust the range and enable a log scale by clicking on a
+y-axis label.</span><a class="headerlink" href="#metric-explorer-yaxis-context-menu" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Clicking on an x-axis label will open a dialog box next to the clicked label.
+Through this dialog box you can adjust the time duration for the chart.
+The options available replicate the duration toolbar.</p>
+<figure class="align-default" id="metric-explorer-xaxis-context-menu">
+<img alt="_images/metric_explorer_xaxis_context_menu.png" src="_images/metric_explorer_xaxis_context_menu.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.6 </span><span class="caption-text">You can adjust the time duration by clicking on an x-axis label.</span><a class="headerlink" href="#metric-explorer-xaxis-context-menu" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Clicking on a legend entry will open a dialog box next to the clicked entry.
+The context menu provided through the legend entry is the same as clicking on
+a point in the plot. The only option that is excluded is the “Show Raw Data” option.</p>
+<figure class="align-default" id="metric-explorer-legend-context-menu">
+<img alt="_images/metric_explorer_legend_context_menu.png" src="_images/metric_explorer_legend_context_menu.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.7 </span><span class="caption-text">You can interact with a data series context menu by clicking on its
+respective legend entry.</span><a class="headerlink" href="#metric-explorer-legend-context-menu" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>For Metric Explorer charts, the zoom level of the plot is reset differently
+than the other tabs. The zoom level can be reset by clicking on the chart
+and choosing the “Reset Zoom” option from the context menu.</p>
+<figure class="align-default" id="metric-explorer-reset-zoom">
+<img alt="_images/metric_explorer_reset_zoom.png" src="_images/metric_explorer_reset_zoom.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.8 </span><span class="caption-text">You can reset the zoom level of a chart by clicking on it and
+choosing “Reset Zoom.”</span><a class="headerlink" href="#metric-explorer-reset-zoom" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="managing-data-series">
+<h2><span class="section-number">9.4. </span>Managing Data Series<a class="headerlink" href="#managing-data-series" title="Permalink to this heading"></a></h2>
+<figure class="align-default" id="metric-explorer-left-panel-add-data">
+<img alt="_images/image111.png" src="_images/image111.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.9 </span><span class="caption-text">Adding additional data to a chart is made easier
+through the menu on the left-hand-side. Here we show how to add CPU
+Hours Per Job to an existing plot of NUs charged Per job and Number
+of jobs Ended (Selecting CPU Hours Per Job is shown in the upper left
+corner of the window).</span><a class="headerlink" href="#metric-explorer-left-panel-add-data" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="metric-explorer-click-add-data">
+<img alt="_images/image56.png" src="_images/image56.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.10 </span><span class="caption-text">Adding data to the plot is as simple as clicking on the chart.</span><a class="headerlink" href="#metric-explorer-click-add-data" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Adding another data series to a chart can be accomplished in several
+ways. <a class="reference internal" href="#metric-explorer-left-panel-add-data"><span class="std std-numref">Fig. 9.9</span></a> shows that clicking on a metric in the chart tree
+brings up a dialog box. This dialog allows you to choose what data will
+be displayed and how it will be grouped. In addition, clicking in the
+chart view area will bring up a chart options box (<a class="reference internal" href="#metric-explorer-click-add-data"><span class="std std-numref">Fig. 9.10</span></a>) that
+allows you to choose to add a new metric. Clicking on a particular data
+series also brings up a dialog box that has an option to select a new
+metric.</p>
+<p>An alternative way to introduce data into a chart is to click on the
+<em>Add Data</em> button as highlighted in <a class="reference internal" href="#metric-explorer-data-series-workflow"><span class="std std-numref">Fig. 9.11</span></a>. Doing so will
+present you with a collection of categories referred to as <em>realms</em>.
+Click on a realm to reveal all the respective metrics. In <a class="reference internal" href="#metric-explorer-data-series-workflow"><span class="std std-numref">Fig. 9.11</span></a>
+the allocations realm has been selected showing 6 possible metrics.
+Clicking on the XD SU’s Allocated metric brings up the Data Series
+Definition dialog box. The Data Series Definition dialog box allows you
+to control how the metric is to be represented and displayed on the
+chart. In addition, filters can be applied to the data series for even
+more precision. For example, you may be interested in the number of jobs
+run by a particular user at an institution for a particular time frame.
+Using filters allows you to acquire this information.</p>
+<figure class="align-default" id="metric-explorer-data-series-workflow">
+<img alt="_images/image11.png" src="_images/image11.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.11 </span><span class="caption-text">Data Series workflow of Metric Explorer</span><a class="headerlink" href="#metric-explorer-data-series-workflow" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>In addition to adding new metrics to a plot, the Metric Explorer also
+allows the user to drill down for more detailed information on a
+particular metric. <a class="reference internal" href="#metric-explorer-dialogue-box"><span class="std std-numref">Fig. 9.12</span></a> shows the dialog box that opens
+when you click on a data series within the chart viewer. Selecting
+“Drilldown” will display the data analyzed by the chosen dimension or
+grouping, as described by Section 5.3 (the Chart Viewer) previously.</p>
+<figure class="align-default" id="metric-explorer-dialogue-box">
+<img alt="_images/image52.png" src="_images/image52.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.12 </span><span class="caption-text">Changing how the data for a given data series is
+displayed can now be achieved simply by clicking on the data series
+to bring up a dialogue box.</span><a class="headerlink" href="#metric-explorer-dialogue-box" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-default" id="metric-explorer-data-options">
+<img alt="_images/image129.png" src="_images/image129.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.13 </span><span class="caption-text">Data section of Metric Explorer</span><a class="headerlink" href="#metric-explorer-data-options" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The <strong>Data</strong> section of the Metric Explorer allows you to include one
+or many metrics on a single chart. As illustrated in <a class="reference internal" href="#metric-explorer-data-options"><span class="std std-numref">Fig. 9.13</span></a>,
+you are given many options which allow you to customize the look of
+each data series. By double-clicking on a data entry in the grid
+below, you will be presented with a dialog which gives you finer
+control of how the data can be represented.</p>
+</section>
+<section id="managing-filters">
+<h2><span class="section-number">9.5. </span>Managing Filters<a class="headerlink" href="#managing-filters" title="Permalink to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 75%" />
+<col style="width: 25%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="metric-explorer-filters">
+<img alt="_images/image38.png" src="_images/image38.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.14 </span><span class="caption-text">Filters section of Metric Explorer</span><a class="headerlink" href="#metric-explorer-filters" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><p>As mentioned in the previous section,
+filters allow you to focus on a
+subset of the data. To apply filters
+to your data, you can either consult
+the <em>Local Filters</em> section of the
+<em>Data Series Definition</em> dialog (see
+<a class="reference internal" href="#metric-explorer-filters"><span class="std std-numref">Fig. 9.14</span></a>),
+or make use of <em>Global Filters</em> (see
+<a class="reference internal" href="#metric-filter-logic"><span class="std std-numref">Fig. 9.15</span></a>).</p>
+<p><em>Local</em> Filters are solely tailored
+to a single data series, whereas
+<em>Global</em> Filters are applied to all
+the data series you have introduced
+into the <strong>Data</strong> section of the
+Metric Explorer.</p>
+<p>To create a filter, click on the <em>Add
+Filter</em> button (as highlighted in
+<a class="reference internal" href="#metric-filter-logic"><span class="std std-numref">Fig. 9.15</span></a>). Doing
+so will provide you with a list of
+dimensions (or parameters) you can
+filter with. Once you have selected a
+dimension, you will be presented with
+a dialog allowing you to navigate,
+search, and select parameter values.
+Click on OK to apply any selected
+filters.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 75%" />
+<col style="width: 25%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><figure class="align-default" id="metric-filter-logic">
+<img alt="_images/image105.png" src="_images/image105.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 9.15 </span><span class="caption-text">Understanding filter logic</span><a class="headerlink" href="#metric-filter-logic" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</td>
+<td><p>Filters in the
+Metric Explorer
+are applied as
+follows:
+Dimensions are
+logically
+<strong>and</strong>-ed
+together, and
+values
+associated with
+the same
+dimension are
+logically
+<strong>or</strong>-ed
+together.</p>
+<p>An example of
+filter logic is
+illustrated in
+<a class="reference internal" href="#metric-filter-logic"><span class="std std-numref">Fig. 9.15</span></a>.</p>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Usage_Tab.html" class="btn btn-neutral float-left" title="8. Usage Tab" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Job_Viewer.html" class="btn btn-neutral float-right" title="10. Job Viewer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 University at Buffalo Center for Computational Research.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>14. Efficiency &mdash; XDMoD Manual 11.5.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="15. My Profile, About, Roadmap, Contact and Help" href="About.html" />
+    <link rel="prev" title="13. Report Generator" href="Report_Generator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #e0e0e0" >
+
+          
+          
+          <a href="index.html">
+            
+              <img src="_static/xdmod_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Browser_Requirements.html">1. Browser Requirements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Introduction.html">2. Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Introduction.html#xdmod-user-interface-overview">2.1. XDMoD User Interface Overview</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Obtaining_an_Account.html">3. Obtaining an Account</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Getting_Started.html">4. Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Getting_Started.html#logging-in">4.1. Logging In</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Getting_Started.html#top-toolbar-and-tabs">4.2. Top Toolbar and Tabs</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Common_User_Interface_Elements.html">5. Common User Interface Elements</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#duration-selection-toolbar">5.1. Duration Selection Toolbar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-configuration-toolbar">5.2. Chart Configuration Toolbar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-selection-tree">5.3. Chart Selection Tree</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-viewer">5.4. Chart Viewer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Common_User_Interface_Elements.html#chart-viewer-tools">5.4.1. Chart Viewer Tools</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Summary_Tab.html">6. Summary Tab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Dashboard_Tab.html">7. Dashboard Tab</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#dashboard-components-overview">7.1. Dashboard Components Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#chart-component">7.2. Chart Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#saved-charts-and-reports-component">7.3. Saved Charts and Reports Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#center-summary-component">7.4. Center Summary Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#center-report-card">7.5. Center Report Card</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#jobs-component">7.6. Jobs Component</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Dashboard_Tab.html#job-efficiency-component">7.7. Job Efficiency Component</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Usage_Tab.html">8. Usage Tab</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Metric_Explorer.html">9. Metric Explorer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Metric_Explorer.html#managing-charts">9.1. Managing Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Metric_Explorer.html#basic-chart-options">9.2. Basic Chart Options</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Metric_Explorer.html#managing-data-series">9.3. Managing Data Series</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Metric_Explorer.html#managing-filters">9.4. Managing Filters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Job_Viewer.html">10. Job Viewer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Job_Viewer.html#searching-for-jobs">10.1. Searching for jobs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Job_Viewer.html#viewing-job-data">10.2. Viewing job data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#at-a-glance-analytics">10.2.1. At-a-glance analytics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#accounting-data">10.2.2. Accounting data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#job-script">10.2.3. Job script</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#executable-information">10.2.4. Executable information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#summary-metrics">10.2.5. Summary metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#detailed-metrics">10.2.6. Detailed metrics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#peers">10.2.7. Peers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="Job_Viewer.html#timeseries-plots">10.2.8. Timeseries plots</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="App_Kernels.html">11. App Kernels</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="App_Kernels.html#app-kernels-viewer">11.1. App Kernels Viewer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="App_Kernels.html#app-kernel-explorer">11.2. App Kernel Explorer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="App_Kernels.html#reports-tab">11.3. Reports tab</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Data_Export.html">12. Data Export</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Data_Export.html#create-data-export-request">12.1. Create Data Export Request</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Data_Export.html#manage-existing-export-requests">12.2. Manage Existing Export Requests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Report_Generator.html">13. Report Generator</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#selection-model">13.1. Selection Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#changing-chart-timeframes">13.2. Changing Chart Timeframes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#previewing-a-report">13.3. Previewing a Report</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#building-exporting-reports">13.4. Building, Exporting Reports</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Report_Generator.html#report-templates">13.5. Report Templates</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">14. Efficiency</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#scatter-plot-view">14.1. Scatter Plot View</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#center-staff-view">14.1.1. Center Staff View</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pi-or-normal-user-view">14.1.2. PI or Normal User View</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#histogram-view">14.2. Histogram View</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#job-list">14.3. Job List</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#filtering-charts">14.4. Filtering Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#selecting-duration-of-charts">14.5. Selecting Duration of Charts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#navigation-in-efficiency-tab">14.6. Navigation in Efficiency Tab</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="About.html">15. My Profile, About, Roadmap, Contact and Help</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="About.html#my-profile-button">15.1. My Profile Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#about-button">15.2. About Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#contact-button">15.3. Contact Button</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#help-menu">15.4. Help Menu</a></li>
+<li class="toctree-l2"><a class="reference internal" href="About.html#roadmap">15.5. Roadmap</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Design_Philosophy.html">16. Design Philosophy</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Appendix_I-XML_Document_Type_Definition.html">17. Appendix I-XML Document Type Definition</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #e0e0e0" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">XDMoD Manual</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><span class="section-number">14. </span>Efficiency</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="efficiency">
+<h1><span class="section-number">14. </span>Efficiency<a class="headerlink" href="#efficiency" title="Permalink to this heading"></a></h1>
+<p>The Efficiency Tab displays information about the efficiency of jobs
+running on the resources at your center. The initial display (<a class="reference internal" href="#efficiency-tab"><span class="std std-numref">Fig. 14.1</span></a>)
+shows analytic cards that each have a small description of the
+analytic and a thumbnail view of a scatter plot showing efficiency
+regarding that specific analytic. The scatter plots are intended to give
+you a quick view of which analytics need to be investigated more for
+poor efficiency.</p>
+<figure class="align-default" id="efficiency-tab">
+<img alt="_images/image42.png" src="_images/image42.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.1 </span><span class="caption-text">Efficiency Tab. The efficiency tab shows analytic cards
+when you first navigate to the tab which give efficiency information
+about users’ jobs at your center.</span><a class="headerlink" href="#efficiency-tab" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>A larger, interactive view of the scatter plot can be seen by clicking
+on the analytic that you want to learn more about (<a class="reference internal" href="#efficiency-interactive-scatter-plot"><span class="std std-numref">Fig. 14.2</span></a>). The
+scatter plots are described in more detail in
+<a class="reference internal" href="#scatter-plot-view"><span class="std std-numref">Section 14.1 - Scatter Plot View</span></a>.</p>
+<figure class="align-default" id="efficiency-interactive-scatter-plot">
+<img alt="_images/image6.png" src="_images/image6.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.2 </span><span class="caption-text">When you click on one of the analytic cards, you will
+be redirected to the scatter plot view.</span><a class="headerlink" href="#efficiency-interactive-scatter-plot" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Analytics are categorized into two bins - analytics associated with
+usage and analytics associated with design. Usage analytics compare
+resources allocated for a job to measured usage for the job. Design
+analytics determine if jobs are using resources in an efficient manner
+consistent with their design. <a class="reference internal" href="#efficiency-analytics-table"><span class="std std-numref">Table 14.1</span></a> below lists the available
+analytics and the associated description for each analytic.</p>
+<span id="efficiency-analytics-table"></span><table class="docutils align-default" id="id7">
+<caption><span class="caption-number">Table 14.1 </span><span class="caption-text">Analytics available for display in the Efficiency Tab.</span><a class="headerlink" href="#id7" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Analytic</strong></p></th>
+<th class="head"><p><strong>Description</strong></p></th>
+<th class="head"><p><strong>Category</strong></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>CPU Usage</p></td>
+<td><p>Measures the percentage of time that the
+CPU cores were idle.</p></td>
+<td><p>Usage</p></td>
+</tr>
+<tr class="row-odd"><td><p>GPU Usage</p></td>
+<td><p>Measures the percentage of time that the
+GPUs were busy.</p></td>
+<td><p>Usage</p></td>
+</tr>
+<tr class="row-even"><td><p>Memory
+Usage</p></td>
+<td><p>Measures the overall highest memory usage
+for jobs.</p></td>
+<td><p>Usage</p></td>
+</tr>
+<tr class="row-odd"><td><p>Homogeneity</p></td>
+<td><p>Measures how uniform the work rate of the
+job is.</p></td>
+<td><p>Usage</p></td>
+</tr>
+<tr class="row-even"><td><p>Wall Time
+Accuracy</p></td>
+<td><p>Measures how well used wall time matches
+requested wall time.</p></td>
+<td><p>Design</p></td>
+</tr>
+<tr class="row-odd"><td><p>Short Jobs</p></td>
+<td><p>Measures the number of jobs that ran for
+30 seconds or less.</p></td>
+<td><p>Design</p></td>
+</tr>
+</tbody>
+</table>
+<section id="scatter-plot-view">
+<span id="id1"></span><h2><span class="section-number">14.1. </span>Scatter Plot View<a class="headerlink" href="#scatter-plot-view" title="Permalink to this heading"></a></h2>
+<p>This view shows a larger, interactive scatter plot for the analytic
+selected by clicking on its corresponding analytic card. For example,
+<a class="reference internal" href="#efficiency-scatter-plot-view"><span class="std std-numref">Fig. 14.3</span></a> shows the CPU Usage Scatter Plot View.</p>
+<p>All scatter plots are initially the same as the thumbnail plot in the
+previous view, but you have the ability to apply filters, zoom in, and
+drill down in this view. Each point on each of the scatter plots
+represents data for the jobs of a particular user with the efficiency
+statistic plotted on the x-axis and the overall usage plotted on the
+y-axis. <a class="reference internal" href="#efficiency-scatter-statistics"><span class="std std-numref">Table 14.2</span></a> shows the analytics and their associated
+efficiency and usage statistics that are plotted in the scatter plots.</p>
+<figure class="align-default" id="efficiency-scatter-plot-view">
+<img alt="_images/image102.png" src="_images/image102.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.3 </span><span class="caption-text">Scatter Plot View. This view displays a larger scatter
+plot that allows drill downs and filters to be applied. The view also
+includes help text to give more context about the analytic and ideas for
+improving efficiency in regard to this analytic.</span><a class="headerlink" href="#efficiency-scatter-plot-view" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<span id="efficiency-scatter-statistics"></span><table class="docutils align-default" id="id8">
+<caption><span class="caption-number">Table 14.2 </span><span class="caption-text">Statistics that are plotted for each of the analytics in the scatter plots.</span><a class="headerlink" href="#id8" title="Permalink to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p><strong>Analytic</strong></p></th>
+<th class="head"><p><strong>Scatter Plot
+Statistics</strong></p></th>
+<th class="head"></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td></td>
+<td><p><strong>Efficiency
+Statistic</strong></p></td>
+<td><p><strong>Usage Statistic</strong></p></td>
+</tr>
+<tr class="row-odd"><td><p>CPU Usage</p></td>
+<td><p>Average CPU % Idle:
+Weighted by Core Hour</p></td>
+<td><p>CPU Hours: Total</p></td>
+</tr>
+<tr class="row-even"><td><p>GPU Usage</p></td>
+<td><p>Average GPU % Active:
+Weighted by GPU Hour</p></td>
+<td><p>GPU Hours: Total</p></td>
+</tr>
+<tr class="row-odd"><td><p>Memory Usage</p></td>
+<td><p>Avg: Max % Memory:
+Weighted by Core Hour</p></td>
+<td><p>CPU Hours: Total</p></td>
+</tr>
+<tr class="row-even"><td><p>Homogeneity</p></td>
+<td><p>Avg: Homogeneity:
+Weighted by Node-Hour</p></td>
+<td><p>CPU Hours: Total</p></td>
+</tr>
+<tr class="row-odd"><td><p>Wall Time Accuracy</p></td>
+<td><p>Wall Time Accuracy</p></td>
+<td><p>Wall Time Allocated</p></td>
+</tr>
+<tr class="row-even"><td><p>Short Jobs</p></td>
+<td><p>Number of Short Jobs
+(&lt;30s)</p></td>
+<td><p>Total Number of Jobs
+Ended</p></td>
+</tr>
+</tbody>
+</table>
+<p>Points higher on the y-axis represent more usage and points on the left
+hand side of the plot correspond to a high measured usage. The upper
+right hand quadrant of each scatter plot represents users with jobs that
+have a lot of usage on the system and are running inefficiently in
+regard to that analytic. A tooltip appears (<a class="reference internal" href="#efficiency-tooltip"><span class="std std-numref">Fig. 14.4</span></a>) when you
+mouse over a point to show the user name (if you have access), the
+efficiency statistic value, and the usage statistic value.</p>
+<figure class="align-default" id="efficiency-tooltip">
+<img alt="_images/image20.png" src="_images/image20.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.4 </span><span class="caption-text">A tooltip giving information</span><a class="headerlink" href="#efficiency-tooltip" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>about the user, their efficiency, and</p>
+<p>usage of their jobs appears when you</p>
+<p>mouse over a point in the scatter plot.</p>
+<p>You can use these to compare efficiency of your jobs against other
+users’ jobs at the same center. If you have access to the user, you are
+able to click on their point on the scatter plot to drill down and view
+more information about that user’s jobs’ efficiency (<a class="reference internal" href="#efficiency-histogram-1"><span class="std std-numref">Fig. 14.5</span></a>).
+When you drill down, you will be presented with a histogram chart
+(<a class="reference internal" href="#efficiency-histogram-2"><span class="std std-numref">Fig. 14.7</span></a>) which is described in
+<a class="reference internal" href="#histogram-view"><span class="std std-numref">Section 14.2 - Histogram View</span></a>.</p>
+<figure class="align-default" id="efficiency-histogram-1">
+<img alt="_images/image130.png" src="_images/image130.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.5 </span><span class="caption-text">Clicking on a point in the scatter plot that you are
+allowed access to will take you to the histogram view for that user
+which shows more information about that user’s jobs.</span><a class="headerlink" href="#efficiency-histogram-1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>There are slight variations to the scatter plot view you will see
+depending on the user access that you have. These are described below in
+<a class="reference internal" href="#center-staff-view"><span class="std std-numref">Section 14.1.1</span></a> and <a class="reference internal" href="#pi-or-normal-user-view"><span class="std std-numref">Section 14.1.2</span></a>
+The main differences between the views are
+the markers used on the scatter plot and the ability to drill down and
+learn more about a user’s jobs. The markers are shown in <a class="reference internal" href="#efficiency-user-markers"><span class="std std-numref">Fig. 14.6</span></a>.</p>
+<figure class="align-default" id="efficiency-user-markers">
+<img alt="_images/image2.png" src="_images/image2.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.6 </span><span class="caption-text">Different markers used to indicate users on the scatter plot.</span><a class="headerlink" href="#efficiency-user-markers" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<section id="center-staff-view">
+<span id="id2"></span><h3><span class="section-number">14.1.1. </span>Center Staff View<a class="headerlink" href="#center-staff-view" title="Permalink to this heading"></a></h3>
+<p>Center staff can view all users at the center that have data to be
+displayed on the scatter plot. Each user is marked with either a red
+or blue marker on the scatter plot. A red marker indicates a user
+that has been flagged as running jobs inefficiently in regard to the
+analytic that is being shown. A blue marker indicates a normal user.
+As center staff, you have access to all users and therefore have the
+ability to view all names in the tooltips and drill down on any user
+in the scatter plot to learn more about the jobs that they are
+running.</p>
+</section>
+<section id="pi-or-normal-user-view">
+<span id="id3"></span><h3><span class="section-number">14.1.2. </span>PI or Normal User View<a class="headerlink" href="#pi-or-normal-user-view" title="Permalink to this heading"></a></h3>
+<p>PIs have access to their own point as well as points that represent
+their users. This is indicated by a black circle around the points
+that you have access to. Normal users only have access to their own
+data and therefore can only drill down on their own point.</p>
+<p>The data that appears in the scatter plot can be altered by changing
+duration and applying filters. Applying filters to the scatter plot is
+described in <a class="reference internal" href="#filtering-charts"><span class="std std-numref">Section 14.4 - Filtering Charts</span></a>
+and changing duration is described in <a class="reference internal" href="#selecting-duration-of-charts"><span class="std std-numref">Section 14.5 - Selecting Duration of Charts</span></a>.</p>
+</section>
+</section>
+<section id="histogram-view">
+<span id="id4"></span><h2><span class="section-number">14.2. </span>Histogram View<a class="headerlink" href="#histogram-view" title="Permalink to this heading"></a></h2>
+<p>If you have access to view information about a specific user, you can
+drill down to the histogram view from the scatter plot view. The
+histogram view for each analytic gives a more detailed analysis of a
+specific user’s jobs in relation to the analytic that is being
+investigated. For example, <a class="reference internal" href="#efficiency-histogram-2"><span class="std std-numref">Fig. 14.7</span></a> shows the histogram view for
+the CPU Usage analytic.</p>
+<figure class="align-default" id="efficiency-histogram-2">
+<img alt="_images/image66.png" src="_images/image66.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.7 </span><span class="caption-text">Histogram view. This view gives a more detailed view of
+a specific user’s jobs.</span><a class="headerlink" href="#efficiency-histogram-2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>If you were to drilldown from the CPU Usage scatter plot on a specific
+user, you would see their jobs binned by the CPU User value compared to
+the overall CPU Usage for jobs in that bin. The bins are color coded
+according to efficiency and the color coding is unique to the analytic
+that is being displayed. However, in each histogram view red is
+associated with jobs that were running more inefficiently while green is
+associated with jobs that were running more efficiently.</p>
+<p>The histogram chart can be modified to learn more information about the
+user’s jobs. You can change the duration of the data included in the
+histogram by using the duration selector toolbar as described in
+<a class="reference internal" href="#filtering-charts"><span class="std std-numref">Section 14.4 - Filtering Charts</span></a>
+and filters can be applied to the chart as described in
+<a class="reference internal" href="#selecting-duration-of-charts"><span class="std std-numref">Section 14.5 - Selecting Duration of Charts</span></a>.</p>
+<p>To learn more information about the user’s jobs that were included in
+each of the bins, you can click on any of the bars in the plot that have
+data in them. Clicking on them will bring up a window that lists all
+jobs that were grouped in the category that you are viewing (<a class="reference internal" href="#efficiency-histogram-bin"><span class="std std-numref">Fig. 14.8</span></a>).</p>
+<figure class="align-default" id="efficiency-histogram-bin">
+<img alt="_images/image3.png" src="_images/image3.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.8 </span><span class="caption-text">Clicking on a bin in the histogram plot will bring up a
+list of all jobs that were binned in this category.</span><a class="headerlink" href="#efficiency-histogram-bin" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="job-list">
+<h2><span class="section-number">14.3. </span>Job List<a class="headerlink" href="#job-list" title="Permalink to this heading"></a></h2>
+<p>As shown in <a class="reference internal" href="#efficiency-histogram-bin"><span class="std std-numref">Fig. 14.8</span></a>, a job list window will appear when you
+click on one of the bars from the histogram plot (as described in
+<a class="reference internal" href="#histogram-view"><span class="std std-numref">Section 14.2 - Histogram View</span></a>). The job list window for each
+analytic varies slightly concerning the data that is shown in the
+window.</p>
+<p>You can click on a row in the job list table to view that job in the Job
+Viewer (<a class="reference internal" href="#efficiency-job-viewer"><span class="std std-numref">Fig. 14.9</span></a>). When you click on a job, you will be
+redirected to the Job Viewer tab with that job showing. This will
+provide you with more details about the job.</p>
+<figure class="align-default" id="efficiency-job-viewer">
+<img alt="_images/image25.png" src="_images/image25.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.9 </span><span class="caption-text">Clicking on a row in the job list table will take you
+to the Job Viewer for that job.</span><a class="headerlink" href="#efficiency-job-viewer" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="filtering-charts">
+<span id="id5"></span><h2><span class="section-number">14.4. </span>Filtering Charts<a class="headerlink" href="#filtering-charts" title="Permalink to this heading"></a></h2>
+<figure class="align-default" id="efficiency-filter-menu">
+<img alt="_images/image34.png" src="_images/image34.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.10 </span><span class="caption-text">Filter Menu.** Select filters you want to apply to the
+chart from this menu and apply these using the “Apply Filters to Chart”
+button.</span><a class="headerlink" href="#efficiency-filter-menu" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>In addition to drilling down on the charts to get more information, you
+can also filter the results that you see on the scatter plot and drill
+down charts. In both cases, you use the filter menu on the left hand
+side of the chart to apply filters. There is filtering available for
+four categories - queue, application, resource, and PI. You can choose
+filters by either checking the box that corresponds with the filter that
+you want to apply or by searching the filter in the search box of the
+category you are interested in and clicking on the filter that you want
+to apply from the dropdown box.</p>
+<p>Once all filters that you want to apply are checked, click on the Apply
+Filters button in the top of the filter menu to apply those filters to
+the chart that you are looking at. The chart will reload and filters
+that have applied will be listed in the subtitle (<a class="reference internal" href="#effiency-chart-filters"><span class="std std-numref">Fig. 14.11</span></a>).</p>
+<figure class="align-default" id="effiency-chart-filters">
+<img alt="_images/image74.png" src="_images/image74.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.11 </span><span class="caption-text">Filters that have applied to the chart will be listed
+in the subtitle of the chart.</span><a class="headerlink" href="#effiency-chart-filters" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>To remove all filters, click on the Remove Filters button at the top of
+the filter menu and the chart will be reloaded with no filters applied.
+If you only want to remove a select number of filters from a chart that
+has filters previously applied, you will need to uncheck the filters in
+the filter menu and click the Apply Filters button again.</p>
+<p>Note: If you change the duration of the plot that you are viewing,
+filters will remain applied as reflected by the filters listed in the
+subtitle. To remove filters, use the Remove Filters from Chart button at
+the top of the filter menu.</p>
+</section>
+<section id="selecting-duration-of-charts">
+<span id="id6"></span><h2><span class="section-number">14.5. </span>Selecting Duration of Charts<a class="headerlink" href="#selecting-duration-of-charts" title="Permalink to this heading"></a></h2>
+<figure class="align-default" id="efficiency-duration-selection-toolbar">
+<img alt="_images/image21.png" src="_images/image21.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.12 </span><span class="caption-text">Duration Selection Toolbar.** Use this toolbar</span><a class="headerlink" href="#efficiency-duration-selection-toolbar" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>By default all charts show data from the previous 30 days. You can
+change this duration for any of the views at any time to view data from
+a different time frame. In each view, there is a duration selection
+toolbar present in the upper toolbar (<a class="reference internal" href="#efficiency-duration-selection-toolbar"><span class="std std-numref">Fig. 14.12</span></a>). You can choose
+a pre-defined timeframe from the duration drop-down menu, or specify a
+start and end date in the date fields to the right of the drop-down menu
+to select a custom timeframe.</p>
+<p>to select a timeframe for the chart that you are viewing.</p>
+</section>
+<section id="navigation-in-efficiency-tab">
+<h2><span class="section-number">14.6. </span>Navigation in Efficiency Tab<a class="headerlink" href="#navigation-in-efficiency-tab" title="Permalink to this heading"></a></h2>
+<p>To move forward in the efficiency tab, you click on elements within the
+current view you are on. For the analytic card view, you click on an
+analytic card to navigate to the scatter plot view. For the scatter plot
+view, you click on a point on the chart to move to the drilldown view
+(this is only true for users that you have access to view their jobs).</p>
+<figure class="align-default" id="efficiency-navigation-toolbar">
+<img alt="_images/image93.png" src="_images/image93.png" />
+<figcaption>
+<p><span class="caption-number">Fig. 14.13 </span><span class="caption-text">Navigation Toolbar. Use the navigation toolbar to
+navigate between views in the efficiency tab. Clicking on any of the
+enabled buttons will take you back to that view.</span><a class="headerlink" href="#efficiency-navigation-toolbar" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>To move back to previously viewed plots, you use the navigation buttons
+in the top toolbar next to the duration toolbar (<a class="reference internal" href="#efficiency-navigation-toolbar"><span class="std std-numref">Fig. 14.13</span></a>). A
+new navigation button will be enabled as you move through the different
+chart views and you can click on the corresponding button to go back to
+a chart view that you were previously on.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Report_Generator.html" class="btn btn-neutral float-left" title="13. Report Generator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="About.html" class="btn btn-neutral float-right" title="15. My Profile, About, Roadmap, Contact and Help" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025 University at Buffalo Center for Computational Research.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
