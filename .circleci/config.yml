@@ -28,6 +28,9 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: git config
+          command:  git config --global --add safe.directory /root/xdmod
+      - run:
           name: Docker Compose corresponding OS file
           command: docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
       - run:
