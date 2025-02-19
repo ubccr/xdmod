@@ -28,9 +28,6 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: git config
-          command:  git config --global --add safe.directory /root/xdmod
-      - run:
           name: Docker Compose corresponding OS file
           command: docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
       - run:
@@ -89,7 +86,9 @@ jobs:
                 command: docker exec -w /root/xdmod xdmod git config --global --add safe.directory /xdmod
             - run:
                 name: Setup remote upstream
-                command: docker exec -w /root/xdmod xdmod git remote add upstream https://github.com/ubccr/xdmod.git
+                command: |
+                  docker exec -w /root/xdmod xdmod git config --global --add safe.directory /root/xdmod
+                  docker exec -w /root/xdmod xdmod git remote add upstream https://github.com/ubccr/xdmod.git
             - run:
                 name: Copy portal_settings.ini into place
                 command: docker exec xdmod cp /etc/xdmod/portal_settings.ini /root/xdmod/configuration/portal_settings.ini
