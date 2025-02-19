@@ -184,4 +184,4 @@ workflows:
             parameters:
               os: [rocky8]
               install-type: ["fresh_install", "upgrade"]
-              string_os: rocky8
+              string_os: [rocky8]
