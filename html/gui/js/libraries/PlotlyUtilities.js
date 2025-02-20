@@ -559,7 +559,7 @@ function removeExtraTimeseriesTickLabels(chartDiv, baseChartOptions) { // eslint
         let seriesLength = baseChartOptions.data[0][dateAxis].length;
         let globalMin = baseChartOptions.data[0][dateAxis][0]
         let globalMax = baseChartOptions.data[0][dateAxis][seriesLength - 1]
-        for (i = 1; i < baseChartOptions.data.length; i++) {
+        for (let i = 1; i < baseChartOptions.data.length; i++) {
             seriesLength = baseChartOptions.data[i][dateAxis].length;
             const localMin = baseChartOptions.data[i][dateAxis][0];
             const localMax = baseChartOptions.data[i][dateAxis][seriesLength - 1];
