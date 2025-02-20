@@ -555,11 +555,20 @@ function removeExtraTimeseriesTickLabels(chartDiv, baseChartOptions) { // eslint
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
     if (!isEmpty && baseChartOptions.layout[axis].timeseries) {
         const xAxisTicks = chartDiv.getElementsByClassName(`${axis}layer-below`)[0];
-        const len = baseChartOptions.layout.swapXY ? baseChartOptions.data[0].y.length - 1 : baseChartOptions.data[0].x.length - 1;
-        const min = baseChartOptions.layout.swapXY ? baseChartOptions.data[0].y[0] : baseChartOptions.data[0].x[0];
-        const max = baseChartOptions.layout.swapXY ? baseChartOptions.data[0].y[len] : baseChartOptions.data[0].x[len];
-        const minString = moment(min).format('YYYY-MM-DD');
-        const maxString = moment(max).format('YYYY-MM-DD');
+        const dateAxis = baseChartOptions.layout.swapXY ? 'y' : 'x';
+        const len = baseChartOptions.data.length;
+        let inner_len = baseChartOptions.data[0][dateAxis].length;
+        let globalMin = baseChartOptions.data[0][dateAxis][0]
+        let globalMax = baseChartOptions.data[0][dateAxis][inner_len - 1]
+        for (i = 1; i < len; i++) {
+            inner_len = baseChartOptions.data[i][dateAxis].length;
+            let localMin = baseChartOptions.data[i][dateAxis][0];
+            let localMax = baseChartOptions.data[i][dateAxis][inner_len - 1];
+            if (localMin < globalMin) globalMin = localMin;
+            if (localMax > globalMax) globalMax = localMax;
+        }
+        const minString = moment(globalMin).format('YYYY-MM-DD');
+        const maxString = moment(globalMax).format('YYYY-MM-DD');
         for (let i = 0; i < xAxisTicks.children.length; i++) {
             const currTick = xAxisTicks.children[i];
             const currDate = moment(currTick.__data__.text);
