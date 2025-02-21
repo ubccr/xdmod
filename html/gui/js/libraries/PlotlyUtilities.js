@@ -556,11 +556,10 @@ function removeExtraTimeseriesTickLabels(chartDiv, baseChartOptions) { // eslint
     if (!isEmpty && baseChartOptions.layout[axis].timeseries) {
         const xAxisTicks = chartDiv.getElementsByClassName(`${axis}layer-below`)[0];
         const dateAxis = baseChartOptions.layout.swapXY ? 'y' : 'x';
-        let seriesLength = baseChartOptions.data[0][dateAxis].length;
-        let globalMin = baseChartOptions.data[0][dateAxis][0]
-        let globalMax = baseChartOptions.data[0][dateAxis][seriesLength - 1]
-        for (let i = 1; i < baseChartOptions.data.length; i++) {
-            seriesLength = baseChartOptions.data[i][dateAxis].length;
+        let globalMin = Infinity;
+        let globalMax = -Infinity;
+        for (let i = 0; i < baseChartOptions.data.length; i++) {
+            let seriesLength = baseChartOptions.data[i][dateAxis].length;
             const localMin = baseChartOptions.data[i][dateAxis][0];
             const localMax = baseChartOptions.data[i][dateAxis][seriesLength - 1];
             if (localMin < globalMin) globalMin = localMin;
