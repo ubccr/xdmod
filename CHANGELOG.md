@@ -28,7 +28,8 @@
           ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
         - Fix ordering of the date axis on timeseries plots with varying date
           intervals
-          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980),
+          [\#1989](https://github.com/ubccr/xdmod/pull/1989)).
     - ETL
         - Add missing endpoint to the exception message in `ExecuteSql`
           ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
