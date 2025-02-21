@@ -11,7 +11,7 @@
                 "extra": "auto_increment"
             },
             {
-                "name": "organization_name",
+                "name": "organization_abbrev",
                 "type": "varchar(300)",
                 "nullable": false,
                 "comment": "Organization full name"
@@ -21,7 +21,7 @@
             {
                 "name": "PRIMARY",
                 "columns": [
-                    "organization_name"
+                    "organization_abbrev"
                 ]
             },
             {
