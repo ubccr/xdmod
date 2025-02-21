@@ -42,6 +42,8 @@ class AddResourceSetup extends SetupItem
         $resourceAllocationTypeOptions = array();
         $resourceAllocationTypeDescriptionText = "";
         $availableResourceAllocationTypes = XdmodConfiguration::assocArrayFactory('resource_allocation_types.json', CONFIG_DIR)['resource_allocation_types'];
+        $availableOrganizations = XdmodConfiguration::assocArrayFactory('organization.json', CONFIG_DIR);
+        $organizationDescriptionText = "";
         $gpu_nodes = 0;
         $gpus = 0;
         $gpu_ppn = 0;
@@ -64,6 +66,15 @@ class AddResourceSetup extends SetupItem
             $resourceAllocationTypeDescriptionText .= sprintf("%-10s - %s", $abbrev, $type['description']) . PHP_EOL;
         }
 
+        foreach ( $availableOrganizations as $abbrev => $type ) {
+            if ( 'UNK' == $type['abbrev'] ) {
+                continue;
+            }
+            // Note that Console::prompt() expects lowercase values for options
+            $organizationOptions[] = strtolower($type['abbrev']);
+            $organizationDescriptionText .= sprintf("%-10s - %s", $type['abbrev'], $type['name']) . PHP_EOL;
+        }
+
         $this->console->displaySectionHeader('Add A New Resource');
 
         $this->console->displayMessage(<<<"EOT"
@@ -77,6 +88,9 @@ $typeDescriptionText
 
 Available resource allocation types are:
 $resourceAllocationTypeDescriptionText
+
+Available organizations are:
+$organizationDescriptionText
 EOT
         );
         $this->console->displayBlankLine();
@@ -85,6 +99,7 @@ EOT
         $name     = $this->console->prompt('Formal Name:');
         $type     = $this->console->prompt('Resource Type:', 'hpc', $typeOptions);
         $resource_allocation_type     = $this->console->prompt('Resource Allocation Type:', 'cpu', $resourceAllocationTypeOptions);
+        $organization = $this->console->prompt('Organization: ', '', $organizationOptions);
         $resource_start_date = $this->getResourceStartDate();
 
         $this->console->displayBlankLine();
@@ -132,7 +147,8 @@ EOT
                 'gpu_processor_count' => (int)$gpus,
                 'gpu_node_count'      => (int)$gpu_nodes,
                 'gpu_ppn'             => (int)$gpu_ppn,
-                'start_date'          => $resource_start_date
+                'start_date'          => $resource_start_date,
+                'organization'        => $organization
             )
         );
     }

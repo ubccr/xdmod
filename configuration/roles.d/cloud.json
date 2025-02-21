@@ -19,6 +19,10 @@
                 },
                 {
                     "realm": "Cloud",
+                    "group_by": "provider"
+                },
+                {
+                    "realm": "Cloud",
                     "group_by": "vm_size"
                 },
                 {
@@ -150,6 +154,10 @@
                 {
                     "realm": "Cloud",
                     "group_by": "resource"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "provider"
                 },
                 {
                     "realm": "Cloud",

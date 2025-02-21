@@ -6,7 +6,7 @@
         "records": {
             "resource_id": "r.resource_id",
             "resource_type_id": "COALESCE(srt.resource_type_id, 0)",
-            "organization_id": "1",
+            "organization_id": "COALESCE(org.organization_id, -1)",
             "resource_name": "rc.name",
             "resource_code": "rc.resource",
             "resource_description": "rc.description",
@@ -40,6 +40,20 @@
                 "name": "staging_resource_allocation_type",
                 "alias": "srat",
                 "on": "rc.resource_allocation_type_abbrev = srat.resource_allocation_type_abbrev"
+            },
+            {
+                "type": "LEFT",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_organization_config",
+                "alias": "org_config",
+                "on": "rc.organization = org_config.organization_abbrev"
+            },
+            {
+                "type": "LEFT",
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_organization",
+                "alias": "org",
+                "on": "org_config.organization_name = org.organization_name"
             }
 
         ]
