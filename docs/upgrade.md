@@ -40,7 +40,7 @@ ticket to `ccr-xdmod-help@buffalo.edu` and we will do our best to help.
 ### Server: EL7, XDMoD: 10.5, PHP: 5.4, MySQL or MariaDB 5.5
 If you are using CentOS 7 and will upgrade to XDMoD 11.0 on Rocky or Alma 8, please follow the steps below.
 
-At the end of this process you should expect to have a working XDMoD 10.5.0 installation on a Rocky 8 server that
+At the end of this process you should expect to have a working XDMoD 10.5 installation on a Rocky 8 server that
 contains all of your current data. After which you can then follow the upgrade procedure that immediately follows this
 section which starts at `Server: EL8, XDMoD: 10.5, PHP: 7.2`.
 
@@ -326,6 +326,22 @@ The following tables will be changed and populated with data from `mod_hpcdb`:
 Additional 11.0.1 Upgrade Notes
 -------------------
 
+### Database Changes
+
+During the upgrade, the following tables in the `modw_cloud` schema:
+
+- `session_records`
+- `cloudfact_by_day`
+- `cloudfact_by_month`
+- `cloudfact_by_quarter`
+- `cloudfact_by_year`
+
+will have the following columns added:
+
+- `person_organization_id`
+- `piperson_organization_id`
+
+Then, the Cloud realm will be reaggregated.
 
 [github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
 [mysql-config]: configuration.md#mysql-configuration
