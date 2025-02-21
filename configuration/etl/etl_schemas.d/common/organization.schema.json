@@ -3,6 +3,10 @@
     "title": "Organization configuration",
     "type": "object",
     "properties": {
+        "id": {
+            "type": ["integer", "null"],
+            "description": "ID for the organization. Optional"
+        },
         "name": {
             "type": "string",
             "description": "Organization name",
