@@ -12,9 +12,9 @@
             },
             {
                 "name": "organization_abbrev",
-                "type": "varchar(300)",
+                "type": "varchar(100)",
                 "nullable": false,
-                "comment": "Organization full name"
+                "comment": "Organization abbreviation"
             }
         ],
         "indexes": [
