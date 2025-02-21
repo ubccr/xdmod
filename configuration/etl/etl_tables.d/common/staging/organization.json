@@ -11,17 +11,17 @@
                 "extra": "auto_increment"
             },
             {
-                "name": "organization_name",
-                "type": "varchar(300)",
+                "name": "organization_abbrev",
+                "type": "varchar(100)",
                 "nullable": false,
-                "comment": "Organization full name"
+                "comment": "Organization abbreviation"
             }
         ],
         "indexes": [
             {
                 "name": "PRIMARY",
                 "columns": [
-                    "organization_name"
+                    "organization_abbrev"
                 ]
             },
             {

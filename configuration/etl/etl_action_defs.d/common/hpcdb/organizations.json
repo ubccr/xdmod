@@ -18,7 +18,7 @@
                 "schema": "${SOURCE_SCHEMA}",
                 "name": "staging_organization_config",
                 "alias": "org_config",
-                "on": "org.organization_name = org_config.organization_name"
+                "on": "org.organization_abbrev = org_config.organization_abbrev"
             }
         ]
     }

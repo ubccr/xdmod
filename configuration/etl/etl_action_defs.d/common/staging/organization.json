@@ -4,7 +4,7 @@
     },
     "source_query": {
         "records": {
-            "organization_name": "org.organization_name"
+            "organization_abbrev": "org.organization_abbrev"
         },
         "joins": [
             {
