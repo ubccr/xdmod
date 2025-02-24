@@ -17,8 +17,6 @@ jobs:
         type: string
       string_os:
         type: string
-      schedule-name:
-        type: string
     executor: << parameters.os >>
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
@@ -57,8 +55,6 @@ jobs:
           command: |
             docker exec xdmod mkdir /root/phpunit
             docker exec xdmod mkdir /tmp/screenshots
-            docker exec xdmod mkdir /root/code_coverage_raw
-            docker exec xdmod mkdir /root/code_coverage
       - run:
           name: Install XDMoD Composer Dependencies
           command: docker exec -w /root/xdmod xdmod composer install
@@ -74,18 +70,6 @@ jobs:
       - run:
           name: Make sure that the test dependencies are installed
           command: docker exec -w /root/xdmod xdmod composer install
-      - when:
-          condition:
-            and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-
-          steps:
-            - run:
-                name: Installing Code Coverage Dependencies
-                command: |
-                  /tools/dev/code_coverage/codeCoverageSetup.sh -b . -x   ./tools/dev/code_coverage/start_xdebug.php  -p  ./tools/dev/code_coverage/combine_xdebug.php
-
       - run:
           name: Setup the SimpleSAML server etc. so we can test SSO
           command: docker exec xdmod /root/xdmod/tests/ci/samlSetup.sh
@@ -115,7 +99,7 @@ jobs:
                 command: docker exec -w /root/xdmod xdmod /root/.qa/scripts/build.sh
       - run:
           name: Make sure that the Test Dependencies are installed
-          command: docker exec -w /root/xdmod xdmod
+          command: docker exec -w /root/xdmod xdmod composer install --no-progress
       - run:
           name: Run Regression Tests
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> -w /root/xdmod xdmod /root/xdmod/tests/regression/runtests.sh
@@ -126,7 +110,6 @@ jobs:
             docker exec xdmod mv /root/xdmod/configuration/portal_settings.ini /root/xdmod/configuration/portal_settings.ini.old
             docker exec xdmod cp /etc/xdmod/portal_settings.ini /root/xdmod/configuration/portal_settings.ini
             docker exec xdmod cp /etc/xdmod/organization.json /root/xdmod/configuration/organization.json
-
       - run:
           name: Running Integration Tests
           command: docker exec -w /root/xdmod xdmod /root/xdmod/tests/integration/runtests.sh --junit-output-dir /root/phpunit
@@ -145,20 +128,6 @@ jobs:
       - run:
           name: Run Playwright Tests
           command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.string_os >>
-      - when:
-          condition:
-            and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-          steps:
-            - run:
-                name: Process Code Coverage Data
-                no_output_timeout: 120m
-                command: ./tools/dev/code_coverage/codeCoverageProcess.sh -i ~/code_coverage_raw
-            - run:
-                name: Tar Up Code Coverage Report for later download
-                command: tar -czvf ~/code_coverage/report.tgz ~/code_coverage_raw
-
       - run:
           name: Copy Test Results into Unit
           command: |
@@ -206,16 +175,6 @@ jobs:
           path: /root/xdmod/logs
       - store_test_results:
           path: ~/phpunit
-      - when:
-          condition:
-            and:
-              - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
-          #            and:
-          #              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-          #              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-          steps:
-            - store_artifacts:
-                path: ~/code_coverage
 
 workflows:
   full-build:
@@ -226,4 +185,3 @@ workflows:
               os: [rocky8]
               install-type: ["fresh_install", "upgrade"]
               string_os: [rocky8]
-              schedule-name: ["xdmod-time-trigger"]
