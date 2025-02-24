@@ -17,6 +17,6 @@ class DatabasesMigration extends AbstractDatabasesMigration
     {
         parent::execute();
 
-        Utilities::runEtlPipeline(['ingest-organizations'], $this->logger);
+        Utilities::runEtlPipeline(['ingest-organizations', 'ingest-resources'], $this->logger);
     }
 }

@@ -23,11 +23,12 @@
     },
     "migration-11_0_0-11_5_0": [
         {
-            "name": "manageOrganizationStagingTables",
-            "description": "Changes to organization tables",
+            "name": "manageStagingTables",
+            "description": "Changes to staging tables",
             "definition_file_list": [
                 "common/staging/organization-config.json",
-                "common/staging/organization.json"
+                "common/staging/organization.json",
+                "common/staging/resource-config.json"
             ]
         }
     ]

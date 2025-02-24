@@ -44,16 +44,9 @@
             {
                 "type": "LEFT",
                 "schema": "${SOURCE_SCHEMA}",
-                "name": "staging_organization_config",
-                "alias": "org_config",
-                "on": "rc.organization = org_config.organization_abbrev"
-            },
-            {
-                "type": "LEFT",
-                "schema": "${SOURCE_SCHEMA}",
                 "name": "staging_organization",
                 "alias": "org",
-                "on": "org_config.organization_name = org.organization_name"
+                "on": "rc.organization = org.organization_abbrev"
             }
 
         ]
