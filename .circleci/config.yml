@@ -84,7 +84,7 @@ jobs:
             - run:
                 name: Installing Code Coverage Dependencies
                 command: |
-                  /tools/dev/code_coverage/codeCoverageSetup.sh -b . -x   ./tools/dev/code_coverage/start_xdebug.php  -p  ./tools/dev/code_coverage/combine_xdebug.php
+                  docker exec xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
 
       - run:
           name: Setup the SimpleSAML server etc. so we can test SSO
