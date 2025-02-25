@@ -298,6 +298,8 @@ class StructuredFileIngestor extends aIngestor implements iAction
 
         $warnings = array();
 
+        $this->destinationHandle->beginTransaction();
+
         foreach ( $this->sourceEndpoint as $sourceRecord ) {
 
             // The same source record may be used in multiple tables.
@@ -335,6 +337,13 @@ class StructuredFileIngestor extends aIngestor implements iAction
                 }
             }
             $numRecords++;
+        }
+
+        try {
+            $this->destinationHandle->commit();
+        } catch (PDOException $e) {
+            $this->logger->warning('Trouble commiting transaction. Rolling back');
+            $this->destinationHandle->rollback();
         }
 
         foreach ( $warnings as $table => $message) {
