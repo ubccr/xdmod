@@ -439,14 +439,14 @@ fi
 ########################################################################################################################
 # *** Install / Setup XDebug ***
 OS_VERSION=$(cat /etc/os-release | grep "VERSION_ID" | cut -d'=' -f 2 | tr -d '"')
-XDEBUG_VERSION=2.4.1
+XDEBUG_VERSION=3.1.6
 XDEBUG_MODE=""
 ### Install Pre-Reqs
 yum -y install php-devel php-pear gcc gcc-c++ autoconf automake
 
 case "$OS_VERSION" in
     8 | 8.5)
-        XDEBUG_VERSION=3.1.2
+        XDEBUG_VERSION=3.1.6
         XDEBUG_MODE="xdebug.mode=coverage"
         ;;
 esac
