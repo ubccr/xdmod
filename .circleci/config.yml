@@ -115,7 +115,7 @@ jobs:
                 command: docker exec -w /root/xdmod xdmod /root/.qa/scripts/build.sh
       - run:
           name: Make sure that the Test Dependencies are installed
-          command: docker exec -w /root/xdmod xdmod
+          command: docker exec -w /root/xdmod xdmod composer install --no-progress
       - run:
           name: Run Regression Tests
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> -w /root/xdmod xdmod /root/xdmod/tests/regression/runtests.sh
