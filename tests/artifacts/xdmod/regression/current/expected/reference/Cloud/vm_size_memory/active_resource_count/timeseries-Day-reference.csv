@@ -1,0 +1,22 @@
+title
+"Number of Resources: Active: by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Day,"[< 2 GB] Number of Resources: Active","[2 - 4 GB] Number of Resources: Active","[4 - 8 GB] Number of Resources: Active","[8 - 16 GB] Number of Resources: Active","[32 - 64 GB] Number of Resources: Active"
+2018-04-18,1,1,1,1,1
+2018-04-19,1,1,0,0,0
+2018-04-20,0,1,0,0,0
+2018-04-21,0,1,0,0,0
+2018-04-22,0,1,0,0,0
+2018-04-23,0,1,0,0,0
+2018-04-24,0,1,0,0,0
+2018-04-25,0,1,0,0,0
+2018-04-26,0,1,0,1,0
+2018-04-27,1,1,0,1,0
+2018-04-28,0,1,0,1,0
+2018-04-29,0,1,0,1,0
+2018-04-30,0,1,0,1,0
+---------

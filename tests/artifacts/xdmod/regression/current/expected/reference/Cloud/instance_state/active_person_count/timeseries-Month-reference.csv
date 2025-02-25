@@ -1,0 +1,10 @@
+title
+"Number of Users: Active: by VM State"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[Active] Number of Users: Active","[Inactive] Number of Users: Active"
+2018-04,3,3
+---------

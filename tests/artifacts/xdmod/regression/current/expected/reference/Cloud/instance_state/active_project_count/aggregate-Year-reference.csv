@@ -1,0 +1,11 @@
+title
+"Number of Projects: Active: by VM State"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"VM State","Number of Projects: Active"
+Inactive,2
+Active,1
+---------
