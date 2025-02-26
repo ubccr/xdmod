@@ -64,6 +64,18 @@ class MigrationFactory
                     $fromVersion,
                     $toVersion
                 );
+
+                foreach (['AppKernels', 'Supremm', 'OnDemand'] as $module) {
+                    $moduleDatabasesMigrationName = $ns . '\\' . $module . 'DatabasesMigration';
+                    if (class_exists($moduleDatabasesMigrationName)) {
+                        $msg = "Using databases migration '$moduleDatabasesMigrationName'";
+                        $logger->debug($msg);
+                        $migrations[] = new $moduleDatabasesMigrationName(
+                            $fromVersion,
+                            $toVersion
+                        );
+                    }
+                }
             }
             $migrations[] = new \OpenXdmod\Migration\Etlv2Migration($fromVersion, $toVersion);
         }
