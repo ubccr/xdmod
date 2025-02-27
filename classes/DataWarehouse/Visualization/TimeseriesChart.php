@@ -967,7 +967,6 @@ class TimeseriesChart extends AggregateChart
             $ticktext[] = date($tick_format, $dates[$i] / 1000);
             if ($i != $last_idx && $include_both_labels) {
                 $i = $last_idx - $dtick;
-                continue;
             }
         }
         $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
