@@ -388,7 +388,7 @@ class TimeseriesChart extends AggregateChart
                         'type' => 'date',
                         'rangemode' => 'tozero',
                         'hoverformat' => $this->getDateFormat(),
-                        'tickmode' => 'linear',
+                        'tickmode' => 'array',
                         'timeseries' => true,
                         'nticks' => 20,
                         'spikedash' => 'solid',
@@ -493,7 +493,7 @@ class TimeseriesChart extends AggregateChart
                             // set up seriesValues
                             foreach($values as $i => $v)
                             {
-                                $xValues[] = date('Y-m-d', $start_ts_array[$i]);
+                                $xValues[] = $start_ts_array[$i]*1000;
                                 $yValues[] = $v;
                                 $text[] = number_format($v, $decimals, '.', ',');
                                 $seriesValue = array(
@@ -634,28 +634,48 @@ class TimeseriesChart extends AggregateChart
                             $trace['type'] = 'area';
                         }
 
-                        // Set date tick interval
-                        $this->_chart['layout']['xaxis']['dtick'] = $pointInterval;
-                        $this->_chart['layout']['xaxis']['tick0'] = $xValues[0];
+                        // Compute tick label placement and format
                         $value_count = count($xValues);
+                        $dtick = $pointInterval;
+                        $tick_format = '';
 
                         if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
-                            $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
+                            $dtick = max(floor($value_count / 14), 1);
+                            $tick_format = 'Y-m-d';
                         }
 
                         if ($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') {
-                            $month_dtick = max(round($value_count / 12), 1);
-                            $this->_chart['layout']['xaxis']['dtick'] = "M{$month_dtick}";
+                            $dtick = max(round($value_count / 12), 1);
+                            $tick_format = 'M Y';
                         }
 
                         if ($this->_aggregationUnit == 'Quarter' || $this->_aggregationUnit == 'quarter') {
-                            $quarter_dtick = 3 * ceil(max(ceil($value_count / 4), 1) / 3.5);
-                            $this->_chart['layout']['xaxis']['dtick'] = "M{$quarter_dtick}";
+                            $dtick = ceil(max(ceil($value_count / 4), 1) / 3.5);
                         }
 
                         if ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year') {
-                            $year_dtick = ceil($value_count / 15) * 12;
-                            $this->_chart['layout']['xaxis']['dtick'] = "M{$year_dtick}";
+                            $dtick = ceil($value_count / 15) * 12;
+                            $tick_format = 'M Y';
+                        }
+
+                        $tickvals = array();
+                        $ticktext = array();
+                        for ($i = 0; $i < $value_count; $i += $dtick) {
+                            $tickvals[] = $xValues[$i];
+                            if ($this->_aggregationUnit == 'Quarter' || $this->_aggregationUnit == 'quarter') {
+                                $month = date("m", $xValues[$i] / 1000);
+                                $quarter = ceil($month / 3);
+                                $tick_format = "\Q{$quarter} Y";
+                            }
+                            $ticktext[] = date($tick_format, $xValues[$i] / 1000);
+                            
+                        }
+                        $this->_chart['layout']['xaxis']['tickvals'] = $tickvals;
+                        $this->_chart['layout']['xaxis']['ticktext'] = $ticktext;
+                        // Ensure last tick
+                        if (($value_count - 1) % $dtick != 0) {
+                            $tickvals[] = $xValues[$values_count - 1];
+                            $ticktext[] = date($tick_format, $xValues[$values_count - 1] / 1000);
                         }
 
                         // Set swap axis
@@ -948,7 +968,7 @@ class TimeseriesChart extends AggregateChart
             $this->_chart['layout']["{$axisName}"]['tickmode'] = 'auto';
             $visibility = array_column($this->_chart['data'], 'visible');
             if (in_array(true, $visibility, true)) {
-                $this->_chart['layout']["{$axisName}"]['tickmode'] = 'linear';
+                $this->_chart['layout']["{$axisName}"]['tickmode'] = 'array';
             }
         }
 
