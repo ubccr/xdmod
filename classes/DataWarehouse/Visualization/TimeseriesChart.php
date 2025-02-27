@@ -495,6 +495,7 @@ class TimeseriesChart extends AggregateChart
                             foreach($values as $i => $v)
                             {
                                 $xValues[] = $start_ts_array[$i]*1000;
+                                $dates[] = $start_ts_array[$i]*1000;
                                 $yValues[] = $v;
                                 $text[] = number_format($v, $decimals, '.', ',');
                                 $seriesValue = array(
