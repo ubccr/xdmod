@@ -494,24 +494,7 @@ function overrideLegendEvent(chartDiv) {
         // We need to set the tickmode to auto if so.
         const visibleData = evt.fullData.filter((trace) => trace.name !== 'gap connector' && trace.name !== 'area fix' && trace.visible === true);
         const axis = (evt.layout.swapXY ? 'y' : 'x') + 'axis';
-        let tickType;
-        if (evt.layout[axis].timeseries) {
-            if (
-                (
-                    evt.layout[axis].dtick === CCR.xdmod.ui.dtickDay
-                    && evt.data[evt.curveNumber].x.length > 7
-                ) || (
-                    visibleData.length === 1
-                    && visibleData[0].index === evt.curveNumber
-                )
-            ) {
-                tickType = 'auto';
-            } else {
-                tickType = 'linear';
-            }
-        } else {
-            tickType = 'array';
-        }
+        const tickType = 'array';
         Plotly.relayout(chartDiv, { [`${axis}.tickmode`]: tickType });
 
         const { node } = evt;
