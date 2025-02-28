@@ -959,7 +959,7 @@ class TimeseriesChart extends AggregateChart
         }
         $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
         $this->_chart['layout']["{$axisName}"]['tickvals'] = $tickvals;
-        
+
         // Timeseries ticks need to be set to 'auto' if all legend elements are hidden
         // due to bug with Plotly JS manually set ticks.
         if (isset($this->_chart['layout']["{$axisName}"]) && $this->_chart['layout']["{$axisName}"]['tickmode'] !== 'auto') {
