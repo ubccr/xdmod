@@ -43,7 +43,7 @@ jobs:
           command: dnf install -y php libzip-devel php-pear php-devel
       - run:
           name: Install MongoDB Pear module
-          command: yes '' | pecl install mongodb-1.18.1 || true
+          command: yes '' | pecl install mongodb-1.20.1 || true
       - run:
             name: install the composer dependencies
             command: composer install
