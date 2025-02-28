@@ -75,23 +75,6 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             }
             baseChartOptions.layout.annotations.splice(0, endIndex);
         }
-        // Set tickmode to auto for thumbnail plots. Large amount of tick labels for thumbnail plots cause them
-        // to lag.
-        if (baseChartOptions.layout.thumbnail) {
-            const axesLabels = getMultiAxisObjects(baseChartOptions.layout);
-            if (baseChartOptions.swapXY) {
-                if (baseChartOptions.layout.yaxis.timeseries) {
-                    baseChartOptions.layout.yaxis.nticks = 5;
-                    baseChartOptions.layout.yaxis.tickangle = -90;
-                }
-            } else if (baseChartOptions.layout.xaxis.timeseries) {
-                baseChartOptions.layout.xaxis.nticks = 5;
-                baseChartOptions.layout.xaxis.tickangle = -90;
-            }
-            for (let i = 0; i < axesLabels.length; i++) {
-                baseChartOptions.layout[axesLabels[i]].nticks = 5;
-            }
-        }
         // Adjust trace ordering
         // Referenced https://stackoverflow.com/questions/45741397/javascript-sort-array-of-objects-by-2-properties
         // for comparison idea
