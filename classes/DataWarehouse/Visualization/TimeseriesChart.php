@@ -922,16 +922,13 @@ class TimeseriesChart extends AggregateChart
         $dates = array_unique($dates);
         $value_count = count($dates);
         $dtick = $this->getPointInterval();
-        $tick_format = '';
 
         if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
             $dtick = max(floor($value_count / 12), 1);
-            $tick_format = 'Y-m-d';
         }
 
         if ($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') {
             $dtick = max(round($value_count / 12), 1);
-            $tick_format = 'M Y';
         }
 
         if ($this->_aggregationUnit == 'Quarter' || $this->_aggregationUnit == 'quarter') {
@@ -940,11 +937,9 @@ class TimeseriesChart extends AggregateChart
 
         if ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year') {
             $dtick = ceil($value_count / 15);
-            $tick_format = 'M Y';
         }
 
         $tickvals = array();
-        $ticktext = array();
         $last_idx = $value_count - 1;
         $include_both_labels = false;
         for ($i = 0; $i < $value_count; $i += $dtick) {
@@ -958,20 +953,13 @@ class TimeseriesChart extends AggregateChart
                 }
             }
             $tickvals[] = $dates[$i];
-            if ($this->_aggregationUnit == 'Quarter' || $this->_aggregationUnit == 'quarter') {
-                $month = date("m", $dates[$i] / 1000);
-                $quarter = ceil($month / 3);
-                $tick_format = "\Q{$quarter} Y";
-            }
-            $ticktext[] = date($tick_format, $dates[$i] / 1000);
             if ($i != $last_idx && $include_both_labels) {
                 $i = $last_idx - $dtick;
             }
         }
         $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
         $this->_chart['layout']["{$axisName}"]['tickvals'] = $tickvals;
-        $this->_chart['layout']["{$axisName}"]['ticktext'] = $ticktext;
-
+        
         // Timeseries ticks need to be set to 'auto' if all legend elements are hidden
         // due to bug with Plotly JS manually set ticks.
         if (isset($this->_chart['layout']["{$axisName}"]) && $this->_chart['layout']["{$axisName}"]['tickmode'] !== 'auto') {
