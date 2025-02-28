@@ -346,7 +346,6 @@ class TimeseriesChart extends AggregateChart
                 {
                     $start_ts_array[] = $st;
                 }
-                $pointInterval = $this->getPointInterval();
 
                 // set x axis if needed
                 if(!isset($xAxis))
