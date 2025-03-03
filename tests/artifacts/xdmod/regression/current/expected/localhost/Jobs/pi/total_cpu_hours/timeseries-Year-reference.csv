@@ -1,0 +1,11 @@
+title
+"CPU Hours: Total: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Flycatcher, Taiga] CPU Hours: Total","[Fieldfare] CPU Hours: Total","[Scaup, Lesser] CPU Hours: Total","[Lark, Calandra] CPU Hours: Total","[Moorhen] CPU Hours: Total","[Bluetail, Red-flanked] CPU Hours: Total","[Shearwater, Balearic] CPU Hours: Total","[White, Great] CPU Hours: Total","[Bunting, Ortolan] CPU Hours: Total","[Egret, Snowy] CPU Hours: Total","[Smew] CPU Hours: Total","[Bufflehead] CPU Hours: Total","[Nuthatch] CPU Hours: Total","[Tern, Caspian] CPU Hours: Total","[Thrush, Hermit] CPU Hours: Total","[Jackdaw] CPU Hours: Total","[Chaffinch] CPU Hours: Total","[Fulmar] CPU Hours: Total","[Shearwater, Macaronesian] CPU Hours: Total","[Warbler, Hooded] CPU Hours: Total","[Accentor, Alpine] CPU Hours: Total","[Kestrel, Lesser] CPU Hours: Total","[Chiffchaff, Iberian] CPU Hours: Total","[Warbler, Savi's] CPU Hours: Total","[Warbler, Blackpoll] CPU Hours: Total","[Dunlin] CPU Hours: Total","[Goose, Red-breasted] CPU Hours: Total","[Gull, Yellow-legged] CPU Hours: Total","[Warbler, Cetti's] CPU Hours: Total","[Petrel, Fea's] CPU Hours: Total","[Dotterel] CPU Hours: Total","[Martin, Sand] CPU Hours: Total","[Swift, Little] CPU Hours: Total","[Bittern] CPU Hours: Total","[Harrier, Hen] CPU Hours: Total","[Dowitcher, Short-billed] CPU Hours: Total","[Shearwater, Great] CPU Hours: Total","[Spotted, Great] CPU Hours: Total","[Gull, Glaucous-winged] CPU Hours: Total","[Blackbird] CPU Hours: Total","[Yellowthroat, Common] CPU Hours: Total"
+2016,152195.7483,144475.4408,119217.1778,62491.4711,55820.4542,29927.2797,33446.5633,18811.7067,14800.0000,37.7500,18391.0000,14099.6133,14141.1200,13433.2406,13105.9733,12116.8122,9183.7456,7720.0703,8590.5158,6404.0900,3473.9867,5137.5000,2003.9100,2013.9756,1588.9133,647.6411,1240.8328,1441.0222,1183.6917,1021.5447,960.1333,611.2161,568.9292,134.0178,100.8417,54.4747,72.0069,59.8692,28.1400,22.5389,1.0400
+2017,8465.3736,2898.9944,56.9511,6739.9578,11183.6664,4898.4422,0,3184.0233,4673.8133,19080.0167,0,1254.4625,0,371.6122,0,299.9489,1696.5272,987.0200,0,963.0756,1788.3289,60.5500,35.2583,0,0,870.5067,206.1100,3.4667,0,0,0,11.4333,21.4056,1.7419,0,27.1514,0,0,0,0,0
+---------

@@ -1,0 +1,20 @@
+title
+"Screwdriver CPU Utilization (%): by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[white] Screwdriver CPU Utilization (%)","[black] Screwdriver CPU Utilization (%)","[pikelet] Screwdriver CPU Utilization (%)","[brown] Screwdriver CPU Utilization (%)","[roti] Screwdriver CPU Utilization (%)","[croutons] Screwdriver CPU Utilization (%)","[cornbread] Screwdriver CPU Utilization (%)","[crumpet] Screwdriver CPU Utilization (%)","[nann] Screwdriver CPU Utilization (%)","[brioche] Screwdriver CPU Utilization (%)","[focaccia] Screwdriver CPU Utilization (%)","[panettone] Screwdriver CPU Utilization (%)","[bannock] Screwdriver CPU Utilization (%)","[chapti] Screwdriver CPU Utilization (%)","[pita] Screwdriver CPU Utilization (%)","[potbrood] Screwdriver CPU Utilization (%)","[pumpernickel] Screwdriver CPU Utilization (%)","[barm] Screwdriver CPU Utilization (%)"
+2016-12-22,0,0,0,0,0,0.2118,0,0,0,0,0.2093,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,0,0.3000,0.0090,0,0,0,0.3000,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0.3000,0.0250,0,0,0,0.3000,0,0,0,0,0,0,0
+2016-12-25,0,0,0,0,0,0.4857,0.0250,0,0,0,0.3000,0,0,0,0,0,0,0
+2016-12-26,0,0,0.2253,0,0,1.8000,0.0250,0,0,0,0.3000,0,0,0,0,0,0,0
+2016-12-27,10.7537,0.1425,2.0000,0,0.4879,1.9063,0.3541,0.2533,0,0.0034,0.3000,0,0,0,0,0,0,0
+2016-12-28,37.7461,16.0211,2.4070,0,6.7749,2.7868,1.6250,1.6000,0,0.0250,0.3000,0.0979,0,0,0,0,0,0
+2016-12-29,106.0268,14.9309,7.9626,1.7124,9.3716,3.0600,2.2638,1.6000,0,0.6063,0.3000,0.5000,0,0.1100,0.0299,0,0.0542,0.0075
+2016-12-30,148.2532,25.7408,6.3076,9.6235,6.1072,4.6463,3.9998,1.6272,0,1.2650,0.3000,0.4257,0.2632,0.4137,0.0999,0.1477,0.0894,0.0500
+2016-12-31,106.8325,24.1166,12.2717,3.4512,0.5847,4.4909,2.9599,2.1535,0.0393,1.3830,0.3000,0,0.2459,0.0740,0.0708,0.1079,0.0074,0.0500
+2017-01-01,47.6513,2.4327,5.1025,0.0283,0,3.3239,0.3871,1.5276,3.2665,0.5992,0.2990,0,0.5499,0,0.0479,0.1145,0.0223,0.0367
+---------

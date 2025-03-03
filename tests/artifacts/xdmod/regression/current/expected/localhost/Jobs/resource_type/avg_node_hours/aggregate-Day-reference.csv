@@ -1,0 +1,10 @@
+title
+"Node Hours: Per Job: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Type","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+"High-performance computing",2.19179880,0.037808294679009785
+---------

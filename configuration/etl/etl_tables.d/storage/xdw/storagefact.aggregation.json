@@ -36,6 +36,12 @@
                 "comment": "The ID of the resource type."
             },
             {
+                "name": "resource_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The organization ID of the resource."
+            },
+            {
                 "name": "mountpoint_id",
                 "type": "int(11)",
                 "nullable": false,

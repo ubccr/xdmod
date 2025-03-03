@@ -1,0 +1,10 @@
+title
+"Core Hour Utilization (%): by Project"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Project,"Core Hour Utilization (%)"
+zealous,0.4225
+---------

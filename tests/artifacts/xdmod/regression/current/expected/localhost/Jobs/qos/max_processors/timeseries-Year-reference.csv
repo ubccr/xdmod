@@ -1,0 +1,11 @@
+title
+"Job Size: Max (Core Count): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[curry] Job Size: Max (Core Count)","[banana-cream] Job Size: Max (Core Count)","[derby] Job Size: Max (Core Count)","[buttermilk] Job Size: Max (Core Count)","[butter] Job Size: Max (Core Count)","[bavarian-cream] Job Size: Max (Core Count)","[coconut-cream] Job Size: Max (Core Count)","[green-grape] Job Size: Max (Core Count)","[fish] Job Size: Max (Core Count)","[apple] Job Size: Max (Core Count)","[cheese] Job Size: Max (Core Count)","[cashew] Job Size: Max (Core Count)","[blueberry] Job Size: Max (Core Count)","[bumbleberry] Job Size: Max (Core Count)","[chestnut] Job Size: Max (Core Count)","[blackberry] Job Size: Max (Core Count)","[boysenberry] Job Size: Max (Core Count)","[flapper] Job Size: Max (Core Count)","[cherry] Job Size: Max (Core Count)"
+2016,336,192,144,112,80,64,64,48,32,24,20,16,12,12,12,8,8,5,4
+2017,192,20,72,1,20,16,64,24,0,24,0,16,0,12,12,4,2,5,4
+---------

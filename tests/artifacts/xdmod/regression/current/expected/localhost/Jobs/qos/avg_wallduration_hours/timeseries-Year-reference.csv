@@ -1,0 +1,11 @@
+title
+"Wall Hours: Per Job: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[fish] Wall Hours: Per Job","[cashew] Wall Hours: Per Job","[blackberry] Wall Hours: Per Job","[cherry] Wall Hours: Per Job","[chestnut] Wall Hours: Per Job","[bavarian-cream] Wall Hours: Per Job","[blueberry] Wall Hours: Per Job","[derby] Wall Hours: Per Job","[flapper] Wall Hours: Per Job","[curry] Wall Hours: Per Job","[coconut-cream] Wall Hours: Per Job","[butter] Wall Hours: Per Job","[cheese] Wall Hours: Per Job","[buttermilk] Wall Hours: Per Job","[apple] Wall Hours: Per Job","[boysenberry] Wall Hours: Per Job","[bumbleberry] Wall Hours: Per Job","[banana-cream] Wall Hours: Per Job","[green-grape] Wall Hours: Per Job"
+2016,56.39826389,42.39165094,27.64086310,18.94884259,232.74638889,17.36833333,14.15629630,13.39134316,9.66546296,9.93756641,8.37074786,5.53777778,3.27557407,2.82398003,2.43680996,1.72331197,0.22731481,0.32910885,0.25677140
+2017,0,11.20848700,13.61297980,11.49055556,2.00925214,11.62486111,0,4.14936728,4.28111111,2.28500837,1.65982323,2.71944444,0,0.96969246,1.37951433,17.62916667,1.16142346,0.09990327,0.23123188
+---------

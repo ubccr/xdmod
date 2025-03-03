@@ -1,0 +1,11 @@
+title
+"CPU Hours: Total: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[curry] CPU Hours: Total","[banana-cream] CPU Hours: Total","[derby] CPU Hours: Total","[cashew] CPU Hours: Total","[fish] CPU Hours: Total","[buttermilk] CPU Hours: Total","[apple] CPU Hours: Total","[coconut-cream] CPU Hours: Total","[bavarian-cream] CPU Hours: Total","[blackberry] CPU Hours: Total","[bumbleberry] CPU Hours: Total","[chestnut] CPU Hours: Total","[cheese] CPU Hours: Total","[butter] CPU Hours: Total","[blueberry] CPU Hours: Total","[boysenberry] CPU Hours: Total","[green-grape] CPU Hours: Total","[cherry] CPU Hours: Total","[flapper] CPU Hours: Total"
+2016,330578.4047,276682.7544,65618.4067,29927.2797,19424.7181,14195.5947,11649.4956,6944.6111,7385.1217,2699.2606,48.5767,2792.9567,982.6722,346.8822,509.6267,407.1778,244.8686,192.6089,144.9819
+2017,41928.3708,10948.5744,3816.8944,4898.4422,0,27.1514,1841.7511,1466.4622,371.6122,569.4603,3135.8433,287.0161,0,275.7033,0,35.2583,109.9300,45.9622,21.4056
+---------

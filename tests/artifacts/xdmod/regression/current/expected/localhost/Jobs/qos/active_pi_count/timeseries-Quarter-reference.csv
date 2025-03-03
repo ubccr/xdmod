@@ -1,0 +1,11 @@
+title
+"Number of PIs: Active: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[curry] Number of PIs: Active","[banana-cream] Number of PIs: Active","[green-grape] Number of PIs: Active","[derby] Number of PIs: Active","[bumbleberry] Number of PIs: Active","[apple] Number of PIs: Active","[bavarian-cream] Number of PIs: Active","[boysenberry] Number of PIs: Active","[butter] Number of PIs: Active","[buttermilk] Number of PIs: Active","[cheese] Number of PIs: Active","[coconut-cream] Number of PIs: Active","[fish] Number of PIs: Active","[flapper] Number of PIs: Active","[blackberry] Number of PIs: Active","[blueberry] Number of PIs: Active","[cashew] Number of PIs: Active","[cherry] Number of PIs: Active","[chestnut] Number of PIs: Active"
+"2016 Q4",26,7,7,6,3,2,2,2,2,2,2,2,2,2,1,1,1,1,1
+"2017 Q1",16,3,1,2,1,1,1,1,1,1,0,2,0,1,1,0,1,1,1
+---------

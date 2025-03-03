@@ -1,0 +1,10 @@
+title
+"CPU Hours: Total: by Domain"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[Default] CPU Hours: Total"
+2018-04,1755.8894
+---------

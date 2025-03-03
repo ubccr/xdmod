@@ -1,0 +1,49 @@
+title
+"Job Size: Normalized (% of Total Cores): by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Group","Job Size: Normalized (% of Total Cores)"
+"Fluid, Particulate, and Hydraulic Systems",5.600000000
+"Global Atmospheric Research",4.000000000
+"Structures and Building Systems",2.800000000
+"Design, Tools, and Test",2.700000000
+"Emerging Technologies Initiation",2.400000000
+"Metals, Ceramics, and Electronic Materials",1.800000000
+"Stellar Astronomy and Astrophysics",1.305000000
+"Organic and Macromolecular Chemistry",1.176000000
+"Systematic and Population Biology",1.062343096
+"Quantum Electronics, Waves, and Beams",0.741761364
+Economics,0.600362319
+"Design and Computer-Integrated Engineering",0.577777778
+Geophysics,0.500000000
+"Volcanology and Mantle Geochemistry",0.500000000
+"Geology and Paleontology",0.468750000
+"Law and Social Sciences",0.400000000
+"Polar Aeronomy and Astrophysics",0.350000000
+"Algebra and Number Theory",0.300000000
+"Theoretical Physics",0.300000000
+Seismology,0.272500000
+Biophysics,0.262096774
+"Experimental Systems",0.229729730
+"Solid State Chemistry and Polymers",0.157762557
+"Polar Ocean and Climate Systems",0.150000000
+Arts,0.138636364
+"Statistics and Probability",0.133796296
+"Cell Biology",0.077083333
+"Physical Chemistry",0.069446045
+Sociology,0.047068235
+"Biochemistry and Molecular Structure and Function",0.043333333
+"Galactic Astronomy",0.035299257
+"Solid-State and Microstructures",0.028712871
+"Decision, Risk, and Management Science",0.026044436
+"Computer and Computation Theory",0.025000000
+"Extragalactic Astronomy and Cosmology",0.025000000
+"Mechanics and Materials",0.025000000
+"Operations Research and Production Systems",0.025000000
+"Polar Meteorology",0.025000000
+"Systems Prototyping and Fabrication",0.025000000
+Tectonics,0.025000000
+---------

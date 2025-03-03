@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[curry] Wait Hours: Per Job","[derby] Wait Hours: Per Job","[bumbleberry] Wait Hours: Per Job","[bavarian-cream] Wait Hours: Per Job","[fish] Wait Hours: Per Job","[blackberry] Wait Hours: Per Job","[banana-cream] Wait Hours: Per Job","[cashew] Wait Hours: Per Job","[apple] Wait Hours: Per Job","[chestnut] Wait Hours: Per Job","[blueberry] Wait Hours: Per Job","[cheese] Wait Hours: Per Job","[butter] Wait Hours: Per Job","[green-grape] Wait Hours: Per Job","[boysenberry] Wait Hours: Per Job","[buttermilk] Wait Hours: Per Job","[coconut-cream] Wait Hours: Per Job","[flapper] Wait Hours: Per Job","[cherry] Wait Hours: Per Job"
+2016-12,25.86811964,16.25263381,0.10910494,5.90136201,5.36229167,2.01965278,1.05952936,0.68931866,0.19058715,0.00027778,0.05148148,0.00100000,0.00104167,0.00040528,0.00033120,0.00016493,0.00019231,0.00000000,0.00004630
+2017-01,3.20851258,0.73645299,10.26765258,0.00666667,0,0.00000000,0.70760600,0.00000000,0.21796115,0.10273148,0,0,0.00011111,0.00020531,0.00000000,0.00016865,0.00014550,0.00027778,0.00000000
+---------

@@ -1,0 +1,11 @@
+title
+"Screwdriver CPU Utilization (%): by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0] Screwdriver CPU Utilization (%)","[2] Screwdriver CPU Utilization (%)"
+"2016 Q4",15.3843,0.2909
+"2017 Q1",0.1610,0.0029
+---------

@@ -1,0 +1,12 @@
+title
+"Core Hour Utilization (%): by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"VM Size: Cores","Core Hour Utilization (%)"
+1,0.0630
+"2 - 3",0.0290
+"4 - 7",0.0292
+---------

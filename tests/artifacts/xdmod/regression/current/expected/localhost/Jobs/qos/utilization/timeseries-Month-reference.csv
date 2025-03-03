@@ -1,0 +1,11 @@
+title
+"Screwdriver CPU Utilization (%): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[curry] Screwdriver CPU Utilization (%)","[banana-cream] Screwdriver CPU Utilization (%)","[derby] Screwdriver CPU Utilization (%)","[cashew] Screwdriver CPU Utilization (%)","[buttermilk] Screwdriver CPU Utilization (%)","[fish] Screwdriver CPU Utilization (%)","[coconut-cream] Screwdriver CPU Utilization (%)","[apple] Screwdriver CPU Utilization (%)","[bavarian-cream] Screwdriver CPU Utilization (%)","[chestnut] Screwdriver CPU Utilization (%)","[blackberry] Screwdriver CPU Utilization (%)","[bumbleberry] Screwdriver CPU Utilization (%)","[cheese] Screwdriver CPU Utilization (%)","[butter] Screwdriver CPU Utilization (%)","[blueberry] Screwdriver CPU Utilization (%)","[green-grape] Screwdriver CPU Utilization (%)","[cherry] Screwdriver CPU Utilization (%)","[boysenberry] Screwdriver CPU Utilization (%)","[flapper] Screwdriver CPU Utilization (%)"
+2016-12,17.2176,9.0066,3.4176,5.1957,2.9574,1.0117,0.7234,0.7138,0.4525,0.2909,0.1654,0.0030,0.1706,0.0328,0.0483,0.0128,0.0334,0.0249,0.0076
+2017-01,1.4089,0.0920,0.1283,0.1646,0.0009,0,0.0493,0.0619,0.0125,0.0096,0.0191,0.1054,0,0.0093,0,0.0037,0.0015,0.0012,0.0007
+---------

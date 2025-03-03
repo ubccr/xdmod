@@ -1,0 +1,11 @@
+title
+"Node Hours: Total: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Microelectronic Information Processing Systems] Node Hours: Total","[Social and Economic Science] Node Hours: Total","[Design and Manufacturing Systems] Node Hours: Total","[Electrical and Communication Systems] Node Hours: Total","[Chemistry] Node Hours: Total","[Earth Sciences] Node Hours: Total","[Materials Research] Node Hours: Total","[Astronomical Sciences] Node Hours: Total","[Mathematical Sciences] Node Hours: Total","[Molecular Biosciences] Node Hours: Total","[Polar Programs] Node Hours: Total","[Arts] Node Hours: Total","[Chemical, Thermal Systems] Node Hours: Total","[Mechanical and Structural Systems] Node Hours: Total","[Atmospheric Sciences] Node Hours: Total","[Environmental Biology] Node Hours: Total","[Physics] Node Hours: Total","[Computer and Computation Research] Node Hours: Total"
+"2016 Q4",56599.0011,16007.5636,14398.6167,14128.8053,12249.0817,8759.2947,3900.2250,3120.4561,2746.8894,2686.4672,237.8625,1107.3767,1092.1644,938.2947,180.1278,61.7047,132.4094,100.8417
+"2017 Q1",11304.0508,949.2081,1414.3675,640.2983,656.4764,5.2339,0,288.5850,531.8447,325.6867,1591.7433,32.6561,0,27.1514,0.4333,88.8292,0,0
+---------

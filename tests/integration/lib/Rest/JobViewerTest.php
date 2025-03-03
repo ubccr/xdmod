@@ -30,6 +30,7 @@ class JobViewerTest extends BaseTest
             'queue',
             'resource',
             'resource_type',
+            'provider',
             'username',
             'person'
         );

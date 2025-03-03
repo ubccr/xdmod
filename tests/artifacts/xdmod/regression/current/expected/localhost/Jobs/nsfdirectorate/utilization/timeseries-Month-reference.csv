@@ -1,0 +1,11 @@
+title
+"Screwdriver CPU Utilization (%): by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Engineering] Screwdriver CPU Utilization (%)","[Mathematical and Physical Sciences] Screwdriver CPU Utilization (%)","[Computer and Information Science and Engineering] Screwdriver CPU Utilization (%)","[Social, Behavioral, and Economic Sciences] Screwdriver CPU Utilization (%)","[Geosciences] Screwdriver CPU Utilization (%)","[Biological Sciences] Screwdriver CPU Utilization (%)","[Humanities/Arts] Screwdriver CPU Utilization (%)"
+2016-12,5.9651,6.0612,3.2476,3.0974,0.4048,0.6449,0.4854
+2017-01,0.1196,0.1029,0.4082,0.0583,0.3212,0.0597,0.0050
+---------

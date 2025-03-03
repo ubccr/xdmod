@@ -1,0 +1,17 @@
+title
+"Screwdriver CPU Utilization (%): by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","Screwdriver CPU Utilization (%)"
+"0 - 1s",2.5915
+"1 - 30s",4.4406
+"30s - 30min",2.9743
+"30 - 60min",0.1816
+"1 - 5hr",2.9830
+"5 - 10hr",0.8912
+"10 - 18hr",0.3173
+18+hr,8.2882
+---------

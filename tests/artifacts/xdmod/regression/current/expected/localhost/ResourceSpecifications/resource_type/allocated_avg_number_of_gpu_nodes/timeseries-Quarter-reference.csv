@@ -1,0 +1,11 @@
+title
+"Average Number of GPU Nodes: Allocated: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Quarter,"[High-performance computing] Average Number of GPU Nodes: Allocated"
+"2016 Q4",520.0000
+"2017 Q1",800.0000
+---------

@@ -1,0 +1,28 @@
+title
+"Wall Hours: Total: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Wall Hours: Total"
+curry,102068.5361
+banana-cream,16266.9992
+cashew,2773.5564
+derby,2270.8689
+apple,1140.4569
+blackberry,923.6869
+fish,676.7792
+bavarian-cream,561.6681
+bumbleberry,265.4119
+chestnut,258.8667
+buttermilk,207.8861
+coconut-cream,145.3358
+cherry,125.1836
+boysenberry,107.2414
+cheese,49.1336
+blueberry,42.4689
+butter,38.4678
+flapper,33.2775
+green-grape,20.9814
+---------

@@ -1,0 +1,11 @@
+title
+"Number of PIs: Active: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Mathematical and Physical Sciences] Number of PIs: Active","[Geosciences] Number of PIs: Active","[Engineering] Number of PIs: Active","[Biological Sciences] Number of PIs: Active","[Computer and Information Science and Engineering] Number of PIs: Active","[Social, Behavioral, and Economic Sciences] Number of PIs: Active","[Humanities/Arts] Number of PIs: Active"
+2016,11,9,8,4,4,4,1
+2017,6,5,6,3,2,2,1
+---------

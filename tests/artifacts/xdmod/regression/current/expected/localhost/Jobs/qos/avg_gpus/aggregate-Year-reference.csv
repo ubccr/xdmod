@@ -1,0 +1,28 @@
+title
+"GPU Count: Per Job: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"GPU Count: Per Job","Std Dev: GPU Count: Per Job"
+chestnut,0.3077,0.20013650333971736
+apple,0.0000,0
+banana-cream,0.0000,0
+bavarian-cream,0.0000,0
+blackberry,0.0000,0
+blueberry,0.0000,0
+boysenberry,0.0000,0
+bumbleberry,0.0000,0
+butter,0.0000,0
+buttermilk,0.0000,0
+cashew,0.0000,0
+cheese,0.0000,0
+cherry,0.0000,0
+coconut-cream,0.0000,0
+curry,0.0000,0
+derby,0.0000,0
+fish,0.0000,0
+flapper,0.0000,0
+green-grape,0.0000,0
+---------

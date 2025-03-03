@@ -1,0 +1,20 @@
+title
+"Number of PIs: Active: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Mathematical and Physical Sciences] Number of PIs: Active","[Geosciences] Number of PIs: Active","[Engineering] Number of PIs: Active","[Biological Sciences] Number of PIs: Active","[Computer and Information Science and Engineering] Number of PIs: Active","[Social, Behavioral, and Economic Sciences] Number of PIs: Active","[Humanities/Arts] Number of PIs: Active"
+2016-12-22,1,0,0,1,0,0,0
+2016-12-23,2,0,0,1,0,0,0
+2016-12-24,2,0,0,1,0,0,0
+2016-12-25,2,0,0,1,0,0,0
+2016-12-26,3,0,0,1,0,0,0
+2016-12-27,6,0,1,3,0,1,0
+2016-12-28,9,1,2,3,2,1,0
+2016-12-29,10,4,5,3,3,2,1
+2016-12-30,11,8,7,4,4,4,1
+2016-12-31,9,6,8,4,3,3,1
+2017-01-01,6,5,6,3,2,2,1
+---------

@@ -1,0 +1,14 @@
+title
+"Job Size: Weighted By GPU Hours (GPU Count): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Job Size: Weighted By GPU Hours (GPU Count)"
+phillips,12.0000
+frearson,0.0000
+mortorq,0.0000
+pozidriv,0.0000
+robertson,0.0000
+---------

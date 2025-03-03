@@ -1,0 +1,11 @@
+title
+"User Expansion Factor: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[1] User Expansion Factor","[2] User Expansion Factor","[3 - 4] User Expansion Factor","[5 - 8] User Expansion Factor","[9 - 16] User Expansion Factor","[17 - 32] User Expansion Factor","[33 - 64] User Expansion Factor","[65 - 128] User Expansion Factor","[129 - 256] User Expansion Factor","[257 - 512] User Expansion Factor"
+2016-12,1.0806,4.5740,144.6304,8.8318,2.1387,2.3439,1.9346,1.9787,1.1954,1.3204
+2017-01,1.0103,1.0001,1.0172,12.4291,4.5952,8.3274,5.6576,2.8626,835.1017,0
+---------

@@ -1,0 +1,75 @@
+title
+"User Expansion Factor: by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"User Expansion Factor"
+"Thrush, Swainson's",297.8504
+Dunlin,69.2703
+"Grey, Great",36.7227
+Honey-buzzard,8.0226
+"Warbler, Yellow-browed",7.8723
+"Treecreeper, Short-toed",6.0105
+"Crane, Sandhill",4.9154
+"Thrush, Grey-cheeked",4.3697
+"Plover, Caspian",3.5459
+"Pipit, Meadow",2.2845
+"Scoter, Velvet",2.0824
+"Bunting, Yellow-browed",2.0475
+Siskin,1.8065
+"Sparrow, Savannah",1.5760
+Peregrine,1.5251
+"Warbler, Booted",1.4886
+"Grey, Lesser",1.4572
+"Warbler, Golden-winged",1.4161
+Whimbrel,1.3852
+"Gallinule, Allen's",1.3753
+"Warbler, Dusky",1.3348
+"Sandpiper, Spotted",1.3167
+"Stint, Little",1.2706
+Ovenbird,1.2280
+"Bunting, Reed",1.2101
+"Tern, Sandwich",1.1633
+Crane,1.1487
+"Thrush, Mistle",1.1120
+"Sapsucker, Yellow-bellied",1.1023
+"Grosbeak, Evening",1.0980
+"Grey, Southern",1.0932
+"Warbler, Sardinian",1.0922
+"Plover, White-tailed",1.0844
+"Sparrow, White-throated",1.0844
+Shag,1.0658
+"Harrier, Hen",1.0642
+"Bunting, Yellow-breasted",1.0557
+Smew,1.0545
+"Dove, Turtle",1.0197
+Roller,1.0148
+"Warbler, Hooded",1.0142
+"Warbler, Garden",1.0132
+"Martin, Crag",1.0131
+Moorhen,1.0081
+"Oriole, Baltimore",1.0045
+"Shearwater, Cory's",1.0029
+"Auk, Little",1.0025
+"Bunting, Black-headed",1.0024
+Lapwing,1.0012
+"Grebe, Pied-billed",1.0011
+"Shrike, Long-tailed",1.0005
+"Duck, Ferruginous",1.0004
+Coot,1.0002
+"Gull, Ring-billed",1.0002
+"Swift, Alpine",1.0002
+"Egret, Cattle",1.0001
+"Martin, Purple",1.0001
+Chaffinch,1.0000
+Fieldfare,1.0000
+"Goose, Egyptian",1.0000
+"Ibis, Glossy",1.0000
+Jackdaw,1.0000
+"Partridge, Red-legged",1.0000
+"Redpoll, Lesser",1.0000
+"Scaup, Lesser",1.0000
+"Warbler, Moltoni's",1.0000
+---------

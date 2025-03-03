@@ -1,0 +1,50 @@
+title
+"Screwdriver CPU Utilization (%): by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+PI,"Screwdriver CPU Utilization (%)"
+Fieldfare,0.7276
+"Scaup, Lesser",0.6371
+Moorhen,0.6345
+"Bluetail, Red-flanked",0.3779
+"Flycatcher, Taiga",0.3334
+"Lark, Calandra",0.2357
+"White, Great",0.2083
+"Bunting, Ortolan",0.1844
+Smew,0.1742
+Nuthatch,0.1551
+Bufflehead,0.1454
+"Thrush, Hermit",0.1241
+"Shearwater, Balearic",0.1139
+Chaffinch,0.1133
+"Egret, Snowy",0.0967
+Fulmar,0.0825
+"Shearwater, Macaronesian",0.0813
+"Warbler, Hooded",0.0698
+Jackdaw,0.0628
+"Accentor, Alpine",0.0498
+"Kestrel, Lesser",0.0492
+"Tern, Caspian",0.0470
+"Warbler, Blackpoll",0.0150
+Dunlin,0.0144
+"Goose, Red-breasted",0.0137
+"Gull, Yellow-legged",0.0137
+"Warbler, Cetti's",0.0112
+Dotterel,0.0104
+"Chiffchaff, Iberian",0.0101
+"Warbler, Savi's",0.0099
+"Petrel, Fea's",0.0097
+"Martin, Sand",0.0059
+"Swift, Little",0.0056
+Bittern,0.0013
+"Harrier, Hen",0.0010
+"Dowitcher, Short-billed",0.0009
+"Shearwater, Great",0.0007
+"Spotted, Great",0.0006
+"Gull, Glaucous-winged",0.0003
+Blackbird,0.0002
+"Yellowthroat, Common",0.0000
+---------

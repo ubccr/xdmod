@@ -1,0 +1,14 @@
+title
+"GPU Count: Per Job: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"GPU Count: Per Job","Std Dev: GPU Count: Per Job"
+phillips,0.0010,0.0006988947038768784
+frearson,0.0000,0
+mortorq,0.0000,0
+pozidriv,0.0000,0
+robertson,0.0000,0
+---------

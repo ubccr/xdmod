@@ -1,0 +1,10 @@
+title
+"Core Hour Utilization (%)"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[Screwdriver] Core Hour Utilization (%)"
+2018-04,2.4051
+---------

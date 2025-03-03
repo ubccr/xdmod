@@ -1,0 +1,11 @@
+title
+"Number of Jobs Started: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Social, Behavioral, and Economic Sciences] Number of Jobs Started","[Mathematical and Physical Sciences] Number of Jobs Started","[Computer and Information Science and Engineering] Number of Jobs Started","[Geosciences] Number of Jobs Started","[Engineering] Number of Jobs Started","[Biological Sciences] Number of Jobs Started","[Humanities/Arts] Number of Jobs Started"
+"2016 Q4",44240,7588,2475,1137,510,193,66
+"2017 Q1",13464,395,212,806,63,164,0
+---------

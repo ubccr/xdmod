@@ -1,0 +1,27 @@
+title
+"Screwdriver CPU Utilization (%): by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"Screwdriver CPU Utilization (%)"
+white,1.1877
+black,0.1918
+pikelet,0.0978
+croutons,0.0620
+roti,0.0606
+brown,0.0400
+cornbread,0.0310
+crumpet,0.0234
+brioche,0.0103
+nann,0.0089
+focaccia,0.0086
+bannock,0.0028
+panettone,0.0028
+chapti,0.0016
+potbrood,0.0010
+pita,0.0007
+pumpernickel,0.0005
+barm,0.0004
+---------

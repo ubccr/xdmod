@@ -1,0 +1,20 @@
+title
+"User Expansion Factor: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[bumbleberry] User Expansion Factor","[banana-cream] User Expansion Factor","[curry] User Expansion Factor","[derby] User Expansion Factor","[bavarian-cream] User Expansion Factor","[fish] User Expansion Factor","[apple] User Expansion Factor","[blackberry] User Expansion Factor","[cashew] User Expansion Factor","[chestnut] User Expansion Factor","[blueberry] User Expansion Factor","[green-grape] User Expansion Factor","[cheese] User Expansion Factor","[boysenberry] User Expansion Factor","[butter] User Expansion Factor","[buttermilk] User Expansion Factor","[cherry] User Expansion Factor","[coconut-cream] User Expansion Factor","[flapper] User Expansion Factor"
+2016-12-22,0,0,0,0,0,0,1.0495,0,0,1.0000,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,1.0610,0,1.0495,0,0,1.0000,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,1.0610,0,1.0495,0,0,1.0000,0,0,0,0,0,0,0,0,0
+2016-12-25,0,1.6550,0,0,1.0610,0,1.0582,0,0,1.0000,0,0,0,0,0,0,0,0,0
+2016-12-26,0,1.6551,0,0,1.0610,0,1.1463,0,1.0000,1.0000,0,0,0,0,0,0,0,0,0
+2016-12-27,0,1.3633,2.9856,2.0011,1.0432,1.0000,1.1387,1.0000,1.0000,1.0000,0,0,0,0,0,0,0,1.0000,0
+2016-12-28,0,1.0497,1.7119,1.8988,1.0203,1.0111,1.1098,1.0000,1.0025,1.0000,0,0,1.0000,0,0,0,0,1.0000,0
+2016-12-29,0,1.0546,1.4021,1.8673,1.3272,1.1476,1.1000,1.0000,1.0228,1.0000,1.0000,0,1.0000,1.0001,0,1.0000,1.0000,1.0000,1.0000
+2016-12-30,2.7348,2.3347,5.8525,2.1663,1.4286,1.1311,1.0173,1.0157,1.0292,1.0000,1.0049,1.0022,1.0007,1.0001,1.0008,1.0000,1.0000,1.0000,1.0000
+2016-12-31,1.0162,5.3897,2.0664,1.2922,1.6816,0,1.0897,1.1709,1.0100,1.0000,1.0001,1.0019,0,1.0002,1.0000,1.0000,1.0000,1.0000,1.0000
+2017-01-01,9.3701,5.0803,2.6618,1.1149,4.1617,0,1.1522,1.0000,1.0058,1.0472,0,1.0009,0,1.0001,1.0001,1.0002,1.0000,1.0000,1.0001
+---------

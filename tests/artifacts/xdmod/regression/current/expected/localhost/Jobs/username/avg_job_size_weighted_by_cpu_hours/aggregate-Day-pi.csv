@@ -1,0 +1,16 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","Job Size: Weighted By CPU Hours (Core Count)"
+swath,45.0823
+ovenb,16.0000
+litst,13.7425
+ybsbu,11.7604
+sante,1.0000
+savsp,1.0000
+---------

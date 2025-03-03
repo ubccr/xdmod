@@ -1,0 +1,28 @@
+title
+"Job Size: Min (Core Count): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Job Size: Min (Core Count)"
+cheese,20
+blueberry,12
+apple,8
+bumbleberry,8
+butter,8
+coconut-cream,8
+flapper,5
+boysenberry,2
+banana-cream,1
+bavarian-cream,1
+blackberry,1
+buttermilk,1
+cashew,1
+cherry,1
+chestnut,1
+curry,1
+derby,1
+fish,1
+green-grape,1
+---------

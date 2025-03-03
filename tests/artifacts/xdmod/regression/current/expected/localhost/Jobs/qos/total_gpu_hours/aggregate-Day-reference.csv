@@ -1,0 +1,28 @@
+title
+"GPU Hours: Total: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"GPU Hours: Total"
+chestnut,506.9128
+apple,0.0000
+banana-cream,0.0000
+bavarian-cream,0.0000
+blackberry,0.0000
+blueberry,0.0000
+boysenberry,0.0000
+bumbleberry,0.0000
+butter,0.0000
+buttermilk,0.0000
+cashew,0.0000
+cheese,0.0000
+cherry,0.0000
+coconut-cream,0.0000
+curry,0.0000
+derby,0.0000
+fish,0.0000
+flapper,0.0000
+green-grape,0.0000
+---------

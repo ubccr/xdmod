@@ -1,0 +1,11 @@
+title
+"Screwdriver CPU Utilization (%): by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[white] Screwdriver CPU Utilization (%)","[black] Screwdriver CPU Utilization (%)","[pikelet] Screwdriver CPU Utilization (%)","[croutons] Screwdriver CPU Utilization (%)","[roti] Screwdriver CPU Utilization (%)","[brown] Screwdriver CPU Utilization (%)","[cornbread] Screwdriver CPU Utilization (%)","[crumpet] Screwdriver CPU Utilization (%)","[brioche] Screwdriver CPU Utilization (%)","[nann] Screwdriver CPU Utilization (%)","[focaccia] Screwdriver CPU Utilization (%)","[bannock] Screwdriver CPU Utilization (%)","[panettone] Screwdriver CPU Utilization (%)","[chapti] Screwdriver CPU Utilization (%)","[potbrood] Screwdriver CPU Utilization (%)","[pita] Screwdriver CPU Utilization (%)","[pumpernickel] Screwdriver CPU Utilization (%)","[barm] Screwdriver CPU Utilization (%)"
+2016,20.4806,8.6377,5.1957,1.8171,1.1663,2.9574,1.0261,0.7234,0.2984,0.0066,0.2909,0.0463,0.1706,0.0543,0.0128,0.0334,0.0076,0.0098
+2017,0.1306,0.0067,0.0140,0.0091,0,0.0001,0.0011,0.0042,0.0016,0.0089,0.0008,0.0015,0,0,0.0003,0.0001,0.0001,0.0001
+---------

@@ -12,6 +12,10 @@
                 },
                 {
                     "realm": "Storage",
+                    "group_by": "provider"
+                },
+                {
+                    "realm": "Storage",
                     "group_by": "resource_type"
                 },
                 {
@@ -53,6 +57,10 @@
                 {
                     "realm": "Storage",
                     "group_by": "resource"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "provider"
                 },
                 {
                     "realm": "Storage",

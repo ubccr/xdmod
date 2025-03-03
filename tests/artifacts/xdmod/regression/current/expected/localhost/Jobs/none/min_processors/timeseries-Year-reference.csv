@@ -1,0 +1,11 @@
+title
+"Job Size: Min (Core Count)"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Screwdriver] Job Size: Min (Core Count)"
+2016,1
+2017,1
+---------

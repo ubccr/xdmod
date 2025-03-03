@@ -1,0 +1,11 @@
+title
+"Number of Jobs Ended: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[banana-cream] Number of Jobs Ended","[curry] Number of Jobs Ended","[apple] Number of Jobs Ended","[bumbleberry] Number of Jobs Ended","[derby] Number of Jobs Ended","[buttermilk] Number of Jobs Ended","[green-grape] Number of Jobs Ended","[cashew] Number of Jobs Ended","[boysenberry] Number of Jobs Ended","[coconut-cream] Number of Jobs Ended","[bavarian-cream] Number of Jobs Ended","[blackberry] Number of Jobs Ended","[cheese] Number of Jobs Ended","[chestnut] Number of Jobs Ended","[fish] Number of Jobs Ended","[butter] Number of Jobs Ended","[cherry] Number of Jobs Ended","[flapper] Number of Jobs Ended","[blueberry] Number of Jobs Ended"
+2016,46116,7812,372,6,159,64,61,6,51,12,30,17,15,0,12,3,5,3,3
+2017,9703,6306,159,225,18,28,23,47,1,22,2,11,0,13,0,6,1,1,0
+---------

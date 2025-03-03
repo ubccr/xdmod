@@ -1,0 +1,11 @@
+title
+"Number of Jobs Ended: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[mortorq] Number of Jobs Ended","[frearson] Number of Jobs Ended","[robertson] Number of Jobs Ended","[pozidriv] Number of Jobs Ended","[phillips] Number of Jobs Ended"
+"2016 Q4",20925,12420,8047,9797,3558
+"2017 Q1",5315,2927,6348,1488,488
+---------

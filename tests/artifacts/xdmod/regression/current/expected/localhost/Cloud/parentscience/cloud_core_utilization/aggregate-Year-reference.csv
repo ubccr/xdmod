@@ -1,0 +1,10 @@
+title
+"Core Hour Utilization (%): by Department"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Department,"Core Hour Utilization (%)"
+"Mechanical and Structural Systems",0.1212
+---------

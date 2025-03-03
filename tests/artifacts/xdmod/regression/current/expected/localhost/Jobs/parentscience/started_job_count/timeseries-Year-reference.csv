@@ -1,0 +1,11 @@
+title
+"Number of Jobs Started: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Social and Economic Science] Number of Jobs Started","[Chemistry] Number of Jobs Started","[Microelectronic Information Processing Systems] Number of Jobs Started","[Earth Sciences] Number of Jobs Started","[Polar Programs] Number of Jobs Started","[Astronomical Sciences] Number of Jobs Started","[Design and Manufacturing Systems] Number of Jobs Started","[Environmental Biology] Number of Jobs Started","[Electrical and Communication Systems] Number of Jobs Started","[Materials Research] Number of Jobs Started","[Molecular Biosciences] Number of Jobs Started","[Mechanical and Structural Systems] Number of Jobs Started","[Arts] Number of Jobs Started","[Mathematical Sciences] Number of Jobs Started","[Computer and Computation Research] Number of Jobs Started","[Chemical, Thermal Systems] Number of Jobs Started","[Physics] Number of Jobs Started","[Atmospheric Sciences] Number of Jobs Started"
+2016,44240,6580,2455,1026,110,787,298,100,145,153,93,64,66,65,20,3,3,1
+2017,13464,389,212,3,802,6,19,139,16,0,25,28,0,0,0,0,0,1
+---------

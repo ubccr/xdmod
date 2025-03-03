@@ -1,0 +1,20 @@
+title
+"Wall Hours: Total: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Microelectronic Information Processing Systems] Wall Hours: Total","[Social and Economic Science] Wall Hours: Total","[Design and Manufacturing Systems] Wall Hours: Total","[Earth Sciences] Wall Hours: Total","[Chemistry] Wall Hours: Total","[Mathematical Sciences] Wall Hours: Total","[Electrical and Communication Systems] Wall Hours: Total","[Molecular Biosciences] Wall Hours: Total","[Polar Programs] Wall Hours: Total","[Astronomical Sciences] Wall Hours: Total","[Materials Research] Wall Hours: Total","[Arts] Wall Hours: Total","[Mechanical and Structural Systems] Wall Hours: Total","[Physics] Wall Hours: Total","[Computer and Computation Research] Wall Hours: Total","[Chemical, Thermal Systems] Wall Hours: Total","[Environmental Biology] Wall Hours: Total","[Atmospheric Sciences] Wall Hours: Total"
+2016-12-22,0,0,0,0,16.9417,0,0,16.7464,0,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,24.0000,0,0,24.0000,0,8.6036,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,24.0000,0,0,24.0000,0,24.0000,0,0,0,0,0,0,0,0
+2016-12-25,0,0,0,0,32.5078,0,0,24.0000,0,24.0000,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0,96.0000,13.5208,0,24.0000,0,24.0000,0,0,0,0,0,0,0,0
+2016-12-27,0,3.2167,0,0,115.3094,124.7214,38.9522,117.5319,0,72.9606,61.4911,0,0,0,0,0,0,0
+2016-12-28,996.9861,24.0000,1962.8444,4.7006,547.1969,196.4592,228.4575,248.3833,0,180.7781,169.2183,0,0,15.1192,0,0,0,0
+2016-12-29,12752.0031,303.7458,3901.6422,34.4008,813.4011,717.7553,560.9514,551.3708,18.9747,262.0022,437.2069,47.7900,14.6778,72.0000,10.0983,0,0,6.4889
+2016-12-30,22088.4072,6707.0317,5473.3125,3094.2667,1278.2967,557.8294,661.3600,721.9308,132.1053,690.1894,546.7922,629.4331,109.4747,45.2903,82.1119,29.3436,12.8208,2.5175
+2016-12-31,20759.5203,8652.6142,2911.3158,5589.6611,952.6464,1136.6033,1052.2525,235.6647,36.4333,295.7200,186.2928,430.1536,56.5822,0,8.6314,16.9689,1.4844,0
+2017-01-01,11304.0508,939.7397,1334.4150,5.2339,590.4597,531.8447,126.6053,184.2342,1591.7433,79.5069,0,32.6561,27.1514,0,0,0,30.9281,0.0217
+---------

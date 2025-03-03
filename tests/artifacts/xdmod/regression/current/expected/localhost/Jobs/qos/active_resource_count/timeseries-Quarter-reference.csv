@@ -1,0 +1,11 @@
+title
+"Number of Resources: Active: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[banana-cream] Number of Resources: Active","[apple] Number of Resources: Active","[bavarian-cream] Number of Resources: Active","[blackberry] Number of Resources: Active","[boysenberry] Number of Resources: Active","[bumbleberry] Number of Resources: Active","[blueberry] Number of Resources: Active","[butter] Number of Resources: Active","[buttermilk] Number of Resources: Active","[cashew] Number of Resources: Active","[cheese] Number of Resources: Active","[cherry] Number of Resources: Active","[chestnut] Number of Resources: Active","[coconut-cream] Number of Resources: Active","[curry] Number of Resources: Active","[derby] Number of Resources: Active","[fish] Number of Resources: Active","[flapper] Number of Resources: Active","[green-grape] Number of Resources: Active"
+"2016 Q4",4,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1,1,1,1
+"2017 Q1",4,1,1,1,1,1,0,1,1,1,0,1,1,1,1,1,0,1,1
+---------

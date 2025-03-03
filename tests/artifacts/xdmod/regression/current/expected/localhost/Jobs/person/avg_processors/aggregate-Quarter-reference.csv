@@ -1,0 +1,75 @@
+title
+"Job Size: Per Job (Core Count): by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+"Warbler, Dusky",224.0000,72.73696905059123
+"Scaup, Lesser",183.1111,8.380524814332512
+"Warbler, Yellow-browed",160.0000,0
+"Goose, Egyptian",112.0000,0
+"Scoter, Velvet",112.0000,22.627416997969522
+"Gallinule, Allen's",108.0000,0
+Crane,96.0000,0
+"Pipit, Meadow",96.0000,0
+Smew,72.0000,0
+Chaffinch,64.0000,0
+"Duck, Ferruginous",60.0000,0
+Peregrine,60.0000,0
+Siskin,60.0000,8.48528137423857
+"Grosbeak, Evening",56.0000,0
+Whimbrel,48.8571,4.610167493255085
+"Swift, Alpine",44.0000,3.872983346207417
+Dunlin,42.4937,2.1967513051929584
+"Warbler, Sardinian",29.2444,2.796321314683548
+"Bunting, Yellow-browed",28.0000,8.48528137423857
+"Warbler, Golden-winged",24.0145,1.2257293401539964
+"Sparrow, White-throated",23.1111,0.8380524817467393
+"Ibis, Glossy",20.0000,0
+"Martin, Crag",20.0000,0
+Roller,18.7500,11.90784930203603
+"Crane, Sandhill",17.6389,0.4033294968166851
+"Shrike, Long-tailed",17.6250,1.5709148409446008
+Ovenbird,16.0000,0
+"Partridge, Red-legged",16.0000,0
+Shag,14.9091,1.9304200094068276
+"Stint, Little",14.1818,0.600525691825461
+"Plover, Caspian",12.0000,0
+"Plover, White-tailed",12.0000,0
+"Sandpiper, Spotted",12.0000,0
+"Thrush, Mistle",12.0000,0
+"Auk, Little",10.9000,0.7273238618387268
+"Warbler, Garden",10.8868,0.562036409390535
+"Warbler, Hooded",10.0952,0.435940674754997
+Honey-buzzard,9.4154,0.00816310989773516
+"Bunting, Yellow-breasted",9.3333,1.2171612393263744
+"Oriole, Baltimore",8.7000,1.5642889758609182
+"Bunting, Reed",8.2161,0.0205625896517565
+"Dove, Turtle",8.0081,0.005754675642337485
+Fieldfare,8.0000,0
+"Shearwater, Cory's",8.0000,0
+"Treecreeper, Short-toed",7.8182,1.2623544244155334
+"Thrush, Swainson's",4.0842,0.08409243973613295
+"Redpoll, Lesser",4.0000,0
+"Sapsucker, Yellow-bellied",4.0000,0
+"Thrush, Grey-cheeked",2.2970,0.1689240965440023
+"Warbler, Booted",1.7333,0.7084673076458524
+"Bunting, Black-headed",1.0000,0
+Coot,1.0000,0
+"Egret, Cattle",1.0000,0
+"Grebe, Pied-billed",1.0000,0
+"Grey, Great",1.0000,0
+"Grey, Lesser",1.0000,0
+"Grey, Southern",1.0000,0
+"Gull, Ring-billed",1.0000,0
+"Harrier, Hen",1.0000,0
+Jackdaw,1.0000,0
+Lapwing,1.0000,0
+"Martin, Purple",1.0000,0
+Moorhen,1.0000,0
+"Sparrow, Savannah",1.0000,0
+"Tern, Sandwich",1.0000,0
+"Warbler, Moltoni's",1.0000,0
+---------

@@ -1,0 +1,11 @@
+title
+"Number of Jobs Submitted: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[banana-cream] Number of Jobs Submitted","[curry] Number of Jobs Submitted","[apple] Number of Jobs Submitted","[derby] Number of Jobs Submitted","[bumbleberry] Number of Jobs Submitted","[buttermilk] Number of Jobs Submitted","[green-grape] Number of Jobs Submitted","[cashew] Number of Jobs Submitted","[boysenberry] Number of Jobs Submitted","[coconut-cream] Number of Jobs Submitted","[bavarian-cream] Number of Jobs Submitted","[blackberry] Number of Jobs Submitted","[cheese] Number of Jobs Submitted","[chestnut] Number of Jobs Submitted","[fish] Number of Jobs Submitted","[butter] Number of Jobs Submitted","[cherry] Number of Jobs Submitted","[flapper] Number of Jobs Submitted","[blueberry] Number of Jobs Submitted"
+2016,46482,8821,378,164,18,64,61,53,52,13,31,28,15,1,12,4,6,3,3
+2017,8179,4449,152,13,150,28,23,0,0,21,1,0,0,12,0,5,0,1,0
+---------

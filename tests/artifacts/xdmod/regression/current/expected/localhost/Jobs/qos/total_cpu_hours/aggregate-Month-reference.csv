@@ -1,0 +1,28 @@
+title
+"CPU Hours: Total: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"CPU Hours: Total"
+curry,372506.7756
+banana-cream,287631.3289
+derby,69435.3011
+cashew,34825.7219
+fish,19424.7181
+buttermilk,14222.7461
+apple,13491.2467
+coconut-cream,8411.0733
+bavarian-cream,7756.7339
+blackberry,3268.7208
+bumbleberry,3184.4200
+chestnut,3079.9728
+cheese,982.6722
+butter,622.5856
+blueberry,509.6267
+boysenberry,442.4361
+green-grape,354.7986
+cherry,238.5711
+flapper,166.3875
+---------

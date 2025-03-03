@@ -1,0 +1,11 @@
+title
+"Quota Utilization: Logical (%): by Resource"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Resource,"Quota Utilization: Logical (%)"
+torx,83.1474
+recex,62.5264
+---------

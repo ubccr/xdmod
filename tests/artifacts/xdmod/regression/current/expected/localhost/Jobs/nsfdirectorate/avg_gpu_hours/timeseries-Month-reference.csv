@@ -1,0 +1,11 @@
+title
+"GPU Hours: Per Job: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Biological Sciences] GPU Hours: Per Job","[Computer and Information Science and Engineering] GPU Hours: Per Job","[Engineering] GPU Hours: Per Job","[Geosciences] GPU Hours: Per Job","[Humanities/Arts] GPU Hours: Per Job","[Mathematical and Physical Sciences] GPU Hours: Per Job","[Social, Behavioral, and Economic Sciences] GPU Hours: Per Job"
+2016-12,2.41187968,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000
+2017-01,0.23942197,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000
+---------

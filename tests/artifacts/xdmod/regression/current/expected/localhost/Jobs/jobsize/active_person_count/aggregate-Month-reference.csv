@@ -1,0 +1,19 @@
+title
+"Number of Users: Active: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Size","Number of Users: Active"
+1,23
+2,1
+"3 - 4",3
+"5 - 8",13
+"9 - 16",24
+"17 - 32",13
+"33 - 64",14
+"65 - 128",11
+"129 - 256",4
+"257 - 512",1
+---------

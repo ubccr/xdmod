@@ -1,0 +1,11 @@
+title
+"Number of PIs: Active: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[white] Number of PIs: Active","[potbrood] Number of PIs: Active","[black] Number of PIs: Active","[bannock] Number of PIs: Active","[brown] Number of PIs: Active","[crumpet] Number of PIs: Active","[panettone] Number of PIs: Active","[pumpernickel] Number of PIs: Active","[roti] Number of PIs: Active","[barm] Number of PIs: Active","[brioche] Number of PIs: Active","[chapti] Number of PIs: Active","[cornbread] Number of PIs: Active","[croutons] Number of PIs: Active","[focaccia] Number of PIs: Active","[nann] Number of PIs: Active","[pikelet] Number of PIs: Active","[pita] Number of PIs: Active"
+"2016 Q4",31,7,6,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1
+"2017 Q1",18,1,2,1,1,2,0,1,0,1,1,0,1,1,1,1,1,1
+---------

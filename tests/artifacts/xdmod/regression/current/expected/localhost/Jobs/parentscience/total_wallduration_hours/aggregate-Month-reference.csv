@@ -1,0 +1,27 @@
+title
+"Wall Hours: Total: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Department,"Wall Hours: Total"
+"Microelectronic Information Processing Systems",67900.9675
+"Social and Economic Science",16630.3481
+"Design and Manufacturing Systems",15583.5300
+"Earth Sciences",8728.2631
+Chemistry,4490.7597
+"Mathematical Sciences",3278.7342
+"Electrical and Communication Systems",2668.5789
+"Molecular Biosciences",2171.8622
+"Polar Programs",1779.2567
+"Astronomical Sciences",1661.7608
+"Materials Research",1401.0014
+Arts,1140.0328
+"Mechanical and Structural Systems",207.8861
+Physics,132.4094
+"Computer and Computation Research",100.8417
+"Chemical, Thermal Systems",46.3125
+"Environmental Biology",45.2333
+"Atmospheric Sciences",9.0281
+---------

@@ -1,0 +1,11 @@
+title
+"Quota: Soft Threshold (Bytes): by Resource Type"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"Resource Type","Quota: Soft Threshold (Bytes)"
+"Storage grid",855000018944000.0000
+"Tape storage resource",127000027136000.0000
+---------

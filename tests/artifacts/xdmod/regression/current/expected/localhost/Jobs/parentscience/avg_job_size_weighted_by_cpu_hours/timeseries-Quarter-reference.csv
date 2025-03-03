@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Chemical, Thermal Systems] Job Size: Weighted By CPU Hours (Core Count)","[Atmospheric Sciences] Job Size: Weighted By CPU Hours (Core Count)","[Chemistry] Job Size: Weighted By CPU Hours (Core Count)","[Mechanical and Structural Systems] Job Size: Weighted By CPU Hours (Core Count)","[Electrical and Communication Systems] Job Size: Weighted By CPU Hours (Core Count)","[Materials Research] Job Size: Weighted By CPU Hours (Core Count)","[Environmental Biology] Job Size: Weighted By CPU Hours (Core Count)","[Astronomical Sciences] Job Size: Weighted By CPU Hours (Core Count)","[Molecular Biosciences] Job Size: Weighted By CPU Hours (Core Count)","[Polar Programs] Job Size: Weighted By CPU Hours (Core Count)","[Mathematical Sciences] Job Size: Weighted By CPU Hours (Core Count)","[Physics] Job Size: Weighted By CPU Hours (Core Count)","[Arts] Job Size: Weighted By CPU Hours (Core Count)","[Social and Economic Science] Job Size: Weighted By CPU Hours (Core Count)","[Design and Manufacturing Systems] Job Size: Weighted By CPU Hours (Core Count)","[Earth Sciences] Job Size: Weighted By CPU Hours (Core Count)","[Microelectronic Information Processing Systems] Job Size: Weighted By CPU Hours (Core Count)","[Computer and Computation Research] Job Size: Weighted By CPU Hours (Core Count)"
+"2016 Q4",326.9898,160.0000,132.5250,111.5740,94.6650,65.7034,71.6000,46.2364,28.5024,37.1250,14.0136,12.0000,11.8512,10.8841,5.4428,6.2382,1.8060,1.0000
+"2017 Q1",0,160.0000,14.4798,1.0000,90.0978,0,47.3679,55.6210,35.3735,11.9990,10.2559,0,10.7741,10.5763,13.8313,7.4372,1.5550,0
+---------

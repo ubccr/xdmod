@@ -1,0 +1,49 @@
+title
+"Screwdriver CPU Utilization (%): by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Group","Screwdriver CPU Utilization (%)"
+"Quantum Electronics, Waves, and Beams",0.2017
+"Systems Prototyping and Fabrication",0.1813
+"Organic and Macromolecular Chemistry",0.1668
+Sociology,0.0892
+"Physical Chemistry",0.0638
+"Stellar Astronomy and Astrophysics",0.0595
+"Emerging Technologies Initiation",0.0527
+"Metals, Ceramics, and Electronic Materials",0.0498
+"Statistics and Probability",0.0481
+"Operations Research and Production Systems",0.0415
+"Structures and Building Systems",0.0398
+"Fluid, Particulate, and Hydraulic Systems",0.0355
+"Solid State Chemistry and Polymers",0.0308
+Biophysics,0.0302
+"Polar Ocean and Climate Systems",0.0263
+"Cell Biology",0.0236
+Tectonics,0.0232
+"Experimental Systems",0.0199
+Arts,0.0171
+"Design and Computer-Integrated Engineering",0.0142
+"Algebra and Number Theory",0.0141
+"Galactic Astronomy",0.0127
+"Theoretical Physics",0.0043
+"Systematic and Population Biology",0.0041
+Economics,0.0039
+"Global Atmospheric Research",0.0039
+"Decision, Risk, and Management Science",0.0032
+"Biochemistry and Molecular Structure and Function",0.0028
+"Polar Aeronomy and Astrophysics",0.0028
+"Solid-State and Microstructures",0.0028
+"Volcanology and Mantle Geochemistry",0.0027
+Seismology,0.0017
+"Geology and Paleontology",0.0016
+"Polar Meteorology",0.0004
+"Computer and Computation Theory",0.0003
+"Extragalactic Astronomy and Cosmology",0.0002
+"Mechanics and Materials",0.0002
+"Design, Tools, and Test",0.0001
+Geophysics,0.0001
+"Law and Social Sciences",0.0000
+---------

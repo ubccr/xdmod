@@ -1,0 +1,10 @@
+title
+"CPU Hours: Total: by VM State"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[Active] CPU Hours: Total","[Inactive] CPU Hours: Total"
+2018-04,1754.1433,1.7461
+---------

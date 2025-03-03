@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"GPU Count","Wait Hours: Total"
+0,306345.3606
+2,0.0003
+---------

@@ -1,0 +1,12 @@
+title
+"Number of Jobs Started: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[whimb] Number of Jobs Started"
+"2016 Q4",9
+"2017 Q1",5
+---------

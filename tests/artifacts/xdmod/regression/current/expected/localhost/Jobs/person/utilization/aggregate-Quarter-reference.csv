@@ -1,0 +1,75 @@
+title
+"Screwdriver CPU Utilization (%): by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Screwdriver CPU Utilization (%)"
+"Pipit, Meadow",1.3871
+"Scaup, Lesser",1.3011
+Moorhen,0.6345
+"Warbler, Garden",0.3779
+Honey-buzzard,0.3259
+Crane,0.1844
+Smew,0.1742
+"Goose, Egyptian",0.1551
+Lapwing,0.1454
+"Dove, Turtle",0.1294
+"Warbler, Dusky",0.1241
+"Bunting, Reed",0.1206
+"Sandpiper, Spotted",0.1153
+"Plover, Caspian",0.0967
+"Warbler, Sardinian",0.0823
+"Grey, Lesser",0.0813
+Chaffinch,0.0800
+Siskin,0.0796
+"Crane, Sandhill",0.0779
+"Treecreeper, Short-toed",0.0777
+Ovenbird,0.0683
+"Scoter, Velvet",0.0521
+"Sparrow, White-throated",0.0498
+"Thrush, Mistle",0.0492
+Whimbrel,0.0466
+Peregrine,0.0424
+"Duck, Ferruginous",0.0398
+"Sapsucker, Yellow-bellied",0.0370
+"Warbler, Hooded",0.0366
+"Oriole, Baltimore",0.0333
+"Shearwater, Cory's",0.0332
+Shag,0.0226
+"Thrush, Swainson's",0.0224
+"Plover, White-tailed",0.0150
+Dunlin,0.0144
+"Warbler, Golden-winged",0.0137
+"Warbler, Yellow-browed",0.0137
+"Bunting, Yellow-breasted",0.0129
+"Grosbeak, Evening",0.0107
+"Ibis, Glossy",0.0104
+"Thrush, Grey-cheeked",0.0101
+"Bunting, Yellow-browed",0.0099
+"Warbler, Booted",0.0097
+"Swift, Alpine",0.0064
+"Auk, Little",0.0059
+Roller,0.0056
+"Grebe, Pied-billed",0.0047
+Fieldfare,0.0036
+"Shrike, Long-tailed",0.0026
+"Tern, Sandwich",0.0018
+"Redpoll, Lesser",0.0016
+"Grey, Southern",0.0013
+"Harrier, Hen",0.0010
+Jackdaw,0.0009
+"Warbler, Moltoni's",0.0007
+"Bunting, Black-headed",0.0006
+"Grey, Great",0.0005
+"Martin, Purple",0.0004
+Coot,0.0003
+"Egret, Cattle",0.0003
+"Gallinule, Allen's",0.0003
+"Gull, Ring-billed",0.0003
+"Martin, Crag",0.0002
+"Stint, Little",0.0002
+"Partridge, Red-legged",0.0000
+"Sparrow, Savannah",0.0000
+---------

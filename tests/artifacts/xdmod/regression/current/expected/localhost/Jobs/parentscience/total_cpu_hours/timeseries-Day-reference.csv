@@ -1,0 +1,20 @@
+title
+"CPU Hours: Total: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Chemistry] CPU Hours: Total","[Electrical and Communication Systems] CPU Hours: Total","[Social and Economic Science] CPU Hours: Total","[Microelectronic Information Processing Systems] CPU Hours: Total","[Materials Research] CPU Hours: Total","[Mathematical Sciences] CPU Hours: Total","[Astronomical Sciences] CPU Hours: Total","[Polar Programs] CPU Hours: Total","[Design and Manufacturing Systems] CPU Hours: Total","[Molecular Biosciences] CPU Hours: Total","[Mechanical and Structural Systems] CPU Hours: Total","[Chemical, Thermal Systems] CPU Hours: Total","[Arts] CPU Hours: Total","[Earth Sciences] CPU Hours: Total","[Physics] CPU Hours: Total","[Environmental Biology] CPU Hours: Total","[Atmospheric Sciences] CPU Hours: Total","[Computer and Computation Research] CPU Hours: Total"
+2016-12-22,203.3000,0,0,0,0,0,0,0,0,200.9567,0,0,0,0,0,0,0,0
+2016-12-23,288.0000,0,0,0,0,0,8.6036,0,0,288.0000,0,0,0,0,0,0,0,0
+2016-12-24,288.0000,0,0,0,0,0,24.0000,0,0,288.0000,0,0,0,0,0,0,0,0
+2016-12-25,466.2700,0,0,0,0,0,24.0000,0,0,288.0000,0,0,0,0,0,0,0,0
+2016-12-26,1728.0000,0,0,0,0,216.3333,24.0000,0,0,288.0000,0,0,0,0,0,0,0,0
+2016-12-27,2293.7600,3739.4133,3.2167,0,4298.8089,1924.7214,1964.5622,0,0,1328.6622,0,0,0,0,0,0,0,0
+2016-12-28,39422.3022,21931.9200,24.0000,1304.6303,6587.9644,2671.1944,4285.3467,0,1962.8444,3523.0667,0,0,0,94.0111,181.4300,0,0,0
+2016-12-29,55290.2700,51398.0422,1901.3108,13933.2064,17862.8422,10260.0844,7035.1161,758.9889,3901.6422,4315.9531,1643.9111,0,516.0911,532.0042,864.0000,0,1038.2222,10.0983
+2016-12-30,56377.7367,53688.2303,63888.1919,24424.9989,18930.7533,7995.6400,10377.4728,1068.1136,5473.3125,4131.6792,9238.5464,7404.4267,6971.0514,3598.5506,543.4833,522.1678,402.8000,82.1119
+2016-12-31,25351.0100,30521.7450,88804.5933,22589.8486,4157.1944,12068.8131,8561.7150,358.6408,6235.8008,3273.0428,3313.1372,5701.5467,4629.6697,6528.7675,0,125.4733,0,8.6314
+2017-01-01,6796.9089,7608.0661,8671.4836,12146.7419,0,4958.9922,3555.6356,19081.7586,3042.7914,2683.5472,27.1514,0,299.9489,32.8389,0,870.5067,3.4667,0
+---------

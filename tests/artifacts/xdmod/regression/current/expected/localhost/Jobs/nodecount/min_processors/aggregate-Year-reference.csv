@@ -1,0 +1,24 @@
+title
+"Job Size: Min (Core Count): by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Node Count","Job Size: Min (Core Count)"
+28,336
+24,288
+20,160
+16,128
+7,112
+9,108
+12,96
+8,64
+5,60
+14,56
+6,48
+3,36
+4,32
+2,16
+1,1
+---------

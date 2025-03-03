@@ -1,0 +1,20 @@
+title
+"Number of Users: Active: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Mathematical and Physical Sciences] Number of Users: Active","[Engineering] Number of Users: Active","[Geosciences] Number of Users: Active","[Biological Sciences] Number of Users: Active","[Social, Behavioral, and Economic Sciences] Number of Users: Active","[Computer and Information Science and Engineering] Number of Users: Active","[Humanities/Arts] Number of Users: Active"
+2016-12-22,1,0,0,1,0,0,0
+2016-12-23,2,0,0,1,0,0,0
+2016-12-24,2,0,0,1,0,0,0
+2016-12-25,3,0,0,1,0,0,0
+2016-12-26,4,0,0,1,0,0,0
+2016-12-27,10,1,0,4,1,0,0
+2016-12-28,15,2,1,4,1,2,0
+2016-12-29,19,6,4,5,3,4,2
+2016-12-30,24,12,8,6,6,5,3
+2016-12-31,20,13,6,5,4,4,3
+2017-01-01,12,10,5,4,3,2,2
+---------

@@ -1,0 +1,11 @@
+title
+"GPU Hours: Total: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[1] GPU Hours: Total","[2] GPU Hours: Total","[3 - 4] GPU Hours: Total","[5 - 8] GPU Hours: Total","[9 - 16] GPU Hours: Total","[17 - 32] GPU Hours: Total","[33 - 64] GPU Hours: Total","[65 - 128] GPU Hours: Total","[129 - 256] GPU Hours: Total","[257 - 512] GPU Hours: Total"
+2016-12,0.0000,0.0000,0.0000,0.0000,465.4928,0.0000,0.0000,0.0000,0.0000,0.0000
+2017-01,0.0000,0.0000,0.0000,0.0000,41.4200,0.0000,0.0000,0.0000,0.0000,0
+---------

@@ -1,0 +1,20 @@
+title
+"Screwdriver CPU Utilization (%): by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Electrical and Communication Systems] Screwdriver CPU Utilization (%)","[Microelectronic Information Processing Systems] Screwdriver CPU Utilization (%)","[Chemistry] Screwdriver CPU Utilization (%)","[Social and Economic Science] Screwdriver CPU Utilization (%)","[Mechanical and Structural Systems] Screwdriver CPU Utilization (%)","[Mathematical Sciences] Screwdriver CPU Utilization (%)","[Design and Manufacturing Systems] Screwdriver CPU Utilization (%)","[Materials Research] Screwdriver CPU Utilization (%)","[Astronomical Sciences] Screwdriver CPU Utilization (%)","[Chemical, Thermal Systems] Screwdriver CPU Utilization (%)","[Molecular Biosciences] Screwdriver CPU Utilization (%)","[Polar Programs] Screwdriver CPU Utilization (%)","[Arts] Screwdriver CPU Utilization (%)","[Earth Sciences] Screwdriver CPU Utilization (%)","[Physics] Screwdriver CPU Utilization (%)","[Environmental Biology] Screwdriver CPU Utilization (%)","[Atmospheric Sciences] Screwdriver CPU Utilization (%)","[Computer and Computation Research] Screwdriver CPU Utilization (%)"
+2016-12-22,0,0,0.2118,0,0,0,0,0,0,0,0.2093,0,0,0,0,0,0,0
+2016-12-23,0,0,0.3000,0,0,0,0,0,0.0090,0,0.3000,0,0,0,0,0,0,0
+2016-12-24,0,0,0.3000,0,0,0,0,0,0.0250,0,0.3000,0,0,0,0,0,0,0
+2016-12-25,0,0,0.4857,0,0,0,0,0,0.0250,0,0.3000,0,0,0,0,0,0,0
+2016-12-26,0,0,1.8000,0,0,0.2253,0,0,0.0250,0,0.3000,0,0,0,0,0,0,0
+2016-12-27,3.8952,0,1.1947,0.0034,0,1.0025,0,4.4779,0.6821,0,0.6920,0,0,0,0,0,0,0
+2016-12-28,22.8458,1.3590,13.6883,0.0250,0,1.3912,2.0446,3.4312,1.4880,0,1.8349,0,0,0.0979,0.1890,0,0,0
+2016-12-29,26.7698,14.5138,19.1980,0.4951,1.7124,5.3438,4.0642,6.2024,2.4427,0,2.2479,0.7906,0.2688,0.2771,0.9000,0,1.0815,0.0105
+2016-12-30,27.9626,25.4427,14.6817,13.3100,9.6235,4.1644,5.7014,6.5732,3.6033,7.7129,2.1519,0.5563,3.6308,1.8742,0.5661,0.5439,0.4196,0.0855
+2016-12-31,15.8967,23.5311,6.6018,18.5010,3.4512,6.2858,6.4956,2.1652,4.4592,5.9391,1.7047,0.1245,2.4113,6.8008,0,0.1307,0,0.0090
+2017-01-01,3.9625,12.6529,1.7700,1.8066,0.0283,2.5828,3.1696,0,1.8519,0,1.3977,9.9384,0.1562,0.0342,0,0.9068,0.0036,0
+---------

@@ -1,0 +1,11 @@
+title
+"CPU Hours: Per Job: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"GPU Count","CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+0,11.74453254,0.7927749973468059
+2,1520.73833333,899.5902978802504
+---------

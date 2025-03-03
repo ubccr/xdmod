@@ -1,0 +1,28 @@
+title
+"Node Hours: Total: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Node Hours: Total"
+curry,117317.4928
+banana-cream,23087.8978
+derby,6702.5344
+cashew,2773.5564
+apple,1140.4758
+coconut-cream,1051.3842
+buttermilk,965.4461
+blackberry,923.6869
+bavarian-cream,706.9989
+fish,676.7792
+bumbleberry,265.4119
+chestnut,258.8667
+cherry,125.1836
+boysenberry,107.2414
+cheese,49.1336
+butter,45.5336
+blueberry,42.4689
+flapper,33.2775
+green-grape,30.3778
+---------

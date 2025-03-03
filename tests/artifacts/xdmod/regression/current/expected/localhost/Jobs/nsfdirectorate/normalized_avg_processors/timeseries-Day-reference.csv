@@ -1,0 +1,20 @@
+title
+"Job Size: Normalized (% of Total Cores): by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Biological Sciences] Job Size: Normalized (% of Total Cores)","[Humanities/Arts] Job Size: Normalized (% of Total Cores)","[Engineering] Job Size: Normalized (% of Total Cores)","[Geosciences] Job Size: Normalized (% of Total Cores)","[Social, Behavioral, and Economic Sciences] Job Size: Normalized (% of Total Cores)","[Mathematical and Physical Sciences] Job Size: Normalized (% of Total Cores)","[Computer and Information Science and Engineering] Job Size: Normalized (% of Total Cores)"
+2016-12-22,0.300000000,0,0,0,0,0.300000000,0
+2016-12-23,0.300000000,0,0,0,0,0.162500000,0
+2016-12-24,0.300000000,0,0,0,0,0.162500000,0
+2016-12-25,0.300000000,0,0,0,0,0.365000000,0
+2016-12-26,0.300000000,0,0,0,0,0.191250000,0
+2016-12-27,0.200000000,0,2.400000000,0,0.025000000,0.167083333,0
+2016-12-28,0.161538462,0,0.244907407,0.500000000,0.025000000,0.256250000,0.029487179
+2016-12-29,0.045000000,0.140909091,0.096679198,0.468750000,0.059678988,0.189383013,0.027854230
+2016-12-30,0.304000000,0.140000000,0.121752266,0.014194479,0.042276790,0.042305188,0.029449405
+2016-12-31,0.470312500,0.136111111,0.078579812,0.011121703,0.047710969,0.046537151,0.027981928
+2017-01-01,0.400650289,0.130000000,0.108176101,0.141732885,0.045808971,0.057665245,0.027484787
+---------

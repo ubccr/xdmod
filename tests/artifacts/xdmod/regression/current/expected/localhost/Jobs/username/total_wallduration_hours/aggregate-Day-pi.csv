@@ -1,0 +1,16 @@
+title
+"Wall Hours: Total: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","Wall Hours: Total"
+ovenb,413.8244
+swath,405.3619
+ybsbu,232.4297
+sante,174.8775
+litst,3.6653
+savsp,0.6342
+---------

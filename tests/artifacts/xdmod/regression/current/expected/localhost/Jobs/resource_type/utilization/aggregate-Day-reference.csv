@@ -1,0 +1,10 @@
+title
+"Screwdriver CPU Utilization (%): by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Type","Screwdriver CPU Utilization (%)"
+"High-performance computing",19.0343
+---------

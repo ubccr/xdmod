@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[fish] Job Size: Per Job (Core Count)","[coconut-cream] Job Size: Per Job (Core Count)","[butter] Job Size: Per Job (Core Count)","[derby] Job Size: Per Job (Core Count)","[cheese] Job Size: Per Job (Core Count)","[green-grape] Job Size: Per Job (Core Count)","[blueberry] Job Size: Per Job (Core Count)","[bumbleberry] Job Size: Per Job (Core Count)","[cashew] Job Size: Per Job (Core Count)","[buttermilk] Job Size: Per Job (Core Count)","[banana-cream] Job Size: Per Job (Core Count)","[apple] Job Size: Per Job (Core Count)","[boysenberry] Job Size: Per Job (Core Count)","[bavarian-cream] Job Size: Per Job (Core Count)","[curry] Job Size: Per Job (Core Count)","[blackberry] Job Size: Per Job (Core Count)","[flapper] Job Size: Per Job (Core Count)","[chestnut] Job Size: Per Job (Core Count)","[cherry] Job Size: Per Job (Core Count)"
+2016-12,29.4167,47.3846,32.0000,18.5366,20.0000,17.3443,12.0000,11.7778,10.8868,14.8750,9.4149,8.2328,7.8846,7.2581,3.5292,5.5000,5.0000,12.0000,2.0000
+2017-01,0,19.2727,18.0000,44.2222,0,22.9565,0,12.0000,10.5532,1.0000,9.7079,8.2013,2.0000,8.5000,8.0224,3.7273,5.0000,4.0769,4.0000
+---------

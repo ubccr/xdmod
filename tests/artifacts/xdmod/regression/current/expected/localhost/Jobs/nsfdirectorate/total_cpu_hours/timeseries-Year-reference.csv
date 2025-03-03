@@ -1,0 +1,11 @@
+title
+"CPU Hours: Total: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Mathematical and Physical Sciences] CPU Hours: Total","[Engineering] CPU Hours: Total","[Social, Behavioral, and Economic Sciences] CPU Hours: Total","[Computer and Information Science and Engineering] CPU Hours: Total","[Geosciences] CPU Hours: Total","[Biological Sciences] CPU Hours: Total","[Humanities/Arts] CPU Hours: Total"
+2016,302576.7286,206154.5189,154621.3128,62353.5258,14380.0989,18573.0017,12116.8122
+2017,15311.5367,10678.0089,8671.4836,12146.7419,19118.0642,3554.0539,299.9489
+---------

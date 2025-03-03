@@ -1,0 +1,75 @@
+title
+"Job Size: Min (Core Count): by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Job Size: Min (Core Count)"
+"Warbler, Yellow-browed",160
+"Goose, Egyptian",112
+"Scaup, Lesser",112
+"Gallinule, Allen's",108
+Crane,96
+"Pipit, Meadow",96
+"Scoter, Velvet",80
+Smew,72
+Chaffinch,64
+"Duck, Ferruginous",60
+Peregrine,60
+"Grosbeak, Evening",56
+Siskin,48
+"Warbler, Dusky",48
+Whimbrel,36
+"Swift, Alpine",32
+"Ibis, Glossy",20
+"Martin, Crag",20
+"Bunting, Yellow-browed",16
+Ovenbird,16
+"Partridge, Red-legged",16
+"Sparrow, White-throated",16
+"Crane, Sandhill",12
+"Plover, Caspian",12
+"Plover, White-tailed",12
+"Sandpiper, Spotted",12
+Shag,12
+"Stint, Little",12
+"Thrush, Mistle",12
+"Warbler, Sardinian",12
+"Bunting, Reed",8
+"Bunting, Yellow-breasted",8
+"Dove, Turtle",8
+Dunlin,8
+Fieldfare,8
+"Shearwater, Cory's",8
+"Warbler, Hooded",8
+"Auk, Little",5
+Roller,5
+"Redpoll, Lesser",4
+"Sapsucker, Yellow-bellied",4
+"Thrush, Swainson's",4
+"Thrush, Grey-cheeked",2
+"Bunting, Black-headed",1
+Coot,1
+"Egret, Cattle",1
+"Grebe, Pied-billed",1
+"Grey, Great",1
+"Grey, Lesser",1
+"Grey, Southern",1
+"Gull, Ring-billed",1
+"Harrier, Hen",1
+Honey-buzzard,1
+Jackdaw,1
+Lapwing,1
+"Martin, Purple",1
+Moorhen,1
+"Oriole, Baltimore",1
+"Shrike, Long-tailed",1
+"Sparrow, Savannah",1
+"Tern, Sandwich",1
+"Treecreeper, Short-toed",1
+"Warbler, Booted",1
+"Warbler, Garden",1
+"Warbler, Golden-winged",1
+"Warbler, Moltoni's",1
+---------

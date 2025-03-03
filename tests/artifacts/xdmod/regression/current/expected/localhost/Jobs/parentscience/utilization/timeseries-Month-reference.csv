@@ -1,0 +1,11 @@
+title
+"Screwdriver CPU Utilization (%): by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Electrical and Communication Systems] Screwdriver CPU Utilization (%)","[Microelectronic Information Processing Systems] Screwdriver CPU Utilization (%)","[Chemistry] Screwdriver CPU Utilization (%)","[Social and Economic Science] Screwdriver CPU Utilization (%)","[Mathematical Sciences] Screwdriver CPU Utilization (%)","[Design and Manufacturing Systems] Screwdriver CPU Utilization (%)","[Materials Research] Screwdriver CPU Utilization (%)","[Mechanical and Structural Systems] Screwdriver CPU Utilization (%)","[Astronomical Sciences] Screwdriver CPU Utilization (%)","[Chemical, Thermal Systems] Screwdriver CPU Utilization (%)","[Molecular Biosciences] Screwdriver CPU Utilization (%)","[Polar Programs] Screwdriver CPU Utilization (%)","[Arts] Screwdriver CPU Utilization (%)","[Earth Sciences] Screwdriver CPU Utilization (%)","[Physics] Screwdriver CPU Utilization (%)","[Environmental Biology] Screwdriver CPU Utilization (%)","[Atmospheric Sciences] Screwdriver CPU Utilization (%)","[Computer and Computation Research] Screwdriver CPU Utilization (%)"
+2016-12,5.4193,3.2423,4.1148,3.0974,1.4077,0.9153,1.4999,2.9574,0.9347,0.6826,0.6224,0.0615,0.4854,0.4308,0.0828,0.0337,0.0751,0.0053
+2017-01,0.1278,0.4082,0.0571,0.0583,0.0833,0.1022,0,0.0009,0.0597,0,0.0451,0.3206,0.0050,0.0011,0,0.0293,0.0001,0
+---------

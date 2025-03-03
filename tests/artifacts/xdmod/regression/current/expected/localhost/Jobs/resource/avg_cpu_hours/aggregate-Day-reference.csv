@@ -1,0 +1,14 @@
+title
+"CPU Hours: Per Job: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+robertson,32.08669544,1.5845303063155447
+frearson,14.18197313,1.4262887880895403
+pozidriv,6.37875732,0.33815435199138116
+mortorq,2.94454458,0.12730307613070352
+phillips,2.90854877,0.8586643406314756
+---------

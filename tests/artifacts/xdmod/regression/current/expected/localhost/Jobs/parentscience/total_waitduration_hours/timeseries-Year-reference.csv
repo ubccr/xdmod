@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Astronomical Sciences] Wait Hours: Total","[Social and Economic Science] Wait Hours: Total","[Molecular Biosciences] Wait Hours: Total","[Materials Research] Wait Hours: Total","[Electrical and Communication Systems] Wait Hours: Total","[Polar Programs] Wait Hours: Total","[Earth Sciences] Wait Hours: Total","[Environmental Biology] Wait Hours: Total","[Microelectronic Information Processing Systems] Wait Hours: Total","[Chemistry] Wait Hours: Total","[Arts] Wait Hours: Total","[Mathematical Sciences] Wait Hours: Total","[Atmospheric Sciences] Wait Hours: Total","[Design and Manufacturing Systems] Wait Hours: Total","[Chemical, Thermal Systems] Wait Hours: Total","[Physics] Wait Hours: Total","[Computer and Computation Research] Wait Hours: Total","[Mechanical and Structural Systems] Wait Hours: Total"
+2016,163654.3247,95082.2167,5259.7317,5142.3756,4664.4050,118.4581,3927.8756,1203.9786,544.9058,406.8461,321.4447,85.0647,25.7286,36.7158,20.0331,11.1744,6.4781,0.0106
+2017,7.3061,19831.9886,1.2347,0,30.3767,4055.6908,0.0003,1826.4933,7.5306,36.3178,0.0000,0.0000,36.3150,0.3344,0,0,0,0.0047
+---------

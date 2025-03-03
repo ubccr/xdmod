@@ -1,0 +1,17 @@
+title
+"Node Hours: Total: by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time","Node Hours: Total"
+"0 - 1s",9447.1700
+"1 - 30s",22041.2992
+"30s - 30min",79592.7303
+"30 - 60min",1294.0506
+"1 - 5hr",15211.2039
+"5 - 10hr",7117.9731
+"10 - 18hr",966.6325
+18+hr,20632.6881
+---------

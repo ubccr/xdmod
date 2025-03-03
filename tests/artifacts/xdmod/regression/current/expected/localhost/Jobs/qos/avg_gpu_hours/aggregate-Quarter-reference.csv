@@ -1,0 +1,28 @@
+title
+"GPU Hours: Per Job: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"GPU Hours: Per Job"
+chestnut,38.99329060
+apple,0.00000000
+banana-cream,0.00000000
+bavarian-cream,0.00000000
+blackberry,0.00000000
+blueberry,0.00000000
+boysenberry,0.00000000
+bumbleberry,0.00000000
+butter,0.00000000
+buttermilk,0.00000000
+cashew,0.00000000
+cheese,0.00000000
+cherry,0.00000000
+coconut-cream,0.00000000
+curry,0.00000000
+derby,0.00000000
+fish,0.00000000
+flapper,0.00000000
+green-grape,0.00000000
+---------

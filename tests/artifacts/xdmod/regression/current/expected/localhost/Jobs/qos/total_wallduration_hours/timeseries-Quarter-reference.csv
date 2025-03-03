@@ -1,0 +1,11 @@
+title
+"Wall Hours: Total: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[curry] Wall Hours: Total","[banana-cream] Wall Hours: Total","[cashew] Wall Hours: Total","[derby] Wall Hours: Total","[apple] Wall Hours: Total","[blackberry] Wall Hours: Total","[fish] Wall Hours: Total","[bavarian-cream] Wall Hours: Total","[bumbleberry] Wall Hours: Total","[chestnut] Wall Hours: Total","[buttermilk] Wall Hours: Total","[coconut-cream] Wall Hours: Total","[cherry] Wall Hours: Total","[boysenberry] Wall Hours: Total","[cheese] Wall Hours: Total","[blueberry] Wall Hours: Total","[butter] Wall Hours: Total","[flapper] Wall Hours: Total","[green-grape] Wall Hours: Total"
+"2016 Q4",87659.2733,15297.6378,2246.7575,2196.1803,921.1142,773.9442,676.7792,538.4183,4.0917,232.7464,180.7347,108.8197,113.6931,89.6122,49.1336,42.4689,22.1511,28.9964,15.6631
+"2017 Q1",14409.2628,969.3614,526.7989,74.6886,219.3428,149.7428,0,23.2497,261.3203,26.1203,27.1514,36.5161,11.4906,17.6292,0,0,16.3167,4.2811,5.3183
+---------

@@ -1,0 +1,10 @@
+title
+"Wall Hours: Per Session: by System Username"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[ylwwa] Wall Hours: Per Session","[yerwa] Wall Hours: Per Session","[setusca] Wall Hours: Per Session"
+"2018 Q2",36.50120370,27.87247685,0.56712121
+---------

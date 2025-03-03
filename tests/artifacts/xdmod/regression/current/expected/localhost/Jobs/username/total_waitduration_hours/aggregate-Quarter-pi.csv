@@ -1,0 +1,16 @@
+title
+"Wait Hours: Total: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","Wait Hours: Total"
+swath,163339.9808
+ovenb,94.3467
+sante,28.5511
+ybsbu,12.9547
+litst,0.9917
+savsp,0.3653
+---------

@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"GPU Count","Job Size: Weighted By CPU Hours (Core Count)"
+0,65.8108
+2,12.0000
+---------

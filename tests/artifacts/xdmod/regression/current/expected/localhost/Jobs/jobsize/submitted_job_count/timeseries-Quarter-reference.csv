@@ -1,0 +1,11 @@
+title
+"Number of Jobs Submitted: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[1] Number of Jobs Submitted","[2] Number of Jobs Submitted","[3 - 4] Number of Jobs Submitted","[5 - 8] Number of Jobs Submitted","[9 - 16] Number of Jobs Submitted","[17 - 32] Number of Jobs Submitted","[33 - 64] Number of Jobs Submitted","[65 - 128] Number of Jobs Submitted","[129 - 256] Number of Jobs Submitted","[257 - 512] Number of Jobs Submitted"
+"2016 Q4",6631,98,732,32324,16094,178,58,80,12,2
+"2017 Q1",323,0,0,9074,3534,57,28,17,1,0
+---------

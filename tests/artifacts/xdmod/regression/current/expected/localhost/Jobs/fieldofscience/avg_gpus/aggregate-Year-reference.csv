@@ -1,0 +1,49 @@
+title
+"GPU Count: Per Job: by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Group","GPU Count: Per Job","Std Dev: GPU Count: Per Job"
+Biophysics,0.1290,0.08824730508988667
+"Algebra and Number Theory",0.0000,0
+Arts,0.0000,0
+"Biochemistry and Molecular Structure and Function",0.0000,0
+"Cell Biology",0.0000,0
+"Computer and Computation Theory",0.0000,0
+"Decision, Risk, and Management Science",0.0000,0
+"Design and Computer-Integrated Engineering",0.0000,0
+"Design, Tools, and Test",0.0000,0
+Economics,0.0000,0
+"Emerging Technologies Initiation",0.0000,0
+"Experimental Systems",0.0000,0
+"Extragalactic Astronomy and Cosmology",0.0000,0
+"Fluid, Particulate, and Hydraulic Systems",0.0000,0
+"Galactic Astronomy",0.0000,0
+"Geology and Paleontology",0.0000,0
+Geophysics,0.0000,0
+"Global Atmospheric Research",0.0000,0
+"Law and Social Sciences",0.0000,0
+"Mechanics and Materials",0.0000,0
+"Metals, Ceramics, and Electronic Materials",0.0000,0
+"Operations Research and Production Systems",0.0000,0
+"Organic and Macromolecular Chemistry",0.0000,0
+"Physical Chemistry",0.0000,0
+"Polar Aeronomy and Astrophysics",0.0000,0
+"Polar Meteorology",0.0000,0
+"Polar Ocean and Climate Systems",0.0000,0
+"Quantum Electronics, Waves, and Beams",0.0000,0
+Seismology,0.0000,0
+Sociology,0.0000,0
+"Solid State Chemistry and Polymers",0.0000,0
+"Solid-State and Microstructures",0.0000,0
+"Statistics and Probability",0.0000,0
+"Stellar Astronomy and Astrophysics",0.0000,0
+"Structures and Building Systems",0.0000,0
+"Systematic and Population Biology",0.0000,0
+"Systems Prototyping and Fabrication",0.0000,0
+Tectonics,0.0000,0
+"Theoretical Physics",0.0000,0
+"Volcanology and Mantle Geochemistry",0.0000,0
+---------

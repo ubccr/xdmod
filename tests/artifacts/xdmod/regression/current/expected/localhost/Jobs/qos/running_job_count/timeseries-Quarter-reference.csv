@@ -1,0 +1,11 @@
+title
+"Number of Jobs Running: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[banana-cream] Number of Jobs Running","[curry] Number of Jobs Running","[apple] Number of Jobs Running","[bumbleberry] Number of Jobs Running","[derby] Number of Jobs Running","[buttermilk] Number of Jobs Running","[green-grape] Number of Jobs Running","[cashew] Number of Jobs Running","[boysenberry] Number of Jobs Running","[coconut-cream] Number of Jobs Running","[bavarian-cream] Number of Jobs Running","[blackberry] Number of Jobs Running","[cheese] Number of Jobs Running","[chestnut] Number of Jobs Running","[fish] Number of Jobs Running","[butter] Number of Jobs Running","[cherry] Number of Jobs Running","[flapper] Number of Jobs Running","[blueberry] Number of Jobs Running"
+"2016 Q4",46482,8821,378,18,164,64,61,53,52,13,31,28,15,1,12,4,6,3,3
+"2017 Q1",9703,6306,159,225,18,28,23,47,1,22,2,11,0,13,0,6,1,1,0
+---------

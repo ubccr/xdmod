@@ -1,0 +1,20 @@
+title
+"Number of Jobs Submitted: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[1] Number of Jobs Submitted","[2] Number of Jobs Submitted","[3 - 4] Number of Jobs Submitted","[5 - 8] Number of Jobs Submitted","[9 - 16] Number of Jobs Submitted","[17 - 32] Number of Jobs Submitted","[33 - 64] Number of Jobs Submitted","[65 - 128] Number of Jobs Submitted","[129 - 256] Number of Jobs Submitted","[257 - 512] Number of Jobs Submitted"
+2016-12-22,0,0,0,0,1,0,0,0,0,0
+2016-12-23,1,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0
+2016-12-25,0,0,0,0,1,0,0,0,0,0
+2016-12-26,0,0,0,0,5,0,0,0,0,0
+2016-12-27,2,0,0,1,5,9,1,0,0,0
+2016-12-28,337,0,0,5,23,5,0,1,8,0
+2016-12-29,915,1,8,140,120,5,3,14,0,0
+2016-12-30,3257,0,8,17147,5142,55,27,23,1,0
+2016-12-31,1794,0,1,11882,10376,31,12,14,1,0
+2017-01-01,323,0,0,9074,3534,57,28,17,1,0
+---------

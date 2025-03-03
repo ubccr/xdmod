@@ -1,0 +1,17 @@
+title
+"Job Size: Normalized (% of Total Cores): by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wall Time","Job Size: Normalized (% of Total Cores)"
+"0 - 1s",0.050929608
+"1 - 30s",0.041701773
+"30s - 30min",0.043670923
+"30 - 60min",0.057160507
+"1 - 5hr",0.042873394
+"5 - 10hr",0.016883947
+"10 - 18hr",0.067726109
+18+hr,0.021325714
+---------

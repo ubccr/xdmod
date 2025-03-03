@@ -1,0 +1,28 @@
+title
+"Number of Resources: Active: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Number of Resources: Active"
+banana-cream,4
+apple,2
+bavarian-cream,2
+blackberry,2
+boysenberry,2
+bumbleberry,2
+blueberry,1
+butter,1
+buttermilk,1
+cashew,1
+cheese,1
+cherry,1
+chestnut,1
+coconut-cream,1
+curry,1
+derby,1
+fish,1
+flapper,1
+green-grape,1
+---------

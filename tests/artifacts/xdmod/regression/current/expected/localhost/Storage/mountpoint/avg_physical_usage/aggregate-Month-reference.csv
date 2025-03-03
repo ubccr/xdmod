@@ -1,0 +1,12 @@
+title
+"Physical Usage (Bytes): by Mountpoint"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Mountpoint,"Physical Usage (Bytes)"
+/data,0.0000
+/projects,0.0000
+/scratch,0.0000
+---------

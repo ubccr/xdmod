@@ -1,0 +1,11 @@
+title
+"Screwdriver CPU Utilization (%): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[robertson] Screwdriver CPU Utilization (%)","[frearson] Screwdriver CPU Utilization (%)","[mortorq] Screwdriver CPU Utilization (%)","[pozidriv] Screwdriver CPU Utilization (%)","[phillips] Screwdriver CPU Utilization (%)"
+2016-12,21.6673,43.9171,11.7551,6.2745,1.0411
+2017-01,1.5416,0.2301,0.3211,0.1924,0.0596
+---------

@@ -1,0 +1,19 @@
+title
+"Number of Jobs Submitted: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Size","Number of Jobs Submitted"
+1,6629
+2,1
+"3 - 4",17
+"5 - 8",38249
+"9 - 16",19207
+"17 - 32",162
+"33 - 64",71
+"65 - 128",69
+"129 - 256",11
+"257 - 512",0
+---------

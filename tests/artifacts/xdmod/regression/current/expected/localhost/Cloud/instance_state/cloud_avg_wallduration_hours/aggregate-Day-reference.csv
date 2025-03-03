@@ -1,0 +1,11 @@
+title
+"Wall Hours: Per Session: by VM State"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"VM State","Wall Hours: Per Session"
+Active,23.14924004
+Inactive,0.00000000
+---------

@@ -1,0 +1,10 @@
+title
+"Job Size: Per Job (Core Count)"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Summary,"Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+Screwdriver,8.7346,0.02156312501879985
+---------

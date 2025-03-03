@@ -1,0 +1,17 @@
+title
+"Screwdriver CPU Utilization (%): by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wall Time","Screwdriver CPU Utilization (%)"
+"0 - 1s",0.0000
+"1 - 30s",0.0003
+"30s - 30min",0.0290
+"30 - 60min",0.0351
+"1 - 5hr",0.0464
+"5 - 10hr",0.0188
+"10 - 18hr",0.0298
+18+hr,0.3205
+---------

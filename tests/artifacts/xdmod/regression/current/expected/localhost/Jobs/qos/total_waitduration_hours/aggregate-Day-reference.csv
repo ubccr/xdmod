@@ -1,0 +1,28 @@
+title
+"Wait Hours: Total: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Wait Hours: Total"
+curry,245178.1744
+banana-cream,55855.9608
+derby,2675.0058
+bumbleberry,2188.9739
+bavarian-cream,182.9489
+apple,105.3900
+fish,64.3475
+blackberry,56.5503
+cashew,36.5339
+chestnut,1.2331
+blueberry,0.1544
+green-grape,0.0294
+boysenberry,0.0172
+buttermilk,0.0153
+cheese,0.0150
+coconut-cream,0.0056
+butter,0.0047
+cherry,0.0003
+flapper,0.0003
+---------

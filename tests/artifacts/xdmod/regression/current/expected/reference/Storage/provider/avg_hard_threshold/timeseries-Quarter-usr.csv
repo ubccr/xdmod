@@ -1,0 +1,11 @@
+title
+"Quota: Hard Threshold (Bytes): by Service Provider"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[screw] Quota: Hard Threshold (Bytes)"
+"2018 Q4",1347045040128000
+"2019 Q1",1347045040128000
+---------

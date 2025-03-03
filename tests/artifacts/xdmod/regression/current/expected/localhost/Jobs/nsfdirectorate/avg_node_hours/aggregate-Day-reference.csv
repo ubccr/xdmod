@@ -1,0 +1,16 @@
+title
+"Node Hours: Per Job: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Decanal Unit","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+Engineering,56.96282432,2.005258852685409
+"Computer and Information Science and Engineering",25.30848292,
+Humanities/Arts,17.27322391,
+"Biological Sciences",8.85906941,1.1894594204595474
+Geosciences,5.54539143,0.08440112591169727
+"Mathematical and Physical Sciences",2.95953498,0.2089891479392211
+"Social, Behavioral, and Economic Sciences",0.29385782,0.0054675314147916015
+---------

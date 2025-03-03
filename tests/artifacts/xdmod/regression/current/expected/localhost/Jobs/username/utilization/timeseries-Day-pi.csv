@@ -1,0 +1,20 @@
+title
+"Screwdriver CPU Utilization (%): by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[ovenb] Screwdriver CPU Utilization (%)","[swath] Screwdriver CPU Utilization (%)","[ybsbu] Screwdriver CPU Utilization (%)","[sante] Screwdriver CPU Utilization (%)","[litst] Screwdriver CPU Utilization (%)","[savsp] Screwdriver CPU Utilization (%)"
+2016-12-23,0,0,0,0.0090,0,0
+2016-12-24,0,0,0,0.0250,0,0
+2016-12-25,0,0,0,0.0250,0,0
+2016-12-26,0,0,0,0.0250,0,0
+2016-12-27,0.3291,0,0.1425,0.0250,0,0
+2016-12-28,1.6000,0,0.4000,0.0250,0,0
+2016-12-29,1.6000,0.2403,0.2772,0.0408,0,0
+2016-12-30,1.6000,1.5376,0.5138,0.0074,0.0206,0.0002
+2016-12-31,1.3809,1.1610,0.4075,0,0.0102,0.0004
+2017-01-01,0.3871,0,0,0,0,0.0000
+---------

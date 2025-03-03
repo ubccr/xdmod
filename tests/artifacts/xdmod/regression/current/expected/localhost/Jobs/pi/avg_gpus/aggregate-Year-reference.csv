@@ -1,0 +1,50 @@
+title
+"GPU Count: Per Job: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+PI,"GPU Count: Per Job","Std Dev: GPU Count: Per Job"
+Chaffinch,0.1290,0.08824730508988667
+"Accentor, Alpine",0.0000,0
+Bittern,0.0000,0
+Blackbird,0.0000,0
+"Bluetail, Red-flanked",0.0000,0
+Bufflehead,0.0000,0
+"Bunting, Ortolan",0.0000,0
+"Chiffchaff, Iberian",0.0000,0
+Dotterel,0.0000,0
+"Dowitcher, Short-billed",0.0000,0
+Dunlin,0.0000,0
+"Egret, Snowy",0.0000,0
+Fieldfare,0.0000,0
+"Flycatcher, Taiga",0.0000,0
+Fulmar,0.0000,0
+"Goose, Red-breasted",0.0000,0
+"Gull, Glaucous-winged",0.0000,0
+"Gull, Yellow-legged",0.0000,0
+"Harrier, Hen",0.0000,0
+Jackdaw,0.0000,0
+"Kestrel, Lesser",0.0000,0
+"Lark, Calandra",0.0000,0
+"Martin, Sand",0.0000,0
+Moorhen,0.0000,0
+Nuthatch,0.0000,0
+"Petrel, Fea's",0.0000,0
+"Scaup, Lesser",0.0000,0
+"Shearwater, Balearic",0.0000,0
+"Shearwater, Great",0.0000,0
+"Shearwater, Macaronesian",0.0000,0
+Smew,0.0000,0
+"Spotted, Great",0.0000,0
+"Swift, Little",0.0000,0
+"Tern, Caspian",0.0000,0
+"Thrush, Hermit",0.0000,0
+"Warbler, Blackpoll",0.0000,0
+"Warbler, Cetti's",0.0000,0
+"Warbler, Hooded",0.0000,0
+"Warbler, Savi's",0.0000,0
+"White, Great",0.0000,0
+"Yellowthroat, Common",0.0000,0
+---------

@@ -1,0 +1,27 @@
+title
+"CPU Hours: Total: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Department,"CPU Hours: Total"
+Chemistry,188505.5578
+"Electrical and Communication Systems",168887.4169
+"Social and Economic Science",163292.7964
+"Microelectronic Information Processing Systems",74399.4261
+"Materials Research",51837.5633
+"Mathematical Sciences",40095.7789
+"Astronomical Sciences",35860.4519
+"Polar Programs",21267.5019
+"Design and Manufacturing Systems",20616.3914
+"Molecular Biosciences",20608.9078
+"Mechanical and Structural Systems",14222.7461
+"Chemical, Thermal Systems",13105.9733
+Arts,12416.7611
+"Earth Sciences",10786.1722
+Physics,1588.9133
+"Environmental Biology",1518.1478
+"Atmospheric Sciences",1444.4889
+"Computer and Computation Research",100.8417
+---------

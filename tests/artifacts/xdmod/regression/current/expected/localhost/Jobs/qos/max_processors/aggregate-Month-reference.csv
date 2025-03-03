@@ -1,0 +1,28 @@
+title
+"Job Size: Max (Core Count): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Job Size: Max (Core Count)"
+curry,336
+banana-cream,192
+derby,144
+buttermilk,112
+butter,80
+bavarian-cream,64
+coconut-cream,64
+green-grape,48
+fish,32
+apple,24
+cheese,20
+cashew,16
+blueberry,12
+bumbleberry,12
+chestnut,12
+blackberry,8
+boysenberry,8
+flapper,5
+cherry,4
+---------

@@ -1,0 +1,12 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[whimb] Job Size: Weighted By CPU Hours (Core Count)"
+"2016 Q4",63.6781
+"2017 Q1",60.4143
+---------

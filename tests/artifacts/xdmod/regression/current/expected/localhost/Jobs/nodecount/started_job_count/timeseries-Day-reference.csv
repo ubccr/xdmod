@@ -1,0 +1,20 @@
+title
+"Number of Jobs Started: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[1] Number of Jobs Started","[2] Number of Jobs Started","[8] Number of Jobs Started","[4] Number of Jobs Started","[6] Number of Jobs Started","[12] Number of Jobs Started","[3] Number of Jobs Started","[7] Number of Jobs Started","[5] Number of Jobs Started","[16] Number of Jobs Started","[14] Number of Jobs Started","[20] Number of Jobs Started","[9] Number of Jobs Started","[24] Number of Jobs Started","[28] Number of Jobs Started"
+2016-12-22,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-23,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-25,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-26,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+2016-12-27,23,2,4,0,1,1,0,0,0,0,0,0,0,0,0
+2016-12-28,378,5,12,3,1,8,0,1,0,0,0,0,0,0,0
+2016-12-29,1257,4,10,4,7,0,0,4,2,0,1,1,0,0,0
+2016-12-30,26989,45,31,34,1,2,0,4,3,2,1,0,1,1,1
+2016-12-31,27296,24,15,10,3,0,5,0,0,1,0,0,0,0,0
+2017-01-01,14944,67,33,46,7,0,4,0,0,2,0,1,0,0,0
+---------

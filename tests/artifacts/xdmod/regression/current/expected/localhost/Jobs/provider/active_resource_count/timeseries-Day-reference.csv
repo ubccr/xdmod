@@ -1,0 +1,20 @@
+title
+"Number of Resources: Active: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[screw] Number of Resources: Active","[wrench] Number of Resources: Active"
+2016-12-22,1,1
+2016-12-23,1,1
+2016-12-24,1,1
+2016-12-25,1,1
+2016-12-26,2,1
+2016-12-27,4,1
+2016-12-28,4,1
+2016-12-29,4,1
+2016-12-30,4,1
+2016-12-31,4,1
+2017-01-01,4,1
+---------

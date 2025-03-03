@@ -1,0 +1,11 @@
+title
+"Job Size: Min (Core Count): by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Biological Sciences] Job Size: Min (Core Count)","[Computer and Information Science and Engineering] Job Size: Min (Core Count)","[Engineering] Job Size: Min (Core Count)","[Geosciences] Job Size: Min (Core Count)","[Humanities/Arts] Job Size: Min (Core Count)","[Mathematical and Physical Sciences] Job Size: Min (Core Count)","[Social, Behavioral, and Economic Sciences] Job Size: Min (Core Count)"
+2016,1,1,1,1,1,1,1
+2017,1,1,1,1,4,1,1
+---------

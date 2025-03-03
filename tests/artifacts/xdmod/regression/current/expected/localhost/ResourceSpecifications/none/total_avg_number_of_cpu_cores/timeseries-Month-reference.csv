@@ -1,0 +1,11 @@
+title
+"Average Number of CPU Cores: Total (Core Count)"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Month,"[Screwdriver] Average Number of CPU Cores: Total (Core Count)"
+2016-12,10400.0000
+2017-01,20000.0000
+---------

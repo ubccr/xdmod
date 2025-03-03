@@ -1,0 +1,11 @@
+title
+"GPU Hours: Total: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[0 - 1s] GPU Hours: Total","[1 - 30s] GPU Hours: Total","[30s - 30min] GPU Hours: Total","[30 - 60min] GPU Hours: Total","[1 - 5hr] GPU Hours: Total","[5 - 10hr] GPU Hours: Total","[10 - 18hr] GPU Hours: Total","[18+hr] GPU Hours: Total"
+2016,0,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,465.4928
+2017,0.0000,0.0094,0.0000,0.0000,0.0000,0.0000,0.0000,41.4106
+---------

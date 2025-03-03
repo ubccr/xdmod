@@ -1,0 +1,49 @@
+title
+"Number of Jobs Submitted: by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Group","Number of Jobs Submitted"
+Sociology,49664
+"Physical Chemistry",6927
+"Decision, Risk, and Management Science",2633
+"Systems Prototyping and Fabrication",2586
+Tectonics,719
+"Polar Ocean and Climate Systems",693
+"Operations Research and Production Systems",308
+"Polar Meteorology",154
+"Systematic and Population Biology",123
+"Mechanics and Materials",84
+Economics,69
+"Cell Biology",55
+"Statistics and Probability",50
+"Galactic Astronomy",47
+"Experimental Systems",37
+Arts,31
+Biophysics,31
+"Organic and Macromolecular Chemistry",25
+"Quantum Electronics, Waves, and Beams",22
+"Computer and Computation Theory",20
+"Emerging Technologies Initiation",16
+"Biochemistry and Molecular Structure and Function",14
+Geophysics,14
+"Stellar Astronomy and Astrophysics",14
+"Solid State Chemistry and Polymers",13
+"Algebra and Number Theory",11
+"Extragalactic Astronomy and Cosmology",10
+Seismology,10
+"Design and Computer-Integrated Engineering",9
+"Structures and Building Systems",8
+"Metals, Ceramics, and Electronic Materials",7
+"Geology and Paleontology",4
+"Theoretical Physics",3
+"Design, Tools, and Test",1
+"Law and Social Sciences",1
+"Polar Aeronomy and Astrophysics",1
+"Solid-State and Microstructures",1
+"Volcanology and Mantle Geochemistry",1
+"Fluid, Particulate, and Hydraulic Systems",0
+"Global Atmospheric Research",0
+---------

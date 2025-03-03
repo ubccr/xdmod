@@ -1,0 +1,28 @@
+title
+"Number of Jobs Submitted: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Number of Jobs Submitted"
+banana-cream,52426
+curry,10762
+apple,526
+bumbleberry,168
+derby,108
+buttermilk,92
+green-grape,84
+boysenberry,52
+cashew,49
+coconut-cream,34
+bavarian-cream,29
+blackberry,27
+cheese,15
+chestnut,13
+butter,9
+fish,9
+cherry,6
+flapper,4
+blueberry,3
+---------

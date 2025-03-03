@@ -1,0 +1,11 @@
+title
+"Wall Hours: Per Job: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"GPU Count","Wall Hours: Per Job","Std Dev: Wall Hours: Per Job"
+0,1.79107501,0.017902725699608067
+2,126.72819444,
+---------

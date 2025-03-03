@@ -1,0 +1,10 @@
+title
+"Core Hour Utilization (%): by Instance Type"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[c1.m4] Core Hour Utilization (%)","[c4.m16] Core Hour Utilization (%)","[c2.m4] Core Hour Utilization (%)","[c1.m1] Core Hour Utilization (%)","[c2.m8] Core Hour Utilization (%)","[m1.small] Core Hour Utilization (%)"
+"2018 Q2",0.2181,0.1018,0.1009,0.0016,0.0001,0.0000
+---------

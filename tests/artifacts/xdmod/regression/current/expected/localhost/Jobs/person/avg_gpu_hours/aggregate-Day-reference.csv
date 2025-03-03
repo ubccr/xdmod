@@ -1,0 +1,75 @@
+title
+"GPU Hours: Per Job: by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"GPU Hours: Per Job"
+"Oriole, Baltimore",16.89709259
+"Auk, Little",0.00000000
+"Bunting, Black-headed",0.00000000
+"Bunting, Reed",0.00000000
+"Bunting, Yellow-breasted",0.00000000
+"Bunting, Yellow-browed",0.00000000
+Chaffinch,0.00000000
+Coot,0.00000000
+Crane,0.00000000
+"Crane, Sandhill",0.00000000
+"Dove, Turtle",0.00000000
+"Duck, Ferruginous",0.00000000
+Dunlin,0.00000000
+"Egret, Cattle",0.00000000
+Fieldfare,0.00000000
+"Gallinule, Allen's",0.00000000
+"Goose, Egyptian",0.00000000
+"Grebe, Pied-billed",0.00000000
+"Grey, Great",0.00000000
+"Grey, Lesser",0.00000000
+"Grey, Southern",0.00000000
+"Grosbeak, Evening",0.00000000
+"Gull, Ring-billed",0.00000000
+"Harrier, Hen",0.00000000
+Honey-buzzard,0.00000000
+"Ibis, Glossy",0.00000000
+Jackdaw,0.00000000
+Lapwing,0.00000000
+"Martin, Crag",0.00000000
+"Martin, Purple",0.00000000
+Moorhen,0.00000000
+Ovenbird,0.00000000
+"Partridge, Red-legged",0.00000000
+Peregrine,0.00000000
+"Pipit, Meadow",0.00000000
+"Plover, Caspian",0.00000000
+"Plover, White-tailed",0.00000000
+"Redpoll, Lesser",0.00000000
+Roller,0.00000000
+"Sandpiper, Spotted",0.00000000
+"Sapsucker, Yellow-bellied",0.00000000
+"Scaup, Lesser",0.00000000
+"Scoter, Velvet",0.00000000
+Shag,0.00000000
+"Shearwater, Cory's",0.00000000
+"Shrike, Long-tailed",0.00000000
+Siskin,0.00000000
+Smew,0.00000000
+"Sparrow, Savannah",0.00000000
+"Sparrow, White-throated",0.00000000
+"Stint, Little",0.00000000
+"Swift, Alpine",0.00000000
+"Tern, Sandwich",0.00000000
+"Thrush, Grey-cheeked",0.00000000
+"Thrush, Mistle",0.00000000
+"Thrush, Swainson's",0.00000000
+"Treecreeper, Short-toed",0.00000000
+"Warbler, Booted",0.00000000
+"Warbler, Dusky",0.00000000
+"Warbler, Garden",0.00000000
+"Warbler, Golden-winged",0.00000000
+"Warbler, Hooded",0.00000000
+"Warbler, Moltoni's",0.00000000
+"Warbler, Sardinian",0.00000000
+"Warbler, Yellow-browed",0.00000000
+Whimbrel,0.00000000
+---------

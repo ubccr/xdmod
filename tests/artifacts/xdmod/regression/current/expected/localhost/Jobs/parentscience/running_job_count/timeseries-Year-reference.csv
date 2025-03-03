@@ -1,0 +1,11 @@
+title
+"Number of Jobs Running: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Social and Economic Science] Number of Jobs Running","[Chemistry] Number of Jobs Running","[Microelectronic Information Processing Systems] Number of Jobs Running","[Earth Sciences] Number of Jobs Running","[Polar Programs] Number of Jobs Running","[Astronomical Sciences] Number of Jobs Running","[Design and Manufacturing Systems] Number of Jobs Running","[Environmental Biology] Number of Jobs Running","[Electrical and Communication Systems] Number of Jobs Running","[Materials Research] Number of Jobs Running","[Molecular Biosciences] Number of Jobs Running","[Mechanical and Structural Systems] Number of Jobs Running","[Arts] Number of Jobs Running","[Mathematical Sciences] Number of Jobs Running","[Computer and Computation Research] Number of Jobs Running","[Chemical, Thermal Systems] Number of Jobs Running","[Physics] Number of Jobs Running","[Atmospheric Sciences] Number of Jobs Running"
+2016,44240,6580,2455,1026,110,787,298,100,145,153,93,64,66,65,20,3,3,1
+2017,13956,410,986,3,814,11,103,139,28,0,34,28,5,48,0,0,0,1
+---------

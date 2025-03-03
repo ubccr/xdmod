@@ -1,0 +1,14 @@
+title
+"CPU Node Hours: Allocated: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Resource,"CPU Node Hours: Allocated"
+robertson,1056000.0000
+pozidriv,969600.0000
+phillips,960000.0000
+mortorq,921600.0000
+frearson,912000.0000
+---------

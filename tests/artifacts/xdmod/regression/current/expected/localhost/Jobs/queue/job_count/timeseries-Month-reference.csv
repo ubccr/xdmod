@@ -1,0 +1,11 @@
+title
+"Number of Jobs Ended: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[black] Number of Jobs Ended","[white] Number of Jobs Ended","[croutons] Number of Jobs Ended","[nann] Number of Jobs Ended","[brown] Number of Jobs Ended","[potbrood] Number of Jobs Ended","[pikelet] Number of Jobs Ended","[cornbread] Number of Jobs Ended","[crumpet] Number of Jobs Ended","[brioche] Number of Jobs Ended","[bannock] Number of Jobs Ended","[roti] Number of Jobs Ended","[panettone] Number of Jobs Ended","[focaccia] Number of Jobs Ended","[chapti] Number of Jobs Ended","[pita] Number of Jobs Ended","[pumpernickel] Number of Jobs Ended","[barm] Number of Jobs Ended"
+2016-12,45828,7964,700,4,64,62,6,43,12,8,7,18,15,0,8,5,3,0
+2017-01,9545,6324,311,225,28,23,47,2,22,12,11,0,0,13,0,1,1,1
+---------

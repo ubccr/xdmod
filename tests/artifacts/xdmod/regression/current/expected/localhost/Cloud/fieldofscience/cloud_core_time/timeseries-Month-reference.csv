@@ -1,0 +1,10 @@
+title
+"CPU Hours: Total: by PI Group"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[Mechanics and Materials] CPU Hours: Total"
+2018-04,1755.8894
+---------

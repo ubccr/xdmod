@@ -1,0 +1,11 @@
+title
+"Number of PIs: Active: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Accentor, Alpine] Number of PIs: Active","[Bittern] Number of PIs: Active","[Blackbird] Number of PIs: Active","[Bluetail, Red-flanked] Number of PIs: Active","[Bufflehead] Number of PIs: Active","[Bunting, Ortolan] Number of PIs: Active","[Chaffinch] Number of PIs: Active","[Chiffchaff, Iberian] Number of PIs: Active","[Dotterel] Number of PIs: Active","[Dowitcher, Short-billed] Number of PIs: Active","[Dunlin] Number of PIs: Active","[Egret, Snowy] Number of PIs: Active","[Fieldfare] Number of PIs: Active","[Flycatcher, Taiga] Number of PIs: Active","[Fulmar] Number of PIs: Active","[Goose, Red-breasted] Number of PIs: Active","[Gull, Glaucous-winged] Number of PIs: Active","[Gull, Yellow-legged] Number of PIs: Active","[Harrier, Hen] Number of PIs: Active","[Jackdaw] Number of PIs: Active","[Kestrel, Lesser] Number of PIs: Active","[Lark, Calandra] Number of PIs: Active","[Martin, Sand] Number of PIs: Active","[Moorhen] Number of PIs: Active","[Nuthatch] Number of PIs: Active","[Petrel, Fea's] Number of PIs: Active","[Scaup, Lesser] Number of PIs: Active","[Shearwater, Balearic] Number of PIs: Active","[Shearwater, Great] Number of PIs: Active","[Shearwater, Macaronesian] Number of PIs: Active","[Smew] Number of PIs: Active","[Spotted, Great] Number of PIs: Active","[Swift, Little] Number of PIs: Active","[Tern, Caspian] Number of PIs: Active","[Thrush, Hermit] Number of PIs: Active","[Warbler, Blackpoll] Number of PIs: Active","[Warbler, Cetti's] Number of PIs: Active","[Warbler, Hooded] Number of PIs: Active","[Warbler, Savi's] Number of PIs: Active","[White, Great] Number of PIs: Active","[Yellowthroat, Common] Number of PIs: Active"
+2016-12,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1
+2017-01,1,1,0,1,1,1,1,1,0,1,1,1,1,1,1,1,0,1,0,1,1,1,1,1,0,0,1,0,0,0,0,0,1,1,0,0,0,1,0,1,0
+---------

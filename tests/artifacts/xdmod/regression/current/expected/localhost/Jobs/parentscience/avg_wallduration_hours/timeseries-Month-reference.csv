@@ -1,0 +1,11 @@
+title
+"Wall Hours: Per Job: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Mathematical Sciences] Wall Hours: Per Job","[Design and Manufacturing Systems] Wall Hours: Per Job","[Physics] Wall Hours: Per Job","[Microelectronic Information Processing Systems] Wall Hours: Per Job","[Molecular Biosciences] Wall Hours: Per Job","[Arts] Wall Hours: Per Job","[Electrical and Communication Systems] Wall Hours: Per Job","[Chemical, Thermal Systems] Wall Hours: Per Job","[Materials Research] Wall Hours: Per Job","[Earth Sciences] Wall Hours: Per Job","[Computer and Computation Research] Wall Hours: Per Job","[Atmospheric Sciences] Wall Hours: Per Job","[Mechanical and Structural Systems] Wall Hours: Per Job","[Astronomical Sciences] Wall Hours: Per Job","[Polar Programs] Wall Hours: Per Job","[Chemistry] Wall Hours: Per Job","[Social and Economic Science] Wall Hours: Per Job","[Environmental Biology] Wall Hours: Per Job"
+2016-12,42.25983761,47.81582215,44.13648148,23.05373388,21.37234468,16.77843434,17.53085249,15.43750000,9.15687182,8.50197775,5.04208333,9.00638889,2.82398003,2.01048779,1.70466667,0.59275076,0.35467017,0.14305278
+2017-01,11.08009838,12.95548544,0,11.46455460,5.41865196,6.53122222,4.52161706,0,0,1.74462963,0,0.02166667,0.96969246,7.22790404,1.95545864,1.44014566,0.06733589,0.22250400
+---------

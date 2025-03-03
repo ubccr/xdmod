@@ -12,7 +12,7 @@ set resources [list]
 lappend resources [list frearson Frearson hpc cpu screw 2016-12-27 400 4000]
 lappend resources [list mortorq Mortorq hpc gpu screw 2016-12-26 400 4000 400 4000]
 lappend resources [list phillips Phillips hpc cpunode screw 2016-12-22 400 4000]
-lappend resources [list pozidriv Posidriv hpc cpu screw 2016-12-21 400 4000]
+lappend resources [list pozidriv Posidriv hpc cpu wrench 2016-12-21 400 4000]
 lappend resources [list robertson Robertson hpc gpunode screw 2016-12-12 400 4000 400 4000]
 # -------------
 

@@ -1,0 +1,11 @@
+title
+"Average Number of CPU Nodes: Total"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Month,"[Screwdriver] Average Number of CPU Nodes: Total"
+2016-12,1040.0000
+2017-01,2000.0000
+---------

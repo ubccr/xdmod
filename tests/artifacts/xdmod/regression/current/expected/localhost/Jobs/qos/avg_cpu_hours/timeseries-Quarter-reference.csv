@@ -1,0 +1,11 @@
+title
+"CPU Hours: Per Job: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[fish] CPU Hours: Per Job","[cashew] CPU Hours: Per Job","[derby] CPU Hours: Per Job","[coconut-cream] CPU Hours: Per Job","[bavarian-cream] CPU Hours: Per Job","[chestnut] CPU Hours: Per Job","[blueberry] CPU Hours: Per Job","[buttermilk] CPU Hours: Per Job","[blackberry] CPU Hours: Per Job","[butter] CPU Hours: Per Job","[cheese] CPU Hours: Per Job","[flapper] CPU Hours: Per Job","[cherry] CPU Hours: Per Job","[curry] CPU Hours: Per Job","[apple] CPU Hours: Per Job","[bumbleberry] CPU Hours: Per Job","[boysenberry] CPU Hours: Per Job","[banana-cream] CPU Hours: Per Job","[green-grape] CPU Hours: Per Job"
+"2016 Q4",1618.72650463,564.66565514,400.11223577,534.20085470,238.22973118,2792.95666667,169.87555556,221.80616753,96.40216270,86.72055556,65.51148148,48.32731481,32.10148148,37.47629574,30.81877131,2.69870370,7.83034188,5.95247094,4.01423953
+"2017 Q1",0,104.22217494,212.04969136,66.65737374,185.80611111,22.07816239,0,0.96969246,51.76911616,45.95055556,0,21.40555556,45.96222222,6.64896461,11.58334032,13.93708148,35.25833333,1.12837003,4.77956522
+---------

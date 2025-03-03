@@ -1,0 +1,75 @@
+title
+"Number of Jobs Started: by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Number of Jobs Started"
+Honey-buzzard,54983
+"Bunting, Reed",5906
+"Grey, Great",2631
+Moorhen,2629
+"Grey, Lesser",1000
+"Dove, Turtle",982
+"Plover, Caspian",756
+"Thrush, Swainson's",713
+Lapwing,308
+Dunlin,239
+"Grey, Southern",154
+"Crane, Sandhill",144
+"Thrush, Grey-cheeked",101
+"Warbler, Golden-winged",69
+"Sandpiper, Spotted",60
+"Warbler, Garden",53
+"Grebe, Pied-billed",50
+"Warbler, Sardinian",45
+"Martin, Purple",36
+"Oriole, Baltimore",30
+"Sparrow, Savannah",26
+Coot,24
+"Egret, Cattle",24
+"Pipit, Meadow",24
+"Treecreeper, Short-toed",22
+"Warbler, Hooded",21
+"Harrier, Hen",20
+"Sapsucker, Yellow-bellied",18
+Crane,16
+"Shearwater, Cory's",16
+"Shrike, Long-tailed",16
+"Swift, Alpine",16
+"Warbler, Booted",15
+"Martin, Crag",14
+Whimbrel,14
+Shag,11
+"Stint, Little",11
+"Thrush, Mistle",11
+"Auk, Little",10
+"Bunting, Black-headed",10
+"Scaup, Lesser",9
+"Sparrow, White-throated",9
+"Goose, Egyptian",8
+Smew,7
+"Bunting, Yellow-breasted",6
+Ovenbird,5
+Jackdaw,4
+Roller,4
+Fieldfare,3
+Peregrine,3
+"Plover, White-tailed",3
+"Warbler, Dusky",3
+"Bunting, Yellow-browed",2
+"Grosbeak, Evening",2
+"Redpoll, Lesser",2
+"Scoter, Velvet",2
+Siskin,2
+"Tern, Sandwich",2
+"Warbler, Yellow-browed",2
+Chaffinch,1
+"Duck, Ferruginous",1
+"Gallinule, Allen's",1
+"Gull, Ring-billed",1
+"Ibis, Glossy",1
+"Partridge, Red-legged",1
+"Warbler, Moltoni's",1
+---------

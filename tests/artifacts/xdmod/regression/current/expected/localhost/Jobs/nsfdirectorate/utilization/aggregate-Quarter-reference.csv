@@ -1,0 +1,16 @@
+title
+"Screwdriver CPU Utilization (%): by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Decanal Unit","Screwdriver CPU Utilization (%)"
+Engineering,0.7381
+"Computer and Information Science and Engineering",0.7055
+"Mathematical and Physical Sciences",0.6596
+"Social, Behavioral, and Economic Sciences",0.3388
+Geosciences,0.1137
+"Biological Sciences",0.1098
+Humanities/Arts,0.0628
+---------

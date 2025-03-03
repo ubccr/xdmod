@@ -1,0 +1,11 @@
+title
+"GPU Count: Per Job: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[chestnut] GPU Count: Per Job","[apple] GPU Count: Per Job","[banana-cream] GPU Count: Per Job","[bavarian-cream] GPU Count: Per Job","[blackberry] GPU Count: Per Job","[blueberry] GPU Count: Per Job","[boysenberry] GPU Count: Per Job","[bumbleberry] GPU Count: Per Job","[butter] GPU Count: Per Job","[buttermilk] GPU Count: Per Job","[cashew] GPU Count: Per Job","[cheese] GPU Count: Per Job","[cherry] GPU Count: Per Job","[coconut-cream] GPU Count: Per Job","[curry] GPU Count: Per Job","[derby] GPU Count: Per Job","[fish] GPU Count: Per Job","[flapper] GPU Count: Per Job","[green-grape] GPU Count: Per Job"
+"2016 Q4",2.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+"2017 Q1",0.3077,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000
+---------

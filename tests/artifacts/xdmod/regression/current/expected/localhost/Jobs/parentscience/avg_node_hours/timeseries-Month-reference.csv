@@ -1,0 +1,11 @@
+title
+"Node Hours: Per Job: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Chemical, Thermal Systems] Node Hours: Per Job","[Electrical and Communication Systems] Node Hours: Per Job","[Atmospheric Sciences] Node Hours: Per Job","[Mathematical Sciences] Node Hours: Per Job","[Design and Manufacturing Systems] Node Hours: Per Job","[Physics] Node Hours: Per Job","[Molecular Biosciences] Node Hours: Per Job","[Materials Research] Node Hours: Per Job","[Microelectronic Information Processing Systems] Node Hours: Per Job","[Arts] Node Hours: Per Job","[Mechanical and Structural Systems] Node Hours: Per Job","[Earth Sciences] Node Hours: Per Job","[Computer and Computation Research] Node Hours: Per Job","[Astronomical Sciences] Node Hours: Per Job","[Polar Programs] Node Hours: Per Job","[Chemistry] Node Hours: Per Job","[Environmental Biology] Node Hours: Per Job","[Social and Economic Science] Node Hours: Per Job"
+2016-12,364.05481481,97.44003640,180.12777778,42.25983761,48.31750559,44.13648148,28.88674432,25.49166667,23.05458294,16.77843434,14.66085503,8.53732429,5.04208333,3.96500141,2.16238636,1.86156256,0.61704722,0.36183462
+2017-01,0,22.86779762,0.43333333,11.08009838,13.73172330,0,9.57901961,0,11.46455460,6.53122222,0.96969246,1.74462963,0,26.23500000,1.95545864,1.60116192,0.63905875,0.06801433
+---------

@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By GPU Hours (GPU Count): by Job Wait Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Job Size: Weighted By GPU Hours (GPU Count)","[1 - 30s] Job Size: Weighted By GPU Hours (GPU Count)","[30s - 30min] Job Size: Weighted By GPU Hours (GPU Count)","[30 - 60min] Job Size: Weighted By GPU Hours (GPU Count)","[1 - 5hr] Job Size: Weighted By GPU Hours (GPU Count)","[5 - 10hr] Job Size: Weighted By GPU Hours (GPU Count)","[10 - 18hr] Job Size: Weighted By GPU Hours (GPU Count)","[18+hr] Job Size: Weighted By GPU Hours (GPU Count)"
+"2016 Q4",0.0000,12.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+"2017 Q1",12.0000,12.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+---------

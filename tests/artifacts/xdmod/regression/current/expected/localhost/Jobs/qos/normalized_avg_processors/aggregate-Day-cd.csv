@@ -1,0 +1,28 @@
+title
+"Job Size: Normalized (% of Total Cores): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Job Size: Normalized (% of Total Cores)"
+fish,0.735416667
+coconut-cream,0.717647059
+butter,0.633333333
+derby,0.505084746
+cheese,0.500000000
+green-grape,0.472023810
+blueberry,0.300000000
+cashew,0.272169811
+buttermilk,0.266304348
+bumbleberry,0.149783550
+curry,0.138930798
+flapper,0.125000000
+apple,0.102448211
+chestnut,0.101923077
+boysenberry,0.098557692
+bavarian-cream,0.088281250
+blackberry,0.068750000
+banana-cream,0.059099836
+cherry,0.050000000
+---------

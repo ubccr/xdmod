@@ -1,0 +1,27 @@
+title
+"Number of Jobs Started: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Queue,"Number of Jobs Started"
+black,55373
+white,14288
+croutons,1011
+nann,229
+brown,92
+potbrood,85
+pikelet,53
+cornbread,45
+crumpet,34
+brioche,20
+bannock,18
+roti,18
+panettone,15
+focaccia,13
+chapti,8
+pita,6
+pumpernickel,4
+barm,1
+---------

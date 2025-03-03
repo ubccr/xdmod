@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By GPU Hours (GPU Count): by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Molecular Biosciences] Job Size: Weighted By GPU Hours (GPU Count)","[Arts] Job Size: Weighted By GPU Hours (GPU Count)","[Astronomical Sciences] Job Size: Weighted By GPU Hours (GPU Count)","[Atmospheric Sciences] Job Size: Weighted By GPU Hours (GPU Count)","[Chemical, Thermal Systems] Job Size: Weighted By GPU Hours (GPU Count)","[Chemistry] Job Size: Weighted By GPU Hours (GPU Count)","[Computer and Computation Research] Job Size: Weighted By GPU Hours (GPU Count)","[Design and Manufacturing Systems] Job Size: Weighted By GPU Hours (GPU Count)","[Earth Sciences] Job Size: Weighted By GPU Hours (GPU Count)","[Electrical and Communication Systems] Job Size: Weighted By GPU Hours (GPU Count)","[Environmental Biology] Job Size: Weighted By GPU Hours (GPU Count)","[Materials Research] Job Size: Weighted By GPU Hours (GPU Count)","[Mathematical Sciences] Job Size: Weighted By GPU Hours (GPU Count)","[Mechanical and Structural Systems] Job Size: Weighted By GPU Hours (GPU Count)","[Microelectronic Information Processing Systems] Job Size: Weighted By GPU Hours (GPU Count)","[Physics] Job Size: Weighted By GPU Hours (GPU Count)","[Polar Programs] Job Size: Weighted By GPU Hours (GPU Count)","[Social and Economic Science] Job Size: Weighted By GPU Hours (GPU Count)"
+2016,12.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2017,12.0000,0.0000,0.0000,0.0000,0,0.0000,0,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0,0.0000,0.0000
+---------

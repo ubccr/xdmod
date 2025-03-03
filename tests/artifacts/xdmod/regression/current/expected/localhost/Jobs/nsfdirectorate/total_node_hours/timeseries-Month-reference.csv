@@ -1,0 +1,11 @@
+title
+"Node Hours: Total: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Computer and Information Science and Engineering] Node Hours: Total","[Engineering] Node Hours: Total","[Mathematical and Physical Sciences] Node Hours: Total","[Social, Behavioral, and Economic Sciences] Node Hours: Total","[Geosciences] Node Hours: Total","[Biological Sciences] Node Hours: Total","[Humanities/Arts] Node Hours: Total"
+2016-12,56699.8428,30557.8811,22149.0617,16007.5636,9177.2850,2748.1719,1107.3767
+2017-01,11304.0508,2081.8172,1476.9061,949.2081,1597.4106,414.5158,32.6561
+---------

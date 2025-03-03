@@ -1,0 +1,10 @@
+title
+"Core Hour Utilization (%): by Decanal Unit"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[Engineering] Core Hour Utilization (%)"
+2018,0.1212
+---------

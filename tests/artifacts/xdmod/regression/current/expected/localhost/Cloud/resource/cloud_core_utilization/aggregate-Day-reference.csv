@@ -1,0 +1,10 @@
+title
+"Core Hour Utilization (%): by Resource"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Resource,"Core Hour Utilization (%)"
+openstack,2.4051
+---------

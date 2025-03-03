@@ -1,0 +1,165 @@
+title
+"Quota Utilization: Logical (%): by PI"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+PI,"Quota Utilization: Logical (%)"
+Chaffinch,525.5863
+"Martin, Sand",503.7686
+"Warbler, Magnolia",401.8166
+"Redstart, American",94.6685
+"Parula, Northern",92.1903
+"Kestrel, Lesser",89.7235
+"Scaup, Lesser",86.3981
+"Cowbird, Brown-headed",81.3354
+"Warbler, Black-and-white",54.5348
+"Waterthrush, Northern",50.6385
+Bobolink,36.6866
+"Warbler, Tennessee",27.6657
+"Bunting, Corn",4.3913
+"Chiffchaff, Iberian",2.5415
+Fulmar,1.2994
+"Grouse, Red",0.5757
+Bittern,0.0000
+"Black-headed, Great",0.0000
+Blackbird,0.0000
+"Bluetail, Red-flanked",0.0000
+"Bonelli's, Eastern",0.0000
+Bullfinch,0.0000
+"Bunting, Indigo",0.0000
+"Bunting, Lapland",0.0000
+"Bunting, Pine",0.0000
+"Bunting, Rock",0.0000
+"Bunting, Rustic",0.0000
+"Catbird, Grey",0.0000
+Chiffchaff,0.0000
+"Crow, Hooded",0.0000
+Cuckoo,0.0000
+"Cuckoo, Black-billed",0.0000
+"Desert, Asian",0.0000
+Dotterel,0.0000
+"Dowitcher, Long-billed",0.0000
+"Dowitcher, Short-billed",0.0000
+Dunlin,0.0000
+Dunnock,0.0000
+"Falcon, Eleonora's",0.0000
+"Falcon, Red-footed",0.0000
+Fieldfare,0.0000
+"Finch, Citril",0.0000
+"Finch, Trumpeter",0.0000
+"Flycatcher, Brown",0.0000
+"Flycatcher, Spotted",0.0000
+"Flycatcher, Taiga",0.0000
+Goldcrest,0.0000
+Goldfinch,0.0000
+"Goose, Egyptian",0.0000
+"Goose, Red-breasted",0.0000
+Greenfinch,0.0000
+"Guillemot, Black",0.0000
+"Guillemot, Brunnich's",0.0000
+"Gull, Audouin's",0.0000
+"Gull, Bonaparte's",0.0000
+"Gull, Franklin's",0.0000
+"Gull, Glaucous",0.0000
+"Gull, Herring",0.0000
+"Gull, Sabine's",0.0000
+"Gull, Slaty-backed",0.0000
+"Gull, Yellow-legged",0.0000
+Jackdaw,0.0000
+Kingfisher,0.0000
+"Kingfisher, Belted",0.0000
+"Lark, Calandra",0.0000
+Linnet,0.0000
+"Martin, House",0.0000
+Merlin,0.0000
+"Nighthawk, Common",0.0000
+Nightingale,0.0000
+Nightjar,0.0000
+Nuthatch,0.0000
+"Nuthatch, Red-breasted",0.0000
+Osprey,0.0000
+"Owl, Little",0.0000
+"Owl, Scops",0.0000
+"Owl, Short-eared",0.0000
+"Owl, Snowy",0.0000
+"Petrel, Fea's",0.0000
+"Phalarope, Red-necked",0.0000
+"Phalarope, Wilson's",0.0000
+"Pipit, Olive-backed",0.0000
+"Pipit, Red-throated",0.0000
+"Pipit, Tawny",0.0000
+"Pipit, Tree",0.0000
+Puffin,0.0000
+"Redpoll, Arctic",0.0000
+"Redpoll, Mealy",0.0000
+"Redshank, Spotted",0.0000
+"Robin, Rufous-tailed",0.0000
+"Robin, White-throated",0.0000
+"Rosefinch, Common",0.0000
+"Sandpiper, Baird's",0.0000
+"Sandpiper, Buff-breasted",0.0000
+"Sandpiper, Purple",0.0000
+"Sandpiper, Western",0.0000
+"Sandpiper, White-rumped",0.0000
+"Shearwater, Balearic",0.0000
+"Shearwater, Macaronesian",0.0000
+"Shrike, Brown",0.0000
+"Skua, Arctic",0.0000
+"Skua, Pomarine",0.0000
+Skylark,0.0000
+Smew,0.0000
+Snipe,0.0000
+"Snipe, Great",0.0000
+"Sparrow, Lark",0.0000
+"Sparrow, Song",0.0000
+"Sparrow, Tree",0.0000
+"Spotted, Lesser",0.0000
+"Starling, Rose-coloured",0.0000
+"Stonechat, Siberian",0.0000
+Swift,0.0000
+"Swift, Chimney",0.0000
+"Swift, Little",0.0000
+"Swift, Pacific",0.0000
+"Tanager, Summer",0.0000
+"Tern, Black",0.0000
+"Tern, Cabot's",0.0000
+"Tern, Caspian",0.0000
+"Tern, Common",0.0000
+"Tern, Gull-billed",0.0000
+"Thrush, Dusky",0.0000
+"Thrush, Eyebrowed",0.0000
+"Thrush, Hermit",0.0000
+"Thrush, Red-throated",0.0000
+"Thrush, Rock",0.0000
+"Thrush, White's",0.0000
+"Thrush, Wood",0.0000
+"Tit, Bearded",0.0000
+"Tit, Long-tailed",0.0000
+"Tit, Willow",0.0000
+Twite,0.0000
+Veery,0.0000
+"Wagtail, Pied",0.0000
+"Wagtail, Yellow",0.0000
+"Warbler, Arctic",0.0000
+"Warbler, Barred",0.0000
+"Warbler, Blackburnian",0.0000
+"Warbler, Blackpoll",0.0000
+"Warbler, Cetti's",0.0000
+"Warbler, Fan-tailed",0.0000
+"Warbler, Green",0.0000
+"Warbler, Hooded",0.0000
+"Warbler, Icterine",0.0000
+"Warbler, Marmora's",0.0000
+"Warbler, Paddyfield",0.0000
+"Warbler, Radde's",0.0000
+"Warbler, Reed",0.0000
+"Warbler, Savi's",0.0000
+"Warbler, Subalpine",0.0000
+"Warbler, Sykes's",0.0000
+Woodcock,0.0000
+"Woodpecker, Green",0.0000
+Woodpigeon,0.0000
+"Yellowthroat, Common",0.0000
+---------

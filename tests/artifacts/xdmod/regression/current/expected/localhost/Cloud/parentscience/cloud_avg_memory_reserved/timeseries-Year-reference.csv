@@ -1,0 +1,10 @@
+title
+"Average Memory Reserved Weighted By Wall Hours (Bytes): by Department"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[Mechanical and Structural Systems] Average Memory Reserved Weighted By Wall Hours (Bytes)"
+2018,5391546777.3100
+---------

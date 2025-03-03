@@ -1,0 +1,49 @@
+title
+"Number of PIs: Active: by PI Group"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Group","Number of PIs: Active"
+"Statistics and Probability",2
+"Algebra and Number Theory",1
+Arts,1
+"Biochemistry and Molecular Structure and Function",1
+Biophysics,1
+"Cell Biology",1
+"Computer and Computation Theory",1
+"Decision, Risk, and Management Science",1
+"Design and Computer-Integrated Engineering",1
+"Design, Tools, and Test",1
+Economics,1
+"Emerging Technologies Initiation",1
+"Experimental Systems",1
+"Extragalactic Astronomy and Cosmology",1
+"Fluid, Particulate, and Hydraulic Systems",1
+"Galactic Astronomy",1
+"Geology and Paleontology",1
+Geophysics,1
+"Global Atmospheric Research",1
+"Law and Social Sciences",1
+"Mechanics and Materials",1
+"Metals, Ceramics, and Electronic Materials",1
+"Operations Research and Production Systems",1
+"Organic and Macromolecular Chemistry",1
+"Physical Chemistry",1
+"Polar Aeronomy and Astrophysics",1
+"Polar Meteorology",1
+"Polar Ocean and Climate Systems",1
+"Quantum Electronics, Waves, and Beams",1
+Seismology,1
+Sociology,1
+"Solid State Chemistry and Polymers",1
+"Solid-State and Microstructures",1
+"Stellar Astronomy and Astrophysics",1
+"Structures and Building Systems",1
+"Systematic and Population Biology",1
+"Systems Prototyping and Fabrication",1
+Tectonics,1
+"Theoretical Physics",1
+"Volcanology and Mantle Geochemistry",1
+---------

@@ -1,0 +1,11 @@
+title
+"GPU Hours: Total: by PI"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Chaffinch] GPU Hours: Total","[Accentor, Alpine] GPU Hours: Total","[Bittern] GPU Hours: Total","[Blackbird] GPU Hours: Total","[Bluetail, Red-flanked] GPU Hours: Total","[Bufflehead] GPU Hours: Total","[Bunting, Ortolan] GPU Hours: Total","[Chiffchaff, Iberian] GPU Hours: Total","[Dotterel] GPU Hours: Total","[Dowitcher, Short-billed] GPU Hours: Total","[Dunlin] GPU Hours: Total","[Egret, Snowy] GPU Hours: Total","[Fieldfare] GPU Hours: Total","[Flycatcher, Taiga] GPU Hours: Total","[Fulmar] GPU Hours: Total","[Goose, Red-breasted] GPU Hours: Total","[Gull, Glaucous-winged] GPU Hours: Total","[Gull, Yellow-legged] GPU Hours: Total","[Harrier, Hen] GPU Hours: Total","[Jackdaw] GPU Hours: Total","[Kestrel, Lesser] GPU Hours: Total","[Lark, Calandra] GPU Hours: Total","[Martin, Sand] GPU Hours: Total","[Moorhen] GPU Hours: Total","[Nuthatch] GPU Hours: Total","[Petrel, Fea's] GPU Hours: Total","[Scaup, Lesser] GPU Hours: Total","[Shearwater, Balearic] GPU Hours: Total","[Shearwater, Great] GPU Hours: Total","[Shearwater, Macaronesian] GPU Hours: Total","[Smew] GPU Hours: Total","[Spotted, Great] GPU Hours: Total","[Swift, Little] GPU Hours: Total","[Tern, Caspian] GPU Hours: Total","[Thrush, Hermit] GPU Hours: Total","[Warbler, Blackpoll] GPU Hours: Total","[Warbler, Cetti's] GPU Hours: Total","[Warbler, Hooded] GPU Hours: Total","[Warbler, Savi's] GPU Hours: Total","[White, Great] GPU Hours: Total","[Yellowthroat, Common] GPU Hours: Total"
+2016,465.4928,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+2017,41.4200,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0,0.0000,0.0000,0.0000,0.0000,0.0000,0,0,0.0000,0,0,0,0,0,0.0000,0.0000,0,0,0,0.0000,0,0.0000,0
+---------

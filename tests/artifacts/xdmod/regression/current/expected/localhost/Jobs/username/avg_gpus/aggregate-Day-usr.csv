@@ -1,0 +1,11 @@
+title
+"GPU Count: Per Job: by System Username"
+parameters
+
+"*Restricted To: User = Whimbrel"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","GPU Count: Per Job","Std Dev: GPU Count: Per Job"
+whimb,0.0000,0
+---------

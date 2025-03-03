@@ -1,0 +1,20 @@
+title
+"Number of Jobs Running: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[banana-cream] Number of Jobs Running","[curry] Number of Jobs Running","[apple] Number of Jobs Running","[bumbleberry] Number of Jobs Running","[derby] Number of Jobs Running","[buttermilk] Number of Jobs Running","[green-grape] Number of Jobs Running","[cashew] Number of Jobs Running","[boysenberry] Number of Jobs Running","[coconut-cream] Number of Jobs Running","[bavarian-cream] Number of Jobs Running","[blackberry] Number of Jobs Running","[cheese] Number of Jobs Running","[chestnut] Number of Jobs Running","[fish] Number of Jobs Running","[butter] Number of Jobs Running","[cherry] Number of Jobs Running","[flapper] Number of Jobs Running","[blueberry] Number of Jobs Running"
+2016-12-22,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0
+2016-12-23,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0
+2016-12-24,0,0,1,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0
+2016-12-25,1,0,3,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0,0
+2016-12-26,1,0,3,0,0,0,0,5,0,0,1,0,0,1,0,0,0,0,0
+2016-12-27,5,8,4,0,5,0,0,5,0,1,3,1,0,1,9,0,0,0,0
+2016-12-28,19,379,4,0,15,0,0,16,0,1,3,1,1,1,10,0,0,0,0
+2016-12-29,248,1347,11,0,74,4,0,20,1,1,9,8,1,1,12,0,1,1,1
+2016-12-30,22428,5902,202,2,154,36,34,20,1,5,14,15,15,1,12,3,5,3,3
+2016-12-31,24345,4781,188,16,49,32,27,48,52,9,22,27,0,1,0,1,3,1,1
+2017-01-01,9703,6306,159,225,18,28,23,47,1,22,2,11,0,13,0,6,1,1,0
+---------

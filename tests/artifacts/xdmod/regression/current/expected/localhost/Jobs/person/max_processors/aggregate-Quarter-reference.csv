@@ -1,0 +1,75 @@
+title
+"Job Size: Max (Core Count): by User"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+User,"Job Size: Max (Core Count)"
+"Warbler, Dusky",336
+Dunlin,192
+"Scaup, Lesser",192
+"Warbler, Yellow-browed",160
+"Scoter, Velvet",144
+"Goose, Egyptian",112
+"Gallinule, Allen's",108
+Crane,96
+"Pipit, Meadow",96
+"Warbler, Sardinian",96
+Siskin,72
+Smew,72
+Whimbrel,72
+Chaffinch,64
+"Swift, Alpine",64
+"Thrush, Swainson's",64
+"Duck, Ferruginous",60
+Peregrine,60
+Roller,60
+"Grosbeak, Evening",56
+"Warbler, Golden-winged",48
+"Bunting, Yellow-browed",40
+"Bunting, Reed",32
+"Crane, Sandhill",32
+"Oriole, Baltimore",32
+Shag,32
+"Treecreeper, Short-toed",32
+"Sparrow, White-throated",24
+"Ibis, Glossy",20
+"Martin, Crag",20
+"Shrike, Long-tailed",20
+"Bunting, Yellow-breasted",16
+Ovenbird,16
+"Partridge, Red-legged",16
+"Stint, Little",16
+"Warbler, Garden",16
+"Auk, Little",12
+"Dove, Turtle",12
+Honey-buzzard,12
+"Plover, Caspian",12
+"Plover, White-tailed",12
+"Sandpiper, Spotted",12
+"Thrush, Grey-cheeked",12
+"Thrush, Mistle",12
+"Warbler, Booted",12
+"Warbler, Hooded",12
+Fieldfare,8
+"Shearwater, Cory's",8
+"Redpoll, Lesser",4
+"Sapsucker, Yellow-bellied",4
+"Bunting, Black-headed",1
+Coot,1
+"Egret, Cattle",1
+"Grebe, Pied-billed",1
+"Grey, Great",1
+"Grey, Lesser",1
+"Grey, Southern",1
+"Gull, Ring-billed",1
+"Harrier, Hen",1
+Jackdaw,1
+Lapwing,1
+"Martin, Purple",1
+Moorhen,1
+"Sparrow, Savannah",1
+"Tern, Sandwich",1
+"Warbler, Moltoni's",1
+---------

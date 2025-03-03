@@ -1,0 +1,26 @@
+title
+"Quota: Soft Threshold (Bytes): by Department"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Department,"Quota: Soft Threshold (Bytes)"
+Unknown,781000019968000.0000
+"Molecular Biosciences",146000015360000.0000
+"Electrical and Communication Systems",25000001536000.0000
+Chemistry,10000003072000.0000
+"Earth Sciences",10000003072000.0000
+"Mathematical Sciences",10000003072000.0000
+Arts,0.0000
+"Astronomical Sciences",0.0000
+"Atmospheric Sciences",0.0000
+"Chemical, Thermal Systems",0.0000
+"Environmental Biology",0.0000
+"Materials Research",0.0000
+"Mechanical and Structural Systems",0.0000
+"Microelectronic Information Processing Systems",0.0000
+Physics,0.0000
+"Polar Programs",0.0000
+"Social and Economic Science",0.0000
+---------

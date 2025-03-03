@@ -1,0 +1,12 @@
+title
+"GPU Hours: Per Job: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[litst] GPU Hours: Per Job","[ovenb] GPU Hours: Per Job","[sante] GPU Hours: Per Job","[savsp] GPU Hours: Per Job","[swath] GPU Hours: Per Job","[ybsbu] GPU Hours: Per Job"
+2016,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000,0.00000000
+2017,0,0.00000000,0,0.00000000,0,0
+---------

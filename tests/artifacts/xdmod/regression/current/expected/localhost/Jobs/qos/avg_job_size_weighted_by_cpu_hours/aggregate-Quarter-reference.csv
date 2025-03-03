@@ -1,0 +1,28 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+QOS,"Job Size: Weighted By CPU Hours (Core Count)"
+buttermilk,111.3630
+banana-cream,83.8484
+coconut-cream,62.9605
+derby,62.2662
+curry,61.4541
+butter,34.4569
+bavarian-cream,33.8916
+fish,31.8851
+green-grape,21.0706
+cheese,20.0000
+apple,14.6667
+cashew,13.8060
+blueberry,12.0000
+bumbleberry,11.9987
+chestnut,11.9631
+boysenberry,6.1218
+flapper,5.0000
+blackberry,3.8822
+cherry,2.9011
+---------

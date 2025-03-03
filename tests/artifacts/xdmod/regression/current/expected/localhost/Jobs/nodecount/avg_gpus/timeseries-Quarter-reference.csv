@@ -1,0 +1,11 @@
+title
+"GPU Count: Per Job: by Node Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[1] GPU Count: Per Job","[2] GPU Count: Per Job","[3] GPU Count: Per Job","[4] GPU Count: Per Job","[5] GPU Count: Per Job","[6] GPU Count: Per Job","[7] GPU Count: Per Job","[8] GPU Count: Per Job","[9] GPU Count: Per Job","[12] GPU Count: Per Job","[14] GPU Count: Per Job","[16] GPU Count: Per Job","[20] GPU Count: Per Job","[24] GPU Count: Per Job","[28] GPU Count: Per Job"
+"2016 Q4",0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000,0.0000
+"2017 Q1",0.0002,0.0000,0.0000,0.0000,0.0000,0.0000,0,0.0000,0,0,0,0.0000,0.0000,0,0
+---------

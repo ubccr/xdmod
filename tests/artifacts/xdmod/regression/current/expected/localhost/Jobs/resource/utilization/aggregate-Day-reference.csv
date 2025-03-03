@@ -1,0 +1,14 @@
+title
+"Screwdriver CPU Utilization (%): by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Screwdriver CPU Utilization (%)"
+robertson,43.7394
+frearson,37.7866
+mortorq,11.4977
+pozidriv,6.8167
+phillips,1.1144
+---------

@@ -1,0 +1,16 @@
+title
+"GPU Hours: Per Job: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+"System Username","GPU Hours: Per Job"
+litst,0.00000000
+ovenb,0.00000000
+sante,0.00000000
+savsp,0.00000000
+swath,0.00000000
+ybsbu,0.00000000
+---------

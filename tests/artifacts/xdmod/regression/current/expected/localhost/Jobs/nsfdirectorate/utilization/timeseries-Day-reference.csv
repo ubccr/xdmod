@@ -1,0 +1,20 @@
+title
+"Screwdriver CPU Utilization (%): by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Engineering] Screwdriver CPU Utilization (%)","[Mathematical and Physical Sciences] Screwdriver CPU Utilization (%)","[Computer and Information Science and Engineering] Screwdriver CPU Utilization (%)","[Social, Behavioral, and Economic Sciences] Screwdriver CPU Utilization (%)","[Geosciences] Screwdriver CPU Utilization (%)","[Biological Sciences] Screwdriver CPU Utilization (%)","[Humanities/Arts] Screwdriver CPU Utilization (%)"
+2016-12-22,0,0.2118,0,0,0,0.2093,0
+2016-12-23,0,0.3090,0,0,0,0.3000,0
+2016-12-24,0,0.3250,0,0,0,0.3000,0
+2016-12-25,0,0.5107,0,0,0,0.3000,0
+2016-12-26,0,1.0252,0,0,0,0.3000,0
+2016-12-27,3.8952,2.7296,0,0.0034,0,0.6920,0
+2016-12-28,24.8904,13.8407,1.3590,0.0250,0.0979,1.8349,0
+2016-12-29,19.7721,23.7792,14.5243,0.4951,0.8088,2.2479,0.2688
+2016-12-30,26.3210,19.6302,25.5282,13.3100,1.7602,2.4239,3.6308
+2016-12-31,15.8931,10.4456,23.5401,18.5010,2.3915,1.7701,2.4113
+2017-01-01,3.7076,3.1899,12.6529,1.8066,9.9573,1.8511,0.1562
+---------
