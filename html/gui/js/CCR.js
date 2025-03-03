@@ -1628,7 +1628,8 @@ CCR.xdmod.initDashboard = function () {
 }; //CCR.xdmod.initDashboard
 
 CCR.xdmod.initJupyterLab = function () {
-    window.open("hub");
+    var JupyterHubURL = CCR.xdmod.JupyterHubURL;
+    window.open(JupyterHubURL);
     window.focus();
 }; //CCR.xdmod.initJupyterLab
 

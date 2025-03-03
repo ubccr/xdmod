@@ -367,6 +367,13 @@ JS;
 
         print "CCR.xdmod.features = " . json_encode($features) . ";\n";
         print "CCR.xdmod.timezone = " . json_encode(date_default_timezone_get()) . ";\n";
+
+        if (xd_utilities\configurationSectionExists('jupyterhub')) {
+            print "CCR.xdmod.isJupyterHubConfigured = true;\n";
+
+            $jupyterhub_url = xd_utilities\getConfiguration('jupyterhub', 'url');
+            print "CCR.xdmod.JupyterHubURL = " . json_encode($jupyterhub_url) . ";\n";
+        }
         ?>
 
     </script>
@@ -512,7 +519,6 @@ JS;
         <script type="text/javascript" src="gui/lib/rsvp/rsvp-1979d5ad89293dadbe7656dd53d152f7426fa35e.min.js"></script>
         <script type="text/javascript" src="gui/lib/groupdataview.js"></script>
         <script type="text/javascript" src="gui/lib/groupcombo.js"></script>
-    <?php endif; ?>
     <?php endif; ?>
 
     <?php

@@ -303,7 +303,9 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
             if (CCR.xdmod.ui.isManager) {
                 userToolbar.push(XDMoD.GlobalToolbar.Dashboard);
             }
-            userToolbar.push(XDMoD.GlobalToolbar.JupyterLab);
+            if (CCR.xdmod.isJupyterHubConfigured) {
+                userToolbar.push(XDMoD.GlobalToolbar.JupyterLab);
+            }
             userToolbar.push(XDMoD.GlobalToolbar.Profile);
         }
 
