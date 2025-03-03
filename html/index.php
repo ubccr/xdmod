@@ -520,6 +520,7 @@ JS;
         <script type="text/javascript" src="gui/lib/groupdataview.js"></script>
         <script type="text/javascript" src="gui/lib/groupcombo.js"></script>
     <?php endif; ?>
+    <?php endif; ?>
 
     <?php
     xd_utilities\checkForCenterLogo();
