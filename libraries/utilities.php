@@ -123,10 +123,10 @@ function configurationSectionExists($section)
     try {
         $configSection = getConfigurationSection($section);
     } catch(\Exception $e) {
-        return false
+        return false;
     }
 
-    return true
+    return true;
 }
 
 /**
