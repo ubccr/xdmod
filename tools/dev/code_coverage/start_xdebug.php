@@ -1,7 +1,18 @@
 <?php
 namespace CCR\CodeCoverage;
+\xdebug_set_filter(
+    XDEBUG_FILTER_CODE_COVERAGE,
+    XDEBUG_PATH_INCLUDE,
+    [
+        "/usr/share/xdmod/html/controllers/",
+        "/usr/share/xdmod/html/internal_dashboard/",
+        "/usr/share/xdmod/libraries/",
+        "/usr/share/xdmod/classes/",
+    ]
+);
 
-xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
+
+\xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 
 function end_coverage()
 {
@@ -16,11 +27,11 @@ function end_coverage()
     $test_name = preg_replace('/::/', '-', $test_name);
 
     try {
-        xdebug_stop_code_coverage(false);
+        \xdebug_stop_code_coverage(false);
         $coverageName = '__CODE_COVERAGE_DIR__/coverage-' . $test_name . '-' . microtime(true);
-        $codecoverageData = json_encode(xdebug_get_code_coverage());
+        $codecoverageData = json_encode(\xdebug_get_code_coverage());
         file_put_contents($coverageName . '.json', $codecoverageData);
-    } catch (Exception $ex) {
+    } catch (\Exception $ex) {
         file_put_contents($coverageName . '.ex', $ex);
     }
 }
@@ -31,7 +42,7 @@ class coverage_dumper
     {
         try {
             end_coverage();
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             echo (string)$ex;
         }
     }
