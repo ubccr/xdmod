@@ -89,6 +89,7 @@ class TimeseriesChart extends AggregateChart
 
 
         $this->show_filters = $show_filters;
+        $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
 
         // Instantiate the color generator:
         $colorGenerator = new \DataWarehouse\Visualization\ColorGenerator();
@@ -149,7 +150,7 @@ class TimeseriesChart extends AggregateChart
         }
 
         $yAxisCount = count($yAxisArray);
-
+        $legendRank = 0;
         $globalFilterDescriptions = array();
 
         // ==== Big long effing loop ====
@@ -419,6 +420,7 @@ class TimeseriesChart extends AggregateChart
                 // operate on each yAxisDataObject, a SimpleTimeseriesData object
                 foreach($yAxisDataObjectsArray as $traceIndex => $yAxisDataObject)
                 {
+                    $legendRank += 3;
                     if( $yAxisDataObject != null)
                     {
                         $yAxisDataObject->joinTo($xAxisData, null);
@@ -435,40 +437,31 @@ class TimeseriesChart extends AggregateChart
                         $color = '#'.str_pad(dechex($color_value), 6, '0', STR_PAD_LEFT);
                         $lineColor = '#'.str_pad(dechex(\DataWarehouse\Visualization::alterBrightness($color_value, -70)), 6, '0', STR_PAD_LEFT);
 
-                        //chart chokes on datasets that are all null so detect them and replace
-                        // all with zero. this will give the user the right impression. (hopefully)
-                        $all_null = true;
+                        // Calculate number of non-null values to determine data series marker visibility.
+                        // If all values are null then skip this series.
+                        $allNull = true;
+                        $visiblePoints = 0;
                         foreach($yAxisDataObject->getValues() as $value)
                         {
                             if($value != null)
                             {
-                                $all_null = false;
-                                break;
+                                $allNull = false;
+                                $visiblePoints++;
                             }
                         }
-                        if($all_null)
+                        if($allNull)
                         {
                             continue;
                         }
                         $values = $yAxisDataObject->getValues();
 
-                        // Decide whether to show data point markers:
-                        $values_count = count($values);
-                        // Count datapoints having actual, non-null y values:
-                        $y_values_count = 0;
-                        foreach ($values as $y_value) {
-                            if ($y_value !== null) {
-                                ++$y_values_count;
-                            }
-                            // we are only interested in the == 1 case.
-                            if ($y_values_count > 1) {
-                                break;
-                            }
-                        }
-                        // Hide markers for 32 points or greater, except when there are multiple traces then hide markers starting at 21 points.
+                        // Show markers if the non-thumbnail plot has less than 21 visible data points.
+                        // Also show markers if there is one data point otherwise thumbnail plots with 1 non-null point will be
+                        // hidden.
                         // Need check for chart types that this applies to otherwise bar, scatter, and pie charts will be hidden.
-                        $hideMarker = in_array($data_description->display_type, array('line', 'spline', 'area', 'areaspline'))
-                            && ($values_count >= 32 || (count($yAxisDataObjectsArray) > 1 && $values_count >= 21));
+                        $showMarker = in_array($data_description->display_type, array('scatter', 'pie', 'bar', 'h_bar', 'column'))
+                            || ($visiblePoints < 21 && !$isThumbnail)
+                            || $visiblePoints == 1;
 
                         $isRemainder = $yAxisDataObject->getGroupId() === TimeseriesDataset::SUMMARY_GROUP_ID;
 
@@ -574,6 +567,9 @@ class TimeseriesChart extends AggregateChart
 
                         $trace = array(
                             'name' => $lookupDataSeriesName,
+                            'meta' => array(
+                                'primarySeries' => true
+                            ),
                             'customdata' => $lookupDataSeriesName,
                             'otitle' => $formattedDataSeriesName,
                             'datasetId' => $data_description->id,
@@ -588,7 +584,7 @@ class TimeseriesChart extends AggregateChart
                                     'color' => $lineColor
                                 ),
                                 'symbol' => $this->_symbolStyles[$traceIndex % 5],
-                                'opacity' => $hideMarker ? 0.0 : 1.0
+                                'opacity' => $showMarker ? 1.0 : 0.0
                             ),
                             'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
                             'line' => array(
@@ -624,10 +620,10 @@ class TimeseriesChart extends AggregateChart
                             ),
                             'x' => $this->_swapXY ? $yValues : $xValues,
                             'y' => $this->_swapXY ? $xValues : $yValues,
-                            'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$traceIndex}",
-                            'legendgroup' => $traceIndex,
-                            'legendrank' => $traceIndex,
-                            'traceorder' => $traceIndex,
+                            'offsetgroup' => $yAxisCount > 1 ? "group{$yIndex}{$legendRank}" : "group{$legendRank}",
+                            'legendgroup' => $legendRank,
+                            'legendrank' => $legendRank,
+                            'traceorder' => $legendRank,
                             'seriesData' => $seriesValues,
                             'visible' => $visible,
                             'isRemainder' => $isRemainder,
@@ -641,11 +637,9 @@ class TimeseriesChart extends AggregateChart
                         // Set date tick interval
                         $this->_chart['layout']['xaxis']['dtick'] = $pointInterval;
                         $this->_chart['layout']['xaxis']['tick0'] = $xValues[0];
-                        $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
                         $value_count = count($xValues);
 
                         if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
-                            $this->_chart['layout']['xaxis']['type'] = 'category';
                             $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
                         }
 
@@ -791,8 +785,8 @@ class TimeseriesChart extends AggregateChart
                                 ),
                                 'connectgaps' => true,
                                 'hoverinfo' => 'skip',
-                                'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$traceIndex}",
-                                'legendgroup' => $traceIndex,
+                                'offsetgroup' => $yAxisCount > 1 ? "group{$yIndex}{$legendRank}" : "group{$legendRank}",
+                                'legendgroup' => $legendRank,
                                 'legendrank' => -1000,
                                 'traceorder' => -1000,
                                 'type' => 'scatter',
@@ -895,6 +889,10 @@ class TimeseriesChart extends AggregateChart
                                 }
                                 $trendline_trace = array(
                                     'name' => $lookupDataSeriesName,
+                                    'meta' => array(
+                                        'primarySeries' => false,
+                                        'trendlineSeries' => true
+                                    ),
                                     'otitle' => $dsn,
                                     'zIndex' => $zIndex,
                                     'datasetId' => $data_description->id,
@@ -915,6 +913,8 @@ class TimeseriesChart extends AggregateChart
                                         'color' => $color,
                                         'width' => $data_description->line_width + $font_size/4,
                                     ),
+                                    'legendrank' => $trace['legendrank'] + 2,
+                                    'traceorder' => $trace['legendrank'] - 2,
                                     'visible' => $visible,
                                     'm' => $m,
                                     'b' => $b,
@@ -923,9 +923,6 @@ class TimeseriesChart extends AggregateChart
                                     'y' => $this->_swapXY ? $trendX : $trendY,
                                     'isRestrictedByRoles' => $data_description->restrictedByRoles,
                                 );
-                                $valid = $data_description->std_err == 1 && !$data_description->log_scale;
-                                $trendline_trace['legendrank'] = $valid ? $trace['legendrank'] + 2 : $trace['legendrank'];
-                                $trendline_trace['traceorder'] = $valid ? $traceIndex - 2 : $traceIndex;
 
                                 if ($this->_swapXY) {
                                     unset($trendline_trace['yaxis']);
