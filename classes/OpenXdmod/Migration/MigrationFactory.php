@@ -65,7 +65,7 @@ class MigrationFactory
                     $toVersion
                 );
 
-                // Run each of the other DatabasesMigration classes in the
+                // Add each of the other DatabasesMigration classes in the
                 // namespace.
                 $databasesMigrationClasses = array_filter(
                     get_declared_classes(),
