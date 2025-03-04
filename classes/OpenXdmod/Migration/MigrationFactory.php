@@ -67,12 +67,20 @@ class MigrationFactory
 
                 // Add each of the other DatabasesMigration classes in the
                 // namespace.
+                $classes = array_map(
+                    function($file) use ($ns) {
+                        return $ns . '\\' . rtrim(basename($file), '.php');
+                    },
+                    glob(__DIR__ . "/Version{$from}To$to/*.php")
+                );
                 $databasesMigrationClasses = array_filter(
-                    get_declared_classes(),
-                    function ($class) use ($ns, $databasesMigrationName) {
-                        return strpos("\\$class", $ns) === 0
-                            && substr("\\$class", -strlen('DatabasesMigration')) === 'DatabasesMigration'
-                            && "\\$class" !== $databasesMigrationName;
+                    $classes,
+                    function ($class) use ($databasesMigrationName) {
+                        return (
+                            substr($class, -strlen('DatabasesMigration')) === 'DatabasesMigration'
+                            && class_exists($class)
+                            && $class !== $databasesMigrationName
+                        );
                     }
                 );
                 sort($databasesMigrationClasses);
