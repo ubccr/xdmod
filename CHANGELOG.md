@@ -49,8 +49,7 @@
       ([\#1931](https://github.com/ubccr/xdmod/pull/1931),
       [\#1933](https://github.com/ubccr/xdmod/pull/1933)).
     - Update version of MongoDB in software requirements
-      ([\#1937](https://github.com/ubccr/xdmod/pull/1937),
-      [\#1993](https://github.com/ubccr/xdmod/pull/1993)).
+      ([\#1937](https://github.com/ubccr/xdmod/pull/1937)).
     - Update documentation of charts in the user manual
       ([\#1916](https://github.com/ubccr/xdmod/pull/1916)).
     - Replace references to XSEDE with ACCESS
