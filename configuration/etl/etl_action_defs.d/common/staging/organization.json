@@ -1,12 +1,17 @@
 {
     "table_definition": {
-        "$ref": "${table_definition_dir}/common/staging/organization.json"
+        "$ref": "${table_definition_dir}/common/staging/organization.json#/table_definition"
     },
-    "destination_record_map": {
-        "staging_organization": {
-            "organization_id": "id",
-            "organization_name": "name",
-            "organization_abbrev": "abbrev"
-        }
+    "source_query": {
+        "records": {
+            "organization_abbrev": "org.organization_abbrev"
+        },
+        "joins": [
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_organization_config",
+                "alias": "org"
+            }
+        ]
     }
 }
