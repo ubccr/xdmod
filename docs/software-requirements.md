@@ -97,7 +97,7 @@ dnf module -y install nodejs:16
 
 **NOTE**: The php mongodb drivers are not available as RPMs and must be installed using PECL as follows:
 ```shell
-pecl install mongodb-1.20.1
+pecl install mongodb-1.18.1
 echo "extension=mongodb.so" > /etc/php.d/40-mongodb.ini
 ```
 
