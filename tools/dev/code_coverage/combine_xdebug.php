@@ -30,7 +30,8 @@ $coverageFiles = glob("$coverageDir/*.json");
 $count = count($coverageFiles);
 echo "Found $count coverage files\n";
 $i = 0;
-
+file_put_contents($installDir . '/coverage.log', "");
+file_put_contents($installDir . '/raw_coverage.log', "");
 foreach ($coverageFiles as $coverageFile) {
     $i++;
     $matches = array();
@@ -39,7 +40,7 @@ foreach ($coverageFiles as $coverageFile) {
         echo "Error reading $coverageFile\n";
         continue;
     }
-    $rawCodeCoverageData = RawCodeCoverageData::fromXdebugWithPathCoverage($codeCoverageData);
+    $rawCodeCoverageData = RawCodeCoverageData::fromXdebugWithoutPathCoverage($codeCoverageData);
     if ($codeCoverageData !== null) {
         $testName = str_ireplace("coverage-", "", basename($coverageFile, ".json"));
         $testName = substr($testName, 0, strrpos($testName, '-'));
@@ -62,28 +63,18 @@ foreach ($coverageFiles as $coverageFile) {
             );
 
             $coverageData[$testName] = $coverage;
-
-
-
-//            #TODO Change to reflect readme
-//            $coverage = new PHP_CodeCoverage();
-//            $coverage->filter()->addDirectoryToWhitelist("$installDir/classes");
-//            $coverage->filter()->addDirectoryToWhitelist("$installDir/html/controllers");
-//            $coverage->filter()->addDirectoryToWhitelist("$installDir/html/internal_dashboard");
-//            $coverage->filter()->addDirectoryToWhitelist("$installDir/libraries");
-//            $coverageData[$testName] = $coverage;
-//            echo "Ending coverage for $testName\n";
         }
 
         $testCoverage = $coverageData[$testName];
 
-        #Append requires $CodeCoverageData to be RawCodeCoverageData
         $testCoverage->append($rawCodeCoverageData, $testName);
 
         $coverageData[$testName] = $testCoverage;
 
     }
 }
+
+echo "The length of coverage data is " . count($coverageData) . "\n";
 
 $phpunitVersion = InstalledVersions::getVersion('phpunit/phpunit');
 
