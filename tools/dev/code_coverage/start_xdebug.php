@@ -1,16 +1,5 @@
 <?php
 namespace CCR\CodeCoverage;
-//\xdebug_set_filter(
-//    XDEBUG_FILTER_CODE_COVERAGE,
-//    XDEBUG_PATH_INCLUDE,
-//    [
-//        "/usr/share/xdmod/html/controllers/",
-//        "/usr/share/xdmod/html/internal_dashboard/",
-//        "/usr/share/xdmod/libraries/",
-//        "/usr/share/xdmod/classes/",
-//    ]
-//);
-
 
 \xdebug_start_code_coverage(XDEBUG_CC_UNUSED | XDEBUG_CC_DEAD_CODE);
 
