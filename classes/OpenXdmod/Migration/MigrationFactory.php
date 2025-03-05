@@ -68,7 +68,7 @@ class MigrationFactory
                 // Add each of the other DatabasesMigration classes in the
                 // namespace.
                 $classes = array_map(
-                    function($file) use ($ns) {
+                    function ($file) use ($ns) {
                         return $ns . '\\' . rtrim(basename($file), '.php');
                     },
                     glob(__DIR__ . "/Version{$from}To$to/*.php")
