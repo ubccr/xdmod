@@ -919,46 +919,48 @@ class TimeseriesChart extends AggregateChart
         }
 
         // Compute tick label placement and format
-        $dates = array_unique($dates);
-        $value_count = count($dates);
-        $dtick = $this->getPointInterval();
+        if (!empty($dates)) {
+            $dates = array_unique($dates);
+            $value_count = count($dates);
+            $dtick = $this->getPointInterval();
 
-        if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
-            $dtick = max(floor($value_count / 12), 1);
-        }
+            if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
+                $dtick = max(floor($value_count / 12), 1);
+            }
 
-        if ($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') {
-            $dtick = max(round($value_count / 12), 1);
-        }
+            if ($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') {
+                $dtick = max(round($value_count / 12), 1);
+            }
 
-        if ($this->_aggregationUnit == 'Quarter' || $this->_aggregationUnit == 'quarter') {
-            $dtick = ceil(max(ceil($value_count / 4), 1) / 3.5);
-        }
+            if ($this->_aggregationUnit == 'Quarter' || $this->_aggregationUnit == 'quarter') {
+                $dtick = ceil(max(ceil($value_count / 4), 1) / 3.5);
+            }
 
-        if ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year') {
-            $dtick = ceil($value_count / 15);
-        }
+            if ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year') {
+                $dtick = ceil($value_count / 15);
+            }
 
-        $tickvals = array();
-        $last_idx = $value_count - 1;
-        $include_both_labels = false;
-        for ($i = 0; $i < $value_count; $i += $dtick) {
-            if (!$include_both_labels && (($value_count - $i) <= $dtick)) {
-                if (($value_count - $i) <= round($dtick * .25)) {
-                    // tick at end of loop is close (within 25%) to last data point
-                    // thererfore just include the last data point tick label
-                    $i = $last_idx;
-                } else {
-                    $include_both_labels = true;
+            $tickvals = array();
+            $last_idx = $value_count - 1;
+            $include_both_labels = false;
+            for ($i = 0; $i < $value_count; $i += $dtick) {
+                if (!$include_both_labels && (($value_count - $i) <= $dtick)) {
+                    if (($value_count - $i) <= round($dtick * .25)) {
+                        // tick at end of loop is close (within 25%) to last data point
+                        // thererfore just include the last data point tick label
+                        $i = $last_idx;
+                    } else {
+                        $include_both_labels = true;
+                    }
+                }
+                $tickvals[] = $dates[$i];
+                if ($i != $last_idx && $include_both_labels) {
+                    $i = $last_idx - $dtick;
                 }
             }
-            $tickvals[] = $dates[$i];
-            if ($i != $last_idx && $include_both_labels) {
-                $i = $last_idx - $dtick;
-            }
+            $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
+            $this->_chart['layout']["{$axisName}"]['tickvals'] = $tickvals;
         }
-        $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
-        $this->_chart['layout']["{$axisName}"]['tickvals'] = $tickvals;
 
         // Timeseries ticks need to be set to 'auto' if all legend elements are hidden
         // due to bug with Plotly JS manually set ticks.
