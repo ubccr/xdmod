@@ -1,0 +1,10 @@
+title
+"Number of Users: Active: by Resource"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Resource,"Number of Users: Active"
+openstack,3
+---------

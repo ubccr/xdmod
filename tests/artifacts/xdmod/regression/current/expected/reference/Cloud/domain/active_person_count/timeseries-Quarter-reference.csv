@@ -1,0 +1,10 @@
+title
+"Number of Users: Active: by Domain"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[Default] Number of Users: Active"
+"2018 Q2",3
+---------
