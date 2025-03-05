@@ -173,6 +173,7 @@ class AggregateChart
                     'traceorder' => 'normal'
                 ),
                 'hovermode' => $this->_hideTooltip ? false : 'x unified',
+                'hoverdistance' => 1,
                 'hoverlabel' => array(
                     'align' => 'left',
                     'bgcolor' => 'rgba(255, 255, 255, 0.8)',
@@ -740,42 +741,53 @@ class AggregateChart
             $this->setSubtitle($subtitle, $font_size);
         }
 
+        // Pie charts are always summarized
+        foreach ($data_series as $dsv) {
+            if ($dsv->display_type == 'pie') {
+                $summarizeDataseries = true;
+            }
+        }
+
         //  ----------- set up xAxis and yAxis, assign to chart -----------
 
         $yAxisArray = $this->setAxes($summarizeDataseries, $offset, $x_axis, $font_size);
         $yAxisCount = count($yAxisArray);
-        $legendRank = 1;
+        $legendRank = 0;
 
         // ------------ prepare to plot ------------
 
-        // --- If ME, Does any dataset specify a pie chart? If so, set to truncate/summarize -- //
-        // This corrects the 'pie charts are wrong' bug...
-        if ( !$summarizeDataseries )
+        if ($summarizeDataseries)
         {
+            // disable ME paging by setting dataset size to 1
+            $this->_total = 1;
             foreach($yAxisArray as $yAxisIndex => $yAxisObject)
             {
-                foreach ($yAxisObject->series as $data_object)
+                foreach($yAxisObject->series as $data_description_index => $yAxisDataObjectAndDescription)
                 {
-                    if ( $data_object['data_description']->display_type=='pie' )
+                    $yAxisDataObject = $yAxisDataObjectAndDescription['yAxisDataObject'];
+                    $data_description = $yAxisDataObjectAndDescription['data_description'];
+                    $valuesCount = $yAxisDataObject->getCount(true);
+
+                    if($valuesCount - $this->limit >= 1)
                     {
-                        // set to summarize, then break both loops.
-                        $summarizeDataseries = true;
-                        break 2;
+                        // only compute average (2nd parameter) if not drawing pie chart
+                        $yAxisDataObject->truncate($this->limit, $data_description->display_type!=='pie');
+
+                        // now merge the x labels, if needed, from multiple datasets:
+                        $mergedlabels = $yAxisDataObject->getXValues();
+                        foreach( $mergedlabels as $idx => $label) {
+                            if ($label === null) {
+                                $tmp = $this->_xAxisDataObject->getValues();
+                                $mergedlabels[$idx] = $tmp[$idx];
+                            }
+                        }
+                        $this->_xAxisDataObject->setValues($mergedlabels);
+                        $this->_xAxisDataObject->getCount(true);
+                        $this->setXAxis($x_axis, $font_size);
                     }
                 }
             }
-
-            // if we have just reset summarizeDatasets, recompute limit, xAxis, and yAxis
-            // with the new limit in place. Reset dataset _total to 1 to disable paging.
-            if ($summarizeDataseries)
-            {
-                $yAxisArray = $this->setAxes($summarizeDataseries, $offset, $x_axis, $font_size);
-                $yAxisCount = count($yAxisArray);
-
-                // disable ME paging by setting dataset size to 1
-                $this->_total = 1;
-            }
-        } // !$summarizeDatasets
+        }
 
         // OK, now let's plot something...
         // Each of the yAxisObjects returned from getYAxis()
@@ -901,34 +913,6 @@ class AggregateChart
                 $semDecimals = $yAxisDataObjectAndDescription['semDecimals'];
                 $filterParametersTitle =  $yAxisDataObjectAndDescription['filterParametersTitle'];
 
-                // ============= truncate (e.g. take average, min, max, sum of remaining values) ==========
-
-                // Usage tab charts and ME pie charts will have their datasets summarized as follows:
-                $dataSeriesSummarized = false;
-                if ( $summarizeDataseries )
-                {
-                        $valuesCount = $yAxisDataObject->getCount(true);
-
-                    if($valuesCount - $this->limit >= 1)
-                        {
-                        // only compute average (2nd parameter) if not drawing pie chart
-                        $yAxisDataObject->truncate($this->limit, $data_description->display_type!=='pie');
-
-                        // now merge the x labels, if needed, from multiple datasets:
-                        $mergedlabels = $yAxisDataObject->getXValues();
-                        foreach( $mergedlabels as $idx => $label) {
-                            if ($label === null) {
-                                $tmp = $this->_xAxisDataObject->getValues();
-                                $mergedlabels[$idx] = $tmp[$idx];
-                            }
-                        }
-                        $this->_xAxisDataObject->setValues($mergedlabels);
-                        $this->_xAxisDataObject->getCount(true);
-                        $this->setXAxis($x_axis, $font_size);
-                        $dataSeriesSummarized = true;
-                    }
-                } // summarizeDataseries
-
                 //  ================ set color ================
 
                 // If the first data set in the series, pick up the yAxisColorValue.
@@ -942,13 +926,14 @@ class AggregateChart
                 $std_err_labels_enabled = property_exists($data_description, 'std_err_labels') && $data_description->std_err_labels;
                 $isThumbnail = $this->_width <= \DataWarehouse\Visualization::$thumbnail_width;
                 $this->_chart['layout']['stdErr'] = $data_description->std_err;
+                $xValues = $this->_xAxisDataObject->getValues();
                 $trace = array();
                 $drilldown = array();
-                $xValues = array();
                 $yValues = array();
                 $drillable = array();
                 $text = array();
                 $colors = array();
+                $visiblePoints = 0;
 
                 // to display as pie chart:
                 if($data_description->display_type == 'pie')
@@ -958,16 +943,16 @@ class AggregateChart
                         // If the first value, give it the yAxisColor so we don't skip
                         // that color in the dataset. Otherwise, pick the next color.
                         $yValues[] = $value;
-                        $xValues[] = $yAxisDataObject->getXValue($index);
                         $colors[] = ($index == 0) ? $yAxisColor
                             : '#'.str_pad(dechex($this->_colorGenerator->getColor() ), 6, '0', STR_PAD_LEFT);
-                        $drillable[] = true;
+                        $drillId = $yAxisDataObject->getXId($index);
+                        $drillable[] = ($drillId > -9999);
                         // N.B.: These are drilldown labels.
                         // X axis labels will be the same, but are plotted
                         // from the x axis object instance variable.
                         // See setXAxis() and _xAxisDataObject.
                         $drilldown[] = array(
-                            'id' => $yAxisDataObject->getXId($index),
+                            'id' => $drillId,
                             'label' => $yAxisDataObject->getXValue($index)
                         );
 
@@ -976,15 +961,25 @@ class AggregateChart
                             'values' => $yValues,
                         );
 
+                        if (!is_null($value)) {
+                            $visiblePoints++;
+                        }
                     }
                     // Dont add data labels for all pie slices. Plotly will render all labels otherwise,
-                    // which causes the margin on pie charts with many slices to break
+                    // which causes the margin on pie charts with many slices to break.
+                    // Show all labels on thumbnail plots because slices can be difficult to hover over
+                    // due to size of plot.
                     $labelLimit = 12;
                     $labelsAllocated = 0;
                     $pieSum = array_sum($yValues);
                     for ($i = 0; $i < count($xValues); $i++) {
-                        if ($isThumbnail || (($labelsAllocated < $labelLimit) && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
-                            $text[] = '<b>' . $xValues[$i] . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
+                        if ($isThumbnail || ($labelsAllocated < $labelLimit && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
+                            $label = $xValues[$i];
+                            // Truncate long data labels to improve visibility.
+                            if (mb_strlen($label) >= 60) {
+                                $label = mb_substr($xValues[$i], 0, 57) . '...';
+                            }
+                            $text[] = '<b>' . $label . '</b><br>' . number_format($yValues[$i], $decimals, '.', ',');
                             $labelsAllocated++;
                         }
                         else {
@@ -1006,22 +1001,22 @@ class AggregateChart
                     // set the label for each value:
                     foreach( $yAxisDataObject->getValues() as $index => $value)
                     {
+                        $drillId = $yAxisDataObject->getXId($index);
                         $yValues[] = $value;
-                        $xValues[] = $yAxisDataObject->getXValue($index);
-                        $drillable[] = true;
+                        $drillable[] = ($drillId > -9999);
+
                         // N.B.: The following are drilldown labels.
                         // Labels on the x axis come from the x axis object
                         // (Though they are the same labels...)
                         $drilldown[] = array(
-                            'id' => $yAxisDataObject->getXId($index),
+                            'id' => $drillId,
                             'label' => $yAxisDataObject->getXValue($index)
                         );
-                    }
-                }
 
-                $values_count = count($yValues);
-                if ($dataSeriesSummarized && $values_count > 0) {
-                    $drillable[$values_count - 1] = false;
+                        if (!is_null($value)) {
+                            $visiblePoints++;
+                        }
+                    }
                 }
 
                 $zIndex = isset($data_description->z_index) ? $data_description->z_index : $data_description_index;
@@ -1084,14 +1079,21 @@ class AggregateChart
                 }
 
                 $this->_chart['layout']['hoverlabel']['bordercolor'] = $yAxisColor;
-                // Hide markers for 32 points or greater, except when there are multiple traces then hide markers starting at 21 points.
+
+                // Show markers if the non-thumbnail plot has less than 21 visible data points.
+                // Also show markers if there is one data point otherwise thumbnail plots with 1 non-null point will be
+                // hidden.
                 // Need check for chart types that this applies to otherwise bar, scatter, and pie charts will be hidden.
-                $hideMarker = in_array($data_description->display_type, array('line', 'spline', 'area', 'areaspline'))
-                    && ($values_count >= 32 || (count($yAxisObject->series) > 1 && $values_count >= 21));
+                $showMarker = in_array($data_description->display_type, array('scatter', 'pie', 'bar', 'h_bar', 'column'))
+                    || ($visiblePoints < 21 && !$isThumbnail)
+                    || $visiblePoints == 1;
 
                 $trace = array_merge($trace, array(
                     'automargin'=> $data_description->display_type == 'pie' ? true : null,
                     'name' => $lookupDataSeriesName,
+                    'meta' => array(
+                        'primarySeries' => true
+                    ),
                     'customdata' => $lookupDataSeriesName,
                     'zIndex' => $zIndex,
                     'cliponaxis' => false,
@@ -1107,7 +1109,7 @@ class AggregateChart
                             'color' => $lineColor,
                         ),
                         'symbol' => $this->_symbolStyles[$data_description_index % 5],
-                        'opacity' => $hideMarker ? 0.0 : 1.0
+                        'opacity' => $showMarker ? 1.0 : 0.0
                     ),
                     'line' => array(
                         'color' => $data_description->display_type == 'pie' ?
@@ -1135,7 +1137,7 @@ class AggregateChart
                     'y' => $this->_swapXY ? $xValues : $yValues,
                     'drillable' => $drillable,
                     'yaxis' => "y{$yIndex}",
-                    'offsetgroup' => $yIndex > 1 ? "group{$yIndex}" : "group{$legendRank}",
+                    'offsetgroup' => $yAxisCount > 1 ? "group{$yIndex}{$legendRank}" : "group{$legendRank}",
                     'legendgroup' => $data_description_index,
                     'legendrank' => $legendRank - 1,
                     'traceorder' => $legendRank,
@@ -1154,6 +1156,9 @@ class AggregateChart
                 if($data_description->display_type!=='line')
                 {
                     if ($trace['type']=='area' && $data_description_index == 0) {
+                        // "Area fix" trace is needed to have the ~5% padding on the
+                        // left and right side of other plots. Otherwise the first and
+                        // last values will be directly up to the end of the plotting area.
                         $hidden_trace = array(
                             'name' => 'area fix',
                             'x' => $this->_swapXY ? array_fill(0, count($xValues), 0) : $xValues,
@@ -1235,10 +1240,14 @@ class AggregateChart
                     $trace['xaxis'] = "x{$yIndex}";
 
                     if (!$swapXYDone) {
-                        $xtmp = $this->_chart['layout']['xaxis'];
-                        $ytmp = $this->_chart['layout']["{$yAxisName}"];
-                        $this->_chart['layout']['yaxis'] = $xtmp;
-                        $this->_chart['layout']["{$xAxisName}"] = $ytmp;
+                        if ($yIndex == 1) {
+                            $xtmp = $this->_chart['layout']["{$xAxisName}"];
+                            $this->_chart['layout']["{$xAxisName}"] = $this->_chart['layout']["{$yAxisName}"];
+                            $this->_chart['layout']["{$yAxisName}"] = $xtmp;
+                        } else {
+                            $this->_chart['layout']["{$xAxisName}"] = $this->_chart['layout']["{$yAxisName}"];
+                            unset($this->_chart['layout']["{$yAxisName}"]);
+                        }
 
                         $this->_chart['layout']["{$xAxisName}"]['side'] = ($yAxisIndex % 2 != 0) ? 'top' : 'bottom';
                         if ($this->_chart['layout']["{$xAxisName}"]['side'] == 'top') {
@@ -1294,6 +1303,7 @@ class AggregateChart
                         ),
                         'connectgaps' => true,
                         'hoverinfo' => 'skip',
+                        'offsetgroup' => $yAxisCount > 1 ? "group{$yIndex}{$legendRank}" : "group{$legendRank}",
                         'legendgroup' => $data_description_index,
                         'legendrank' => -1000,
                         'traceorder' => -1000,
@@ -1447,6 +1457,9 @@ class AggregateChart
             // create the data series description:
             $error_trace = array_merge($trace, array(
                 'name' => $lookupDataSeriesName,
+                'meta' => array(
+                    'primarySeries' => false
+                ),
                 'otitle' => $dsn,
                 'datasetId' => $data_description->id,
                 'color'=> $error_color,
