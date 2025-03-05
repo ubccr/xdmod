@@ -23,7 +23,8 @@
         - Fix pie chart data label display
           ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
         - Fix display of plots when swapping x- and y-axes
-          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980),
+          [\#1996](https://github.com/ubccr/xdmod/pull/1996)).
         - Fix display of bar and area plots with side-by-side grouping
           ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
         - Fix ordering of the date axis on timeseries plots with varying date
