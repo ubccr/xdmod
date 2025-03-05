@@ -919,6 +919,7 @@ class TimeseriesChart extends AggregateChart
         }
 
         // Compute tick label placement and format
+        $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
         if (!empty($dates)) {
             $dates = array_unique($dates);
             $value_count = count($dates);
@@ -958,7 +959,6 @@ class TimeseriesChart extends AggregateChart
                     $i = $last_idx - $dtick;
                 }
             }
-            $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
             $this->_chart['layout']["{$axisName}"]['tickvals'] = $tickvals;
         }
 
