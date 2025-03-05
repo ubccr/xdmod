@@ -741,6 +741,13 @@ class AggregateChart
             $this->setSubtitle($subtitle, $font_size);
         }
 
+        // Pie charts are always summarized
+        foreach ($data_series as $dsv) {
+            if ($dsv->display_type == 'pie') {
+                $summarizeDataseries = true;
+            }
+        }
+
         //  ----------- set up xAxis and yAxis, assign to chart -----------
 
         $yAxisArray = $this->setAxes($summarizeDataseries, $offset, $x_axis, $font_size);
@@ -748,24 +755,6 @@ class AggregateChart
         $legendRank = 0;
 
         // ------------ prepare to plot ------------
-
-        // --- If ME, Does any dataset specify a pie chart? If so, set to truncate/summarize -- //
-        // This corrects the 'pie charts are wrong' bug...
-        if ( !$summarizeDataseries )
-        {
-            foreach($yAxisArray as $yAxisIndex => $yAxisObject)
-            {
-                foreach ($yAxisObject->series as $data_object)
-                {
-                    if ( $data_object['data_description']->display_type=='pie' )
-                    {
-                        // set to summarize, then break both loops.
-                        $summarizeDataseries = true;
-                        break 2;
-                    }
-                }
-            }
-        }
 
         if ($summarizeDataseries)
         {
