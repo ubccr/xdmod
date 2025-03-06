@@ -87,7 +87,7 @@ if ($userLoggedIn) {
 
 $page_title = xd_utilities\getConfiguration('general', 'title');
 
-$jupyterhubConfigured = xd_utilities\configurationSectionExists('jupyterhub'));
+$jupyterhubConfigured = xd_utilities\configurationSectionExists('jupyterhub');
 
 // Set REST cookies.
 \xd_rest\setCookies();
