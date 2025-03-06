@@ -232,9 +232,6 @@
             "expansion_factor": [
                 "3.1031"
             ],
-            "normalized_avg_processors": [
-                "0.043672753"
-            ],
             "avg_job_size_weighted_by_cpu_hours": [
                 "65.6161"
             ],
