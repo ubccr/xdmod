@@ -448,6 +448,9 @@ class TimeseriesChart extends AggregateChart
                                 $allNull = false;
                                 $visiblePoints++;
                             }
+                            if ($visiblePoints > 1) {
+                                break;
+                            }
                         }
                         if($allNull)
                         {
