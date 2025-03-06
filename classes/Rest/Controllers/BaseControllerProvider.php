@@ -788,11 +788,11 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         $tokenParts = explode(Tokens::DELIMITER, $rawToken);
         $tokenPartsSize = sizeof($tokenParts);
         if ($tokenPartsSize === 2) {
-            $userId = $tokenParts[0] //substr($rawToken, 0, $delimPosition);
-            $token = $tokenParts[1] //substr($rawToken, $delimPosition + 1);
+            $userId = $tokenParts[0]; //substr($rawToken, 0, $delimPosition);
+            $token = $tokenParts[1]; //substr($rawToken, $delimPosition + 1);
             return Tokens::authenticate($userId, $token);
         } elseif ($tokenPartsSize === 3) {
-            return Tokens::authenticateJSONWebToken($rawToken)
+            return Tokens::authenticateJSONWebToken($rawToken);
         } else {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
