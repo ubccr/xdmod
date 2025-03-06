@@ -439,20 +439,19 @@ class TimeseriesChart extends AggregateChart
 
                         // Calculate number of non-null values to determine data series marker visibility.
                         // If all values are null then skip this series.
-                        $allNull = true;
                         $visiblePoints = 0;
                         foreach($yAxisDataObject->getValues() as $value)
                         {
                             if($value != null)
                             {
-                                $allNull = false;
                                 $visiblePoints++;
                             }
-                            if ($visiblePoints > 1) {
+                            if($visiblePoints > 1)
+                            {
                                 break;
                             }
                         }
-                        if($allNull)
+                        if($visiblePoints == 0)
                         {
                             continue;
                         }
