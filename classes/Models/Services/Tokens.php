@@ -3,6 +3,8 @@
 namespace Models\Services;
 
 use Exception;
+use Firebase\JWT\JWT;
+use Firebase\JWT\Key;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use XDUser;
@@ -74,6 +76,14 @@ SQL;
 
         // and if we've made it this far we can safely return the requested Users data.
         return XDUser::getUserByID($dbUserId);
+    }
+
+    public static function authenticateJSONWebToken($jwt)
+    {
+        $configured_secret_key = \xd_utilities\getConfiguration('json_web_token', 'secret_key');
+        $secret_key = Key($configured_secret_key, 'HS256');
+        $decoded_token = JWT::decode($jwt, $secret_key);
+
     }
 
     /**

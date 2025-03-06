@@ -785,20 +785,20 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             );
         }
 
-
-        // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
-        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
-        if ($delimPosition === false) {
+        $tokenParts = explode(Tokens::DELIMITER, $rawToken);
+        $tokenPartsSize = sizeof($tokenParts)
+        if ($tokenPartsSize === 2) {
+            $userId = $tokenParts[0] //substr($rawToken, 0, $delimPosition);
+            $token = $tokenParts[1] //substr($rawToken, $delimPosition + 1);
+            return Tokens::authenticate($userId, $token);
+        } elseif ($tokenPartsSize === 3) {
+            return Tokens::authenticateJSONWebToken($rawToken)
+        } else {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
                 'Invalid token format.'
             );
         }
-
-        $userId = substr($rawToken, 0, $delimPosition);
-        $token = substr($rawToken, $delimPosition + 1);
-
-        return Tokens::authenticate($userId, $token);
     }
 
     /**
