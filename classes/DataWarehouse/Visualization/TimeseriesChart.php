@@ -460,7 +460,7 @@ class TimeseriesChart extends AggregateChart
                         // hidden.
                         // Need check for chart types that this applies to otherwise bar, scatter, and pie charts will be hidden.
                         $showMarker = in_array($data_description->display_type, array('scatter', 'pie', 'bar', 'h_bar', 'column'))
-                            || ($visiblePoints < 21 && !$isThumbnail)
+                            || (count($values) < 21 && !$isThumbnail)
                             || $visiblePoints == 1;
 
                         $isRemainder = $yAxisDataObject->getGroupId() === TimeseriesDataset::SUMMARY_GROUP_ID;
