@@ -1085,7 +1085,7 @@ class AggregateChart
                 // hidden.
                 // Need check for chart types that this applies to otherwise bar, scatter, and pie charts will be hidden.
                 $showMarker = in_array($data_description->display_type, array('scatter', 'pie', 'bar', 'h_bar', 'column'))
-                    || ($visiblePoints < 21 && !$isThumbnail)
+                    || (count($yValues) < 21 && !$isThumbnail)
                     || $visiblePoints == 1;
 
                 $trace = array_merge($trace, array(

@@ -439,17 +439,19 @@ class TimeseriesChart extends AggregateChart
 
                         // Calculate number of non-null values to determine data series marker visibility.
                         // If all values are null then skip this series.
-                        $allNull = true;
                         $visiblePoints = 0;
                         foreach($yAxisDataObject->getValues() as $value)
                         {
                             if($value != null)
                             {
-                                $allNull = false;
                                 $visiblePoints++;
                             }
+                            if($visiblePoints > 1)
+                            {
+                                break;
+                            }
                         }
-                        if($allNull)
+                        if($visiblePoints == 0)
                         {
                             continue;
                         }
@@ -460,7 +462,7 @@ class TimeseriesChart extends AggregateChart
                         // hidden.
                         // Need check for chart types that this applies to otherwise bar, scatter, and pie charts will be hidden.
                         $showMarker = in_array($data_description->display_type, array('scatter', 'pie', 'bar', 'h_bar', 'column'))
-                            || ($visiblePoints < 21 && !$isThumbnail)
+                            || (count($values) < 21 && !$isThumbnail)
                             || $visiblePoints == 1;
 
                         $isRemainder = $yAxisDataObject->getGroupId() === TimeseriesDataset::SUMMARY_GROUP_ID;
