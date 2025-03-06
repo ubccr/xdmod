@@ -10,8 +10,10 @@ use PhpOffice\PhpWord\Exception\Exception;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use XDUser;
 
 /**
@@ -219,7 +221,11 @@ class UserControllerProvider extends BaseControllerProvider
      */
     public function createJSONWebToken(Request $request, Application $app)
     {
-        $user = $this->authorize($request);
+        try {
+            $user = $this->authorize($request);
+        } catch (UnauthorizedHttpException | AccessDeniedException $e) {
+            //redirect to login
+        }
 
         $secretKey  = \xd_utilities\getConfiguration('json_web_token', 'secret_key');
         $tokenId    = base64_encode(random_bytes(16));

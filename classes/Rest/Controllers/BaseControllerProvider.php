@@ -222,9 +222,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         }
 
         $authorized = $user->hasAcls($requirements);
-        if ($authorized === false && !$isPublicUser) {
+        if (!$authorized && !$isPublicUser) {
             throw new AccessDeniedHttpException(self::EXCEPTION_MESSAGE);
-        } elseif ($authorized === false && $isPublicUser) {
+        } elseif (!$authorized && $isPublicUser) {
             throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
 
