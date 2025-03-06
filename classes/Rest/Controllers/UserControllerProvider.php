@@ -224,7 +224,7 @@ class UserControllerProvider extends BaseControllerProvider
         try {
             $user = $this->authorize($request);
         } catch (UnauthorizedHttpException | AccessDeniedException $e) {
-            RedirectResponse("/");
+            return new RedirectResponse("/");
         }
 
         $secretKey  = \xd_utilities\getConfiguration('json_web_token', 'secret_key');
