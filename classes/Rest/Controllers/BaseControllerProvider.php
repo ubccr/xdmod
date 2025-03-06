@@ -786,7 +786,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         }
 
         $tokenParts = explode(Tokens::DELIMITER, $rawToken);
-        $tokenPartsSize = sizeof($tokenParts)
+        $tokenPartsSize = sizeof($tokenParts);
         if ($tokenPartsSize === 2) {
             $userId = $tokenParts[0] //substr($rawToken, 0, $delimPosition);
             $token = $tokenParts[1] //substr($rawToken, $delimPosition + 1);
