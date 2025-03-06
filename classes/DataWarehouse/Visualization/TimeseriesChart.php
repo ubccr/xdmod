@@ -946,8 +946,8 @@ class TimeseriesChart extends AggregateChart
             $include_both_labels = false;
             for ($i = 0; $i < $value_count; $i += $dtick) {
                 if (!$include_both_labels && (($value_count - $i) <= $dtick)) {
-                    if (($value_count - $i) <= round($dtick * .25)) {
-                        // tick at end of loop is close (within 25%) to last data point
+                    if (($value_count - $i) <= round($dtick * .30)) {
+                        // tick at end of loop is close (within 30%) to last data point
                         // thererfore just include the last data point tick label
                         $i = $last_idx;
                     } else {
