@@ -66,6 +66,15 @@
                     "javascriptReference": "CCR.xdmod.ui.aboutXD",
                     "userManualSectionName": "About",
                     "tooltip": ""
+                },
+                {
+                    "name": "jupyterhub",
+                    "title": "JupyterHub",
+                    "position": -1,
+                    "javascriptClass": "XDMoD.Module.JupyterHub",
+                    "javascriptReference": "CCR.xdmod.ui.JupyterHub",
+                    "tooltip": "Access JupyterHub",
+                    "userManualSectionName": "JupyterHub"
                 }
             ],
             "query_descripters": [],
