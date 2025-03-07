@@ -234,7 +234,7 @@ class UserControllerProvider extends BaseControllerProvider
         $issuedAt   = new \DateTimeImmutable();
         $expire     = $issuedAt->modify('+6 minutes')->getTimestamp();
 
-        $data = [
+        $tokenData = [
             'iat'  => $issuedAt->getTimestamp(),
             'jti'  => $tokenId,
             'exp'  => $expire,
@@ -242,15 +242,18 @@ class UserControllerProvider extends BaseControllerProvider
         ];
 
         $jwt = JWT::encode(
-            $data,
+            $tokenData,
             $secretKey,
             'HS256'
         );
 
         $cookie = new Cookie('xdmod_jwt', $jwt);
-        $jupyterhub_url = \xd_utilities\getConfiguration('jupyterhub', 'url');
-        $response = new RedirectReponse($jupyterhub_url);
-        return $response->headers->setCookie($cookie);
+        $jupyterhubURL = \xd_utilities\getConfiguration('jupyterhub', 'url');
+        $response = new RedirectResponse($jupyterhubURL);
+        $response->headers->setCookie($cookie);
+        return $response;
+    }
+
     }
 
     /**
