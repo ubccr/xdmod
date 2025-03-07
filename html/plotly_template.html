@@ -115,7 +115,6 @@
                 }
                 const update = relayoutChart(chartDiv, chartOptions.layout.height, true, true);
                 Plotly.relayout('container', update);
-                removeExtraTimeseriesTickLabels(chartDiv, chartOptions);
             });
         });
 
