@@ -249,8 +249,8 @@ class UserControllerProvider extends BaseControllerProvider
         );
 
         $cookie = new Cookie('xdmod_jwt', $jwt);
-        $jupyterhubURL = $this->generateURL(\xd_utilities\getConfiguration('jupyterhub', 'url'));
-        $response = new RedirectResponse($jupyterhubURL);
+        $jupyterhubURL = \xd_utilities\getConfiguration('jupyterhub', 'url');
+        $response = new RedirectResponse($this->generateUrl($jupyterhubURL));
         $response->headers->setCookie($cookie);
         return $response;
     }
