@@ -8,6 +8,7 @@ use Firebase\JWT\JWT;
 use Models\Services\Organizations;
 use PhpOffice\PhpWord\Exception\Exception;
 use Silex\Application;
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedException;
@@ -245,10 +246,10 @@ class UserControllerProvider extends BaseControllerProvider
             'HS256'
         );
 
-        return $app->json(array(
-            'success' => true,
-            'data' => $jwt
-        ));
+        $cookie = new Cookie('xdmod_jwt', $jwt);
+        $jupyterhub_url = \xd_utilities\getConfiguration('jupyterhub', 'url');
+        $response = new RedirectReponse($jupyterhub_url);
+        return $response->headers->setCookie($cookie);
     }
 
     /**
