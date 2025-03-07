@@ -238,7 +238,8 @@ class UserControllerProvider extends BaseControllerProvider
             'iat'  => $issuedAt->getTimestamp(),
             'jti'  => $tokenId,
             'exp'  => $expire,
-            'upn'  => $user->getUserName()
+            'upn'  => $user->getUsername(),
+            'uid'  => $user->getUserID(),
         ];
 
         $jwt = JWT::encode(
@@ -252,8 +253,6 @@ class UserControllerProvider extends BaseControllerProvider
         $response = new RedirectResponse($jupyterhubURL);
         $response->headers->setCookie($cookie);
         return $response;
-    }
-
     }
 
     /**
