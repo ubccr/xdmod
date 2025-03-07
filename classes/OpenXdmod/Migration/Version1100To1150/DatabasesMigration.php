@@ -19,8 +19,6 @@ class DatabasesMigration extends AbstractDatabasesMigration
     {
         parent::execute();
 
-        Utilities::runEtlPipeline(['ingest-resources'], $this->logger);
-
         $dbh = DB::factory('datawarehouse');
         $mysql_helper = MySQLHelper::factory($dbh);
 

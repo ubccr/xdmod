@@ -489,31 +489,7 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
 /* exported overrideLegendEvent */
 function overrideLegendEvent(chartDiv) {
     chartDiv.on('plotly_legendclick', (evt) => {
-        // First check if all traces are hidden.
-        // There is a bug with tick text manually set.
-        // We need to set the tickmode to auto if so.
-        const visibleData = evt.fullData.filter((trace) => trace.name !== 'gap connector' && trace.name !== 'area fix' && trace.visible === true);
-        const axis = (evt.layout.swapXY ? 'y' : 'x') + 'axis';
-        let tickType;
-        if (evt.layout[axis].timeseries) {
-            if (
-                (
-                    evt.layout[axis].dtick === CCR.xdmod.ui.dtickDay
-                    && evt.data[evt.curveNumber].x.length > 7
-                ) || (
-                    visibleData.length === 1
-                    && visibleData[0].index === evt.curveNumber
-                )
-            ) {
-                tickType = 'auto';
-            } else {
-                tickType = 'linear';
-            }
-        } else {
-            tickType = 'array';
-        }
-        Plotly.relayout(chartDiv, { [`${axis}.tickmode`]: tickType });
-
+        // Update std err bar based on legend event details.
         const { node } = evt;
         const nodeVisibility = evt.node.style.opacity;
         const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';
@@ -542,30 +518,4 @@ function overrideLegendEvent(chartDiv) {
     });
 
     chartDiv.on('plotly_legenddoubleclick', (evt) => false);
-}
-/**
- * Removes tick labels outside the selected time interval
- * from the domain axis of the timeseries plot.
- *
- * @param {Object} chartDiv - Plotly JS chart div
- * @param {Object} baseChartOptions - Object contain Plotly JS layout and data
- */
-function removeExtraTimeseriesTickLabels(chartDiv, baseChartOptions) { // eslint-disable-line
-    const axis = baseChartOptions.layout.swapXY ? 'yaxis' : 'xaxis';
-    const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
-    if (!isEmpty && baseChartOptions.layout[axis].timeseries) {
-        const xAxisTicks = chartDiv.getElementsByClassName(`${axis}layer-below`)[0];
-        const len = baseChartOptions.layout.swapXY ? baseChartOptions.data[0].y.length - 1 : baseChartOptions.data[0].x.length - 1;
-        const min = baseChartOptions.layout.swapXY ? baseChartOptions.data[0].y[0] : baseChartOptions.data[0].x[0];
-        const max = baseChartOptions.layout.swapXY ? baseChartOptions.data[0].y[len] : baseChartOptions.data[0].x[len];
-        const minString = moment(min).format('YYYY-MM-DD');
-        const maxString = moment(max).format('YYYY-MM-DD');
-        for (let i = 0; i < xAxisTicks.children.length; i++) {
-            const currTick = xAxisTicks.children[i];
-            const currDate = moment(currTick.__data__.text);
-            if (currDate.isBefore(minString) || currDate.isAfter(maxString)) {
-                currTick.remove();
-            }
-        }
-    }
 }

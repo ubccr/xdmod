@@ -2,9 +2,9 @@
     "module": "xdmod",
     "defaults": {
         "migration-11_0_0-11_5_0": {
-            "class": "ManageTables",
-            "namespace": "ETL\\Maintenance",
-            "options_class": "MaintenanceOptions",
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "class": "DatabaseIngestor",
             "endpoints": {
                 "destination": {
                     "type": "mysql",
@@ -42,13 +42,40 @@
     },
     "migration-11_0_0-11_5_0": [
         {
-            "name": "manageStagingTables",
-            "description": "Changes to staging tables",
+            "name": "manageOrganizationStagingTables",
+            "description": "Changes to organization tables",
+            "class": "ManageTables",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
             "definition_file_list": [
                 "common/staging/organization-config.json",
                 "common/staging/organization.json",
                 "common/staging/resource-config.json"
             ]
+        },
+        {
+            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/0"
+        },
+        {
+            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/1"
+        },
+        {
+            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/2"
+        },
+        {
+            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/3"
+        },
+        {
+            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/4"
+        },
+        {
+            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/5"
+        },
+        {
+            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/6"
+        },
+        {
+            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/7"
         }
     ],
     "storage-migration-11-0-0_11-5-0": [

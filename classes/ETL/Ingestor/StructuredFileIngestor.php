@@ -298,43 +298,60 @@ class StructuredFileIngestor extends aIngestor implements iAction
 
         $warnings = array();
 
-        foreach ( $this->sourceEndpoint as $sourceRecord ) {
+        if(!$this->destinationHandle->beginTransaction()) {
+            $this->logAndThrowException(
+                "Could not start transaction. Skipping ingestion.",
+                array('endpoint' => $this)
+            );
+        }
 
-            // The same source record may be used in multiple tables.
+        try {
+            foreach ( $this->sourceEndpoint as $sourceRecord ) {
 
-            foreach ( $this->destinationFieldMappings as $etlTableKey => $destFieldToSourceFieldMap ) {
+                // The same source record may be used in multiple tables.
 
-                $parameters = $this->generateParametersFromSourceRecord(
-                    $sourceRecord,
-                    $destinationFieldIdToSourceFieldMap[$etlTableKey],
-                    $sourceFieldToValueMapTemplate[$etlTableKey],
-                    $simpleSourceFields[$etlTableKey],
-                    $complexSourceFields[$etlTableKey]
-                );
+                foreach ( $this->destinationFieldMappings as $etlTableKey => $destFieldToSourceFieldMap ) {
 
-                try {
-                    // Some values of parameters are complex objects and cannot be! This is due to
-                    // the auto-generated field map.
-                    $insertStatements[$etlTableKey]->execute($parameters);
-                } catch (PDOException $e) {
-                    $this->logger->debug(print_r($sourceRecord, true));
-                    $this->logAndThrowException(
-                        sprintf(
-                            "Error inserting data into table key '%s' for record %s.",
-                            $etlTableKey,
-                            $this->sourceEndpoint->key()
-                        ),
-                        array('exception' => $e, 'endpoint' => $this)
+                    $parameters = $this->generateParametersFromSourceRecord(
+                        $sourceRecord,
+                        $destinationFieldIdToSourceFieldMap[$etlTableKey],
+                        $sourceFieldToValueMapTemplate[$etlTableKey],
+                        $simpleSourceFields[$etlTableKey],
+                        $complexSourceFields[$etlTableKey]
                     );
-                }
 
-                $warning = $this->destinationHandle->query("SHOW WARNINGS");
+                    try {
+                        // Some values of parameters are complex objects and cannot be! This is due to
+                        // the auto-generated field map.
+                        $insertStatements[$etlTableKey]->execute($parameters);
+                    } catch (PDOException $e) {
+                        $this->logger->debug(print_r($sourceRecord, true));
+                        $this->logAndThrowException(
+                            sprintf(
+                                "Error inserting data into table key '%s' for record %s.",
+                                $etlTableKey,
+                                $this->sourceEndpoint->key()
+                            ),
+                            array('exception' => $e, 'endpoint' => $this)
+                        );
+                    }
 
-                if ( count($warning) > 0 ) {
-                    $warnings[$etlTableKey] = array_key_exists($etlTableKey, $warnings) ? array_merge($warnings[$etlTableKey], $warning) : $warning;
+                    $warning = $this->destinationHandle->query("SHOW WARNINGS");
+
+                    if ( count($warning) > 0 ) {
+                        $warnings[$etlTableKey] = array_key_exists($etlTableKey, $warnings) ? array_merge($warnings[$etlTableKey], $warning) : $warning;
+                    }
                 }
+                $numRecords++;
             }
-            $numRecords++;
+
+            $this->destinationHandle->commit();
+        } catch (PDOException $e) {
+            $this->logAndThrowException(
+                "Error committing transaction. Rolling back transactions.",
+                array('exception' => $e, 'endpoint' => $this)
+            );
+            $this->destinationHandle->rollback();
         }
 
         foreach ( $warnings as $table => $message) {
