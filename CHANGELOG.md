@@ -7,7 +7,8 @@
         - Remove plot range entry boxes in the corners of axes
           ([\#1887](https://github.com/ubccr/xdmod/pull/1887)).
         - Fix displays of markers on plots with null values
-          ([\#1941](https://github.com/ubccr/xdmod/pull/1941)).
+          ([\#1941](https://github.com/ubccr/xdmod/pull/1941),
+          [\#1997](https://github.com/ubccr/xdmod/pull/1997)).
         - Fix the displayed lists of datasets when hovering over plots
           ([\#1921](https://github.com/ubccr/xdmod/pull/1921)).
         - Fix aggregate plot x-axis labels when multiple metrics are plotted
@@ -23,6 +24,8 @@
           intervals
           ([\#1960](https://github.com/ubccr/xdmod/pull/1960),
           [\#1988](https://github.com/ubccr/xdmod/pull/1988)).
+        - Fix display of x-axis tick labels
+          ([\#1992](https://github.com/ubccr/xdmod/pull/1992)).
     - ETL
         - Add missing endpoint to the exception message in `ExecuteSql`
           ([\#1929](https://github.com/ubccr/xdmod/pull/1929)).
