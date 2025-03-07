@@ -253,7 +253,6 @@ Ext.extend(CCR.xdmod.ui.PlotlyPanel, Ext.Panel, {
                                         return false;
                                 }
                             });
-                            removeExtraTimeseriesTickLabels(chartDiv, this.chartOptions);
                         });
                         // Subtitle context menu
                         chartDiv.on('plotly_clickannotation', (evt) => {
