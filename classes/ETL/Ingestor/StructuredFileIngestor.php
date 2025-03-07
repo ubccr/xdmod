@@ -298,51 +298,59 @@ class StructuredFileIngestor extends aIngestor implements iAction
 
         $warnings = array();
 
-        $this->destinationHandle->beginTransaction();
-
-        foreach ( $this->sourceEndpoint as $sourceRecord ) {
-
-            // The same source record may be used in multiple tables.
-
-            foreach ( $this->destinationFieldMappings as $etlTableKey => $destFieldToSourceFieldMap ) {
-
-                $parameters = $this->generateParametersFromSourceRecord(
-                    $sourceRecord,
-                    $destinationFieldIdToSourceFieldMap[$etlTableKey],
-                    $sourceFieldToValueMapTemplate[$etlTableKey],
-                    $simpleSourceFields[$etlTableKey],
-                    $complexSourceFields[$etlTableKey]
-                );
-
-                try {
-                    // Some values of parameters are complex objects and cannot be! This is due to
-                    // the auto-generated field map.
-                    $insertStatements[$etlTableKey]->execute($parameters);
-                } catch (PDOException $e) {
-                    $this->logger->debug(print_r($sourceRecord, true));
-                    $this->logAndThrowException(
-                        sprintf(
-                            "Error inserting data into table key '%s' for record %s.",
-                            $etlTableKey,
-                            $this->sourceEndpoint->key()
-                        ),
-                        array('exception' => $e, 'endpoint' => $this)
-                    );
-                }
-
-                $warning = $this->destinationHandle->query("SHOW WARNINGS");
-
-                if ( count($warning) > 0 ) {
-                    $warnings[$etlTableKey] = array_key_exists($etlTableKey, $warnings) ? array_merge($warnings[$etlTableKey], $warning) : $warning;
-                }
-            }
-            $numRecords++;
+        if(!$this->destinationHandle->beginTransaction()) {
+            $this->logAndThrowException(
+                "Could not start transaction. Skipping ingestion.",
+                array('endpoint' => $this)
+            );
         }
 
         try {
+            foreach ( $this->sourceEndpoint as $sourceRecord ) {
+
+                // The same source record may be used in multiple tables.
+
+                foreach ( $this->destinationFieldMappings as $etlTableKey => $destFieldToSourceFieldMap ) {
+
+                    $parameters = $this->generateParametersFromSourceRecord(
+                        $sourceRecord,
+                        $destinationFieldIdToSourceFieldMap[$etlTableKey],
+                        $sourceFieldToValueMapTemplate[$etlTableKey],
+                        $simpleSourceFields[$etlTableKey],
+                        $complexSourceFields[$etlTableKey]
+                    );
+
+                    try {
+                        // Some values of parameters are complex objects and cannot be! This is due to
+                        // the auto-generated field map.
+                        $insertStatements[$etlTableKey]->execute($parameters);
+                    } catch (PDOException $e) {
+                        $this->logger->debug(print_r($sourceRecord, true));
+                        $this->logAndThrowException(
+                            sprintf(
+                                "Error inserting data into table key '%s' for record %s.",
+                                $etlTableKey,
+                                $this->sourceEndpoint->key()
+                            ),
+                            array('exception' => $e, 'endpoint' => $this)
+                        );
+                    }
+
+                    $warning = $this->destinationHandle->query("SHOW WARNINGS");
+
+                    if ( count($warning) > 0 ) {
+                        $warnings[$etlTableKey] = array_key_exists($etlTableKey, $warnings) ? array_merge($warnings[$etlTableKey], $warning) : $warning;
+                    }
+                }
+                $numRecords++;
+            }
+
             $this->destinationHandle->commit();
         } catch (PDOException $e) {
-            $this->logger->warning('Trouble commiting transaction. Rolling back');
+            $this->logAndThrowException(
+                "Error committing transaction. Rolling back transactions.",
+                array('exception' => $e, 'endpoint' => $this)
+            );
             $this->destinationHandle->rollback();
         }
 
