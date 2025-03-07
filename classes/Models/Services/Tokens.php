@@ -80,9 +80,47 @@ SQL;
 
     public static function authenticateJSONWebToken($jwt)
     {
-        $configured_secret_key = \xd_utilities\getConfiguration('json_web_token', 'secret_key');
-        $secret_key = Key($configured_secret_key, 'HS256');
-        $decoded_token = JWT::decode($jwt, $secret_key);
+        $configuredSecretKey = \xd_utilities\getConfiguration('json_web_token', 'secret_key');
+        $secretKey = new Key($configuredSecretKey, 'HS256');
+        $decodedToken = JWT::decode($jwt, $secretKey);
+
+        // Cast to PHP array to get token claims
+        $decodedToken = (array) $decodedToken;
+
+        // Claims
+        $issuedAtTime   = $decodedToken['iat'];
+        $jwtID          = $decodedToken['jti'];
+        $expiresOn      = $decodedToken['exp'];
+        $username       = $decodedToken['upn'];
+        $userID         = $decodedTokne['uid'];
+
+        $db = \CCR\DB::factory('database');
+        $query = <<<SQL
+        SELECT
+            id,
+            username
+        FROM moddb.Users
+        WHERE username = :username
+            AND id = :user_id
+            AND account_is_active = 1
+SQL;
+
+        $row = $db->query($query, array(':username' => $username, ':user_id' => $userID));
+        $rows = count($row);
+        if ($rows === 0) {
+            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid JSON Web Token.');
+        } elif $rows > 1) {
+            throw new UnauthorizedHttpException('', 'Invalid User');
+        }
+
+        $dbUserId = $row[0]['id'];
+        $now = new \DateTime();
+        $expires = new \DateTime($expiresOn);
+        if ($expires < $now) {
+            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'The JSON Web Token has expired.');
+        }
+
+        return XDUser::getUserByID($dbUserId);
 
     }
 
