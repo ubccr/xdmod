@@ -40,6 +40,8 @@
         - Fix how the `pdoAggregator` class displays the day that was
           aggregated in its logging
           ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Add ability to specify multiple database migration classes
+          ([\#2001](https://github.com/ubccr/xdmod/pull/2001)).
 - Enhancements
     - Cloud
         - Add database columns for person organization ID, PI organization ID,
