@@ -152,6 +152,7 @@ class TimeseriesChart extends AggregateChart
         $yAxisCount = count($yAxisArray);
         $legendRank = 0;
         $globalFilterDescriptions = array();
+        $dates = array();
 
         // ==== Big long effing loop ====
         // --- Walk through y axes and do some setup ---
@@ -345,7 +346,6 @@ class TimeseriesChart extends AggregateChart
                 {
                     $start_ts_array[] = $st;
                 }
-                $pointInterval = $this->getPointInterval();
 
                 // set x axis if needed
                 if(!isset($xAxis))
@@ -388,7 +388,7 @@ class TimeseriesChart extends AggregateChart
                         'type' => 'date',
                         'rangemode' => 'tozero',
                         'hoverformat' => $this->getDateFormat(),
-                        'tickmode' => 'linear',
+                        'tickmode' => 'array',
                         'timeseries' => true,
                         'nticks' => 20,
                         'spikedash' => 'solid',
@@ -493,7 +493,8 @@ class TimeseriesChart extends AggregateChart
                             // set up seriesValues
                             foreach($values as $i => $v)
                             {
-                                $xValues[] = date('Y-m-d', $start_ts_array[$i]);
+                                $xValues[] = $start_ts_array[$i]*1000;
+                                $dates[] = $start_ts_array[$i]*1000;
                                 $yValues[] = $v;
                                 $text[] = number_format($v, $decimals, '.', ',');
                                 $seriesValue = array(
@@ -632,30 +633,6 @@ class TimeseriesChart extends AggregateChart
 
                         if ($data_description->display_type == 'areaspline') {
                             $trace['type'] = 'area';
-                        }
-
-                        // Set date tick interval
-                        $this->_chart['layout']['xaxis']['dtick'] = $pointInterval;
-                        $this->_chart['layout']['xaxis']['tick0'] = $xValues[0];
-                        $value_count = count($xValues);
-
-                        if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
-                            $this->_chart['layout']['xaxis']['tickmode'] = 'auto';
-                        }
-
-                        if ($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') {
-                            $month_dtick = max(round($value_count / 12), 1);
-                            $this->_chart['layout']['xaxis']['dtick'] = "M{$month_dtick}";
-                        }
-
-                        if ($this->_aggregationUnit == 'Quarter' || $this->_aggregationUnit == 'quarter') {
-                            $quarter_dtick = 3 * ceil(max(ceil($value_count / 4), 1) / 3.5);
-                            $this->_chart['layout']['xaxis']['dtick'] = "M{$quarter_dtick}";
-                        }
-
-                        if ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year') {
-                            $year_dtick = ceil($value_count / 15) * 12;
-                            $this->_chart['layout']['xaxis']['dtick'] = "M{$year_dtick}";
                         }
 
                         // Set swap axis
@@ -941,14 +918,57 @@ class TimeseriesChart extends AggregateChart
             $this->addRestrictedDataWarning();
         }
 
+        // Compute tick label placement and format
+        $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
+        if (!empty($dates)) {
+            $dates = array_unique($dates);
+            $value_count = count($dates);
+            $dtick = $this->getPointInterval();
+
+            if (($this->_aggregationUnit == 'Day' || $this->_aggregationUnit == 'day')) {
+                $dtick = max(floor($value_count / 12), 1);
+            }
+
+            if ($this->_aggregationUnit == 'Month' || $this->_aggregationUnit == 'month') {
+                $dtick = max(round($value_count / 12), 1);
+            }
+
+            if ($this->_aggregationUnit == 'Quarter' || $this->_aggregationUnit == 'quarter') {
+                $dtick = ceil(max(ceil($value_count / 4), 1) / 3.5);
+            }
+
+            if ($this->_aggregationUnit == 'Year' || $this->_aggregationUnit == 'year') {
+                $dtick = ceil($value_count / 15);
+            }
+
+            $tickvals = array();
+            $last_idx = $value_count - 1;
+            $include_both_labels = false;
+            for ($i = 0; $i < $value_count; $i += $dtick) {
+                if (!$include_both_labels && (($value_count - $i) <= $dtick)) {
+                    if (($value_count - $i) <= round($dtick * .30)) {
+                        // tick at end of loop is close (within 30%) to last data point
+                        // thererfore just include the last data point tick label
+                        $i = $last_idx;
+                    } else {
+                        $include_both_labels = true;
+                    }
+                }
+                $tickvals[] = $dates[$i];
+                if ($i != $last_idx && $include_both_labels) {
+                    $i = $last_idx - $dtick;
+                }
+            }
+            $this->_chart['layout']["{$axisName}"]['tickvals'] = $tickvals;
+        }
+
         // Timeseries ticks need to be set to 'auto' if all legend elements are hidden
         // due to bug with Plotly JS manually set ticks.
-        $axisName = $this->_swapXY ? 'yaxis' : 'xaxis';
         if (isset($this->_chart['layout']["{$axisName}"]) && $this->_chart['layout']["{$axisName}"]['tickmode'] !== 'auto') {
             $this->_chart['layout']["{$axisName}"]['tickmode'] = 'auto';
             $visibility = array_column($this->_chart['data'], 'visible');
             if (in_array(true, $visibility, true)) {
-                $this->_chart['layout']["{$axisName}"]['tickmode'] = 'linear';
+                $this->_chart['layout']["{$axisName}"]['tickmode'] = 'array';
             }
         }
 
