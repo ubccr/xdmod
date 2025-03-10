@@ -346,12 +346,12 @@ class StructuredFileIngestor extends aIngestor implements iAction
             }
 
             $this->destinationHandle->commit();
-        } catch (PDOException $e) {
+        } catch (Exception $e) {
+            $this->destinationHandle->rollback();
             $this->logAndThrowException(
                 "Error committing transaction. Rolling back transactions.",
                 array('exception' => $e, 'endpoint' => $this)
             );
-            $this->destinationHandle->rollback();
         }
 
         foreach ( $warnings as $table => $message) {
