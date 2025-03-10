@@ -2,8 +2,8 @@
     "table_definition": {
         "name": "ReportTemplateCharts",
         "engine": "InnoDB",
-        "charset": "utf8mb4",
-        "collation": "utf8mb4_general_ci",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
         "columns": [
             {
                 "name": "template_id",

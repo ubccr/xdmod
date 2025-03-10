@@ -91,8 +91,8 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
                     'type' => 'varchar(16)',
                     'nullable' => false,
                     'default' => 'Test Column',
-                    'charset' => 'utf8mb4',
-                    'collation' => 'utf8mb4_general_ci',
+                    'charset' => 'utf8',
+                    'collation' => 'utf8_unicode_ci',
                     'comment' => 'No comment',
                 ),
             ),
@@ -107,7 +107,7 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
         $generated = array_shift($generated);
         $expected = "CREATE TABLE IF NOT EXISTS `table_no_schema` (
   `column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment',
-  `column2` varchar(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'
+  `column2` varchar(16) CHARSET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'
 );";
         $this->assertEquals($expected, $generated);
 
@@ -116,7 +116,7 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
         $generated = array_shift($generated);
         $expected = "CREATE TABLE IF NOT EXISTS `my_schema`.`table_no_schema` (
   `column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment',
-  `column2` varchar(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'
+  `column2` varchar(16) CHARSET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'
 );";
         $this->assertEquals($expected, $generated);
     }
@@ -201,14 +201,14 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
             'type' => 'varchar(16)',
             'nullable' => false,
             'default' => 'Test Column',
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_general_ci',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
             'comment' => 'No comment',
         );
 
         $obj = new Column($config, '`', self::$logger);
         $generated = $obj->getSql();
-        $expected = "`column2` varchar(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'";
+        $expected = "`column2` varchar(16) CHARSET utf8 COLLATE utf8_unicode_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'";
         $this->assertEquals($expected, $generated);
 
         $config = (object) array(
@@ -312,8 +312,8 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
         $config = (object) array(
             'name' => 'new_column2',
             'type' => 'char(64)',
-            'charset' => 'utf8mb4',
-            'collation' => 'utf8mb4_general_ci',
+            'charset' => 'utf8',
+            'collation' => 'utf8_unicode_ci',
             'nullable' => true,
         );
         $destTable->addColumn($config);

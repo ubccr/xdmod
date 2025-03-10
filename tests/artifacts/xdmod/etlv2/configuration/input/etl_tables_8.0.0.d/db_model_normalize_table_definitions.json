@@ -3,8 +3,8 @@
   "table_definition": {
     "name": "normalize_table_test",
     "engine": "myisam",
-    "charset": "UTF8",
-    "collation": "UTF8_GENERAL_CI",
+    "charset": "utf8",
+    "collation": "utf8_unicode_ci",
     "columns": [
       {
         "name": "resource_id",
@@ -16,8 +16,8 @@
         "name": "RESOURCE",
         "type": "VARCHAR(40)",
         "nullable": true,
-        "charset": "UTF8",
-        "collation": "utf8_general_ci",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
         "comment": "This is a comment"
       },
       {
