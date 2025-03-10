@@ -2649,7 +2649,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                     Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
                     const update = relayoutChart(chartDiv, adjHeight, false);
                     Plotly.relayout(this.chartId, update);
-                    removeExtraTimeseriesTickLabels(chartDiv, this.chartOptions);
                 }
             }
         } //onResize
@@ -2783,10 +2782,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             this.chartId = id;
                             this.chartOptions = chartOptions;
                             var chartDiv = document.getElementById(baseChartOptions.renderTo);
-
-                            chartDiv.on('plotly_relayout', (evt) => {
-                                removeExtraTimeseriesTickLabels(chartDiv, this.chartOptions);
-                            });
 
                             chartDiv.on('plotly_click', (evt) => {
                                 let drillId;
