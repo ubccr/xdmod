@@ -74,6 +74,11 @@
             "description": "Web-based access to CI resources",
             "realms": [
             ]
+        },
+        "Program": {
+            "description": "Coordination or management of resources",
+            "realms": [
+            ]
         }
     }
 }
