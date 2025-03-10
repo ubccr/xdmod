@@ -75,5 +75,34 @@
       "name": "Core Hour Utilization",
       "unit": "%",
       "precision": 2
+    },
+    "active_person_count": {
+        "description_html": "The total number of users that used cloud resources.",
+        "formula": "COUNT(DISTINCT(agg.person_id))",
+        "name": "Number of Users: Active",
+        "precision": 0,
+        "unit": "Number of Users"
+    },
+    "active_pi_count": {
+        "description_html": "The total number of PIs associated with Projects that used cloud resources.",
+        "formula": "COUNT(DISTINCT(agg.principalinvestigator_person_id))",
+        "name": "Number of PIs: Active",
+        "precision": 0,
+        "unit": "Number of PIs"
+    },
+    "active_resource_count": {
+        "description_html": "The total number of active cloud resources.",
+        "formula": "COUNT(DISTINCT(agg.host_resource_id))",
+        "name": "Number of Resources: Active",
+        "precision": 0,
+        "unit": "Number of Resources"
+    },
+    "active_project_count": {
+        "description_html": "The total number of projects that used cloud resources.",
+        "formula": "COUNT(DISTINCT(agg.account_id))",
+        "name": "Number of Projects: Active",
+        "precision": 0,
+        "unit": "Number of Projects"
     }
+
 }
