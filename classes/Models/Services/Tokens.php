@@ -92,35 +92,32 @@ SQL;
         $jwtID          = $decodedToken['jti'];
         $expiresOn      = $decodedToken['exp'];
         $username       = $decodedToken['upn'];
-        $userID         = $decodedTokne['uid'];
 
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
         SELECT
-            id,
             username
         FROM moddb.Users
         WHERE username = :username
-            AND id = :user_id
             AND account_is_active = 1
 SQL;
 
-        $row = $db->query($query, array(':username' => $username, ':user_id' => $userID));
+        $row = $db->query($query, array(':username' => $username));
         $rows = count($row);
         if ($rows === 0) {
             throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid JSON Web Token.');
-        } elif $rows > 1) {
+        } elseif ($rows > 1) {
             throw new UnauthorizedHttpException('', 'Invalid User');
         }
 
-        $dbUserId = $row[0]['id'];
+        $dbUsername = $row[0]['username'];
         $now = new \DateTime();
         $expires = new \DateTime($expiresOn);
         if ($expires < $now) {
             throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'The JSON Web Token has expired.');
         }
 
-        return XDUser::getUserByID($dbUserId);
+        return XDUser::getUserByUsername($dbUsername);
 
     }
 
