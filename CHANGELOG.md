@@ -2,6 +2,10 @@
 
 ## XXXX-XX-XX v11.5.0
 
+- Enhancements
+    - Improve performance of file ingestion
+      ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
+      [\#2003](https://github.com/ubccr/xdmod/pull/2003)).
 - Maintenance / Code Quality
     - Clean up CI bootstrap script
       ([\#1954](https://github.com/ubccr/xdmod/pull/1954)).
