@@ -63,9 +63,6 @@ then
     dnf install -y ~/rpmbuild/RPMS/*/*.rpm
     mysql_install_db --user mysql
 
-    if [ -f /etc/my.cnf.d/mariadb-server.cnf.rpmsave ]; then
-        mv /etc/my.cnf.d/mariadb-server.cnf.rpmsave /etc/my.cnf.d/mariadb-server.cnf
-    fi
     if [ -f /etc/my.cnf.d/mariadb-server.cnf ]; then
         >/etc/my.cnf.d/mariadb-server.cnf
         echo "# this is read by the standalone daemon and embedded servers
