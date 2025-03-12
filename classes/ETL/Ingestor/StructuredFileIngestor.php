@@ -349,7 +349,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
         } catch (Exception $e) {
             $this->destinationHandle->rollback();
             $this->logAndThrowException(
-                "Error committing transaction. Rolling back transactions.",
+                "Error committing transaction. Rolling back transaction.",
                 array('exception' => $e, 'endpoint' => $this)
             );
         }
