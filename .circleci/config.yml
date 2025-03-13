@@ -67,6 +67,9 @@ jobs:
       - run: ./tests/regression/post_ingest_test.sh --junit-output-dir ~/phpunit
       - run: ./tests/component/runtests.sh --junit-output-dir ~/phpunit
       - run:
+          name: Ensure that no XDMoD exceptions were logged
+          command: test ! -f /root/xdmod/logs/exceptions.log
+      - run:
           name: 'Install Chromium 99'
           command: |
             pushd $HOME && \
@@ -109,6 +112,8 @@ jobs:
           path: /var/log/php-fpm
       - store_artifacts:
           path: /var/log/php_errors.log
+      - store_artifacts:
+          path: /root/xdmod/logs
       - store_test_results:
           path: ~/phpunit
 
