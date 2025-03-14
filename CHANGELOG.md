@@ -38,6 +38,9 @@
           and resource organization ID to tables in the Cloud realm
           ([\#1957](https://github.com/ubccr/xdmod/pull/1957),
           [\#1966](https://github.com/ubccr/xdmod/pull/1966)).
+    - ETL
+        - Add ability to specify multiple database migration classes
+          ([\#1991](https://github.com/ubccr/xdmod/pull/1991)).
 - Documentation
     - Update list of ACCESS MMS team members
       ([\#1918](https://github.com/ubccr/xdmod/pull/1918),
@@ -67,8 +70,6 @@
       ([\#1944](https://github.com/ubccr/xdmod/pull/1944)).
     - Add missing CI testing of exceptions
       ([\#1903](https://github.com/ubccr/xdmod/pull/1903)).
-    - Add ability to specify multiple database migration classes
-      ([\#1991](https://github.com/ubccr/xdmod/pull/1991)).
 
 ## 2024-09-16 v11.0.0
 - Important Notes
