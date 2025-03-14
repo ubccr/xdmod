@@ -101,8 +101,6 @@ rm -rf $RPM_BUILD_ROOT
 - Release 11.0.1
 * Mon Sep 16 2024 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 11.0.0-1.0
 - Release 11.0.0
-* Mon Sep 16 2024 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 11.0.0-1.0
-- Release 11.0.0
 - Update `php` dependencies for PHP 7.4
 * Mon Sep 11 2023 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 10.5.0-1.0
 - Release 10.5.0
