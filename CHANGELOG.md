@@ -2,6 +2,9 @@
 
 ## XXXX-XX-XX v11.5.0
 
+- Bug Fixes
+    - Fix various bugs found when testing strict SQL modes
+      ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
 - Enhancements
     - Improve performance of file ingestion
       ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
@@ -42,8 +45,6 @@
         - Fix how the `pdoAggregator` class displays the day that was
           aggregated in its logging
           ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
-        - Add ability to specify multiple database migration classes
-          ([\#2001](https://github.com/ubccr/xdmod/pull/2001)).
 - Enhancements
     - Cloud
         - Add database columns for person organization ID and PI organization
