@@ -1,18 +1,5 @@
 # Open XDMoD Change Log
 
-## XXXX-XX-XX v11.5.0
-
-- Bug Fixes
-    - Fix various bugs found when testing strict SQL modes
-      ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
-- Enhancements
-    - Improve performance of file ingestion
-      ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
-      [\#2003](https://github.com/ubccr/xdmod/pull/2003)).
-- Maintenance / Code Quality
-    - Clean up CI bootstrap script
-      ([\#1954](https://github.com/ubccr/xdmod/pull/1954)).
-
 ## 2025-03-17 v11.0.1
 
 - Bug Fixes
