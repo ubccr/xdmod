@@ -34,8 +34,8 @@
           ([\#1932](https://github.com/ubccr/xdmod/pull/1932)).
 - Enhancements
     - Cloud
-        - Add database columns for person organization ID, PI organization ID,
-          and resource organization ID to tables in the Cloud realm
+        - Add database columns for person organization ID and PI organization
+          ID to tables in the Cloud realm
           ([\#1957](https://github.com/ubccr/xdmod/pull/1957),
           [\#1966](https://github.com/ubccr/xdmod/pull/1966)).
     - ETL
