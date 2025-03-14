@@ -2,6 +2,9 @@
 
 ## XXXX-XX-XX v11.5.0
 
+- Bug Fixes
+    - Fix various bugs found when testing strict SQL modes
+      ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
 - Enhancements
     - Improve performance of file ingestion
       ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
