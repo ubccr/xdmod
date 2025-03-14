@@ -2,6 +2,9 @@
 
 ## XXXX-XX-XX v11.5.0
 
+- Bug Fixes
+    - Fix various bugs found when testing strict SQL modes
+      ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
 - Enhancements
     - Improve performance of file ingestion
       ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
@@ -10,12 +13,10 @@
     - Clean up CI bootstrap script
       ([\#1954](https://github.com/ubccr/xdmod/pull/1954)).
 
-## XXXX-XX-XX v11.0.1
+## 2025-03-17 v11.0.1
 
 - Bug Fixes
     - General
-        - Fix various bugs found when testing strict SQL modes
-          ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
         - Remove plot range entry boxes in the corners of axes
           ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
         - Fix displays of markers on plots with null values
@@ -44,13 +45,14 @@
         - Fix how the `pdoAggregator` class displays the day that was
           aggregated in its logging
           ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
-        - Add ability to specify multiple database migration classes
-          ([\#2001](https://github.com/ubccr/xdmod/pull/2001)).
 - Enhancements
     - Cloud
         - Add database columns for person organization ID, PI organization ID,
           and resource organization ID to tables in the Cloud realm
           ([\#1958](https://github.com/ubccr/xdmod/pull/1958)).
+    - ETL
+        - Add ability to specify multiple database migration classes
+          ([\#2001](https://github.com/ubccr/xdmod/pull/2001)).
 - Documentation
     - Update list of ACCESS MMS team members
       ([\#1918](https://github.com/ubccr/xdmod/pull/1918),
