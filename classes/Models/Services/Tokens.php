@@ -105,7 +105,7 @@ SQL;
         $row = $db->query($query, array(':username' => $username));
         $rows = count($row);
         if ($rows === 0) {
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid JSON Web Token.');
+            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid JSON Web Token for user ' . $username);
         } elseif ($rows > 1) {
             throw new UnauthorizedHttpException('', 'Invalid User');
         }
@@ -117,7 +117,7 @@ SQL;
             throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'The JSON Web Token has expired.');
         }
 
-        return XDUser::getUserByUsername($dbUsername);
+        return XDUser::getUserByUserName($dbUsername);
 
     }
 
@@ -145,14 +145,20 @@ SQL;
             return null;
         }
 
-        $userId = substr($rawToken, 0, $delimPosition);
-        $token = substr($rawToken, $delimPosition + 1);
-
-        try {
+        $tokenParts = explode(Tokens::DELIMITER, $rawToken);
+        $tokenPartsSize = sizeof($tokenParts);
+        if ($tokenPartsSize === 2) {
+            $userId = $tokenParts[0];
+            $token = $tokenParts[1];
             return Tokens::authenticate($userId, $token);
-        } catch (Exception $e) {
-            // and again, same as above.
+        } elseif ($tokenPartsSize === 3) {
+            return Tokens::authenticateJSONWebToken($rawToken);
+        } else {
             return null;
+            //throw new UnauthorizedHttpException(
+            //    Tokens::HEADER_KEY,
+            //    'Invalid token format.'
+            //);
         }
     }
 
