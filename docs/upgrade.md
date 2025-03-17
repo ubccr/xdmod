@@ -30,7 +30,7 @@ Download available at [GitHub][github-latest-release].
 
 ### Install the RPM
 
-    # dnf install xdmod-{{ page.sw_version }}-1.0.el8.noarch.rpm
+    # dnf install xdmod-{{ page.sw_version }}-1.el8.noarch.rpm
 
 Likewise, install the latest `xdmod-appkernels`, `xdmod-supremm`, and/or
 `xdmod-ondemand` RPM files if you have those modules installed.
@@ -68,8 +68,8 @@ Download available at [GitHub][github-latest-release].
     # cd xdmod-{{ page.sw_version }}
     # ./install --prefix=/opt/xdmod-{{ page.sw_version }}
 
-Likewise, install the latest `xdmod-appkernels` or `xdmod-supremm`
-tarballs if you have those installed.
+Likewise, install the latest `xdmod-appkernels`, `xdmod-supremm`, and/or
+`xdmod-ondemand` tarballs if you have those installed.
 
 ### Copy Current Config Files
 
