@@ -157,7 +157,7 @@ jobs:
           command: docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageProcess.sh -i /root/code_coverage_raw
       - run:
           name: Tar Up Code Coverage Report for later download
-          command: docker exec -it xdmod sh -c "tar -czvf ~/code_coverage/report.tgz ~/code_coverage_raw"
+          command: docker exec -it xdmod sh -c "tar -czvf /root/code_coverage/report.tgz /root/code_coverage_raw"
 #      - when:
 #          condition:
 #            and:
@@ -220,7 +220,7 @@ jobs:
       - store_test_results:
           path: ~/phpunit
       - store_artifacts:
-          path: ~/code_coverage
+          path: /root/code_coverage
 #      - when:
 #          condition:
 #            and:
