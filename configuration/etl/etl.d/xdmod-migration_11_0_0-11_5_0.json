@@ -54,18 +54,6 @@
             ]
         },
         {
-            "$ref": "${local_config_dir}/organizations.json#/ingest-organizations/0"
-        },
-        {
-            "$ref": "${local_config_dir}/organizations.json#/ingest-organizations/1"
-        },
-        {
-            "$ref": "${local_config_dir}/organizations.json#/ingest-organizations/2"
-        },
-        {
-            "$ref": "${local_config_dir}/organizations.json#/ingest-organizations/3"
-        },
-        {
             "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/0"
         },
         {
