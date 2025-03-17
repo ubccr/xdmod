@@ -111,11 +111,6 @@ SQL;
         }
 
         $dbUsername = $row[0]['username'];
-        $now = new \DateTime();
-        $expires = new \DateTime($expiresOn);
-        if ($expires < $now) {
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'The JSON Web Token has expired.');
-        }
 
         return XDUser::getUserByUserName($dbUsername);
 
