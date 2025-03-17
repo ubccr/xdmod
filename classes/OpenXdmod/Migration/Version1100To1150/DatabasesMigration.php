@@ -24,8 +24,8 @@ class DatabasesMigration extends AbstractDatabasesMigration
 
         if ($mysql_helper->tableExists('modw.storagefact')) {
             Utilities::runEtlPipeline(
-                ['storage-migration-11-0-0_11-5-0', 'xdw-aggregate-storage'], 
-                $this->logger, 
+                ['storage-migration-11-0-0_11-5-0', 'xdw-aggregate-storage'],
+                $this->logger,
                 ['last-modified-start-date' => '2017-01-01 00:00:00']
             );
         }

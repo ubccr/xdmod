@@ -82,8 +82,8 @@ then
 
     copy_template_httpd_conf
     ~/bin/services start
-    mysql -e "CREATE USER 'root'@'_gateway' IDENTIFIED BY '';
-    GRANT ALL PRIVILEGES ON *.* TO 'root'@'_gateway' WITH GRANT OPTION;
+    mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
     FLUSH PRIVILEGES;"
 
     # TODO: Replace diff files with hard fixes
@@ -161,10 +161,6 @@ then
     dnf -y install ~/rpmbuild/RPMS/*/*.rpm
 
     ~/bin/services start
-
-    mysql -e "CREATE USER 'root'@'_gateway' IDENTIFIED BY '';
-    GRANT ALL PRIVILEGES ON *.* TO 'root'@'_gateway' WITH GRANT OPTION;
-    FLUSH PRIVILEGES;"
 
     expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
 

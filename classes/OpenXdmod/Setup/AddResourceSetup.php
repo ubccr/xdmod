@@ -39,6 +39,7 @@ class AddResourceSetup extends SetupItem
         $typeOptions = array();
         $typeDescriptionText = "";
         $availableTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
+        $organizationOptions = array();
         $resourceAllocationTypeOptions = array();
         $resourceAllocationTypeDescriptionText = "";
         $availableResourceAllocationTypes = XdmodConfiguration::assocArrayFactory('resource_allocation_types.json', CONFIG_DIR)['resource_allocation_types'];
