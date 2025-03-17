@@ -41,6 +41,7 @@ logs/
 *.msm
 *.msp
 
+sphinx_venv
 
 ### Bower ###
 bower_components
