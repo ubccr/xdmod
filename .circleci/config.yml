@@ -74,6 +74,11 @@ jobs:
       - run:
           name: Make sure that the test dependencies are installed
           command: docker exec -w /root/xdmod xdmod composer install
+      #Remove Later after we test for code coverage
+      - run:
+          name: Installing Code Coverage Dependencies
+          command: |
+                docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
       - when:
           condition:
             and:
@@ -145,6 +150,14 @@ jobs:
       - run:
           name: Run Playwright Tests
           command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.string_os >>
+      #remove these after testing for code coverage
+      - run:
+          name: Process Code Coverage Data
+          no_output_timeout: 120m
+          command: docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageProcess.sh -i /root/code_coverage_raw
+      - run:
+          name: Tar Up Code Coverage Report for later download
+          command: docker exec -it xdmod sh -c "tar -czvf ~/code_coverage/report.tgz ~/code_coverage_raw"
       - when:
           condition:
             and:
