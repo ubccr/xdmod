@@ -1,5 +1,10 @@
 # Open XDMoD Change Log
 
+## 2025-03-17 v10.5.1
+- Bug Fixes 
+    - Update jQuery to version 3.7.1 to address CVE-2020-11023
+      ([\#1970](https://github.com/ubccr/xdmod/pull/1970)).
+
 ## 2023-09-11 v10.5.0
 - Bug Fixes
     - Cloud
