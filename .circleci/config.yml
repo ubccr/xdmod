@@ -79,17 +79,17 @@ jobs:
           name: Installing Code Coverage Dependencies
           command: |
                 docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
-      - when:
-          condition:
-            and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-
-          steps:
-            - run:
-                name: Installing Code Coverage Dependencies
-                command: |
-                  docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
+#      - when:
+#          condition:
+#            and:
+#              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+#              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+#
+#          steps:
+#            - run:
+#                name: Installing Code Coverage Dependencies
+#                command: |
+#                  docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
 
       - run:
           name: Setup the SimpleSAML server etc. so we can test SSO
@@ -158,19 +158,19 @@ jobs:
       - run:
           name: Tar Up Code Coverage Report for later download
           command: docker exec -it xdmod sh -c "tar -czvf ~/code_coverage/report.tgz ~/code_coverage_raw"
-      - when:
-          condition:
-            and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-          steps:
-            - run:
-                name: Process Code Coverage Data
-                no_output_timeout: 120m
-                command: docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageProcess.sh -i /root/code_coverage_raw
-            - run:
-                name: Tar Up Code Coverage Report for later download
-                command: docker exec -it xdmod sh -c "tar -czvf ~/code_coverage/report.tgz ~/code_coverage_raw"
+#      - when:
+#          condition:
+#            and:
+#              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+#              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+#          steps:
+#            - run:
+#                name: Process Code Coverage Data
+#                no_output_timeout: 120m
+#                command: docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageProcess.sh -i /root/code_coverage_raw
+#            - run:
+#                name: Tar Up Code Coverage Report for later download
+#                command: docker exec -it xdmod sh -c "tar -czvf ~/code_coverage/report.tgz ~/code_coverage_raw"
 
       - run:
           name: Copy Test Results into Unit
@@ -219,16 +219,18 @@ jobs:
           path: /root/xdmod/logs
       - store_test_results:
           path: ~/phpunit
-      - when:
-          condition:
-            and:
-              - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
-          #            and:
-          #              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-          #              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-          steps:
-            - store_artifacts:
-                path: ~/code_coverage
+      - store_artifacts:
+          path: ~/code_coverage
+#      - when:
+#          condition:
+#            and:
+#              - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
+#          #            and:
+#          #              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+#          #              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+#          steps:
+#            - store_artifacts:
+#                path: ~/code_coverage
 
 workflows:
   full-build:
