@@ -1,12 +1,11 @@
 <?php
 /**
- * Update config files from version 10.0.3 to 10.5.0.
+ * Update config files from version 10.5.0 to 10.5.1.
  */
 
 namespace OpenXdmod\Migration\Version1050To1051;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
-use OpenXdmod\Setup\Console;
 
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {
