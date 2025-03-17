@@ -75,10 +75,6 @@ jobs:
           name: Make sure that the test dependencies are installed
           command: docker exec -w /root/xdmod xdmod composer install
       #Remove Later after we test for code coverage
-      - run:
-          name: Installing Code Coverage Dependencies
-          command: |
-                docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
 #      - when:
 #          condition:
 #            and:
@@ -121,6 +117,10 @@ jobs:
       - run:
           name: Make sure that the Test Dependencies are installed
           command: docker exec -w /root/xdmod xdmod composer install --no-progress
+      - run:
+          name: Installing Code Coverage Dependencies
+          command: |
+            docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
       - run:
           name: Run Regression Tests
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> -w /root/xdmod xdmod /root/xdmod/tests/regression/runtests.sh
