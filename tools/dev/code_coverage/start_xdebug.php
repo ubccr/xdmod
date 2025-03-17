@@ -37,4 +37,4 @@ class coverage_dumper
     }
 }
 
-new coverage_dumper();
+$_coverage_dumper = new coverage_dumper();
