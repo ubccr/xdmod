@@ -28,7 +28,6 @@ $coverageData = array();
 
 $coverageFiles = glob("$coverageDir/*.json");
 
-$count = count($coverageFiles);
 $i = 0;
 foreach ($coverageFiles as $coverageFile) {
     $i++;
