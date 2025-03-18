@@ -74,19 +74,6 @@ jobs:
       - run:
           name: Make sure that the test dependencies are installed
           command: docker exec -w /root/xdmod xdmod composer install
-      #Remove Later after we test for code coverage
-#      - when:
-#          condition:
-#            and:
-#              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-#              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-#
-#          steps:
-#            - run:
-#                name: Installing Code Coverage Dependencies
-#                command: |
-#                  docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
-
       - run:
           name: Setup the SimpleSAML server etc. so we can test SSO
           command: docker exec xdmod /root/xdmod/tests/ci/samlSetup.sh
@@ -117,10 +104,18 @@ jobs:
       - run:
           name: Make sure that the Test Dependencies are installed
           command: docker exec -w /root/xdmod xdmod composer install --no-progress
-      - run:
-          name: Installing Code Coverage Dependencies
-          command: |
-            docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
+      - when:
+          condition:
+            and:
+              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+
+          steps:
+            - run:
+                name: Installing Code Coverage Dependencies
+                command: |
+                  docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
+
       - run:
           name: Run Regression Tests
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> -w /root/xdmod xdmod /root/xdmod/tests/regression/runtests.sh
@@ -150,30 +145,22 @@ jobs:
       - run:
           name: Run Playwright Tests
           command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.string_os >>
-      #remove these after testing for code coverage
-      - run:
-          name: Process Code Coverage Data
-          no_output_timeout: 120m
-          command: docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageProcess.sh -i /root/code_coverage_raw
-      - run:
-          name: Tar Up Code Coverage Report for later download
-          command: docker exec -it xdmod sh -c "tar -czvf /root/code_coverage/report.tgz /root/code_coverage_raw"
-      - run:
-          name: Copy Code Coverage Report to Host
-          command: docker cp xdmod:/root/code_coverage ~/code_coverage
-#      - when:
-#          condition:
-#            and:
-#              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-#              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-#          steps:
-#            - run:
-#                name: Process Code Coverage Data
-#                no_output_timeout: 120m
-#                command: docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageProcess.sh -i /root/code_coverage_raw
-#            - run:
-#                name: Tar Up Code Coverage Report for later download
-#                command: docker exec -it xdmod sh -c "tar -czvf ~/code_coverage/report.tgz ~/code_coverage_raw"
+      - when:
+          condition:
+            and:
+              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+          steps:
+            - run:
+                name: Process Code Coverage Data
+                no_output_timeout: 120m
+                command: docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageProcess.sh -i /root/code_coverage_raw
+            - run:
+                name: Tar Up Code Coverage Report for later download
+                command: docker exec -it xdmod sh -c "tar -czvf ~/code_coverage/report.tgz ~/code_coverage_raw"
+            - run:
+                name: Copy Code Coverage Report to Host
+                command: docker cp xdmod:/root/code_coverage ~/code_coverage
 
       - run:
           name: Copy Test Results into Unit
@@ -220,20 +207,18 @@ jobs:
           path: /var/log/php_errors.log
       - store_artifacts:
           path: /root/xdmod/logs
-      - store_artifacts:
-          path : ~/code_coverage
       - store_test_results:
           path: ~/phpunit
-#      - when:
-#          condition:
-#            and:
-#              - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
-#          #            and:
-#          #              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-#          #              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-#          steps:
-#            - store_artifacts:
-#                path: ~/code_coverage
+      - when:
+          condition:
+            and:
+              - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
+          #            and:
+          #              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+          #              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+          steps:
+            - store_artifacts:
+                path: ~/code_coverage
 
 workflows:
   full-build:
