@@ -159,7 +159,7 @@ jobs:
           name: Tar Up Code Coverage Report for later download
           command: docker exec -it xdmod sh -c "tar -czvf /root/code_coverage/report.tgz /root/code_coverage_raw"
       - run:
-        - name: Copy Code Coverage Report to Host
+          name: Copy Code Coverage Report to Host
           command: docker cp xdmod:/root/code_coverage/report.tgz ~/code_coverage
 #      - when:
 #          condition:
