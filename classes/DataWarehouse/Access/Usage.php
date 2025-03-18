@@ -756,6 +756,7 @@ class Usage extends Common
                     (isset($meChart['layout']['xaxis']['ticktext']) || isset($meChart['layout']['yaxis']['ticktext']))
                     && $chartSortedByValue
                     && $usageGroupBy !== 'none'
+                    && !$meRequestIsTimeseries
                 ) {
                     $meChartCategories = array();
                     foreach (['x', 'y'] as $axis) {

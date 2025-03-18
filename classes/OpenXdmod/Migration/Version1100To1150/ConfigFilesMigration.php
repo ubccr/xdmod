@@ -6,6 +6,7 @@
 namespace OpenXdmod\Migration\Version1100To1150;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
+use CCR\Json;
 
 class ConfigFilesMigration extends AbstractConfigFilesMigration
 {
@@ -16,6 +17,10 @@ class ConfigFilesMigration extends AbstractConfigFilesMigration
     {
         $this->assertPortalSettingsIsWritable();
         $this->assertModulePortalSettingsAreWritable();
+        $this->assertJsonConfigIsWritable('organization');
+        $organization_config = Json::loadFile(CONFIG_DIR . '/organization.json');
+        $organization_config = [$organization_config];
+        $this->writeJsonConfigFile('organization', $organization_config);
         $this->writePortalSettingsFile();
         $this->writeModulePortalSettingsFiles();
     }
