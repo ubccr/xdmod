@@ -34,8 +34,13 @@ confirmFileWrite yes
 enterToContinue
 
 selectMenuOption 3
+selectMenuOption 1
 provideInput {Organization Name:} Screwdriver
 provideInput {Organization Abbreviation:} screw
+selectMenuOption 1
+provideInput {Organization Name:} Wrench
+provideInput {Organization Abbreviation:} wrench
+selectMenuOption s
 confirmFileWrite yes
 enterToContinue
 
