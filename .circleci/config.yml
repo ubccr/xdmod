@@ -160,7 +160,7 @@ jobs:
           command: docker exec -it xdmod sh -c "tar -czvf /root/code_coverage/report.tgz /root/code_coverage_raw"
       - run:
           name: Copy Code Coverage Report to Host
-          command: docker cp xdmod:/root/code_coverage/report.tgz ~/code_coverage
+          command: docker cp xdmod:/root/code_coverage ~/code_coverage
 #      - when:
 #          condition:
 #            and:
@@ -220,10 +220,10 @@ jobs:
           path: /var/log/php_errors.log
       - store_artifacts:
           path: /root/xdmod/logs
+      - store_artifacts:
+          path : ~/code_coverage
       - store_test_results:
           path: ~/phpunit
-      - store_artifacts:
-          path: ~/code_coverage
 #      - when:
 #          condition:
 #            and:
