@@ -736,6 +736,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
          handler: newReportBasedOn
 
        });
+       btnNewBasedOn.setVisible(false);
 
        var mnuNewBasedOn = new XDMoD.Reporting.ReportCloneMenu({
 
@@ -748,6 +749,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
           }
 
        });
+       mnuNewBasedOn.setVisible(false);
 
        var btnEditReport = new Ext.Button({
 
