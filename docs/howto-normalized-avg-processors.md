@@ -1,7 +1,6 @@
-The Normalized Avg Processor statistic is available if you add the following JSON and SQL Files to the XDMoD project.
+The "Job Size: Normalized" statistic can be restored if you modify/add the following JSON and SQL files to your installation of Open XDMoD. The files are located in `/etc/xdmod` unless you used a different prefix when installing Open XDMoD (e.g., `/opt/xdmod-{{ page.sw_version }}/etc`).
 
-1. Add the follwing to:
-- configuration/datawarehouse.d/ref/Job-Statistics.json
+1. Add the following to `datawarehouse.d/ref/Jobs-statistics.json`:
 ```json
     "normalized_avg_processors": {
         "aggregate_formula": {
@@ -19,8 +18,7 @@ The Normalized Avg Processor statistic is available if you add the following JSO
 ```
 
 
-2. Add the following to:
-- configuration/datawarehouse.d/ref/Gateways-Statistics.json
+2. Add the following to `datawarehouse.d/ref/Gateways-statistics.json`:
 ```json
  "normalized_avg_processors": {
         "$overwrite": {
@@ -31,8 +29,7 @@ The Normalized Avg Processor statistic is available if you add the following JSO
     },
 ```
 
-3. Create a **jobs-norm-avg-proc-time.sql** in the following:
-- configuration/datawarehouse.d/include/jobs-norm-avg-proc-time.sql
+3. Create the file `datawarehouse.d/include/Jobs-norm-avg-proc-time.sql`
 ```sql
 100.0 *
 COALESCE(
@@ -60,8 +57,7 @@ COALESCE(
 
 ```
 
-4. create a **jobs-norm-avg-proc-agg.sql** at the follwing:
-- configuration/datawarehouse.d/include/jobs-norm-avg-proc-agg.sql
+4. Create the file `datawarehouse.d/include/Jobs-norm-avg-proc-agg.sql`:
 ```sql
 100.0 *
 COALESCE(
