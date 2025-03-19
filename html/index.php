@@ -522,9 +522,6 @@ JS;
         <script type="text/javascript" src="gui/lib/groupdataview.js"></script>
         <script type="text/javascript" src="gui/lib/groupcombo.js"></script>
     <?php endif; ?>
-    <?php if ($userLoggedIn && $jupyterhubConfigured): ?>
-        <script type="text/javascript" src="gui/js/modules/JupyterHub.js"></script>
-    <?php endif ?>
     <?php endif; ?>
 
     <?php
