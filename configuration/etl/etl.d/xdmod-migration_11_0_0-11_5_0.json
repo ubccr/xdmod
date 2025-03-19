@@ -8,14 +8,14 @@
             "endpoints": {
                 "destination": {
                     "type": "mysql",
-                    "name": "Shredder Database",
-                    "config": "shredder",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "mod_shredder"
                 },
                 "source": {
                     "type": "mysql",
-                    "name": "Shredder Databaes",
-                    "config": "shredder",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
                     "schema": "mod_shredder"
                 }
             }
