@@ -218,8 +218,7 @@ class UserControllerProvider extends BaseControllerProvider
      *
      * @param Request $request
      * @param Application $app
-     * @return Response
-     * @throws \Exception if there is a problem retrieving a database connection.
+     * @return RedirectResponse
      */
     public function createJSONWebToken(Request $request, Application $app)
     {
@@ -239,7 +238,6 @@ class UserControllerProvider extends BaseControllerProvider
             'jti'  => $tokenId,
             'exp'  => $expire,
             'upn'  => $user->getUsername(),
-            'uid'  => $user->getUserID(),
         ];
 
         $jwt = JWT::encode(
