@@ -212,8 +212,6 @@ XDMoD.Reporting.chartDetailsRenderer = function(val, metaData, record, rowIndex,
       entryData.thumbnail_link = entryData.thumbnail_link.replace(/start_date=\d{4}-\d{2}-\d{2}/, 'start_date=' + s_date);
       entryData.thumbnail_link = entryData.thumbnail_link.replace(/end_date=\d{4}-\d{2}-\d{2}/, 'end_date=' + e_date);
 
-      //console.log(entryData.thumbnail_link);
-
    }//if (entryData.timeframe_type.toLowerCase() != 'user defined')
 
    // =================

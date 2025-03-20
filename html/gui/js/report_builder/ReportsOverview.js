@@ -547,9 +547,6 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
             resource_provider: resource_provider
          };
 
-         //console.log(objParams);
-         //return;
-
          var conn = new Ext.data.Connection();
 
          conn.request({
