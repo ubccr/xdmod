@@ -5,7 +5,7 @@ namespace Models\Services;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use XDUser;
 
@@ -15,6 +15,11 @@ use XDUser;
  */
 class Tokens
 {
+    /**
+     *
+     */
+    const HEADER_NAME = 'Authorization';
+
     /**
      * This is the key that will be used when adding an API Token to a request's headers.
      */
@@ -39,7 +44,7 @@ class Tokens
      *                                   if the stored token for $userId has expired, or
      *                                   if the provided $token doesn't match the stored hash.
      */
-    public static function authenticate($userId, $password)
+    private static function authenticateAPIToken($userId, $password)
     {
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
@@ -78,7 +83,11 @@ SQL;
         return XDUser::getUserByID($dbUserId);
     }
 
-    public static function authenticateJSONWebToken($jwt)
+    /**
+     *
+     * Authenticate
+     */
+    private static function authenticateJSONWebToken($jwt)
     {
         $configuredSecretKey = \xd_utilities\getConfiguration('json_web_token', 'secret_key');
         $secretKey = new Key($configuredSecretKey, 'HS256');
@@ -125,72 +134,78 @@ SQL;
      */
     public static function authenticateToken()
     {
-
-        $rawToken = self::getRawToken();
+        $request = Request::createFromGlobals();
+        $rawToken = Tokens::getRawTokenFromRequest($request);
         if (empty($rawToken)) {
-            // we want to the token authentication to be optional so instead of throwing an exception we return null.
-            // This allows us to provide token authentication to existing endpoints without impeding their normal use.
             return null;
         }
 
-        // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
-        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
-        if ($delimPosition === false) {
-            // Same as above, token authentication is optional so we return null instead of throwing an exception.
-            return null;
-        }
+        return Tokens::authenticateRawToken($rawToken);
+    }
 
+    /**
+     * @param String rawToken
+     * @return XDUser or null
+     */
+    public static function authenticateRawToken($rawToken)
+    {
         $tokenParts = explode(Tokens::DELIMITER, $rawToken);
         $tokenPartsSize = sizeof($tokenParts);
         if ($tokenPartsSize === 2) {
             $userId = $tokenParts[0];
             $token = $tokenParts[1];
-            return Tokens::authenticate($userId, $token);
+            return Tokens::authenticateAPIToken($userId, $token);
         } elseif ($tokenPartsSize === 3) {
             return Tokens::authenticateJSONWebToken($rawToken);
         } else {
             return null;
-            //throw new UnauthorizedHttpException(
-            //    Tokens::HEADER_KEY,
-            //    'Invalid token format.'
-            //);
         }
     }
 
     /**
-     * Attempt to retrieve the raw API Token from one of the following sources:
+     * Attempt to retrieve the raw Token from one of the following sources:
      *   - Headers
      *   - GET Parameters
      *   - POST Parameters
      *
-     * @return null|string returns the api token if found else it returns null.
+     * @return null|string returns the token if found else it returns null.
      */
-    private static function getRawToken()
+    public static function getRawTokenFromRequest($request)
     {
-        // Try to find the token in the `Authorization` header.
-        $headers = getallheaders();
-        if (!empty($headers['Authorization'])) {
-            $authorizationHeader = $headers['Authorization'];
-            if (is_string($authorizationHeader) && strpos($authorizationHeader, Tokens::HEADER_KEY) !== false) {
-                // The format for including the token in the header is slightly different then when included as a get or
-                // post parameter. Here the value will be in the form: `Bearer <token>`
-                return substr(
-                    $authorizationHeader,
-                    strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1
-                );
+        $headerName = Tokens::HEADER_NAME;
+        $headerKey  = Tokens::HEADER_KEY;
+        $rawToken   = null;
+
+        if ($request->headers->has($headerName)) {
+            $header = $request->headers->get($headerName);
+            $rawToken = self::stripHeaderKey($header);
+        } elseif ($request->query->has($headerKey)) {
+            $rawToken = $request->query->get($headerKey);
+        } elseif ($request->request->has($headerKey)) {
+            $rawToken = $request->request->get($headerKey);
+        } else {
+            $allHeaders = getallheaders();
+            if (array_key_exists($headerName, $allHeaders)) {
+                $header = $allHeaders[$headerName];
+                $rawToken = self::stripHeaderKey($header);
+            } elseif (isset($_GET[$headerKey]) && is_string($_GET[$headerKey])) {
+                $rawToken = $_GET[$headerKey];
+            } elseif (isset($_POST[$headerKey]) && is_string($_POST[$headerKey])) {
+                $rawToken = $_POST[$headerKey];
             }
-
         }
 
-        // If it's not in the headers, try $_GET
-        if (isset($_GET[Tokens::HEADER_KEY]) && is_string($_GET[Tokens::HEADER_KEY])) {
-            return $_GET[Tokens::HEADER_KEY];
-        }
+        return $rawToken;
+    }
 
-        if (isset($_POST[Tokens::HEADER_KEY]) && is_string($_POST[Tokens::HEADER_KEY])) {
-            return $_POST[Tokens::HEADER_KEY];
+    private static function stripHeaderKey($header)
+    {
+        $headerKey = Tokens::HEADER_KEY .' ';
+        $rawToken = str_replace($headerKey, '', $header);
+        if ($rawToken === '')
+        {
+            return null;
         }
-
-        return null;
+        return $rawToken;
     }
 }

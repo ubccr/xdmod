@@ -757,27 +757,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      */
     protected function authenticateToken($request)
     {
-        // NOTE: While we prefer token's to be pulled from the 'Authorization' header, we also support a fallback lookup
-        // to the request's query params.
-
-        // Also, we check `getallheaders` because for some reason Silex seems to gobble up the `Authorization` header.
-        $allHeaders = getallheaders();
-
-        $authorizationHeader = null;
-        if ($request->headers->has('Authorization')) {
-            $authorizationHeader = $request->headers->get('Authorization');
-        } elseif (array_key_exists('Authorization', $allHeaders)) {
-            $authorizationHeader = $allHeaders['Authorization'];
-        }
-
-        // Fall back to getting the token from the request(PATH,GET,BODY).
-        if (empty($authorizationHeader) || strpos($authorizationHeader, Tokens::HEADER_KEY) === false) {
-            $rawToken = $request->get(Tokens::HEADER_KEY);
-        } else {
-            $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1);
-        }
-
-        // If it's still empty, then no token == no access.
+        $rawToken = Tokens::getRawTokenFromRequest($request);
         if (empty($rawToken)) {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
@@ -785,14 +765,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             );
         }
 
-        $tokenParts = explode(Tokens::DELIMITER, $rawToken);
-        $tokenPartsSize = sizeof($tokenParts);
-        if ($tokenPartsSize === 2) {
-            $userId = $tokenParts[0]; //substr($rawToken, 0, $delimPosition);
-            $token = $tokenParts[1]; //substr($rawToken, $delimPosition + 1);
-            return Tokens::authenticate($userId, $token);
-        } elseif ($tokenPartsSize === 3) {
-            return Tokens::authenticateJSONWebToken($rawToken);
+        $authenticatedUser = Tokens::authenticateRawToken($rawToken);
+        if ($authenticateUser) {
+            return $authenticatedUser
         } else {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
