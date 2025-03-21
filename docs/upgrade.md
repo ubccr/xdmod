@@ -33,14 +33,11 @@ General Upgrade Notes
   there may be version-specific upgrade notes. If you have installed any of the
   optional modules for Open XDMoD, they may have their own version-specific
   upgrade notes as well, see:
-    - [`xdmod-appkernels`](https://appkernels.xdmod.org/ak-upgrade.html)
-    - [`xdmod-supremm`](https://supremm.xdmod.org/supremm-upgrade.html)
-    - [`xdmod-ondemand`](https://ondemand.xdmod.org/upgrade.html)
+    - [Application Kernels](https://appkernels.xdmod.org/ak-upgrade.html)
+    - [Job Performance (SUPReMM)](https://supremm.xdmod.org/supremm-upgrade.html)
+    - [OnDemand](https://ondemand.xdmod.org/upgrade.html)
 
-RPM Upgrade Process
--------------------
-
-# !!! XDMoD 11.0 Upgrade Process Changes !!!
+## !!! XDMoD 11.0 Upgrade Process Changes !!!
 
 XDMoD 11.0 no longer supports the obsolete Centos 7 OS. XDMoD 11.0 is supported on
 Rocky 8 with the PHP version 7.4 that [is supported until May 2029](https://access.redhat.com/support/policy/updates/rhel-app-streams-life-cycle#rhel8_full_life_application_streams).
@@ -52,28 +49,32 @@ We support the following upgrade paths:
 If you run into any problems during your upgrade process, please submit a
 ticket to `ccr-xdmod-help@buffalo.edu` and we will do our best to help.
 
-
 ### Server: EL7, XDMoD: 10.5, PHP: 5.4, MySQL or MariaDB 5.5
+
 If you are using CentOS 7 and will upgrade to XDMoD 11.0 on Rocky 8, please follow the steps below.
 
 At the end of this process you should expect to have a working XDMoD 10.5 installation on a Rocky 8 server that
 contains all of your current data. After which you can then follow the upgrade procedure that immediately follows this
 section which starts at `Server: EL8, XDMoD: 10.5, PHP: 7.2`.
 
-1. Install a fresh copy of XDMoD 10.5 on a new Rocky 8 server [via RPM](10.5/install-rpm.md) or [from source](10.5/install-source.md).
+1. Install a fresh copy of XDMoD 10.5 on a new Rocky 8 server from
+   [RPM](../10.5/install-rpm.html) or [source](../10.5/install-source.html).
    1. Instead of running `xdmod-setup` do steps 2 & 3 below.
 2. Copy the contents of `/etc/xdmod` (or if you have a source install the contents of `/path/to/your/xdmod/etc/`) from the CentOS 7
    server to the Rocky 8 server.
     1. <span style="color: orange;">***NOTE:***</span>If the database host has changed then on the Rocky 8 Server,
        update the `host = ` entries in `/etc/xdmod/portal_settings.ini` to reflect this.
 3. Export the database from the CentOS 7 installation and transfer the files to the Rocky 8 server.
-    1. For example, `mysqldump --databases mod_hpcdb mod_logger moddb modw modw_aggregates modw_cloud modw_filters > backup.sql`
+    1. For example (noting that if you have the `xdmod-supremm` module
+       installed to add `modw_supremm` to the list of databases and if you have
+       the `xdmod-ondemand` module installed to add `modw_ondemand` to the list
+       of databases): `mysqldump --databases mod_hpcdb mod_logger moddb modw modw_aggregates modw_cloud modw_filters > backup.sql`
        1. To make the process of importing the data less error-prone, please update the following sed snippet with your installations MySQL user (`` `user`@`host` ``) and run it against the dumped sql file(s).
           ``sed -i 's|DEFINER=`xdmod`@`localhost`||g' backup.sql``
 4. Import the CentOS 7 exported database files into the Rocky 8 server's database.
     1. `mysql < backup.sql`
 5. **NOTE:** MariaDB / MySQL users are defined as `'username'@'hostname'` so if the hostname of the new Rocky 8 web server is different than the hostname of the old CentOS 7 web server, you will need to make sure that this change is reflected in the database.
-    1. Run the following from an account that has db admin privileges to ensure the XDMoD user is correct: `mysql -e "UPDATE mysql.user SET Host = '<insert new XDMoD web server hostname here>' WHERE username = 'xdmod';"`
+    1. Run the following from an account that has db admin privileges to ensure the XDMoD user is correct: `mysql -e "UPDATE mysql.user SET Host = '<insert new XDMoD web server hostname here>' WHERE username = 'xdmod'"`
 6. Restart the web server / database on the Rocky 8 server and confirm that everything is working as expected.
 7. Next, follow the upgrade process detailed below on the Rocky 8 Server.
 
@@ -93,14 +94,14 @@ $ dnf install -y php make libzip-devel php-pear php-devel
 ```
 
 Some Notes:
-- If you run the above command and dnf tells you that the packages are already installed, double-check the contents of
-  `/etc/dnf/dnf.conf` if `best=False` is present then change it to `best=True`. Re-run the command above, and it should
+- If you run the above command and `dnf` tells you that the packages are already installed, double-check the contents of
+  `/etc/dnf/dnf.conf`; if `best=False` is present then change it to `best=True` and re-run the command above, and it should
   now find / install the 7.4 version of the packages.
 - You may also see some `PHP: Warning` messages during this process, specifically:
 ```
 PHP Warning:  PHP Startup: Unable to load dynamic library 'mongodb.so' (tried: /usr/lib64/php/modules/mongodb.so (/usr/lib64/php/modules/mongodb.so: undefined symbol: _zval_ptr_dtor), /usr/lib64/php/modules/mongodb.so.so (/usr/lib64/php/modules/mongodb.so.so: cannot open shared object file: No such file or directory)) in Unknown on line 0
 ```
-*Not to worry, this will be resolved by the next step*
+*Not to worry, this will be resolved by the next step.*
 
 Install the mongodb PHP Pear package
 ```shell
@@ -108,6 +109,9 @@ $ yes '' | pecl install mongodb-1.18.1
 ```
 
 You may now continue with the standard upgrade steps below.
+
+RPM Upgrade Process
+-------------------
 
 ### Download Latest Open XDMoD RPM package
 
