@@ -1,5 +1,75 @@
 # Open XDMoD Change Log
 
+## 2025-03-17 v11.0.1
+
+- Bug Fixes
+    - General
+        - Remove plot range entry boxes in the corners of axes
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix displays of markers on plots with null values
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980),
+          [\#1999](https://github.com/ubccr/xdmod/pull/1999)).
+        - Fix the displayed lists of datasets when hovering over plots
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix aggregate plot x-axis labels when multiple metrics are plotted
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix pie chart data label display
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix display of plots when swapping x- and y-axes
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980),
+          [\#1996](https://github.com/ubccr/xdmod/pull/1996)).
+        - Fix display of bar and area plots with side-by-side grouping
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix ordering of the date axis on timeseries plots with varying date
+          intervals
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980),
+          [\#1989](https://github.com/ubccr/xdmod/pull/1989)).
+        - Fix display of x-axis tick labels
+          ([\#1998](https://github.com/ubccr/xdmod/pull/1998)).
+    - ETL
+        - Add missing endpoint to the exception message in `ExecuteSql`
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix how the `pdoAggregator` class displays the day that was
+          aggregated in its logging
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+- Enhancements
+    - Cloud
+        - Add database columns for person organization ID and PI organization
+          ID to tables in the Cloud realm
+          ([\#1958](https://github.com/ubccr/xdmod/pull/1958)).
+    - ETL
+        - Add ability to specify multiple database migration classes
+          ([\#2001](https://github.com/ubccr/xdmod/pull/2001)).
+- Documentation
+    - Update list of ACCESS MMS team members
+      ([\#1918](https://github.com/ubccr/xdmod/pull/1918),
+      [\#1919](https://github.com/ubccr/xdmod/pull/1919)).
+    - Update support information for 10.5 and 11.0
+      ([\#1926](https://github.com/ubccr/xdmod/pull/1926),
+      [\#1928](https://github.com/ubccr/xdmod/pull/1928)).
+    - Add additional information to 11.0.0 upgrade notes
+      ([\#1925](https://github.com/ubccr/xdmod/pull/1925)).
+    - Reorder configuration guide for clarity
+      ([\#1913](https://github.com/ubccr/xdmod/pull/1913)).
+    - Remove references to CentOS 7
+      ([\#1931](https://github.com/ubccr/xdmod/pull/1931),
+      [\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - Update version of MongoDB in software requirements
+      ([\#1937](https://github.com/ubccr/xdmod/pull/1937)).
+    - Update documentation of charts in the user manual
+      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - Replace references to XSEDE with ACCESS
+      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - Update the HTML metadata description of the index page
+      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - Add to the lists of publications and presentations
+      ([\#1962](https://github.com/ubccr/xdmod/pull/1962)).
+- Maintenance / Code Quality
+    - Fix PHPUnit test warnings
+      ([\#1945](https://github.com/ubccr/xdmod/pull/1945)).
+    - Add missing CI testing of exceptions
+      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+
 ## 2024-09-16 v11.0.0
 - Important Notes
     - Open XDMoD is now no longer bundled with libraries that have license restrictions for commercial or government use. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the license required from the Highcharts library. Please refer to the [license notices](https://open.xdmod.org/11.0/notices.html) for more information about the open source licenses bundled with Open XDMoD.

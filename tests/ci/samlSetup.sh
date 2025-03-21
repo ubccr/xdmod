@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Used for docker build, cache file will need to be upgraded if newer version is needed
+#Used for docker build, cache file will need to be upgraded if newer version is needed
 CACHE_FILE='/root/saml-idp.tar.gz'
 
 DEFAULT_INSTALL_DIR=/usr/share/xdmod
@@ -179,6 +179,7 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/authsources.php" <<EOF
 EOF
 
 CERTCONTENTS=`sed -n '2,21p' idp-public-cert.pem | perl -ne 'chomp and print'`
+HOSTNAME=$(hostname)
 
 cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <<EOF
 <?php
@@ -194,12 +195,12 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <
     0 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'https://localhost:7000',
+      'Location' => 'https://$HOSTNAME:7000',
     ),
     1 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-      'Location' => 'https://localhost:7000',
+      'Location' => 'https://$HOSTNAME:7000',
     ),
   ),
   'SingleLogoutService' =>
@@ -207,7 +208,7 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <
     0 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'https://localhost:7000/signout',
+      'Location' => 'https://$HOSTNAME:7000/signout',
     ),
   ),
   'ArtifactResolutionService' =>
@@ -232,5 +233,5 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <
 );
 EOF
 
-node app.js  --acs https://localhost/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud https://localhost/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
+node app.js  --acs https://$HOSTNAME/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud https://$HOSTNAME/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
 httpd -k start
