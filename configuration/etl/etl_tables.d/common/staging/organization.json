@@ -11,12 +11,6 @@
                 "extra": "auto_increment"
             },
             {
-                "name": "organization_name",
-                "type": "varchar(300)",
-                "nullable": false,
-                "comment": "Organization full name"
-            },
-            {
                 "name": "organization_abbrev",
                 "type": "varchar(100)",
                 "nullable": false,
@@ -27,7 +21,6 @@
             {
                 "name": "PRIMARY",
                 "columns": [
-                    "organization_name",
                     "organization_abbrev"
                 ]
             },
@@ -35,20 +28,6 @@
                 "name": "uk_organization_id",
                 "columns": [
                     "organization_id"
-                ],
-                "is_unique": true
-            },
-            {
-                "name": "uk_organization_name",
-                "columns": [
-                    "organization_name"
-                ],
-                "is_unique": true
-            },
-            {
-                "name": "uk_organization_abbrev",
-                "columns": [
-                    "organization_abbrev"
                 ],
                 "is_unique": true
             }

@@ -1,7 +1,7 @@
 {
     "name": "xdmod",
-    "version": "11.0.0",
-    "release": "rc.1",
+    "version": "11.5.0",
+    "release": "1",
     "files": {
         "include_paths": [
             "/"

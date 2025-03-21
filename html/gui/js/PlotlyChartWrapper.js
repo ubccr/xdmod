@@ -16,7 +16,12 @@ Ext.namespace('XDMoD.utils');
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     const baseChartOptions = {};
-    const configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500 };
+    const configs = {
+        displayModeBar: false,
+        doubleClick: 'reset',
+        doubleClickDelay: 500,
+        showAxisRangeEntryBoxes: false
+    };
     XDMoD.utils.deepExtend(baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
 
@@ -70,32 +75,15 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             }
             baseChartOptions.layout.annotations.splice(0, endIndex);
         }
-        // Set tickmode to auto for thumbnail plots. Large amount of tick labels for thumbnail plots cause them
-        // to lag.
-        if (baseChartOptions.layout.thumbnail) {
-            const axesLabels = getMultiAxisObjects(baseChartOptions.layout);
-            if (baseChartOptions.swapXY) {
-                if (baseChartOptions.layout.yaxis.timeseries) {
-                    baseChartOptions.layout.yaxis.nticks = 5;
-                    baseChartOptions.layout.yaxis.tickangle = -90;
-                }
-            } else if (baseChartOptions.layout.xaxis.timeseries) {
-                baseChartOptions.layout.xaxis.nticks = 5;
-                baseChartOptions.layout.xaxis.tickangle = -90;
-            }
-            for (let i = 0; i < axesLabels.length; i++) {
-                baseChartOptions.layout[axesLabels[i]].nticks = 5;
-            }
-        }
         // Adjust trace ordering
         // Referenced https://stackoverflow.com/questions/45741397/javascript-sort-array-of-objects-by-2-properties
         // for comparison idea
         baseChartOptions.data.sort((trace1, trace2) => {
-            if (baseChartOptions.layout.barmode !== 'group') {
-                return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.traceorder - trace1.traceorder);
+            const containsBarSeries = baseChartOptions.data.some((elem) => elem.type === 'bar');
+            if (containsBarSeries && baseChartOptions.layout.barmode === 'stack') {
+                return Math.sign(trace2.traceorder - trace1.traceorder);
             }
-            const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.traceorder - trace2.traceorder);
-            return res;
+            return Math.sign(trace1.traceorder - trace2.traceorder);
         });
     }
 

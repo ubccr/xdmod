@@ -4,15 +4,21 @@
     },
     "source_query": {
         "records": {
-            "organization_id": "o.organization_id",
-            "organization_name": "o.organization_name",
-            "organization_abbrev": "o.organization_abbrev"
+            "organization_id": "org.organization_id",
+            "organization_name": "org_config.organization_name",
+            "organization_abbrev": "org_config.organization_abbrev"
         },
         "joins": [
             {
                 "schema": "${SOURCE_SCHEMA}",
                 "name": "staging_organization",
-                "alias": "o"
+                "alias": "org"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_organization_config",
+                "alias": "org_config",
+                "on": "org.organization_abbrev = org_config.organization_abbrev"
             }
         ]
     }
