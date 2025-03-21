@@ -5,21 +5,37 @@ title: Upgrade Guide
 General Upgrade Notes
 ---------------------
 
-- Open XDMoD only supports upgrading to a new version from the version that
-  directly precedes it unless otherwise noted below.  If you need to upgrade
-  from an older version you must upgrade through all the intermediate versions
-  or perform a clean installation.
+- Open XDMoD release numbers are of the form X.Y.Z.
+    - New minor releases increment Z by 1, e.g., 10.0.0, 10.0.1, 10.0.2, etc.
+    - New major releases increment X.Y by 0.5 and reset Z to 0, e.g., 9.0.0,
+      9.5.0, 10.0.0, 10.5.0, etc.
+- Unless otherwise noted below, Open XDMoD only supports upgrades to:
+    - Minor releases of the same major release (e.g., from 9.5.0 to 9.5.1,
+      from 10.0.0 to 10.0.3, etc.),
+    - The next major release (e.g., from 9.5.0 to 10.0.0, from 10.0.2 to
+      11.0.0, etc.), or
+    - Minor releases of the next major release (e.g., from 9.5.0 to 10.0.1,
+      from 10.5.1 to 11.0.1, etc.).
+- If you need to jump more than one major release, you must incrementally
+  upgrade to each of the intermediate major releases (or a minor release
+  thereof), e.g., if you want to upgrade from 9.5.0 to 11.5.0, then you must
+  upgrade from 9.5.0 to 10.0.\*, then from 10.0.\* to 10.5.\*, then from
+  10.5.\* to 11.5.0.
 - Make a backup of your Open XDMoD configuration files before running
-  the upgrade script.  The upgrade script may overwrite your current
+  the upgrade script. The upgrade script may overwrite your current
   configuration files.
-- If the upgrade includes database schema changes (see notes at the
-  bottom of this page), you should backup all your data.
+- If the upgrade includes database schema changes (see version-specific notes
+  further down on this page), you should back up all your data.
 - Do not change the version in `portal_settings.ini` before running the
-  upgrade script.  The version number will be changed by the upgrade
+  upgrade script. The version number will be changed by the upgrade
   script.
-- If you have installed any additional Open XDMoD packages (e.g.
-  `xdmod-appkernels`, `xdmod-supremm`, or `xdmod-ondemand`), upgrade those to
-  the latest version before running `xdmod-upgrade`.
+- Make sure to follow the instructions below in the proper order, and note that
+  there may be version-specific upgrade notes. If you have installed any of the
+  optional modules for Open XDMoD, they may have their own version-specific
+  upgrade notes as well, see:
+    - [`xdmod-appkernels`](https://appkernels.xdmod.org/ak-upgrade.html)
+    - [`xdmod-supremm`](https://supremm.xdmod.org/supremm-upgrade.html)
+    - [`xdmod-ondemand`](https://ondemand.xdmod.org/upgrade.html)
 
 RPM Upgrade Process
 -------------------
@@ -106,7 +122,7 @@ Likewise, install the latest `xdmod-appkernels`, `xdmod-supremm`, and/or
 
 After upgrading the package you may need to manually merge any files
 that you have manually changed before the upgrade.  You do not need to
-merge `portal_settings.ini`.  This file will be updated by the upgrade
+merge `portal_settings.ini`. This file will be updated by the upgrade
 script.  If you have manually edited this file, you should create a
 backup and merge any changes after running the upgrade script.
 
