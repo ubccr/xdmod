@@ -977,7 +977,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                         return !n.disabled && n.id === searchString;
                 });
 
-                // Check if the URL is pointing at a summary node 
+                // Check if the URL is pointing at a summary node
                 if (child && !statistic) {
                     tree.getSelectionModel().select(child);
                     return;
