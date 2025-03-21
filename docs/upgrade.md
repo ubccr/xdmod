@@ -113,13 +113,13 @@ You may now continue with the standard upgrade steps below.
 RPM Upgrade Process
 -------------------
 
-### Download Latest Open XDMoD RPM package
+### Download Open XDMoD RPM package
 
-Download available at [GitHub][github-latest-release].
+Download available at [GitHub][github-release].
 
 ### Install the RPM
 
-    # dnf install xdmod-{{ page.sw_version }}-1.el8.noarch.rpm
+    # dnf install xdmod-{{ page.rpm_version }}.el8.noarch.rpm
 
 Likewise, install the latest `xdmod-appkernels`, `xdmod-supremm`, and/or
 `xdmod-ondemand` RPM files if you have those modules installed.
@@ -147,9 +147,9 @@ This example assumes that your previous version of Open XDMoD is installed at
 `/opt/xdmod-{{ page.sw_version }}`.  It is recommended to install the new version of Open XDMoD
 in a different directory than your existing version.
 
-### Download Latest Open XDMoD Source Package
+### Download Open XDMoD Source Package
 
-Download available at [GitHub][github-latest-release].
+Download available at [GitHub][github-release].
 
 ### Extract and Install Source Package
 
@@ -363,5 +363,5 @@ will have the following columns added:
 
 Then, the Cloud realm will be reaggregated.
 
-[github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
+[github-release]: https://github.com/ubccr/xdmod/releases/{{ page.rpm_version }}
 [mysql-config]: configuration.md#mysql-configuration
