@@ -18,9 +18,9 @@ General Upgrade Notes
       from 10.5.1 to 11.0.1, etc.).
 - If you need to jump more than one major release, you must incrementally
   upgrade to each of the intermediate major releases (or a minor release
-  thereof), e.g., if you want to upgrade from 9.5.0 to 11.5.0, then you must
+  thereof), e.g., if you want to upgrade from 9.5.0 to 11.0.0, then you must
   upgrade from 9.5.0 to 10.0.\*, then from 10.0.\* to 10.5.\*, then from
-  10.5.\* to 11.5.0.
+  10.5.\* to 11.0.0.
 - Make a backup of your Open XDMoD configuration files before running
   the upgrade script. The upgrade script may overwrite your current
   configuration files.
