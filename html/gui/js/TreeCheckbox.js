@@ -218,7 +218,6 @@ Ext.override(Ext.tree.TreeEventModel, {
             this.onIconClick(e, this.getNode(e));
         }
         else if(this.getNodeTarget(e)){
-            //console.log(this.getNodeTarget(e));
             this.onNodeClick(e, this.getNode(e));
         }
     },
