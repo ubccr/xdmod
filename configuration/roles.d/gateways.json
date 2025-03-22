@@ -56,6 +56,10 @@
                 },
                 {
                     "realm": "Gateways",
+                    "group_by": "provider"
+                },
+                {
+                    "realm": "Gateways",
                     "group_by": "resource_type"
                 },
                 {
@@ -117,6 +121,10 @@
                 {
                     "realm": "Gateways",
                     "group_by": "resource"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "provider"
                 },
                 {
                     "realm": "Gateways",

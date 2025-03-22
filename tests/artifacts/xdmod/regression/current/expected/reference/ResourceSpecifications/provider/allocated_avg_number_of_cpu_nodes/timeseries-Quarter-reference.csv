@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Quarter,"[screw] Average Number of CPU Nodes: Allocated"
-"2016 Q4",1040.0000
-"2017 Q1",2000.0000
+Quarter,"[screw] Average Number of CPU Nodes: Allocated","[wrench] Average Number of CPU Nodes: Allocated"
+"2016 Q4",820.0000,400.0000
+"2017 Q1",1600.0000,400.0000
 ---------

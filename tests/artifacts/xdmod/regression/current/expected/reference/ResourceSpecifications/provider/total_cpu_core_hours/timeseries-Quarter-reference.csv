@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Quarter,"[screw] CPU Hours: Total"
-"2016 Q4",4992000.0000
-"2017 Q1",43200000.0000
+Quarter,"[screw] CPU Hours: Total","[wrench] CPU Hours: Total"
+"2016 Q4",3936000.0000,1056000.0000
+"2017 Q1",34560000.0000,8640000.0000
 ---------

@@ -10,7 +10,8 @@
             "shared_jobs": "shared_jobs",
             "timezone": "timezone",
             "type_abbrev": "resource_type",
-            "resource_allocation_type_abbrev": "resource_allocation_type"
+            "resource_allocation_type_abbrev": "resource_allocation_type",
+            "organization": "organization"
         }
     }
 }

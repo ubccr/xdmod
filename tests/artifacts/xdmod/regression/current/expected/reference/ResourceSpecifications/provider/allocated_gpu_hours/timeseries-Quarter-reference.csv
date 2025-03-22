@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Quarter,"[screw] GPU Hours: Allocated"
-"2016 Q4",2496000.0000
-"2017 Q1",17280000.0000
+Quarter,"[screw] GPU Hours: Allocated","[wrench] GPU Hours: Allocated"
+"2016 Q4",2496000.0000,0.0000
+"2017 Q1",17280000.0000,0.0000
 ---------

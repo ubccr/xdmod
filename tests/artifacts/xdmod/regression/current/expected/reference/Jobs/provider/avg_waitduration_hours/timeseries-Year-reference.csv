@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[screw] Wait Hours: Per Job","[wrench] Wait Hours: Per Job"
+2016,5.73725065,1.48979528
+2017,1.42993013,4.44912351
+---------

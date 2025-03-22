@@ -1,0 +1,11 @@
+title
+"Wall Hours: Per Job: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[screw] Wall Hours: Per Job","[wrench] Wall Hours: Per Job"
+2016,2.27041027,0.60887666
+2017,1.06629022,0.47114714
+---------

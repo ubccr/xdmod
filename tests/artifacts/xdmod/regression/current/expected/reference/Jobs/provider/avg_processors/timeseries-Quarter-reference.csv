@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[wrench] Job Size: Per Job (Core Count)","[screw] Job Size: Per Job (Core Count)"
+"2016 Q4",9.4049,8.3542
+"2017 Q1",11.1505,8.9335
+---------
