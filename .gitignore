@@ -307,6 +307,10 @@ configuration/roles.d/supremm.json
 configuration/supremmconfig.json
 configuration/aggregation_meta/
 
+# Exclude extjs examples
+public/gui/lib/extjs/examples/
+
+
 # ETL resource-specific configuration
 /etl/js/config/supremm/dataset_maps/*
 /etl/js/config/supremm/tests/*
@@ -345,3 +349,5 @@ launch.json
 
 # Include test specific diff changes
 !/tests/ci/diff/*.diff
+
+
