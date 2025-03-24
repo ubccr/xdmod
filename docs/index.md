@@ -30,9 +30,9 @@ wait time, and wall time, with minimum, maximum and the average of
 these metrics, in addition to many others.  Metrics are organized by a
 customizable hierarchy appropriate for your organization.
 
-A version of Open XDMoD, namely [XDMoD](https://xdmod.ccr.buffalo.edu/),
-was developed to monitor the NSF supported portfolio of supercomputers
-that fall under the [XSEDE](https://www.xsede.org/) program.
+A version of Open XDMoD, [ACCESS XDMoD](https://xdmod.access-ci.org)
+is used to monitor the NSF-supported portfolio of advanced computing
+systems and services that are integrated with the NSF-funded [ACCESS](https://access-ci.org) program.
 
 This material is based upon work supported by the National Science Foundation
 under Grant Numbers [OAC 2137603][nsf-2137603],
@@ -71,22 +71,5 @@ Open XDMoD is an open source project released under the
 
 [lgpl3]: http://www.gnu.org/licenses/lgpl-3.0.txt
 
-<div markdown="1" class="non-commercial-notice">
-
-While Open XDMoD is released under the LGPL, it is bundled with some
-3<sup>rd</sup> party software libraries that are not free for commercial
-use. See [License Notices][notices] for more information on
-3<sup>rd</sup> party software bundled with Open XDMoD.
-
-Specifically, Open XDMoD is bundled with [Highcharts][], released
-under the [Creative Commons Attribution-NonCommercial 3.0][cc-by-nc]
-license.  For more information regarding Highcharts licensing, please
-refer to their
-[Non Commercial Licensing FAQ][highcharts-non-commerical-faq].
-
-</div>
-
 [notices]:                       notices.html
-[highcharts]:                    http://shop.highsoft.com/highcharts.html
 [cc-by-nc]:                      http://creativecommons.org/licenses/by-nc/3.0/legalcode
-[highcharts-non-commerical-faq]: https://shop.highsoft.com/faq/non-commercial

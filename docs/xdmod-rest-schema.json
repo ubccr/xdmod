@@ -151,7 +151,7 @@ layout: null
                   "scale": {
                     "type": "string",
                     "format": "integer",
-                    "description": "For chart image exports this sets the zoom factor for the exported image compared to the on-screen display. See https://api.highcharts.com/highcharts/exporting.scale"
+                    "description": "Sets the scaling of the chart width and height."
                   },
                   "share_y_axis": {
                     "type": "string",
@@ -269,7 +269,7 @@ layout: null
                     "scale": {
                         "type": "string",
                         "format": "integer",
-                        "description": "For chart image exports this sets the zoom factor for the exported image compared to the on-screen display. See https://api.highcharts.com/highcharts/exporting.scale"
+                        "description": "Sets the scaling of the chart width and height."
                     },
                     "aggregation_unit": {
                         "type": "string",
@@ -1933,7 +1933,7 @@ layout: null
 
                         }
                     },
-                    "404": { "$ref": "api-token-404" }
+                    "404": { "$ref": "#/components/responses/api-token-404" }
                 }
             },
             "post": {
@@ -2111,7 +2111,7 @@ layout: null
                             }
                         }
                     },
-                    "404": { "$ref": "api-token-404" },
+                    "404": { "$ref": "#/components/responses/api-token-404" },
                     "500": {
                         "description": "Internal Server Error",
                         "content": {
@@ -2857,7 +2857,7 @@ layout: null
                     "Data Analytics Framework"
                 ],
                 "summary": "Get raw data from the data warehouse",
-                "description": "This will return rows of raw data up to a maximum number of rows. The limit on number of rows can be obtained via `GET /warehouse/raw-data/limit`.",
+                "description": "On success, returns a stream of content type `application/json-seq` containing one line with an array containing the `display` property of each obtained field followed by one line for each obtained record with an array containing the obtained field values for that record. Each line starts with an ASCII Record Separator character and ends with an ASCII Line Feed character.",
                 "operationId": "get-warehouse-raw-data",
                 "security": [
                     { "http_bearer": [] },
@@ -2916,51 +2916,7 @@ layout: null
                     "200": {
                         "description": "OK",
                         "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "title": "success",
-                                    "properties": {
-                                        "success":  {
-                                            "type": "boolean",
-                                            "enum": [ true ]
-                                        },
-                                        "fields": {
-                                            "type": "array",
-                                            "description": "Labels of fields returned",
-                                            "items": {
-                                                "type": "string"
-                                            }
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "description": "Rows of raw data",
-                                            "items": {
-                                                "type": "array",
-                                                "items": {
-                                                    "type": "string",
-                                                    "nullable": true
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "required": [
-                                        "success",
-                                        "fields",
-                                        "data"
-                                    ]
-                                },
-                                "examples": {
-                                    "success": {
-                                        "description": "Parameters: `start_date=2022-01-01&end_date=2022-01-01&realm=SUPREMM&fields=nodes,cores`",
-                                        "value": {
-                                            "success": true,
-                                            "fields": [ "Cores", "Nodes" ],
-                                            "data": [ ["1", "1"], ["5", "1"], ["2304", "24"] ]
-                                        }
-                                    }
-                                }
-                            }
+                            "application/json-seq": {}
                         }
                     },
                     "400": {
@@ -3115,96 +3071,6 @@ layout: null
                                     "expired-token": {
                                         "$ref": "#/components/examples/expired-token"
                                     }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/warehouse/raw-data/limit": {
-            "get": {
-                "tags": [
-                    "Data Warehouse",
-                    "Data Analytics Framework"
-                ],
-                "summary": "Get the raw data response limit",
-                "description": "This gets the maximum number of rows that will be returned in a single response from `GET /warehouse/raw-data`.",
-                "operationId": "get-warehouse-raw-data-limit",
-                "security": [
-                    { "http_bearer": [] },
-                    { "query_param_bearer": [] }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "title": "success",
-                                    "properties": {
-                                        "success":  {
-                                            "type": "boolean",
-                                            "enum": [ true ]
-                                        },
-                                        "data": {
-                                            "type": "integer",
-                                            "minimum": 0
-                                        }
-                                    },
-                                    "required": [
-                                        "success",
-                                        "data"
-                                    ]
-                                },
-                                "example": {
-                                    "success": true,
-                                    "data": 10000
-                                }
-                            }
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/warehouse-error"
-                                },
-                                "examples": {
-                                    "empty-token": {
-                                        "$ref": "#/components/examples/empty-token"
-                                    },
-                                    "malformed-token": {
-                                        "$ref": "#/components/examples/malformed-token"
-                                    },
-                                    "invalid-token": {
-                                        "$ref": "#/components/examples/invalid-token"
-                                    },
-                                    "expired-token": {
-                                        "$ref": "#/components/examples/expired-token"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/warehouse-error"
-                                },
-                                "example": {
-                                    "success": false,
-                                    "count": 0,
-                                    "total": 0,
-                                    "totalCount": 0,
-                                    "results": [],
-                                    "data": [],
-                                    "message": "Option 'rest_raw_row_limit' does not exist in section 'datawarehouse'",
-                                    "code": 0
                                 }
                             }
                         }

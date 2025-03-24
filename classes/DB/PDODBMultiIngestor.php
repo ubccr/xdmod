@@ -41,7 +41,7 @@ class PDODBMultiIngestor implements Ingestor
     function __construct(
         $dest_db,
         $source_db,
-        $pre_ingest_update_statements = array(),
+        $pre_ingest_update_statements,
         $source_query,
         $insert_table,
         $insert_fields = array(),
@@ -452,7 +452,7 @@ class PDODBMultiIngestor implements Ingestor
     protected function loadProcessingConfig($configFilePath)
     {
         if (! is_file($configFilePath)) {
-            throw new Exception("'$configPath' is missing. If no processing is needed, use an empty array.");
+            throw new Exception("'$configFilePath' is missing. If no processing is needed, use an empty array.");
         }
 
         $configFileContents = @file_get_contents($configFilePath);

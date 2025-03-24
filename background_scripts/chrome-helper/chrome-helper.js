@@ -20,23 +20,18 @@ const args = require('yargs').argv;
 
     await page.goto('file://' + args['input-file']);
 
-    let svgInnerHtml;
+    // Chart traces and axis values svg
+    let chart = await page.evaluate(() => document.querySelector('.user-select-none.svg-container').children[0].outerHTML);
+    // Chart title and axis titles svg
+    const chartLabels = await page.evaluate(() => document.querySelector('.user-select-none.svg-container').children[2].innerHTML);
 
-    if (args.plotly) {
-        // Chart traces and axis values svg
-        let plotlyChart = await page.evaluate(() => document.querySelector('.user-select-none.svg-container').children[0].outerHTML);
-        // Chart title and axis titles svg
-        const plotlyLabels = await page.evaluate(() => document.querySelector('.user-select-none.svg-container').children[2].innerHTML);
+    chart = chart.substring(0, chart.length - 6);
+    let svg = chart + '' + chartLabels + '</svg>';
 
-        plotlyChart = plotlyChart.substring(0, plotlyChart.length - 6);
-        const plotlyImage = plotlyChart + '' + plotlyLabels + '</svg>';
-        // HTML tags in titles thorw xml not well-formed error
-        svgInnerHtml = plotlyImage.replace(/<br>|<b>|<\/b>/gm, '');
-    } else {
-        svgInnerHtml = await page.evaluate(() => document.querySelector('.highcharts-container').innerHTML);
-    }
+    // Unencoded HTML tags throw xml not well-formed error
+    svg = svg.replace(/data-unformatted="(.*?)"/g, (str) => str.replace(/>/g, '&gt;').replace(/</g, '&lt;'));
 
-    console.log(JSON.stringify(svgInnerHtml));
+    console.log(JSON.stringify(svg));
 
     await browser.close();
 })();

@@ -181,6 +181,7 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/authsources.php" <<EOF
 EOF
 
 CERTCONTENTS=`sed -n '2,21p' idp-public-cert.pem | perl -ne 'chomp and print'`
+HOSTNAME=$(hostname)
 
 cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <<EOF
 <?php
@@ -196,12 +197,12 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <
     0 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'https://localhost:7000',
+      'Location' => 'https://$HOSTNAME:7000',
     ),
     1 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-      'Location' => 'https://localhost:7000',
+      'Location' => 'https://$HOSTNAME:7000',
     ),
   ),
   'SingleLogoutService' =>
@@ -209,7 +210,7 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <
     0 =>
     array (
       'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'https://localhost:7000/signout',
+      'Location' => 'https://$HOSTNAME:7000/signout',
     ),
   ),
   'ArtifactResolutionService' =>

@@ -380,6 +380,10 @@ class DataWarehouseInitializer
             $this->logger,
             array('last-modified-start-date' => $lastModifiedStartDate)
         );
+
+        $filterListBuilder = new FilterListBuilder();
+        $filterListBuilder->setLogger($this->logger);
+        $filterListBuilder->buildRealmLists('ResourceSpecifications');
     }
 
     /**

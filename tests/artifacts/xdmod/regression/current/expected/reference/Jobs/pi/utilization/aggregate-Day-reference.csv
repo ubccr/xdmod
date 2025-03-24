@@ -1,50 +1,50 @@
 title
-"Screwdriver Utilization (%): by PI"
+"Screwdriver CPU Utilization (%): by PI"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-PI,"Screwdriver Utilization (%)"
-"Scaup, Lesser",7.308463780
-Fieldfare,6.977956216
-Moorhen,6.345087174
-"Bluetail, Red-flanked",5.182399099
-"Flycatcher, Taiga",3.638159464
-"Lark, Calandra",2.575573991
-Nuthatch,2.455055556
-"White, Great",2.082928977
-"Bunting, Ortolan",1.844111111
-Smew,1.741571970
-Bufflehead,1.453984454
-"Shearwater, Balearic",1.244291791
-"Thrush, Hermit",1.241095960
-"Egret, Snowy",1.106352238
-Chaffinch,1.030328862
-Fulmar,0.824535064
-"Shearwater, Macaronesian",0.813495818
-Jackdaw,0.718562564
-"Warbler, Hooded",0.697648253
-"Tern, Caspian",0.513573392
-"Accentor, Alpine",0.498325337
-"Kestrel, Lesser",0.492239583
-"Warbler, Blackpoll",0.150465278
-Dunlin,0.143763994
-Dotterel,0.142876984
-"Goose, Red-breasted",0.137021096
-"Gull, Yellow-legged",0.136788721
-"Warbler, Cetti's",0.112092014
-"Petrel, Fea's",0.096737190
-"Chiffchaff, Iberian",0.096551531
-"Warbler, Savi's",0.095358691
-"Martin, Sand",0.058963016
-"Swift, Little",0.055902909
-"Dowitcher, Short-billed",0.014171200
-Bittern,0.012856034
-"Harrier, Hen",0.009549400
-"Shearwater, Great",0.006818839
-"Spotted, Great",0.005669429
-Blackbird,0.003354001
-"Gull, Glaucous-winged",0.002664773
-"Yellowthroat, Common",0.000098485
+PI,"Screwdriver CPU Utilization (%)"
+"Scaup, Lesser",7.3085
+Fieldfare,6.9780
+Moorhen,6.3451
+"Bluetail, Red-flanked",5.1824
+"Flycatcher, Taiga",3.6382
+"Lark, Calandra",2.5756
+Nuthatch,2.4551
+"White, Great",2.0829
+"Bunting, Ortolan",1.8441
+Smew,1.7416
+Bufflehead,1.4540
+"Shearwater, Balearic",1.2443
+"Thrush, Hermit",1.2411
+"Egret, Snowy",1.1064
+Chaffinch,1.0303
+Fulmar,0.8245
+"Shearwater, Macaronesian",0.8135
+Jackdaw,0.7186
+"Warbler, Hooded",0.6976
+"Tern, Caspian",0.5136
+"Accentor, Alpine",0.4983
+"Kestrel, Lesser",0.4922
+"Warbler, Blackpoll",0.1505
+Dunlin,0.1438
+Dotterel,0.1429
+"Goose, Red-breasted",0.1370
+"Gull, Yellow-legged",0.1368
+"Warbler, Cetti's",0.1121
+"Petrel, Fea's",0.0967
+"Chiffchaff, Iberian",0.0966
+"Warbler, Savi's",0.0954
+"Martin, Sand",0.0590
+"Swift, Little",0.0559
+"Dowitcher, Short-billed",0.0142
+Bittern,0.0129
+"Harrier, Hen",0.0095
+"Shearwater, Great",0.0068
+"Spotted, Great",0.0057
+Blackbird,0.0034
+"Gull, Glaucous-winged",0.0027
+"Yellowthroat, Common",0.0001
 ---------

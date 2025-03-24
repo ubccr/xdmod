@@ -2,6 +2,90 @@
 title: Configuration Guide
 ---
 
+Prerequisites
+-------------
+
+Before running the interactive `xdmod-setup` script, ensure the following:
+
+- The base XDMoD software and any desired XDMoD submodules have been installed
+  following the [Installation Guide](install.md).
+- The MariaDB server is configured per the instructions below and is
+  running.
+
+MariaDB Configuration
+---------------------
+
+Open XDMoD does not support any of the strict [Server SQL Modes][sql-mode].
+You must set `sql_mode = ''` in your MySQL server configuration.
+
+Open XDMoD uses the `GROUP_CONCAT()` SQL function. The `group_concat_max_len`
+server system variable must be changed to 16MB from its default value of 1024
+bytes.
+
+The `max_allowed_packet` setting must be set to at least 16MB.
+
+Some versions of MySQL have binary logging enabled by default.  This can be an
+issue during the setup process if the user specified to create the databases
+does not have the `SUPER` privilege.  If binary logging is not required you
+should disable it in your MySQL configuration.  If that is not an option you
+can use the less safe [log_bin_trust_function_creators][] variable.  You may
+also grant the `SUPER` privilege to the user that is used to create the Open
+XDMoD database.
+
+We recommend setting `innodb_buffer_pool_size` to around 50% of the memory on your server.
+
+Whatever your set for `innodb_buffer_pool_size`, make sure `innodb_log_file_size`
+is 25% of `innodb_buffer_pool_size`.
+
+The recommended settings in the MySQL server configuration file are as follows:
+
+```ini
+[mysqld]
+sql_mode = ''
+max_allowed_packet = 1G
+group_concat_max_len = 16M
+innodb_stats_on_metadata = off
+innodb_file_per_table = On
+```
+
+### Enabling InnoDB File Per Table setting
+
+We recommend setting `innodb_file_per_table = On` for your Open XDMoD instance but it
+is not required. This setting helps to control the size of the database files and
+provides a minor speed up for InnoDB tables. It is important to note that setting
+`innodb_file_per_table` to `On` is a global setting that will affect all databases
+on the database server not just Open XDMoD related databases.
+
+While not mandatory, when changing the `innodb_file_per_table` to `innodb_file_per_table = On`
+we recommend that you export, drop, and re-import all Open XDMoD InnoDB tables in order
+to make sure existing InnoDB data is moved to one file per table.
+
+A script, `/bin/xdmod-convert-innodb-fpt`, is provided to help with this process.
+This script will only convert Open XDMoD related databases. For any non-Open XDMoD databases
+with InnoDB tables on your server you will need to export the tables manually, drop
+the tables and then load them back in.
+
+The steps to enable the `innodb_file_per_table` MySQL option and making sure
+existing InnoDB data is moved to the appropriate file by using the `xdmod-convert-innodb-fpt`
+script is listed below.
+
+1. Export all Open XDMoD InnoDB tables. This can be done with the following command
+`xdmod-convert-innodb-fpt --export-tables --dir=path/to/dir`
+2. Drop all Open XDMoD InnoDB tables. This can be done using the `--drop-tables` flag,
+`xdmod-convert-innodb-fpt --drop-tables`. This command will drop your Open XDMoD InnoDB tables!
+Please make sure you have either run the command `xdmod-convert-innodb-fpt --export-tables --dir=path/to/dir`
+or have manually exported the InnoDB tables before running it.
+3. Shutdown the MySQL server
+4. Add the following line to `/etc/my.cnf` file.
+   ```ini
+   innodb_file_per_table = On
+   ```
+5. Delete the `ibdata1`, `ib_logfile0` and `ib_logfile1` files from the MySQL data directory.
+The default location for this is `/var/lib/mysql`
+6. Restart MySQL
+7. Import Open XDMoD InnoDB data previously exported. This can be done with the following command:
+`xdmod-convert-innodb-fpt --import-tables --dir=path/to/dir`
+
 Setup Script
 ------------
 
@@ -119,7 +203,7 @@ in the RPM install and `share/templates/apache.conf` in the source code install.
 This template file must be copied to the Apache configuration directory and
 edited to update site specific configuration settings.
 
-For CentOS 7, RHEL 7, Rocky 8, and RHEL 8 the template file should be copied to `/etc/httpd/conf.d/xdmod.conf`
+For Rocky 8 and RHEL 8 the template file should be copied to `/etc/httpd/conf.d/xdmod.conf`.
 For other Linux distributions consult the distribution documentation
 to determine the path to the webserver configuration files.
 
@@ -133,8 +217,8 @@ for SSL configuration information.
 The `ServerName` setting should be updated to match the server name in the SSL
 certificate.
 
-The name and port of the server must match with the `site_address` and `user_manual`
-configuration settings in `portal_settings.ini`.
+The name and port of the server must match with the `site_address`
+configuration setting in `portal_settings.ini`.
 
 The template configuration file also configures the webserver to send the `Strict-Transport-Security` HTTP Header
 to indicate to  web browsers that the Open XDMoD instance should only be accessed using HTTPS.
@@ -193,80 +277,6 @@ to indicate to  web browsers that the Open XDMoD instance should only be accesse
     CustomLog "|/usr/sbin/rotatelogs -n 5 /var/log/xdmod/apache-access.log 1M" combined
 </VirtualHost>
 ```
-
-MySQL Configuration
--------------------
-
-Open XDMoD does not support any of the strict [Server SQL Modes][sql-mode].
-You must set `sql_mode = ''` in your MySQL server configuration.
-
-Open XDMoD uses the `GROUP_CONCAT()` SQL function. The `group_concat_max_len`
-server system variable must be changed to 16MB from its default value of 1024
-bytes.
-
-The `max_allowed_packet` setting must be set to at least 16MB.
-
-Some versions of MySQL have binary logging enabled by default.  This can be an
-issue during the setup process if the user specified to create the databases
-does not have the `SUPER` privilege.  If binary logging is not required you
-should disable it in your MySQL configuration.  If that is not an option you
-can use the less safe [log_bin_trust_function_creators][] variable.  You may
-also grant the `SUPER` privilege to the user that is used to create the Open
-XDMoD database.
-
-We recommend setting `innodb_buffer_pool_size` to around 50% of the memory on your server.
-
-Whatever your set for `innodb_buffer_pool_size`, make sure `innodb_log_file_size`
-is 25% of `innodb_buffer_pool_size`.
-
-The recommended settings in the MySQL server configuration file are as follows:
-
-```ini
-[mysqld]
-sql_mode = ''
-max_allowed_packet = 1G
-group_concat_max_len = 16M
-innodb_stats_on_metadata = off
-innodb_file_per_table = On
-```
-
-### Enabling InnoDB File Per Table setting
-
-We recommend setting `innodb_file_per_table = On` for your Open XDMoD instance but it
-is not required. This setting helps to control the size of the database files and
-provides a minor speed up for InnoDB tables. It is important to note that setting
-`innodb_file_per_table` to `On` is a global setting that will affect all databases
-on the database server not just Open XDMoD related databases.
-
-While not mandatory, when changing the `innodb_file_per_table` to `innodb_file_per_table = On`
-we recommend that you export, drop, and re-import all Open XDMoD InnoDB tables in order
-to make sure existing InnoDB data is moved to one file per table.
-
-A script, `/bin/xdmod-convert-innodb-fpt`, is provided to help with this process.
-This script will only convert Open XDMoD related databases. For any non-Open XDMoD databases
-with InnoDB tables on your server you will need to export the tables manually, drop
-the tables and then load them back in.
-
-The steps to enable the `innodb_file_per_table` MySQL option and making sure
-existing InnoDB data is moved to the appropriate file by using the `xdmod-convert-innodb-fpt`
-script is listed below.
-
-1. Export all Open XDMoD InnoDB tables. This can be done with the following command
-`xdmod-convert-innodb-fpt --export-tables --dir=path/to/dir`
-2. Drop all Open XDMoD InnoDB tables. This can be done using the `--drop-tables` flag,
-`xdmod-convert-innodb-fpt --drop-tables`. This command will drop your Open XDMoD InnoDB tables!
-Please make sure you have either run the command `xdmod-convert-innodb-fpt --export-tables --dir=path/to/dir`
-or have manually exported the InnoDB tables before running it.
-3. Shutdown the MySQL server
-4. Add the following line to `/etc/my.cnf` file.
-   ```ini
-   innodb_file_per_table = On
-   ```
-5. Delete the `ibdata1`, `ib_logfile0` and `ib_logfile1` files from the MySQL data directory.
-The default location for this is `/var/lib/mysql`
-6. Restart MySQL
-7. Import Open XDMoD InnoDB data previously exported. This can be done with the following command:
-`xdmod-convert-innodb-fpt --import-tables --dir=path/to/dir`
 
 Logrotate Configuration
 -----------------------
@@ -493,31 +503,41 @@ this should be set to `true`.
 For cloud resources the timezone is not used and times are converted to
 the local timezone that the server is in.
 
+The `resource_allocation_type` option indicates how this resource is allocated
+to users, such as by CPU, GPU or Node. By default, there are 4 possible values,
+`CPU`, `CPUNode`, `GPU`, and `GPUNode`. `CPUNode` denotes a resource that allocates
+nodes of CPUs to users, whereas `CPU` denotes a resource that allocates individual CPUs
+to users.
+
 ```json
 [
     {
         "resource": "resource1",
         "name": "Resource 1",
         "description": "Our first HPC resource",
-        "resource_type": "HPC"
+        "resource_type": "HPC",
+        "resource_allocation_type": "CPUNode"
     },
     {
         "resource": "resource2",
         "name": "Resource 2",
         "resource_type": "HPC",
-        "pi_column": "account_name"
+        "pi_column": "account_name",
+        "resource_allocation_type": "GPU"
     },
     {
         "resource": "resource3",
         "name": "Resource 3",
         "resource_type": "HPC",
         "timezone": "US/Eastern",
+        "resource_allocation_type": "CPU",
         "shared_jobs": true
     },
     {
         "resource": "resource4",
         "name": "Resource 4",
-        "resource_type": "Cloud"
+        "resource_type": "Cloud",
+        "resource_allocation_type": "CPU",
     }
 ]
 ```
@@ -530,10 +550,9 @@ the number of nodes and processors in a resource have changed over time,
 multiple entries are required for that resource to calculate an accurate
 utilization metric.
 
-Note that if there is a single entry for a resource, both the
-`start_date` and `end_date` may be omitted.  If a resource has multiple
-entries, the `start_date` may be omitted from the first and `end_date`
-may be omitted from the last.
+Note that the `end_date` is necessary for resources with multiple entries and
+still active. The `end_date` should not be included for the last entry for a
+resource. A `start_date` is necessary for all entries.
 
 It is also possible to change the utilization metric by specifying a
 percent allocated (see `percent_allocated` below).  The utilization will
@@ -548,34 +567,49 @@ warehouse.  If this data is omitted, it is assumed that the resource is
 [
     {
         "resource": "resource1",
-        "nodes": 64,
-        "processors": 1024,
-        "ppn": 16
+        "start_date": "2016-12-27",
+        "cpu_node_count": 400,
+        "cpu_processor_count": 4000,
+        "cpu_ppn": 10,
+        "gpu_node_count": 0,
+        "gpu_processor_count": 0,
+        "gpu_ppn": 0,
+        "end_date": "2017-12-01"
     },
     {
-        "resource": "resource2",
-        "end_date": "2013-12-31",
-        "nodes": 32,
-        "processors": 256,
-        "ppn": 8
+        "resource": "frearson",
+        "start_date": "2017-12-02",
+        "cpu_node_count": 800,
+        "cpu_processor_count": 8000,
+        "cpu_ppn": 10,
+        "gpu_node_count": 0,
+        "gpu_processor_count": 0,
+        "gpu_ppn": 0,
+        "end_date": "2018-01-01"
     },
     {
-        "resource": "resource2",
-        "start_date": "2014-01-01",
-        "end_date": "2014-01-15",
-        "nodes": 64,
-        "processors": 512,
-        "ppn": 8,
+        "resource": "frearson",
+        "start_date": "2018-01-02",
+        "cpu_node_count": 800,
+        "cpu_processor_count": 8000,
+        "cpu_ppn": 10,
+        "gpu_node_count": 10,
+        "gpu_processor_count": 100,
+        "gpu_ppn": 10,
+        "end_date": "2019-01-01",
         "percent_allocated": 100
-    }
+    },
     {
-        "resource": "resource2",
-        "start_date": "2014-01-16",
-        "nodes": 65,
-        "processors": 520,
-        "ppn": 8,
+        "resource": "frearson",
+        "start_date": "2019-01-02",
+        "cpu_node_count": 800,
+        "cpu_processor_count": 8000,
+        "cpu_ppn": 10,
+        "gpu_node_count": 10,
+        "gpu_processor_count": 100,
+        "gpu_ppn": 10,
         "percent_allocated": 90
-    }
+    },
 ]
 ```
 
@@ -585,6 +619,12 @@ warehouse.  If this data is omitted, it is assumed that the resource is
 Defines resource types and associates resource types with realms.  Each
 resource in `resources.json` should reference a resource type from this file.
 This file typically should not be changed.
+
+### resource_allocation_types.json
+
+Defines how a resource is allocated to users.  Each resource in `resources.json`
+should reference a resource allocation type from this file. This file typically
+should not be changed.
 
 ### update_check.json
 

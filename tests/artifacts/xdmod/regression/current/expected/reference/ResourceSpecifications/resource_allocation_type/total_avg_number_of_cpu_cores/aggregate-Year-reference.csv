@@ -1,0 +1,13 @@
+title
+"Average Number of CPU Cores: Total (Core Count): by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+"Resource Allocation Type","Average Number of CPU Cores: Total (Core Count)"
+"CPU Allocated",7936.1702
+"GPU Allocated",4000.0000
+"CPU Node Allocated",4000.0000
+"GPU Node Allocated",4000.0000
+---------

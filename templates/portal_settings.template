@@ -1,7 +1,6 @@
 [general]
 title = "[:general_title:]"
 site_address = "[:general_site_address:]"
-user_manual = "[:general_user_manual:]"
 contact_page_recipient = "[:general_contact_page_recipient:]"
 tech_support_recipient = "[:general_tech_support_recipient:]"
 
@@ -133,7 +132,6 @@ user = "[:datawarehouse_user:]"
 pass = "[:datawarehouse_pass:]"
 database = "modw"
 rest_logfile = "rest_datawarehouse.log"
-rest_raw_row_limit = "10000"
 
 [shredder]
 db_engine = "MySQLDB"

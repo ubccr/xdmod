@@ -30,16 +30,16 @@ class MetricExplorerChartsTest extends TestCase
     private function output($chartData)
     {
         $result = array(
-            'total' => $chartData->totalCount,
+            'total' => $chartData['totalCount'],
             'series_data' => array()
         );
-        foreach ($chartData->data[0]->series as $series) {
+        $chartData = $chartData->data[0]->data;
+        foreach ($chartData as $series) {
             $result['series_data'][] = array(
                 'name' => $series->name,
-                'y' => $series->data[0]->y,
-                'percentage' => $series->data[0]->percentage
+                'y' => $series->y[0],
             );
-        }
+        };
         var_export($result);
     }
 
@@ -71,15 +71,15 @@ class MetricExplorerChartsTest extends TestCase
 
         $chartData = $chartStore->data[0];
 
-        $this->assertEquals($expected['subtitle'], $chartData->subtitle->text);
+        $this->assertEquals($expected['subtitle'], $chartData->layout->annotations[1]->text);
         if (isset($expected['yvalue'])) {
-            $this->assertEquals($expected['yvalue'], $chartData->series[0]->data[0]->y);
+            $this->assertEquals($expected['yvalue'], $chartData->data[0]->y[0]);
         } else {
             self::$chartFilterTestData[] = array(
                 'settings' => $settings,
                 'expected' => array(
                     'subtitle' => $expected['subtitle'],
-                    'yvalue' => $chartData->series[0]->data[0]->y
+                    'yvalue' => $chartData->data[0]->y[0]
                 )
             );
         }
@@ -151,10 +151,10 @@ class MetricExplorerChartsTest extends TestCase
         $expected = array (
             'total' => '55',
             'series_data' => array(
-                array('name' => 'aytinis', 'y' => 10091.8844, 'percentage' => null),
-                array('name' => 'sarwa', 'y' => 6955.7733, 'percentage' => null),
-                array('name' => 'crane', 'y' => 6839.52, 'percentage' => null),
-                array('name' => 'duswa', 'y' => 5701.5467, 'percentage' => null)
+                array('name' => 'aytinis', 'y' => 10091.8844),
+                array('name' => 'sarwa', 'y' => 6955.7733),
+                array('name' => 'crane', 'y' => 6839.52),
+                array('name' => 'duswa', 'y' => 5701.5467)
             )
         );
         $this->testChartData($requestData, $expected);
@@ -182,16 +182,15 @@ class MetricExplorerChartsTest extends TestCase
         }
 
         $this->assertEquals($expected['total'], $chartData->totalCount);
-
-        $series = $chartData->data[0]->series;
+        $chartData = $chartData->data[0];
+        $series = $chartData->data;
         $this->assertCount(count($expected['series_data']), $series);
 
         $sdata = reset($expected['series_data']);
 
         foreach ($series as $s) {
             $this->assertEquals($sdata['name'], $s->name);
-            $this->assertEqualsWithDelta($sdata['y'], $s->data[0]->y,  1.0E-6, '');
-            $this->assertEquals($sdata['percentage'], $s->data[0]->percentage);
+            $this->assertEquals($sdata['y'], $s->y[0], '', 1.0E-6);
             $sdata = next($expected['series_data']);
         }
 
@@ -220,10 +219,10 @@ class MetricExplorerChartsTest extends TestCase
         $expected = array (
             'total' => '55',
             'series_data' => array(
-                array('name' => 'aytinis [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 10091.8844, 'percentage' => null),
-                array('name' => 'sarwa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6955.7733, 'percentage' => null),
-                array('name' => 'crane [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6839.52, 'percentage' => null),
-                array('name' => 'duswa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 5701.5467, 'percentage' => null)
+                array('name' => 'aytinis [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 10091.8844),
+                array('name' => 'sarwa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6955.7733),
+                array('name' => 'crane [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 6839.52),
+                array('name' => 'duswa [<span style="color:#1199ff">CPU Hours: Total</span>]', 'y' => 5701.5467)
             )
         );
 
@@ -341,11 +340,11 @@ class MetricExplorerChartsTest extends TestCase
             array(
                 'total' => 55,
                 'series_data' => array(
-                    array( 'name' => 'honbu', 'y' => 86581.6175, 'percentage' => 0),
-                    array( 'name' => 'meapi', 'y' => 22004.0533, 'percentage' => 0),
-                    array( 'name' => 'moorh', 'y' => 20518.0064, 'percentage' => 0),
-                    array( 'name' => 'garwa', 'y' => 11780.8131, 'percentage' => 0),
-                    array( 'name' => 'All 51 Others', 'y' => 81345.1393, 'percentage' => null)
+                    array( 'name' => 'honbu', 'y' => 86581.6175),
+                    array( 'name' => 'meapi', 'y' => 22004.0533),
+                    array( 'name' => 'moorh', 'y' => 20518.0064),
+                    array( 'name' => 'garwa', 'y' => 11780.8131),
+                    array( 'name' => 'All 51 Others', 'y' => 81345.1393)
                 )
             )
         );
@@ -355,11 +354,11 @@ class MetricExplorerChartsTest extends TestCase
             array (
                 'total' => '34',
                 'series_data' => array (
-                    array('name' => 'Thrush, Hermit', 'y' => 336, 'percentage' => 0),
-                    array('name' => 'Dunlin', 'y' => 192, 'percentage' => 0),
-                    array('name' => 'Scaup, Lesser', 'y' => 192, 'percentage' => 0),
-                    array('name' => 'Nuthatch', 'y' => 112, 'percentage' => 0),
-                    array('name' => 'Maximum over all 30 others', 'y' => 96, 'percentage' => null),
+                    array('name' => 'Thrush, Hermit', 'y' => 336),
+                    array('name' => 'Dunlin', 'y' => 192),
+                    array('name' => 'Scaup, Lesser', 'y' => 192),
+                    array('name' => 'Nuthatch', 'y' => 112),
+                    array('name' => 'Maximum over all 30 others', 'y' => 96),
                 )
             )
         );
@@ -369,11 +368,11 @@ class MetricExplorerChartsTest extends TestCase
             array (
                 'total' => '55',
                 'series_data' => array (
-                    array('name' => 'Moorhen', 'y' => 20518.0064, 'percentage' => 0),
-                    array('name' => 'Honey-buzzard', 'y' => 8276.1947, 'percentage' => 0),
-                    array('name' => 'Grey, Lesser', 'y' => 5534.6542, 'percentage' => 0),
-                    array('name' => 'Lapwing', 'y' => 2761.8142, 'percentage' => 0),
-                    array('name' => 'All 51 Others', 'y' => 5231.8753, 'percentage' => null),
+                    array('name' => 'Moorhen', 'y' => 20518.0064),
+                    array('name' => 'Honey-buzzard', 'y' => 8276.1947),
+                    array('name' => 'Grey, Lesser', 'y' => 5534.6542),
+                    array('name' => 'Lapwing', 'y' => 2761.8142),
+                    array('name' => 'All 51 Others', 'y' => 5231.8753),
                 )
             )
         );
@@ -383,11 +382,11 @@ class MetricExplorerChartsTest extends TestCase
             array (
                 'total' => '17',
                 'series_data' => array (
-                    array('name' => 'roti', 'y' => 32, 'percentage' => 0),
-                    array('name' => 'chapti', 'y' => 12, 'percentage' => 0),
-                    array('name' => 'focaccia', 'y' => 12, 'percentage' => 0),
-                    array('name' => 'nann', 'y' => 12, 'percentage' => 0),
-                    array('name' => 'Minimum over all 13 others', 'y' => 1, 'percentage' => null),
+                    array('name' => 'roti', 'y' => 32),
+                    array('name' => 'chapti', 'y' => 12),
+                    array('name' => 'focaccia', 'y' => 12),
+                    array('name' => 'nann', 'y' => 12),
+                    array('name' => 'Minimum over all 13 others', 'y' => 1),
                 )
             )
         );
@@ -400,16 +399,16 @@ class MetricExplorerChartsTest extends TestCase
             array (
                 'total' => '55',
                 'series_data' => array (
-                    array('name' => 'Moorhen', 'y' => 20518.0064, 'percentage' => null),
-                    array('name' => 'Honey-buzzard', 'y' => 8276.1947, 'percentage' => null),
-                    array('name' => 'Grey, Lesser', 'y' => 5534.6542, 'percentage' => null),
-                    array('name' => 'Lapwing', 'y' => 2761.8142, 'percentage' => null),
-                    array('name' => 'All 51 Others', 'y' => 5231.8753, 'percentage' => null),
-                    array('name' => 'white', 'y' => 32448.9128, 'percentage' => null),
-                    array('name' => 'black', 'y' => 7527.9847, 'percentage' => null),
-                    array('name' => 'pikelet', 'y' => 1112.6033, 'percentage' => null),
-                    array('name' => 'croutons', 'y' => 481.5464, 'percentage' => null),
-                    array('name' => 'All 13 Others', 'y' => 751.4976, 'percentage' => null)
+                    array('name' => 'Moorhen', 'y' => 20518.0064),
+                    array('name' => 'Honey-buzzard', 'y' => 8276.1947),
+                    array('name' => 'Grey, Lesser', 'y' => 5534.6542),
+                    array('name' => 'Lapwing', 'y' => 2761.8142),
+                    array('name' => 'All 51 Others', 'y' => 5231.8753),
+                    array('name' => 'white', 'y' => 32448.9128),
+                    array('name' => 'black', 'y' => 7527.9847),
+                    array('name' => 'pikelet', 'y' => 1112.6033),
+                    array('name' => 'croutons', 'y' => 481.5464),
+                    array('name' => 'All 13 Others', 'y' => 751.4976)
                 ),
             )
         );
@@ -467,7 +466,7 @@ class MetricExplorerChartsTest extends TestCase
                 if (count($testConfig['settings']['filter_values']) === 1) {
                     $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' =  ' . $testConfig['settings']['filter_values'][0] ;
                 } else {
-                    $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' = ( ' . implode($testConfig['settings']['filter_values'], ',  ') . ' )';
+                    $testConfig['expected']['subtitle'] = $dimConfig['name'] . ' = ( ' . implode(', ', $testConfig['settings']['filter_values']) . ' )';
                 }
 
                 $output[] = $testConfig;

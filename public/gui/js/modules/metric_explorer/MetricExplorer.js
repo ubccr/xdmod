@@ -56,13 +56,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         ['off', 'Off']
     ],
 
-    layer_types: [
-        ['send_backward', 'Send Backward'],
-        ['bring_forward', 'Bring Forward'],
-        ['send_to_back', 'Send to Back'],
-        ['bring_to_front', 'Bring to Front']
-    ],
-
     /**
      * A mapping of realms to the categories they belong to.
      *
@@ -168,22 +161,11 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             instance = CCR.xdmod.ui.metricExplorer;
         }
 
-        if (event && event.target &&
-            ((event.target.innerHTML && event.target.innerHTML === "Reset zoom") ||
-                (event.target.firstChild && event.target.firstChild.data && event.target.firstChild.data === "Reset zoom"))) {
-            return; //if reset zoom button, return
-        }
-
         var x, y;
 
-        if (event && event.xAxis && event.yAxis && event.xAxis[0] && event.yAxis[0]) {
-            x = event.xAxis[0].value;
-            y = event.yAxis[0].value;
-        } else {
-            var xy = Ext.EventObject.getXY();
-            x = xy[0];
-            y = xy[1];
-        }
+        var xy = Ext.EventObject.getXY();
+        x = xy[0];
+        y = xy[1];
 
         XDMoD.TrackEvent('Metric Explorer', 'Clicked on chart to access chart context menu', Ext.encode({
             'x': x,
@@ -271,7 +253,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 },
                 items: [
                     '<span class="menu-title">Chart Options:</span><br/>',
-                    '-', {
+                    {
                         xtype: 'menucheckitem',
                         text: 'Aggregate',
                         checked: !instance.timeseries,
@@ -336,6 +318,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                                 instance.datasetStore.each(function(record) {
                                     record.set('log_scale', check);
                                 });
+                                if (check === false) {
+                                    allLogScale = false;
+                                }
                             }
                         }
                     }, {
@@ -427,6 +412,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
                     return result;
                 };
+                const chartJSON = JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4);
                 menu.add({
                     text: 'View chart json',
                     iconCls: 'json_file',
@@ -440,12 +426,96 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             closeAction: 'destroy',
                             items: [{
                                 autoScroll: true,
-                                html: '<pre>' + Ext.util.Format.htmlEncode(JSON.stringify(filterConfigForExport(instance.getConfig()), null, 4)) + '</pre>'
+                                html: `<pre>${Ext.util.Format.htmlEncode(chartJSON)}</pre>`
+                            }],
+                            tools: [{
+                                id: 'save',
+                                qtip: 'Copy Chart JSON',
+                                handler: () => {
+                                    navigator.clipboard.writeText(chartJSON);
+                                }
                             }]
                         });
                         win.show();
                     }
                 });
+                const chartLayoutJSON = JSON.stringify(instance.plotlyPanel.chartOptions.layout, null, 4);
+                menu.add({
+                    text: 'View Plotly JS chart layout',
+                    iconCls: 'chart',
+                    handler: () => {
+                        const win = new Ext.Window({
+                            title: 'Plotly JS Layout Json',
+                            width: 800,
+                            height: 600,
+                            layout: 'fit',
+                            autoScroll: true,
+                            closeAction: 'destroy',
+                            items: [{
+                                autoScroll: true,
+                                html: `<pre>${Ext.util.Format.htmlEncode(chartLayoutJSON)}</pre>`
+                            }],
+                            tools: [{
+                                id: 'save',
+                                qtip: 'Copy Chart Layout',
+                                handler: () => {
+                                    navigator.clipboard.writeText(chartLayoutJSON);
+                                }
+                            }]
+                        });
+                        win.show();
+                    }
+                });
+                const chartDataJSON = JSON.stringify(instance.plotlyPanel.chartOptions.data, null, 4);
+                menu.add({
+                    text: 'View Plotly JS chart data',
+                    iconCls: 'dataset',
+                    handler: () => {
+                        const win = new Ext.Window({
+                            title: 'Plotly JS Data Json',
+                            width: 800,
+                            height: 600,
+                            layout: 'fit',
+                            autoScroll: true,
+                            closeAction: 'destroy',
+                            items: [{
+                                autoScroll: true,
+                                html: `<pre>${Ext.util.Format.htmlEncode(chartDataJSON)}</pre>`
+                            }],
+                            tools: [{
+                                id: 'save',
+                                qtip: 'Copy Chart Data',
+                                handler: () => {
+                                    navigator.clipboard.writeText(chartDataJSON);
+                                }
+                            }]
+                        });
+                        win.show();
+                    }
+                });
+            }
+            if (instance.plotlyPanel.chartOptions.layout.zoom) {
+                menu.insert(0, {
+                    text: 'Reset Zoom',
+                    iconCls: 'refresh',
+                    xtype: 'menuitem',
+                    handler: (t) => {
+                        XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
+                        const { swapXY } = instance.plotlyPanel.chartOptions.layout;
+                        const min = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
+                        const max = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
+                        if (min !== 0 || max !== null) {
+                            if (swapXY) {
+                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'xaxis.range': [min, max], 'yaxis.autorange': false });
+                            } else {
+                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': [min, max], 'yaxis.autorange': false });
+                            }
+                        } else {
+                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.autorange': true });
+                        }
+                    }
+                });
+                menu.insert(1, '-');
             }
         }
 
@@ -466,12 +536,12 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         }
 
         XDMoD.TrackEvent('Metric Explorer', 'Clicked on chart data point to access context menu', Ext.encode({
-            'x-axis': point.ts ? Highcharts.dateFormat('%Y-%m-%d', point.ts) : point.series.data[point.x].category,
-            'y-axis': point.y,
-            'series': point.series.name
+            'x-axis': point.data.type === 'pie' ? point.label : point.x,
+            'y-axis': point.data.type === 'pie' ? point.label : point.y,
+            'series': point.data.name
         }));
 
-        XDMoD.Module.MetricExplorer.seriesContextMenu(point.series, false, datasetId, point, instance);
+        XDMoD.Module.MetricExplorer.seriesContextMenu(point.data, false, datasetId, point, instance);
     },
     // ------------------------------------------------------------------
 
@@ -499,16 +569,23 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             drillLabel;
 
         var isRemainder =
-            (point && point.options.isRemainder) ||
-            (series && series.options.isRemainder);
+            (series && series.isRemainder) ||
+            (point && point.data.drillable && !point.data.drillable[point.pointNumber]);
 
         if (!isRemainder) {
-            if (point && point.drilldown) {
-                drillId = point.drilldown.id;
-                drillLabel = point.drilldown.label;
-            } else if (series && series.options.drilldown) {
-                drillId = series.options.drilldown.id;
-                drillLabel = series.options.drilldown.label;
+            if (point) {
+                const drillInfo = point.data.drilldown;
+                if (drillInfo[0]) {
+                    drillId = drillInfo[point.pointNumber].id;
+                    drillLabel = drillInfo[point.pointNumber].label;
+                } else {
+                    drillId = drillInfo.id;
+                    drillLabel = drillInfo.label;
+                }
+            } else {
+                const drillInfo = series.drilldown;
+                drillId = drillInfo.id;
+                drillLabel = drillInfo.label;
             }
         }
         var isPie = instance.isPie();
@@ -607,104 +684,6 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 r.store.resumeEvents();
             }
         }, this);
-        var layerItems = [],
-            minZIndex,
-            maxZIndex,
-            z_index = record.get('z_index');
-        record.store.each(function(r) {
-            if (r.id !== record.id) {
-                var z_index = r.get('z_index');
-                if (minZIndex === undefined || z_index < minZIndex) {
-                    minZIndex = z_index;
-                }
-                if (maxZIndex === undefined || z_index > maxZIndex) {
-                    maxZIndex = z_index;
-                }
-            }
-        }, this);
-
-        function replaceZIndex(from, to, record) {
-            var neighborRecordIndex = -1;
-            while ((neighborRecordIndex = record.store.find('z_index', from, 0, false)) > -1) {
-                var neighborRecord = record.store.getAt(neighborRecordIndex);
-                neighborRecord.set('z_index', to);
-            }
-        }
-
-        for (var g = 0; XDMoD.Module.MetricExplorer.layer_types.length > g; g++) {
-            var disabled = false;
-            switch (XDMoD.Module.MetricExplorer.layer_types[g][0]) {
-                case 'send_backward':
-                case 'send_to_back':
-                    disabled = minZIndex === undefined || z_index < minZIndex;
-                    break;
-                case 'bring_forward':
-                case 'bring_to_front':
-                    disabled = minZIndex === undefined || z_index > maxZIndex;
-                    break;
-            }
-            layerItems.push({
-                text: XDMoD.Module.MetricExplorer.layer_types[g][1],
-                value: XDMoD.Module.MetricExplorer.layer_types[g][0],
-                disabled: disabled,
-                xtype: 'menuitem',
-                handler: function( /*b*/ ) {
-
-                    XDMoD.TrackEvent('Metric Explorer', 'Clicked on Layer option in data series context menu', Ext.encode({
-                        datasetId: datasetId,
-                        combine_type: this.value
-                    }));
-
-                    var process_value = function(value, record) {
-                        var toZIndex;
-                        switch (value) {
-                            case 'send_backward':
-                                if (minZIndex !== undefined && z_index >= minZIndex) {
-                                    var maxZIndexLessThanZIndex;
-                                    record.store.each(function(r) {
-                                        var r_z_index = r.get('z_index');
-                                        if ((maxZIndexLessThanZIndex === undefined || r_z_index > maxZIndexLessThanZIndex) && r_z_index < z_index) {
-                                            maxZIndexLessThanZIndex = r_z_index;
-                                        }
-                                    }, this);
-                                    toZIndex = maxZIndexLessThanZIndex !== undefined ? maxZIndexLessThanZIndex : z_index - 1;
-                                    replaceZIndex(toZIndex, z_index, record);
-                                    record.set('z_index', toZIndex);
-                                }
-                                break;
-                            case 'bring_forward':
-                                if (maxZIndex !== undefined && z_index <= maxZIndex) {
-                                    var minZIndexGreaterThanZIndex;
-                                    record.store.each(function(r) {
-                                        var r_z_index = r.get('z_index');
-                                        if ((minZIndexGreaterThanZIndex === undefined || r_z_index < minZIndexGreaterThanZIndex) && r_z_index > z_index) {
-                                            minZIndexGreaterThanZIndex = r_z_index;
-                                        }
-                                    }, this);
-                                    toZIndex = minZIndexGreaterThanZIndex !== undefined ? minZIndexGreaterThanZIndex : z_index + 1;
-                                    replaceZIndex(toZIndex, z_index, record);
-                                    record.set('z_index', toZIndex);
-                                }
-                                break;
-                            case 'send_to_back':
-                                if (minZIndex !== undefined && z_index >= minZIndex) {
-                                    toZIndex = minZIndex - 1;
-                                    record.set('z_index', toZIndex);
-                                }
-                                break;
-                            case 'bring_to_front':
-                                if (maxZIndex !== undefined && z_index <= maxZIndex) {
-                                    toZIndex = maxZIndex + 1;
-                                    record.set('z_index', toZIndex);
-                                }
-                                break;
-                        }
-                    };
-
-                    process_value(this.value, record);
-                }
-            });
-        }
 
         var widthItems = [];
         for (var y = 0; CCR.xdmod.ui.AddDataPanel.line_widths.length > y; y++) {
@@ -765,9 +744,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     '</g>' + '</svg>' + CCR.xdmod.ui.AddDataPanel.line_types[z][1] + '</span>' +
                     '</div>',
 
-                value: CCR.xdmod.ui.AddDataPanel.line_types[z][0],
+                value: CCR.xdmod.ui.AddDataPanel.line_types[z][2],
                 xtype: 'menucheckitem',
-                checked: record.get('line_type') === CCR.xdmod.ui.AddDataPanel.line_types[z][0],
+                checked: (record.get('line_type') === CCR.xdmod.ui.AddDataPanel.line_types[z][2]) || record.get('line_type') === 'Solid',
                 handler: function( /*b*/ ) {
                     XDMoD.TrackEvent('Metric Explorer', 'Clicked on Line Type option in data series context menu', Ext.encode({
                         datasetId: datasetId,
@@ -800,9 +779,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                                 if (datasetCount === 1) {
                                     instance.filtersStore.add(new instance.filtersStore.recordType(filter));
                                 } else if (datasetCount > 1) {
-                                    var filters = jQuery.extend(true, {}, record.get('filters')),
-                                        found = false;
-                                    for (var i = 0; i < filters.length; i++) {
+                                    var filters = XDMoD.utils.deepExtend({}, record.get('filters'));
+                                    let found = false;
+                                    for (let i = 0; i < filters.length; i++) {
                                         if (filters[i].id == filter.id) {
                                             found = true;
                                             break;
@@ -856,9 +835,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                                 id: Math.random(),
                                 metric: this.met,
                                 color: 'auto'
-                            };
-                        jQuery.extend(config, record.data);
-                        jQuery.extend(config, defaultConfig);
+                           };
+                        config = { ...config, ...record.data };
+                        config = { ...config, ...defaultConfig };
                         var newRecord = CCR.xdmod.ui.AddDataPanel.initRecord(
                             instance.datasetStore,
                             config,
@@ -896,7 +875,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             ],
             listeners: {
                 'show': {
-                    fn: function(menu) {
+                    fn: function (menu) {
                         menu.getEl().slideIn('t', {
                             easing: 'easeIn',
                             duration: 0.2
@@ -906,8 +885,30 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             }
         }); //menu
         if (series) {
+            if (instance.plotlyPanel.chartOptions.layout.zoom) {
+                menu.addItem({
+                    text: 'Reset Zoom',
+                    xtype: 'menuitem',
+                    iconCls: 'refresh',
+                    handler: (t) => {
+                        XDMoD.TrackEvent('Metric Explorer', 'Clicked on Reset Zoom data series context menu');
+                        const { swapXY } = instance.plotlyPanel.chartOptions.layout;
+                        const min = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[0] : instance.plotlyPanel.chartOptions.layout.yaxis.range[0];
+                        const max = swapXY ? instance.plotlyPanel.chartOptions.layout.xaxis.range[1] : instance.plotlyPanel.chartOptions.layout.yaxis.range[1];
+                        if (min !== 0 || max !== null) {
+                            if (swapXY) {
+                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'xaxis.range': [min, max], 'yaxis.autorange': false });
+                            } else {
+                                Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.range': [min, max], 'yaxis.autorange': false });
+                            }
+                        } else {
+                            Plotly.relayout(instance.plotlyPanel.id, { 'xaxis.autorange': true, 'yaxis.autorange': true });
+                        }
+                    }
+                });
+            }
             var visibility = Ext.apply({}, record.get('visibility')),
-                originalTitle = series.options.otitle;
+                originalTitle = series.otitle;
             if (!visibility) {
                 visibility = {};
             }
@@ -915,6 +916,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             var visible = true;
             if (visibility[originalTitle] !== undefined && visibility[originalTitle] !== null) {
                 visible = visibility[originalTitle];
+                if (visible !== true) {
+                    visible = false;
+                }
             }
             menu.addItem({
                 text: 'Show',
@@ -925,11 +929,11 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         XDMoD.TrackEvent('Metric Explorer', 'Clicked on Hide Series option in data series context menu', Ext.encode({
                             checked: check
                         }));
-                        series.setVisible(check);
+                        const displaySeries = check ? true : 'legendonly';
                         if (check) {
                             delete visibility[originalTitle];
                         } else {
-                            visibility[originalTitle] = false;
+                            visibility[originalTitle] = displaySeries;
                         }
                         record.set('visibility', visibility);
                     }
@@ -956,6 +960,18 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 }
                 var store = Ext.StoreMgr.lookup('hchart_store_metric_explorer');
 
+                let pointSelected = point.x;
+                // Plotly doesn't accept unix timestamps therefore
+                // we need to grab the raw timestamp stored on the data object.
+                if (point.data.seriesData) {
+                    for (let pointIndex = 0; pointIndex < point.data.seriesData.length; pointIndex++) {
+                        if (point.data.seriesData[pointIndex].y === point.y) {
+                            pointSelected = point.data.seriesData[pointIndex].x;
+                            break;
+                        }
+                    }
+                }
+
                 menu.addItem({
                     text: 'Show raw data',
                     iconCls: 'dataset',
@@ -966,7 +982,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             format: 'jsonstore',
                             operation: 'get_rawdata',
                             inline: 'n',
-                            datapoint: point.x,
+                            datapoint: Number(pointSelected),
                             datasetId: datasetId,
                             limit: 20,
                             start: 0
@@ -1145,9 +1161,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             });
             if (dimension !== 'none') {
                 if (instance.filtersStore.getById(drillFilter.id) === undefined) {
-                    var filters = jQuery.extend(true, {}, record.get('filters')),
-                        found = false;
-                    for (var k = 0; k < filters.length; k++) {
+                    var filters = XDMoD.utils.deepExtend({}, record.get('filters'));
+                    var found = false;
+                    for (let k = 0; k < filters.length; k++) {
                         if (filters[k].id == drillFilter.id) {
                             found = true;
                             break;
@@ -1294,29 +1310,11 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         record.set('long_legend', check);
                     }
                 }
-            }, {
-                text: 'Shadow',
-                iconCls: 'shadow',
-
-                xtype: 'menucheckitem',
-                checked: record.get('shadow'),
-                listeners: {
-                    checkchange: function(t, check) {
-                        XDMoD.TrackEvent('Metric Explorer', 'Clicked on Shadow option in data series context menu');
-                        record.set('shadow', check);
-                    }
-                }
             }]
         };
 
         menu.addItem(moreOptionsMenuItem);
 
-        menu.addItem('-');
-        menu.addItem({
-            text: 'Layer',
-            iconCls: 'layer',
-            menu: layerItems
-        });
         menu.addItem('-');
         menu.addItem({
             text: 'Edit Dataset',
@@ -1349,15 +1347,13 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             });
         }
         if (series) {
-            var originalTitle = series.options.otitle;
+            var originalTitle = series.otitle;
             var resetLegendItemTitle = function() {
                 XDMoD.TrackEvent('Metric Explorer', 'Clicked on reset legend item name option in series context menu');
 
                 delete instance.legend[originalTitle];
 
-                series.chart.series[series.index].update({
-                    name: originalTitle
-                });
+                series.name = originalTitle;
 
                 instance.saveQuery();
             };
@@ -1390,14 +1386,12 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                                     };
                                 }
 
-                                series.chart.series[series.index].update({
-                                    name: text
-                                });
+                                series.name = text;
 
                                 instance.saveQuery();
                             }
                             menu.hide();
-                        }, originalTitle !== series.options.name ? {
+                        }, originalTitle !== series.name ? {
                             xtype: 'button',
                             text: 'Reset',
                             handler: function() {
@@ -1410,7 +1404,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
                 }
             });
-            if (originalTitle !== series.options.name) {
+            if (originalTitle !== series.name) {
                 menu.addItem({
                     text: 'Reset Legend Item Name',
                     iconCls: 'reset_legend_item_name',
@@ -1435,7 +1429,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
-        var textContent = event.target.title ? event.target.title.element.textContent : '';
+        var textContent = instance.chartTitleField.getValue();
         var menu = instance.getTextEditMenu(
             textContent,
             'Chart Title',
@@ -1447,13 +1441,10 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
 
                     // Because the text is coming to us htmlEncoded'd we need to decode it fully
                     // so that the chartTitleField has the correct value.
+                    // We also want to strip out the anchor tag to avoid nefarious links.
                     var decoded = Ext.util.Format.htmlDecode(text);
-                    instance.chartTitleField.setValue(decoded);
-                    event.target.setTitle({
-                        text: instance.highChartPanel.highChartsTextEncode(decoded)
-                    });
-                    event.target.setSize(event.target.chartWidth, event.target.chartHeight);
-
+                    const sanitizedText = decoded.replace(/<(\/?a.*?)>/g, '&lt;$1&gt;');
+                    instance.chartTitleField.setValue(sanitizedText);
                     instance.saveQuery();
                 }
                 menu.hide();
@@ -1465,8 +1456,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
-        var el = event.target.title.element,
-            menu = new Ext.menu.Menu({
+        var menu = new Ext.menu.Menu({
                 scope: instance,
                 showSeparator: false,
                 ignoreParentClicks: true,
@@ -1501,10 +1491,10 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
-        var axisIndex = axis.options.index,
-            axisTitle = axis.options.title.text,
-            originalTitle = axis.options.otitle,
-            defaultTitle = axis.options.dtitle,
+        var axisIndex = 0,
+            axisTitle = axis.title.text,
+            originalTitle = axis.otitle,
+            defaultTitle = axis.dtitle,
             durationSelector = instance.getDurationSelector(),
             startDate = durationSelector.getStartDate(),
             endDate = durationSelector.getEndDate(),
@@ -1613,11 +1603,12 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
-        var originalTitle = axis.options.otitle;
-        var axisTitle = axis.options.title.text;
-        var axisIndex = axis.options.index;
+        var originalTitle = axis.otitle;
+        var axisTitle = axis.title.text;
+        const axisTitleText = axisTitle.length !== 0 ? axisTitle.substring(3, axisTitle.length - 4) : axisTitle;
+        var axisIndex = 0;
         var menu = instance.getTextEditMenu(
-            axisTitle,
+            axisTitleText,
             'X Axis [' + (axisIndex + 1) + '] Title',
             function(text) {
                 XDMoD.TrackEvent('Metric Explorer', 'Pressed enter in x axis [' + (axisIndex + 1) + '] title field.', Ext.encode({
@@ -1645,13 +1636,16 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
-        var originalTitle = axis.options.otitle;
-        var axisTitle = axis.options.title.text;
-        var axisIndex = axis.options.index;
+        var originalTitle = axis.otitle;
+        var axisTitle = axis.title.text;
+        if (axisTitle.length > 0) {
+            axisTitle = axisTitle.substring(3, axisTitle.length - 4);
+        }
+        var axisIndex = axis.index;
         var menu = instance.getTextEditMenu(
             axisTitle,
             'Y Axis [' + (axisIndex + 1) + '] Title',
-            function(text) {
+            function (text) {
                 XDMoD.TrackEvent('Metric Explorer', 'Pressed enter in y axis [' + (axisIndex + 1) + '] title field.', Ext.encode({
                     title: text
                 }));
@@ -1672,17 +1666,20 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         menu.showAt(Ext.EventObject.getXY());
     },
 
-    yAxisContextMenu: function(axis, instance) {
+    yAxisContextMenu: function(axis, series, instance) {
         if (instance === undefined) {
             instance = CCR.xdmod.ui.metricExplorer;
         }
         var handler;
-        var axisIndex = axis.options.index;
-        var axisTitle = axis.options.title.text;
-        var originalTitle = axis.options.otitle;
-        var defaultTitle = axis.options.dtitle;
+        var axisIndex = axis.index;
+        var axisTitle = axis.title.text;
+        if (axisTitle.length > 0) {
+            axisTitle = axisTitle.substring(3, axisTitle.length - 4);
+        }
+        var originalTitle = axis.otitle;
+        var defaultTitle = axis.dtitle;
         var minField = new Ext.form.NumberField({
-            value: axis.options.min,
+            value: axis.range[0],
             listeners: {
                 specialkey: function(field, e) {
                     if (e.getKey() == e.ENTER) {
@@ -1695,7 +1692,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             }
         });
         var maxField = new Ext.form.NumberField({
-            value: axis.options.max,
+            value: axis.range[1],
             listeners: {
                 specialkey: function(field, e) {
                     if (e.getKey() == e.ENTER) {
@@ -1706,10 +1703,13 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         });
 
         var yAxisDatasetIds = [];
-        for (var s = 0; s < axis.chart.series.length; s++) {
-            var se = axis.chart.series[s];
-            if (se.userOptions.yAxis === axisIndex) {
-                yAxisDatasetIds.push(se.userOptions.datasetId);
+        for (var s = 0; s < series.length; s++) {
+            const trace = series[s];
+            if (trace.yaxis && trace.name !== 'gap connector' && trace.name !== 'area fix') {
+                const yAxisIndex = Number(trace.yaxis.slice(-1)) - 1;
+                if (yAxisIndex === axisIndex) {
+                    yAxisDatasetIds.push(trace.datasetId);
+                }
             }
         }
 
@@ -1721,6 +1721,10 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 }
             }
         });
+
+        if (axis.type === 'log') {
+            allLogScale = true;
+        }
 
         var setLog = new Ext.form.Checkbox({
             checked: allLogScale === true,
@@ -1736,6 +1740,9 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 },
                 check: function(t, ch) {
                     t.setValue(ch);
+                    if (ch === false) {
+                        allLogScale = false;
+                    }
                 }
             }
         });
@@ -1785,8 +1792,8 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
         }
 
         handler = function() {
-            var oldMin = axis.min,
-                oldMax = axis.max,
+            var oldMin = axis.range[0],
+                oldMax = axis.range[1],
                 allLog = setLog.getValue(),
                 axisType = null,
                 newMin = minField.getValue(),
@@ -1807,7 +1814,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             // Calculate best min and max for log plot
             if (allLog) {
 
-                axisType = 'logarithmic';
+                axisType = 'log';
 
                 /* This is only pre-defined until we decide to either
                  * update the tick-value for log-axis charts, or give
@@ -1848,21 +1855,15 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                 if (instance.yAxis['original' + axisIndex]) {
                     instance.yAxis['original' + axisIndex].min = newMin;
                     instance.yAxis['original' + axisIndex].max = newMax;
+                    instance.yAxis['original' + axisIndex].chartType = axisType;
                 } else {
-                    instance.yAxis['original' + axisIndex] = {
+                    instance.yAxis[`original${axisIndex}`] = {
                         title: axisTitle,
                         min: newMin,
-                        max: newMax
+                        max: newMax,
+                        chartType: axisType
                     };
                 }
-
-                axis.target.yAxis[axisIndex].update({
-                    min: newMin,
-                    max: newMax,
-                    type: axisType,
-                    startOnTick: newMin == null,
-                    endOnTick: newMax == null
-                }, true);
 
                 instance.saveQuery();
             }
@@ -1908,7 +1909,29 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                     instance.resetYAxisTitle(axis);
                 }
             });
+        } else {
+            menu.addItem('-');
         }
+        menu.addItem({
+            text: 'Reset Range',
+            xtype: 'menuitem',
+            handler: function(t) {
+                XDMoD.TrackEvent('Metric Explorer', `Clicked on Reset Range in y axis [${axisIndex + 1}] title field.`);
+                if (instance.yAxis[`original${axisIndex}`]) {
+                    instance.yAxis[`original${axisIndex}`].min = 0;
+                    instance.yAxis[`original${axisIndex}`].max = null;
+                    instance.yAxis[`original${axisIndex}`].chartType = 'linear';
+                } else {
+                    instance.yAxis[`original${axisIndex}`] = {
+                        min: 0,
+                        max: null,
+                        chartType: 'linear'
+                    };
+                }
+
+                instance.saveQuery();
+            }
+        });
         menu.addItem({
             xtype: 'panel',
             layout: 'hbox',
@@ -1927,7 +1950,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
             }, {
                 xtype: 'button',
                 text: 'Cancel',
-                handler: function() {
+                handler: () => {
                     menu.destroy();
                 }
             }]
@@ -1943,7 +1966,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
              *                            execution is not filtered.
              * @return {dependent}        return type of handler
              */
-            menu.keyNav.doRelay = function(event, handler) {
+            menu.keyNav.doRelay = function (event, handler) {
 
                 var key = event.getKey();
 
@@ -2468,15 +2491,14 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
     },
 
     resetXAxisTitle: function(axis) {
-        var originalTitle = axis.options && axis.options.otitle ? axis.options.otitle : '';
-        var defaultTitle = axis.options && axis.options.dtitle ? axis.options.dtitle : '';
+        var originalTitle = axis && axis.otitle ? axis.otitle : '';
+        var defaultTitle = axis && axis.dtitle ? axis.dtitle : '';
 
         var newTitle = originalTitle === defaultTitle ? '' : originalTitle;
         this.setXAxisTitle(axis, newTitle);
     },
     setXAxisTitle: function(axis, newTitle) {
-        var axisIndex = axis.options.index;
-        var originalTitle = axis.options && axis.options.otitle ? axis.options.otitle : '';
+        var originalTitle = axis && axis.otitle ? axis.otitle : '';
 
         //find old mapping, if one.
         if (this.xAxis[originalTitle]) {
@@ -2487,21 +2509,17 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             };
         }
 
-        axis.target.xAxis[axisIndex].setTitle({
-            text: newTitle
-        });
-
         this.saveQuery();
     },
     resetYAxisTitle: function(axis) {
-        var originalTitle = axis.options && axis.options.otitle ? axis.options.otitle : '';
-        var defaultTitle = axis.options && axis.options.dtitle ? axis.options.dtitle : '';
+        var originalTitle = axis && axis.otitle ? axis.otitle : '';
+        var defaultTitle = axis && axis.dtitle ? axis.dtitle : '';
 
         var newTitle = originalTitle === defaultTitle ? '' : originalTitle;
         this.setYAxisTitle(axis, newTitle);
     },
     setYAxisTitle: function(axis, newTitle) {
-        var axisIndex = axis.options.index;
+        var axisIndex = axis.index;
 
         //find old mapping, if one.
         if (this.yAxis['original' + axisIndex]) {
@@ -2511,9 +2529,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 title: newTitle
             };
         }
-        axis.target.yAxis[axisIndex].setTitle({
-            text: newTitle
-        });
 
         this.saveQuery();
     },
@@ -2629,6 +2644,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         var chartThumbScale = 0.45;
         var chartWidth = 740;
         var chartHeight = 345;
+        let plotlyPanel;
 
         /*
          * Start Legend Menu
@@ -5476,19 +5492,11 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             messageProperty: 'message',
             fields: [
                 'chart',
-                'credits',
-                'title',
-                'subtitle',
-                'xAxis',
-                'yAxis',
-                'tooltip',
-                'legend',
-                'series',
                 'plotOptions',
-                'alignedLabels',
-                'credits',
                 'dimensions',
                 'metrics',
+                'layout',
+                'data',
                 'exporting',
                 'reportGeneratorMeta'
             ],
@@ -5545,7 +5553,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             }
 
             this.mask('Loading...');
-            highChartPanel.un('resize', onResize, this);
+            plotlyPanel.un('resize', onResize, this);
 
             initBaseParams.call(this);
 
@@ -5590,7 +5598,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             var has_title = reportGeneratorMeta.title && reportGeneratorMeta.title.length > 0;
             self.setExportDefaults(has_title);
 
-            highChartPanel.on('resize', onResize, this); //re-register this after loading/its unregistered beforeload
+            plotlyPanel.on('resize', onResize, this); //re-register this after loading/its unregistered beforeload
 
             this.chartPagingToolbar.setPagingEnabled(!this.show_remainder);
 
@@ -5658,11 +5666,11 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 responseMessage = 'Unknown Error';
             }
 
-            highChartPanel.displayError(
+            plotlyPanel.displayError(
                 'An error occurred while loading the chart.',
                 responseMessage
             );
-            this.chartViewPanel.getLayout().setActiveItem(this.highChartPanel.getId());
+            this.chartViewPanel.getLayout().setActiveItem(this.plotlyPanel.getId());
 
             this.unmask();
 
@@ -5981,68 +5989,15 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         }); //assistPanel
 
         // ---------------------------------------------------------
-
-        var highChartPanel = new CCR.xdmod.ui.HighChartPanel({
-            id: 'hc-panel' + this.id,
+        plotlyPanel = new CCR.xdmod.ui.PlotlyPanel({
+            id: 'plotly-panel' + this.id,
             baseChartOptions: {
-                chart: {
-                    events: {
-                        titleClick: function (event) {
-                            return XDMoD.Module.MetricExplorer.titleContextMenu(event);
-                        },
-                        subtitleClick: function (event) {
-                            return XDMoD.Module.MetricExplorer.subtitleContextMenu(event);
-                        },
-                        xAxisClick: function (axis) {
-                            return XDMoD.Module.MetricExplorer.xAxisContextMenu(axis);
-                        },
-                        yAxisClick: function (axis) {
-                            return XDMoD.Module.MetricExplorer.yAxisContextMenu(axis);
-                        },
-                        xAxisTitleClick: function (axis) {
-                            return XDMoD.Module.MetricExplorer.xAxisTitleContextMenu(axis);
-                        },
-                        yAxisTitleClick: function (axis) {
-                            return XDMoD.Module.MetricExplorer.yAxisTitleContextMenu(axis);
-                        },
-                        xAxisLabelClick: function (axis) {
-                            return XDMoD.Module.MetricExplorer.xAxisLabelContextMenu(axis);
-                        },
-                        yAxisLabelClick: function (axis) {
-                            return XDMoD.Module.MetricExplorer.yAxisLabelContextMenu(axis);
-                        },
-                        click: function (event) {
-                            return XDMoD.Module.MetricExplorer.chartContextMenu.call(this, event);
-                        }
-                    }
-                },
-                plotOptions: {
-                    series: {
-                        events: {
-                            legendItemClick: function () {
-                                XDMoD.Module.MetricExplorer.seriesContextMenu(this, true, this.userOptions.datasetId);
-                                return false;
-                            }
-                        },
-                        point: {
-                            events: {
-                                click: function () {
-                                    if (this.options.x) {
-                                        this.ts = this.options.x;
-                                    }
-
-                                    XDMoD.Module.MetricExplorer.pointContextMenu(this, this.series.userOptions.datasetId);
-                                }
-                            }
-                        }
-                    }
-                }
+                metricExplorer: true
             },
             store: chartStore
         }); //assistPanel
 
-        this.highChartPanel = highChartPanel;
-
+        this.plotlyPanel = plotlyPanel;
         // ---------------------------------------------------------
 
         var quickFilterButton = XDMoD.DataWarehouse.createQuickFilterButton({
@@ -6146,7 +6101,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             region: 'center',
             border: true,
             items: [
-                highChartPanel,
+                plotlyPanel,
                 assistPanel
             ]
         }); //chartViewPanel
@@ -6321,14 +6276,20 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         // ---------------------------------------------------------
 
         self.on('chart_link_clicked', function () {
-            var encodedData = window.btoa(JSON.stringify(this.getConfig()));
-            var link = window.location.protocol + '//' + window.location.host + '/#main_tab_panel:metric_explorer?config=' + encodedData;
-            var msg = 'Use the following link to share the current chart. Note that the link does not override the access controls. So if you send the link to someone who does not have access to the data, they will still not be able to see the data. <br> We recommend using Chrome or Firefox if the link does not work in Internet Explorer.<br><b>' + link + '</b>';
+            const encodedData = window.btoa(JSON.stringify(this.getConfig()));
+            const link = `${window.location.protocol}//${window.location.host}/#main_tab_panel:metric_explorer?config=${encodedData}`;
+            const msg = `Use the following link to share the current chart. Note that the link does not override the access controls. So if you send the link to someone who does not have access to the data, they will still not be able to see the data. <br><b>${link}</b>`;
             Ext.Msg.show({
                 title: 'Link to Chart',
                 minWidth: 700,
                 msg: msg,
-                buttons: Ext.Msg.OK
+                buttons: { ok: 'Copy', cancel: 'Cancel' },
+                icon: Ext.MessageBox.INFO,
+                fn: (buttonId) => {
+                    if (buttonId === 'ok') {
+                        navigator.clipboard.writeText(link);
+                    }
+                }
             });
         }); // self.on('chart_link_clicked', ...
 
@@ -6366,8 +6327,14 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
 
-        function onResize( /*t*/ ) {
+        function onResize(t, adjWidth, adjHeight, rawWidth, rawHeight) {
             this.maximizeScale.call(this);
+            const chartDiv = document.getElementById(`plotly-panel${this.id}`);
+            if (chartDiv) {
+                Plotly.relayout(`plotly-panel${this.id}`, { width: adjWidth, height: adjHeight });
+                const update = relayoutChart(chartDiv, adjHeight, false);
+                Plotly.relayout(`plotly-panel${this.id}`, update);
+            }
         } //onResize
 
         // ---------------------------------------------------------

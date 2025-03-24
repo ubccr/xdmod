@@ -4,6 +4,7 @@ namespace IntegrationTests;
 
 use CCR\Json;
 use Exception;
+use SebastianBergmann\Comparator\ComparisonFailure;
 use PHPUnit\Framework\TestCase;
 use Swaggest\JsonSchema\Schema;
 use IntegrationTests\TestHarness\TestFiles;
@@ -580,31 +581,37 @@ abstract class BaseTest extends TestCase
         ];
         $values = [
             'string' => 'foo',
-            'array' => ['foo' => 'bar']
+            'array' => ['foo' => 'bar'],
+            'invalid_date' => '2024-01-99'
         ];
         foreach ($types as $key => $type) {
             if (array_key_exists($key, $options)) {
                 foreach ($options[$key] as $param) {
                     $input = $validInputWithAdditionalParams;
                     foreach ($values as $id => $value) {
-                        // Strings can be strings, so skip that test.
-                        if ('string_params' !== $key || 'string' !== $id) {
-                            $input[$paramSource][$param] = $value;
-                            $testData = ["{$param}_$id", $runAs];
-                            if ($tokenAuth) {
-                                $testData[] = 'valid_token';
-                            }
-                            array_push(
-                                $testData,
-                                $input,
-                                $this->validateInvalidParameterResponse(
-                                    $param,
-                                    $type,
-                                    $errorBodyValidator
-                                )
-                            );
-                            $tests[] = $testData;
+                        // We can skip tests:
+                        //   - Strings can be strings, so skip that test.
+                        //   - Invalid dates should only be tested on date params.
+                        if (('string' === $id && 'string_params' === $key) ||
+                            ('invalid_date' === $id && 'date_params' !== $key) ) {
+                            continue;
                         }
+
+                        $input[$paramSource][$param] = $value;
+                        $testData = ["{$param}_$id", $runAs];
+                        if ($tokenAuth) {
+                            $testData[] = 'valid_token';
+                        }
+                        array_push(
+                            $testData,
+                            $input,
+                            $this->validateInvalidParameterResponse(
+                                $param,
+                                $type,
+                                $errorBodyValidator
+                            )
+                        );
+                        $tests[] = $testData;
                     }
                 }
             }
@@ -627,7 +634,7 @@ abstract class BaseTest extends TestCase
         $bodyValidator = null
     ) {
         return $this->validateBadRequestResponse(
-            "missing required $name parameter",
+            "$name is a required parameter.",
             $bodyValidator
         );
     }

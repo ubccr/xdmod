@@ -1,0 +1,11 @@
+title
+"GPU Node Hours: Allocated: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Year,"[screw] GPU Node Hours: Allocated"
+2016,249600.0000
+2017,7008000.0000
+---------

@@ -12,12 +12,8 @@ BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}__PRERELEASE__-%{relea
 BuildArch:     noarch
 BuildRequires: php-cli
 Requires:      httpd mod_ssl
-%{?el8:Requires: mariadb >= 10.3.17}
-%{?el8:Requires: php >= 7.2 php-cli php-mysqlnd php-pdo php-gd php-xml php-mbstring php-zip php-posix}
-%{?el8:Requires: php-pecl-apcu php-json}
-%{?el7:Requires: mariadb >= 5.5.3}
-%{?el7:Requires: php >= 5.4 php-cli php-mysql php-pdo php-gd php-xml php-mbstring}
-%{?el7:Requires: php-pecl-apcu}
+Requires:      php >= 7.4 php-cli php-mysqlnd php-pdo php-gd php-xml php-mbstring php-zip php-posix
+Requires:      php-pecl-apcu php-json
 Requires:      libreoffice-writer
 Requires:      chromium-headless >= 111
 Requires:      librsvg2-tools
@@ -111,77 +107,82 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0570,apache,xdmod) %{xdmod_export_dir}
 
 %changelog
+* Mon Mar 17 2025 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 11.0.1-1
+- Release 11.0.1
+* Mon Sep 16 2024 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 11.0.0-1.0
+- Release 11.0.0
+- Update `php` dependencies for PHP 7.4
 * Mon Sep 11 2023 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 10.5.0-1.0
-    - Release 10.5.0
-    - Add support for checking rpm install state in check-config
-* Fri Aug 8 2023 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 10.0.3-1.0
-    - Release 10.0.3
+- Release 10.5.0
+- Add support for checking rpm install state in check-config
+* Fri Aug 4 2023 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 10.0.3-1.0
+- Release 10.0.3
 * Mon Apr 3 2023 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 10.0.2-1.0
-    - Release 10.0.2
+- Release 10.0.2
 * Fri Mar 10 2023 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 10.0.1-1.0
-    - Release 10.0.1
+- Release 10.0.1
 * Thu Mar 10 2022 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 10.0.0-1.0
-    - Release 10.0.0
-    - Remove `php-pear-MDB2` and `php-pear-MDB2-Driver-mysql` from required dependencies
-    - Add required dependencies for enterprise Linux 8
+- Release 10.0.0
+- Remove `php-pear-MDB2` and `php-pear-MDB2-Driver-mysql` from required dependencies
+- Add required dependencies for enterprise Linux 8
 * Fri May 21 2021 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 9.5.0-1.0
-    - Add `chromium-headless` and `librsvg2-tools` to required dependencies
-    - Replace `ghostscript` dependency with `exiftool`
-    - Replace java dependencies with `libreoffice-writer`
-    - Change default file permissions for executables in the bin/ directory
-      to only be run by the xdmod user (or root)
+- Add `chromium-headless` and `librsvg2-tools` to required dependencies
+- Replace `ghostscript` dependency with `exiftool`
+- Replace java dependencies with `libreoffice-writer`
+- Change default file permissions for executables in the bin/ directory
+  to only be run by the xdmod user (or root)
 * Thu Aug 13 2020 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 9.0.0-1.0
-    - Release 9.0.0
-    - Add `mod_ssl` to required dependencies
-    - Replace `cronie` with `crontabs` in required dependencies
-    - Remove `php-mcrypt` from required dependencies
-    - Change log file and directory permissions
-    - Remove Apache httpd configuration file
+- Release 9.0.0
+- Add `mod_ssl` to required dependencies
+- Replace `cronie` with `crontabs` in required dependencies
+- Remove `php-mcrypt` from required dependencies
+- Change log file and directory permissions
+- Remove Apache httpd configuration file
 * Tue Oct 29 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.5.1-1.0
-    - Release 8.5.1
+- Release 8.5.1
 * Mon Oct 21 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.5.0-1.0
-    - Release 8.5.0
-    - Remove `node_modules` management from `%pre`
-    - Add data warehouse batch export directory `/var/spool/xdmod/export`
-    - Add `php-pecl-apcu` to required dependencies
+- Release 8.5.0
+- Remove `node_modules` management from `%pre`
+- Add data warehouse batch export directory `/var/spool/xdmod/export`
+- Add `php-pecl-apcu` to required dependencies
 * Mon May 06 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.2-1.0
-    - Update `%pre` with steps for `node_modules` on 8.1.2 release
+- Update `%pre` with steps for `node_modules` on 8.1.2 release
 * Thu May 02 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.1-1.0
-    - Update `%pre` with steps for `node_modules` on 8.1.1 release
+- Update `%pre` with steps for `node_modules` on 8.1.1 release
 * Tue Apr 23 2019 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.1.0-1.0
-    - Update `%pre` with steps for `node_modules` on 8.1.0 release
+- Update `%pre` with steps for `node_modules` on 8.1.0 release
 * Tue Oct 30 2018 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 8.0.0-1.0
-    - Add `jq` dependency
-    - Add `php-mbstring` dependency
-    - Remove php-pear-Log dependency
+- Add `jq` dependency
+- Add `php-mbstring` dependency
+- Remove php-pear-Log dependency
 * Thu Mar 01 2018 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 7.5.0-1.0
-    - Create an `xdmod` user and group if they do not already exist
-    - Change the permissions of `/var/log/xdmod/query.log`,
-      `/var/log/xdmod/exceptions.log`, and `/var/log/xdmod` so that they are
-      writable by the `apache` user and the `xdmod` group
-    - Update dependencies
+- Create an `xdmod` user and group if they do not already exist
+- Change the permissions of `/var/log/xdmod/query.log`,
+  `/var/log/xdmod/exceptions.log`, and `/var/log/xdmod` so that they are
+  writable by the `apache` user and the `xdmod` group
+- Update dependencies
 * Wed Sep 27 2017 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 7.0.1-1.0
-    - Release 7.0.1
+- Release 7.0.1
 * Thu Sep 21 2017 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 7.0.0-1.0
-    - Add pre-release versioning
-    - Added Post Install
+- Add pre-release versioning
+- Added Post Install
 * Thu May 11 2017 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 6.6.0-1.0
-    - Release 6.6.0
+- Release 6.6.0
 * Tue Jan 10 2017 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 6.5.0-1.0
-    - Release 6.5.0
+- Release 6.5.0
 * Wed Sep 21 2016 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 6.0.0-1.0
-    - Release 6.0.0
+- Release 6.0.0
 * Tue May 24 2016 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 5.6.0-1.0
-    - Release 5.6.0
+- Release 5.6.0
 * Fri Dec 18 2015 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 5.5.0-1.0
-    - Release 5.5.0
+- Release 5.5.0
 * Wed Aug 19 2015 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 5.0.0-1.0
-    - Release 5.0.0
+- Release 5.0.0
 * Tue Feb 17 2015 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 4.5.2-1.0
-    - Release 4.5.2
+- Release 4.5.2
 * Thu Feb 05 2015 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 4.5.1-1.0
-    - Release 4.5.1
+- Release 4.5.1
 * Thu Dec 04 2014 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 4.5.0-1.0
-    - Release 4.5.0
+- Release 4.5.0
 * Mon Nov 18 2013 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 3.5.0-1.0
-    - Initial public release
+- Initial public release

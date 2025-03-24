@@ -5,6 +5,7 @@ namespace IntegrationTests\Rest;
 use CCR\DB;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use IntegrationTests\TokenAuthTest;
 use JsonSchema\Constraints\Constraint;
 use JsonSchema\Validator;
@@ -19,6 +20,8 @@ use XDUser;
  */
 class WarehouseExportControllerProviderTest extends TokenAuthTest
 {
+    use ArraySubsetAsserts;
+
     /**
      * Directory containing test artifact files.
      */
@@ -201,14 +204,14 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                 'authentication_type' => 'token_optional'
             ],
             parent::validateSuccessResponse(function ($body, $assertMessage) {
-                $this->assertSame(2, $body['total'], $assertMessage);
+                $this->assertSame(3, $body['total'], $assertMessage);
                 $index = 0;
-                foreach (['Jobs', 'Cloud'] as $realmName) {
+                foreach (['Jobs', 'Cloud', 'ResourceSpecifications'] as $realmName) {
                     $realm = $body['data'][$index];
                     foreach (['id', 'name'] as $property) {
                         $this->assertSame(
                             $realmName,
-                            $realm[$property],
+                            str_replace(' ', '', $realm[$property]),
                             $assertMessage
                         );
                     }
@@ -231,16 +234,15 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                     }
                     $index++;
                 }
-                $this->assertCount(
-                    28,
-                    $body['data'][0]['fields'],
-                    $assertMessage
-                );
-                $this->assertCount(
-                    16,
-                    $body['data'][1]['fields'],
-                    $assertMessage
-                );
+
+                $counts = [28, 16, 16];
+                for ($i = 0; $i < count($counts); $i++) {
+                    $this->assertCount(
+                        $counts[$i],
+                        $body['data'][$i]['fields'],
+                        $assertMessage
+                    );
+                }
             })
         );
     }
@@ -323,7 +325,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
 
         // Only check data for successful requests.
         if ($httpCode == 200) {
-            $this->assertTrue(count($requests) === count($content['data']), 'Data contains requests');
+            self::assertArraySubset($requests, $content['data']);
         }
     }
 
@@ -399,6 +401,8 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
 
         // Non-integer ID.
         list($content, $info, $headers) = self::$helpers['usr']->delete('warehouse/export/request/abc');
+        $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
+        list($content, $info, $headers) = self::$helpers['usr']->delete('rest/warehouse/export/request/abc');
         $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals(404, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, 'error');

@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Queue"
+"Screwdriver CPU Utilization (%): by Queue"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Month,"[white] Screwdriver Utilization (%)","[black] Screwdriver Utilization (%)","[pikelet] Screwdriver Utilization (%)","[brown] Screwdriver Utilization (%)","[roti] Screwdriver Utilization (%)","[croutons] Screwdriver Utilization (%)","[cornbread] Screwdriver Utilization (%)","[crumpet] Screwdriver Utilization (%)","[nann] Screwdriver Utilization (%)","[brioche] Screwdriver Utilization (%)","[focaccia] Screwdriver Utilization (%)","[panettone] Screwdriver Utilization (%)","[bannock] Screwdriver Utilization (%)","[chapti] Screwdriver Utilization (%)","[pita] Screwdriver Utilization (%)","[potbrood] Screwdriver Utilization (%)","[pumpernickel] Screwdriver Utilization (%)","[barm] Screwdriver Utilization (%)"
-2016-12,20.480610547,8.637713108,5.195708285,2.957415567,1.166315639,1.817068603,1.026054240,0.723396991,0.006553819,0.298424716,0.290932986,0.170602816,0.046282197,0.054344381,0.033439043,0.012782046,0.007551143,0.009776515
-2017-01,1.537139290,0.078473053,0.164598193,0.000912345,0,0.107221401,0.012486970,0.049276284,0.105371080,0.019330430,0.009644359,0,0.017737717,0,0.001544430,0.003693884,0.000719273,0.001184756
+Month,"[white] Screwdriver CPU Utilization (%)","[black] Screwdriver CPU Utilization (%)","[pikelet] Screwdriver CPU Utilization (%)","[croutons] Screwdriver CPU Utilization (%)","[roti] Screwdriver CPU Utilization (%)","[brown] Screwdriver CPU Utilization (%)","[cornbread] Screwdriver CPU Utilization (%)","[crumpet] Screwdriver CPU Utilization (%)","[brioche] Screwdriver CPU Utilization (%)","[nann] Screwdriver CPU Utilization (%)","[focaccia] Screwdriver CPU Utilization (%)","[panettone] Screwdriver CPU Utilization (%)","[bannock] Screwdriver CPU Utilization (%)","[chapti] Screwdriver CPU Utilization (%)","[potbrood] Screwdriver CPU Utilization (%)","[pita] Screwdriver CPU Utilization (%)","[barm] Screwdriver CPU Utilization (%)","[pumpernickel] Screwdriver CPU Utilization (%)"
+2016-12,20.4806,8.6377,5.1957,1.8171,1.1663,2.9574,1.0261,0.7234,0.2984,0.0066,0.2909,0.1706,0.0463,0.0543,0.0128,0.0334,0.0098,0.0076
+2017-01,1.5371,0.0785,0.1646,0.1072,0,0.0009,0.0125,0.0493,0.0193,0.1054,0.0096,0,0.0177,0,0.0037,0.0015,0.0012,0.0007
 ---------

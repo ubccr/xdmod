@@ -2,8 +2,8 @@
 
 if [ -z $XDMOD_REALMS ]; then
     echo "XDMOD_REALMS is not set"
-    echo "Default for core xdmod is: XDMOD_REALMS='jobs,storage,cloud'"
-    echo "Default for JobPerformance is: XDMOD_REALMS='jobs,storage,cloud,supremm,jobefficiency'"
+    echo "Default for core xdmod is: XDMOD_REALMS='jobs,storage,cloud,resourcespecifications'"
+    echo "Default for JobPerformance is: XDMOD_REALMS='jobs,storage,cloud,supremm,jobefficiency,resourcespecifications'"
     exit 1
 fi
 

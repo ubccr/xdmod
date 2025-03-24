@@ -38,7 +38,6 @@ class RequestLogger
     public function log($start, $end, $level = \CCR\Log::INFO)
     {
         $authInfo = $this->getAuthenticationInfo();
-
         $retval = array(
             'message' => 'Route called',
             'path' => $this->arrayGetOr('REQUEST_URI', $_SERVER),
@@ -62,7 +61,32 @@ class RequestLogger
             $retval['data']['timestamp'] = date("Y-m-d H:i:s", $requestTime);
         }
 
-        $this->logger->log($level, $retval);
+        switch ($level) {
+            case \CCR\Log::EMERG:
+                $this->logger->emergency($retval);
+                break;
+            case Log::ALERT:
+                $this->logger->alert($retval);
+                break;
+            case \CCR\Log::CRIT:
+                $this->logger->critical($retval);
+                break;
+            case \CCR\Log::ERR:
+                $this->logger->error($retval);
+                break;
+            case Log::WARNING:
+                $this->logger->warning($retval);
+                break;
+            case \CCR\Log::NOTICE:
+                $this->logger->notice($retval);
+                break;
+            case \CCR\Log::INFO:
+                $this->logger->info($retval);
+                break;
+            case \CCR\Log::DEBUG:
+                $this->logger->debug($retval);
+                break;
+        }
     }
 
     /**

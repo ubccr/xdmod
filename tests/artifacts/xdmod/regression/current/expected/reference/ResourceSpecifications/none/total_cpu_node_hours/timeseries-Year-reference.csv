@@ -1,0 +1,11 @@
+title
+"CPU Node Hours: Total"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Year,"[Screwdriver] CPU Node Hours: Total"
+2016,499200.0000
+2017,17520000.0000
+---------

@@ -1,0 +1,11 @@
+title
+"CPU Hours: Allocated: by Resource Allocation Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Quarter,"[CPU Allocated] CPU Hours: Allocated","[GPU Node Allocated] CPU Hours: Allocated","[CPU Node Allocated] CPU Hours: Allocated","[GPU Allocated] CPU Hours: Allocated"
+"2016 Q4",1536000.0000,1920000.0000,960000.0000,576000.0000
+"2017 Q1",17280000.0000,8640000.0000,8640000.0000,8640000.0000
+---------

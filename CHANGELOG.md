@@ -1,5 +1,113 @@
 # Open XDMoD Change Log
 
+## 2025-03-17 v11.0.1
+
+- Bug Fixes
+    - General
+        - Remove plot range entry boxes in the corners of axes
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix displays of markers on plots with null values
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980),
+          [\#1999](https://github.com/ubccr/xdmod/pull/1999)).
+        - Fix the displayed lists of datasets when hovering over plots
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix aggregate plot x-axis labels when multiple metrics are plotted
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix pie chart data label display
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix display of plots when swapping x- and y-axes
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980),
+          [\#1996](https://github.com/ubccr/xdmod/pull/1996)).
+        - Fix display of bar and area plots with side-by-side grouping
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix ordering of the date axis on timeseries plots with varying date
+          intervals
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980),
+          [\#1989](https://github.com/ubccr/xdmod/pull/1989)).
+        - Fix display of x-axis tick labels
+          ([\#1998](https://github.com/ubccr/xdmod/pull/1998)).
+    - ETL
+        - Add missing endpoint to the exception message in `ExecuteSql`
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+        - Fix how the `pdoAggregator` class displays the day that was
+          aggregated in its logging
+          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+- Enhancements
+    - Cloud
+        - Add database columns for person organization ID and PI organization
+          ID to tables in the Cloud realm
+          ([\#1958](https://github.com/ubccr/xdmod/pull/1958)).
+    - ETL
+        - Add ability to specify multiple database migration classes
+          ([\#2001](https://github.com/ubccr/xdmod/pull/2001)).
+- Documentation
+    - Update list of ACCESS MMS team members
+      ([\#1918](https://github.com/ubccr/xdmod/pull/1918),
+      [\#1919](https://github.com/ubccr/xdmod/pull/1919)).
+    - Update support information for 10.5 and 11.0
+      ([\#1926](https://github.com/ubccr/xdmod/pull/1926),
+      [\#1928](https://github.com/ubccr/xdmod/pull/1928)).
+    - Add additional information to 11.0.0 upgrade notes
+      ([\#1925](https://github.com/ubccr/xdmod/pull/1925)).
+    - Reorder configuration guide for clarity
+      ([\#1913](https://github.com/ubccr/xdmod/pull/1913)).
+    - Remove references to CentOS 7
+      ([\#1931](https://github.com/ubccr/xdmod/pull/1931),
+      [\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - Update version of MongoDB in software requirements
+      ([\#1937](https://github.com/ubccr/xdmod/pull/1937)).
+    - Update documentation of charts in the user manual
+      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - Replace references to XSEDE with ACCESS
+      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - Update the HTML metadata description of the index page
+      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+    - Add to the lists of publications and presentations
+      ([\#1962](https://github.com/ubccr/xdmod/pull/1962)).
+- Maintenance / Code Quality
+    - Fix PHPUnit test warnings
+      ([\#1945](https://github.com/ubccr/xdmod/pull/1945)).
+    - Add missing CI testing of exceptions
+      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+
+## 2024-09-16 v11.0.0
+- Important Notes
+    - Open XDMoD is now no longer bundled with libraries that have license restrictions for commercial or government use. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the license required from the Highcharts library. Please refer to the [license notices](https://open.xdmod.org/11.0/notices.html) for more information about the open source licenses bundled with Open XDMoD.
+
+- Enhancements
+    - Improve performance of Data Analytics Framework API calls for raw data ([\#1792](https://github.com/ubccr/xdmod/pull/1792), [\#1780](https://github.com/ubccr/xdmod/pull/1780), [\#1800](https://github.com/ubccr/xdmod/pull/1800), [\#1779](https://github.com/ubccr/xdmod/pull/1779))
+    - Add resource specifications realm ([\#1849](https://github.com/ubccr/xdmod/pull/1849), [\#1837](https://github.com/ubccr/xdmod/pull/1837), [\#1836](https://github.com/ubccr/xdmod/pull/1836), [\#1828](https://github.com/ubccr/xdmod/pull/1828), [\#1801](https://github.com/ubccr/xdmod/pull/1801), [\#1799](https://github.com/ubccr/xdmod/pull/1799), [\#1786](https://github.com/ubccr/xdmod/pull/1786))
+    - Change charting library to Plotly ([\#1869](https://github.com/ubccr/xdmod/pull/1869), [\#1866](https://github.com/ubccr/xdmod/pull/1866), [\#1864](https://github.com/ubccr/xdmod/pull/1864), [\#1850](https://github.com/ubccr/xdmod/pull/1850), [\#1822](https://github.com/ubccr/xdmod/pull/1822), [\#1846](https://github.com/ubccr/xdmod/pull/1846), [\#1791](https://github.com/ubccr/xdmod/pull/1791), [\#1899](https://github.com/ubccr/xdmod/pull/1899), [\#1900](https://github.com/ubccr/xdmod/pull/1900), [\#1902](https://github.com/ubccr/xdmod/pull/1902))
+    - Add Metric Explorer copy to clipboard button ([\#1859](https://github.com/ubccr/xdmod/pull/1859))
+    - Change warehouse raw data endpoint to respond with JSON text sequence. ([\#1858](https://github.com/ubccr/xdmod/pull/1858))
+    - Update description of Job Size: Normalized statistic ([\#1856](https://github.com/ubccr/xdmod/pull/1856))
+    - Add visualization of null values in Job Viewer charts ([\#1851](https://github.com/ubccr/xdmod/pull/1851))
+    - Add configuration setting for the ETL process log database output ([\#1848](https://github.com/ubccr/xdmod/pull/1848), [\#1827](https://github.com/ubccr/xdmod/pull/1827))
+    - Improve UI display when the database is down or otherwise unreachable from the webserver ([\#1793](https://github.com/ubccr/xdmod/pull/1793))
+    - Update log table SQL migration query to be more efficient ([\#1886](https://github.com/ubccr/xdmod/pull/1886))
+    - Provide more helpful error codes and messages for warehouse raw data REST requests ([\#1894](https://github.com/ubccr/xdmod/pull/1894), [\#1895](https://github.com/ubccr/xdmod/pull/1895))
+- Maintenance / Code Quality
+    - Updates for compatibility with PHP 7.4 ([\#1873](https://github.com/ubccr/xdmod/pull/1873), [\#1875](https://github.com/ubccr/xdmod/pull/1875), [\#1877](https://github.com/ubccr/xdmod/pull/1877), [\#1806](https://github.com/ubccr/xdmod/pull/1806))
+    - Remove `jquery-base64` from NOTICE ([\#1853](https://github.com/ubccr/xdmod/pull/1853))
+    - Update Rest Logging to include the username ([\#1809](https://github.com/ubccr/xdmod/pull/1809))
+    - Replace redundant exception classes with ones provided by Symfony. ([\#1798](https://github.com/ubccr/xdmod/pull/1798))
+    - Updates to support the OnDemand module enhancements ([\#1874](https://github.com/ubccr/xdmod/pull/1874), [\#1824](https://github.com/ubccr/xdmod/pull/1824), [\#1816](https://github.com/ubccr/xdmod/pull/1816), [\#1854](https://github.com/ubccr/xdmod/pull/1854), [\#1852](https://github.com/ubccr/xdmod/pull/1852), [\#1838](https://github.com/ubccr/xdmod/pull/1838))
+    - Remove obsolete XSEDE-specific code ([\#1773](https://github.com/ubccr/xdmod/pull/1773))
+    - Patch for symfony/http-foundation: CVE-2019-10913 ([\#1893](https://github.com/ubccr/xdmod/pull/1893))
+- Bug Fixes
+    - Escape double quotes when migrating portal settings. ([\#1814](https://github.com/ubccr/xdmod/pull/1814))
+    - Fix API token expiration message ([\#1817](https://github.com/ubccr/xdmod/pull/1817))
+    - Fix Token Header Auth ([\#1863](https://github.com/ubccr/xdmod/pull/1863))
+    - Fix typo in rest endpoint data validation check ([\#1782](https://github.com/ubccr/xdmod/pull/1782))
+    - Change etlv2 endpoint config value used for migration etlv2 actions ([\#1826](https://github.com/ubccr/xdmod/pull/1826))
+    - Add logic to catch invalid datetime values in REST requests ([\#1896](https://github.com/ubccr/xdmod/pull/1896))
+    - Add default value for `modw_cloud.instance_type_union` table ([\#1897](https://github.com/ubccr/xdmod/pull/1897))
+- Uncategorized
+    - Add explicit ordering for Job Viewer analytics panel. ([\#1804](https://github.com/ubccr/xdmod/pull/1804))
+    - Change User Manual generator to use Sphinx ([\#1839](https://github.com/ubccr/xdmod/pull/1839))
+    - Update user manual content ([\#1845](https://github.com/ubccr/xdmod/pull/1845), [\#1901](https://github.com/ubccr/xdmod/pull/1901))
+    - Change name of Utilization metric to CPU Utilization ([\#1898](https://github.com/ubccr/xdmod/pull/1898))
+
 ## 2023-09-11 v10.5.0
 - Bug Fixes
     - Cloud

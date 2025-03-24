@@ -13,8 +13,17 @@ function copy_template_httpd_conf {
     cp /usr/share/xdmod/templates/apache.conf /etc/httpd/conf.d/xdmod.conf
 }
 
+function set_resource_spec_end_times {
+    # Adding end time for each resource in resourcespecs.json. This is to get consistant results for
+    # the raw data regression tests. The jq command does not do well with overwriting the existing file
+    # so writing to a temp file and then renaming seems to be the best way to go.
+    cat /etc/xdmod/resource_specs.json | jq '[.[] | .["end_date"] += "2020-01-01"]' > /etc/xdmod/resource_specs2.json
+    jq . /etc/xdmod/resource_specs2.json > /etc/xdmod/resource_specs.json
+    rm -f /etc/xdmod/resource_specs2.json
+}
+
 if [ -z $XDMOD_REALMS ]; then
-    export XDMOD_REALMS=jobs,storage,cloud
+    export XDMOD_REALMS=jobs,storage,cloud,resourcespecifications
 fi
 
 cp -r $REF_SOURCE /var/tmp/
@@ -51,12 +60,9 @@ then
     chown -R mysql:mysql /var/log/mariadb
     chown -R mysql:mysql /var/run/mariadb
 
-    yum -y install ~/rpmbuild/RPMS/*/*.rpm
+    dnf install -y ~/rpmbuild/RPMS/*/*.rpm
     mysql_install_db --user mysql
 
-    if [ -f /etc/my.cnf.d/mariadb-server.cnf.rpmsave ]; then
-        mv /etc/my.cnf.d/mariadb-server.cnf.rpmsave /etc/my.cnf.d/mariadb-server.cnf
-    fi
     if [ -f /etc/my.cnf.d/mariadb-server.cnf ]; then
         >/etc/my.cnf.d/mariadb-server.cnf
         echo "# this is read by the standalone daemon and embedded servers
@@ -110,7 +116,6 @@ then
 
     expect $BASEDIR/scripts/xdmod-setup-finish.tcl | col -b
 
-
     xdmod-import-csv -t hierarchy -i $REF_DIR/hierarchy.csv
     xdmod-import-csv -t group-to-hierarchy -i $REF_DIR/group-to-hierarchy.csv
 
@@ -121,6 +126,7 @@ then
         done
     fi
 
+    set_resource_spec_end_times
     sudo -u xdmod xdmod-ingestor
 
     if [[ "$XDMOD_REALMS" == *"cloud"* ]];
@@ -153,36 +159,11 @@ fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
-    yum -y install ~/rpmbuild/RPMS/*/*.rpm
-
-    copy_template_httpd_conf
-    sed -i 's#http://localhost:8080#https://localhost#' /etc/xdmod/portal_settings.ini
+    # Install the newly built RPM.
+    dnf -y install ~/rpmbuild/RPMS/*/*.rpm
 
     ~/bin/services start
 
-    # TODO: Replace diff files with hard fixes
-    # Modify integration sso tests to work with cloud realm
-    if [ "$XDMOD_REALMS" = "cloud" ]; then
-        if ! patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff >/dev/null; then
-            # -- Fix users searched in SSO test
-            patch -up1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff
-        fi
-    else
-        if patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff >/dev/null; then
-            # -- Reverse previous patch
-            patch -R -up1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff
-        fi
-    fi
-
     expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
 
-    if [[ "$XDMOD_REALMS" == *"storage"* ]];
-    then
-        for storage_dir in $REF_DIR/storage/*; do
-            sudo -u xdmod xdmod-shredder -f storage -r $(basename $storage_dir) -d $storage_dir
-        done
-        last_modified_start_date=$(date +'%F %T')
-        sudo -u xdmod xdmod-ingestor --datatype storage
-        sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
-    fi
 fi

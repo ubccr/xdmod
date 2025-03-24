@@ -20,29 +20,23 @@
             }
         },
         "aggregate-resource-specs": {
-            "namespace": "ETL\\Ingestor",
-            "options_class": "IngestorOptions"
+            "namespace": "ETL\\Aggregator",
+            "options_class": "AggregatorOptions",
+            "class": "SimpleAggregator",
+            "table_prefix": "resourcespecsfact_by_"
         }
     },
     "aggregate-resource-specs": [
         {
             "name": "ResourceSpecsAggregatorByDay",
-            "class": "SimpleAggregator",
-            "namespace": "ETL\\Aggregator",
-            "options_class": "AggregatorOptions",
             "description": "Aggregate resource specification records.",
             "definition_file": "resource_specifications/resource_specs_aggregation_by_day.json",
-            "table_prefix": "resourcespecsfact_by_",
             "aggregation_units": ["day"]
         },
         {
             "name": "ResourceSpecsAggregator",
-            "class": "SimpleAggregator",
-            "namespace": "ETL\\Aggregator",
-            "options_class": "AggregatorOptions",
             "description": "Aggregate resource specification records.",
             "definition_file": "resource_specifications/resource_specs_aggregation.json",
-            "table_prefix": "resourcespecsfact_by_",
             "aggregation_units": ["month", "quarter", "year"]
         },
         {
@@ -50,7 +44,7 @@
             "namespace": "ETL\\Ingestor",
             "class": "ExplodeTransformIngestor",
             "options_class": "IngestorOptions",
-            "definition_file": "resource_specifications/resourcespecs_by_day_resourcespecslist.json",
+            "definition_file": "resource_specifications/resourcespecsfact_by_day_resourcespecslist.json",
             "description": "Populate the resourcespecs list table, which contains the back references from the resource specs aggregates table to the resourcespecs table",
             "endpoints": {
                 "source": {

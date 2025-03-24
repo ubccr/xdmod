@@ -65,7 +65,7 @@ class RealmManagerTest extends BaseTest
      * Only includes the relevant properties from the realm that are used by
      * the realm manager class.
      *
-     * @param \Models\Realm $realm
+     * @param \Model\Realm $realm
      * @return array
      */
     private function convertRealmToArray(Realm $realm)

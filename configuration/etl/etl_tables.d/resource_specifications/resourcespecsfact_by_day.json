@@ -26,80 +26,105 @@
                 "nullable": false,
                 "comment": "DIMENSION: The ${AGGREGATION_UNIT} of the year."
             },{
-                "name": "resource_id",
+                "name": "record_resource_id",
                 "type": "int(11)",
                 "nullable": false,
                 "comment": "DIMENSION: The resource the specification is for."
             },{
-                "name": "cpu_cores_available",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Number of cpu cores available for a time period"
-            },{
-                "name": "gpu_cores_available",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Number of gpu cores available for a time period"
-            },{
-                "name": "cpu_nodes_available",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Number of cpu nodes available for a time period"
-            },{
-                "name": "gpu_nodes_available",
-                "type": "int(11)",
-                "nullable": false,
-                "comment": "FACT: Number of gpu nodes available for a time period"
-            },{
-                "name": "core_time_available",
+                "name": "total_cpu_core_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of cpu cores available for a time period, in seconds"
+                "comment": "FACT: The number of CPU core seconds available during a time period, including those not allocated."
             },{
-                "name": "gpu_time_available",
+                "name": "allocated_cpu_core_time",
                 "type": "bigint(42)",
                 "nullable": false,
-                "comment": "FACT: Number of gpu cores available for a time period, in seconds"
+                "comment": "FACT: The number of CPU core seconds available to be allocated during a time period."
             },{
-                "name": "su_available",
-                "type": "int(11) unsigned",
+                "name": "total_gpu_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of GPU seconds available during a time period, including those not allocated."
+            },{
+                "name": "allocated_gpu_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of GPU seconds available to be allocated during a time period."
+            },{
+                "name": "total_cpu_node_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of CPU node seconds available during a time period, including those not allocated."
+            },{
+                "name": "allocated_cpu_node_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of CPU node seconds available to be allocated during a time period."
+            },{
+                "name": "total_gpu_node_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of GPU node seconds available during a time period, including those not allocated."
+            },{
+                "name": "allocated_gpu_node_time",
+                "type": "bigint(42)",
+                "nullable": false,
+                "comment": "FACT: The number of GPU node seconds available to be allocated during a time period."
+            },{
+                "name": "total_su_available",
+                "type": "decimal(20,4)",
                 "nullable": true,
-                "comment": "FACT: Total number of SU's available for a time period"
+                "comment": "FACT: The total number of SU's available during a time period."
+            },{
+                "name": "allocated_su_available",
+                "type": "decimal(20,4)",
+                "nullable": true,
+                "comment": "FACT: The number of SU's available to be allocated during a time period."
+            },{
+                "name": "total_normalized_su_available",
+                "type": "decimal(20,4)",
+                "nullable": true,
+                "comment": "FACT: The total number of Normalized SU's available during a time period."
+            },{
+                "name": "allocated_normalized_su_available",
+                "type": "decimal(20,4)",
+                "nullable": true,
+                "comment": "FACT: The number of Normalized SU's available to be allocated during a time period."
             },{
                 "name": "resource_allocation_type_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Allocation type for the resource"
+                "comment": "DIMENSION: The allocation type for the resource."
             },{
-                "name": "organization_id",
+                "name": "resource_organization_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Organization the resource belongs to"
+                "comment": "DIMENSION: The organization to which the resource belongs."
             },{
                 "name": "resource_state_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Geographical state of the organization to which the resource belongs"
+                "comment": "DIMENSION: The geographical state of the organization to which the resource belongs."
             },{
                 "name": "resource_country_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: Country of the organization to which the resource belongs"
+                "comment": "DIMENSION: The country of the organization to which the resource belongs."
             },{
                 "name": "organizationtype_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: The type of organization the resource belongs to"
+                "comment": "DIMENSION: The type of organization to which the resource belongs."
             },{
                 "name": "resourcetype_id",
                 "type": "int(11)",
                 "nullable": false,
-                "comment": "DIMENSION: The type of resource this is"
+                "comment": "DIMENSION: The type of resource."
             },{
                 "name": "resourcespecs_id_list",
                 "type": "mediumtext",
                 "nullable": false,
-                "comment": "METADATA: the ids in the fact table for the rows that went into this row"
+                "comment": "METADATA: the ids in the fact table for the rows that are aggregated into each row."
             },{
                 "name": "last_modified",
                 "type": "timestamp",
@@ -118,7 +143,7 @@
                 "is_unique": true
             },{
                 "name": "index_resource",
-                "columns": [ "resource_id" ]
+                "columns": [ "record_resource_id" ]
             },{
                 "name": "index_period_value",
                 "columns": [ "${AGGREGATION_UNIT}" ]

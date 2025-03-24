@@ -1,8 +1,13 @@
 {
   "env": {
     "browser": true,
-    "es6": true,
     "es2018": true
+  },
+  "parserOptions": {
+    "sourceType": "script"
+  },
+  "rules": {
+    "no-underscore-dangle": "off"
   },
   "globals": {
     "AppKernel": false,
@@ -13,26 +18,12 @@
     "moment": false,
     "_gaq": false,
     "jQuery": false,
-    "Highcharts": false,
     "truncateText": false,
     "XDMoD": false,
     "Dashboard": false,
     "DashboardStore": false,
     "grecaptcha": false,
     "StringUtilities": false,
-    "Plotly": false,
-    "generateChartOptions": false
-  },
-  "ignorePatterns": [
-    "lib/extjs/**/*.js",
-    "lib/highcharts/**/*.js",
-    "lib/jquery/*.js",
-    "lib/jquery-plugins/**/*.js",
-    "lib/moment/*.js",
-    "lib/moment-timezone/*.js",
-    "lib/plotly/*.js",
-    "lib/printer/*.js",
-    "lib/rsvp/*.js"
-  ]
+    "Plotly": false
+  }
 }
-

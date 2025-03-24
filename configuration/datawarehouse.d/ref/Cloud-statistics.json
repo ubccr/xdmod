@@ -70,10 +70,38 @@
     },
     "cloud_core_utilization": {
       "description_html": "A percentage that shows how many core hours were reserved over a time period against how many core hours a resource had available during that time period.<br/><b>Core Hours</b>: The product of the number of cores assigned to a VM and its wall time, in hours.<br/><b>Core Hours Available:</b> The total number of core hours available for a time period. Calculated by taking the product of the number of cores available over a time period, number of days in a time period and the number of hours in a day.",
-      "aggregate_formula": "COALESCE((SUM(agg.core_time) / (SELECT SUM(rsa.core_time_available) FROM modw_aggregates.resourcespecsfact_by_${AGGREGATION_UNIT} as rsa WHERE rsa.${AGGREGATION_UNIT}_id BETWEEN ${MIN_DATE_ID} AND ${MAX_DATE_ID} AND FIND_IN_SET(rsa.resource_id, GROUP_CONCAT(DISTINCT agg.host_resource_id)) <> 0)) * 100, 0)",
-      "timeseries_formula": "COALESCE((SUM(agg.core_time) / (SELECT SUM(rf.core_time_available) FROM modw_aggregates.resourcespecsfact_by_${AGGREGATION_UNIT} rf WHERE rf.${AGGREGATION_UNIT}_id = agg.${AGGREGATION_UNIT}_id AND FIND_IN_SET(rf.resource_id, GROUP_CONCAT(DISTINCT agg.host_resource_id)) <> 0)) * 100, 0)",
+      "aggregate_formula": "COALESCE((SUM(agg.core_time) / (SELECT SUM(rsa.allocated_cpu_core_time) FROM modw_aggregates.resourcespecsfact_by_${AGGREGATION_UNIT} as rsa WHERE rsa.${AGGREGATION_UNIT}_id BETWEEN ${MIN_DATE_ID} AND ${MAX_DATE_ID} AND FIND_IN_SET(rsa.record_resource_id, GROUP_CONCAT(DISTINCT agg.host_resource_id)) <> 0)) * 100, 0)",
+      "timeseries_formula": "COALESCE((SUM(agg.core_time) / (SELECT SUM(rsa.allocated_cpu_core_time) FROM modw_aggregates.resourcespecsfact_by_${AGGREGATION_UNIT} as rsa WHERE rsa.${AGGREGATION_UNIT}_id = agg.${AGGREGATION_UNIT}_id AND FIND_IN_SET(rsa.record_resource_id, GROUP_CONCAT(DISTINCT agg.host_resource_id)) <> 0)) * 100, 0)",
       "name": "Core Hour Utilization",
       "unit": "%",
       "precision": 2
+    },
+    "active_person_count": {
+        "description_html": "The total number of users that used cloud resources.",
+        "formula": "COUNT(DISTINCT(agg.person_id))",
+        "name": "Number of Users: Active",
+        "precision": 0,
+        "unit": "Number of Users"
+    },
+    "active_pi_count": {
+        "description_html": "The total number of PIs associated with Projects that used cloud resources.",
+        "formula": "COUNT(DISTINCT(agg.principalinvestigator_person_id))",
+        "name": "Number of PIs: Active",
+        "precision": 0,
+        "unit": "Number of PIs"
+    },
+    "active_resource_count": {
+        "description_html": "The total number of active cloud resources.",
+        "formula": "COUNT(DISTINCT(agg.host_resource_id))",
+        "name": "Number of Resources: Active",
+        "precision": 0,
+        "unit": "Number of Resources"
+    },
+    "active_project_count": {
+        "description_html": "The total number of projects that used cloud resources.",
+        "formula": "COUNT(DISTINCT(agg.account_id))",
+        "name": "Number of Projects: Active",
+        "precision": 0,
+        "unit": "Number of Projects"
     }
 }

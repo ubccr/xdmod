@@ -1,0 +1,11 @@
+title
+"CPU Hours: Total: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Quarter,"[High-performance computing] CPU Hours: Total"
+"2016 Q4",4992000.0000
+"2017 Q1",43200000.0000
+---------

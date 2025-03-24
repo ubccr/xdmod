@@ -1,12 +1,12 @@
 title
-"Screwdriver Utilization (%): by System Username"
+"Screwdriver CPU Utilization (%): by System Username"
 parameters
 
 "*Restricted To: User = Whimbrel"
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[whimb] Screwdriver Utilization (%)"
-"2016 Q4",0.157970313
-"2017 Q1",0.021822222
+Quarter,"[whimb] Screwdriver CPU Utilization (%)"
+"2016 Q4",0.1580
+"2017 Q1",0.0218
 ---------

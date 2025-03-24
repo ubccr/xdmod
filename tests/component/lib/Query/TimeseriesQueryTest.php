@@ -39,9 +39,9 @@ class TimeseriesQueryTest extends TestCase
     }
 
     /**
-     * Simulate execution of a TimeseriesQuery. HighChartTimeseries2 creates a timeseries query and
+     * Simulate execution of a TimeseriesQuery. TimeseriesChart creates a timeseries query and
      * then passes it into a SimpleTimeseriesDataset which executes an aggregate query to get all
-     * dimension values.  The timeseries query is then executed using the values of the aggregate
+     * dimension values. The timeseries query is then executed using the values of the aggregate
      * query in the HAVING clause via the SimpleTimeseriesDataIterator.
      */
 
@@ -58,7 +58,7 @@ class TimeseriesQueryTest extends TestCase
             self::$logger
         );
 
-        // Simulate HighChartTimeseries2 configure
+        // Simulate TimeseriesChart configure
 
         $data_description = (object) array(
             'sort_type' => 'value_desc',

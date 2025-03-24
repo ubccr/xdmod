@@ -1,0 +1,10 @@
+title
+"CPU Node Hours: Allocated"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Summary,"CPU Node Hours: Allocated"
+Screwdriver,4819200.0000
+---------

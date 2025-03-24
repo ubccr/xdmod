@@ -9,7 +9,7 @@ class AdminControllerProviderTest extends BaseTest
 {
     private static $helper;
 
-    public static function setUpBeforeClass(): void
+    public static function setupBeforeClass(): void
     {
         self::$helper = new XdmodTestHelper();
     }

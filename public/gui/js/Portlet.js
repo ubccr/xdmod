@@ -74,7 +74,7 @@ CCR.xdmod.ui.Portlet = Ext.extend(Ext.ux.Portlet, {
                                     {
                                         text: 'More Information',
                                         handler: function () {
-                                            window.open('user_manual.php?t=Dashboard');
+                                            window.open('user_manual/Dashboard.html');
                                         }
                                     },
                                     '->',

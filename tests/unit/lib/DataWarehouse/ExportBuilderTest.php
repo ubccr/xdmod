@@ -47,7 +47,6 @@ class ExportBuilderTest extends TestCase
         }
     }
 
-
     public function testExportXml() {
 
         $result = $this->exportHelper('xml', true, 'filename');

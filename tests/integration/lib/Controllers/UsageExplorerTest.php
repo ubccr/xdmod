@@ -392,14 +392,20 @@ EOF
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode($response[0], true);
-        $dataseries = $plotdata['data'][0]['hc_jsonstore']['series'];
+        $dataseries = $plotdata['data'][0]['hc_jsonstore']['data'];
 
-        $this->assertCount(1, $dataseries);
-        $this->assertArrayHasKey('data', $dataseries[0]);
-        $this->assertCount(1, $dataseries[0]['data']);
-        $this->assertArrayHasKey('y', $dataseries[0]['data'][0]);
+        $primaryTraces = array();
+        for ($i = 0; $i < count($dataseries); $i++) {
+            if (strcmp($dataseries[$i]['name'], 'area fix') != 0 && strcmp($dataseries[$i]['name'], 'gap connector') != 0) {
+                $primaryTraces[] = $dataseries[$i];
+            }
+        }
+        $this->assertCount(1, $primaryTraces);
+        $this->assertArrayHasKey('y', $dataseries[0]);
+        $this->assertCount(1, $dataseries[0]['y']);
+        $this->assertArrayHasKey('y', $dataseries[0]);
 
-        $this->assertEqualsWithDelta($expected, $dataseries[0]['data'][0]['y'], 1.0e-6, '');
+        $this->assertEquals($expected, $dataseries[0]['y'][0], '', 1.0e-6);
     }
 
     /**
@@ -675,9 +681,16 @@ EOF;
 
         $this->assertTrue($plotdata['success']);
 
-        $this->assertCount(count($expectedNames), $plotdata['data'][0]['hc_jsonstore']['series']);
+        $actualNames = array();
 
-        foreach($plotdata['data'][0]['hc_jsonstore']['series'] as $seriesIdx => $seriesData) {
+        foreach($plotdata['data'][0]['hc_jsonstore']['data'] as $seriesIdx => $seriesData) {
+            if (strcmp($seriesData['name'], 'area fix') != 0 && strcmp($seriesData['name'], 'gap connector') != 0) {
+                $actualNames[] = $seriesData;
+            }
+        }
+        $this->assertCount(count($expectedNames), $actualNames);
+
+        foreach($actualNames as $seriesIdx => $seriesData) {
             $this->assertEquals(($seriesIdx + 1) . '. ' . $expectedNames[$seriesIdx] . '*', $seriesData['name']);
         }
     }

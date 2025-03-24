@@ -452,7 +452,7 @@ class RegressionTestHelper extends XdmodTestHelper
      * @param string|null $referenceFileName name of the reference file.
      * @return bool true if the reference file exists and already contains the
      *              specified data.
-     * @throws \PHPUnit_Framework_SkippedTestError if the reference file does
+     * @throws SkippedTestError if the reference file does
      *                                             not exist or does not
      *                                             already contain the
      *                                             specified data.
@@ -493,7 +493,7 @@ class RegressionTestHelper extends XdmodTestHelper
             [$outputDir, $outputFileName]
         );
         file_put_contents($outputFile, $data);
-        throw new \PHPUnit\Framework\SkippedTestError(
+        throw new SkippedTestError(
             "Created Expected output for $fullTestName"
         );
     }
@@ -599,14 +599,12 @@ class RegressionTestHelper extends XdmodTestHelper
             $input,
             $role
         );
+        $data = str_replace("\x1e", '', $response[0]);
         if ($sort) {
-            array_multisort(
-                array_column($response[0]['data'], 0),
-                SORT_ASC,
-                $response[0]['data']
-            );
+            $lines = explode("\n", rtrim($data));
+            sort($lines);
+            $data = implode("\n", $lines) . "\n";
         }
-        $data = json_encode($response[0]) . "\n";
         $data = preg_replace(self::$replaceRegex, self::$replacements, $data);
         if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
             return $this->generateArtifact(
@@ -644,13 +642,9 @@ class RegressionTestHelper extends XdmodTestHelper
             );
             throw new ExpectationFailedException(
                 sprintf(
-                    (
-                        "%d difference"
-                        . (1 === count($differences) ? '' : 's')
-                        . ":\n\t%s"
-                    ),
-                    count($differences),
-                    implode("\n\t", $differences)
+                    "Response does not match artifact:\nExpected:\n%s\nActual:\n%s\n",
+                    $expected,
+                    $data
                 )
             );
         }

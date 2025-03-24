@@ -624,16 +624,19 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
             }); // portlet
 
-            var hcp = new CCR.xdmod.ui.HighChartPanel({
+            var cp = new CCR.xdmod.ui.PlotlyPanel({
 
                 credits: false,
-                chartOptions: {
-                    chart: {
-                        animation: this.public_user === true
-                    },
-                    plotOptions: {
-                        series: {
-                            animation: this.public_user === true
+                baseChartOptions: {
+                    summary: true,
+                    chart: {},
+                    layout: {
+                        width: portletWidth,
+                        height: portletWidth * portletAspect,
+                        thumbnail: true,
+                        margin: {
+                            t: 22,
+                            b: 0
                         }
                     }
                 },
@@ -667,7 +670,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                 var errorCode = data.code;
 
                                 if (errorCode === XDMoD.Error.QueryUnavailableTimeAggregationUnit) {
-                                    var hcp = this.portlet.items.get(0);
+                                    var chartPortlet = this.portlet.items.get(0);
 
                                     var errorMessageExtraData = '';
                                     var errorData = data.errorData;
@@ -688,7 +691,7 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
                                       }
                                     }
 
-                                    hcp.displayError(
+                                    chartPortlet.displayError(
                         'Data not available for the selected aggregation unit.',
                         errorMessageExtraData
                       );
@@ -707,14 +710,8 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
                     fields: [
                         'chart',
-                        'credits',
-                        'title',
-                        'subtitle',
-                        'xAxis',
-                        'yAxis',
-                        'tooltip',
-                        'legend',
-                        'series',
+                        'layout',
+                        'data',
                         'dimensions',
                         'metrics',
                         'plotOptions',
@@ -739,9 +736,9 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
 
                 }) // store
 
-            }); // hcp
+            }); // cp
 
-            portlet.add(hcp);
+            portlet.add(cp);
 
             portalColumns[i % portalColumnsCount].add(portlet);
         } // for (var i = 0; i < charts.length; i++)

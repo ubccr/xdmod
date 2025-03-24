@@ -1,0 +1,39 @@
+{
+    "table_definition": {
+        "name": "resourcespecsfact_by_day_resourcespecslist",
+        "engine": "InnoDB",
+        "columns": [
+            {
+                "name": "agg_id",
+                "type": "int(11)",
+                "nullable": false
+            },
+            {
+                "name": "resourcespec_id",
+                "type": "bigint(20) unsigned",
+                "nullable": false
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "agg_id",
+                    "resourcespec_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "resourcespecs_lookup_key",
+                "columns": [
+                    "resourcespec_id",
+                    "agg_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ],
+        "triggers": []
+    }
+}

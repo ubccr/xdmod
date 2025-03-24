@@ -61,9 +61,6 @@ class FileWriterTest extends TestCase
 
     /**
      * Test creating an invalid file writer format.
-     *
-     *
-     *
      */
     public function testFileWriterFactoryException()
     {

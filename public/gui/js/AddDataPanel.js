@@ -22,16 +22,16 @@ Ext.apply(CCR.xdmod.ui.AddDataPanel, {
     ],
     line_types: [
         ['Solid', 'Solid', ''],
-        ['ShortDash', 'ShortDash', '6,2'],
-        ['ShortDot', 'ShortDot', '2,2'],
-        ['ShortDashDot', 'ShortDashDot', '6,2,2,2'],
-        ['ShortDashDotDot', 'ShortDashDotDot', '6,2,2,2,2,2'],
-        ['Dot', 'Dot', '2,6'],
-        ['Dash', 'Dash', '8,6'],
-        ['LongDash', 'LongDash', '16,6'],
-        ['DashDot', 'DashDot', '8,6,2,6'],
-        ['LongDashDot', 'LongDashDot', '16,6,2,6'],
-        ['LongDashDotDot', 'LongDashDotDot', '16,6,2,6,2,6']
+        ['ShortDash', 'ShortDash', '6px,2px'],
+        ['ShortDot', 'ShortDot', '2px,2px'],
+        ['ShortDashDot', 'ShortDashDot', '6px,2px,2px,2px'],
+        ['ShortDashDotDot', 'ShortDashDotDot', '6px,2px,2px,2px,2px,2px'],
+        ['Dot', 'Dot', '2px,6px'],
+        ['Dash', 'Dash', '8px,6px'],
+        ['LongDash', 'LongDash', '16px,6px'],
+        ['DashDot', 'DashDot', '8px,6px,2px,6px'],
+        ['LongDashDot', 'LongDashDot', '16px,6px,2px,6px'],
+        ['LongDashDotDot', 'LongDashDotDot', '16px,6px,2px,6px,2px,6px']
     ],
     line_widths: [
         [1, '1'],
@@ -55,10 +55,7 @@ Ext.apply(CCR.xdmod.ui.AddDataPanel, {
         ['label_asc', 'Labels Ascending'],
         ['label_desc', 'Labels Descending']
     ],
-    randomInt: function (min, max) {
-        // eslint-disable-next-line no-mixed-operators
-        return Math.floor(Math.random() * (max - min + 1) + min);
-    },
+
     defaultConfig: function (timeseries) {
         return {
             group_by: 'none',
@@ -85,9 +82,9 @@ Ext.apply(CCR.xdmod.ui.AddDataPanel, {
     },
     initRecord: function (store, config, selectedFilters, timeseries) {
         var conf = {};
-        jQuery.extend(true, conf, CCR.xdmod.ui.AddDataPanel.defaultConfig(timeseries));
-        if (config) jQuery.extend(true, conf, config);
-        conf.id = this.randomInt(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
+        XDMoD.utils.deepExtend(conf, CCR.xdmod.ui.AddDataPanel.defaultConfig(timeseries));
+        if (config) XDMoD.utils.deepExtend(conf, config);
+        conf.id = CCR.randomInt(Number.MIN_SAFE_INTEGER, Number.MAX_SAFE_INTEGER);
         conf.z_index = store.getCount();
         conf.filters = selectedFilters ? selectedFilters : {
             data: [],
@@ -105,7 +102,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         if (this.filtersStore) {
             this.filtersStore.each(
                 function (record) {
-                    var data = jQuery.extend({}, record.data);
+                    var data = { ...{}, ...record.data };
                     ret.push(data);
                 });
         }
@@ -126,62 +123,77 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
     },
     initComponent: function () {
         var filterButtonHandler;
+        var self = this;
 
         if (!this.record && this.store) {
             this.record = CCR.xdmod.ui.AddDataPanel.initRecord(this.store, this.config, this.getSelectedFilters(), this.timeseries);
         }
         this.originalData = {};
-        jQuery.extend(this.originalData, this.record.data);
-        var filtersMenu = new Ext.menu.Menu({
+        this.originalData = { ...this.originalData, ...this.record.data };
+        this.filtersMenu = new Ext.menu.Menu({
             showSeparator: false,
             ignoreParentClicks: true
         });
-        var filterItems = [];
-        var filterMap = {};
-        filtersMenu.removeAll(true);
+
+        this.filtersMenu.removeAll(true);
 
         this.addFilterButton = new Ext.Button({
             text: 'Add Filter',
             xtype: 'button',
             iconCls: 'add_filter',
             scope: this,
-            menu: filtersMenu
+            menu: this.filtersMenu
         });
 
         var realm_dimensions = this.realms[this.record.data.realm]['dimensions'];
-        for (x in realm_dimensions) {
-            if (x == 'none' || realm_dimensions[x].text == undefined) continue;
-            if (filterMap[x] == undefined) {
-                filterMap[x] = filterItems.length;
-                filterItems.push({
-                    text: realm_dimensions[x].text,
-                    iconCls: 'menu',
-                    realms: [this.record.data.realm],
-                    dimension: x,
-                    scope: this,
-                    handler: function (b, e) {
-                        XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected filter from menu', b.text);
-                        filterButtonHandler.call(b.scope, b.dimension, b.text, b.realms);
-                    }
-                });
-            } else {
-                if (filterItems[filterMap[x]].realms.indexOf(this.record.data.realm) == -1) {
-                    filterItems[filterMap[x]].realms.push(this.record.data.realm);
-                }
-            }
-        }
-        filterItems.sort(
-            function (a, b) {
-                var nameA = a.text.toLowerCase(),
-                    nameB = b.text.toLowerCase();
-                if (nameA < nameB) //sort string ascending
-                    return -1;
-                if (nameA > nameB)
-                    return 1;
-                return 0; //default return value (no sorting)
-            }
-        );
-        filtersMenu.addItem(filterItems);
+
+        this.filterItemsList = function () {
+          var recordData = this.record.data;
+          var hidden_groupbys = this.realms[recordData.realm].metrics[recordData.metric].hidden_groupbys;
+          var filterItems = [];
+          var filterMap = {};
+
+          Object.entries(realm_dimensions).forEach(function (item, key, value) {
+              var dimension_name = item[0];
+              if (dimension_name === 'none' || item[1].text === undefined || hidden_groupbys.includes(dimension_name)) {
+                return;
+              }
+              if (filterMap[dimension_name] === undefined) {
+                  filterMap[dimension_name] = filterItems.length;
+                  filterItems.push({
+                      text: item[1].text,
+                      iconCls: 'menu',
+                      realms: [recordData.realm],
+                      dimension: dimension_name,
+                      scope: self,
+                      handler: function (b, e) {
+                          XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected filter from menu', b.text);
+                          filterButtonHandler.call(b.scope, b.dimension, b.text, b.realms);
+                      }
+                  });
+              } else if (filterItems[filterMap[dimension_name]].realms.indexOf(recordData.realm) === -1) {
+                  filterItems[filterMap[dimension_name]].realms.push(recordData.realm);
+              }
+          });
+
+          filterItems.sort(
+              function (a, b) {
+                  var nameA = a.text.toLowerCase();
+                  var nameB = b.text.toLowerCase();
+                  if (nameA < nameB) { // sort string ascending
+                      return -1;
+                  }
+                  if (nameA > nameB) {
+                      return 1;
+                  }
+                  return 0; // default return value (no sorting)
+              }
+          );
+
+          return filterItems;
+        };
+
+        this.filtersMenu.addItem(this.filterItemsList());
         filterButtonHandler = function (dim_id, dim_label, realms) {
             if (!dim_id || !dim_label) return;
             var filterDimensionPanel = new CCR.xdmod.ui.FilterDimensionPanel({
@@ -228,14 +240,32 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         for (realm in this.realms) {
             realmData.push([realm]);
         }
-        var metricData = [];
-        for (metric in this.realms[this.record.data.realm]['metrics']) {
-            metricData.push([metric, this.realms[this.record.data.realm]['metrics'][metric].text]);
-        }
-        var dimenionsData = [];
-        for (dimension in this.realms[this.record.data.realm]['dimensions']) {
-            dimenionsData.push([dimension, this.realms[this.record.data.realm]['dimensions'][dimension].text]);
-        }
+
+        this.metricsDataList = function () {
+            var metricData = [];
+
+            for (var metric in this.realms[this.record.data.realm].metrics) {
+                if (this.realms[this.record.data.realm].metrics[metric].hidden_groupbys.includes(this.record.data.group_by) === false) {
+                  metricData.push([metric, this.realms[this.record.data.realm].metrics[metric].text]);
+                }
+            }
+
+            return metricData;
+        };
+
+        this.dimensionDataList = function () {
+            var hidden_groupbys = this.realms[this.record.data.realm].metrics[this.record.data.metric].hidden_groupbys;
+            var dimensionData = [];
+
+            for (var dimension in this.realms[this.record.data.realm].dimensions) {
+                if (hidden_groupbys.includes(dimension) === false) {
+                    dimensionData.push([dimension, this.realms[this.record.data.realm].dimensions[dimension].text]);
+                }
+            }
+
+            return dimensionData;
+        };
+
         var activeFilterCheckColumn = new Ext.grid.CheckColumn({
             id: 'checked',
             sortable: false,
@@ -275,7 +305,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             ])
         });
         if (this.record.data.filters) {
-            var currentFilters = jQuery.extend({}, this.record.data.filters);
+            var currentFilters = { ...{}, ...this.record.data.filters };
             this.filtersStore.loadData(currentFilters, false);
         }
         var selectAllButton = new Ext.Button({
@@ -452,6 +482,76 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                 }
             }
         });
+
+        this.metricsComboBox = new Ext.form.ComboBox(
+          {
+              fieldLabel: 'Metric',
+              name: 'metric',
+              xtype: 'combo',
+              mode: 'local',
+              editable: false,
+              store: new Ext.data.ArrayStore({
+                  id: 0,
+                  fields: [
+                      'id',
+                      'text'
+                  ],
+                  data: this.metricsDataList() // data is local
+              }),
+              disabled: false,
+              value: this.record.data.metric,
+              valueField: 'id',
+              displayField: 'text',
+              triggerAction: 'all',
+              listeners: {
+                  scope: this,
+                  select: function (combo, record, index) {
+                      XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected ' + combo.fieldLabel + ' using drop-down menu', record.get('id'));
+                      var metric = record.get('id');
+                      this.record.set('metric', metric);
+                      var has_std_err = this.realms[this.record.data.realm].metrics[metric].std_err;
+                      this.record.set('has_std_err', has_std_err);
+                      this.stdErrorCheckBox.setDisabled(!has_std_err || this.record.data.log_scale);
+                      this.stdErrorLabelsCheckBox.setDisabled(!has_std_err || this.record.data.log_scale);
+                      this.dimensionComboBox.store.removeAll();
+                      this.dimensionComboBox.store.loadData(this.dimensionDataList());
+                      this.filtersMenu.removeAll();
+                      this.filtersMenu.addItem(this.filterItemsList());
+                  }
+              }
+          }
+        );
+
+        this.dimensionComboBox = new Ext.form.ComboBox({
+              fieldLabel: 'Group by',
+              name: 'dimension',
+              xtype: 'combo',
+              mode: 'local',
+              editable: false,
+              store: new Ext.data.ArrayStore({
+                  id: 0,
+                  fields: [
+                      'id',
+                      'text'
+                  ],
+                  data: this.dimensionDataList() // data is local
+              }),
+              disabled: false,
+              value: this.record.data.group_by,
+              valueField: 'id',
+              displayField: 'text',
+              triggerAction: 'all',
+              listeners: {
+                  scope: this,
+                  select: function (combo, record, index) {
+                      XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected ' + combo.fieldLabel + ' using drop-down menu', record.get('id'));
+                      this.record.set('group_by', record.get('id'));
+                      this.metricsComboBox.store.removeAll();
+                      this.metricsComboBox.store.loadData(this.metricsDataList());
+                  }
+              }
+        });
+
         this.stdErrorLabelsCheckBox = new Ext.form.Checkbox({
             fieldLabel: 'Std Err Labels',
             name: 'std_err_labels',
@@ -609,8 +709,8 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             listeners: {
                 scope: this,
                 'select': function (combo, record, index) {
-                    XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Advanced -> Selected ' + combo.fieldLabel + ' using drop-down menu', record.get('id'));
-                    this.record.set('line_type', record.get('id'));
+                    XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Advanced -> Selected ' + combo.fieldLabel + ' using drop-down menu', record.get('dasharray'));
+                    this.record.set('line_type', record.get('dasharray'));
                 }
             }
         });
@@ -716,22 +816,6 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                 }
             }
         });
-        this.shadowCheckBox = new Ext.form.Checkbox({
-            fieldLabel: 'Shadow',
-            name: 'shadow',
-            xtype: 'checkbox',
-            boxLabel: 'Cast a shadow',
-            checked: this.record.data.shadow,
-            listeners: {
-                scope: this,
-                'check': function (checkbox, check) {
-                    XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Advanced -> Clicked on ' + checkbox.fieldLabel, Ext.encode({
-                        checked: check
-                    }));
-                    this.record.set('shadow', check);
-                }
-            }
-        });
         this.displayTypeConfigButton = new Ext.Button({
             flex: 1.5,
             xtype: 'button',
@@ -742,7 +826,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
             menu: [{
                 bodyStyle: 'padding:5px 5px 0;',
                 xtype: 'form',
-                items: [this.lineTypeCombo, this.lineWidthCombo, this.colorCombo, this.shadowCheckBox]
+                items: [this.lineTypeCombo, this.lineWidthCombo, this.colorCombo]
             }]
         });
         var displayType = this.record.get('display_type');
@@ -788,64 +872,10 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
                 valueField: 'id',
                 displayField: 'id',
                 triggerAction: 'all'
-            }, {
-                fieldLabel: 'Metric',
-                name: 'metric',
-                xtype: 'combo',
-                mode: 'local',
-                editable: false,
-                store: new Ext.data.ArrayStore({
-                    id: 0,
-                    fields: [
-                        'id',
-                        'text'
-                    ],
-                    data: metricData // data is local
-                }),
-                disabled: false,
-                value: this.record.data.metric,
-                valueField: 'id',
-                displayField: 'text',
-                triggerAction: 'all',
-                listeners: {
-                    scope: this,
-                    'select': function (combo, record, index) {
-                        XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected ' + combo.fieldLabel + ' using drop-down menu', record.get('id'));
-                        var metric = record.get('id');
-                        this.record.set('metric', metric);
-                        var has_std_err = this.realms[this.record.data.realm]['metrics'][metric].std_err;
-                        this.record.set('has_std_err', has_std_err);
-                        this.stdErrorCheckBox.setDisabled(!has_std_err || this.record.data.log_scale);
-                        this.stdErrorLabelsCheckBox.setDisabled(!has_std_err || this.record.data.log_scale);
-                    }
-                }
-            }, {
-                fieldLabel: 'Group by',
-                name: 'dimension',
-                xtype: 'combo',
-                mode: 'local',
-                editable: false,
-                store: new Ext.data.ArrayStore({
-                    id: 0,
-                    fields: [
-                        'id',
-                        'text'
-                    ],
-                    data: dimenionsData // data is local
-                }),
-                disabled: false,
-                value: this.record.data.group_by,
-                valueField: 'id',
-                displayField: 'text',
-                triggerAction: 'all',
-                listeners: {
-                    scope: this,
-                    'select': function (combo, record, index) {
-                        XDMoD.TrackEvent('Metric Explorer', 'Data Series Definition -> Selected ' + combo.fieldLabel + ' using drop-down menu', record.get('id'));
-                        this.record.set('group_by', record.get('id'));
-                    }
-                }
-            }, {
+            },
+            this.metricsComboBox,
+            this.dimensionComboBox,
+            {
                 fieldLabel: 'Sort Type',
                 name: 'sort_type',
                 xtype: 'combo',
@@ -1008,7 +1038,7 @@ Ext.extend(CCR.xdmod.ui.AddDataPanel, Ext.Panel, {
         });
         CCR.xdmod.ui.AddDataPanel.superclass.initComponent.apply(this, arguments);
         this.hideMenu = function () {
-            filtersMenu.hide();
+            this.filtersMenu.hide();
         };
     },
 

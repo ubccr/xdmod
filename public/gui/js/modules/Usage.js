@@ -89,8 +89,8 @@ Ext.apply(XDMoD.Module.Usage, {
 
 
         XDMoD.TrackEvent('Usage', 'Clicked on chart to access drill-down menu', Ext.encode({
-           'x-axis': point.ts ? Highcharts.dateFormat('%Y-%m-%d', point.ts) : point.series.data[point.x].category,
-           'y-axis': point.y,
+           'x-axis': point.data.type === 'pie' ? point.label : point.x,
+           'y-axis': point.data.type === 'pie' ? point.value : point.y,
            'label': (groupByName == 'none') ? '' : groupByUnit + '=' + groupByValue
         }));
 
@@ -1493,59 +1493,58 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 }
 
                                 var baseChartOptions = {
-
-                                    chart: {
-
-                                        renderTo: id,
+                                    renderTo: id,
+                                    realmOverview: true,
+                                    layout: {
                                         width: CCR.xdmod.ui.thumbWidth * chartThumbScale,
                                         height: CCR.xdmod.ui.thumbHeight * chartThumbScale,
-                                        animation: false,
-                                        events: {
-
-                                            load: function (e) {
-
-                                                if (this.series.length == 0) {
-
-                                                    this.renderer.image('gui/images/report_thumbnail_no_data.png', 0, 0, this.chartWidth, this.chartHeight).add();
-
-                                                } //if (this.series.length == 0)
-
-                                            } //load
-
-                                        } //events
-
-                                    },
-                                    plotOptions:{
-                                      series: {
-                                        animation: false
-                                      }
-                                    },
-                                    loading: {
-                                        labelStyle: {
-                                            top: '45%'
-                                        }
-                                    },
-
-                                    exporting: {
-                                        enabled: false
-                                    },
-
-                                    credits: {
-                                        enabled: true
+                                        margin: {
+                                            t: 20,
+                                            l: 5,
+                                            r: 5,
+                                            b: 35
+                                        },
+                                        thumbnail: true
                                     }
-
                                 }; //baseChartOptions
 
                                 var chartOptions = {};
                                 if (chartRecords.length > 0) {
                                     chartOptions = chartRecords[0].get('hc_jsonstore');
                                 }
-                                jQuery.extend(true, chartOptions, baseChartOptions);
+                                chartOptions = XDMoD.utils.deepExtend({}, chartOptions, baseChartOptions);
 
-                                chartOptions.exporting.enabled = false;
-                                chartOptions.credits.enabled = false;
+                                let axisLabels;
+                                const isEmpty = chartOptions.data && chartOptions.data.length === 0;
+                                if (!isEmpty && chartOptions) {
+                                    axisLabels = chartOptions.layout.swapXY ? chartOptions.layout.yaxis.ticktext : chartOptions.layout.xaxis.ticktext;
+                                }
 
-                                this.charts.push(new Highcharts.Chart(chartOptions));
+                                if (axisLabels) {
+                                    for (let j = 0; j < axisLabels.length; j++) {
+                                        let label = axisLabels[j];
+                                        if (label.length > 20) {
+                                            label = `${label.substring(0, 18)}...`;
+                                            axisLabels[j] = label;
+                                        }
+                                    }
+                                    if (chartOptions.layout.swapXY) {
+                                        chartOptions.layout.yaxis.ticktext = axisLabels;
+                                    } else {
+                                        chartOptions.layout.xaxis.ticktext = axisLabels;
+                                    }
+                                }
+
+                                chartOptions.data.forEach((trace) => {
+                                    if ((trace.type === 'line' || trace.type === 'area') && trace.y.length > 1) {
+                                        if (trace.marker) {
+                                            trace.marker.opacity = 0;
+                                        }
+                                    }
+                                });
+
+                                this.charts.push(XDMoD.utils.createChart(chartOptions));
+                                chartContainer.unmask();
                             };
 
                             deferStore.load({
@@ -2588,10 +2587,15 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
         // ---------------------------------------------------------
 
         function onResize(t, adjWidth, adjHeight, rawWidth, rawHeight) {
-
             maximizeScale.call(this);
-            if (this.chart) this.chart.setSize(adjWidth, adjHeight);
-
+            if (this.chart && this.chartId) {
+                const chartDiv = document.getElementById(this.chartId);
+                if (chartDiv) {
+                    Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
+                    const update = relayoutChart(chartDiv, adjHeight, false);
+                    Plotly.relayout(this.chartId, update);
+                }
+            }
         } //onResize
 
         // ---------------------------------------------------------
@@ -2700,95 +2704,64 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                             }
 
                             var baseChartOptions = {
-
-                                chart: {
-
-                                    renderTo: id,
+                                renderTo: id,
+                                layout: {
                                     width: chartWidth * chartScale,
-                                    height: chartHeight * chartScale,
-                                    animation: false
-
+                                    height: chartHeight * chartScale
                                 },
-
-                                loading: {
-                                    labelStyle: {
-                                        top: '45%'
-                                    }
-                                },
-
                                 exporting: {
                                     enabled: false
                                 },
-
                                 credits: {
                                     enabled: true
-                                },
-
-                                plotOptions: {
-                                    series: {
-                                        events: {
-                                            click: function (evt) {
-                                                var drillId;
-                                                var label;
-                                                var drillInfo = evt.point.series.userOptions.drilldown;
-
-                                                if (!drillInfo) {
-                                                    // dataseries such as the trend line do not have a drilldown
-                                                    return;
-                                                }
-
-                                                if (evt.point.drilldown) {
-                                                    drillId = evt.point.drilldown.id;
-                                                    label = evt.point.drilldown.label;
-                                                } else {
-                                                    evt.point.ts = evt.point.x; // eslint-disable-line no-param-reassign
-                                                    drillId = drillInfo.id;
-                                                    label = drillInfo.label;
-                                                }
-                                                XDMoD.Module.Usage.drillChart(evt.point, drillInfo.drilldowns, drillInfo.groupUnit, drillId, label, 'none', 'tg_usage', drillInfo.realm);
-                                            }
-                                        }
-                                    }
                                 }
-
-                            }; //baseChartOptions
+                            };
 
                             var chartOptions = r.get('hc_jsonstore');
 
-                            jQuery.extend(true, chartOptions, baseChartOptions);
+                            chartOptions = XDMoD.utils.deepExtend({}, chartOptions, baseChartOptions);
                             chartOptions.exporting.enabled = false;
                             chartOptions.credits.enabled = true;
 
-                            var extraChartHandlers = {
-                                loadHandlers: [],
-                                redrawHandlers: []
-                            };
-                            extraChartHandlers.loadHandlers.push(function () {
-                                this.checkSeries = function () {
-                                    if (this.series.length === 0) {
-                                        if (this.placeholder_element) {
-                                            this.placeholder_element.destroy();
-                                        }
-                                        this.placeholder_element = this.renderer.image('gui/images/report_thumbnail_no_data.png', (this.chartWidth - 400) / 2, (this.chartHeight - 300) / 2, 400, 300).add();
+                            this.chart = XDMoD.utils.createChart(chartOptions);
+                            this.chartId = id;
+                            this.chartOptions = chartOptions;
+                            var chartDiv = document.getElementById(baseChartOptions.renderTo);
+
+                            chartDiv.on('plotly_click', (evt) => {
+                                let drillId;
+                                let label;
+                                let point;
+                                const usageDiv = document.getElementById(this.id);
+                                if (evt.points && evt.points.length > 0) {
+                                    if (evt.points[0].data.type === 'pie') {
+                                        [point] = evt.points;
+                                    } else {
+                                        const traces = usageDiv.getElementsByClassName('plot')[0].firstChild.children;
+                                        point = getClickedPoint(evt, traces);
                                     }
-                                };
-
-                                this.checkSeries();
-                            });
-                            extraChartHandlers.redrawHandlers.push(function () {
-                                if (this.checkSeries) {
-                                    this.checkSeries();
                                 }
+                                if (!point) {
+                                    return;
+                                }
+                                const drillInfo = point.data.drilldown;
+                                if (drillInfo[0]) {
+                                    drillId = drillInfo[point.pointNumber].id;
+                                    label = drillInfo[point.pointNumber].label;
+                                } else {
+                                    drillId = drillInfo.id;
+                                    label = drillInfo.label;
+                                }
+
+                                XDMoD.Module.Usage.drillChart(point, drillInfo.drilldowns, drillInfo.groupUnit, drillId, label, 'none', 'tg_usage', drillInfo.realm);
                             });
 
-                            this.chart = XDMoD.utils.createChart(chartOptions, extraChartHandlers);
-
+                            overrideLegendEvent(chartDiv);
                         }, this); //task
 
                         task.delay(0);
 
                         return true;
-
                     }, this); //chartStore.each(function(r)
 
                     self.getDurationSelector().enable();

@@ -66,7 +66,7 @@ class BatchProcessTest extends BaseTest
      */
     public static function setUpBeforeClass(): void
     {
-        parent::setUpBeforeClass();
+        parent::setupBeforeClass();
         self::$queryHandler = new QueryHandler();
         self::$exportDirectory = xd_utilities\getConfiguration(
             'data_warehouse_export',

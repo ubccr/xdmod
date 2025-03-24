@@ -1,0 +1,11 @@
+title
+"Average Number of CPU Cores: Total (Core Count): by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-07
+---------
+Year,"[High-performance computing] Average Number of CPU Cores: Total (Core Count)"
+2016,10400.0000
+2017,20000.0000
+---------

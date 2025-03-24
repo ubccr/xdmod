@@ -105,11 +105,9 @@ abstract class BaseUserAdminTest extends BaseTest
         $actualContentType = $response[1]['content_type'];
         $actualHttpCode = $response[1]['http_code'];
         if (strpos($actualContentType, $expectedContentType) === false) {
-            print_r($response);
             throw new Exception("Expected content-type: $expectedContentType. Received: $actualContentType");
         }
         if ($expectedHttpCode !== $actualHttpCode) {
-            print_r($response);
             throw new Exception("Expected http code: $expectedHttpCode. Received: $actualHttpCode");
         }
 

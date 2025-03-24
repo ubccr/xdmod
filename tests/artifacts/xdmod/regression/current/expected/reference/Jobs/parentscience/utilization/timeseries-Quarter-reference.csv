@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Department"
+"Screwdriver CPU Utilization (%): by Department"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Quarter,"[Electrical and Communication Systems] Screwdriver Utilization (%)","[Microelectronic Information Processing Systems] Screwdriver Utilization (%)","[Chemistry] Screwdriver Utilization (%)","[Social and Economic Science] Screwdriver Utilization (%)","[Mechanical and Structural Systems] Screwdriver Utilization (%)","[Mathematical Sciences] Screwdriver Utilization (%)","[Design and Manufacturing Systems] Screwdriver Utilization (%)","[Materials Research] Screwdriver Utilization (%)","[Astronomical Sciences] Screwdriver Utilization (%)","[Chemical, Thermal Systems] Screwdriver Utilization (%)","[Molecular Biosciences] Screwdriver Utilization (%)","[Polar Programs] Screwdriver Utilization (%)","[Arts] Screwdriver Utilization (%)","[Earth Sciences] Screwdriver Utilization (%)","[Physics] Screwdriver Utilization (%)","[Environmental Biology] Screwdriver Utilization (%)","[Atmospheric Sciences] Screwdriver Utilization (%)","[Computer and Computation Research] Screwdriver Utilization (%)"
-"2016 Q4",5.419333025,3.242327300,4.114779187,3.097382067,2.957415567,1.407723825,0.915291667,1.499929495,0.934745845,0.682602778,0.622408353,0.061535567,0.485449208,0.430822650,0.082755903,0.033731308,0.075053241,0.005252170
-"2017 Q1",0.044028160,0.140587291,0.019666982,0.020072879,0.000314252,0.028697872,0.035217493,0,0.020576595,0,0.015529787,0.110426844,0.001735815,0.000380080,0,0.010075309,0.000040123,0
+Quarter,"[Electrical and Communication Systems] Screwdriver CPU Utilization (%)","[Microelectronic Information Processing Systems] Screwdriver CPU Utilization (%)","[Chemistry] Screwdriver CPU Utilization (%)","[Social and Economic Science] Screwdriver CPU Utilization (%)","[Mathematical Sciences] Screwdriver CPU Utilization (%)","[Design and Manufacturing Systems] Screwdriver CPU Utilization (%)","[Materials Research] Screwdriver CPU Utilization (%)","[Mechanical and Structural Systems] Screwdriver CPU Utilization (%)","[Chemical, Thermal Systems] Screwdriver CPU Utilization (%)","[Astronomical Sciences] Screwdriver CPU Utilization (%)","[Molecular Biosciences] Screwdriver CPU Utilization (%)","[Polar Programs] Screwdriver CPU Utilization (%)","[Arts] Screwdriver CPU Utilization (%)","[Earth Sciences] Screwdriver CPU Utilization (%)","[Physics] Screwdriver CPU Utilization (%)","[Environmental Biology] Screwdriver CPU Utilization (%)","[Atmospheric Sciences] Screwdriver CPU Utilization (%)","[Computer and Computation Research] Screwdriver CPU Utilization (%)"
+"2016 Q4",5.4193,3.2423,4.1148,3.0974,1.4077,0.9153,1.4999,2.9574,0.6826,0.9347,0.6224,0.0615,0.4854,0.4308,0.0828,0.0337,0.0751,0.0053
+"2017 Q1",0.0440,0.1406,0.0197,0.0201,0.0287,0.0352,0,0.0003,0,0.0206,0.0155,0.1104,0.0017,0.0004,0,0.0101,0.0000,0
 ---------

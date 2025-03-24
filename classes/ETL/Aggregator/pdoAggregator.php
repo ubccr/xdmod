@@ -733,7 +733,7 @@ class pdoAggregator extends aAggregator
 
         // There are instances where $firstPeriod is a bool not an array ( when $aggregationPeriodList is empty or at the end of the array)
         // the following code takes that into account.
-        $periodSize = 1;
+        $periodSize = 0;
         if (!is_bool($firstPeriod)) {
             $periodSize = $firstPeriod['period_end_day_id'] - $firstPeriod['period_start_day_id'];
         }
@@ -1221,8 +1221,8 @@ class pdoAggregator extends aAggregator
             $numPeriodsProcessed++;
             $periodDisplay = $periodId;
             if ( 'day' === $aggregationUnit ) {
-                $dayDateTime = \DateTime::createFromFormat('Y00z', $periodId);
-                $periodDisplay .= ' ' . $dayDateTime->format('d m Y');
+                $dayDateTime = \DateTime::createFromFormat('Y00z', $periodId - 1);
+                $periodDisplay .= ' ' . $dayDateTime->format('Y-m-d');
             }
             $this->logger->info("Aggregated $aggregationUnit ("
                                 . ( $numPeriodsProcessed + $aggregationPeriodOffset)

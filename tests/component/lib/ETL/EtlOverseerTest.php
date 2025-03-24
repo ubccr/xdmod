@@ -73,13 +73,13 @@ class EtlOverseerTest extends TestCase
 
     public function testValidResourceCodes() {
 
-        // Single valid resource codes to include
+        $this->expectNotToPerformAssertions();
 
+        // Single valid resource codes to include
         try {
             self::$overseerOptions->setIncludeOnlyResourceCodes('resource1');
             $overseer = new EtlOverseer(self::$overseerOptions);
             $overseer->execute(self::$etlConfig);
-            $this->assertTrue(true);
         } catch ( Exception $e ) {
             $this->fail($e->getMessage());
         }
@@ -90,7 +90,6 @@ class EtlOverseerTest extends TestCase
             self::$overseerOptions->setIncludeOnlyResourceCodes(array('resource1', 'resource2'));
             $overseer = new EtlOverseer(self::$overseerOptions);
             $overseer->execute(self::$etlConfig);
-            $this->assertTrue(true);
         } catch ( Exception $e ) {
             $this->fail($e->getMessage());
         }
@@ -101,7 +100,6 @@ class EtlOverseerTest extends TestCase
             self::$overseerOptions->setExcludeResourceCodes('resource1');
             $overseer = new EtlOverseer(self::$overseerOptions);
             $overseer->execute(self::$etlConfig);
-            $this->assertTrue(true);
         } catch ( Exception $e ) {
             $this->fail($e->getMessage());
         }
@@ -112,7 +110,6 @@ class EtlOverseerTest extends TestCase
             self::$overseerOptions->setExcludeResourceCodes(array('resource1', 'resource2'));
             $overseer = new EtlOverseer(self::$overseerOptions);
             $overseer->execute(self::$etlConfig);
-            $this->assertTrue(true);
         } catch ( Exception $e ) {
             $this->fail($e->getMessage());
         }

@@ -1,28 +1,28 @@
 title
-"Screwdriver Utilization (%): by QOS"
+"Screwdriver CPU Utilization (%): by QOS"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-QOS,"Screwdriver Utilization (%)"
-curry,35.275262837
-banana-cream,8.560456217
-derby,6.575312605
-cashew,5.182399099
-buttermilk,2.469226755
-fish,1.839461937
-coconut-cream,0.796503157
-apple,0.780743441
-bavarian-cream,0.448885063
-chestnut,0.291664089
-blackberry,0.189162085
-bumbleberry,0.184283565
-cheese,0.146230985
-butter,0.058956965
-blueberry,0.048260101
-cherry,0.035501653
-green-grape,0.033598353
-boysenberry,0.025603942
-flapper,0.015756392
+QOS,"Screwdriver CPU Utilization (%)"
+curry,35.2753
+banana-cream,8.5605
+derby,6.5753
+cashew,5.1824
+buttermilk,2.4692
+fish,1.8395
+coconut-cream,0.7965
+apple,0.7807
+bavarian-cream,0.4489
+chestnut,0.2917
+blackberry,0.1892
+bumbleberry,0.1843
+cheese,0.1462
+butter,0.0590
+blueberry,0.0483
+cherry,0.0355
+green-grape,0.0336
+boysenberry,0.0256
+flapper,0.0158
 ---------

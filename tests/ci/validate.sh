@@ -4,6 +4,7 @@
 # file permissions are correct on the RPM packaged files.
 
 exitcode=0
+INSTALL_DIR=/usr/share/xdmod
 
 # Check that there are no development artifacts installed in the RPM
 if rpm -ql xdmod | fgrep .eslintrc.json; then
@@ -30,7 +31,7 @@ fi
 
 # Check that the various scripts have not left any files around in the tmp
 # directory
-FIND_CRITERIA=(-type f -newer /usr/share/xdmod/html/index.php '(' -user xdmod -o -user apache ')')
+FIND_CRITERIA=(-type f -newer $INSTALL_DIR/html/index.php '(' -user xdmod -o -user apache ')')
 if find /tmp "${FIND_CRITERIA[@]}" | grep -q  .
 then
     echo "Unexpected files found in temporary directory"
@@ -55,6 +56,34 @@ fi
 if ! xdmod-check-config | grep -q 'RPM Installed Packages'
 then
     echo "Missing RPM information from xdmod-check-config"
+    exitcode=1
+
+fi
+
+# Confirm that the user manual is built
+# Check if table of contents tree properly links
+# to corresponding file and each html file exists
+MANUAL_DIR="$INSTALL_DIR"/html/user_manual
+PAGES=($(grep -o '<li class="toctree-l1"><a class="reference internal" href="[^"]*"' "$MANUAL_DIR/index.html" | sed -E 's/.*href="([^"]*)"/\1/'))
+for PAGE in "${PAGES[@]}"; do
+    HTML_FILE="$MANUAL_DIR/${PAGE}"
+    if [[ ! -f "$HTML_FILE" ]]; then
+        echo "$HTML_FILE does not exist."
+        exitcode=1
+    fi
+done
+
+# Check if user manual is being properly hosted by the webserver
+MANUAL_URL=https://localhost:443/user_manual/index.html
+if [ !$(curl -I -s -o /dev/null -w "%{http_code}" -k $MANUAL_URL) == "200" ];
+then
+    echo "Non 200 response from $MANUAL_URL"
+    exitcode=1
+fi
+
+if !(curl -s -k https://localhost:443/user_manual/index.html | grep -q h1)
+then
+    echo "User manual pages unavailable at $MANUAL_URL"
     exitcode=1
 fi
 
