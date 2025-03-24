@@ -5,11 +5,16 @@ title: Source Installation Guide
 Install Source Package
 ----------------------
 
-Change the installation prefix as desired.  The default installation prefix is
-`/usr/local/xdmod`.  These instructions assume you are installing Open
-XDMoD in `/opt/xdmod-{{ page.sw_version }}`.
+The source package can be downloaded from
+[GitHub](https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}).
+Make sure to download `xdmod-{{ page.sw_version }}.tar.gz`, not the
+GitHub-generated "Source code" files.
 
-    # tar zxvf xdmod-{{ page.sw_version }}-el8.tar.gz
+These instructions assume you are installing Open XDMoD in `/opt/xdmod-{{
+page.sw_version }}`. Change the installation prefix as desired. The default
+installation prefix is `/usr/local/xdmod`.
+
+    # tar zxvf xdmod-{{ page.sw_version }}.tar.gz
     # cd xdmod-{{ page.sw_version }}
     # ./install --prefix=/opt/xdmod-{{ page.sw_version }}
 
