@@ -7,8 +7,8 @@ General Upgrade Notes
 
 - Open XDMoD release numbers are of the form X.Y.Z.
     - New minor releases increment Z by 1, e.g., 10.0.0, 10.0.1, 10.0.2, etc.
-    - New major releases increment X.Y by 0.5 and reset Z to 0, e.g., 9.0.0,
-      9.5.0, 10.0.0, 10.5.0, etc.
+    - New major releases increment X.Y (usually by 0.5) and reset Z to 0, e.g.,
+      9.0.0, 9.5.0, 10.0.0, 10.5.0, etc.
 - Unless otherwise noted below, Open XDMoD only supports upgrades to:
     - Minor releases of the same major release (e.g., from 9.5.0 to 9.5.1,
       from 10.0.0 to 10.0.3, etc.),
@@ -21,11 +21,9 @@ General Upgrade Notes
   thereof), e.g., if you want to upgrade from 9.5.1 to 11.0.2, then you must
   upgrade from 9.5.1 to 10.0.\*, then from 10.0.\* to 10.5.\*, then from
   10.5.\* to 11.0.2.
-- Make a backup of your Open XDMoD configuration files before running
-  the upgrade script. The upgrade script may overwrite your current
-  configuration files.
-- If the upgrade includes database schema changes (see version-specific notes
-  further down on this page), you should back up all your data.
+- Make backups of your Open XDMoD configuration files and databases before
+  running the upgrade script. The upgrade script may overwrite your current
+  configuration files and data.
 - Do not change the version in `portal_settings.ini` before running the
   upgrade script. The version number will be changed by the upgrade
   script.
