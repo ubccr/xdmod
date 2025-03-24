@@ -309,7 +309,7 @@ configuration/aggregation_meta/
 
 # Exclude extjs examples
 public/gui/lib/extjs/examples/
-
+public/gui/lib/extjs/welcome/
 
 # ETL resource-specific configuration
 /etl/js/config/supremm/dataset_maps/*
