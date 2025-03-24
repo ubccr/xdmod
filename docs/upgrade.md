@@ -196,6 +196,11 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
+### Update Apache Configuration
+
+Make sure to update `/etc/httpd/conf.d/xdmod.conf` to change
+`/opt/xdmod-{{ page.prev_sw_version }}` to `/opt/xdmod-{{ page.sw_version }}`.
+
 Additional 11.0.0 Upgrade Notes
 -------------------
 
