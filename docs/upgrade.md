@@ -5,19 +5,23 @@ title: Upgrade Guide
 General Upgrade Notes
 ---------------------
 
-- Open XDMoD release numbers are of the form X.Y.Z.
-    - New minor releases increment Z by 1, e.g., 10.0.0, 10.0.1, 10.0.2, etc.
-    - New major releases increment X.Y (usually by 0.5) and reset Z to 0, e.g.,
-      9.0.0, 9.5.0, 10.0.0, 10.5.0, etc.
+- Open XDMoD version numbers are of the form X.Y.Z, where X.Y is the major
+  version number and Z is the minor version number.
+    - Software changes for minor versions include security updates and bug
+      fixes.
+    - Software changes for major versions usually have new features added,
+      database structure changes, and non-backwards compatible changes.
+    - Major version numbers usually (but not always) increment by 0.5, e.g.,
+      9.0, 9.5, 10.0, 10.5, etc.
 - Unless otherwise noted below, Open XDMoD only supports upgrades to:
-    - Minor releases of the same major release (e.g., from 9.5.0 to 9.5.1,
+    - Minor versions of the same major version (e.g., from 9.5.0 to 9.5.1,
       from 10.0.0 to 10.0.3, etc.),
-    - The next major release (e.g., from 9.5.0 to 10.0.0, from 10.0.2 to
+    - The next major version (e.g., from 9.5.0 to 10.0.0, from 10.0.2 to
       11.0.0, etc.), or
-    - Minor releases of the next major release (e.g., from 9.5.0 to 10.0.1,
+    - Minor versions of the next major version (e.g., from 9.5.0 to 10.0.1,
       from 10.5.1 to 11.0.1, etc.).
-- If you need to jump more than one major release, you must incrementally
-  upgrade to each of the intermediate major releases (or a minor release
+- If you need to jump more than one major version, you must incrementally
+  upgrade to each of the intermediate major versions (or a minor version
   thereof), e.g., if you want to upgrade from 9.5.1 to 11.0.2, then you must
   upgrade from 9.5.1 to 10.0.\*, then from 10.0.\* to 10.5.\*, then from
   10.5.\* to 11.0.2.
