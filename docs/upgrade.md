@@ -33,9 +33,9 @@ General Upgrade Notes
   there may be version-specific upgrade notes. If you have installed any of the
   optional modules for Open XDMoD, they may have their own version-specific
   upgrade notes as well, see:
-    - [Application Kernels](https://appkernels.xdmod.org/ak-upgrade.html)
-    - [Job Performance (SUPReMM)](https://supremm.xdmod.org/supremm-upgrade.html)
-    - [OnDemand](https://ondemand.xdmod.org/upgrade.html)
+    - [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-upgrade.html)
+    - [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-upgrade.html)
+    - [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/upgrade.html)
 
 ## !!! XDMoD 11.0 Upgrade Process Changes !!!
 
@@ -121,8 +121,11 @@ Download available at [GitHub][github-release].
 
     # dnf install xdmod-{{ page.rpm_version }}.el8.noarch.rpm
 
-Likewise, install the latest `xdmod-appkernels`, `xdmod-supremm`, and/or
-`xdmod-ondemand` RPM files if you have those modules installed.
+If you have installed any of the optional modules for Open XDMoD, download and
+install their RPMs, too:
+- [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-install-rpm.html)
+- [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-install.html)
+- [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/install.html)
 
 After upgrading the package you may need to manually merge any files
 that you have manually changed before the upgrade.  You do not need to
@@ -363,5 +366,5 @@ will have the following columns added:
 
 Then, the Cloud realm will be reaggregated.
 
-[github-release]: https://github.com/ubccr/xdmod/releases/{{ page.rpm_version }}
+[github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
 [mysql-config]: configuration.md#mysql-configuration
