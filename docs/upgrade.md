@@ -154,7 +154,9 @@ in a different directory than your existing version.
 
 ### Download Open XDMoD Source Package
 
-Download available at [GitHub][github-release].
+Download available at [GitHub][github-release]. Make sure to download
+`xdmod-{{ page.sw_version }}.tar.gz`, not the GitHub-generated "Source code"
+files.
 
 ### Extract and Install Source Package
 
@@ -162,8 +164,11 @@ Download available at [GitHub][github-release].
     # cd xdmod-{{ page.sw_version }}
     # ./install --prefix=/opt/xdmod-{{ page.sw_version }}
 
-Likewise, install the latest `xdmod-appkernels`, `xdmod-supremm`, and/or
-`xdmod-ondemand` tarballs if you have those installed.
+If you have installed any of the optional modules for Open XDMoD, download,
+extract, and install their source packages, too:
+- [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-install-source.html)
+- [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-install.html)
+- [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/install.html)
 
 ### Copy Current Config Files
 
@@ -369,4 +374,4 @@ will have the following columns added:
 Then, the Cloud realm will be reaggregated.
 
 [github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
-[mysql-config]: configuration.md#mysql-configuration
+[mysql-config]: configuration.html#mariadb-configuration
