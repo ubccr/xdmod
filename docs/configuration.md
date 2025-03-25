@@ -203,7 +203,7 @@ in the RPM install and `share/templates/apache.conf` in the source code install.
 This template file must be copied to the Apache configuration directory and
 edited to update site specific configuration settings.
 
-For CentOS 7, RHEL 7, Rocky 8, and RHEL 8 the template file should be copied to `/etc/httpd/conf.d/xdmod.conf`
+For Rocky 8 and RHEL 8 the template file should be copied to `/etc/httpd/conf.d/xdmod.conf`.
 For other Linux distributions consult the distribution documentation
 to determine the path to the webserver configuration files.
 

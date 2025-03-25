@@ -547,9 +547,6 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
             resource_provider: resource_provider
          };
 
-         //console.log(objParams);
-         //return;
-
          var conn = new Ext.data.Connection();
 
          conn.request({
@@ -736,6 +733,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
          handler: newReportBasedOn
 
        });
+       btnNewBasedOn.setVisible(false);
 
        var mnuNewBasedOn = new XDMoD.Reporting.ReportCloneMenu({
 
@@ -748,6 +746,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
           }
 
        });
+       mnuNewBasedOn.setVisible(false);
 
        var btnEditReport = new Ext.Button({
 
