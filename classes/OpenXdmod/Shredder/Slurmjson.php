@@ -110,7 +110,7 @@ class Slurmjson extends Slurm
      *   has been allocated resource then the allocated value is used, otherwise
      *   the requested value is used. 0 is returned if no data found.
      */
-    function getTresValue($jobrecord, $rtype, $rname = null)
+    private function getTresValue($jobrecord, $rtype, $rname = null)
     {
         if (!isset($jobrecord->tres)) {
             return 0;
@@ -139,7 +139,7 @@ class Slurmjson extends Slurm
         return 0;
     }
 
-    function getTimeLimit($jobrecord) {
+    private function getTimeLimit($jobrecord) {
         if (isset($jobrecord->time->limit)) {
             if (isset($jobrecord->time->limit->number)) {
                 return $jobrecord->time->limit->number;
@@ -149,7 +149,7 @@ class Slurmjson extends Slurm
         return 0;
     }
 
-    function getJobId($jobrecord) {
+    private function getJobId($jobrecord) {
         if (isset($jobrecord->array) && isset($jobrecord->array->job_id) && $jobrecord->array->job_id != 0)
         {
             $array_index = $jobrecord->array->task_id->number ?? $jobrecord->array->task_id;
@@ -160,7 +160,7 @@ class Slurmjson extends Slurm
         return array($jobrecord->job_id, -1);
     }
 
-    function getStartTime($jobrecord) {
+    private function getStartTime($jobrecord) {
         $start_ts = null;
 
         foreach($jobrecord->steps as $step) {
@@ -184,7 +184,7 @@ class Slurmjson extends Slurm
         return $start_ts;
     }
 
-    function getExitCode($jobrecord) {
+    private function getExitCode($jobrecord) {
 
         $state = $this->getJobState($jobrecord);
 
@@ -209,7 +209,7 @@ class Slurmjson extends Slurm
         return "$return_code:$signal";
     }
 
-    function getJobState($jobrecord) {
+    private function getJobState($jobrecord) {
         if (is_array($jobrecord->state->current)) {
             return $jobrecord->state->current[0];
         }
@@ -217,7 +217,7 @@ class Slurmjson extends Slurm
         return $jobrecord->state->current;
     }
 
-    function parseJobRecord($jobrecord) {
+    private function parseJobRecord($jobrecord) {
 
         // Skip jobs that haven't ended.
         if ($jobrecord->time->end == 0) {
