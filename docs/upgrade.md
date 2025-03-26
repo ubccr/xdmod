@@ -115,24 +115,26 @@ You may now continue with the standard upgrade steps below.
 RPM Upgrade Process
 -------------------
 
-### Download Open XDMoD RPM package
+### Download and install Open XDMoD RPM package
 
 Download available at [GitHub][github-release].
 
-### Install the RPM
+If you have installed any of the optional modules for Open XDMoD:
 
-    # dnf install xdmod-{{ page.rpm_version }}.el8.noarch.rpm
+1. Download their RPMs, too; download links and additional notes are available
+   in their upgrade guides:
+    - [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-upgrade.html)
+    - [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-upgrade.html)
+    - [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/upgrade.html)
+1. Add the module RPMs to the end of the command below.
 
-If you have installed any of the optional modules for Open XDMoD, download and
-install their RPMs, too:
-- [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-install-rpm.html)
-- [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-install.html)
-- [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/install.html)
+```
+# dnf install xdmod-{{ page.rpm_version }}.el8.noarch.rpm
+```
 
-After upgrading the package you may need to manually merge any files
-that you have manually changed before the upgrade.  You do not need to
-merge `portal_settings.ini`. This file will be updated by the upgrade
-script.  If you have manually edited this file, you should create a
+You may need to manually merge any files that you had manually changed. You do
+not need to merge `portal_settings.ini`. This file will be updated by the
+upgrade script. If you have manually edited this file, you should create a
 backup and merge any changes after running the upgrade script.
 
 ### Verify Server Configuration Settings
