@@ -10,7 +10,10 @@ See the [Software Requirements](software-requirements.html) for details.
 Install the RPM
 ---------------
 
-    # dnf install xdmod-{{ page.sw_version }}-1.0.el8.noarch.rpm
+The RPM package can be downloaded from
+[GitHub](https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}).
+
+    # dnf install xdmod-{{ page.rpm_version }}.el8.noarch.rpm
 
 Configure Open XDMoD
 --------------------

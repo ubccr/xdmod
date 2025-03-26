@@ -15,7 +15,7 @@ prefixed with a dollar sign (`$`). e.g.:
 Examples of commands that must be run with root privileges are prefixed
 with a number sign (`#`). e.g.:
 
-    # ./install --prefix=/opt/xdmod
+    # ./install --prefix=/opt/xdmod-{{ page.sw_version }}
 
 These commands may be run with `sudo` or `su`.
 
@@ -27,9 +27,9 @@ is not the case. For example, the following:
 
 Would need to be changed to:
 
-    # /opt/xdmod/bin/xdmod-setup
+    # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-setup
 
-If you installed Open XDMoD in `/opt/xdmod`.
+If you installed Open XDMoD in `/opt/xdmod-{{ page.sw_version }}`.
 
 If you installed the Open XDMoD RPM package, these commands will be
 placed in `/usr/bin` which is most likely already in your `PATH`.
