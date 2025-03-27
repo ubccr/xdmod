@@ -48,10 +48,22 @@
                 "comment": "The ID of the person."
             },
             {
+                "name": "person_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The organization ID of the person"
+            },
+            {
                 "name": "principalinvestigator_person_id",
                 "type": "int(11)",
                 "nullable": false,
                 "comment": "The ID of the PI."
+            },
+            {
+                "name": "piperson_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "The organization ID of the PI"
             },
             {
                 "name": "systemaccount_id",

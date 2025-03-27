@@ -277,12 +277,13 @@ function updatePeople(array $people)
     $logger->debug('Updating people data');
 
     $personIdForUsername = getPersonIdUsernameMappings();
+    $organizations = getOrganizationIDNameMappings();
 
     foreach ($people as $person) {
         $logger->debug('Processing row: ' . json_encode($person));
 
         $fieldCount = count($person);
-        if ($fieldCount != 3) {
+        if ($fieldCount != 3 && $fieldCount != 4 ) {
             $msg = "Unexpected number of fields ($fieldCount) in row: "
                 . implode(',', $person);
             $logger->warning($msg);
@@ -290,14 +291,17 @@ function updatePeople(array $people)
         }
 
         list($username, $firstName, $lastName) = $person;
-
+        
+        $personOrganization = array_key_exists(3, $person) ? $person[3] : null;
+        $personOrganizationId = array_key_exists($personOrganization, $organizations) ? $organizations[$personOrganization] : -1;
+        
         $lowerUsername = strtolower($username);
-
+        
         if (isset($personIdForUsername[$lowerUsername])) {
             $personId = $personIdForUsername[$lowerUsername];
-            updatePerson($personId, $firstName, $lastName);
+            updatePerson($personId, $firstName, $lastName, $personOrganizationId);
         } else {
-            createPerson($username, $firstName, $lastName);
+            createPerson($username, $firstName, $lastName, $personOrganizationId);
         }
     }
 }
@@ -315,7 +319,7 @@ function updatePeople(array $people)
  *
  * @return int The person's HPcDB person_id.
  */
-function createPerson($username, $firstName, $lastName)
+function createPerson($username, $firstName, $lastName, $organizationId)
 {
     global $db, $shredderDb, $logger;
 
@@ -324,6 +328,7 @@ function createPerson($username, $firstName, $lastName)
         'username'   => $username,
         'first_name' => $firstName,
         'last_name'  => $lastName,
+        'organization_id' => $organizationId
     ));
 
     $sql = "
@@ -335,7 +340,7 @@ function createPerson($username, $firstName, $lastName)
 
     $sql = "
         INSERT INTO hpcdb_people SET
-            organization_id = 1,
+            organization_id = :organization_id,
             person_id = :person_id,
             first_name = :first_name,
             last_name = :last_name
@@ -347,6 +352,7 @@ function createPerson($username, $firstName, $lastName)
             'person_id'  => $personId,
             'first_name' => $firstName,
             'last_name'  => $lastName,
+            'organization_id' => $organizationId
         )
     );
 
@@ -362,7 +368,7 @@ function createPerson($username, $firstName, $lastName)
  * @param string $firstName The person's first name.
  * @param string $lastName The person's last name.
  */
-function updatePerson($personId, $firstName, $lastName)
+function updatePerson($personId, $firstName, $lastName, $organizationId)
 {
     global $db, $logger;
 
@@ -371,12 +377,14 @@ function updatePerson($personId, $firstName, $lastName)
         'person_id'  => $personId,
         'first_name' => $firstName,
         'last_name'  => $lastName,
+        'organization_id' => $organizationId
     ));
 
     $sql = "
         UPDATE hpcdb_people SET
             first_name = :first_name,
-            last_name = :last_name
+            last_name = :last_name,
+            organization_id = :organization_id
         WHERE person_id = :person_id
     ";
 
@@ -386,6 +394,7 @@ function updatePerson($personId, $firstName, $lastName)
             'first_name' => $firstName,
             'last_name'  => $lastName,
             'person_id'  => $personId,
+            'organization_id' => $organizationId
         )
     );
 }
@@ -708,6 +717,24 @@ function getPersonIdUsernameMappings()
     }
 
     return $personIdForUsername;
+}
+
+function getOrganizationIDNameMappings()
+{
+    global $db, $logger;
+
+    $logger->debug('Querying organization information');
+
+    $sql = "SELECT organization_abbrev, organization_id FROM mod_hpcdb.hpcdb_organizations";
+    $organizations_resultset = $db->query($sql);
+
+    $organizations = array();
+
+    foreach ($organizations_resultset as $org) {
+        $organizations[$org['organization_abbrev']] = $org['organization_id'];
+    }
+
+    return $organizations;
 }
 
 /**

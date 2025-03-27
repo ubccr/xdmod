@@ -153,6 +153,10 @@
                 },
                 {
                     "realm": "Jobs",
+                    "group_by": "pi_institution"
+                },
+                {
+                    "realm": "Jobs",
                     "group_by": "qos"
                 },
                 {
@@ -170,6 +174,10 @@
                 {
                     "realm": "Jobs",
                     "group_by": "person"
+                },
+                {
+                    "realm": "Jobs",
+                    "group_by": "institution"
                 },
                 {
                     "realm": "Jobs",

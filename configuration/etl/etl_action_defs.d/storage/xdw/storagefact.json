@@ -9,7 +9,9 @@
             "resourcetype_id": "res.resource_type_id",
             "mountpoint_id": "su.mountpoint_id",
             "person_id": "su.person_id",
+            "person_organization_id": "person.organization_id",
             "principalinvestigator_person_id": "pi.person_id",
+            "piperson_organization_id": "piperson.organization_id",
             "systemaccount_id": "sa.system_account_id",
             "fos_id": "req.primary_fos_id",
             "dt": "su.dt",
@@ -42,6 +44,13 @@
             },
             {
                 "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_people",
+                "alias": "person",
+                "type": "INNER",
+                "on": "su.person_id = person.person_id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
                 "name": "hpcdb_resources",
                 "alias": "res",
                 "type": "INNER",
@@ -53,6 +62,13 @@
                 "alias": "pi",
                 "type": "INNER",
                 "on": "req.request_id = pi.request_id"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_people",
+                "alias": "piperson",
+                "type": "INNER",
+                "on": "pi.person_id = piperson.person_id"
             }
         ],
         "where": [

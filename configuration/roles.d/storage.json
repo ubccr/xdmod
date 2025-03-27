@@ -24,7 +24,15 @@
                 },
                 {
                     "realm": "Storage",
+                    "group_by": "institution"
+                },
+                {
+                    "realm": "Storage",
                     "group_by": "pi"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "pi_institution"
                 },
                 {
                     "realm": "Storage",
@@ -68,7 +76,15 @@
                 },
                 {
                     "realm": "Storage",
+                    "group_by": "institution"
+                },
+                {
+                    "realm": "Storage",
                     "group_by": "pi"
+                },
+                {
+                    "realm": "Storage",
+                    "group_by": "pi_institution"
                 },
                 {
                     "realm": "Storage",
