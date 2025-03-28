@@ -15,7 +15,7 @@
 
         ],
         "where": [
-            "su.storage_usage_id > COALESCE((SELECT MAX(storage_usage_id) FROM modw.storagefact), 0)"
+            "su.storage_usage_id > COALESCE((SELECT MAX(id) FROM modw.storagefact), 0)"
         ]
     }
 }

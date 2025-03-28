@@ -335,7 +335,7 @@ class DataWarehouseInitializer
             'hpcdb-ingest-storage',
             'hpcdb-xdw-ingest-common'
         );
-        
+
         $params = [];
 
         if ($startDate !== null || $endDate !== null) {
@@ -345,7 +345,7 @@ class DataWarehouseInitializer
             if ($endDate !== null) {
                 $params['end-date'] = $endDate . ' 23:59:59';
             }
-            $pipeline[] = 'hpcdb-prep-xdw-storage-ingest-by-date-range';            
+            $pipeline[] = 'hpcdb-prep-xdw-storage-ingest-by-date-range';
         }
         else {
             $pipeline[] = 'hpcdb-prep-xdw-storage-ingest-by-new-usage';
