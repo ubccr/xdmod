@@ -121,7 +121,7 @@ Note that if you have installed any of the optional modules for Open XDMoD, you
 should also include their new RPM file(s) on the same `dnf install` command
 line below that you use to install the new Open XDMoD RPM file. The upgrade
 guides for each of the optional modules are linked below; these each contain a
-link to the GitHub page for the module release, which has the link for their
+link to the GitHub page for the module release, which has the link to their
 RPM file.
 
 - [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-upgrade.html)
@@ -179,7 +179,10 @@ files.
     # ./install --prefix=/opt/xdmod-{{ page.sw_version }}
 
 If you have installed any of the optional modules for Open XDMoD, download,
-extract, and install their source packages, too:
+extract, and install their source packages, too. The upgrade guides for
+each of the optional modules are linked below; these each contain a link to
+the GitHub page for the module release, which has the link to their source
+package.
 
 - [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-upgrade.html)
 - [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-upgrade.html)
