@@ -25,7 +25,6 @@ require_once 'user_check.php';
   <link rel="stylesheet" type="text/css" href="css/dashboard.css">
   <link rel="stylesheet" type="text/css" href="css/management.css">
   <link rel="stylesheet" type="text/css" href="css/AdminPanel.css" />
-  <script type="text/javascript" src="../gui/lib/internet-explorer-polyfills.js"></script>
   <?php ExtJS::loadSupportScripts('../gui/lib'); ?>
   <script type="text/javascript" src="../gui/lib/ext-oldie-history-patch.js"></script>
   <script type="text/javascript" src="../gui/lib/jquery/jquery-3.7.1.min.js"></script>
@@ -96,12 +95,6 @@ require_once 'user_check.php';
   <script type="text/javascript" src="../gui/js/ContainerBodyMask.js"></script>
 
   <link rel="stylesheet" type="text/css" href="../gui/css/common.css" />
-  <!--[if lte IE 9]>
-  <link rel="stylesheet" type="text/css" href="../gui/css/common_ie9.css" />
-  <![endif]-->
-  <!--[if lte IE 8]>
-  <link rel="stylesheet" type="text/css" href="../gui/css/common_ie8.css" />
-  <![endif]-->
   <script type="text/javascript" src="../gui/lib/plotly/plotly-2.29.1.min.js"></script>
   <script type="text/javascript" src="../gui/js/PlotlyPanel.js"></script>
   <script type="text/javascript" src="../gui/js/PlotlyChartWrapper.js"></script>
