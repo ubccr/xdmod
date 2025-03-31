@@ -36,8 +36,10 @@ defaults:
       type: "pages"
     values:
       layout: "page"
-      prev_sw_version: "10.0.2"
-      sw_version: "10.5.0"
+      version: "10.5"
+      prev_sw_version: "10.0.3"
+      sw_version: "10.5.1"
+      rpm_version: "10.5.1-1"
       style: "effervescence"
       tocversion: "toc"
 
