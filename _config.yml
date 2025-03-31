@@ -29,8 +29,8 @@ latest_version: "11.0"
 latest_sw_version: "11.0.1"
 version_list:
   - "11.0"
-  - "10.5"
 unsupported_version_list:
+  - "10.5"
   - "10.0"
   - "9.5"
 
