@@ -1,0 +1,10 @@
+title
+"Number of Users: Active: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[Warbler, Blackburnian] Number of Users: Active","[Warbler, Yellow] Number of Users: Active","[Warbler, Yellow-rumped] Number of Users: Active"
+2018,1,1,1
+---------

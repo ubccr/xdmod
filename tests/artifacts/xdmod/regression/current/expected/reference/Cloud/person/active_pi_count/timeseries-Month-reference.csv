@@ -1,0 +1,10 @@
+title
+"Number of PIs: Active: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[Warbler, Blackburnian] Number of PIs: Active","[Warbler, Yellow] Number of PIs: Active","[Warbler, Yellow-rumped] Number of PIs: Active"
+2018-04,1,1,1
+---------

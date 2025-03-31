@@ -806,32 +806,6 @@ Ext.Element.boxMarkup:
         if (this.msgs.length > 1) {
             this.updateMsg();
         }
-        /*
-//for reference
-this.el.disableShadow();
-this.setPosition(0, 0);
-
-delete this.el.lastXY;
-delete this.el.lastLT;
-if(this.x === undefined || this.y === undefined){
-    var xy = this.el.getAlignToXY(this.container, 'c-c');
-    var pos = this.el.translatePoints(xy[0], xy[1]);
-    this.x = this.x === undefined? pos.left : this.x;
-    this.y = this.y === undefined? pos.top : this.y;
-}
-this.el.setLeftTop(this.x, this.y);
-
-alignTo        : 'tl',
-alignToXY      :  [ 5, (this.el.getComputedHeight() * -1) + 5],
-slideDirection : 'b'
-
-console.info('this.el.lastXY',this.el.lastXY);
-console.info('this.el.lastLT',this.el.lastLT);
-console.info('this.el.x',this.el.x);
-console.info('this.el.y',this.el.y);
-console.info('this.el.getComputedHeight()',this.el.getComputedHeight());
-console.log('====');
-*/
 
         //element to hide and configured Fx
         var w = this.el,
