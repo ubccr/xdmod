@@ -115,27 +115,35 @@ You may now continue with the standard upgrade steps below.
 RPM Upgrade Process
 -------------------
 
-### Download and install Open XDMoD RPM package
+### Install RPM package(s)
 
-Download available at [GitHub][github-release].
+Note that if you have installed any of the optional modules for Open XDMoD
+(whose upgrade guides are linked below), you should also include their new
+RPM file(s) on the same `dnf install` command line below that you use to
+install the new Open XDMoD RPM file.
+- [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-upgrade.html)
+- [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-upgrade.html)
+- [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/upgrade.html)
 
-If you have installed any of the optional modules for Open XDMoD:
+If your web server can reach GitHub via HTTPS, you can install the RPM package
+directly:
 
-1. Download their RPMs, too; download links and additional notes are available
-   in their upgrade guides:
-    - [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-upgrade.html)
-    - [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-upgrade.html)
-    - [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/upgrade.html)
-1. Add the module RPMs to the end of the command below.
+    # dnf install https://github.com/ubccr/xdmod/releases/download/v{{ page.rpm_version }}/xdmod-{{ page.rpm_version }}.el8.noarch.rpm
 
-```
-# dnf install xdmod-{{ page.rpm_version }}.el8.noarch.rpm
-```
+Otherwise, you can download the RPM file from the [GitHub page for the
+release][github-release] and install it:
 
-You may need to manually merge any files that you had manually changed. You do
-not need to merge `portal_settings.ini`. This file will be updated by the
-upgrade script. If you have manually edited this file, you should create a
-backup and merge any changes after running the upgrade script.
+    # dnf install xdmod-{{ page.rpm_version }}.el8.noarch.rpm
+
+After installing the RPM(s), you may need to manually merge changes to any
+files that you had previously manually changed in your Open XDMoD installation.
+Any such files will have extensions of `.rpmnew` or `.rpmsave` and can be
+located with the following command. The exception to this is
+`portal_settings.ini`; this file will be updated by the `xdmod-upgrade` command
+later; any manual changes you want to merge to this file should be merged after
+running the `xdmod-upgrade` command in a later step below.
+
+    # find /etc/xdmod /usr/bin /usr/lib64/xdmod /usr/share/xdmod -regextype sed -regex '.*\.rpm\(new\|save\)$'
 
 ### Verify Server Configuration Settings
 
