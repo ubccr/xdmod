@@ -117,23 +117,27 @@ RPM Upgrade Process
 
 ### Install RPM package(s)
 
-Note that if you have installed any of the optional modules for Open XDMoD
-(whose upgrade guides are linked below), you should also include their new
-RPM file(s) on the same `dnf install` command line below that you use to
-install the new Open XDMoD RPM file.
+Note that if you have installed any of the optional modules for Open XDMoD, you
+should also include their new RPM file(s) on the same `dnf install` command
+line below that you use to install the new Open XDMoD RPM file. The upgrade
+guides for each of the optional modules are linked below; these each contain a
+link to the GitHub page for the module release, which has the link for their
+RPM file.
+
 - [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-upgrade.html)
 - [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-upgrade.html)
 - [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/upgrade.html)
 
-If your web server can reach GitHub via HTTPS, you can install the RPM package
-directly:
+If your web server can reach GitHub via HTTPS, you can install the RPM
+package(s) directly:
 
-    # dnf install https://github.com/ubccr/xdmod/releases/download/v{{ page.rpm_version }}/xdmod-{{ page.rpm_version }}.el8.noarch.rpm
+    # dnf install https://github.com/ubccr/xdmod/releases/download/v{{ page.rpm_version }}/xdmod-{{ page.rpm_version }}.el8.noarch.rpm [optional module RPMs]
 
 Otherwise, you can download the RPM file from the [GitHub page for the
-release][github-release] and install it:
+release][github-release] and install it (along with any of the optional modules
+you have installed as explained above):
 
-    # dnf install xdmod-{{ page.rpm_version }}.el8.noarch.rpm
+    # dnf install xdmod-{{ page.rpm_version }}.el8.noarch.rpm [optional module RPMs]
 
 After installing the RPM(s), you may need to manually merge changes to any
 files that you had previously manually changed in your Open XDMoD installation.
@@ -176,9 +180,10 @@ files.
 
 If you have installed any of the optional modules for Open XDMoD, download,
 extract, and install their source packages, too:
-- [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-install-source.html)
-- [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-install.html)
-- [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/install.html)
+
+- [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-upgrade.html)
+- [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-upgrade.html)
+- [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/upgrade.html)
 
 ### Copy Current Config Files
 
