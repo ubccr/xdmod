@@ -959,11 +959,11 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
             updateDisabledMenus.call(this, true);
 
-            let node = tree.getSelectionModel().getSelectedNode();
+            const node = tree.getSelectionModel().getSelectedNode();
 
             if (node != null) return;
 
-            let root = tree.getRootNode();
+            const root = tree.getRootNode();
 
             if (root.hasChildNodes()) {
                 const parts = CCR.tokenize(document.location.hash);
@@ -994,9 +994,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                     // trim off 'node=' for the node's ID
                     let nodeId = parts.params.slice(5);
                     if (!realm || !groupBy || !statistic) {
-                        nodeId = 'statistic&realm=Jobs&group_by=none&statistic=total_cpu_hours'
+                        nodeId = 'statistic&realm=Jobs&group_by=none&statistic=total_cpu_hours';
                     }
-                    tree.expandPath(child.getPath(), null, function (success) {
+                    tree.expandPath(child.getPath(), null, (success) => {
                         // If the summary node was successfully expanded...
                         if (success) {
                             // If available, open the default statistic.
