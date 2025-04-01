@@ -59,6 +59,7 @@ defaults:
       version: "10.5"
       prev_sw_version: "10.0.3"
       sw_version: "10.5.1"
+      rpm_version: "10.5.1-1.0"
       style: "effervescence"
       tocversion: "v10_5toc"
   -
