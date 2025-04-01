@@ -2469,7 +2469,7 @@ SQL;
 
         // If we have ssoAttrs available and this user's person's organization is 'Unknown' ( -1 ).
         // Then go ahead and lookup the organization value from sso.
-        if ($expectedOrganization == -1 && count($this->ssoAttrs) > 0) {
+        if ($expectedOrganization == -1 && isset($this->ssoAttrs['organization']) && count($this->ssoAttrs['organization']) > 0) {
             $expectedOrganization = Organizations::getIdByName($this->ssoAttrs['organization'][0]);
         }
 
