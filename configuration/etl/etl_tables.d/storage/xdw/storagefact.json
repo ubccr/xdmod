@@ -24,6 +24,12 @@
                 "comment": "Resource ID"
             },
             {
+                "name": "resource_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Resource Organization ID"
+            },
+            {
                 "name": "resourcetype_id",
                 "type": "int(11)",
                 "nullable": false,

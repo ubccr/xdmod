@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Month,"[screw] GPU Hours: Allocated"
-2016-12,2496000.0000
-2017-01,5952000.0000
+Month,"[screw] GPU Hours: Allocated","[wrench] GPU Hours: Allocated"
+2016-12,2496000.0000,0.0000
+2017-01,5952000.0000,0.0000
 ---------

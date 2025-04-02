@@ -1,0 +1,11 @@
+title
+"Number of Jobs Ended: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[screw] Number of Jobs Ended","[wrench] Number of Jobs Ended"
+"2016 Q4",44950,9797
+"2017 Q1",15078,1488
+---------

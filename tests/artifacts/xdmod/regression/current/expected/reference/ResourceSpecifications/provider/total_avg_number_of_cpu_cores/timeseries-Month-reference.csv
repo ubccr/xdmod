@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Month,"[screw] Average Number of CPU Cores: Total (Core Count)"
-2016-12,10400.0000
-2017-01,20000.0000
+Month,"[screw] Average Number of CPU Cores: Total (Core Count)","[wrench] Average Number of CPU Cores: Total (Core Count)"
+2016-12,8200.0000,4000.0000
+2017-01,16000.0000,4000.0000
 ---------
