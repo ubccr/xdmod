@@ -62,6 +62,19 @@ jobs:
       - run:
           name: Install XDMoD Composer Dependencies
           command: docker exec -w /root/xdmod xdmod composer install
+      - when:
+          condition:
+            or:
+              - and:
+                  - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+                  - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+              - or:
+                  - equal: [ "xdmod-time-trigger", << pipeline.parameters.schedule-name ]
+          steps:
+            - run:
+                name: Installing Code Coverage Dependencies
+                command: |
+                  docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
       - run:
           name: Build XDMoD RPM
           command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
@@ -104,18 +117,6 @@ jobs:
       - run:
           name: Make sure that the Test Dependencies are installed
           command: docker exec -w /root/xdmod xdmod composer install --no-progress
-      - when:
-          condition:
-            and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-
-          steps:
-            - run:
-                name: Installing Code Coverage Dependencies
-                command: |
-                  docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
-
       - run:
           name: Run Regression Tests
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> -w /root/xdmod xdmod /root/xdmod/tests/regression/runtests.sh
@@ -147,9 +148,12 @@ jobs:
           command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.string_os >>
       - when:
           condition:
-            and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+            or:
+              - and:
+                  - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+                  - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+              - or:
+                  - equal: [ "xdmod-time-trigger", << pipeline.parameters.schedule-name ]
           steps:
             - run:
                 name: Process Code Coverage Data
@@ -211,9 +215,12 @@ jobs:
           path: ~/phpunit
       - when:
           condition:
-            and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+            or:
+              - and:
+                - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+                - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+              - or:
+                - equal: [ "xdmod-time-trigger", << pipeline.parameters.schedule-name ]
           steps:
             - store_artifacts:
                 path: ~/code_coverage
