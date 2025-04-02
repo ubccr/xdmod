@@ -220,7 +220,7 @@ jobs:
                 - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
                 - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
               - or:
-                - equal: [ "xdmod-time-trigger", << pipeline.parameters.schedule-name ]
+                - equal: [ "xdmod-time-trigger", << pipeline.parameters.schedule-name >> ]
           steps:
             - store_artifacts:
                 path: ~/code_coverage
