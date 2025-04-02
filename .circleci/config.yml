@@ -62,6 +62,9 @@ jobs:
       - run:
           name: Install XDMoD Composer Dependencies
           command: docker exec -w /root/xdmod xdmod composer install
+      - run:
+          name: Build XDMoD RPM
+          command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
       - when:
           condition:
             or:
@@ -75,10 +78,6 @@ jobs:
                 name: Installing Code Coverage Dependencies
                 command: |
                   docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
-
-      - run:
-          name: Build XDMoD RPM
-          command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
       - run:
           name: Install / Upgrade XDMoD from the newly created RPM
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> xdmod /root/xdmod/tests/ci/bootstrap.sh
