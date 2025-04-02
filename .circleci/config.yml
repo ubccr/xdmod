@@ -85,9 +85,6 @@ jobs:
           name: Validate that the install / upgrade went as expected
           command: docker exec -w /root/xdmod xdmod /root/xdmod/tests/ci/validate.sh
       - run:
-          name: Make sure that the test dependencies are installed
-          command: docker exec -w /root/xdmod xdmod composer install
-      - run:
           name: Setup the SimpleSAML server etc. so we can test SSO
           command: docker exec xdmod /root/xdmod/tests/ci/samlSetup.sh
       - when:
