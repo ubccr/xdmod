@@ -141,7 +141,7 @@ class DataWarehouseInitializer
         $this->ingestAllHpcdb($startDate, $endDate);
         $this->ingestCloudDataGeneric();
         $this->ingestCloudDataOpenStack();
-        $this->ingestStorageData();
+        $this->ingestStorageData($startDate, $endDate);
     }
 
     /**
@@ -322,23 +322,42 @@ class DataWarehouseInitializer
      *
      * If the storage realm is not enabled then do nothing.
      */
-    public function ingestStorageData()
+    public function ingestStorageData($startDate = null, $endDate = null)
     {
         if (!$this->isRealmEnabled('Storage')) {
             $this->logger->debug('Storage realm not enabled, not ingesting');
             return;
         }
 
+        $pipeline = array(
+            'staging-ingest-common',
+            'hpcdb-ingest-common',
+            'hpcdb-ingest-storage',
+            'hpcdb-xdw-ingest-common'
+        );
+
+        $params = [];
+
+        if ($startDate !== null || $endDate !== null) {
+            if ($startDate !== null) {
+                $params['start-date'] = $startDate . ' 00:00:00';
+            }
+            if ($endDate !== null) {
+                $params['end-date'] = $endDate . ' 23:59:59';
+            }
+            $pipeline[] = 'hpcdb-prep-xdw-storage-ingest-by-date-range';
+        }
+        else {
+            $pipeline[] = 'hpcdb-prep-xdw-storage-ingest-by-new-usage';
+        }
+
+        $pipeline[] = 'xdw-ingest-storage';
+
         $this->logger->notice('Ingesting storage data');
         Utilities::runEtlPipeline(
-            [
-                'staging-ingest-common',
-                'hpcdb-ingest-common',
-                'hpcdb-ingest-storage',
-                'hpcdb-xdw-ingest-common',
-                'xdw-ingest-storage',
-            ],
-            $this->logger
+            $pipeline,
+            $this->logger,
+            $params
         );
     }
 

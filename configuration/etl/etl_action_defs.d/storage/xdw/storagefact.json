@@ -25,8 +25,15 @@
         "joins": [
             {
                 "schema": "${SOURCE_SCHEMA}",
+                "name": "hpcdb_storage_usage_to_ingest",
+                "alias": "su_ingest"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
                 "name": "hpcdb_storage_usage",
-                "alias": "su"
+                "alias": "su",
+                "type": "INNER",
+                "on": "su_ingest.storage_usage_id = su.storage_usage_id"
             },
             {
                 "schema": "${SOURCE_SCHEMA}",
@@ -70,9 +77,6 @@
                 "type": "INNER",
                 "on": "pi.person_id = piperson.person_id"
             }
-        ],
-        "where": [
-            "su.storage_usage_id > COALESCE((SELECT MAX(id) FROM ${DESTINATION_SCHEMA}.storagefact), 0)"
         ]
     }
 }
