@@ -22,6 +22,8 @@ jobs:
     executor: << parameters.os >>
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
+      COMPOSER_ALLOW_XDEBUG: 1
+      COMPOSER_DISABLE_XDEBUG_WARN: 1
       XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
       QA_BRANCH: 'v2'
       TRAVIS_COMMIT_RANGE: << pipeline.git.base_revision >>..<<pipeline.git.revision>>
