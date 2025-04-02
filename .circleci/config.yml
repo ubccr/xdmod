@@ -59,6 +59,9 @@ jobs:
             docker exec xdmod mkdir /tmp/screenshots
             docker exec xdmod mkdir /root/code_coverage_raw
             docker exec xdmod mkdir /root/code_coverage
+      - run:
+          name: Install XDMoD Composer Dependencies
+          command: docker exec -w /root/xdmod xdmod composer install
       - when:
           condition:
             or:
@@ -72,9 +75,7 @@ jobs:
                 name: Installing Code Coverage Dependencies
                 command: |
                   docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
-      - run:
-          name: Install XDMoD Composer Dependencies
-          command: docker exec -w /root/xdmod xdmod composer install
+
       - run:
           name: Build XDMoD RPM
           command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
