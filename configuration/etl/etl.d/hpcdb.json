@@ -186,6 +186,22 @@
             "definition_file": "jobs/hpcdb/jobs-to-ingest-by-new-jobs.json"
         }
     ],
+    "hpcdb-prep-xdw-storage-ingest-by-date-range": [
+        {
+            "name": "storage-ingest-date-range",
+            "description": "Prepare storage usage to ingest using a date range",
+            "truncate_destination": true,
+            "definition_file": "storage/hpcdb/usage-to-ingest-date-range.json"
+        }
+    ],
+    "hpcdb-prep-xdw-storage-ingest-by-new-usage": [
+        {
+            "name": "storage-ingest-new-usage",
+            "description": "Prepare storage usage to ingest based on new usage information",
+            "truncate_destination": true,
+            "definition_file": "storage/hpcdb/usage-to-ingest-new-usage.json"
+        }
+    ],
     "hpcdb-ingest-storage": [
         {
             "name": "mountpoints",
