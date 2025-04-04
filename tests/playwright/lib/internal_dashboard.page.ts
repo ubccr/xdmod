@@ -11,7 +11,6 @@ class InternalDashboard extends BasePage implements LoginInterface {
     readonly submitLocator = this.page.locator(InternalDashboard.selectors.login.submit);
     readonly logoutLinkLocator = this.page.locator(InternalDashboard.selectors.logoutLink);
     readonly loggedInDisplayLocator = this.page.locator(InternalDashboard.selectors.loggedInDisplayName);
-    readonly overviewTabLocator = this.page.locator(selectors.summary.tabs.overview());
 
     async login(username: string, password: string, display: string) {
         await this.verifyLocation('/internal_dashboard', 'XDMoD Internal Dashboard');
@@ -25,7 +24,6 @@ class InternalDashboard extends BasePage implements LoginInterface {
         await this.submitLocator.isHidden();
 
         await this.logoutLinkLocator.isVisible();
-        await this.overviewTabLocator.isVisible();
         await expect(this.loggedInDisplayLocator).toContainText(display);
     }
 
