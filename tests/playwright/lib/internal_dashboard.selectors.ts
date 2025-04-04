@@ -25,7 +25,8 @@ const selectors = {
             },
             log_data: function () {
                 return selectors.tabByText('Log Data');
-            }
+            },
+            usersPanel: '//div[@id="top-tab-panel"]//span[contains(@class, "x-panel-header-text") and contains(text(), "Users")]'
         }
     },
     user_management: {

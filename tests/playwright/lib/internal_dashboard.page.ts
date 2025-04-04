@@ -29,6 +29,9 @@ class InternalDashboard extends BasePage implements LoginInterface {
 
         const overviewTab = this.page.locator(selectors.summary.tabs.overview());
         await overviewTab.isVisible();
+
+        const usersPanel = this.page.locator(selectors.summary.tabs.usersPanel);
+        await usersPanel.isVisible();
     }
 
     async logout() {
