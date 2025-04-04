@@ -5,7 +5,9 @@ const selectors = {
         submit: '//input[@type="submit" and @value="Log In"]'
     },
     logoutLink: '//a[@id="header-logout"]',
-    loggedInDisplayName: '//div[@id="dashboard-header"]//b',
+    loggedIn: function(username) {
+        return `//div[@id="dashboard-header"]//b[contains(text(), "${username}")]`
+    },
     header: {
         tabs: {
             summary: function () {
