@@ -24,7 +24,7 @@ layout: null
     },
     "servers": [
         {
-            "url": "https://xdmod.ccr.buffalo.edu/",
+            "url": "https://xdmod.access-ci.org/",
             "description": "Production server"
         }
     ],
