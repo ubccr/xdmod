@@ -17,21 +17,21 @@ class InternalDashboard extends BasePage implements LoginInterface {
         await this.usernameLocator.fill(username);
         await this.passwordLocator.fill(password);
         await this.submitLocator.click();
-        await expect(this.submitLocator.toBeHidden());
+        await expect(this.submitLocator).toBeHidden();
 
-        await expect(this.logoutLinkLocator.toBeVisible());
+        await expect(this.logoutLinkLocator).toBeVisible();
 
         const login = this.page.locator(selectors.loggedIn(display));
-        await expect(login.toBeVisible());
+        await expect(login).toBeVisible();
 
         const overviewTab = this.page.locator(selectors.summary.tabs.overview());
-        await expect(overviewTab.toBeVisible());
+        await expect(overviewTab).toBeVisible();
 
         const usersPanel = this.page.locator(selectors.summary.tabs.usersPanel);
-        await expect(usersPanel.toBeVisible());
+        await expect(usersPanel).toBeVisible();
 
         const userManagementTab = this.page.locator(selectors.header.tabs.user_management());
-        await expect(userManagementTab.toBeVisible());
+        await expect(userManagementTab).toBeVisible();
     }
 
     async logout() {
