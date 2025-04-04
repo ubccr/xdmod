@@ -13,28 +13,25 @@ class InternalDashboard extends BasePage implements LoginInterface {
 
     async login(username: string, password: string, display: string) {
         await this.verifyLocation('/internal_dashboard', 'XDMoD Internal Dashboard');
-        await this.usernameLocator.isVisible();
-        await this.passwordLocator.isVisible();
-        await this.submitLocator.isVisible();
 
         await this.usernameLocator.fill(username);
         await this.passwordLocator.fill(password);
         await this.submitLocator.click();
-        await this.submitLocator.isHidden();
+        await expect(this.submitLocator.toBeHidden());
 
-        await this.logoutLinkLocator.isVisible();
+        await expect(this.logoutLinkLocator.toBeVisible());
 
         const login = this.page.locator(selectors.loggedIn(display));
-        await login.isVisible();
+        await expect(login.toBeVisible());
 
         const overviewTab = this.page.locator(selectors.summary.tabs.overview());
-        await overviewTab.isVisible();
+        await expect(overviewTab.toBeVisible());
 
         const usersPanel = this.page.locator(selectors.summary.tabs.usersPanel);
-        await usersPanel.isVisible();
+        await expect(usersPanel.toBeVisible());
 
         const userManagementTab = this.page.locator(selectors.header.tabs.user_management());
-        await userManagementTab.isVisible();
+        await expect(userManagementTab.toBeVisible());
     }
 
     async logout() {
