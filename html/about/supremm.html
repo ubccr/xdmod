@@ -1,8 +1,15 @@
 
-<p><h1>SUPReMM Program</h1></p>
+<p><h1>The SUPReMM Realm</h1></p>
 <br>
-<p>The SUPReMM program is designed integrate job level performance data into the XDMoD framework so it is available for detailed analysis. The goal of the SUPReMM program is to develop the HPCPerfStats and other data sources and pipe this data into the XDMoD data warehouse.</p>
-<p>HPCPerfStats uses collectors sampled at the beginning and end of every job and at a regularly configured intervals to provide a wide variety of job performance information including memory, I/O file data, CPU data and network data.  Accordingly, with this data system personnel will have at their fingertips detailed performance data for every job that runs on the HPC resource.</p>
+<p>
+The SUPReMM realm provides job-level performance data for detailed analysis in the XDMoD user interface or through the <a href="https://github.com/ubccr/xdmod-data">Data Analytics Framework</a>. This information is populated by cross-referencing jobs from XDMoD's data warehouse with node-level performance data running on compute nodes.
+</p>
+<p>
+Node-level performance data are gathered through collection software such as Performance Co-Pilot (PCP), Prometheus, or HPCPerfStats running on compute nodes. These collectors sample node hardware information at a regularly configured interval and provide a wide variety of job performance information including memory, I/O file data, CPU data and network data.
+</p>
+<p>
+More information about the setup and usage of SUPReMM can be found in the <a href="https://supremm.xdmod.org">documentation</a>.
+</p>
 <br>
 <table cellpadding=10>
 <tr>
