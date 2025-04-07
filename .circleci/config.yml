@@ -22,6 +22,8 @@ jobs:
     executor: << parameters.os >>
     environment:
       COMPOSER_ALLOW_SUPERUSER: 1
+      COMPOSER_ALLOW_XDEBUG: 1
+      COMPOSER_DISABLE_XDEBUG_WARN: 1
       XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
       QA_BRANCH: 'v2'
       TRAVIS_COMMIT_RANGE: << pipeline.git.base_revision >>..<<pipeline.git.revision>>
@@ -65,15 +67,25 @@ jobs:
       - run:
           name: Build XDMoD RPM
           command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
+      - when:
+          condition:
+            or:
+              - and:
+                  - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+                  - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+              - or:
+                  - equal: [ "xdmod-time-trigger", << parameters.schedule-name >> ]
+          steps:
+            - run:
+                name: Installing Code Coverage Dependencies
+                command: |
+                  docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
       - run:
           name: Install / Upgrade XDMoD from the newly created RPM
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> xdmod /root/xdmod/tests/ci/bootstrap.sh
       - run:
           name: Validate that the install / upgrade went as expected
           command: docker exec -w /root/xdmod xdmod /root/xdmod/tests/ci/validate.sh
-      - run:
-          name: Make sure that the test dependencies are installed
-          command: docker exec -w /root/xdmod xdmod composer install
       - run:
           name: Setup the SimpleSAML server etc. so we can test SSO
           command: docker exec xdmod /root/xdmod/tests/ci/samlSetup.sh
@@ -101,21 +113,6 @@ jobs:
             - run:
                 name: Run QA Tests
                 command: docker exec -w /root/xdmod xdmod /root/.qa/scripts/build.sh
-      - run:
-          name: Make sure that the Test Dependencies are installed
-          command: docker exec -w /root/xdmod xdmod composer install --no-progress
-      - when:
-          condition:
-            and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-
-          steps:
-            - run:
-                name: Installing Code Coverage Dependencies
-                command: |
-                  docker exec -w /root/xdmod xdmod /root/xdmod/tools/dev/code_coverage/codeCoverageSetup.sh -b . -x /root/xdmod/tools/dev/code_coverage/start_xdebug.php -p /root/xdmod/tools/dev/code_coverage/combine_xdebug.php
-
       - run:
           name: Run Regression Tests
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> -w /root/xdmod xdmod /root/xdmod/tests/regression/runtests.sh
@@ -147,9 +144,12 @@ jobs:
           command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.string_os >>
       - when:
           condition:
-            and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+            or:
+              - and:
+                  - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+                  - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+              - or:
+                  - equal: [ "xdmod-time-trigger", << parameters.schedule-name >> ]
           steps:
             - run:
                 name: Process Code Coverage Data
@@ -211,11 +211,12 @@ jobs:
           path: ~/phpunit
       - when:
           condition:
-            and:
-              - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
-          #            and:
-          #              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-          #              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+            or:
+              - and:
+                - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+                - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
+              - or:
+                - equal: [ "xdmod-time-trigger", << parameters.schedule-name >> ]
           steps:
             - store_artifacts:
                 path: ~/code_coverage
