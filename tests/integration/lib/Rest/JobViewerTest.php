@@ -26,12 +26,14 @@ class JobViewerTest extends BaseTest
             'nodecount',
             'pi',
             'fieldofscience',
+            'pi_institution',
             'qos',
             'queue',
             'resource',
             'resource_type',
             'username',
-            'person'
+            'person',
+            'institution'
         );
     }
 

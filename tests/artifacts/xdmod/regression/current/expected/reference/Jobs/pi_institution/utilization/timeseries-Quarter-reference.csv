@@ -1,0 +1,11 @@
+title
+"Screwdriver CPU Utilization (%): by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[screw - Screwdriver] Screwdriver CPU Utilization (%)","[wrench - Wrench] Screwdriver CPU Utilization (%)"
+"2016 Q4",11.2943,5.9886
+"2017 Q1",0.1392,0.0372
+---------

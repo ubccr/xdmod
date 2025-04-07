@@ -1,0 +1,12 @@
+title
+"Job Size: Per Job (Core Count): by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+"Unknown - Unknown Organization",30.6232,4.345849862512311
+"wrench - Wrench",9.4745,0.011385096302188947
+"screw - Screwdriver",6.1043,0.08117297225804496
+---------

@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[wrench - Wrench] Job Size: Weighted By CPU Hours (Core Count)","[screw - Screwdriver] Job Size: Weighted By CPU Hours (Core Count)"
+2016,76.0751,67.1408
+2017,34.5793,20.3035
+---------

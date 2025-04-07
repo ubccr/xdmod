@@ -1,0 +1,12 @@
+title
+"Number of Jobs Submitted: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","Number of Jobs Submitted"
+"wrench - Wrench",53224
+"screw - Screwdriver",15950
+"Unknown - Unknown Organization",69
+---------

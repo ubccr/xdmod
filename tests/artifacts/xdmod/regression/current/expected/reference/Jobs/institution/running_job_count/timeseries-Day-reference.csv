@@ -1,0 +1,20 @@
+title
+"Number of Jobs Running: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[wrench - Wrench] Number of Jobs Running","[screw - Screwdriver] Number of Jobs Running","[Unknown - Unknown Organization] Number of Jobs Running"
+2016-12-22,0,2,0
+2016-12-23,0,3,0
+2016-12-24,0,3,0
+2016-12-25,0,6,0
+2016-12-26,0,6,5
+2016-12-27,6,31,5
+2016-12-28,27,407,16
+2016-12-29,295,1422,23
+2016-12-30,19415,9412,28
+2016-12-31,22602,6946,55
+2017-01-01,13931,2581,54
+---------
