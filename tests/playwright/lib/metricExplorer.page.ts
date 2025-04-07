@@ -90,6 +90,7 @@ class MetricExplorer extends BasePage{
         await expect(this.containerLocator).toBeVisible();
         await expect(this.catalogContainerLocator).toBeVisible();
         await expect(this.collapseButtonLocator).toBeVisible();
+        await this.clickSelector(this.logo);
     }
 
     /**

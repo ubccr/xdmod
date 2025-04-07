@@ -85,6 +85,7 @@ test.describe('Metric Explorer', async () => {
             const xdmod = new XDMoD(page, baseUrl);
             await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await xdmod.selectTab('metric_explorer');
+            await me.waitForLoaded();
             await test.step('Add data via metric catalog', async () => {
                 await me.createNewChart(chartName, 'Timeseries', 'Line');
                 await page.click(me.selectors.toolbar.configureTime.frameButton);
@@ -103,6 +104,7 @@ test.describe('Metric Explorer', async () => {
             const xdmod = new XDMoD(page, baseUrl);
             await loginPage.login(roles['cd'].username, roles['cd'].password, (roles['cd'].givenname + " " + roles['cd'].surname));
             await xdmod.selectTab('metric_explorer');
+            await me.waitForLoaded();
             await test.step('Add Filters in Toolbar', async () => {
                 await me.loadExistingChartByName(chartName);
                 await page.locator(me.chart.titleByText(chartName)).waitFor({state:'visible'});
