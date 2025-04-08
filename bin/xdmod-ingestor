@@ -275,7 +275,7 @@ function main()
                 }
 
                 if ($datatypeValue == 'storage') {
-                    $dwi->ingestStorageData();
+                    $dwi->ingestStorageData($startDate, $endDate);
                 }
             }
 
