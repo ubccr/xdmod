@@ -291,12 +291,12 @@ function updatePeople(array $people)
         }
 
         list($username, $firstName, $lastName) = $person;
-        
+
         $personOrganization = array_key_exists(3, $person) ? $person[3] : null;
         $personOrganizationId = array_key_exists($personOrganization, $organizations) ? $organizations[$personOrganization] : -1;
-        
+
         $lowerUsername = strtolower($username);
-        
+
         if (isset($personIdForUsername[$lowerUsername])) {
             $personId = $personIdForUsername[$lowerUsername];
             updatePerson($personId, $firstName, $lastName, $personOrganizationId);
