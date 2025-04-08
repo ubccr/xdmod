@@ -1,8 +1,15 @@
 
-<p><h1>SUPReMM Program</h1></p>
+<p><h1>The Job-Level Performance Realm</h1></p>
 <br>
-<p>The SUPReMM program is designed integrate job level performance data into the XDMoD framework so it is available for detailed analysis.  Initially an independently funded NSF program, SUPReMM was subsequently merged into the TAS program.  The goal of the SUPReMM program is to develop the TACC_Stats and Lariat data sources and pipe this data into the XDMoD data warehouse.</p>
-<p>Lariat captures application information at the time that jobs are launched.  TACC_Stats uses collectors sampled at the beginning and end of every job and at 10 minute intervals to provide a wide variety of job performance information including memory, I/O file data, CPU data and network data.  Accordingly, with this data system personnel will have at their fingertips detailed performance data for every job that runs on the HPC resource.  Starting with XDMoD 4.0, this job performance information has been available in the XDMoD SUPReMM data realm.</p>
+<p>
+The Job-Level Performance (SUPReMM) realm provides job-level performance data for detailed analysis in the XDMoD user interface or through the <a href="https://github.com/ubccr/xdmod-data">Data Analytics Framework</a>. This information is populated by cross-referencing jobs from XDMoD's data warehouse with node-level performance data running on compute nodes.
+</p>
+<p>
+Node-level performance data are gathered through collection software such as Performance Co-Pilot (PCP), Prometheus, or HPCPerfStats running on compute nodes. These collectors sample node hardware information at a regularly configured interval and provide a wide variety of job performance information including memory, I/O file data, CPU data and network data.
+</p>
+<p>
+More information about setup and usage can be found in the <a href="https://supremm.xdmod.org">documentation</a>.
+</p>
 <br>
 <table cellpadding=10>
 <tr>
