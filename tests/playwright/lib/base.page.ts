@@ -1,4 +1,5 @@
 import {expect, Locator, Page} from "@playwright/test";
+import config from "../playwright.config";
 
 export class BasePage {
     readonly page: Page;
@@ -10,6 +11,9 @@ export class BasePage {
         this.page = page;
         this.maskSelector = '.ext-el-mask-msg';
         this.mask = page.locator(this.maskSelector);
+        if (baseUrl == undefined || baseUrl.length === 0) {
+            baseUrl = config.use.baseURL
+        }
         this.baseUrl = baseUrl;
     }
 
