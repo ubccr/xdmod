@@ -224,11 +224,12 @@ class UserControllerProvider extends BaseControllerProvider
     {
         try {
             $user = $this->authorize($request);
-        } catch (UnauthorizedHttpException | AccessDeniedException $e) {
+        } catch (UnauthorizedHttpException  $e) {
             return new RedirectResponse("/");
-        }
+        } //catch AccessDeniedException $e
 
         $secretKey  = \xd_utilities\getConfiguration('json_web_token', 'secret_key');
+        $audience   = \xd_utilities\getConfiguration('general', 'site_address');
         $tokenId    = base64_encode(random_bytes(16));
         $issuedAt   = new \DateTimeImmutable();
         $expire     = $issuedAt->modify('+6 minutes')->getTimestamp();
@@ -237,7 +238,8 @@ class UserControllerProvider extends BaseControllerProvider
             'iat'  => $issuedAt->getTimestamp(),
             'jti'  => $tokenId,
             'exp'  => $expire,
-            'upn'  => $user->getUsername(),
+            'sub'  => $user->getUsername(),
+            'aud'  => $audience
         ];
 
         $jwt = JWT::encode(
@@ -246,7 +248,7 @@ class UserControllerProvider extends BaseControllerProvider
             'HS256'
         );
 
-        $cookie = new Cookie('xdmod_jwt', $jwt);
+        $cookie = new Cookie('xdmod_jupyterhub_token', $jwt);
         $jupyterhubUrl = \xd_utilities\getConfiguration('jupyterhub', 'url');
         $response = $app->redirect($jupyterhubUrl);
         $response->headers->setCookie($cookie);
