@@ -50,11 +50,12 @@ class Tokens
         if (false === $delimPosition) {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
-                'Invalid token format.'
+                'Invalid API token.'
             );
         }
         $userId = substr($rawToken, 0, $delimPosition);
         $token = substr($rawToken, $delimPosition + 1);
+
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
         SELECT
@@ -65,7 +66,6 @@ class Tokens
             JOIN moddb.Users u ON u.id = ut.user_id
         WHERE u.id = :user_id and u.account_is_active = 1
 SQL;
-
         $row = $db->query($query, array(':user_id' => $userId));
 
         if (count($row) === 0) {
@@ -84,7 +84,7 @@ SQL;
         }
 
         // finally check that the provided token matches its stored hash.
-        if (!password_verify($password, $expectedToken)) {
+        if (!password_verify($token, $expectedToken)) {
             throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
         }
 
