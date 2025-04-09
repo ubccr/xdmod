@@ -37,8 +37,24 @@ class Tokens
      *                                   if the stored token for $userId has expired, or
      *                                   if the provided $token doesn't match the stored hash.
      */
-    public static function authenticate($userId, $password)
+    public static function authenticate($authorizationHeader)
     {
+        if (0 !== strpos($authorizationHeader, Tokens::HEADER_KEY . ' ')) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                'No Token Provided.'
+            );
+        }
+        $rawToken = substr($authorizationHeader, strlen(Tokens::HEADER_KEY) + 1);
+        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
+        if (false === $delimPosition) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                'Invalid token format.'
+            );
+        }
+        $userId = substr($rawToken, 0, $delimPosition);
+        $token = substr($rawToken, $delimPosition + 1);
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
         SELECT
@@ -67,7 +83,7 @@ SQL;
             throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'The API Token has expired.');
         }
 
-        // finally check that the provided token matches it's stored hash.
+        // finally check that the provided token matches its stored hash.
         if (!password_verify($password, $expectedToken)) {
             throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
         }
@@ -85,66 +101,13 @@ SQL;
      */
     public static function authenticateToken()
     {
-
-        $rawToken = self::getRawToken();
-        if (empty($rawToken)) {
-            // we want to the token authentication to be optional so instead of throwing an exception we return null.
-            // This allows us to provide token authentication to existing endpoints without impeding their normal use.
-            return null;
-        }
-
-        // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
-        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
-        if ($delimPosition === false) {
-            // Same as above, token authentication is optional so we return null instead of throwing an exception.
-            return null;
-        }
-
-        $userId = substr($rawToken, 0, $delimPosition);
-        $token = substr($rawToken, $delimPosition + 1);
-
-        try {
-            return Tokens::authenticate($userId, $token);
-        } catch (Exception $e) {
-            // and again, same as above.
-            return null;
-        }
-    }
-
-    /**
-     * Attempt to retrieve the raw API Token from one of the following sources:
-     *   - Headers
-     *   - GET Parameters
-     *   - POST Parameters
-     *
-     * @return null|string returns the api token if found else it returns null.
-     */
-    private static function getRawToken()
-    {
-        // Try to find the token in the `Authorization` header.
         $headers = getallheaders();
-        if (!empty($headers['Authorization'])) {
-            $authorizationHeader = $headers['Authorization'];
-            if (is_string($authorizationHeader) && strpos($authorizationHeader, Tokens::HEADER_KEY) !== false) {
-                // The format for including the token in the header is slightly different then when included as a get or
-                // post parameter. Here the value will be in the form: `Bearer <token>`
-                return substr(
-                    $authorizationHeader,
-                    strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1
-                );
-            }
-
+        if (empty($headers['Authorization'])) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                'No Token Provided.'
+            );
         }
-
-        // If it's not in the headers, try $_GET
-        if (isset($_GET[Tokens::HEADER_KEY]) && is_string($_GET[Tokens::HEADER_KEY])) {
-            return $_GET[Tokens::HEADER_KEY];
-        }
-
-        if (isset($_POST[Tokens::HEADER_KEY]) && is_string($_POST[Tokens::HEADER_KEY])) {
-            return $_POST[Tokens::HEADER_KEY];
-        }
-
-        return null;
+        return Tokens::authenticate($headers['Authorization']);
     }
 }
