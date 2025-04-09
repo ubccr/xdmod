@@ -2,6 +2,7 @@
 
 namespace Models\Services;
 
+use CCR\Log;
 use Exception;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -37,7 +38,7 @@ class Tokens
      *                                   if the stored token for $userId has expired, or
      *                                   if the provided $token doesn't match the stored hash.
      */
-    public static function authenticate($authorizationHeader)
+    public static function authenticate($authorizationHeader, $request = null)
     {
         if (0 !== strpos($authorizationHeader, Tokens::HEADER_KEY . ' ')) {
             throw new UnauthorizedHttpException(
@@ -87,6 +88,29 @@ SQL;
         if (!password_verify($token, $expectedToken)) {
             throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
         }
+
+        // Log the request so we can count it in our reporting of usage of the
+        // Data Analytics Framework.
+        $logger = Log::factory(
+            'daf',
+            [
+                'console' => false,
+                'file' => false,
+                'mail' => false
+            ]
+        );
+        $logger->info(
+            'User '
+            . $dbUserId
+            . ' requested '
+            . (
+                !is_null($request)
+                ? $request->getPathInfo()
+                : $_SERVER['SCRIPT_NAME']
+            )
+            . ' with API token using '
+            . $_SERVER['HTTP_USER_AGENT']
+        );
 
         // and if we've made it this far we can safely return the requested Users data.
         return XDUser::getUserByID($dbUserId);
