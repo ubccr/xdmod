@@ -116,7 +116,6 @@ $jupyterhubConfigured = xd_utilities\configurationSectionExists('jupyterhub');
     <title><?php print $page_title; ?></title>
 
     <link rel="shortcut icon" href="gui/icons/favicon_static.ico"/>
-    <script type="text/javascript" src="gui/lib/internet-explorer-polyfills.js"></script>
     <?php if (!$userLoggedIn): ?>
         <script type="text/javascript">
             /**
@@ -124,7 +123,6 @@ $jupyterhubConfigured = xd_utilities\configurationSectionExists('jupyterhub');
              **/
             var XDMoD = XDMoD || {};
             XDMoD.referer = document.location.hash || 'main_tab_panel#tg_summary' // <-- TODO: HORRIBLE HORRIBLE HACK, FIX THIS;
-            console.log(XDMoD.referer);
         </script>
     <?php endif; ?>
     <?php
@@ -220,12 +218,6 @@ $jupyterhubConfigured = xd_utilities\configurationSectionExists('jupyterhub');
 
     <link rel="stylesheet" type="text/css" href="gui/css/MetricExplorer.css"/>
     <link rel="stylesheet" type="text/css" href="gui/css/common.css"/>
-    <!--[if lte IE 9]>
-    <link rel="stylesheet" type="text/css" href="gui/css/common_ie9.css"/>
-    <![endif]-->
-    <!--[if lte IE 8]>
-    <link rel="stylesheet" type="text/css" href="gui/css/common_ie8.css"/>
-    <![endif]-->
     <?php if (!$userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/LoginPrompt.css"/>
     <?php endif; ?>
