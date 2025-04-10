@@ -766,7 +766,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             );
         }
         $authorizationHeader = $request->headers->get('Authorization');
-        return Tokens::authenticate($authorizationHeader, $request);
+        return Tokens::authenticate($authorizationHeader, $request->getPathInfo());
     }
 
     /**

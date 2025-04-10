@@ -25,20 +25,17 @@ class Tokens
     const DELIMITER = '.';
 
     /**
-     * Perform token authentication for the provided $userId & $token combo. If the authentication is successful, an
-     * XDUser object will be returned for the provided $userId. If not, an exception will be thrown.
+     * Perform token authentication given an the value of an Authorization header.
      *
-     * @param int|string $userId   The id used to look up the the users hashed token.
-     * @param string     $password The value to be checked against the retrieved hashed token.
+     * @param string $authorizationHeader
+     * @param string $endpoint | null $endpoint the endpoint being requested, used only for logging.
      *
-     * @return XDUser for the provided $userId, if the authentication is successful else an exception will be thrown.
+     * @return XDUser the authenticated user.
      *
      * @throws Exception                 if unable to retrieve a database connection.
-     * @throws UnauthorizedHttpException if no token can be found for the provided $userId,
-     *                                   if the stored token for $userId has expired, or
-     *                                   if the provided $token doesn't match the stored hash.
+     * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    public static function authenticate($authorizationHeader, $request = null)
+    public static function authenticate($authorizationHeader, $endpoint = null)
     {
         if (0 !== strpos($authorizationHeader, Tokens::HEADER_KEY . ' ')) {
             throw new UnauthorizedHttpException(
