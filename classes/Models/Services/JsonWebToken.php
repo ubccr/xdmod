@@ -5,9 +5,6 @@ namespace Models\Services;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-use XDUser;
 
 class JsonWebToken
 {
@@ -36,11 +33,11 @@ class JsonWebToken
         $expire     = $issuedAt->modify('+6 minutes')->getTimestamp();
 
         $claims = [
-            self::claimKeyIssuedAtTime  => $issuedAt->getTimestamp(),
-            self::claimKeyTokenId       => base64_encode(random_bytes(16)),
-            self::claimKeyExpiration    => $expire,
-            self::claimKeyAudience      => $xdmodURL,
-            self::claimKeyIssuer        => $xdmodURL
+            self::$claimKeyIssuedAtTime  => $issuedAt->getTimestamp(),
+            self::$claimKeyTokenId       => base64_encode(random_bytes(16)),
+            self::$claimKeyExpiration    => $expire,
+            self::$claimKeyAudience      => $xdmodURL,
+            self::$claimKeyIssuer        => $xdmodURL
         ];
 
         $this->addClaims($claims);
@@ -54,9 +51,10 @@ class JsonWebToken
 
     public function decode($jwt) {
         try {
-            $decodedToken = JWT::decode($jwt, $this->_secretKey);
+            $secretKey = new Key($this->_secretKey, self::$signingAlgorithm);
+            $decodedToken = JWT::decode($jwt, $secretKey);
         } catch (Exception $e) {
-            throw new Exception('Error while decoding');
+            throw new Exception('Error while decoding: '.$e->getMessage());
         }
         $decodedToken = (array) $decodedToken;
         $this->addClaims($decodedToken);
