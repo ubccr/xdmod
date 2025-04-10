@@ -101,11 +101,7 @@ SQL;
             'User '
             . $dbUserId
             . ' requested '
-            . (
-                !is_null($request)
-                ? $request->getPathInfo()
-                : $_SERVER['SCRIPT_NAME']
-            )
+            . (!is_null($endpoint) ? $endpoint : $_SERVER['SCRIPT_NAME'])
             . ' with API token using '
             . $_SERVER['HTTP_USER_AGENT']
         );
