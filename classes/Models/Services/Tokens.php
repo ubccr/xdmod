@@ -3,10 +3,10 @@
 namespace Models\Services;
 
 use Exception;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+
+use Models\Services\JsonWebToken;
 use XDUser;
 
 /**
@@ -89,18 +89,9 @@ SQL;
      */
     private static function authenticateJSONWebToken($jwt)
     {
-        $configuredSecretKey = \xd_utilities\getConfiguration('json_web_token', 'secret_key');
-        $secretKey = new Key($configuredSecretKey, 'HS256');
-        $decodedToken = JWT::decode($jwt, $secretKey);
-
-        // Cast to PHP array to get token claims
-        $decodedToken = (array) $decodedToken;
-
-        // Claims
-        $issuedAtTime   = $decodedToken['iat'];
-        $jwtID          = $decodedToken['jti'];
-        $expiresOn      = $decodedToken['exp'];
-        $username       = $decodedToken['upn'];
+        $jsonWebToken = new JsonWebToken();
+        $jsonWebToken->decode($jwt);
+        $username = $jsonWebToken->getClaim(JsonWebToken::claimKeySubject);
 
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
@@ -118,7 +109,6 @@ SQL;
         } elseif ($rows > 1) {
             throw new UnauthorizedHttpException('', 'Invalid User');
         }
-
         $dbUsername = $row[0]['username'];
 
         return XDUser::getUserByUserName($dbUsername);

@@ -4,7 +4,7 @@ namespace Rest\Controllers;
 
 use CCR\DB;
 use Configuration\Configuration;
-use Firebase\JWT\JWT;
+use Models\Services\JsonWebToken;
 use Models\Services\Organizations;
 use PhpOffice\PhpWord\Exception\Exception;
 use Silex\Application;
@@ -226,29 +226,14 @@ class UserControllerProvider extends BaseControllerProvider
             $user = $this->authorize($request);
         } catch (UnauthorizedHttpException  $e) {
             return new RedirectResponse("/");
-        } //catch AccessDeniedException $e
+        }
 
-        $secretKey  = \xd_utilities\getConfiguration('json_web_token', 'secret_key');
-        $audience   = \xd_utilities\getConfiguration('general', 'site_address');
-        $tokenId    = base64_encode(random_bytes(16));
-        $issuedAt   = new \DateTimeImmutable();
-        $expire     = $issuedAt->modify('+6 minutes')->getTimestamp();
+        $username = $user->getUsername();
+        $usernameClaim = [JsonWebToken::claimKeySubject => $username];
+        $jsonWebToken = new JsonWebToken();
+        $jsonWebToken->addClaims($usernameClaim);
 
-        $tokenData = [
-            'iat'  => $issuedAt->getTimestamp(),
-            'jti'  => $tokenId,
-            'exp'  => $expire,
-            'sub'  => $user->getUsername(),
-            'aud'  => $audience
-        ];
-
-        $jwt = JWT::encode(
-            $tokenData,
-            $secretKey,
-            'HS256'
-        );
-
-        $cookie = new Cookie('xdmod_jupyterhub_token', $jwt);
+        $cookie = new Cookie('xdmod_jupyterhub_token', $jsonWebToken->encode());
         $jupyterhubUrl = \xd_utilities\getConfiguration('jupyterhub', 'url');
         $response = $app->redirect($jupyterhubUrl);
         $response->headers->setCookie($cookie);

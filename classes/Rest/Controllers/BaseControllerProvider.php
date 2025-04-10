@@ -767,7 +767,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
         $authenticatedUser = Tokens::authenticateRawToken($rawToken);
         if ($authenticateUser) {
-            return $authenticatedUser
+            return $authenticatedUser;
         } else {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
