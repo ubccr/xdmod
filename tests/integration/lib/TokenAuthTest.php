@@ -162,7 +162,7 @@ abstract class TokenAuthTest extends BaseTest
             } elseif ('token_required' === $input['authentication_type']) {
                 $messages = [
                     'empty_token' => 'No Token Provided.',
-                    'malformed_token' => 'Invalid token format.',
+                    'malformed_token' => 'Invalid API token.',
                     'invalid_token' => 'Invalid API token.',
                     'expired_token' => 'The API Token has expired.',
                     'revoked_token' => 'Invalid API token.'

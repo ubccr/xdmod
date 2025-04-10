@@ -572,18 +572,6 @@ layout: null
                     "code": 0
                 }
             },
-            "malformed-token": {
-                "value": {
-                    "success": false,
-                    "count": 0,
-                    "total": 0,
-                    "totalCount": 0,
-                    "results": [],
-                    "data": [],
-                    "message": "Invalid token format.",
-                    "code": 0
-                }
-            },
             "invalid-token": {
                 "value": {
                     "success": false,
@@ -3061,9 +3049,6 @@ layout: null
                                 "examples": {
                                     "empty-token": {
                                         "$ref": "#/components/examples/empty-token"
-                                    },
-                                    "malformed-token": {
-                                        "$ref": "#/components/examples/malformed-token"
                                     },
                                     "invalid-token": {
                                         "$ref": "#/components/examples/invalid-token"
