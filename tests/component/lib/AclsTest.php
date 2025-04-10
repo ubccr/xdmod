@@ -306,6 +306,7 @@ TXT;
             'resource',
             'resource_type',
             'username',
+            'provider'
         );
 
         $stats = array(

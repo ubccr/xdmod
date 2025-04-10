@@ -48,6 +48,16 @@
               }
           },
           {
+            "schema": "modw",
+            "name": "serviceprovider",
+            "alias": "sp",
+            "join": {
+                "primaryKey": "organization_id",
+                "foreignTableAlias": "sr",
+                "foreignKey": "service_provider"
+            }
+          },
+          {
 
               "schema": "modw",
               "name": "systemaccount",
@@ -136,6 +146,14 @@
               "documentation": "The resource that ran the job.",
               "batchExport": true
           },
+          {
+            "name": "Service Provider",
+            "tableAlias": "sp",
+            "column": "long_name",
+            "group": "Administration",
+            "documentation": "The organization of the resource that ran the job.",
+            "batchExport": true
+        },
           {
               "name": "System Username",
               "tableAlias": "sa",

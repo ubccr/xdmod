@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Year,"[screw] GPU Node Hours: Allocated"
-2016,249600.0000
-2017,7008000.0000
+Year,"[screw] GPU Node Hours: Allocated","[wrench] GPU Node Hours: Allocated"
+2016,249600.0000,0.0000
+2017,7008000.0000,0.0000
 ---------

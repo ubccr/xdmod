@@ -88,6 +88,7 @@ class UsageExplorerJobsTest extends \PHPUnit\Framework\TestCase
             'person',
             'pi',
             'queue',
+            'provider',
             'resource',
             'resource_type',
             'username',

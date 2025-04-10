@@ -1,0 +1,11 @@
+title
+"Job Size: Min (Core Count): by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[screw] Job Size: Min (Core Count)","[wrench] Job Size: Min (Core Count)"
+2016,1,1
+2017,1,1
+---------

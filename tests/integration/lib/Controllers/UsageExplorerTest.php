@@ -1209,6 +1209,11 @@ END;
         $arrays = array();
         foreach (array($noGroupBy, $withGroupBy) as $groupParams) {
             foreach (array($noFilter, $withFilter) as $filterParams) {
+
+                if($filterParams[0] === 'provider_filter' && $groupParams[0] === 'resource') {
+                    $groupParams[2] = array('robertson', 'frearson', 'mortorq', 'phillips');
+                }
+
                 foreach (array($emptyData, $nonEmptyData) as $emptinessParams) {
                     $arrays[] = array_merge(
                         $groupParams,

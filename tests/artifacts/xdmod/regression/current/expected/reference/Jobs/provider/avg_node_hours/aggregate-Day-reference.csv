@@ -1,0 +1,11 @@
+title
+"Node Hours: Per Job: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Service Provider","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+screw,2.48851983,0.04455091706245642
+wrench,0.61345852,0.025732433486385795
+---------
