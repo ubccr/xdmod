@@ -1,0 +1,10 @@
+title
+"Number of Sessions Started: by User Institution"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[screw - Screwdriver] Number of Sessions Started","[Unknown - Unknown Organization] Number of Sessions Started","[wrench - Wrench] Number of Sessions Started"
+2018,36,11,6
+---------

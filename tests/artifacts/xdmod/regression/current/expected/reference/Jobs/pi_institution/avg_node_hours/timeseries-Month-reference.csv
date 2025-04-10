@@ -1,0 +1,11 @@
+title
+"Node Hours: Per Job: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[wrench - Wrench] Node Hours: Per Job","[screw - Screwdriver] Node Hours: Per Job"
+2016-12,2.55858205,2.45038365
+2017-01,2.09133228,1.05141368
+---------

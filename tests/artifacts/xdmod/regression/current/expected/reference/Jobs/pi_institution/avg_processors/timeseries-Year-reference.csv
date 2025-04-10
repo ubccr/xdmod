@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[screw - Screwdriver] Job Size: Per Job (Core Count)","[wrench - Wrench] Job Size: Per Job (Core Count)"
+2016,8.5423,8.5136
+2017,9.0465,12.4265
+---------

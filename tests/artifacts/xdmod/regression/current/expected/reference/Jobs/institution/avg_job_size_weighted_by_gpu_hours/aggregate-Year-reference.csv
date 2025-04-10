@@ -1,0 +1,12 @@
+title
+"Job Size: Weighted By GPU Hours (GPU Count): by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","Job Size: Weighted By GPU Hours (GPU Count)"
+"screw - Screwdriver",12.0000
+"Unknown - Unknown Organization",0.0000
+"wrench - Wrench",0.0000
+---------

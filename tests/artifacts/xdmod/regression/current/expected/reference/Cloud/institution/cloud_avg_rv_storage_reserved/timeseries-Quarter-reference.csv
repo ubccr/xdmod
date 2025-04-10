@@ -1,0 +1,10 @@
+title
+"Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes): by User Institution"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[Unknown - Unknown Organization] Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes)","[screw - Screwdriver] Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes)","[wrench - Wrench] Average Root Volume Storage Reserved Weighted By Wall Hours (Bytes)"
+"2018 Q2",21474836480.0000,21474836480.0000,21474836480.0000
+---------

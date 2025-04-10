@@ -1,0 +1,10 @@
+title
+"Number of Sessions Active: by User Institution"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[screw - Screwdriver] Number of Sessions Active","[Unknown - Unknown Organization] Number of Sessions Active","[wrench - Wrench] Number of Sessions Active"
+"2018 Q2",36,11,6
+---------

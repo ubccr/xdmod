@@ -1,0 +1,11 @@
+title
+"Wait Hours: Total: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Institution","Wait Hours: Total"
+"screw - Screwdriver",303942.2531
+"wrench - Wrench",2403.1078
+---------

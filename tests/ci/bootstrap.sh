@@ -150,7 +150,7 @@ then
     fi
 
     sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
-    sudo -u xdmod xdmod-ingestor
+    sudo -u xdmod xdmod-ingestor --start-date "2016-12-01" --end-date "2022-01-01" --last-modified-start-date "2017-01-01 00:00:00"
     php $BASEDIR/scripts/create_xdmod_users.php
 
 fi
@@ -163,5 +163,19 @@ then
     ~/bin/services start
 
     expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
+
+    cat /etc/xdmod/organization.json | jq '.[1] |= .+ {"name": "Wrench", "abbrev": "wrench"}' > /etc/xdmod/organization2.json
+    jq . /etc/xdmod/organization2.json > /etc/xdmod/organization.json
+    rm -f /etc/xdmod/organization2.json
+
+    cat /etc/xdmod/resources.json | jq '[ .[] | if (.["resource"] == "pozidriv") then .["organization"] else empty end = "wrench"]' > /etc/xdmod/resources2.json
+    jq . /etc/xdmod/resources2.json > /etc/xdmod/resources.json
+    rm -f /etc/xdmod/resources2.json
+
+    sudo -u xdmod /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-organizations -p ingest-resources
+    sudo -u xdmod xdmod-ingestor --last-modified-start-date "2017-01-01 00:00:00"
+
+    sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
+    sudo -u xdmod xdmod-ingestor --start-date "2016-12-01" --end-date "2022-01-01" --last-modified-start-date "2017-01-01 00:00:00"
 
 fi

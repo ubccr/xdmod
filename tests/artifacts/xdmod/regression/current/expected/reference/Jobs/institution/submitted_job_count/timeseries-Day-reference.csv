@@ -1,0 +1,20 @@
+title
+"Number of Jobs Submitted: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[wrench - Wrench] Number of Jobs Submitted","[screw - Screwdriver] Number of Jobs Submitted","[Unknown - Unknown Organization] Number of Jobs Submitted"
+2016-12-22,0,1,0
+2016-12-23,0,1,0
+2016-12-24,0,0,0
+2016-12-25,0,1,0
+2016-12-26,0,0,5
+2016-12-27,1,17,0
+2016-12-28,0,368,11
+2016-12-29,208,995,3
+2016-12-30,18455,7200,5
+2016-12-31,19488,4586,37
+2017-01-01,11514,1516,4
+---------

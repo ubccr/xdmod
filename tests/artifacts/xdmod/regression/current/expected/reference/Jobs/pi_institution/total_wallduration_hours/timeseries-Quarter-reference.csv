@@ -1,0 +1,11 @@
+title
+"Wall Hours: Total: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[screw - Screwdriver] Wall Hours: Total","[wrench - Wrench] Wall Hours: Total"
+"2016 Q4",106351.9475,4846.2681
+"2017 Q1",16129.6203,648.9706
+---------

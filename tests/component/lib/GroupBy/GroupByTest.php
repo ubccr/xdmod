@@ -120,7 +120,7 @@ class GroupByTest extends \PHPUnit\Framework\TestCase
         $obj = $realm->getGroupByObject('person');
 
         $restrictions = array(
-            'name' => 'Avocet'
+            'name' => 'Moorhen'
         );
         $values = $obj->getAttributeValues($restrictions);
         $this->assertCount(1, $values, 'Number of person attributes returned with id = 552');

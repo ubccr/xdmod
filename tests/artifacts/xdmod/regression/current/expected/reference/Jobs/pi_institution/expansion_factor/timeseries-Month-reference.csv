@@ -1,0 +1,11 @@
+title
+"User Expansion Factor: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[screw - Screwdriver] User Expansion Factor","[wrench - Wrench] User Expansion Factor"
+2016-12,3.3144,1.9498
+2017-01,2.8311,1.2829
+---------

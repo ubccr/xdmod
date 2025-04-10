@@ -1,0 +1,11 @@
+title
+"CPU Hours: Per Job: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Institution","CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+"wrench - Wrench",30.99683231,4.594372527791987
+"screw - Screwdriver",9.69996071,0.7242219625236057
+---------

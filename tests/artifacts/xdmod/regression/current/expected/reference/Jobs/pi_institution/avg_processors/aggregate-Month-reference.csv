@@ -1,0 +1,11 @@
+title
+"Job Size: Per Job (Core Count): by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Institution","Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+"screw - Screwdriver",8.7432,0.022674697508974676
+"wrench - Wrench",8.6547,0.06969542024152343
+---------

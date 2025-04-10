@@ -1,0 +1,12 @@
+title
+"Number of Users: Active: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","Number of Users: Active"
+"screw - Screwdriver",60
+"wrench - Wrench",4
+"Unknown - Unknown Organization",2
+---------

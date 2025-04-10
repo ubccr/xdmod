@@ -1,0 +1,11 @@
+title
+"Node Hours: Per Job: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Unknown - Unknown Organization] Node Hours: Per Job","[screw - Screwdriver] Node Hours: Per Job","[wrench - Wrench] Node Hours: Per Job"
+"2016 Q4",53.53985897,7.38697256,0.67953800
+"2017 Q1",16.96820988,6.17461664,0.07204047
+---------

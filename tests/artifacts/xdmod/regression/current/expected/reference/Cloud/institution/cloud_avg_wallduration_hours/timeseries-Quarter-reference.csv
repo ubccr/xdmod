@@ -1,0 +1,10 @@
+title
+"Wall Hours: Per Session: by User Institution"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[wrench - Wrench] Wall Hours: Per Session","[screw - Screwdriver] Wall Hours: Per Session","[Unknown - Unknown Organization] Wall Hours: Per Session"
+"2018 Q2",36.50120370,27.87247685,0.56712121
+---------

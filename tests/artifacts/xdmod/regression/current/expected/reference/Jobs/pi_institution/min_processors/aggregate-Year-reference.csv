@@ -1,0 +1,11 @@
+title
+"Job Size: Min (Core Count): by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Institution","Job Size: Min (Core Count)"
+"screw - Screwdriver",1
+"wrench - Wrench",1
+---------

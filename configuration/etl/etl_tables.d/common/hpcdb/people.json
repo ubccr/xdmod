@@ -14,6 +14,7 @@
             {
                 "name": "organization_id",
                 "type": "int(11)",
+                "default": -1,
                 "nullable": false
             },
             {

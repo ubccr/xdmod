@@ -1,0 +1,12 @@
+title
+"Job Size: Normalized (% of Total Cores): by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","Job Size: Normalized (% of Total Cores)"
+"Unknown - Unknown Organization",0.382789855
+"wrench - Wrench",0.047372448
+"screw - Screwdriver",0.030521442
+---------

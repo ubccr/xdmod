@@ -1,0 +1,10 @@
+title
+"Core Hour Utilization (%): by User Institution"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[screw - Screwdriver] Core Hour Utilization (%)","[wrench - Wrench] Core Hour Utilization (%)","[Unknown - Unknown Organization] Core Hour Utilization (%)"
+2018,0.0903,0.0304,0.0004
+---------

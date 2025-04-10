@@ -1,0 +1,12 @@
+title
+"Node Hours: Per Job: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+"Unknown - Unknown Organization",63.71556763,
+"screw - Screwdriver",7.61716889,0.12967889962137522
+"wrench - Wrench",0.53209424,0.026355864291748545
+---------

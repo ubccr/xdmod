@@ -1,0 +1,11 @@
+title
+"Number of Jobs Submitted: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[wrench - Wrench] Number of Jobs Submitted","[screw - Screwdriver] Number of Jobs Submitted","[Unknown - Unknown Organization] Number of Jobs Submitted"
+2016-12,41710,14434,65
+2017-01,11514,1516,4
+---------

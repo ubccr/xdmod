@@ -1,0 +1,11 @@
+title
+"Logical Usage (Bytes): by PI Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[screw - Screwdriver] Logical Usage (Bytes)","[wrench - Wrench] Logical Usage (Bytes)","[Unknown - Unknown Organization] Logical Usage (Bytes)"
+"2018 Q4",482949577881600,171807841536000,146377911099733
+"2019 Q1",460872363929600,172410767334400,146219946982400
+---------

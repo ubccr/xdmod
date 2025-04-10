@@ -1,0 +1,12 @@
+title
+"Core Hour Utilization (%): by User Institution"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"User Institution","Core Hour Utilization (%)"
+"screw - Screwdriver",0.0903
+"wrench - Wrench",0.0304
+"Unknown - Unknown Organization",0.0004
+---------

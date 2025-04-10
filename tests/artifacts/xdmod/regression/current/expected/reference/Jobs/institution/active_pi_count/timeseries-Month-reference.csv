@@ -1,0 +1,11 @@
+title
+"Number of PIs: Active: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[screw - Screwdriver] Number of PIs: Active","[wrench - Wrench] Number of PIs: Active","[Unknown - Unknown Organization] Number of PIs: Active"
+2016-12,39,3,2
+2017-01,23,2,2
+---------

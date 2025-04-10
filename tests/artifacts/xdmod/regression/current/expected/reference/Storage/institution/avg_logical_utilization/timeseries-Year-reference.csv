@@ -1,0 +1,11 @@
+title
+"Quota Utilization: Logical (%): by User Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[Unknown - Unknown Organization] Quota Utilization: Logical (%)","[screw - Screwdriver] Quota Utilization: Logical (%)","[wrench - Wrench] Quota Utilization: Logical (%)"
+2018,100.3673,90.4782,55.4388
+2019,102.6442,84.5291,55.6517
+---------

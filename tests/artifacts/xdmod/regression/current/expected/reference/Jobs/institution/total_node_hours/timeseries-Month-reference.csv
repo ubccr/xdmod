@@ -1,0 +1,11 @@
+title
+"Node Hours: Total: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[screw - Screwdriver] Node Hours: Total","[wrench - Wrench] Node Hours: Total","[Unknown - Unknown Organization] Node Hours: Total"
+2016-12,106623.5619,28343.5300,3480.0908
+2017-01,15936.6856,1003.5958,916.2833
+---------

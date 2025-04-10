@@ -1,0 +1,12 @@
+title
+"Wall Hours: Total: by User Institution"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"User Institution","Wall Hours: Total"
+"screw - Screwdriver",1003.4092
+"wrench - Wrench",219.0072
+"Unknown - Unknown Organization",6.2383
+---------

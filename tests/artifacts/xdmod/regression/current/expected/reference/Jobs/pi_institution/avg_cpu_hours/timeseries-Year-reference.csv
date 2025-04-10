@@ -1,0 +1,11 @@
+title
+"CPU Hours: Per Job: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[wrench - Wrench] CPU Hours: Per Job","[screw - Screwdriver] CPU Hours: Per Job"
+2016,31.38239757,11.36391113
+2017,22.84111901,3.72527786
+---------

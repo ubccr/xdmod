@@ -1,0 +1,11 @@
+title
+"GPU Hours: Per Job: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[screw - Screwdriver] GPU Hours: Per Job","[wrench - Wrench] GPU Hours: Per Job"
+"2016 Q4",0.00938229,0.00000000
+"2017 Q1",0.00256566,0.00000000
+---------

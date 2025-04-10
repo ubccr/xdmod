@@ -1,0 +1,11 @@
+title
+"CPU Hours: Total: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[screw - Screwdriver] CPU Hours: Total","[wrench - Wrench] CPU Hours: Total","[Unknown - Unknown Organization] CPU Hours: Total"
+2016,409653.7719,316394.9472,44727.2797
+2017,49813.8900,10393.6925,9572.2556
+---------

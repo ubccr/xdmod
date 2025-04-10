@@ -1,0 +1,11 @@
+title
+"Job Size: Min (Core Count): by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[Unknown - Unknown Organization] Job Size: Min (Core Count)","[screw - Screwdriver] Job Size: Min (Core Count)","[wrench - Wrench] Job Size: Min (Core Count)"
+2016-12,1,1,1
+2017-01,8,1,1
+---------

@@ -1,0 +1,11 @@
+title
+"Number of Users: Active: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[screw - Screwdriver] Number of Users: Active","[wrench - Wrench] Number of Users: Active","[Unknown - Unknown Organization] Number of Users: Active"
+"2016 Q4",60,4,2
+"2017 Q1",33,3,2
+---------
