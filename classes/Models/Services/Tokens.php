@@ -91,7 +91,7 @@ SQL;
     {
         $jsonWebToken = new JsonWebToken();
         $jsonWebToken->decode($jwt);
-        $username = $jsonWebToken->getClaim(JsonWebToken::$claimKeySubject);
+        $username = $jsonWebToken->getClaim(JsonWebToken::claimKeySubject);
 
         $db = \CCR\DB::factory('database');
         $query = <<<SQL

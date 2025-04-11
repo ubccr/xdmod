@@ -8,15 +8,14 @@ use Firebase\JWT\Key;
 
 class JsonWebToken
 {
+    const claimKeyIssuedAtTime = 'iat';
+    const claimKeyTokenId      = 'jti';
+    const claimKeyExpiration   = 'exp';
+    const claimKeySubject      = 'sub';
+    const claimKeyAudience     = 'aud';
+    const claimKeyIssuer       = 'iss';
+
     public static $signingAlgorithm = 'HS256';
-
-    public static $claimKeyIssuedAtTime = 'iat';
-    public static $claimKeyTokenId      = 'jti';
-    public static $claimKeyExpiration   = 'exp';
-    public static $claimKeySubject      = 'sub';
-    public static $claimKeyAudience     = 'aud';
-    public static $claimKeyIssuer       = 'iss';
-
     private $_claimsSet;
     private $_secretKey;
 
@@ -33,11 +32,11 @@ class JsonWebToken
         $expire     = $issuedAt->modify('+6 minutes')->getTimestamp();
 
         $claims = [
-            self::$claimKeyIssuedAtTime  => $issuedAt->getTimestamp(),
-            self::$claimKeyTokenId       => base64_encode(random_bytes(16)),
-            self::$claimKeyExpiration    => $expire,
-            self::$claimKeyAudience      => $xdmodURL,
-            self::$claimKeyIssuer        => $xdmodURL
+            self::claimKeyIssuedAtTime  => $issuedAt->getTimestamp(),
+            self::claimKeyTokenId       => base64_encode(random_bytes(16)),
+            self::claimKeyExpiration    => $expire,
+            self::claimKeyAudience      => $xdmodURL,
+            self::claimKeyIssuer        => $xdmodURL
         ];
 
         $this->addClaims($claims);

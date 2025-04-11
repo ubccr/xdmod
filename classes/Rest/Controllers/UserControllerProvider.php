@@ -229,7 +229,7 @@ class UserControllerProvider extends BaseControllerProvider
         }
 
         $username = $user->getUsername();
-        $usernameClaim = [JsonWebToken::$claimKeySubject => $username];
+        $usernameClaim = [JsonWebToken::claimKeySubject => $username];
         $jsonWebToken = new JsonWebToken();
         $jsonWebToken->addClaims($usernameClaim);
 
