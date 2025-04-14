@@ -1,6 +1,6 @@
 The "Job Size: Normalized" statistic in the Jobs realm was removed from the default list of statistics in version 11.5.0 of Open XDMoD because the values of the statistic were incorrect if the resource size changed during the time period of the dataset. The values of the statistic were also not physically meaningful except when grouping or filtering by a single resource.
 
-The recommended way to report on this type of statistic in Open XDMoD 11.5+ is to use the Data Analytics Framework to compute the normalization factor. However, the "Job Size: Normalized" statistic can be restored to the  Open XDMoD portal by making the following changes to  configuration files in your installation of Open XDMoD. For an RPM-based install, these files are located in `/etc/xdmod`. For a source code install they are located in the`/etc` directory under the installation location.
+The recommended way to report on this type of statistic in Open XDMoD 11.5+ is to use the [Data Analytics Framework](data-analytics-framework.md) to fetch data from your Open XDMoD portal and compute the normalization factor. However, the "Job Size: Normalized" statistic can also be restored to your Open XDMoD portal by making the following changes to configuration files in your installation of Open XDMoD.
 
 1. Add the following to `datawarehouse.d/ref/Jobs-statistics.json`:
 ```json
