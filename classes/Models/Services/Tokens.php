@@ -127,8 +127,10 @@ SQL;
      * This function is a stop-gap that is meant to be used to protect controller endpoints until they can be moved to
      * the new REST stack.
      *
-     * @return XDUser|null if the authentication is successful then an XDUser instance for the authenticated user will
-     * be returned, if the authentication is not successful then null will be returned.
+     * @return XDUser the authenticated user.
+     *
+     * @throws Exception                 if unable to retrieve a database connection.
+     * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
     public static function authenticateToken()
     {
