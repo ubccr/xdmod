@@ -28,7 +28,7 @@ class Tokens
      * Perform token authentication given the value of an Authorization header.
      *
      * @param string $authorizationHeader
-     * @param string $endpoint | null $endpoint the endpoint being requested, used only for logging.
+     * @param string | null $endpoint the endpoint being requested, used only for logging.
      *
      * @return XDUser the authenticated user.
      *
