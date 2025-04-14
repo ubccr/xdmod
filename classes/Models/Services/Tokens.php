@@ -24,6 +24,10 @@ class Tokens
      */
     const DELIMITER = '.';
 
+    const MISSING_TOKEN_MESSAGE = 'No API token provided.';
+    const INVALID_TOKEN_MESSAGE = 'Invalid API token.';
+    const EXPIRED_TOKEN_MESSAGE = 'API token has expired.';
+
     /**
      * Perform token authentication given the value of an Authorization header.
      *
@@ -40,7 +44,7 @@ class Tokens
         if (0 !== strpos($authorizationHeader, Tokens::HEADER_KEY . ' ')) {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
-                'No Token Provided.'
+                Tokens::MISSING_TOKEN_MESSAGE
             );
         }
         $rawToken = substr($authorizationHeader, strlen(Tokens::HEADER_KEY) + 1);
@@ -48,7 +52,7 @@ class Tokens
         if (false === $delimPosition) {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
-                'Invalid API token.'
+                Tokens::INVALID_TOKEN_MESSAGE
             );
         }
         $userId = substr($rawToken, 0, $delimPosition);
@@ -68,7 +72,10 @@ SQL;
         $row = $db->query($query, array(':user_id' => $userId));
 
         if (count($row) === 0) {
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::INVALID_TOKEN_MESSAGE
+            );
         }
 
         $expectedToken = $row[0]['token'];
@@ -79,12 +86,18 @@ SQL;
         $now = new \DateTime();
         $expires = new \DateTime($expiresOn);
         if ($expires < $now) {
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'The API Token has expired.');
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::EXPIRED_TOKEN_MESSAGE
+            );
         }
 
         // finally check that the provided token matches its stored hash.
         if (!password_verify($token, $expectedToken)) {
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::INVALID_TOKEN_MESSAGE
+            );
         }
 
         // Log the request so we can count it in our reporting of usage of the
@@ -123,7 +136,7 @@ SQL;
         if (empty($headers['Authorization'])) {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
-                'No Token Provided.'
+                Tokens::MISSING_TOKEN_MESSAGE
             );
         }
         return Tokens::authenticate($headers['Authorization']);

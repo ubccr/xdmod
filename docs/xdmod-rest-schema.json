@@ -568,7 +568,7 @@ layout: null
                     "totalCount": 0,
                     "results": [],
                     "data": [],
-                    "message": "No Token Provided.",
+                    "message": "No API token provided.",
                     "code": 0
                 }
             },
@@ -592,7 +592,7 @@ layout: null
                     "totalCount": 0,
                     "results": [],
                     "data": [],
-                    "message": "The API Token has expired.",
+                    "message": "API token has expired.",
                     "code": 0
                 }
             }

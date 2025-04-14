@@ -762,7 +762,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         if (!$request->headers->has('Authorization')) {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
-                'No Token Provided.'
+                Tokens::MISSING_TOKEN_MESSAGE
             );
         }
         $authorizationHeader = $request->headers->get('Authorization');
