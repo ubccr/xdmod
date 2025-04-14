@@ -2,7 +2,7 @@
 title: Data Analytics Framework
 ---
 
-The XDMoD Data Analytics Framework provides REST API access to the XDMoD data warehouse. Users can access the API programmatically using the [xdmod-data](https://github.com/ubccr/xdmod-data) package. To use the API, users must generate API Tokens for themselves through the portal interface.
+The XDMoD Data Analytics Framework provides REST API access to the XDMoD data warehouse. Users can access the API programmatically using the [xdmod-data](https://github.com/ubccr/xdmod-data) package. To use the API, users must generate API tokens for themselves through the portal interface.
 
 ## Configuration
 
@@ -19,7 +19,7 @@ expiration_interval = "6 months"
 
 ## API Token Generation
 
-Users should follow [these steps](https://github.com/ubccr/xdmod-data#api-token-access) to generate an API Token.
+Users should follow [these steps](https://github.com/ubccr/xdmod-data#api-token-access) to generate an API token.
 
 ## API Token Revocation
 
