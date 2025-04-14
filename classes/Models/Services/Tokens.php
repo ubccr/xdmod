@@ -25,7 +25,7 @@ class Tokens
     const DELIMITER = '.';
 
     /**
-     * Perform token authentication given an the value of an Authorization header.
+     * Perform token authentication given the value of an Authorization header.
      *
      * @param string $authorizationHeader
      * @param string $endpoint | null $endpoint the endpoint being requested, used only for logging.
