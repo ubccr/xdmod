@@ -1,5 +1,4 @@
 import {expect, Locator, Page} from "@playwright/test";
-import config from "../playwright.config";
 
 export class BasePage {
     readonly page: Page;
