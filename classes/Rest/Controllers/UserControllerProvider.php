@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -72,7 +73,7 @@ class UserControllerProvider extends BaseControllerProvider
         $controller->get("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::getCurrentAPIToken');
         $controller->post("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::createAPIToken');
         $controller->delete("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::revokeAPIToken');
-        $controller->get("$root/current/api/jsonwebtoken", '\Rest\Controllers\UserControllerProvider::createJSONWebToken');
+        $controller->get("$root/current/api/jwt-redirect", '\Rest\Controllers\UserControllerProvider::redirectWithJwt');
     }
 
     /**
@@ -220,12 +221,17 @@ class UserControllerProvider extends BaseControllerProvider
      * @param Application $app
      * @return RedirectResponse
      */
-    public function createJSONWebToken(Request $request, Application $app)
+    public function redirectWithJwt(Request $request, Application $app)
     {
+        $next = $this->getStringParam($request, 'next', true);
+        if (0 !== strpos($next, '/')) {
+            throw new BadRequestHttpException("Invalid 'next' parameter.");
+        }
+
         try {
             $user = $this->authorize($request);
         } catch (UnauthorizedHttpException  $e) {
-            return new RedirectResponse("/");
+            return new RedirectResponse('/#jwt-redirect?next=' . $next);
         }
 
         $username = $user->getUsername();
@@ -234,8 +240,7 @@ class UserControllerProvider extends BaseControllerProvider
         $jsonWebToken->addClaims($usernameClaim);
 
         $cookie = new Cookie('xdmod_jupyterhub_token', $jsonWebToken->encode());
-        $jupyterhubUrl = \xd_utilities\getConfiguration('jupyterhub', 'url');
-        $response = $app->redirect($jupyterhubUrl);
+        $response = $app->redirect($next);
         $response->headers->setCookie($cookie);
         return $response;
     }
