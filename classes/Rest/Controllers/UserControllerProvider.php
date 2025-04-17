@@ -245,7 +245,15 @@ class UserControllerProvider extends BaseControllerProvider
         $jsonWebToken = new JsonWebToken();
         $jsonWebToken->addClaims($usernameClaim);
 
-        $cookie = new Cookie('xdmod_jwt', $jsonWebToken->encode());
+        $cookie = new Cookie(
+            'xdmod_jwt',
+            $jsonWebToken->encode(),
+            strtotime('+30 seconds'),
+            '/',
+            null, // domain
+            true, // secure
+            true  // httpOnly
+        );
         $response = $app->redirect($next);
         $response->headers->setCookie($cookie);
         return $response;
