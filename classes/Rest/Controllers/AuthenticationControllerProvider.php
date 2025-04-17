@@ -44,7 +44,7 @@ class AuthenticationControllerProvider extends BaseControllerProvider
         $controller->post("$root/login", '\Rest\Controllers\AuthenticationControllerProvider::login');
         $controller->post("$root/logout", '\Rest\Controllers\AuthenticationControllerProvider::logout');
         $controller->get("$root/idpredirect", '\Rest\Controllers\AuthenticationControllerProvider::getIdpRedirect');
-        $controller->get("$root/jwt-redirect", '\Rest\Controllers\UserControllerProvider::redirectWithJwt');
+        $controller->get("$root/jwt-redirect", '\Rest\Controllers\AuthenticationControllerProvider::redirectWithJwt');
     }
 
     /**
