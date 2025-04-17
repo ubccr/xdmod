@@ -25,7 +25,7 @@ class JsonWebToken
 
         $xdmodURL   = \xd_utilities\getConfiguration('general', 'site_address');
         $issuedAt   = new \DateTimeImmutable();
-        $expire     = $issuedAt->modify('+6 minutes')->getTimestamp();
+        $expire     = $issuedAt->modify('+30 seconds')->getTimestamp();
 
         $this->_claimsSet = array_merge(
             [
