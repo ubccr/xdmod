@@ -216,10 +216,16 @@ class UserControllerProvider extends BaseControllerProvider
     }
 
     /**
+     * Redirect to a specified path with a new JSON Web Token in a cookie.
      *
-     * @param Request $request
+     * @param Request $request must contain a 'next' parameter whose value is
+     *                         the path to which to redirect.
      * @param Application $app
-     * @return RedirectResponse
+     * @return RedirectResponse to the 'next' path if the user is
+     *                          authenticated, otherwise to the sign-in
+     *                          screen.
+     * @throws BadRequestHttpException if the 'next' parameter is not present
+     *                                 or does not start with '/'.
      */
     public function redirectWithJwt(Request $request, Application $app)
     {
@@ -230,7 +236,7 @@ class UserControllerProvider extends BaseControllerProvider
 
         try {
             $user = $this->authorize($request);
-        } catch (UnauthorizedHttpException  $e) {
+        } catch (UnauthorizedHttpException $e) {
             return new RedirectResponse('/#jwt-redirect?next=' . $next);
         }
 
@@ -239,7 +245,7 @@ class UserControllerProvider extends BaseControllerProvider
         $jsonWebToken = new JsonWebToken();
         $jsonWebToken->addClaims($usernameClaim);
 
-        $cookie = new Cookie('xdmod_jupyterhub_token', $jsonWebToken->encode());
+        $cookie = new Cookie('xdmod_jwt', $jsonWebToken->encode());
         $response = $app->redirect($next);
         $response->headers->setCookie($cookie);
         return $response;
