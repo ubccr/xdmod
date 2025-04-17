@@ -4,11 +4,14 @@ namespace Rest\Controllers;
 
 use CCR\MailWrapper;
 use Models\Services\Acls;
+use Models\Services\JsonWebToken;
 use Models\Services\Organizations;
-use Silex\Application;
-use Symfony\Component\HttpFoundation\Request;
-
 use Rest\Utilities\Authentication;
+use Silex\Application;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use XDUser;
 
 /**
