@@ -484,21 +484,19 @@ layout: null
                     },
                     "results": {
                         "type": "array",
-                        "items": {},
+                        "minItems": 0,
                         "maxItems": 0
                     },
                     "data": {
                         "type": "array",
-                        "items": {},
+                        "minItems": 0,
                         "maxItems": 0
                     },
                     "message": {
-                        "type": "string",
-                        "description": "Error message"
+                        "type": "string"
                     },
                     "code": {
-                        "type": "integer",
-                        "description": "Error code"
+                        "type": "integer"
                     }
                 },
                 "required": [
@@ -511,16 +509,49 @@ layout: null
                     "message",
                     "code"
                 ]
+            },
+            "warehouse-error-0": {
+                "allOf": [
+                    { "$ref": "#/components/schemas/warehouse-error" },
+                    {
+                        "properties": {
+                            "code": {
+                                "enum": [0]
+                            }
+                        }
+                    }
+                ]
             }
         },
         "responses": {
+            "unauthorized": {
+                "description": "Unauthorized",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "allOf": [
+                                { "$ref": "#/components/schemas/warehouse-error-0" },
+                                {
+                                    "properties": {
+                                        "message": {
+                                            "enum": [
+                                                "An error was encountered while attempting to process the requested authorization procedure."
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
             "api-token-404": {
                 "description": "Not Found",
                 "content": {
                     "application/json": {
                         "schema": {
                             "allOf": [
-                                { "$ref": "#/components/schemas/warehouse-error" },
+                                { "$ref": "#/components/schemas/warehouse-error-0" },
                                 {
                                     "properties": {
                                         "message": {
@@ -560,54 +591,6 @@ layout: null
             }
         },
         "examples": {
-            "empty-token": {
-                "value": {
-                    "success": false,
-                    "count": 0,
-                    "total": 0,
-                    "totalCount": 0,
-                    "results": [],
-                    "data": [],
-                    "message": "No Token Provided.",
-                    "code": 0
-                }
-            },
-            "malformed-token": {
-                "value": {
-                    "success": false,
-                    "count": 0,
-                    "total": 0,
-                    "totalCount": 0,
-                    "results": [],
-                    "data": [],
-                    "message": "Invalid token format.",
-                    "code": 0
-                }
-            },
-            "invalid-token": {
-                "value": {
-                    "success": false,
-                    "count": 0,
-                    "total": 0,
-                    "totalCount": 0,
-                    "results": [],
-                    "data": [],
-                    "message": "Invalid API token.",
-                    "code": 0
-                }
-            },
-            "expired-token": {
-                "value": {
-                    "success": false,
-                    "count": 0,
-                    "total": 0,
-                    "totalCount": 0,
-                    "results": [],
-                    "data": [],
-                    "message": "The API Token has expired.",
-                    "code": 0
-                }
-            }
         }
     },
     "security": [
@@ -1894,45 +1877,7 @@ layout: null
                             }
                         }
                     },
-                    "401": {
-                        "description": "An unauthorized request to this endpoint.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "enum": [false]
-                                        },
-                                        "count": {
-                                            "type": "integer"
-                                        },
-                                        "total": {
-                                            "type": "integer"
-                                        },
-                                        "totalCount": {
-                                            "type": "integer"
-                                        },
-                                        "results": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "message": {
-                                            "enum": ["An error was encountered while attempting to process the requested authorization procedure."]
-                                        },
-                                        "code": {
-                                            "type": "integer"
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-                    },
+                    "401": { "$ref": "#/components/responses/unauthorized" },
                     "404": { "$ref": "#/components/responses/api-token-404" }
                 }
             },
@@ -1977,53 +1922,14 @@ layout: null
                             }
                         }
                     },
-                    "401": {
-                        "description": "An unauthorized request to this endpoint.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "enum": [false]
-                                        },
-                                        "count": {
-                                            "type": "integer"
-                                        },
-                                        "total": {
-                                            "type": "integer"
-                                        },
-                                        "totalCount": {
-                                            "type": "integer"
-                                        },
-                                        "results": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "message": {
-                                            "enum": [
-                                                "An error was encountered while attempting to process the requested authorization procedure."
-                                            ]
-                                        },
-                                        "code": {
-                                            "type": "integer"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
+                    "401": { "$ref": "#/components/responses/unauthorized" },
                     "409": {
                         "description": "Conflict",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "allOf": [
-                                        { "$ref": "#/components/schemas/warehouse-error" },
+                                        { "$ref": "#/components/schemas/warehouse-error-0" },
                                         {
                                             "properties": {
                                                 "message": {
@@ -2069,48 +1975,7 @@ layout: null
                             }
                         }
                     },
-                    "401": {
-                        "description": "An unauthorized request to this endpoint.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "enum": [
-                                                false
-                                            ]
-                                        },
-                                        "count": {
-                                            "type": "integer"
-                                        },
-                                        "total": {
-                                            "type": "integer"
-                                        },
-                                        "totalCount": {
-                                            "type": "integer"
-                                        },
-                                        "results": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "message": {
-                                            "enum": [
-                                                "An error was encountered while attempting to process the requested authorization procedure."
-                                            ]
-                                        },
-                                        "code": {
-                                            "type": "integer"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
+                    "401": { "$ref": "#/components/responses/unauthorized" },
                     "404": { "$ref": "#/components/responses/api-token-404" },
                     "500": {
                         "description": "Internal Server Error",
@@ -2118,11 +1983,68 @@ layout: null
                             "application/json": {
                                 "schema": {
                                     "allOf": [
-                                        { "$ref": "#/components/schemas/warehouse-error" },
+                                        { "$ref": "#/components/schemas/warehouse-error-0" },
                                         {
                                             "properties": {
                                                 "message": {
                                                     "enum": [ "Unable to revoke API token." ]
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/users/current/api/jwt-redirect": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Redirect to a specified path with a new JSON Web Token (JWT) in a cookie",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "next",
+                        "in": "query",
+                        "description": "The path to which to redirect",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^/.*"
+                        },
+                        "example": "/jupyterhub"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect with a new JWT in a cookie",
+                        "headers": {
+                            "Set-Cookie": {
+                                "description": "HttpOnly `xdmod_jwt` cookie whose value is a signed JWT containing the user's username",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error-0" },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "enum": [
+                                                        "next is a required parameter.",
+                                                        "Invalid 'next' parameter."
+                                                    ]
                                                 }
                                             }
                                         }
@@ -2924,129 +2846,27 @@ layout: null
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/warehouse-error"
-                                },
-                                "examples": {
-                                    "no-start-date": {
-                                        "value": {
-                                            "success": false,
-                                            "count": 0,
-                                            "total": 0,
-                                            "totalCount": 0,
-                                            "results": [],
-                                            "data": [],
-                                            "message": "start_date is a required parameter",
-                                            "code": 0
+                                    "allOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error-0" },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "enum": [
+                                                        "start_date is a required parameter.",
+                                                        "end_date is a required parameter.",
+                                                        "Invalid value for start_date. Must be a(n) ISO 8601 Date.",
+                                                        "realm is a required parameter.",
+                                                        "Invalid value for end_date. Must be a(n) ISO 8601 Date.",
+                                                        "End date cannot be less than start date.",
+                                                        "Invalid realm.",
+                                                        "Invalid fields specified: 'foo', 'bar'.",
+                                                        "Invalid filter key 'foo'.",
+                                                        "Offset must be non-negative."
+                                                    ]
+                                                }
+                                            }
                                         }
-                                    },
-                                    "no-end-date": {
-                                        "value": {
-                                            "success": false,
-                                            "count": 0,
-                                            "total": 0,
-                                            "totalCount": 0,
-                                            "results": [],
-                                            "data": [],
-                                            "message": "end_date is a required parameter",
-                                            "code": 0
-                                        }
-                                    },
-                                    "start-date-malformed": {
-                                        "value": {
-                                            "success": false,
-                                            "count": 0,
-                                            "total": 0,
-                                            "totalCount": 0,
-                                            "results": [],
-                                            "data": [],
-                                            "message": "Invalid value for start_date. Must be a(n) ISO 8601 Date.",
-                                            "code": 0
-                                        }
-                                    },
-                                    "no-realm": {
-                                        "value": {
-                                            "success": false,
-                                            "count": 0,
-                                            "total": 0,
-                                            "totalCount": 0,
-                                            "results": [],
-                                            "data": [],
-                                            "message": "realm is a required parameter.",
-                                            "code": 0
-                                        }
-                                    },
-                                    "end-date-malformed": {
-                                        "value": {
-                                            "success": false,
-                                            "count": 0,
-                                            "total": 0,
-                                            "totalCount": 0,
-                                            "results": [],
-                                            "data": [],
-                                            "message": "Invalid value for end_date. Must be a(n) ISO 8601 Date.",
-                                            "code": 0
-                                        }
-                                    },
-                                    "end-before-start": {
-                                        "value": {
-                                            "success": false,
-                                            "count": 0,
-                                            "total": 0,
-                                            "totalCount": 0,
-                                            "results": [],
-                                            "data": [],
-                                            "message": "End date cannot be less than start date.",
-                                            "code": 0
-                                        }
-                                    },
-                                    "invalid-realm": {
-                                        "value": {
-                                            "success": false,
-                                            "count": 0,
-                                            "total": 0,
-                                            "totalCount": 0,
-                                            "results": [],
-                                            "data": [],
-                                            "message": "Invalid realm.",
-                                            "code": 0
-                                        }
-                                    },
-                                    "invalid-fields": {
-                                        "value": {
-                                            "success": false,
-                                            "count": 0,
-                                            "total": 0,
-                                            "totalCount": 0,
-                                            "results": [],
-                                            "data": [],
-                                            "message": "Invalid fields specified: 'foo', 'bar'.",
-                                            "code": 0
-                                        }
-                                    },
-                                    "invalid-filter-key": {
-                                        "value": {
-                                            "success": false,
-                                            "count": 0,
-                                            "total": 0,
-                                            "totalCount": 0,
-                                            "results": [],
-                                            "data": [],
-                                            "message": "Invalid filter key 'foo'.",
-                                            "code": 0
-                                        }
-                                    },
-                                    "negative-offset": {
-                                        "value": {
-                                            "success": false,
-                                            "count": 0,
-                                            "total": 0,
-                                            "totalCount": 0,
-                                            "results": [],
-                                            "data": [],
-                                            "message": "Offset must be non-negative.",
-                                            "code": 0
-                                        }
-                                    }
+                                    ]
                                 }
                             }
                         }
@@ -3056,21 +2876,21 @@ layout: null
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/warehouse-error"
-                                },
-                                "examples": {
-                                    "empty-token": {
-                                        "$ref": "#/components/examples/empty-token"
-                                    },
-                                    "malformed-token": {
-                                        "$ref": "#/components/examples/malformed-token"
-                                    },
-                                    "invalid-token": {
-                                        "$ref": "#/components/examples/invalid-token"
-                                    },
-                                    "expired-token": {
-                                        "$ref": "#/components/examples/expired-token"
-                                    }
+                                    "allOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error-0" },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "enum": [
+                                                        "No Token Provided.",
+                                                        "Invalid token format.",
+                                                        "Invalid API token.",
+                                                        "The API Token has expired."
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    ]
                                 }
                             }
                         }
