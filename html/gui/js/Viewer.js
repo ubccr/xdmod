@@ -418,7 +418,7 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
                 if (hasToken) {
                     if (token.root === '' && token.tab === 'jwt-redirect' && !CCR.xdmod.publicUser) {
                         document.location = (
-                            '/rest/users/current/api/jwt-redirect'
+                            '/rest/auth/jwt-redirect'
                             + (token.params ? '?' + token.params : '')
                         );
                     }

@@ -73,7 +73,6 @@ class UserControllerProvider extends BaseControllerProvider
         $controller->get("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::getCurrentAPIToken');
         $controller->post("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::createAPIToken');
         $controller->delete("$root/current/api/token", '\Rest\Controllers\UserControllerProvider::revokeAPIToken');
-        $controller->get("$root/current/api/jwt-redirect", '\Rest\Controllers\UserControllerProvider::redirectWithJwt');
     }
 
     /**
@@ -213,50 +212,6 @@ class UserControllerProvider extends BaseControllerProvider
 
         // If the `revokeToken` failed for some reason then we let the user know.
         throw new Exception('Unable to revoke API token.');
-    }
-
-    /**
-     * Redirect to a specified path with a new JSON Web Token in a cookie.
-     *
-     * @param Request $request must contain a 'next' parameter whose value is
-     *                         the path to which to redirect.
-     * @param Application $app
-     * @return RedirectResponse to the 'next' path if the user is
-     *                          authenticated, otherwise to the sign-in
-     *                          screen.
-     * @throws BadRequestHttpException if the 'next' parameter is not present
-     *                                 or does not start with '/'.
-     */
-    public function redirectWithJwt(Request $request, Application $app)
-    {
-        $next = $this->getStringParam($request, 'next', true);
-        if (0 !== strpos($next, '/')) {
-            throw new BadRequestHttpException("Invalid 'next' parameter.");
-        }
-
-        try {
-            $user = $this->authorize($request);
-        } catch (UnauthorizedHttpException $e) {
-            return new RedirectResponse('/#jwt-redirect?next=' . $next);
-        }
-
-        $username = $user->getUsername();
-        $usernameClaim = [JsonWebToken::claimKeySubject => $username];
-        $jsonWebToken = new JsonWebToken();
-        $jsonWebToken->addClaims($usernameClaim);
-
-        $cookie = new Cookie(
-            'xdmod_jwt',
-            $jsonWebToken->encode(),
-            strtotime('+30 seconds'),
-            '/',
-            null, // domain
-            true, // secure
-            true  // httpOnly
-        );
-        $response = $app->redirect($next);
-        $response->headers->setCookie($cookie);
-        return $response;
     }
 
     /**

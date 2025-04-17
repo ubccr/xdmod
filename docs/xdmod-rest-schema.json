@@ -1257,6 +1257,63 @@ layout: null
                 }
             }
         },
+        "/auth/jwt-redirect": {
+            "get": {
+                "tags": [
+                    "Authentication"
+                ],
+                "summary": "Redirect to a specified path with a new JSON Web Token (JWT) in a cookie",
+                "description": "",
+                "parameters": [
+                    {
+                        "name": "next",
+                        "in": "query",
+                        "description": "The path to which to redirect",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "^/.*"
+                        },
+                        "example": "/jupyterhub"
+                    }
+                ],
+                "responses": {
+                    "302": {
+                        "description": "Redirect with a new JWT in a cookie",
+                        "headers": {
+                            "Set-Cookie": {
+                                "description": "HttpOnly `xdmod_jwt` cookie whose value is a signed JWT containing the user's username",
+                                "schema": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "allOf": [
+                                        { "$ref": "#/components/schemas/warehouse-error-0" },
+                                        {
+                                            "properties": {
+                                                "message": {
+                                                    "enum": [
+                                                        "next is a required parameter.",
+                                                        "Invalid 'next' parameter."
+                                                    ]
+                                                }
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/dashboard/components": {
             "get": {
                 "tags": [
@@ -1988,63 +2045,6 @@ layout: null
                                             "properties": {
                                                 "message": {
                                                     "enum": [ "Unable to revoke API token." ]
-                                                }
-                                            }
-                                        }
-                                    ]
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        },
-        "/users/current/api/jwt-redirect": {
-            "get": {
-                "tags": [
-                    "Authentication"
-                ],
-                "summary": "Redirect to a specified path with a new JSON Web Token (JWT) in a cookie",
-                "description": "",
-                "parameters": [
-                    {
-                        "name": "next",
-                        "in": "query",
-                        "description": "The path to which to redirect",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "pattern": "^/.*"
-                        },
-                        "example": "/jupyterhub"
-                    }
-                ],
-                "responses": {
-                    "302": {
-                        "description": "Redirect with a new JWT in a cookie",
-                        "headers": {
-                            "Set-Cookie": {
-                                "description": "HttpOnly `xdmod_jwt` cookie whose value is a signed JWT containing the user's username",
-                                "schema": {
-                                    "type": "string"
-                                }
-                            }
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "allOf": [
-                                        { "$ref": "#/components/schemas/warehouse-error-0" },
-                                        {
-                                            "properties": {
-                                                "message": {
-                                                    "enum": [
-                                                        "next is a required parameter.",
-                                                        "Invalid 'next' parameter."
-                                                    ]
                                                 }
                                             }
                                         }
