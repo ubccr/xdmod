@@ -22,25 +22,24 @@ class JsonWebToken
     public function __construct($claims = array()) {
         $configuredSecretKey = \xd_utilities\getConfiguration('json_web_token', 'secret_key');
         $this->_secretKey = $configuredSecretKey; //new Key($configuredSecretKey, self::$signingAlgorithm);
-        $this->_claimsSet = $claims;
-    }
-
-    public function encode() {
 
         $xdmodURL   = \xd_utilities\getConfiguration('general', 'site_address');
         $issuedAt   = new \DateTimeImmutable();
         $expire     = $issuedAt->modify('+6 minutes')->getTimestamp();
 
-        $claims = [
-            self::claimKeyIssuedAtTime  => $issuedAt->getTimestamp(),
-            self::claimKeyTokenId       => base64_encode(random_bytes(16)),
-            self::claimKeyExpiration    => $expire,
-            self::claimKeyAudience      => $xdmodURL,
-            self::claimKeyIssuer        => $xdmodURL
-        ];
+        $this->_claimsSet = array_merge(
+            [
+                self::claimKeyIssuedAtTime  => $issuedAt->getTimestamp(),
+                self::claimKeyTokenId       => base64_encode(random_bytes(16)),
+                self::claimKeyExpiration    => $expire,
+                self::claimKeyAudience      => $xdmodURL,
+                self::claimKeyIssuer        => $xdmodURL
+            ],
+            $claims
+        );
+    }
 
-        $this->addClaims($claims);
-
+    public function encode() {
         return JWT::encode(
             $this->_claimsSet,
             $this->_secretKey,

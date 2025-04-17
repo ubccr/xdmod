@@ -140,13 +140,13 @@ class AuthenticationControllerProvider extends BaseControllerProvider
 
         $username = $user->getUsername();
         $usernameClaim = [JsonWebToken::claimKeySubject => $username];
-        $jsonWebToken = new JsonWebToken();
-        $jsonWebToken->addClaims($usernameClaim);
+        $jwt = new JsonWebToken();
+        $jwt->addClaims($usernameClaim);
 
         $cookie = new Cookie(
             'xdmod_jwt',
-            $jsonWebToken->encode(),
-            $jsonWebToken->getClaim(JsonWebToken::claimKeyExpiration), // expire
+            $jwt->encode(),
+            $jwt->getClaim(JsonWebToken::claimKeyExpiration), // expire
             '/',  // path
             null, // domain
             true, // secure
