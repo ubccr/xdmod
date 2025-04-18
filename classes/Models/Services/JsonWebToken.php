@@ -8,20 +8,20 @@ use Firebase\JWT\Key;
 
 class JsonWebToken
 {
-    const claimKeyIssuedAtTime = 'iat';
     const claimKeyTokenId      = 'jti';
     const claimKeyExpiration   = 'exp';
     const claimKeySubject      = 'sub';
-    const claimKeyAudience     = 'aud';
-    const claimKeyIssuer       = 'iss';
 
-    public static $signingAlgorithm = 'HS256';
+    public static $signingAlgorithm = 'RS256';
     private $_claimsSet;
-    private $_secretKey;
+    private $_jwtPrivateKey;
 
     public function __construct($claims = array()) {
-        $configuredSecretKey = \xd_utilities\getConfiguration('json_web_token', 'secret_key');
-        $this->_secretKey = $configuredSecretKey; //new Key($configuredSecretKey, self::$signingAlgorithm);
+        $this->_jwtPrivateKey = file_get_contents(
+            CONFIG_DIR
+            . DIRECTORY_SEPARATOR
+            . 'xdmod-private.pem'
+        );
 
         $xdmodURL   = \xd_utilities\getConfiguration('general', 'site_address');
         $issuedAt   = new \DateTimeImmutable();
@@ -29,11 +29,8 @@ class JsonWebToken
 
         $this->_claimsSet = array_merge(
             [
-                self::claimKeyIssuedAtTime  => $issuedAt->getTimestamp(),
                 self::claimKeyTokenId       => base64_encode(random_bytes(16)),
-                self::claimKeyExpiration    => $expire,
-                self::claimKeyAudience      => $xdmodURL,
-                self::claimKeyIssuer        => $xdmodURL
+                self::claimKeyExpiration    => $expire
             ],
             $claims
         );
@@ -42,14 +39,14 @@ class JsonWebToken
     public function encode() {
         return JWT::encode(
             $this->_claimsSet,
-            $this->_secretKey,
+            $this->_jwtPrivateKey,
             self::$signingAlgorithm
         );
     }
 
     public function decode($jwt) {
         try {
-            $secretKey = new Key($this->_secretKey, self::$signingAlgorithm);
+            $secretKey = new Key($this->_jwtPrivateKey, self::$signingAlgorithm);
             $decodedToken = JWT::decode($jwt, $secretKey);
         } catch (Exception $e) {
             throw new Exception('Error while decoding: '.$e->getMessage());
