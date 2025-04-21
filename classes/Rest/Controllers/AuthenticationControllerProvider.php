@@ -131,22 +131,16 @@ class AuthenticationControllerProvider extends BaseControllerProvider
         if (0 !== strpos($next, '/')) {
             throw new BadRequestHttpException("Invalid 'next' parameter.");
         }
-
         try {
             $user = $this->authorize($request);
         } catch (UnauthorizedHttpException $e) {
             return new RedirectResponse('/#jwt-redirect?next=' . $next);
         }
-
-        $username = $user->getUsername();
-        $usernameClaim = [JsonWebToken::claimKeySubject => $username];
-        $jwt = new JsonWebToken();
-        $jwt->addClaims($usernameClaim);
-
+        list($jwt, $expiration) = JsonWebToken::encode($user->getUsername());
         $cookie = new Cookie(
             'xdmod_jwt',
-            $jwt->encode(),
-            $jwt->getClaim(JsonWebToken::claimKeyExpiration), // expire
+            $jwt,
+            $expiration,
             '/',  // path
             null, // domain
             true, // secure

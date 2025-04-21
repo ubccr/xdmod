@@ -2,73 +2,57 @@
 
 namespace Models\Services;
 
+use DateTimeImmutable;
 use Exception;
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
 class JsonWebToken
 {
-    const claimKeyTokenId      = 'jti';
-    const claimKeyExpiration   = 'exp';
-    const claimKeySubject      = 'sub';
+    const signingAlgorithm = 'RS256';
 
-    public static $signingAlgorithm = 'RS256';
-    private $_claimsSet;
-    private $_jwtPrivateKey;
+    private static $xdmodPrivateKey = null;
+    private static $jupyterhubPublicKey = null;
 
-    public function __construct($claims = array()) {
-        $this->_jwtPrivateKey = file_get_contents(
-            CONFIG_DIR
-            . DIRECTORY_SEPARATOR
-            . 'xdmod-private.pem'
-        );
-
-        $xdmodURL   = \xd_utilities\getConfiguration('general', 'site_address');
-        $issuedAt   = new \DateTimeImmutable();
-        $expire     = $issuedAt->modify('+30 seconds')->getTimestamp();
-
-        $this->_claimsSet = array_merge(
-            [
-                self::claimKeyTokenId       => base64_encode(random_bytes(16)),
-                self::claimKeyExpiration    => $expire
-            ],
-            $claims
-        );
-    }
-
-    public function encode() {
-        return JWT::encode(
-            $this->_claimsSet,
-            $this->_jwtPrivateKey,
-            self::$signingAlgorithm
-        );
-    }
-
-    public function decode($jwt) {
-        try {
-            $secretKey = new Key($this->_jwtPrivateKey, self::$signingAlgorithm);
-            $decodedToken = JWT::decode($jwt, $secretKey);
-        } catch (Exception $e) {
-            throw new Exception('Error while decoding: '.$e->getMessage());
+    /**
+     * @param string $subject
+     * @return array first element is a signed JWT, second is the expiration
+     *               time of the JWT.
+     */
+    public static function encode($subject) {
+        if (is_null(self::$xdmodPrivateKey)) {
+            self::$xdmodPrivateKey = file_get_contents(
+                CONFIG_DIR
+                . DIRECTORY_SEPARATOR
+                . 'xdmod-private.pem'
+            );
         }
-        $decodedToken = (array) $decodedToken;
-        $this->addClaims($decodedToken);
+        $issuedAt = new DateTimeImmutable();
+        $expiration = $issuedAt->modify('+30 seconds')->getTimestamp();
+        $jwt = JWT::encode(
+            [
+                'exp' => $expiration,
+                'sub' => $subject
+            ],
+            self::$xdmodPrivateKey,
+            self::signingAlgorithm
+        );
+        return [$jwt, $expiration];
     }
 
     /**
-     * Add one or more claim to the claims set
+     * @param string $jwt
+     * @return \stdClass the claims in the JWT.
      */
-    public function addClaims($claims) {
-        foreach ($claims as $key => $value) {
-            $this->_claimsSet[$key] = $value;
+    public static function decode($jwt) {
+        if (is_null(self::$jupyterhubPublicKey)) {
+            self::$jupyterhubPublicKey = file_get_contents(
+                CONFIG_DIR
+                . DIRECTORY_SEPARATOR
+                . 'jupyterhub-public.pem'
+            );
         }
-    }
-
-    public function getClaim($claimKey) {
-        if (array_key_exists($claimKey, $this->_claimsSet)) {
-            return $this->_claimsSet[$claimKey];
-        } else {
-            throw new Exception('JSON Web Token Claim does not exist.');
-        }
+        $secretKey = new Key(self::$jupyterhubPublicKey, self::signingAlgorithm);
+        return JWT::decode($jwt, $secretKey);
     }
 }

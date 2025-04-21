@@ -90,8 +90,8 @@ SQL;
     private static function authenticateJSONWebToken($jwt)
     {
         $jsonWebToken = new JsonWebToken();
-        $jsonWebToken->decode($jwt);
-        $username = $jsonWebToken->getClaim(JsonWebToken::claimKeySubject);
+        $claims = $jsonWebToken->decode($jwt);
+        $username = $claims->sub;
 
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
