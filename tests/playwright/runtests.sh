@@ -13,7 +13,7 @@ fi
 set -e
 #ensure that playwright installed
 npm update
-npm install -g @playwright/test
+npm install -g @playwright/test@1.51.1
 
 echo "UI tests beginning:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
 
