@@ -154,5 +154,6 @@ Additional 11.5.0 Upgrade Notes
 
 ### Configuration File Changes
 
-- Normalized Avg Processors Statistics was removed and in order to re add the statistics
-  please see the [Restore the "Job Size: Normalized" Statistic](howto-normalized-avg-processors.html)
+The "Job Size: Normalized" statistic in the Jobs realm is removed from the
+default list of statistics. See [this
+page](howto-normalized-avg-processors.html) for more information.
