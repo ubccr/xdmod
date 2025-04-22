@@ -152,5 +152,8 @@ Additional 11.5.0 Upgrade Notes
 [github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
 [mysql-config]: configuration.html#mariadb-configuration
 
+Configuration File Changes
+----------------------------
+
 - Normalized Avg Processors Statistics was removed and in order to re add the statistics
   please see the [Restore the "Job Size: Normalized" Statistic](howto-normalized-avg-processors.html)
