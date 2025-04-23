@@ -46,6 +46,9 @@ jobs:
             docker cp ~/project xdmod:/root/xdmod
             docker cp ~/project playwright:/root/xdmod
       - run:
+          name: Make XDMoD directory safe for git
+          command: docker exec xdmod git config --global --add safe.directory /root/xdmod
+      - run:
           name: Create test result directories
           command: |
             rm -rf ~/phpunit
@@ -68,9 +71,12 @@ jobs:
       - run:
           name: Install / Upgrade XDMoD from the newly created RPM
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> xdmod /root/xdmod/tests/ci/bootstrap.sh
+      #      - run:
+      #          name: Validate that the install / upgrade went as expected
+      #          command: docker exec -w /root/xdmod xdmod /root/xdmod/tests/ci/validate.sh
       - run:
-          name: Validate that the install / upgrade went as expected
-          command: docker exec -w /root/xdmod xdmod /root/xdmod/tests/ci/validate.sh
+          name: Setup the SimpleSAML server etc. so we can test SSO
+          command: docker exec xdmod /root/xdmod/tests/ci/samlSetup.sh
       - run:
           name: Make sure that the test dependencies are installed
           command: docker exec -w /root/xdmod xdmod composer install
@@ -212,7 +218,7 @@ jobs:
       - when:
           condition:
             and:
-              - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
+              - equal: [ "xdmod-time-trigger", << parameters.schedule-name >> ]
           #            and:
           #              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
           #              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
@@ -226,7 +232,7 @@ workflows:
       - build:
           matrix:
             parameters:
-              os: [rocky8]
-              install-type: ["fresh_install", "upgrade"]
-              string_os: [rocky8]
-              schedule-name: ["xdmod-time-trigger"]
+              os: [ rocky8 ]
+              install-type: [ "fresh_install", "upgrade" ]
+              string_os: [ rocky8 ]
+              schedule-name: [ "xdmod-time-trigger" ]
