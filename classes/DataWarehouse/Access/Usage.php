@@ -113,7 +113,7 @@ class Usage extends Common
 
                 $usageChart = array(
                         'hc_jsonstore' => array('title' => array('text' => '')),
-                        'id' => "statistic_${usageRealm}_${usageGroupBy}_${userStatistic}",
+                        'id' => "statistic_{$usageRealm}_{$usageGroupBy}_{$userStatistic}",
                         'short_title' => $statsClass->getName(),
                         'random_id' => 'chart_' . mt_rand(),
                         'subnotes' => $usageSubnotes,
@@ -466,7 +466,7 @@ class Usage extends Common
                                 $nextFieldNameIndex++;
 
                                 $timeseriesColumn = $timeseriesTemplateColumn;
-                                $timeseriesColumn['header'] = "[${resultRecordDimension}] " . $timeseriesColumn['header'];
+                                $timeseriesColumn['header'] = "[{$resultRecordDimension}] " . $timeseriesColumn['header'];
                                 $timeseriesColumn['dataIndex'] = $timeseriesDimensionColumnName;
                                 $timeseriesColumns[$resultRecordDimension] = $timeseriesColumn;
 
@@ -614,7 +614,7 @@ class Usage extends Common
             $usageTitleFontSizeInPixels = 16 + $usageFontSize;
             $usageTitleStyle = array(
                 'color' => '#000000',
-                'size' => "${usageTitleFontSizeInPixels}",
+                'size' => "{$usageTitleFontSizeInPixels}",
             );
 
             // Get the user's report generator chart pool.
@@ -712,8 +712,8 @@ class Usage extends Common
 
                 // Generate the expected IDs for the chart.
                 $usageMetric = $meRequest['data_series_unencoded'][0]['metric'];
-                $usageChartId = "statistic_${usageRealm}_${usageGroupBy}_${usageMetric}";
-                $usageChartMenuId = "group_by_${usageRealm}_${usageGroupBy}";
+                $usageChartId = "statistic_{$usageRealm}_{$usageGroupBy}_{$usageMetric}";
+                $usageChartMenuId = "group_by_{$usageRealm}_{$usageGroupBy}";
 
                 // Remove extraneous x-axis properties.
                 if ($meRequestIsTimeseries) {
@@ -766,7 +766,7 @@ class Usage extends Common
                     $currentCategoryRank = $usageOffset + 1;
                     foreach ($meChartCategories as $meChartCategory) {
                         if (!empty($meChartCategory)) {
-                            $usageChartCategories[] = "${currentCategoryRank}. ${meChartCategory}";
+                            $usageChartCategories[] = "{$currentCategoryRank}. {$meChartCategory}";
                         }
                         else {
                             $usageChartCategories[] = '';
@@ -845,7 +845,7 @@ class Usage extends Common
                             && $usageGroupBy !== 'none'
                         ) {
                             $rank = $meDataSeries['legendrank'] / 3;
-                            $meDataSeries['name'] = "${rank}. " . $meDataSeries['name'];
+                            $meDataSeries['name'] = "{$rank}. " . $meDataSeries['name'];
                         }
                     }
 
@@ -1164,7 +1164,7 @@ class Usage extends Common
             $unencodedMeRequestParams[$meRequestKey] = $meRequestValue;
         }
         foreach ($unencodedMeRequestParams as $meRequestKey => $meRequestValue) {
-            $meRequest["${meRequestKey}_unencoded"] = $meRequestValue;
+            $meRequest["{$meRequestKey}_unencoded"] = $meRequestValue;
             $meRequest[$meRequestKey] = urlencode(json_encode($meRequestValue));
         }
 

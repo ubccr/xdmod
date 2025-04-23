@@ -252,12 +252,12 @@ class JobsAggregator extends pdoAggregator implements iAction
 
             if ( null !== $this->currentStartDate ) {
                 $startDate = $this->sourceHandle->quote($this->currentStartDate);
-                $ranges[] = "d.${aggregationUnit}_end_ts >= UNIX_TIMESTAMP($startDate)";
+                $ranges[] = "d.{$aggregationUnit}_end_ts >= UNIX_TIMESTAMP($startDate)";
             }
 
             if ( null !== $this->currentEndDate ) {
                 $endDate = $this->sourceHandle->quote($this->currentEndDate);
-                $ranges[] = "d.${aggregationUnit}_start_ts <= UNIX_TIMESTAMP($endDate)";
+                $ranges[] = "d.{$aggregationUnit}_start_ts <= UNIX_TIMESTAMP($endDate)";
             }
 
             $dateRangeSql = implode(" AND ", $ranges);
@@ -306,7 +306,7 @@ class JobsAggregator extends pdoAggregator implements iAction
              * --------------------------------------------------------------------------------
              */
 
-            $whereClauses = array("aggregated_${aggregationUnit} = 0");
+            $whereClauses = array("aggregated_{$aggregationUnit} = 0");
             if ( null !== $this->resourceIdListString ) {
                 $whereClauses[] = "resource_id IN (" . $this->resourceIdListString . ")";
             }
@@ -317,8 +317,8 @@ class JobsAggregator extends pdoAggregator implements iAction
 
             $minMaxJoin = "(\n  $minMaxSql\n) js_limits";
 
-            $dateRangeSql = "d.${aggregationUnit}_end_ts >= js_limits.min_start " .
-                "AND d.${aggregationUnit}_start_ts <= js_limits.max_end";
+            $dateRangeSql = "d.{$aggregationUnit}_end_ts >= js_limits.min_start " .
+                "AND d.{$aggregationUnit}_start_ts <= js_limits.max_end";
 
         }  // else ( $this->getEtlOverseerOptions()->isForce() )
 
@@ -331,16 +331,16 @@ class JobsAggregator extends pdoAggregator implements iAction
             "SELECT distinct
          d.id as period_id,
          d.`year` as year_value,
-         d.`${aggregationUnit}` as period_value,
-         d.${aggregationUnit}_start as period_start,
-         d.${aggregationUnit}_end as period_end,
-         d.${aggregationUnit}_start_ts as period_start_ts,
-         d.${aggregationUnit}_end_ts as period_end_ts,
+         d.`{$aggregationUnit}` as period_value,
+         d.{$aggregationUnit}_start as period_start,
+         d.{$aggregationUnit}_end as period_end,
+         d.{$aggregationUnit}_start_ts as period_start_ts,
+         d.{$aggregationUnit}_end_ts as period_end_ts,
          d.hours as period_hours,
          d.seconds as period_seconds,
          0 as period_start_day_id,
          0 as period_end_day_id
-       FROM {$utilitySchema}.${aggregationUnit}s d" . (null !== $minMaxJoin ? ",\n$minMaxJoin" : "" ) . "
+       FROM {$utilitySchema}.{$aggregationUnit}s d" . (null !== $minMaxJoin ? ",\n$minMaxJoin" : "" ) . "
        WHERE $dateRangeSql
        ORDER BY 2 DESC, 3 DESC";
 
@@ -391,7 +391,7 @@ class JobsAggregator extends pdoAggregator implements iAction
        from {$sourceSchema}.jobfact
        where
        start_time_ts between unix_timestamp(:startDate) and unix_timestamp(:endDate)
-       and resource_id not in (select distinct resource_id from ${utilitySchema}.resourcespecs where processors is not null)" .
+       and resource_id not in (select distinct resource_id from {$utilitySchema}.resourcespecs where processors is not null)" .
             ( null !== $this->resourceIdListString ? " and resource_id IN (" . $this->resourceIdListString . ")" : "");
 
         $params = array(
