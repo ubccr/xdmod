@@ -2,8 +2,8 @@
 
 namespace Rest\Controllers;
 
-use Access\Security\Helpers\Tokens;
 use DateTime;
+use Models\Services\Tokens;
 use Rest\Utilities\Authentication;
 use Rest\Utilities\Authorization;
 use Silex\Application;
