@@ -7,9 +7,10 @@ namespace UnitTests\Realm;
 
 use CCR\Log as Logger;
 use Exception;
+use PHPUnit\Framework\TestCase;
 use Realm\Realm;
 
-class StatisticTest extends \PHPUnit\Framework\TestCase
+class StatisticTest extends TestCase
 {
     protected static $logger = null;
 

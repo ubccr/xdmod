@@ -11,9 +11,9 @@ namespace UnitTests\ETL\Configuration;
 
 use CCR\Log;
 use Configuration\Configuration;
-use Exception;
+use PHPUnit\Framework\TestCase;
 
-class ConfigurationTest extends \PHPUnit\Framework\TestCase
+class ConfigurationTest extends TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
@@ -297,7 +297,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
     public function testCallConfigurationConstructor()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
         new Configuration(
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_variables.json'
         );
@@ -342,7 +342,7 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
 
     public function testJsonReferenceWithOverwriteWithNoOverwriteDirective()
     {
-        $this->expectException(Exception::class);
+        $this->expectException(\Exception::class);
         Configuration::factory(
             self::TEST_ARTIFACT_INPUT_PATH . '/sample_config_with_missing_json_overwrite_key.json',
             null,

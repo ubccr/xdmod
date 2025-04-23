@@ -2,9 +2,11 @@
 
 namespace UnitTests\DataWarehouse\Visualization;
 
-class ColorGeneratorTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class ColorGeneratorTest extends TestCase
 {
-    public function setup(): void
+    public function setUp(): void
     {
         // Cut and pasted from the colors1.json file.
         $this->expected = array(

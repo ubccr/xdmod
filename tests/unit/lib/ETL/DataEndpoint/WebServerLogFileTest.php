@@ -3,6 +3,7 @@
 namespace UnitTests\ETL\DataEndpoint;
 
 use CCR\Log;
+use DMS\PHPUnitExtensions\ArraySubset\ArraySubsetAsserts;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use PHPUnit\Framework\TestCase;
@@ -10,6 +11,7 @@ use Psr\Log\LoggerInterface;
 
 class WebServerLogFileTest extends TestCase
 {
+
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input/webserverlogfile";
 
     /**
@@ -53,7 +55,7 @@ class WebServerLogFileTest extends TestCase
         $endpoint->connect();
         $numIterations = 0;
         foreach ($endpoint as $record) {
-            $this->assertSame($expected[$numIterations], $record);
+            $this->assertEqualsCanonicalizing($expected[$numIterations], $record);
             $numIterations++;
         }
         $this->assertSame(

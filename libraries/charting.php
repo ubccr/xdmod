@@ -46,7 +46,7 @@ function exportChart(
     $effectiveWidth = (int)($width*$scale);
     $effectiveHeight = (int)($height*$scale);
 
-    $html_dir = __DIR__ . "/../html";
+    $html_dir = __DIR__ . "/../public";
     $template = file_get_contents($html_dir . "/plotly_template.html");
 
     $template = str_replace('_html_dir_', $html_dir, $template);

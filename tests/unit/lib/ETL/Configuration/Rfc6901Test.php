@@ -12,9 +12,10 @@ namespace UnitTests\ETL\Configuration;
 use CCR\Log;
 use Configuration\Configuration;
 use Configuration\JsonReferenceTransformer;
+use PHPUnit\Framework\TestCase;
 use Exception;
 
-class Rfc6901Test extends \PHPUnit\Framework\TestCase
+class Rfc6901Test extends TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";

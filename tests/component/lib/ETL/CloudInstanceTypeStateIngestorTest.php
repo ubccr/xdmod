@@ -8,12 +8,13 @@ namespace ComponentTests\ETL;
 use ETL\Ingestor\CloudInstanceTypeStateIngestor;
 use ETL\Ingestor\IngestorOptions;
 use ETL\Configuration\EtlConfiguration;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Test Cloud Resource Specifications State FSM
  */
 
-class CloudInstanceTypeStateIngestorTest extends \PHPUnit\Framework\TestCase
+class CloudInstanceTypeStateIngestorTest extends TestCase
 {
     private $instance_type_state_first_record = array(
         "resource_id" => 8,
@@ -231,7 +232,6 @@ class CloudInstanceTypeStateIngestorTest extends \PHPUnit\Framework\TestCase
 
         $options = new IngestorOptions($this->options_array);
         $conf = EtlConfiguration::factory($configFile);
-
         $this->fsm = new CloudInstanceTypeStateIngestor($options, $conf);
         parent::__construct($name, $data, $dataName);
     }

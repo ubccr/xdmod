@@ -11,10 +11,11 @@ namespace UnitTests\Realm;
 
 use CCR\Log as Logger;
 use Exception;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use \Realm\Realm;
 
-class GroupByTest extends \PHPUnit\Framework\TestCase
+class GroupByTest extends TestCase
 {
     /**
      * @var LoggerInterface|null
@@ -302,7 +303,7 @@ SQL;
         try {
             $realm->getGroupByObject('alternate_groupby_class');
             $this->assertTrue(false, 'Alternate GroupBy class returned object');
-        } catch ( \Exception $e ) {
+        } catch ( Exception $e ) {
             $message = $e->getMessage();
             $expected = '\Realm\GroupBy\AlternateGroupBy.php';
             $length = strlen($expected);

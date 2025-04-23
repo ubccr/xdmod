@@ -10,7 +10,10 @@ namespace UnitTests\Common;
 *
 */
 
-class IdentityTest extends \PHPUnit\Framework\TestCase
+use ArgumentCountError;
+use PHPUnit\Framework\TestCase;
+
+class IdentityTest extends TestCase
 {
     private $_identity;
     private $_identity1;
@@ -46,7 +49,7 @@ class IdentityTest extends \PHPUnit\Framework\TestCase
      */
     public function testNoDefaultParameterToConstructor()
     {
-        $this->expectException(\ArgumentCountError::class);
+        $this->expectException(ArgumentCountError::class);
         new \Common\Identity(); // this construction should fail since the name parameter is not specified
     }
 

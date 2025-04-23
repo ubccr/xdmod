@@ -12,8 +12,9 @@ namespace UnitTests\ETL\JsonPointer;
 use CCR\Log;
 use ETL\JsonPointer;
 use CCR\Loggable;
+use PHPUnit\Framework\TestCase;
 
-class JsonPointerTest extends \PHPUnit\Framework\TestCase
+class JsonPointerTest extends TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";

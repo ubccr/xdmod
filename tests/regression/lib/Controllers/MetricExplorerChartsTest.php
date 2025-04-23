@@ -2,10 +2,11 @@
 
 namespace RegressionTests\Controllers;
 
+use PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
-class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
+class MetricExplorerChartsTest extends TestCase
 {
     private static $chartFilterTestData = array();
 
@@ -38,7 +39,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
                 'name' => $series->name,
                 'y' => $series->y[0],
             );
-        }
+        };
         var_export($result);
     }
 
@@ -120,7 +121,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
             'selectedFilterIds' => ''
         );
 
-        $response = $helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $helper->post('controllers/metric_explorer.php', null, $params);
 
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
@@ -437,7 +438,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
 
         foreach ($baseConfig as $config)
         {
-            $response = $helper->get('rest/v1/warehouse/dimensions', array('realm' => $config['realm']));
+            $response = $helper->get('warehouse/dimensions', array('realm' => $config['realm']));
             foreach ($response[0]['results'] as $dimConfig)
             {
                 $dimension = $dimConfig['id'];

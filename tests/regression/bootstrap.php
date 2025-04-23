@@ -1,5 +1,12 @@
 <?php
 
+/*
+# If regression tests don't run and $?=255 then uncomment this block to get a better idea of what's happening.
+ini_set('display_startup_errors', 1);
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+*/
+
 $dir = __DIR__;
 
 // Autoloader for test classes.

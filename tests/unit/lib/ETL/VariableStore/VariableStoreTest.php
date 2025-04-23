@@ -10,9 +10,10 @@
 namespace UnitTests\ETL\VariableStore;
 
 use ETL\VariableStore;
+use PHPUnit\Framework\TestCase;
 use Exception;
 
-class VariableStoreTest extends \PHPUnit\Framework\TestCase
+class VariableStoreTest extends TestCase
 {
 
     /**

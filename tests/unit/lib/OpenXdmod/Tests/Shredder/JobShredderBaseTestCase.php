@@ -8,7 +8,7 @@ namespace UnitTests\OpenXdmod\Tests\Shredder;
 use CCR\DB\NullDB;
 use Exception;
 use CCR\Log;
-use \PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use IntegrationTests\TestHarness\TestFiles;
 

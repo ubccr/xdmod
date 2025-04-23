@@ -2,7 +2,9 @@
 
 namespace UnitTests\DataWarehouse;
 
-class VisualizationTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class VisualizationTest extends TestCase
 {
     public function setup(): void
     {

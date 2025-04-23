@@ -4,10 +4,12 @@ namespace UnitTests\DB\TimePeriodGenerators;
 
 use UnitTests\TestHelpers\TestHelper;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * Tests for TimePeriodGenerator and its subclasses.
  */
-class TimePeriodGeneratorTest extends \PHPUnit\Framework\TestCase
+class TimePeriodGeneratorTest extends TestCase
 {
     /**
      * A cache of TimePeriodGenerator instances.

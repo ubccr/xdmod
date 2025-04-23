@@ -8,8 +8,8 @@ namespace UnitTests\ETL\DbModel;
 use CCR\Log;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Table;
+use PHPUnit\Framework\TestCase;
 use Exception;
-use \PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\TestFiles;
 use stdClass;
 
@@ -21,7 +21,7 @@ class ForeignKeyConstraintTest extends TestCase
 
     private $testFiles;
 
-    public static function setupBeforeClass(): void
+    public static function setUpBeforeClass(): void
     {
         self::$logger = Log::singleton('null');
     }

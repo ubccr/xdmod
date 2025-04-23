@@ -5,6 +5,8 @@
 
 namespace xd_rest;
 
+use xd_security\SessionSingleton;
+
 /**
  * Get the user's REST token.
  *
@@ -12,10 +14,14 @@ namespace xd_rest;
  */
 function getToken()
 {
-    if (isset($_SESSION['session_token'])) {
-        $token = $_SESSION['session_token'];
-    } else if (isset($_SESSION['public_session_token'])) {
-        $token = $_SESSION['public_session_token'];
+    $session = SessionSingleton::getSession();
+    $sessionToken = $session->get('session_token');
+    $publicSessionToken = $session->get('public_session_token');
+
+    if (isset($sessionToken)) {
+        $token = $sessionToken;
+    } else if (isset($publicSessionToken)) {
+        $token = $publicSessionToken;
     } else {
         $token = '';
     }

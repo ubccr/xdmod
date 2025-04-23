@@ -4,6 +4,7 @@ namespace IntegrationTests;
 
 use CCR\DB;
 use Exception;
+use CCR\Log;
 use Models\Services\Tokens;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
@@ -15,11 +16,11 @@ abstract class TokenAuthTest extends BaseTest
     /**
      * HTTP path for endpoint that creates, reads, and deletes API tokens.
      */
-    const TOKEN_CRD_ENDPOINT = 'rest/users/current/api/token';
+    const TOKEN_CRD_ENDPOINT = 'users/current/api/token';
 
     /**
      * Valid, expired, and revoked tokens for any of the non-public base roles
-     * (@see BaseTest::getBaseRoles()). Generated as a 2D array when it is
+     * (@see TestBase::getBaseRoles()). Generated as a 2D array when it is
      * first needed (@see self::getToken()) and stored statically for use by
      * all tests that need the tokens. Indexed first by string role (e.g.,
      * 'cd') and then by string token type (e.g., 'valid_token').
@@ -27,7 +28,7 @@ abstract class TokenAuthTest extends BaseTest
     private static $tokens = null;
 
     /**
-     * User IDs for each of the base roles (@see BaseTest::getBaseRoles()),
+     * User IDs for each of the base roles (@see TestBase::getBaseRoles()),
      * used to expire and unexpire tokens. Generated when they are first needed
      * (@see self::getToken()) and stored statically for use by all tests that
      * need them.

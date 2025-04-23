@@ -10,7 +10,9 @@ namespace UnitTests\Common;
 *
 */
 
-class ScalableValueTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class ScalableValueTest extends TestCase
 {
     private $_scalableValue;
     public function setup(): void

@@ -27,9 +27,10 @@ use Exception;
 use CCR\Log;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class DirectoryScannerTest extends \PHPUnit\Framework\TestCase
+class DirectoryScanner extends TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";
@@ -223,6 +224,8 @@ class DirectoryScannerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * 6. Test catching a bad file regex.
+     *
+     *
      */
 
     public function testLastModifiedBadFileRegex()
@@ -246,6 +249,8 @@ class DirectoryScannerTest extends \PHPUnit\Framework\TestCase
 
     /**
      * 7. Test catching a bad directory regex.
+     *
+     *
      */
 
     public function testLastModifiedBadDirRegex()

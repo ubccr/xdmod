@@ -8,10 +8,11 @@
 namespace ComponentTests\GroupBy;
 
 use CCR\Log as Logger;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Realm\Realm;
 
-class GroupByTest extends \PHPUnit\Framework\TestCase
+class GroupByTest extends TestCase
 {
 
     /**

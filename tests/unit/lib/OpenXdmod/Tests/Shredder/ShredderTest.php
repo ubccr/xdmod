@@ -8,11 +8,12 @@ namespace UnitTests\OpenXdmod\Tests\Shredder;
 use CCR\DB\NullDB;
 use Exception;
 use OpenXdmod\Shredder;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Shredder test class.
  */
-class ShredderTest extends \PHPUnit\Framework\TestCase
+class ShredderTest extends TestCase
 {
 
     protected $db;

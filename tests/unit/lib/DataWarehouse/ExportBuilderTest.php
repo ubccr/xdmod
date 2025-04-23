@@ -2,7 +2,9 @@
 
 namespace UnitTests\DataWarehouse;
 
-class ExportBuilderTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class ExportBuilderTest extends TestCase
 {
     public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
@@ -31,16 +33,16 @@ class ExportBuilderTest extends \PHPUnit\Framework\TestCase
         return $result;
     }
 
+    /**
+     * @return void
+     */
     public function testExportJson() {
-
         $result = $this->exportHelper('json', true, 'filename');
-
         $this->assertEquals('application/json', $result['headers']['Content-type']);
 
         $data = json_decode($result['results'], true);
 
-        foreach($data as $datum)
-        {
+        foreach ($data as $datum) {
             $this->assertArrayHasKey('title', $datum);
         }
     }

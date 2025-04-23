@@ -11,12 +11,13 @@ use CCR\DB;
 use ETL\EtlOverseer;
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Various tests for the EtlOverseer class.
  */
 
-class EtlOverseerTest extends \PHPUnit\Framework\TestCase
+class EtlOverseerTest extends TestCase
 {
     private static $etlConfig = null;
     private static $testArtifactInputPath = null;
@@ -59,7 +60,7 @@ class EtlOverseerTest extends \PHPUnit\Framework\TestCase
      * Reset values in shared classes.
      */
 
-    public function setup(): void
+    public function setUp(): void
     {
         self::$overseerOptions->setIncludeOnlyResourceCodes(null);
         self::$overseerOptions->setIncludeOnlyResourceCodes(null);

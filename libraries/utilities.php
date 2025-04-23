@@ -10,6 +10,7 @@ namespace xd_utilities;
 
 use Exception;
 use UnexpectedValueException;
+use xd_security\SessionSingleton;
 
 /**
  * Global INI data.
@@ -24,9 +25,9 @@ $iniData = null;
  * first time that this function is called unless the $cache is set to
  * false.
  *
- * @param $section Desired configuration section
- * @param $option Desired option within the section
- * @param $useCachedOptions Cache the parsed options file after the
+ * @param string $section Desired configuration section
+ * @param string $option Desired option within the section
+ * @param bool $useCachedOptions Cache the parsed options file after the
  *     first call to this function.  Set to true by default.  Setting
  *     this to false will cause the file to be parsed again.
  *
@@ -37,7 +38,7 @@ $iniData = null;
  *
  * @return mixed The requested configuration option.
  */
-function getConfiguration($section, $option, $useCachedOptions = true)
+function getConfiguration(string $section, string $option, bool $useCachedOptions = true)
 {
     $sectionData = getConfigurationSection($section, $useCachedOptions);
 
@@ -84,9 +85,8 @@ function getConfigurationUrlBase($section, $option, $useCachedOptions = true)
  * Same as getConfiguration however it returns the whole section as
  * an associative array.
  *
- * @param $section Desired configuration section
- * @param $option Desired option within the section
- * @param $useCachedOptions Cache the parsed options file after the
+ * @param string $section Desired configuration section
+ * @param bool $useCachedOptions Cache the parsed options file after the
  *     first call to this function.  Set to true by default.  Setting
  *     this to false will cause the file to be parsed again.
  *
@@ -96,12 +96,12 @@ function getConfigurationUrlBase($section, $option, $useCachedOptions = true)
  *
  * @return array The requested configuration section.
  */
-function getConfigurationSection($section, $useCachedOptions = true)
+function getConfigurationSection(string $section, bool $useCachedOptions = true): array
 {
     global $iniData;
 
     if (empty($section)) {
-        $msg = "Configuration section not specified";
+        $msg = 'Configuration section not specified';
         throw new Exception($msg);
     }
 
@@ -423,16 +423,20 @@ EOF;
  *
  * @param mixed $value to be filtered
  * @param int $filter the type of filter to apply
- * @param mixed $options the options to be supplied to the filter
+ * @param array|int|null $options the options to be supplied to the filter
  * @return bool|mixed false if the value is logically false, else the results of
  * \filter_var($value, $filter, $options)
  */
 
-function filter_var($value, $filter = FILTER_DEFAULT, $options = null)
+function filter_var(mixed $value, int $filter = FILTER_DEFAULT, array|int $options = null)
 {
-    return ( FILTER_VALIDATE_BOOLEAN == $filter && false === $value
-             ? false
-             : \filter_var($value, $filter, $options) );
+    if (FILTER_VALIDATE_BOOLEAN === $filter && false === $value) {
+        return false;
+    }
+    if (is_null($options)) {
+        return \filter_var($value, $filter);
+    }
+    return \filter_var($value, $filter, $options);
 }
 
 /**
@@ -466,12 +470,11 @@ function qualify_path($path, $base_path)
  * cause issues in a dynamic environment.
  */
 
-function resolve_path($path)
+function resolve_path(?string $path): ?string
 {
     // If we don't limit to filly qualified paths then relative paths such as "../../foo"
     // are not properly resolved.
-
-    if ( 0 !== strpos($path, DIRECTORY_SEPARATOR) ) {
+    if (is_null($path)) {
         return $path;
     }
 
@@ -581,8 +584,8 @@ function verify_captcha(){
     }
     catch(exception $e){
     }
-
-    if ('' !== $captchaSiteKey && '' !== $captchaSecret && !isset($_SESSION['xdUser'])) {
+    $xdUser = SessionSingleton::getSession()->get('xdUser');
+    if ('' !== $captchaSiteKey && '' !== $captchaSecret && !isset($xdUser)) {
         if (!isset($_POST['g-recaptcha-response'])){
             \xd_response\presentError('Recaptcha information not specified');
         }

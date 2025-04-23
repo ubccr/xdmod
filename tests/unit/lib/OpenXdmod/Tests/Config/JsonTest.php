@@ -5,10 +5,12 @@
 
 namespace UnitTests\OpenXdmod\Tests\Config;
 
+use PHPUnit\Framework\TestCase;
+
 /**
  * JSON config file test class.
  */
-class JsonTest extends \PHPUnit\Framework\TestCase
+class JsonTest extends TestCase
 {
 
     /**
@@ -20,7 +22,6 @@ class JsonTest extends \PHPUnit\Framework\TestCase
         $pattern = BASE_DIR . '/configuration/*.json';
         $jsonFiles = glob($pattern);
         sort($jsonFiles);
-
         foreach ($jsonFiles as $file) {
             $contents = file_get_contents($file);
             $this->assertNotFalse($contents, "Got contents of $file");

@@ -10,8 +10,9 @@
 namespace UnitTests;
 
 use CCR\Log;
+use PHPUnit\Framework\TestCase;
 
-class LogTest extends \PHPUnit\Framework\TestCase
+class LogTest extends TestCase
 {
     /**
      * Test various log levels including the newly added TRACE.

@@ -36,7 +36,7 @@ class ExternalProcess extends \php_user_filter
      * @var string The name of the filter, populated by PHP
      */
 
-    public $filtername = null;
+    public string $filtername  = '';
 
     /**
      * @var object The parameters passed to this filter by stream_filter_prepend() or
@@ -49,7 +49,7 @@ class ExternalProcess extends \php_user_filter
      * logger: Optional logger for displying error messages
      */
 
-    public $params = null;
+    public mixed $params = null;
 
     /**
      * @var array An array containing file descriptors connected to the application. The following
@@ -83,22 +83,22 @@ class ExternalProcess extends \php_user_filter
      * Called when applying the filter. Move data from the input buckets to the output
      * buckets, filtering along the way.
      *
-     * @param $in A resource pointing to a bucket brigade which contains one or more
+     * @param resource $in A resource pointing to a bucket brigade which contains one or more
      *   bucket objects containing data to be filtered.
-     * @param $out A resource pointing to a second bucket brigade into which your modified
+     * @param resource $out A resource pointing to a second bucket brigade into which your modified
      *   buckets should be placed.
-     * @param $consumed A reference to a value that should be incremented by the length of
+     * @param mixed $consumed A reference to a value that should be incremented by the length of
      *   the data which your filter reads in and alters. In most cases this means you will
      *   increment consumed by $bucket->datalen for each $bucket.
-     * @param $closing Set to TRUE if the stream is in the process of closing (and
+     * @param bool $closing Set to TRUE if the stream is in the process of closing (and
      *   therefore this is the last pass through the filterchain).
      *
-     * @return PSFS_PASS_ON If data has been copied to the $out brigade
-     * @return PSFS_FEED_ME If the filter was successful but did not copy data to the $out brigade,
-     * @return PSFS_ERR_FATAL On error.
+     * @return int PSFS_PASS_ON If data has been copied to the $out brigade
+     * @return int PSFS_FEED_ME If the filter was successful but did not copy data to the $out brigade,
+     * @return int PSFS_ERR_FATAL On error.
      */
 
-    public function filter($in, $out, &$consumed, $closing)
+    public function filter($in, $out, &$consumed, $closing): int
     {
         $retval = PSFS_FEED_ME;
 
@@ -146,7 +146,7 @@ class ExternalProcess extends \php_user_filter
      * application and opening read and write pipes to the application.
      */
 
-    public function onCreate()
+    public function onCreate(): bool
     {
         // Verify parameters
 
@@ -219,7 +219,7 @@ class ExternalProcess extends \php_user_filter
      * Cleanup after the filter is closed.
      */
 
-    public function onClose()
+    public function onClose(): void
     {
         if ($this->pipes[0]) {
             fclose($this->pipes[0]);

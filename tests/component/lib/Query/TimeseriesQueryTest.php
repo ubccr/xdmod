@@ -8,8 +8,9 @@ namespace ComponentTests\Query;
 
 use CCR\Log as Logger;
 use DataWarehouse\Query\AggregateQuery;
+use PHPUnit\Framework\TestCase;
 
-class TimeseriesQueryTest extends \PHPUnit\Framework\TestCase
+class TimeseriesQueryTest extends TestCase
 {
 
     protected static $logger = null;

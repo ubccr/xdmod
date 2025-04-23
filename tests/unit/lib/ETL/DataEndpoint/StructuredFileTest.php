@@ -38,9 +38,10 @@ use CCR\Log;
 use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use Exception;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class StructuredFileTest extends \PHPUnit\Framework\TestCase
+class StructuredFileTest extends TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";
@@ -232,6 +233,7 @@ class StructuredFileTest extends \PHPUnit\Framework\TestCase
     /**
      * Test #3: Error reporting when config is not valid.
      *
+     *
      */
 
     public function testInvalidFilterConfig()
@@ -258,6 +260,7 @@ class StructuredFileTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test #4: Error reporting when a filter type is not provided.
+     *
      *
      */
 
@@ -289,6 +292,7 @@ class StructuredFileTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test #5: Filter syntax error.
+     *
      *
      */
 
@@ -635,6 +639,7 @@ class StructuredFileTest extends \PHPUnit\Framework\TestCase
 
     /**
      * Test #15: Parse JSON 2d array, no header row, no field names (excpect Exception).
+     *
      *
      */
 

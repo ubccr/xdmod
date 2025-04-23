@@ -6,6 +6,7 @@ use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
 use IntegrationTests\TokenAuthTest;
+
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\IncompleteTestError;
 use PHPUnit\Framework\SkippedTestError;
@@ -206,7 +207,7 @@ class RegressionTestHelper extends XdmodTestHelper
      * @see XdmodTestHelper::authenticate()
      * @param string $userrole The user's role.
      */
-    public function authenticate($userrole = null)
+    public function authenticate($userrole = null, $verbose = false)
     {
         if ($userrole === null) {
             $userrole = self::getEnvUserrole();
@@ -214,7 +215,7 @@ class RegressionTestHelper extends XdmodTestHelper
 
         // The public user cannot authenticate.
         if ($userrole !== 'public') {
-            parent::authenticate($userrole);
+            parent::authenticate($userrole, $verbose);
         }
     }
 
@@ -360,7 +361,9 @@ class RegressionTestHelper extends XdmodTestHelper
             throw new SkippedTestError($fullTestName . ' intentionally skipped');
         }
 
-        list($csvdata, $curldata) = self::post('/controllers/user_interface.php', null, $input);
+        list($csvdata, $curldata) = self::post('controllers/user_interface.php', null, $input);
+        $origData = $csvdata;
+
         if (!empty(self::$timingOutputDir)) {
             $time_data = $fullTestName . "," . $curldata['total_time'] . "," . $curldata['starttransfer_time'] . "\n";
             $outputCSV = self::$timingOutputDir . "timings.csv";
@@ -517,7 +520,7 @@ class RegressionTestHelper extends XdmodTestHelper
     public static function getRawDataTestParams(array $realmParams)
     {
         $baseInput = [
-            'path' => 'rest/warehouse/raw-data',
+            'path' => 'warehouse/raw-data',
             'method' => 'get',
             'data' => null
         ];
@@ -637,11 +640,17 @@ class RegressionTestHelper extends XdmodTestHelper
                 json_decode($expected, true),
                 json_decode($data, true)
             );
+
+            // If there are no differences then we're good.
+            if (empty($differences)) {
+                return true;
+            }
             throw new ExpectationFailedException(
                 sprintf(
-                    "Response does not match artifact:\nExpected:\n%s\nActual:\n%s\n",
+                    "Response does not match artifact:\nExpected:\n%s\nActual:\n%s\nDifferences:\n%s\n***",
                     $expected,
-                    $data
+                    $data,
+                    implode("\n",$differences)
                 )
             );
         }

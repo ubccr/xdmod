@@ -2935,7 +2935,7 @@ layout: null
                                             "totalCount": 0,
                                             "results": [],
                                             "data": [],
-                                            "message": "start_date is a required parameter",
+                                            "message": "missing required start_date parameter",
                                             "code": 0
                                         }
                                     },
@@ -2947,7 +2947,7 @@ layout: null
                                             "totalCount": 0,
                                             "results": [],
                                             "data": [],
-                                            "message": "end_date is a required parameter",
+                                            "message": "missing required end_date parameter",
                                             "code": 0
                                         }
                                     },
@@ -2971,7 +2971,7 @@ layout: null
                                             "totalCount": 0,
                                             "results": [],
                                             "data": [],
-                                            "message": "realm is a required parameter.",
+                                            "message": "missing required realm parameter",
                                             "code": 0
                                         }
                                     },

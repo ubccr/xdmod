@@ -6,12 +6,13 @@
 namespace UnitTests\OpenXdmod\Tests;
 
 use Exception;
+use PHPUnit\Framework\TestCase;
 use Xdmod\HostListParser;
 
 /**
  * HostListParser test class.
  */
-class HostListParserTest extends \PHPUnit\Framework\TestCase
+class HostListTest extends TestCase
 {
 
     private $parser;
@@ -48,8 +49,8 @@ class HostListParserTest extends \PHPUnit\Framework\TestCase
 
     public function testNestedBracketsException()
     {
-        $this->expectExceptionMessageMatches("/^Nested brackets/");
         $this->expectException(Exception::class);
+        $this->expectExceptionMessageMatches("/^Nested brackets/");
         $this->parser->expandHostList('host[01-10[01-10]]');
     }
 

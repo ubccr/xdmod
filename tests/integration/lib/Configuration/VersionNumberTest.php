@@ -9,7 +9,7 @@ use CCR\Json;
 /**
  * Test the Open XDMoD version number.
  */
-class VersionNumberTest extends \PHPUnit\Framework\TestCase
+class VersionNumberTest extends TestCase
 {
     /**
      * Absolute path to portal_settings.ini of installed Open XDMoD.

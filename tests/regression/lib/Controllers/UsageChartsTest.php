@@ -107,10 +107,10 @@ class UsageChartsTest extends \PHPUnit\Framework\TestCase
             }
             $pipes = array();
             $descriptor_spec = array(
-                    0 => array('pipe', 'r'),
-                    1 => array('pipe', 'w'),
-                    2 => array('pipe', 'w'),
-                    );
+                0 => array('pipe', 'r'),
+                1 => array('pipe', 'w'),
+                2 => array('pipe', 'w'),
+            );
             $process = proc_open($command, $descriptor_spec, $pipes);
             if (!is_resource($process)) {
                 throw new \Exception('Unable execute command Details: ' . print_r(error_get_last(), true));
@@ -139,9 +139,12 @@ class UsageChartsTest extends \PHPUnit\Framework\TestCase
     public function testChartSettings($testName, $input, $expectedHash)
     {
         $postvars = null;
-        $response = self::$helper->post('/controllers/user_interface.php', $postvars, $input);
+        $response = self::$helper->post('controllers/user_interface.php', $postvars, $input);
 
         $imageData = $response[0];
+        if (!is_string($imageData)) {
+            echo var_export($imageData, true) . "\n";
+        }
         $actualHash = $this->phash($input['format'], $imageData);
 
         if (getenv('REG_TEST_SAVE_IMAGE')) {
@@ -201,39 +204,39 @@ class UsageChartsTest extends \PHPUnit\Framework\TestCase
         //    Chart Title override
 
         $reference = array(
-           'public_user' => 'false',
-           'realm' => 'Jobs',
-           'group_by' => 'pi',
-           'statistic' => 'total_cpu_hours',
-           'start_date' => '2016-12-22',
-           'end_date' => '2017-01-01',
-           'timeframe_label' => 'User Defined',
-           'scale' => 1,
-           'aggregation_unit' => 'Day',
-           'dataset_type' => 'timeseries',
-           'thumbnail' => 'n',
-           'query_group' => 'tg_usage',
-           'display_type' => 'line',
-           'combine_type' => 'side',
-           'limit' => '10',
-           'offset' => '0',
-           'log_scale' => 'n',
-           'show_guide_lines' => 'y',
-           'show_trend_line' => 'n',
-           'show_error_bars' => 'n',
-           'show_aggregate_labels' => 'n',
-           'show_error_labels' => 'n',
-           'hide_tooltip' => 'false',
-           'show_title' => 'y',
-           'width' => '916',
-           'height' => '484',
-           'legend_type' => 'bottom_center',
-           'font_size' => '3',
-           'none' => '-9999',
-           'format' => 'png',
-           'inline' => 'n',
-           'operation' => 'get_data',
-           'controller_module' => 'user_interface'
+            'public_user' => 'false',
+            'realm' => 'Jobs',
+            'group_by' => 'pi',
+            'statistic' => 'total_cpu_hours',
+            'start_date' => '2016-12-22',
+            'end_date' => '2017-01-01',
+            'timeframe_label' => 'User Defined',
+            'scale' => 1,
+            'aggregation_unit' => 'Day',
+            'dataset_type' => 'timeseries',
+            'thumbnail' => 'n',
+            'query_group' => 'tg_usage',
+            'display_type' => 'line',
+            'combine_type' => 'side',
+            'limit' => '10',
+            'offset' => '0',
+            'log_scale' => 'n',
+            'show_guide_lines' => 'y',
+            'show_trend_line' => 'n',
+            'show_error_bars' => 'n',
+            'show_aggregate_labels' => 'n',
+            'show_error_labels' => 'n',
+            'hide_tooltip' => 'false',
+            'show_title' => 'y',
+            'width' => '916',
+            'height' => '484',
+            'legend_type' => 'bottom_center',
+            'font_size' => '3',
+            'none' => '-9999',
+            'format' => 'png',
+            'inline' => 'n',
+            'operation' => 'get_data',
+            'controller_module' => 'user_interface'
         );
 
         $statistics = array('job_count', 'total_cpu_hours', 'utilization');

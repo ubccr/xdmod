@@ -198,13 +198,20 @@ class Column extends NamedEntity implements iEntity
             // value for another column.  To specify automatic initialization or updating for a
             // different TIMESTAMP column, you must suppress the automatic properties for the first
             // one.
-
             if (
                 (
-                    (null === $srcDefault && null === $srcExtra)
-                    || ('current_timestamp' === strtolower($srcDefault) && 'on update current_timestamp' === strtolower($srcExtra))
+                    (
+                        null === $srcDefault &&
+                        null === $srcExtra
+                    )
+                    ||
+                    (
+                        !is_null($srcDefault) && !is_null($srcExtra) &&
+                        'current_timestamp' === strtolower($srcDefault) &&
+                        'on update current_timestamp' === strtolower($srcExtra)
+                    )
                 )
-                && ('current_timestamp' != strtolower($destDefault) || null === $destExtra)
+                && ((!is_null($destDefault) && 'current_timestamp' != strtolower($destDefault)) || null === $destExtra)
             ) {
                 $this->logCompareFailure('timestamp', "$srcDefault $srcExtra", "$destDefault $destExtra", $this->name);
                 return -1;

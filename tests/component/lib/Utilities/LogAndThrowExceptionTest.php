@@ -12,7 +12,7 @@ use \PHPUnit\Framework\TestCase;
  * Test various cases for exceptions thrown by Loggable::logAndThrowException()
  */
 
-class LogAndThrowExceptionTest extends \PHPUnit\Framework\TestCase
+class LogAndThrowExceptionTest extends TestCase
 {
     private $db;
     private $loggable;

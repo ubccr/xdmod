@@ -11,19 +11,22 @@
             "/composer.json",
             "/composer.lock",
             "/docs",
-            "/html/gui/js/modules/Module.template",
+            "/public/gui/js/modules/Module.template",
             "/logs",
-            "/phpcs.xml",
             "/setup",
             "/sonar-project.properties",
             "/tests",
-            "/html/gui/lib/extjs/docs",
-            "/html/gui/lib/extjs/build",
-            "/html/gui/lib/extjs/pkgs",
-            "/html/gui/lib/extjs/test",
-            "/html/gui/lib/extjs/welcome",
-            "/html/unit_tests",
-            "/html/user_manual/sphinx_venv",
+            "/public/gui/lib/extjs/docs",
+            "/public/gui/lib/extjs/build",
+            "/public/gui/lib/extjs/pkgs",
+            "/public/gui/lib/extjs/test",
+            "/public/gui/lib/extjs/welcome",
+            "/public/gui/lib/highcharts/api",
+            "/public/gui/lib/highcharts/examples",
+            "/public/gui/lib/highcharts/gfx",
+            "/public/gui/lib/highcharts/graphics",
+            "/public/gui/lib/highcharts/index.htm",
+            "/public/unit_tests",
             "/user_manual_builder"
         ],
         "exclude_patterns": [
@@ -33,18 +36,24 @@
             "#^\\/html\\/gui\\/lib\\/extjs\\/examples\\/[A-t,v-z].*#",
             "#^\\/html\\/gui\\/lib\\/extjs\\/resources\\/images\\/[a,h-z].*#",
             "#^\\/html\\/gui\\/lib\\/extjs\\/resources\\/.*\\.swf#",
-            "#^\\/configuration\\/.+\\..+\\.template$#"
+            "#^\\/configuration\\/.+\\..+\\.template$#",
+            "#\\/var\\/.*#"
         ]
     },
     "file_maps": {
         "data": [
+            { "bin/console": true },
             "classes",
             "etl",
-            "html",
             "libraries",
             "templates",
             "tools",
             "vendor",
+            "src",
+            "public",
+            "config",
+            "var",
+            {".env":  true},
             { "configuration/constants.php": true },
             { "configuration/linker.php" : true }
         ],
@@ -105,8 +114,6 @@
         "pre_build": [
             "rm -rf vendor/",
             "composer install",
-            "sed -i 's/SimpleSAML_Error_Assertion::installHandler();//g' vendor/simplesamlphp/simplesamlphp/www/_include.php",
-            "patch vendor/symfony/http-foundation/Request.php < open_xdmod/modules/xdmod/assets/symfony_http-foundation_CVE-2019-10913.patch",
             "user_manual_builder/setup.sh",
             "user_manual_builder/build_user_manual.sh --builddir user_manual_builder/ --destdir html/user_manual/"
         ]

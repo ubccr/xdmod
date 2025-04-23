@@ -5,7 +5,9 @@
 
 namespace UnitTests;
 
-abstract class TestBase extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+abstract class TestBase extends TestCase
 {
     /**
      * Recursively filter out any keys matching one in $keyList. This is a helper function to

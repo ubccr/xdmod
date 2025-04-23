@@ -5,12 +5,13 @@
 
 namespace UnitTests\OpenXdmod\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Xdmod\NodeSet;
 
 /**
  * NodeSet test class
  */
-class NodeSetTest extends \PHPUnit\Framework\TestCase
+class NodeSetTest extends TestCase
 {
     public function testNodeSetIterator()
     {

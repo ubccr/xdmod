@@ -2,9 +2,10 @@
 
 namespace UnitTests;
 
+use PHPUnit\Framework\TestCase;
 use Exception;
 
-class XdRegressionTest extends \PHPUnit\Framework\TestCase
+class XdRegressionTest extends TestCase
 {
     public function testLinearRegression1() {
 

@@ -2,9 +2,10 @@
 
 namespace UnitTests\DataWarehouse\Query;
 
+use PHPUnit\Framework\TestCase;
 use UnitTests\TestHelpers\mock;
 
-class TimeAggregationUnitTest extends \PHPUnit\Framework\TestCase
+class TimeAggregationUnitTest extends TestCase
 {
     public function testInvalidTimePeriod()
     {

@@ -4,7 +4,9 @@ namespace UnitTests;
 
 use UnitTests\TestHelpers\mock\MockXDUser;
 
-class UserStorageTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class UserStorageTest extends TestCase
 {
     public function testGet() {
 

@@ -30,7 +30,7 @@ class AdminControllerProviderTest extends BaseTest
     public function provideResetUserTourViewed()
     {
         $validInput = [
-            'path' => 'rest/admin/reset_user_tour_viewed',
+            'path' => 'reset_user_tour_viewed',
             'method' => 'post',
             'params' => null,
             'data' => [

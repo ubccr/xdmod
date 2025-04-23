@@ -11,8 +11,9 @@ namespace UnitTests\ETL\SqlParser;
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
 use ETL\aAction;
+use PHPUnit\Framework\TestCase;
 
-class SqlParserTest extends \PHPUnit\Framework\TestCase
+class SqlParserTest extends TestCase
 {
     // Re-use existing input files
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";

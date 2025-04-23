@@ -5,12 +5,12 @@ namespace IntegrationTests;
 use CCR\Json;
 use Exception;
 use SebastianBergmann\Comparator\ComparisonFailure;
+use PHPUnit\Framework\TestCase;
 use Swaggest\JsonSchema\Schema;
 use IntegrationTests\TestHarness\TestFiles;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 use InvalidArgumentException;
-
 /**
  * This class serves as a base for test classes.
  *
@@ -90,7 +90,7 @@ use InvalidArgumentException;
  *      );
  *  }
  */
-abstract class BaseTest extends \PHPUnit\Framework\TestCase
+abstract class BaseTest extends TestCase
 {
     const DATE_REGEX = '/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/';
 
@@ -108,7 +108,7 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
         'output' => ['status_code', 'body_validator']
     ];
 
-    public static function setupBeforeClass(): void
+    public static function setUpBeforeClass(): void
     {
         self::$XDMOD_REALMS = Utilities::getRealmsToTest();
     }
@@ -268,7 +268,7 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
             . "\nEXPECTED CONTENT TYPE: application/json"
             . "\nACTUAL CONTENT TYPE: $actualContentType"
             . "\nACTUAL BODY: "
-            . self::getJsonStringForExceptionMessage($actualBody)
+            . (is_array($actualBody) ? self::getJsonStringForExceptionMessage($actualBody) : $actualBody)
             . "\n"
         );
 
@@ -299,9 +299,11 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
         array $input,
         array $output
     ) {
+        $testHelper = new XdmodTestHelper();
         if ('pub' !== $role) {
             $testHelper->authenticate($role);
         }
+
         $actualBody = $this->requestAndValidateJson(
             $testHelper,
             $input,
@@ -890,5 +892,13 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
             ? substr($str, 0, $numChars) . '...'
             : $str
         );
+    }
+
+    protected function log($message)
+    {
+        if (getenv('TEST_VERBOSE') === '1') {
+            echo "\n*****************************\n";
+            echo "$message\n";
+        }
     }
 }

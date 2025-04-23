@@ -1,6 +1,8 @@
 #!/bin/bash
 
-#Used for docker build, cache file will need to be upgraded if newer version is needed
+SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
+
+# Used for docker build, cache file will need to be upgraded if newer version is needed
 CACHE_FILE='/root/saml-idp.tar.gz'
 
 DEFAULT_INSTALL_DIR=/usr/share/xdmod
@@ -19,9 +21,10 @@ then
     tar -zxf $CACHE_FILE
     cd saml-idp
 else
+    echo '{ "allow_root": true }' > /root/.bowerrc
     git clone https://github.com/mcguinness/saml-idp/
+    chown -R root:root saml-idp
     cd saml-idp
-    git checkout 8ff807a91f4badc3c0a10551e1d789df140a66cc
     rm -f package-lock.json
     npm set progress=false
     npm install --quiet --silent
@@ -233,5 +236,16 @@ cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <
 );
 EOF
 
-node app.js  --acs https://$HOSTNAME/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud https://$HOSTNAME/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
-httpd -k start
+# Install CORS
+npm install cors
+
+# Copy over the cors enabled version of app.js
+\cp "${SCRIPT_DIR}/scripts/app.js" .
+
+# Update the x509cert in the hslavich_onelogin_saml.yaml file to match what was generated for the IDP.
+sed -i -E 's|x509cert: (.*)'"|x509cert: '"$CERTCONTENTS"'|" /usr/share/xdmod/config/packages/hslavich_onelogin_saml.yaml
+
+# Run the IDP
+node app.js  --acs https://localhost/saml/acs --aud xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
+
+httpd -k restart

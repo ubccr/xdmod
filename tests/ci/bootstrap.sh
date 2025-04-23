@@ -86,6 +86,8 @@ then
     GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
     FLUSH PRIVILEGES;"
 
+    SECRET=$(date | sha256sum | cut -d' ' -f1 ); echo "APP_SECRET=$SECRET" >> /usr/share/xdmod/.env
+
     # TODO: Replace diff files with hard fixes
     # Modify integration sso tests to work with cloud realm
     if [ "$XDMOD_REALMS" = "cloud" ]; then

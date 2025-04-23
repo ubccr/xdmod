@@ -511,7 +511,7 @@ class ExportDBTest extends BaseTest
         }
     }
 
-    public static function setupBeforeClass(): void
+    public static function setUpBeforeClass(): void
     {
         // setup needed to use NORMAL_USER_USER_NAME or the like
         parent::setupBeforeClass();

@@ -1140,20 +1140,29 @@ class XDReportManager
     public function fetchChartBlob(
         $type,
         $insertion_rank,
-        $chart_id_cache_file = null
+        $chart_id_cache_file = null,
+        $logger =  null
     ) {
         $pdo = DB::factory('database');
         $trace = "";
-
+        if (!empty($logger)) {
+            $logger->warning('Fetching Chart Blob', ['type' => $type, 'insertion_rank' => $insertion_rank, 'chart_id_cache_file' => $chart_id_cache_file]);
+        }
         switch ($type) {
             case 'volatile':
+                if (!empty($logger)) {
+                    $logger->warning('Fetching Volatile Chart Blob', ['type' => $type, 'insertion_rank' => $insertion_rank, 'chart_id_cache_file' => $chart_id_cache_file]);
+                }
                 $temp_file = $this->generateCachedFilename(
                     $insertion_rank,
                     true
                 );
 
                 if (file_exists($temp_file)) {
-                    print file_get_contents($temp_file);
+                    if (!empty($logger)) {
+                        $logger->warning('Temp file exists!');
+                    }
+                    return file_get_contents($temp_file);
                 }
                 else {
                     if (
@@ -1162,29 +1171,43 @@ class XDReportManager
                         && isset($insertion_rank['start_date'])
                         && isset($insertion_rank['end_date'])
                     ) {
+                        if (!empty($logger)) {
+                            $logger->warning('Using insertion rank...');
+                        }
                         $blob = $this->generateChartBlob(
                             $type,
                             $insertion_rank,
                             $insertion_rank['start_date'],
-                            $insertion_rank['end_date']
+                            $insertion_rank['end_date'],
+                            $logger
                         );
                     }
                     else {
 
                         // If no start or end dates are supplied, then,
                         // grab directly from chart pool
-
+                        if (!empty($logger)) {
+                            $logger->warning('No start / end dates so snagging directly from chart pool');
+                        }
                         $chart_config_file = str_replace(
                             '.png',
                             '.xrc',
                             $temp_file
                         );
 
+                        if (!empty($logger)) {
+                            $logger->warning('using config file: ', [$chart_config_file]);
+                        }
+
                         $blob = $this->fetchChartBlob(
                             'chart_pool',
                             $insertion_rank['rank'],
                             $chart_config_file
                         );
+
+                        if (!empty($logger)) {
+                            $logger->warning('Blob Retrieved', [!empty($blob)]);
+                        }
 
                         // The following 3 lines are in place as a
                         // performance enhancement.  Should the user
@@ -1205,8 +1228,11 @@ class XDReportManager
                     }
 
                     file_put_contents($temp_file, $blob);
+                    if (!empty($logger)) {
+                        $logger->warning('Returning Blob', [!empty($blob)]);
+                    }
 
-                    print $blob;
+                    return $blob;
                 }
 
                 exit;
@@ -1234,17 +1260,18 @@ class XDReportManager
                 $temp_file = $this->generateCachedFilename($insertion_rank);
 
                 if (file_exists($temp_file)) {
-                    print file_get_contents($temp_file);
+                    return file_get_contents($temp_file);
                 }
                 else {
                     $blob = $this->generateChartBlob(
                         $type,
                         $insertion_rank,
                         $insertion_rank['start_date'],
-                        $insertion_rank['end_date']
+                        $insertion_rank['end_date'],
+                        $logger
                     );
                     file_put_contents($temp_file, $blob);
-                    print $blob;
+                    return $blob;
                 }
 
                 exit;
@@ -1326,7 +1353,8 @@ class XDReportManager
                 $type,
                 $insertion_rank,
                 $start_date,
-                $end_date
+                $end_date,
+                $logger
             );
         }
         else {
@@ -1354,7 +1382,8 @@ class XDReportManager
                         $type,
                         $insertion_rank,
                         $start_date,
-                        $end_date
+                        $end_date,
+                        $logger
                     );
                 }
             }
@@ -1365,7 +1394,8 @@ class XDReportManager
                     $type,
                     $insertion_rank,
                     $start_date,
-                    $end_date
+                    $end_date,
+                    $logger
                 );
             }
         }
@@ -1437,7 +1467,8 @@ class XDReportManager
         $type,
         $insertion_rank,
         $start_date,
-        $end_date
+        $end_date,
+        $logger = null
     ) {
         $pdo = DB::factory('database');
 
@@ -1461,12 +1492,16 @@ class XDReportManager
                         'chart_pool',
                         $insertion_rank['rank'],
                         $start_date,
-                        $end_date
+                        $end_date,
+                        $logger
                     );
                 }
                 break;
 
             case 'chart_pool':
+                if (!empty($logger)) {
+                    $logger->warning('generate chart Blob', ['type' => $type, 'insertion_rank' => $insertion_rank, 'start_date' => $start_date, 'end_date' => $end_date, 'user_id' => $this->_user_id]);
+                }
                 $iq = $pdo->query(
                     "
                         SELECT chart_id
@@ -1497,9 +1532,14 @@ class XDReportManager
                 );
                 break;
         }
-
+        if (!empty($logger)) {
+            $logger->warning('testing.');
+        }
         if (count($iq) == 0) {
-            throw new \Exception("Unable to target chart entry");
+            throw new \Exception("Unable to target chart entry. Type: $type " . json_encode(array(
+                    'user_id'        => $this->_user_id,
+                    'insertion_rank' => $insertion_rank,
+                )));
         }
 
         $chart_id = $iq[0]['chart_id'];

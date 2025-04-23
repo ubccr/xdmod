@@ -3,6 +3,7 @@
 namespace UnitTests\OpenXdmod\Tests;
 
 use IntegrationTests\TestHarness\TestFiles;
+use PHPUnit\Framework\TestCase;
 use Xdmod\SlurmResourceParser;
 
 /**
@@ -10,7 +11,7 @@ use Xdmod\SlurmResourceParser;
  *
  * @coversDefaultClass SlurmResourceParser
  */
-class SlurmResourceParserTest extends \PHPUnit\Framework\TestCase
+class SlurmResourceParserTest extends TestCase
 {
     /** Tests base directory relative to __DIR__ */
     const TESTS_BASE_REL_DIR = '/../../../..';

@@ -2,7 +2,9 @@
 
 namespace IntegrationTests\Logging;
 
-class CCRDBHandlerTest extends \PHPUnit\Framework\TestCase
+use PHPUnit\Framework\TestCase;
+
+class CCRDBHandlerTest extends TestCase
 {
 
     public function testHandlerWritesCorrectly()

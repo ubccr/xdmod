@@ -28,6 +28,8 @@ class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iA
 
     private $_instance_state;
 
+    private ?string $_end_time;
+
     /**
      * @see ETL\Ingestor\pdoIngestor::__construct()
      */

@@ -5,14 +5,15 @@ namespace ComponentTests\Export;
 use CCR\Json;
 use DataWarehouse\Data\RawStatisticsConfiguration;
 use Exception;
-use \PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase;
+
 
 /**
  * Test data warehouse export raw statistics configuration.
  *
  * @coversDefaultClass \DataWarehouse\Data\RawStatisticsConfiguration
  */
-class RawStatisticsConfigurationTest extends \PHPUnit\Framework\TestCase
+class RawStatisticsConfigurationTest extends TestCase
 {
     /**
      * @var array Realms used for testing.

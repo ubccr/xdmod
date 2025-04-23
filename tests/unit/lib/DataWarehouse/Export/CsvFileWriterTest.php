@@ -4,7 +4,7 @@ namespace UnitTests\DataWarehouse\Export;
 
 use CCR\Log;
 use DataWarehouse\Export\FileWriter\CsvFileWriter;
-use \PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use IntegrationTests\TestHarness\TestFiles;
 
@@ -27,7 +27,7 @@ class CsvFileWriterTest extends TestCase
     /**
      * Create logger.
      */
-    public static function setupBeforeClass(): void
+    public static function setUpBeforeClass(): void
     {
         self::$logger = Log::singleton('null');
     }

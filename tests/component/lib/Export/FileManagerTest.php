@@ -33,7 +33,7 @@ class FileManagerTest extends BaseTest
     /**
      * Create file manager and test data.
      */
-    public static function setupBeforeClass(): void
+    public static function setUpBeforeClass(): void
     {
         parent::setupBeforeClass();
         self::$fileManager = new FileManager();
@@ -150,9 +150,6 @@ class FileManagerTest extends BaseTest
          ->will($this->onConsecutiveCalls(1, 2, false));
         $dataSet->method('valid')
          ->will($this->onConsecutiveCalls(true, true, false));
-        $dataSet->method('next')->willReturn(null);
-        $dataSet->method('rewind')->willReturn(null);
-
 
         $format = $request['export_file_format'];
         $file = self::$fileManager->writeDataSetToFile($dataSet, $format);
