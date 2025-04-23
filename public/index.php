@@ -13,10 +13,12 @@ header("Access-Control-Allow-Methods: *");
 header("Allow: *");
 
 // Configurable constants ---------------------------
-$org = \Configuration\XdmodConfiguration::assocArrayFactory(
+$orgConfig = \Configuration\XdmodConfiguration::assocArrayFactory(
     'organization.json',
     CONFIG_DIR
 );
+// orgConfig is returned as array(0=>array('name' => '', 'abbrev' => ''))
+$org = array_shift($orgConfig);
 define('ORGANIZATION_NAME', $org['name']);
 $org_abbrev = $org['abbrev'];
 if (empty($org_abbrev)) {
