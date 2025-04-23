@@ -88,20 +88,20 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
 
         // Format timezone -- Plotly does not support timezones
         // Therefore, we need to utilize moment JS.
-        let axis = baseChartOptions.layout.swapXY ? 'y' : 'x';
-        baseChartOptions.data.forEach((series) => {
-            if (series.type !== 'pie') {
-                series[axis].forEach((elem, index, seriesArr) => {
+        const axis = (baseChartOptions.layout.swapXY ? 'y' : 'x') + 'axis';
+        if (baseChartOptions.layout[axis].timeseries) {
+            const axisName = axis.slice(0,1);
+            baseChartOptions.data.forEach((series) => {
+                series[axisName].forEach((elem, index, seriesArr) => {
                     seriesArr[index] = moment.tz(elem, CCR.xdmod.timezone).format();
                 });
-            }
-        });
+            });
 
-        // Format timezone for the tickvals also
-        axis = axis + 'axis';
-        baseChartOptions.layout[axis].tickvals.forEach((tick, index, tickvals) => {
-            tickvals[index] = moment.tz(tick, CCR.xdmod.timezone).format();
-        });
+            // Format timezone for the tickvals also
+            baseChartOptions.layout[axis].tickvals.forEach((tick, index, tickvals) => {
+                tickvals[index] = moment.tz(tick, CCR.xdmod.timezone).format();
+            });
+        }
     }
 
     const chart = Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, configs);
