@@ -596,27 +596,27 @@ class EtlConfiguration extends Configuration
      * ==========================================================================================
      */
 
-    public function current()
+    public function current(): mixed
     {
         return current($this->actionOptions);
     }  // current()
 
-    public function key()
+    public function key(): mixed
     {
         return key($this->actionOptions);
     }  // key()
 
-    public function next()
+    public function next(): void
     {
-        return next($this->actionOptions);
+        next($this->actionOptions);
     }  // next()
 
-    public function rewind()
+    public function rewind(): void
     {
-        return reset($this->actionOptions);
+        reset($this->actionOptions);
     }  // rewind()
 
-    public function valid()
+    public function valid(): bool
     {
         return false !== current($this->actionOptions);
     }  // valid()
@@ -628,11 +628,11 @@ class EtlConfiguration extends Configuration
      *
      * @see Configuration::addSection()
      *
-     * @param $name The name of the new section
-     * @param $data The data associated with the new section
-     * @param $overwrite TRUE if any existing data for the given section should be overwritten
+     * @param string $name The name of the new section
+     * @param mixed $data The data associated with the new section
+     * @param bool $overwrite TRUE if any existing data for the given section should be overwritten
      *
-     * @return This object for method chaining
+     * @return EtlConfiguration This object for method chaining
      * ------------------------------------------------------------------------------------------
      */
 
@@ -829,10 +829,10 @@ class EtlConfiguration extends Configuration
     /** -----------------------------------------------------------------------------------------
      * Add an action to the list of actions for the specified section.
      *
-     * @param $sectionName The name of the section that we are adding the action to
-     * @param $options The options for the action
+     * @param string $sectionName The name of the section that we are adding the action to
+     * @param aOptions $options The options for the action
      *
-     * @returns This object to support method chaining
+     * @returns void This object to support method chaining
      * ------------------------------------------------------------------------------------------
      */
 
