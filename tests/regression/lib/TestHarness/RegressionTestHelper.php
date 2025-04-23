@@ -640,11 +640,17 @@ class RegressionTestHelper extends XdmodTestHelper
                 json_decode($expected, true),
                 json_decode($data, true)
             );
+
+            // If there are no differences then we're good.
+            if (empty($differences)) {
+                return true;
+            }
             throw new ExpectationFailedException(
                 sprintf(
-                    "Response does not match artifact:\nExpected:\n%s\nActual:\n%s\n",
+                    "Response does not match artifact:\nExpected:\n%s\nActual:\n%s\nDifferences:\n%s\n***",
                     $expected,
-                    $data
+                    $data,
+                    implode("\n",$differences)
                 )
             );
         }

@@ -67,7 +67,7 @@ class EtlOverseerOptions extends \CCR\Loggable
     private $resourceCodeToIdMap = array();
 
     // SQL query used to populate the resource code to resource id map
-    private $resourcecodeToIdMapSql = null;
+    private $resourceCodeToIdMapSql = null;
 
     // A list of all requested section names
     private $sectionNames = array();

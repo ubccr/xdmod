@@ -1281,7 +1281,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $queryDescripters = Acls::getQueryDescripters($user, $realm);
 
         if (empty($queryDescripters)) {
-            throw new BadRequestHttpException('Invalid realm');
+            throw new BadRequestHttpException('No realm exists with the requested name.');
         }
 
         $offset = $this->getIntParam($request, 'start', true);
@@ -1292,7 +1292,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $searchParams = json_decode($searchParameterStr, true);
 
         if ($searchParams === null || !is_array($searchParams)) {
-            throw new BadRequestHttpException('The params parameter must be a json object');
+            throw new BadRequestHttpException('params parameter must be valid JSON');
         }
 
         $params = array_intersect_key($searchParams, $queryDescripters);

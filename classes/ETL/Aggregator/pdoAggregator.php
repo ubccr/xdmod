@@ -335,7 +335,7 @@ class pdoAggregator extends aAggregator
         // debug information.
 
         // In order to properly manage the tables, we must perform variable substitution on column,
-        // index, and trigger definitions as they may use the ${AGGREGATION_UNIT} macro. We can't do
+        // index, and trigger definitions as they may use the {$AGGREGATION_UNIT} macro. We can't do
         // this on the original table definition because we will need to substitute each aggregation
         // unit.
 

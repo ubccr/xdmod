@@ -72,7 +72,7 @@ class UserAdminTest extends BaseUserAdminTest
             // Username not provided
             array(
                 $this->copyAndRemove($params, array('username')),
-                $this->copyAndReplace($expected, array('message' => "missing required username parameter"))
+                $this->copyAndReplace($expected, array('message' => "username is a required parameter."))
             ),
             // Username empty
             array(
@@ -82,7 +82,7 @@ class UserAdminTest extends BaseUserAdminTest
             // first_name not provided
             array(
                 $this->copyAndRemove($params, array('first_name')),
-                $this->copyAndReplace($expected, array('message' => "missing required first_name parameter"))
+                $this->copyAndReplace($expected, array('message' => "first_name is a required parameter."))
             ),
             // first_name empty
             array(
@@ -92,7 +92,7 @@ class UserAdminTest extends BaseUserAdminTest
             // last_name not provided
             array(
                 $this->copyAndRemove($params, array('last_name')),
-                $this->copyAndReplace($expected, array('message' => "missing required last_name parameter"))
+                $this->copyAndReplace($expected, array('message' => "last_name is a required parameter."))
             ),
             // last_name empty
             array(
@@ -102,7 +102,7 @@ class UserAdminTest extends BaseUserAdminTest
             // user_type not provided
             array(
                 $this->copyAndRemove($params, array('user_type')),
-                $this->copyAndReplace($expected, array('message' => "missing required user_type parameter"))
+                $this->copyAndReplace($expected, array('message' => "user_type is a required parameter."))
             ),
             // user_type empty
             array(
@@ -112,7 +112,7 @@ class UserAdminTest extends BaseUserAdminTest
             // email_address not provided
             array(
                 $this->copyAndRemove($params, array('email_address')),
-                $this->copyAndReplace($expected, array('message' => "missing required email_address parameter"))
+                $this->copyAndReplace($expected, array('message' => "email_address is a required parameter."))
             ),
             // email_address empty
             array(
@@ -122,7 +122,7 @@ class UserAdminTest extends BaseUserAdminTest
             // acls not provided
             array(
                 $this->copyAndRemove($params, array('acls')),
-                $this->copyAndReplace($expected, array('message' => "missing required acls parameter"))
+                $this->copyAndReplace($expected, array('message' => "acls is a required parameter."))
             ),
             // acls empty
             array(

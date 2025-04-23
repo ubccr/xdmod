@@ -204,9 +204,15 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                 'authentication_type' => 'token_optional'
             ],
             parent::validateSuccessResponse(function ($body, $assertMessage) {
+                $validData = [
+                    'Jobs' => ['count' => 28, 'index' => 0],
+                    'Cloud' => ['count' => 16, 'index' => 0],
+                    'ResourceSpecifications' => ['count' => 16, 'index' => 0]
+                ];
                 $this->assertSame(3, $body['total'], $assertMessage);
-                $index = 0;
-                foreach (['Jobs', 'Cloud', 'ResourceSpecifications'] as $realmName) {
+                foreach (array_keys($validData) as $realmName) {
+                    // Save off the index for this realm so we can use it later to validate the count.
+                    $validData[$realmName]['index'] = $index = array_search($realmName, array_column($body['data'], 'id'));
                     $realm = $body['data'][$index];
                     foreach (['id', 'name'] as $property) {
                         $this->assertSame(
@@ -217,11 +223,11 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                     }
                     foreach ($realm['fields'] as $field) {
                         foreach ([
-                            'name',
-                            'alias',
-                            'display',
-                            'documentation'
-                        ] as $string) {
+                                     'name',
+                                     'alias',
+                                     'display',
+                                     'documentation'
+                                 ] as $string) {
                             $this->assertIsString(
                                 $field[$string],
                                 $assertMessage
@@ -232,14 +238,10 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                             $assertMessage
                         );
                     }
-                    $index++;
-                }
 
-                $counts = [28, 16, 16];
-                for ($i = 0; $i < count($counts); $i++) {
                     $this->assertCount(
-                        $counts[$i],
-                        $body['data'][$i]['fields'],
+                        $validData[$realmName]['count'],
+                        $realm['fields'],
                         $assertMessage
                     );
                 }

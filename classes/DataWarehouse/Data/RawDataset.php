@@ -2,52 +2,72 @@
 
 namespace DataWarehouse\Data;
 
+use DataWarehouse\Query\Query;
+use DateInvalidTimeZoneException;
+use DateMalformedStringException;
+use XDUser;
+
+/**
+ *
+ */
 class RawDataset
 {
-    private $query;
-    private $query_results;
+    private Query $query;
+    private ?array $queryResults;
+    private int $userType;
 
-    public function __construct(&$query, $user)
+    /**
+     * @param $query
+     * @param XDUser $user
+     */
+    public function __construct(&$query, XDUser $user)
     {
         $this->query = $query;
-        $this->query_results = null;
+        $this->queryResults = null;
         $this->userType = $user->getUserType();
     }
 
-    private function formattime($timestamp, $timezone)
+    /**
+     * @param $timestamp
+     * @param $timezone
+     * @return string
+     * @throws DateInvalidTimeZoneException
+     * @throws DateMalformedStringException
+     */
+    private function formattime($timestamp, $timezone): string
     {
-        $tmpdate = new \DateTime(null, new \DateTimeZone('UTC'));
-        $tmpdate->setTimestamp($timestamp);
-        $tmpdate->setTimezone(new \DateTimeZone($timezone));
+        $dateTime = new \DateTime(null, new \DateTimeZone('UTC'));
+        $dateTime->setTimestamp($timestamp);
+        $dateTime->setTimezone(new \DateTimeZone($timezone));
 
-        return $tmpdate->format("Y-m-d\TH:i:s T");
+        return $dateTime->format('Y-m-d\TH:i:s T');
     }
 
     private function fetchResults()
     {
-        if ($this->query_results === null) {
+        if ($this->queryResults === null) {
             $stmt = $this->query->getRawStatement();
-            $this->query_results = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+            $this->queryResults = $stmt->fetchAll(\PDO::FETCH_ASSOC);
         }
     }
 
     public function hasResults()
     {
         $this->fetchResults();
-        return count($this->query_results) > 0;
+        return count($this->queryResults) > 0;
     }
 
     public function getResults()
     {
         $this->fetchResults();
-        return $this->query_results;
+        return $this->queryResults;
     }
 
     public function export()
     {
         $this->fetchResults();
 
-        if (count($this->query_results) == 0) {
+        if (count($this->queryResults) == 0) {
             return array();
         }
 
@@ -57,7 +77,7 @@ class RawDataset
 
         $redactlist = array();
 
-        foreach ($this->query_results[0] as $key => $value) {
+        foreach ($this->queryResults[0] as $key => $value) {
 
             // Skip the error columns (if present)
             if (\xd_utilities\string_ends_with($key, '_error')) {
@@ -83,19 +103,19 @@ class RawDataset
             }
 
             if ($value === null) {
-                if (isset($this->query_results[0][$key.'_error'])) {
-                    $errorMsg = $this->query_results[0][$key.'_error'];
+                if (isset($this->queryResults[0][$key.'_error'])) {
+                    $errorMsg = $this->queryResults[0][$key.'_error'];
                 } else {
                     continue;
                 }
             }
 
             if ($units == 'ts') {
-                if (isset($this->query_results[0]['timezone'])) {
-                    $value = $this->formattime($value, $this->query_results[0]['timezone']);
+                if (isset($this->queryResults[0]['timezone'])) {
+                    $value = $this->formattime($value, $this->queryResults[0]['timezone']);
                     $units = '';
-                } elseif (isset($this->query_results[0]['Timezone'])) {
-                    $value = $this->formattime($value, $this->query_results[0]['Timezone']);
+                } elseif (isset($this->queryResults[0]['Timezone'])) {
+                    $value = $this->formattime($value, $this->queryResults[0]['Timezone']);
                     $units = '';
                 }
             }

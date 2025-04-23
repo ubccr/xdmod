@@ -80,6 +80,7 @@ XDMoD.ReportManager = Ext.extend(Ext.Panel, {
                     );
 
                     var location = '/controllers/report_builder.php' +
+                        responseData.report_name +
                         '?operation=download_report&report_loc=' +
                         responseData.report_loc + '&format=' + format;
 

@@ -73,6 +73,8 @@ use Exception;
 use Psr\Log\LoggerInterface;
 use stdClass;
 use Traversable;
+use function xd_utilities\qualify_path;
+use function xd_utilities\resolve_path;
 
 class Configuration extends Loggable implements iConfiguration
 {
@@ -119,7 +121,7 @@ class Configuration extends Loggable implements iConfiguration
     protected $sectionData = array();
 
     /**
-     * @var boolean TRUE if this is a local configuration file as opposed to the main configuration
+     * @var bool TRUE if this is a local configuration file as opposed to the main configuration
      * file
      */
 
@@ -138,7 +140,7 @@ class Configuration extends Loggable implements iConfiguration
     protected $localConfigFiles = array();
 
     /**
-     * @var boolean Flag indicating that the directory for local configuration files has been
+     * @var bool Flag indicating that the directory for local configuration files has been
      * scanned and the list of filenames has been stored for use.
      */
 
@@ -170,7 +172,7 @@ class Configuration extends Loggable implements iConfiguration
     protected $variableStore = null;
 
     /**
-     * @var boolean TRUE if the configuration has already been initialized.
+     * @var bool TRUE if the configuration has already been initialized.
      */
 
     protected $initialized = false;
@@ -183,7 +185,7 @@ class Configuration extends Loggable implements iConfiguration
     protected $calledClassName = null;
 
     /**
-     * @var boolean Enable or disable the object cache to improve performance. Enabling the object
+     * @var bool Enable or disable the object cache to improve performance. Enabling the object
      * cache means that a Configuration object will only need to be created once for a given global
      * file.
      */
@@ -200,7 +202,7 @@ class Configuration extends Loggable implements iConfiguration
     protected static $objectCache = array();
 
     /**
-     * @var boolean Force use of the local (per-session) object cache rather than APCu or other
+     * @var bool Force use of the local (per-session) object cache rather than APCu or other
      * caching mechanisms. This is used mainly for testing purposes.
      */
 
@@ -247,7 +249,7 @@ class Configuration extends Loggable implements iConfiguration
         $calledClass = get_called_class();
 
         if ( empty($filename) ) {
-            $msg = sprintf("%s: Configuration filename cannot be empty", $calledClass);
+            $msg = sprintf('%s: Configuration filename cannot be empty', $calledClass);
             if ( null !== $logger ) {
                 $logger->error($msg);
             }
@@ -265,10 +267,10 @@ class Configuration extends Loggable implements iConfiguration
         if ( null === $baseDir ) {
             // This will be used for the main config file, any sub-files should have the
             // base explicitly dir passed to them.
-            $baseDir = \xd_utilities\qualify_path(dirname($filename), getcwd());
-            $filename = \xd_utilities\qualify_path($filename, getcwd());
+            $baseDir = qualify_path(dirname($filename), getcwd());
+            $filename = qualify_path($filename, getcwd());
         } else {
-            $filename = \xd_utilities\qualify_path($filename, $baseDir);
+            $filename = qualify_path($filename, $baseDir);
         }
 
         $cacheKey = null;
@@ -388,7 +390,7 @@ class Configuration extends Loggable implements iConfiguration
      * Force use of the local object cache rather than APCu or other methods. Used mainly for
      * testing.
      *
-     * @param boolean $flag TRUE to force use of the local object cache.
+     * @param bool $flag TRUE to force use of the local object cache.
      */
 
     public static function forceLocalObjectCache($flag = true)
@@ -437,12 +439,12 @@ class Configuration extends Loggable implements iConfiguration
 
         if ( ! array_key_exists('called_via_factory', $options) || ! $options['called_via_factory'] ) {
             $this->logAndThrowException(
-                sprintf("Cannot call %s::__construct() directly, use factory() instead", get_called_class())
+                sprintf('Cannot call %s::__construct() directly, use factory() instead', get_called_class())
             );
         }
 
         if ( empty($filename) ) {
-            $this->logAndThrowException(sprintf("%s: Configuration filename cannot be empty", get_called_class()));
+            $this->logAndThrowException(sprintf('%s: Configuration filename cannot be empty', get_called_class()));
         }
 
         // The base directory and filename are expected to be qualifed in factory()
@@ -456,7 +458,7 @@ class Configuration extends Loggable implements iConfiguration
             $this->localConfigDir = $options['local_config_dir'];
         } elseif ( ! $this->isLocalConfig ) {
             // Imply the local config directory from the global config file name
-            $dir = implode(DIRECTORY_SEPARATOR, array($this->baseDir, sprintf("%s.d", basename($filename, '.json'))));
+            $dir = implode(DIRECTORY_SEPARATOR, array($this->baseDir, sprintf('%s.d', basename($filename, '.json'))));
             if ( is_dir($dir) ) {
                 $this->localConfigDir = $dir;
             }
@@ -479,9 +481,9 @@ class Configuration extends Loggable implements iConfiguration
         }
 
         // Clean up directory paths
-        $this->filename = \xd_utilities\resolve_path($this->filename);
-        $this->baseDir = \xd_utilities\resolve_path($this->baseDir);
-        $this->localConfigDir = \xd_utilities\resolve_path($this->localConfigDir);
+        $this->filename = resolve_path($this->filename);
+        $this->baseDir = resolve_path($this->baseDir);
+        $this->localConfigDir = resolve_path($this->localConfigDir);
 
         if ( isset($options['variable_store']) && $options['variable_store'] instanceof VariableStore ) {
             $this->variableStore = $options['variable_store'];
@@ -507,7 +509,7 @@ class Configuration extends Loggable implements iConfiguration
         if ( false === $fileStats ) {
             $err = error_get_last();
             $this->logAndThrowException(
-                sprintf("Error calling stat() on global configuration file %s: %s", $this->filename, $err['message'])
+                sprintf('Error calling stat() on global configuration file %s: %s', $this->filename, $err['message'])
             );
         }
         $this->lastModifiedTimes[] = $fileStats['mtime'];
@@ -516,7 +518,7 @@ class Configuration extends Loggable implements iConfiguration
     /**
      * Initialize the configuration objecton.
      *
-     * @param boolean $force TRUE to force re-initialization of the configuration even if it has
+     * @param bool $force TRUE to force re-initialization of the configuration even if it has
      *   previously been initialized.
      *
      * @return Configuration This object to support method chaining.
@@ -528,7 +530,7 @@ class Configuration extends Loggable implements iConfiguration
             return;
         }
 
-        $this->logger->debug("Loading" . ( $this->isLocalConfig ? " local" : "" ) . " configuration file " . $this->filename);
+        $this->logger->debug('Loading' . ( $this->isLocalConfig ? ' local' : '') . ' configuration file ' . $this->filename);
 
         // Parse the configuration file
 
@@ -572,7 +574,7 @@ class Configuration extends Loggable implements iConfiguration
                 try {
                     $localConfigObj = $this->processLocalConfig($file);
                 } catch ( Exception $e ) {
-                    throw new Exception(sprintf("Processing local file %s: %s", $file, $e->getMessage()));
+                    throw new Exception(sprintf('Processing local file %s: %s', $file, $e->getMessage()));
                 }
 
                 $this->merge($localConfigObj);
@@ -592,7 +594,7 @@ class Configuration extends Loggable implements iConfiguration
      * scanning, determine the maximum last modified time of all global and local configuraiton
      * files.
      *
-     * @param boolean $force Force a re-scan of the filesystem even in the file list is not empty.
+     * @param bool $force Force a re-scan of the filesystem even in the file list is not empty.
      *
      * @return int The number of local configuration files found.
      */
@@ -639,7 +641,7 @@ class Configuration extends Loggable implements iConfiguration
             if ( false === $fileStats ) {
                 $err = error_get_last();
                 $this->logAndThrowException(
-                    sprintf("Error calling stat() on local configuration file %s: %s", $fullpath, $err['message'])
+                    sprintf('Error calling stat() on local configuration file %s: %s', $fullpath, $err['message'])
                 );
             }
             $this->lastModifiedTimes[] = $fileStats['mtime'];
@@ -653,7 +655,7 @@ class Configuration extends Loggable implements iConfiguration
     /**
      * Parse the configuration file.
      *
-     * @param boolean $force TRUE if the configuration file should be re-parsed.
+     * @param bool $force TRUE if the configuration file should be re-parsed.
      *
      * @return Configuration This object to support method chaining.
      */
@@ -669,9 +671,9 @@ class Configuration extends Loggable implements iConfiguration
         // Parse and decode the JSON configuration file
 
         $options = new DataEndpointOptions(array(
-            'name' => "Configuration",
+            'name' => 'Configuration',
             'path' => $this->filename,
-            'type' => "jsonconfigfile"
+            'type' => 'jsonconfigfile'
         ));
 
         $jsonFile = DataEndpoint::factory($options, $this->logger);
@@ -828,16 +830,16 @@ class Configuration extends Loggable implements iConfiguration
     /**
      * Merge $incoming object into the $existing object recursively.
      *
-     * @param \stdClass $existing         the object to be merged into.
-     * @param \stdClass $incoming         the object to be merged from.
+     * @param stdClass $existing         the object to be merged into.
+     * @param stdClass $incoming         the object to be merged from.
      * @param string    $incomingFileName the file that $incoming originates from.
      * @param bool      $overwrite        whether or not to force overwriting of all $existing w/
      * $incoming.
      * @param bool      $overwriteScalar  whether or not to force overwriting of just scalar values.
-     * @return \stdClass the updated $existing object.
+     * @return stdClass the updated $existing object.
      */
 
-    protected function mergeLocal(\stdClass $existing, \stdClass $incoming, $incomingFileName, $overwrite = false, $overwriteScalar = true)
+    protected function mergeLocal(stdClass $existing, stdClass $incoming, $incomingFileName, $overwrite = false, $overwriteScalar = true)
     {
         foreach($incoming as $property => $incomingValue) {
 
@@ -921,7 +923,7 @@ class Configuration extends Loggable implements iConfiguration
 
         if ( is_string($entity) ) {
             return $this->variableStore->substitute($entity);
-        } elseif ( is_array($entity) || $entity instanceof \stdClass || $entity instanceof \Traversable ) {
+        } elseif ( is_array($entity) || $entity instanceof stdClass || $entity instanceof Traversable) {
             return $this->recursivelySubstituteVariables($entity);
         }
         return $entity;
@@ -941,7 +943,7 @@ class Configuration extends Loggable implements iConfiguration
         foreach ( $traversable as $property => &$value ) {
             if ( is_string($value) ) {
                 $value = $this->variableStore->substitute($value);
-            } elseif ( is_array($value) || $value instanceof \stdClass || $value instanceof \Traversable ) {
+            } elseif ( is_array($value) || $value instanceof stdClass || $value instanceof Traversable) {
                 $value = $this->recursivelySubstituteVariables($value);
             }
         }
@@ -951,7 +953,7 @@ class Configuration extends Loggable implements iConfiguration
     /**
      * Clean up intermediate information that we don't need to keep around after processing.
      *
-     * @var boolean $deepCleanup Flag indicating that a more thorough cleanup should be performed.
+     * @var bool $deepCleanup Flag indicating that a more thorough cleanup should be performed.
      */
 
     public function cleanup($deepCleanup = false)
@@ -999,7 +1001,7 @@ class Configuration extends Loggable implements iConfiguration
                 try {
                     $stop = ( ! $transformer->transform($transformKey, $value, $obj, $this, Log::ERR) );
                 } catch ( Exception $e ) {
-                    throw new Exception(sprintf("%s: %s", $this->filename, $e->getMessage()));
+                    throw new Exception(sprintf('%s: %s', $this->filename, $e->getMessage()));
                 }
 
                 if ( null === $transformKey && null === $value ) {
@@ -1086,7 +1088,7 @@ class Configuration extends Loggable implements iConfiguration
     /**
      * @param string $name The name of the section to examine.
      *
-     * @return boolean TRUE if a section is defined
+     * @return bool TRUE if a section is defined
      */
 
     public function getSectionData($name)
@@ -1104,7 +1106,7 @@ class Configuration extends Loggable implements iConfiguration
      *
      * @param string $name The name of the new section
      * @param stdClass $data The data associated with the new section
-     * @param boolean $overwrite TRUE if any existing data for the given section should be overwritten
+     * @param bool $overwrite TRUE if any existing data for the given section should be overwritten
      *
      * @return Configuration This object for method chaining
      */
@@ -1144,27 +1146,27 @@ class Configuration extends Loggable implements iConfiguration
      * ==========================================================================================
      */
 
-    public function current()
+    public function current(): mixed
     {
         return current($this->sectionData);
     }
 
-    public function key()
+    public function key(): mixed
     {
         return key($this->sectionData);
     }
 
-    public function next()
+    public function next(): void
     {
-        return next($this->sectionData);
+        next($this->sectionData);
     }
 
-    public function rewind()
+    public function rewind(): void
     {
-        return reset($this->sectionData);
+        reset($this->sectionData);
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return false !== current($this->sectionData);
     }
@@ -1203,7 +1205,7 @@ class Configuration extends Loggable implements iConfiguration
      *
      * @param string|iConfigFileKeyTransformer $transformer A key transformer object or class name
      *
-     * @return boolean TRUE if the transformer has already been added to this configuration file.
+     * @return bool TRUE if the transformer has already been added to this configuration file.
      */
 
     public function hasKeyTransformer($transformer)
@@ -1348,7 +1350,7 @@ class Configuration extends Loggable implements iConfiguration
      *
      * @param string $property The name of the property to retrieve
      *
-     * @return boolean TRUE if the property exists and is not NULL, or FALSE otherwise.
+     * @return bool TRUE if the property exists and is not NULL, or FALSE otherwise.
      */
 
     public function __isset($property)

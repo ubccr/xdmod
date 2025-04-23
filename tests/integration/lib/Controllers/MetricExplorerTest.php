@@ -186,13 +186,13 @@ class MetricExplorerTest extends TokenAuthTest
         unset($params['start_date']);
         $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
         $this->assertFalse($response[0]['success']);
-        $this->assertEquals('missing required start_date parameter', $response[0]['message']);
+        $this->assertEquals('start_date is a required parameter.', $response[0]['message']);
 
         $params['start_date'] = '2016-12-29';
         unset($params['end_date']);
         $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
         $this->assertFalse($response[0]['success']);
-        $this->assertEquals('missing required end_date parameter', $response[0]['message']);
+        $this->assertEquals('end_date is a required parameter.', $response[0]['message']);
 
         $params['end_date'] = '2016-12-29';
         $params['data_series'] = '[object Object]';

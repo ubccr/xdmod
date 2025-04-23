@@ -752,7 +752,7 @@ CCR.xdmod.ui.invertColor = function (hexTripletColor) {
     return color;
 };
 
-CCR.randomInt = function(min, max) {
+CCR.randomInt = function (min, max) {
     // eslint-disable-next-line no-mixed-operators
     return Math.floor(Math.random() * (max - min + 1) + min);
 }
@@ -1037,7 +1037,7 @@ CCR.WebPanel = Ext.extend(Ext.Window, {
 
 // -----------------------------------
 
-CCR.xdmod.sponsor_message = 'This work was sponsored by NSF under grant number ACI 1025159, ACI 1445806 and ACI 2137603';
+CCR.xdmod.sponsor_message = 'This work was sponsored by NSF under grant numbers ACI 1025159, ACI 1445806 and ACI 2137603';
 
 //Used in html/gui/general/login.php
 var toggle_about_footer = function (o) {
@@ -1105,17 +1105,20 @@ CCR.BrowserWindow = Ext.extend(Ext.Window, {
 }); //CCR.BrowserWindow
 
 // -----------------------------------
+var logoutCallback = function () {
+    location.href = 'index.php';
+};
 
 CCR.xdmod.ui.actionLogout = function () {
     if (CCR.xdmod.ui.isImpersonating) {
         CCR.xdmod.ui.stopImpersonation();
-    } else {        XDMoD.TrackEvent("Portal", "logout link clicked");
+    } else {
+        XDMoD.TrackEvent("Portal", "logout link clicked");
         Ext.Ajax.request({
             url: '/logout',
             method: 'POST',
             success: function () {
                 location.href = "/";
-
             }
         });
     }

@@ -13,6 +13,7 @@ use Models\Services\Realms;
 use PDOException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
 use XDUser;
 
@@ -37,22 +38,24 @@ class SummaryController extends BaseController
      * @Route("/internal_dashboard/controllers/summary.php")
      * @param Request $request
      * @return Response
+     * @throws Exception
      */
     public function index(Request $request): Response
     {
         $operation = $this->getStringParam($request, 'operation', true);
 
-        switch($operation) {
+        switch ($operation) {
             case 'get_config':
-                break;
+                return $this->getConfig($request);
+            case 'get_portlets':
+                return $this->getPortlets($request);
+            default:
+                throw new NotFoundHttpException('Unknown Operation Provided');
         }
-
-        return $this->json([]);
     }
 
     /**
      * @Route("/summary/configs", methods={"POST"})
-
      * @throws Exception
      */
     public function getConfig(Request $request): Response
@@ -107,7 +110,6 @@ class SummaryController extends BaseController
 
     /**
      * @Route("/summary/portlets", methods={"POST"})
-
      * @throws Exception
      */
     public function getPortlets(Request $request): Response
@@ -162,7 +164,7 @@ class SummaryController extends BaseController
 
     /**
      * @Route("/summary/charts", methods={"GET"})
-
+     *
      * @param Request $request
      * @return Response
      * @throws Exception

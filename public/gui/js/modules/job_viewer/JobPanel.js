@@ -188,12 +188,29 @@ XDMoD.Module.JobViewer.JobPanel = Ext.extend(Ext.Panel, {
          */
         update_analytics: function (data) {
             var analyticsPanel = this.getComponent('analytics_container');
+            var metricOrder = [
+                'CPU User',
+                'Homogeneity',
+                'CPU User Balance',
+                'Memory Headroom',
+                'Walltime Accuracy'
+            ];
+            var sortedIndices;
             var i;
             var metricPanel;
 
             if (!analyticsPanel) {
                 return;
             }
+
+            // Sort metrics by expected order
+            sortedIndices = {};
+            for (i = 0; i < metricOrder.length; i++) {
+                sortedIndices[metricOrder[i]] = i;
+            }
+            data.sort(function (a, b) {
+                return sortedIndices[a.key] - sortedIndices[b.key];
+            });
 
             // Shrink panel to available metric count
             if (data.length < this.MAX_ANALYTICS) {

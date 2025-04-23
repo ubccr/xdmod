@@ -2,11 +2,10 @@
 
 namespace RegressionTests\Controllers;
 
-use PHPUnit\Framework\TestCase;
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
-class UsageChartsTest extends TestCase
+class UsageChartsTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * The path relative to this file that contains the expected hashes for this test case.
@@ -27,10 +26,12 @@ class UsageChartsTest extends TestCase
     // Used when running in hash-generation mode.
     protected static $imagehashes = array();
 
+    protected static $fileNameToTestNames = array();
+
     /**
      * Determine which JSON file to use for expected hash data.
      */
-    public static function getHashPath(): string
+    private static function getHashPath()
     {
         if (self::$hashFilePath !== null) {
             return self::$hashFilePath;
@@ -85,6 +86,14 @@ class UsageChartsTest extends TestCase
                 print json_encode(self::$imagehashes, JSON_PRETTY_PRINT);
             }
         }
+
+        // If we're saving images then make sure to save the metadata
+        if (!empty(self::$fileNameToTestNames)) {
+            echo "Saving Regression Usage Chart Metadata!\n";
+            $fileName = implode(DIRECTORY_SEPARATOR, array('/tmp', 'reg_usage_chart_metadata.json'));
+            file_put_contents($fileName, json_encode(self::$fileNameToTestNames, JSON_PRETTY_PRINT));
+            echo "Saved to $fileName";
+        }
     }
 
     private function phash($type, $imageData)
@@ -98,10 +107,10 @@ class UsageChartsTest extends TestCase
             }
             $pipes = array();
             $descriptor_spec = array(
-                    0 => array('pipe', 'r'),
-                    1 => array('pipe', 'w'),
-                    2 => array('pipe', 'w'),
-                    );
+                0 => array('pipe', 'r'),
+                1 => array('pipe', 'w'),
+                2 => array('pipe', 'w'),
+            );
             $process = proc_open($command, $descriptor_spec, $pipes);
             if (!is_resource($process)) {
                 throw new \Exception('Unable execute command Details: ' . print_r(error_get_last(), true));
@@ -133,7 +142,27 @@ class UsageChartsTest extends TestCase
         $response = self::$helper->post('controllers/user_interface.php', $postvars, $input);
 
         $imageData = $response[0];
+        if (!is_string($imageData)) {
+            echo var_export($imageData, true) . "\n";
+        }
         $actualHash = $this->phash($input['format'], $imageData);
+
+        if (getenv('REG_TEST_SAVE_IMAGE')) {
+            $fileHash = md5(var_export($input, true));
+            $fileExt = 'png';
+            if (strpos($imageData, 'svg') !== false) {
+                $fileExt = 'svg';
+            }
+            $filePath = implode(DIRECTORY_SEPARATOR, array('/tmp', "$fileHash.$fileExt"));
+            self::$fileNameToTestNames[] = array(
+                'test_name' => $testName,
+                'file_hash' => $fileHash,
+                'expected_hash' => $expectedHash,
+                'actual_hash' => $actualHash,
+                'input' => $input
+            );
+            file_put_contents($filePath, $imageData);
+        }
 
         if ($expectedHash === false || getenv('REG_TEST_FORCE_GENERATION') === '1') {
             self::$imagehashes[$testName] = $actualHash;
@@ -175,39 +204,39 @@ class UsageChartsTest extends TestCase
         //    Chart Title override
 
         $reference = array(
-           'public_user' => 'false',
-           'realm' => 'Jobs',
-           'group_by' => 'pi',
-           'statistic' => 'total_cpu_hours',
-           'start_date' => '2016-12-22',
-           'end_date' => '2017-01-01',
-           'timeframe_label' => 'User Defined',
-           'scale' => 1,
-           'aggregation_unit' => 'Day',
-           'dataset_type' => 'timeseries',
-           'thumbnail' => 'n',
-           'query_group' => 'tg_usage',
-           'display_type' => 'line',
-           'combine_type' => 'side',
-           'limit' => '10',
-           'offset' => '0',
-           'log_scale' => 'n',
-           'show_guide_lines' => 'y',
-           'show_trend_line' => 'n',
-           'show_error_bars' => 'n',
-           'show_aggregate_labels' => 'n',
-           'show_error_labels' => 'n',
-           'hide_tooltip' => 'false',
-           'show_title' => 'y',
-           'width' => '916',
-           'height' => '484',
-           'legend_type' => 'bottom_center',
-           'font_size' => '3',
-           'none' => '-9999',
-           'format' => 'png',
-           'inline' => 'n',
-           'operation' => 'get_data',
-           'controller_module' => 'user_interface'
+            'public_user' => 'false',
+            'realm' => 'Jobs',
+            'group_by' => 'pi',
+            'statistic' => 'total_cpu_hours',
+            'start_date' => '2016-12-22',
+            'end_date' => '2017-01-01',
+            'timeframe_label' => 'User Defined',
+            'scale' => 1,
+            'aggregation_unit' => 'Day',
+            'dataset_type' => 'timeseries',
+            'thumbnail' => 'n',
+            'query_group' => 'tg_usage',
+            'display_type' => 'line',
+            'combine_type' => 'side',
+            'limit' => '10',
+            'offset' => '0',
+            'log_scale' => 'n',
+            'show_guide_lines' => 'y',
+            'show_trend_line' => 'n',
+            'show_error_bars' => 'n',
+            'show_aggregate_labels' => 'n',
+            'show_error_labels' => 'n',
+            'hide_tooltip' => 'false',
+            'show_title' => 'y',
+            'width' => '916',
+            'height' => '484',
+            'legend_type' => 'bottom_center',
+            'font_size' => '3',
+            'none' => '-9999',
+            'format' => 'png',
+            'inline' => 'n',
+            'operation' => 'get_data',
+            'controller_module' => 'user_interface'
         );
 
         $statistics = array('job_count', 'total_cpu_hours', 'utilization');

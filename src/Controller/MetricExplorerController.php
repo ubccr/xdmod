@@ -166,7 +166,7 @@ class MetricExplorerController extends BaseController
         try {
             $data = $request->get('data', null);
             if ($data === null) {
-                throw new BadRequestHttpException('missing required data parameter');
+                throw new BadRequestHttpException('data is a required parameter.');
             }
             if ($this->getUser() !== null) {
                 $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());

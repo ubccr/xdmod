@@ -140,6 +140,7 @@ class QueryHandler extends Loggable
 
             $id = $this->dbh->insert($sql, $params);
             $this->dbh->commit();
+
             return $id;
         } catch (Exception $e) {
             $this->dbh->rollBack();

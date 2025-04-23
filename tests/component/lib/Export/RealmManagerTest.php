@@ -85,10 +85,20 @@ class RealmManagerTest extends BaseTest
     public function testGetRealms($realms)
     {
         $actual = array_map(
-            fn($realm) => ['name' => $realm->getDisplay(), 'display' => $realm->getDisplay()],
+            fn($realm) => ['name' => $realm->getName(), 'display' => $realm->getDisplay()],
             self::$realmManager->getRealms()
         );
-        $this->assertEquals(
+
+        // sort both the actual and expected since we don't care about order.
+        usort($actual, function($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+        usort($realms, function($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
+        // Not we can assert that they're equal.
+        self::assertEquals(
             $realms,
             $actual,
             sprintf('Expected: %s, Received: %s', json_encode($realms), json_encode($actual))
@@ -104,9 +114,18 @@ class RealmManagerTest extends BaseTest
     public function testGetRealmsForUser($role, $realms)
     {
         $actual = array_map(
-            fn($realm) => ['name' => $realm->getDisplay(), 'display' => $realm->getDisplay()],
+            fn($realm) => ['name' => $realm->getName(), 'display' => $realm->getDisplay()],
             self::$realmManager->getRealmsForUser(self::$users[$role])
         );
+
+        // sort both the actual and expected since we don't care about order.
+        usort($actual, function($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+        usort($realms, function($a, $b) {
+            return strcmp($a['name'], $b['name']);
+        });
+
         $this->assertEquals(
             $realms,
             $actual,

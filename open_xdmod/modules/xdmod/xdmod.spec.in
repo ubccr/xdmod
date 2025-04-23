@@ -12,7 +12,7 @@ BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}__PRERELEASE__-%{relea
 BuildArch:     noarch
 BuildRequires: php-cli
 Requires:      httpd mod_ssl
-Requires:      php >= 7.4 php-cli php-mysqlnd php-pdo php-gd php-xml php-mbstring php-zip php-posix
+Requires:      php >= 8.2 php-cli php-mysqlnd php-pdo php-gd php-xml php-mbstring php-zip php-posix
 Requires:      php-pecl-apcu php-json
 Requires:      libreoffice-writer
 Requires:      chromium-headless >= 111
@@ -85,11 +85,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/
 %{_datadir}/%{name}/
-%{_datadir}/%{name}/vendor
-%{_datadir}/%{name}/public
-%{_datadir}/%{name}/config
-%{_datadir}/%{name}/.env
-%{_datadir}/%{name}/var
+
 
 %{_docdir}/%{name}-%{version}__PRERELEASE__/
 

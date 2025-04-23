@@ -51,7 +51,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, LegacyP
     /**
      * @param string $username
      * @param array $roles
-     * @param string $userId
+     * @param int $userId
      * @param string $token
      * @param string|null $password
      * @param string|null $salt
@@ -59,7 +59,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, LegacyP
     public function __construct(
         string  $username,
         array   $roles,
-        string  $userId = '',
+        int     $userId = -1,
         string  $token = '',
         ?string $password = '',
         ?string $salt = '')
@@ -151,7 +151,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, LegacyP
 
     public static function fromXDUser(\XDUser $xdUser): User
     {
-        return new User($xdUser->getUsername(), $xdUser->getRoles(), $xdUser->getUserID(), $xdUser->getToken(), $xdUser->getPassword());
+        return new User(
+            $xdUser->getUsername(),
+            $xdUser->getRoles(),
+            $xdUser->getUserID(),
+            $xdUser->getToken(),
+            $xdUser->getPassword()
+        );
     }
 
     public function setSamlAttributes(array $attributes)

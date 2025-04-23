@@ -16,78 +16,82 @@ Ext.namespace('XDMoD', 'XDMoD.Module', 'XDMoD.Module.JobViewer');
 XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
     _DEFAULT_CONFIG: {
         delimiter: ':',
-        chartOptions: {
-            exporting: {
-                enabled: false
-            },
-            chart: {
-                type: 'bar',
-                height: 65,
-                options: {
-                },
-                reflow: false
-            },
-            yAxis: {
-                max: 1, // display all analytics barplots on a plot ranging from 0 to 1
-                min: 0,
-                gridLineColor: '#c0c0c0',
-                labels: {
-                    enabled: false
-                },
-                title: {
-                    text: '',
-                    margin: 1, // tighten vertical distance between axis title and labels
-                    style: {
-                        fontWeight: 'bold',
-                        color: '#5078a0'
-                    }
-                }
-            },
-            xAxis: {
-                tickLength: 0,
-                labels: {
-                    enabled: false
-                }
-            },
-            tooltip: {
-                enabled: false
-            },
-            credits: {
-                enabled: false
-            },
-            legend: {
-                enabled: false
-            },
-            plotOptions: {
-                bar: {
-
-                },
-                series: {
-                  animation: false
-                }
-            }
-        },
         colorSteps: [
             {
-                value: .25,
-                color: '#FF0000'
+                value: 0.25,
+                color: '#ff0000',
+                bg_color: 'rgb(255,102,102)'
             },
             {
-                value: .50,
-                color: '#FFB336'
+                value: 0.50,
+                color: '#ffb336',
+                bg_color: 'rgb(255,255,156)'
             },
             {
-                value: .75,
-                color: '#DDDF00'
+                value: 0.75,
+                color: '#dddf00',
+                bg_color: 'rgb(255,255,102)'
             },
             {
                 value: 1,
-                color: '#50B432'
+                color: '#50b432',
+                bg_color: 'rgb(182,255,152)'
             }
-        ]
+        ],
+
+        chartOptions: {
+            height: 65,
+            xaxis: {
+                showticklabels: false,
+                range: [0, 1],
+                color: '#606060',
+                ticks: 'inside',
+                tick0: 0.0,
+                dtick: 0.2,
+                ticklen: 2,
+                tickcolor: '#ffffff',
+                gridcolor: '#c0c0c0',
+                linecolor: '#ffffff',
+                zeroline: false,
+                showgrid: true,
+                zerolinecolor: '#000000',
+                showline: false,
+                zerolinewidth: 0,
+                fixedrange: true
+            },
+            yaxis: {
+                showticklabels: false,
+                color: '#606060',
+                showgrid: false,
+                gridcolor: '#c0c0c0',
+                linecolor: '#ffffff',
+                zeroline: false,
+                zerolinecolor: '#ffffff',
+                showline: false,
+                rangemode: 'tozero',
+                zerolinewidth: 0,
+                fixedrange: true
+            },
+            hovermode: false,
+            shapes: [],
+            images: [],
+            annotations: [],
+            showlegend: false,
+            margin: {
+                t: 10,
+                l: 9,
+                r: 13,
+                b: 10,
+                pad: 0
+            }
+        },
+        config: {
+            displayModeBar: false,
+            staticPlot: true
+        }
     },
 
-    // The instance of Highcharts used as this components primary display.
+    // The instance of Plotly used as this components primary display.
     chart: null,
 
     // private member that stores the error message object
@@ -96,73 +100,54 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
     /**
      * This components 'constructor'.
      */
-    initComponent: function() {
-
-        this.colorSteps = Ext.apply(
-                this.colorSteps || [],
-                this._DEFAULT_CONFIG.colorSteps
-        );
-
-        XDMoD.Module.JobViewer.AnalyticChartPanel.superclass.initComponent.call(
-            this
-        );
-
+    initComponent: function () {
+        this.colorSteps = Ext.apply(this.colorSteps || [], this._DEFAULT_CONFIG.colorSteps);
+        XDMoD.Module.JobViewer.AnalyticChartPanel.superclass.initComponent.call(this);
     }, // initComponent
 
     listeners: {
 
         /**
          * Event that is fired when this component is rendered to the page.
-         * Processes that require the HighCharts component to be created /
+         * Processes that require the Plotly component to be created /
          * a visible element to hook into are handled here.
          */
-        render: function() {
-
+        render: function () {
             Ext.apply(this.chartOptions, this._DEFAULT_CONFIG.chartOptions);
-
-            this.chartOptions.chart.renderTo = this.id;
-
-            if (this.chart) {
-                this.chart.destroy();
-            }
-            this.chart = new Highcharts.Chart(this.chartOptions);
-
+            delete this.chartOptions.title;
+            this.chart = Plotly.newPlot(this.id, [], this.chartOptions, this._DEFAULT_CONFIG.config);
         }, // render
 
         /**
          * Attempt to execute an update of this components' data ensuring that
-         * the HighCharts instance updates.
+         * the Plotly instance updates.
          *
          * @param {Array|Number|Object} data that should be used to update this
          *                              component.
          */
-        update_data: function(data) {
+        update_data: function (data) {
             this._updateData(data);
-            this.chart.redraw(true);
         }, // update_data
 
         /**
-         * Attempt to reset this components' data ensuring that the HighCharts
+         * Attempt to reset this components' data ensuring that the Plotly
          * instance updates correctly to reflect the change, if any.
          */
-        reset: function() {
+        reset: function () {
             if (this.chart) {
-                while (this.chart.series.length > 0) {
-                    this.chart.series[0].remove(false);
-                }
-                this.chart.redraw();
+                Plotly.react(this.id, [], this.chartOptions, this._DEFAULT_CONFIG.config);
             }
         }, // reset
 
-        destroy: function () {
+        beforedestroy: function () {
             if (this.chart) {
-                this.chart.destroy();
+                Plotly.purge(this.id);
                 this.chart = null;
             }
         },
 
         /**
-         * Attempt to resize this components HighCharts instance such that it
+         * Attempt to resize this components Plotly instance such that it
          * falls with in the new adjWidth and adjHeight.
          *
          * @param {Ext.Panel} panel
@@ -173,9 +158,15 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
          */
         resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
             if (this.chart) {
-                this.chart.reflow();
-                if (this.errorMsg) {
-                    this.updateErrorMessage(this.errorMsg.text.textStr);
+                Plotly.relayout(this.id, { width: adjWidth });
+                if (this.chartOptions.annotations.length > 0) {
+                    var update = {
+                        showticklabels: false,
+                        zeroline: false,
+                        showgrid: false,
+                        showline: false
+                    };
+                    Plotly.relayout(this.id, { xaxis: update });
                 }
             }
         } // resize
@@ -190,55 +181,83 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
      */
     updateErrorMessage: function (errorStr) {
         if (this.errorMsg) {
-            this.errorMsg.text.destroy();
-            this.errorMsg.image.destroy();
             this.errorMsg = null;
         }
         if (errorStr) {
-            this.errorMsg = { text: this.chart.renderer.text(errorStr, this.chart.plotLeft + 23, this.chart.plotTop + 10)
-                .css({ width: this.chart.chartWidth - this.chart.plotLeft - 23 })
-                .add() };
-            var box = this.errorMsg.text.getBBox();
-            this.errorMsg.image = this.chart.renderer.image('/gui/images/about_16.png', box.x - 23, box.y - 1, 16, 16).add();
+            this.errorMsg = errorStr;
+            var errorImage = [
+                {
+                    source: '/gui/images/about_16.png',
+                    align: 'left',
+                    xref: 'paper',
+                    yref: 'paper',
+                    sizex: 0.35,
+                    sizey: 0.35,
+                    x: 0,
+                    y: 1.05
+                }
+            ];
+            this.chartOptions.images = errorImage;
+            var max = Math.floor(this.chartOptions.width / 7);
+            var wordMatch = new RegExp('(?![^\\n]{1,' + max + '}$)([^\\n]{1,' + max + '})\\s', 'g');
+            var errorText = [
+                {
+                    text: errorStr.replace(wordMatch, '$1<br />'),
+                    align: 'left',
+                    xref: 'paper',
+                    yref: 'paper',
+                    font: {
+                        size: 12,
+                        family: 'Lucida Grande, Lucida Sans Unicode, Arial, Helvetica, sans-serif'
+                    },
+                    x: 0.08,
+                    y: 1.1,
+                    showarrow: false
+                }
+            ];
+            this.chartOptions.annotations = errorText;
+            this.chartOptions.xaxis.showgrid = false;
+        } else {
+            this.chartOptions.images = [];
+            this.chartOptions.annotations = [];
+            this.chartOptions.xaxis.showgrid = true;
         }
     },
 
     /**
-     * Helper function that handles the work of updating this HighCharts
+     * Helper function that handles the work of updating this Plotly
      * instance with new data.
      *
      * @param {Array|Object} data
      * @private
      */
-    _updateData: function(data) {
+    _updateData: function (data) {
+        var trace = {};
+        if (data.error === '') {
+            var chartColor = this._getDataColor(data.value);
+            this.chartOptions.plot_bgcolor = chartColor.bg_color;
 
-        var brightFactor = 0.4;
-        var color, nColor;
-
-        while (this.chart.series.length > 0) {
-            this.chart.series[0].remove(true);
-        }
-
-        this.chart.plotBackground = null;
-        this.chart.chartBackground = null;
-
-        if (data.error == '') { 
-
-            color = this._getDataColor(data.value);
-            nColor = new Highcharts.Color(color).brighten(brightFactor);
-            this.chart.options.chart.plotBackgroundColor = 'rgba(' + nColor.rgba + ')';
-
-            this.chart.addSeries({
+            trace = {
+                x: [data.value],
                 name: data.name ? data.name : '',
-                data: [data.value],
-                color: color
-            }, true, true);
+                width: [0.5],
+                marker: {
+                    color: chartColor.color,
+                    line: {
+                        color: '#ffffff',
+                        width: 1
+                    }
+                },
+                type: 'bar',
+                orientation: 'h'
+            };
+        } else {
+            this.chartOptions.plot_bgcolor = '#ffffff';
         }
         this.updateErrorMessage(data.error);
-
         this._updateTitle(data);
         this.ownerCt.doLayout(false, true);
-
+        Plotly.react(this.id, [trace], this.chartOptions, this._DEFAULT_CONFIG.config);
     }, // _updateData
 
     /**
@@ -247,7 +266,7 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
      * @param {Object} data
      * @private
      */
-    _updateTitle: function(data) {
+    _updateTitle: function (data) {
         var title = data.name + this._DEFAULT_CONFIG.delimiter + ' ' + data.value;
         this.ownerCt.setTitle(title);
     }, // _updateTitle
@@ -259,15 +278,19 @@ XDMoD.Module.JobViewer.AnalyticChartPanel = Ext.extend(Ext.Panel, {
      * @returns {Null|String}
      * @private
      */
-    _getDataColor: function(data) {
+    _getDataColor: function (data) {
         var color = null;
         if (typeof data === 'number') {
             var steps = this.colorSteps;
             var count = steps.length;
-            for ( var i = 0; i < count; i++) {
+            for (var i = 0; i < count; i++) {
                 var step = steps[i];
                 if (data <= step.value) {
-                    return step.color;
+                    var ret = {
+                        color: step.color,
+                        bg_color: step.bg_color
+                    };
+                    return ret;
                 }
             }
 

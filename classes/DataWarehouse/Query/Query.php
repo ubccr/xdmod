@@ -106,6 +106,7 @@ class Query extends Loggable
      * @var bool True if this query should use DISTINCT.
      */
     private $isDistinct = false;
+    private array $parameters;
 
     public function __construct(
         $realmId,

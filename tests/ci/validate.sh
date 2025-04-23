@@ -31,7 +31,7 @@ fi
 
 # Check that the various scripts have not left any files around in the tmp
 # directory
-FIND_CRITERIA=(-type f -newer $INSTALL_DIR/html/index.php '(' -user xdmod -o -user apache ')')
+FIND_CRITERIA=(-type f -newer $INSTALL_DIR/public/index.php '(' -user xdmod -o -user apache ')')
 if find /tmp "${FIND_CRITERIA[@]}" | grep -q  .
 then
     echo "Unexpected files found in temporary directory"

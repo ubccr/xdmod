@@ -27,6 +27,10 @@ class CloudInstanceTypeStateIngestor extends pdoIngestor implements iAction
 
     private $_instance_type_state;
 
+    private ?string $_end_time;
+
+    private null $_instance_state;
+
     /**
      * @see ETL\Ingestor\pdoIngestor::__construct()
      */

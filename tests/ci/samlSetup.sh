@@ -21,9 +21,10 @@ then
     tar -zxf $CACHE_FILE
     cd saml-idp
 else
+    echo '{ "allow_root": true }' > /root/.bowerrc
     git clone https://github.com/mcguinness/saml-idp/
+    chown -R root:root saml-idp
     cd saml-idp
-    git checkout 8ff807a91f4badc3c0a10551e1d789df140a66cc
     rm -f package-lock.json
     npm set progress=false
     npm install --quiet --silent
@@ -247,4 +248,4 @@ sed -i -E 's|x509cert: (.*)'"|x509cert: '"$CERTCONTENTS"'|" /usr/share/xdmod/con
 # Run the IDP
 node app.js  --acs https://localhost/saml/acs --aud xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
 
-httpd -k start
+httpd -k restart

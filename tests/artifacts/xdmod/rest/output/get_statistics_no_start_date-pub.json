@@ -5,6 +5,6 @@
   "totalCount": 0,
   "results": [],
   "data": [],
-  "message": "missing required start_date parameter",
+  "message": "start_date is a required parameter.",
   "code": 0
 }

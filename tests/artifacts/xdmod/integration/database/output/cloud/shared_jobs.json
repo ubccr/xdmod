@@ -1,6 +1,6 @@
 [
     {
         "code": "openstack",
-        "shared_jobs": "0"
+        "shared_jobs": 0
     }
 ]

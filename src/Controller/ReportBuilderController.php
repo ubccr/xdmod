@@ -6,6 +6,7 @@ namespace Access\Controller;
 
 use DataWarehouse\Access\ReportGenerator;
 use Exception;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -495,6 +496,8 @@ class ReportBuilderController extends BaseController
         $this->logger->warning('Generating a Report Image');
 
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        $userId = null;
         try {
             $this->logger->warning('Report Image Authenticated');
             $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
@@ -504,6 +507,7 @@ class ReportBuilderController extends BaseController
             $did = $this->getStringParam($request, 'did', false, '', ReportGenerator::REPORT_CHART_DID_REGEX);
             $start = $this->getStringParam($request, 'start', false, null, ReportGenerator::REPORT_DATE_REGEX);
             $end = $this->getStringParam($request, 'end', false, null, ReportGenerator::REPORT_DATE_REGEX);
+
 
             switch ($type) {
                 case 'chart_pool':
@@ -515,7 +519,7 @@ class ReportBuilderController extends BaseController
                         throw new Exception('Invalid thumbnail reference set');
                     }
 
-                    $userId = $matches[1];
+                    $userId = (int)$matches[1];
 
                     if (isset($start) && isset($end)) {
                         $insertionRank = [
@@ -572,8 +576,8 @@ class ReportBuilderController extends BaseController
                     throw new Exception('Invalid thumbnail type value supplied: ' . $request['type']);
             }
 
-            if ($userId !== $user->getUserID()) {
-                throw new AccessDeniedHttpException('Invalid User Request');
+            if ($userId != $user->getUserID()) {
+                throw new AccessDeniedHttpException(sprintf('Invalid User Request. Expected %s, Actual: %s', $user->getUserID(), $userId));
             }
 
             $this->logger->warning('Valid User Request');
@@ -663,5 +667,22 @@ class ReportBuilderController extends BaseController
             'success' => true,
             'results' => $data
         ]);
+    }
+
+    /**
+     * @Route("/img_placeholder.php", methods={"GET"})
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function imgPlaceholder(Request $request): Response
+    {
+        $filePath = tempnam(sys_get_temp_dir(), 'img-placeholder-');
+        $src = imagecreatetruecolor(7, 12);
+        $background = imagecolorallocate($src, 255, 255, 255);
+        imagefill($src, 0, 0, $background);
+        imagepng($src, $filePath);
+
+        return new BinaryFileResponse($filePath, 200, ['Content-Type: image/png']);
     }
 }

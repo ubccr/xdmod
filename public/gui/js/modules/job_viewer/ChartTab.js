@@ -4,7 +4,7 @@ Ext.namespace('XDMoD', 'XDMoD.Module', 'XDMoD.Module.JobViewer');
  * @class XDMoD.Module.JobViewer.ChartTab
  * @extends Ext.Panel
  * <p>A specialized panel intended for the display of timeseries data from an Ext.store into
- * a Highcharts chart in the job viewer.</p>
+ * a Plotly chart in the job viewer.</p>
  * <p> The derived class should implement the updateChart event listener that is fired when
  * ever data is loaded from the store.
  * @constructor
@@ -12,9 +12,6 @@ Ext.namespace('XDMoD', 'XDMoD.Module', 'XDMoD.Module.JobViewer');
  */
 XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
     /**
-     * @cfg {Object} chartSettings
-     * The Highcharts chart settings. This settings object overrides the default values.
-     *
      * @cfg {string} panelSettings.url
      * The url to connect to
      *
@@ -26,7 +23,7 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
      *
      * @cfg {number} panelSettings.pageSize
      * If defined then the paging toolbar is enabled and the number of records to request from the store
-     * is set the the pageSize. If undefined then no paging is done (default undefined).
+     * is set the pageSize. If undefined then no paging is done (default undefined).
      */
 
     chart: null,
@@ -37,71 +34,7 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
         var self = this;
 
         var createChart = function () {
-            var defaultChartSettings = {
-                chart: {
-                    renderTo: self.id + '_hc'
-                },
-                colors: ['#2f7ed8', '#0d233a', '#8bbc21', '#910000', '#1aadce', '#492970', '#f28f43', '#77a1e5', '#c42525', '#a6c96a'],
-                title: {
-                    style: {
-                        color: '#444b6e',
-                        fontSize: '16px'
-                    },
-                    text: ''
-                },
-                loading: {
-                    style: {
-                        opacity: 0.7
-                    }
-                },
-                yAxis: {
-                    title: {
-                        style: {
-                            fontWeight: 'bold',
-                            color: '#5078a0'
-                        }
-                    }
-                },
-                legend: {
-                    enabled: false
-                },
-                exporting: {
-                    enabled: false
-                },
-                tooltip: {
-                    pointFormat: '<span style="color:{series.color}">●</span> {series.name}: <b>{point.low:%A, %b %e, %H:%M:%S}</b> - <b>{point.high:%A, %b %e, %H:%M:%S}</b><br/>',
-                    dateTimeLabelFormats: {
-                        millisecond: '%A, %b %e, %H:%M:%S.%L %T',
-                        second: '%A, %b %e, %H:%M:%S %T',
-                        minute: '%A, %b %e, %H:%M:%S %T',
-                        hour: '%A, %b %e, %H:%M:%S %T'
-                    }
-                },
-                plotOptions: {
-                    line: {
-                        marker: {
-                            enabled: false
-                        }
-                    },
-                    columnrange: {
-                        minPointLength: 3,
-                        animation: false,
-                        dataLabels: {
-                            enabled: false
-                        }
-                    },
-                    series: {
-                        allowPointSelect: false,
-                        animation: false
-                    }
-                }
-            };
-
-            var chartOptions = jQuery.extend(true, {}, defaultChartSettings, self.chartSettings);
-
-            self.chart = new Highcharts.Chart(chartOptions);
-            self.chart.showLoading();
-
+            this.chart = Plotly.newPlot(this.id, [], [], { displayModeBar: false, doubleClick: 'reset' });
             var storeParams;
             if (self.panelSettings.pageSize) {
                 storeParams = {
@@ -185,9 +118,9 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
             xtype: 'container',
             id: this.id + '_hc',
             listeners: {
-                resize: function () {
-                    if (self.chart) {
-                        self.chart.reflow();
+                resize: function (panel, adjWidth, adjHeight, rawWidth, rawHeight) {
+                    if (this.chart) {
+                        Plotly.relayout(this.id, { width: adjWidth, height: adjHeight });
                     }
                 },
                 render: createChart
@@ -210,28 +143,14 @@ XDMoD.Module.JobViewer.ChartTab = Ext.extend(Ext.Panel, {
         XDMoD.Module.JobViewer.ChartTab.superclass.initComponent.call(this, arguments);
     },
 
-    updateTimezone: function (timezone) {
-        this.displayTimezone = timezone;
-        this.setHighchartTimezone();
-    },
-
-    setHighchartTimezone: function () {
-        Highcharts.setOptions({
-            global: {
-                timezone: this.displayTimezone
-            }
-        });
-    },
-
     listeners: {
         activate: function () {
-            this.setHighchartTimezone();
             Ext.History.add(this.historyToken);
         },
-        destroy: function () {
+        beforedestroy: function () {
             if (this.chart) {
-                this.chart.destroy();
-                this.chart = null;
+                Plotly.purge(this.id);
+                this.chart = false;
             }
         }
     }

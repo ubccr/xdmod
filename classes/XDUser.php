@@ -1224,15 +1224,14 @@ SQL;
 
     // ---------------------------
 
-    /*
+    /**
      *
      * @function getUserType;
      *
      * @return int (maps to one of the TYPE_* class constants at the top of this file)
      *
      */
-
-    public function getUserType()
+    public function getUserType(): int
     {
         return $this->_user_type;
     }
@@ -1917,7 +1916,7 @@ SQL;
 
     public function getUserID()
     {
-        return (empty($this->_id)) ? '0' : $this->_id;
+        return (empty($this->_id)) ? 0 : $this->_id;
     }
 
     /*

@@ -8,7 +8,6 @@
     <link rel="stylesheet" type="text/css" href={{ asset('gui/css/dashboard/dashboard.css') }}>
     <link rel="stylesheet" type="text/css" href={{ asset('gui/css/dashboard/management.css') }}>
     <link rel="stylesheet" type="text/css" href={{ asset('gui/css/dashboard/AdminPanel.css') }}>
-    <script type="text/javascript" src={{ asset('gui/lib/internet-explorer-polyfills.js') }}></script>
 
     <!-- Include Ext stylesheets here: -->
     <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/ext-all.css">
@@ -29,7 +28,7 @@
     </script>
 
     <script type="text/javascript" src={{ asset('gui/lib/ext-oldie-history-patch.js') }}></script>
-    <script type="text/javascript" src={{ asset('gui/lib/jquery/jquery-1.12.4.min.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/jquery/jquery-3.7.1.min.js') }}></script>
 
     <script type="text/javascript">
         jQuery.noConflict();
@@ -96,11 +95,6 @@
     <!--[if lte IE 8]>
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/common_ie8.css') }}"/>
     <![endif]-->
-
-    <script type="text/javascript" src={{ asset('gui/lib/highcharts/js/highcharts.src.js') }}></script>
-    <script type="text/javascript" src={{ asset('gui/lib/highcharts/js/highcharts-more.js') }}></script>
-    <script type="text/javascript" src={{ asset('gui/lib/highchartsDateformats.src.js') }}></script>
-    <script type="text/javascript" src={{ asset('gui/js/HighChartPanel.js') }}></script>
 
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/ChartDragDrop.css') }}"/>
 

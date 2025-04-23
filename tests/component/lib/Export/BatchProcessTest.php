@@ -3,6 +3,7 @@
 namespace ComponentTests\Export;
 
 use CCR\DB;
+use CCR\Log;
 use ComponentTests\BaseTest;
 use DataWarehouse\Export\BatchProcessor;
 use DataWarehouse\Export\FileManager;
@@ -67,7 +68,11 @@ class BatchProcessTest extends BaseTest
     public static function setUpBeforeClass(): void
     {
         parent::setupBeforeClass();
-        self::$queryHandler = new QueryHandler();
+
+        $logConf = ['console' => [
+            'consoleLogLevel' => Log::CRIT]];
+        $logger = Log::factory('batchprocess', $logConf);
+        self::$queryHandler = new QueryHandler($logger);
         self::$exportDirectory = xd_utilities\getConfiguration(
             'data_warehouse_export',
             'export_directory'
@@ -86,9 +91,9 @@ class BatchProcessTest extends BaseTest
 
         // Find a valid user ID.
         list($user) = self::$dbh->query("SELECT id FROM Users WHERE username = 'normaluser'");
-
         // Create records and set one to be expiring.
         self::$submittedRequestId = self::$queryHandler->createRequestRecord($user['id'], 'Jobs', '2019-01-01', '2019-01-31', 'CSV');
+
         self::$expiringRequestId = self::$queryHandler->createRequestRecord($user['id'], 'Jobs', '2019-01-01', '2019-01-31', 'JSON');
         self::$queryHandler->submittedToAvailable(self::$expiringRequestId);
         self::$dbh->execute(
@@ -283,16 +288,15 @@ class BatchProcessTest extends BaseTest
             count($submittedRequestsAfter),
             'One less submitted request'
         );
-
         $submittedRequestsIdsBefore = array_map(
             function ($request) {
                 return $request['id'];
             },
             $submittedRequestsBefore
         );
-        $this->assertContains(
-            self::$submittedRequestId,
-            $submittedRequestsIdsBefore,
+
+        $this->assertTrue(
+            in_array(self::$submittedRequestId, $submittedRequestsIdsBefore),
             'Submitted request ID listed before processing'
         );
 
@@ -320,9 +324,8 @@ class BatchProcessTest extends BaseTest
             },
             $expiringRequestsBefore
         );
-        $this->assertContains(
-            self::$expiringRequestId,
-            $expiringRequestsIdsBefore,
+        $this->assertTrue(
+            in_array(self::$expiringRequestId, $expiringRequestsIdsBefore),
             'Expiring request ID listed before processing'
         );
 

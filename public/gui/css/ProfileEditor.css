@@ -44,8 +44,43 @@
    width: 125px !important;
 }
 
+#user_profile_most_privileged_role {
+     font-weight: bold;
+     padding-left: 3px;
+}
 /* ----------------------------- */
+.user_profile_api_token .token_text {
+   display: inline-block;
+   margin: 5px 0;
+   border: 1px solid lightgray;
+   padding: 5px;
+   background-color: white;
+   font-weight: bold;
+}
 
+.user_profile_api_token .btn_copy_icon {
+   background-image: url('../images/save_as.png');
+}
+
+.user_profile_api_token .btn_delete_icon {
+   background-image: url('../images/delete.png');
+}
+
+.user_profile_api_token .btn_generate_icon {
+   background-image: url('../images/add.png');
+}
+
+.user_profile_api_token .btn_retry_icon {
+   background-image: url('../images/refresh.png');
+}
+
+.user_profile_api_token .copied_msg {
+   color: forestgreen;
+}
+
+.user_profile_api_token .panel_msg {
+   font-size: 12px;
+}
 .role_manager .lbl_member_status{
    font-size: 12px;
    padding-top: 10px;
