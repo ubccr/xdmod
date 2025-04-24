@@ -85,6 +85,23 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             }
             return Math.sign(trace1.traceorder - trace2.traceorder);
         });
+
+        // Format timezone -- Plotly does not support timezones
+        // Therefore, we need to utilize moment JS.
+        const axis = baseChartOptions.layout.swapXY ? 'yaxis' : 'xaxis';
+        if (baseChartOptions.layout[axis].timeseries) {
+            const axisName = axis.slice(0, 1);
+            baseChartOptions.data.forEach((series) => {
+                series[axisName].forEach((elem, index, seriesArr) => {
+                    seriesArr[index] = moment.tz(elem, CCR.xdmod.timezone).format();
+                });
+            });
+
+            // Format timezone for the tickvals also
+            baseChartOptions.layout[axis].tickvals.forEach((tick, index, tickvals) => {
+                tickvals[index] = moment.tz(tick, CCR.xdmod.timezone).format();
+            });
+        }
     }
 
     const chart = Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, configs);
