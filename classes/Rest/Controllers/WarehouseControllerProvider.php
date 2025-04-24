@@ -2340,7 +2340,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $i++;
         }
         if ($isLastQueryInSeries) {
-            // Output the last chunk.
             echo "0\r\n\r\n";
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         }
