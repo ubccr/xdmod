@@ -1,6 +1,13 @@
+115
 ["Resource ID","Resource","Resource Allocation Type","Start Time","End Time","CPU Processor Count","CPU Node Count","CPU Processors Per Node","GPU Count","GPU Node Count","GPUs Per Node","Normalization Factor","SUs Available","Resource Type","Organization","Percent Allocated"]
+97
 ["1","Frearson","CPU Allocated","1482796800","1577923199","4000","400","10","0","0","0","1.0000",null,"High-performance computing","Screwdriver","100"]
+9c
 ["2","Mortorq","GPU Allocated","1482710400","1577923199","4000","400","10","4000","400","10","1.0000",null,"High-performance computing","Screwdriver","100"]
+9c
 ["3","Phillips","CPU Node Allocated","1482364800","1577923199","4000","400","10","0","0","0","1.0000",null,"High-performance computing","Screwdriver","100"]
+97
 ["4","Posidriv","CPU Allocated","1482278400","1577923199","4000","400","10","0","0","0","1.0000",null,"High-performance computing","Screwdriver","100"]
+a3
 ["5","Robertson","GPU Node Allocated","1481500800","1577923199","4000","400","10","4000","400","10","1.0000",null,"High-performance computing","Screwdriver","100"]
+0
