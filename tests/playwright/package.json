@@ -7,6 +7,6 @@
   "license": "GPL-3.0",
   "repository": "https://github.com/ubccr/xdmod",
   "devDependencies": {
-    "@playwright/test": "^1.22.2"
+    "@playwright/test": "1.51.1"
   }
 }
