@@ -22,7 +22,7 @@ extensions = ['sphinx_rtd_theme', 'only']
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-if 'Open' in tags.tags.keys():
+if 'Open' in tags:
     exclude_patterns.extend(['Compliance_Tab.rst', 'Allocations_Tab.rst'])
 
 numfig = True
