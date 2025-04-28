@@ -46,7 +46,7 @@ SQL;
      * $organizationName.
      *
      * @param string $organizationName the name of the organization to retrieve.
-     * @return int -1 if no record is found else the organization_id as an int.
+     * @return string '-1' if no record is found else the organization_id as a string.
      * @throws \Exception if there is a problem retrieving a db connection.
      * @throws \Exception if there is a problem executing the sql statement.
      */
@@ -57,7 +57,7 @@ SQL;
             "SELECT o.id FROM modw.organization o WHERE o.name = :organization_name;",
             array(':organization_name' => $organizationName)
         );
-        return !empty($rows) ? $rows[0]['id'] : -1;
+        return !empty($rows) ? $rows[0]['id'] : '-1';
     }
 
     /**
@@ -82,7 +82,7 @@ SQL;
      * Attempt to retrieve the organization_id for the specified person_id.
      *
      * @param int $personId
-     * @return int id of the organization or -1 if not found
+     * @return string id of the organization or '-1' if not found
      * @throws \Exception
      */
     public static function getOrganizationIdForPerson($personId)
@@ -95,6 +95,6 @@ SQL;
             )
         );
 
-        return count($rows) > 0 ? $rows[0]['organization_id'] : -1;
+        return count($rows) > 0 ? $rows[0]['organization_id'] : '-1';
     }
 }
