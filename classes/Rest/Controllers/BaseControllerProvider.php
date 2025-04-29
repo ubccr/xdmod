@@ -2,6 +2,8 @@
 
 namespace Rest\Controllers;
 
+use Rest\Exceptions\BadTokenException;
+use Rest\Exceptions\EmptyTokenException;
 use DateTime;
 use Models\Services\Tokens;
 use Rest\Utilities\Authentication;
@@ -220,6 +222,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         if (empty($requirements) && $isPublicUser) {
             throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
+
 
         $authorized = $user->hasAcls($requirements);
         if ($authorized === false && !$isPublicUser) {
@@ -752,7 +755,8 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *
      * @param Request $request
      * @return \XDUser
-     * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
+     * @throws EmptyTokenException if the provided token is empty, or there is not a provided token.
+     * @throws BadTokenException if the provided token is in an invalid format.
      * @throws \Exception if the user's token from the db does not validate against the provided token.
      */
     protected function authenticateToken($request)
@@ -779,20 +783,21 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
 
         // If it's still empty, then no token == no access.
         if (empty($rawToken)) {
-            throw new UnauthorizedHttpException(
+            throw new EmptyTokenException(
                 Tokens::HEADER_KEY,
                 'No Token Provided.'
             );
-        }
 
+        }
 
         // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
         $delimPosition = strpos($rawToken, Tokens::DELIMITER);
         if ($delimPosition === false) {
-            throw new UnauthorizedHttpException(
+            throw new BadTokenException(
                 Tokens::HEADER_KEY,
                 'Invalid token format.'
             );
+
         }
 
         $userId = substr($rawToken, 0, $delimPosition);
