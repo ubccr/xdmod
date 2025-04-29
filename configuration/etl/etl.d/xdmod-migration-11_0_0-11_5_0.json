@@ -141,6 +141,27 @@
             "sql_file_list": [
                     "migrations/11.0.0-11.5.0/mod_shredder/shredded_job_slurm.sql"
             ]
+        },
+        {
+            "name": "UpdateShredderJobTable",
+            "description": "Update end_time index on mod_shredder.shredded_job.",
+            "definition_file_list": [
+                "jobs/shredder/job.json"
+            ],
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder Database",
+                    "config": "shredder",
+                    "schema": "mod_shredder"
+                },
+                "source": {
+                    "type": "mysql",
+                    "name": "Shredder Database",
+                    "config": "shredder",
+                    "schema": "mod_shredder"
+                }
+            }
         }
     ]
 }

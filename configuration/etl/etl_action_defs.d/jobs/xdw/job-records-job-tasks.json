@@ -42,7 +42,7 @@
             "piperson_organization_id": "pi.organization_id",
             "resource_state_id": 0,
             "resource_country_id": 0,
-            "resource_organization_id": "o.organization_id",
+            "resource_organization_id": "res.organization_id",
             "resource_organization_type_id": 0,
             "wallduration": "${wallduration_statement}",
             "start_time_ts": "${start_time_ts_statement}",
@@ -140,12 +140,6 @@
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "pi",
                 "on": "pi.person_id = pi_map.person_id"
-            },
-            {
-                "name": "hpcdb_organizations",
-                "schema": "${SOURCE_SCHEMA}",
-                "alias": "o",
-                "on": "o.organization_id = res.organization_id"
             }
         ],
         "#": "Exclude jobs with nodecount = 0, which appear to be reservations.",

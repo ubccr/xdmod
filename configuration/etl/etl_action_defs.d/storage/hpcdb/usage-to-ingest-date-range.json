@@ -1,0 +1,22 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/storage/hpcdb/usage-to-ingest.json#/table_definition"
+    },
+    "source_query": {
+        "overseer_restrictions": {
+            "start_date": "UNIX_TIMESTAMP(su.dt) >= UNIX_TIMESTAMP(${VALUE})",
+            "end_date": "UNIX_TIMESTAMP(su.dt) <= UNIX_TIMESTAMP(${VALUE})"
+        },
+        "records": {
+            "storage_usage_id": "su.storage_usage_id"
+        },
+        "joins": [
+            {
+                "schema": "${DESTINATION_SCHEMA}",
+                "name": "hpcdb_storage_usage",
+                "alias": "su"
+            }
+
+        ]
+    }
+}
