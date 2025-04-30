@@ -1,7 +1,7 @@
 [
     {
         "text": "Resource Specifications Summary",
-        "id": "group_by_ResourceSpecifications_none",
+        "id": "group_by&realm=ResourceSpecifications&group_by=none",
         "group_by": "none",
         "query_group": "tg_usage",
         "category": "ResourceSpecifications",
@@ -15,7 +15,7 @@
     },
     {
         "text": "Resource Specifications by Resource",
-        "id": "group_by_ResourceSpecifications_resource",
+        "id": "group_by&realm=ResourceSpecifications&group_by=resource",
         "group_by": "resource",
         "query_group": "tg_usage",
         "category": "ResourceSpecifications",
@@ -29,7 +29,7 @@
     },
     {
         "text": "Resource Specifications by Resource Allocation Type",
-        "id": "group_by_ResourceSpecifications_resource_allocation_type",
+        "id": "group_by&realm=ResourceSpecifications&group_by=resource_allocation_type",
         "group_by": "resource_allocation_type",
         "query_group": "tg_usage",
         "category": "ResourceSpecifications",
@@ -43,7 +43,7 @@
     },
     {
         "text": "Resource Specifications by Resource Type",
-        "id": "group_by_ResourceSpecifications_resource_type",
+        "id": "group_by&realm=ResourceSpecifications&group_by=resource_type",
         "group_by": "resource_type",
         "query_group": "tg_usage",
         "category": "ResourceSpecifications",
@@ -57,7 +57,7 @@
     },
     {
         "text": "Resource Specifications by Service Provider",
-        "id": "group_by_ResourceSpecifications_provider",
+        "id": "group_by&realm=ResourceSpecifications&group_by=provider",
         "group_by": "provider",
         "query_group": "tg_usage",
         "category": "ResourceSpecifications",
