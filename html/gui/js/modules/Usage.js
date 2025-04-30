@@ -992,15 +992,15 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                 if (child) {
                     // trim off 'node=' for the node's ID
-                    let nodeId = parts.params.slice(5);
+                    let defaultStatistic = parts.params.slice(5);
                     if (!realm || !groupBy || !statistic) {
-                        nodeId = 'statistic&realm=Jobs&group_by=none&statistic=total_cpu_hours';
+                        defaultStatistic = 'statistic&realm=Jobs&group_by=none&statistic=total_cpu_hours';
                     }
                     tree.expandPath(child.getPath(), null, (success) => {
                         // If the summary node was successfully expanded...
                         if (success) {
                             // If available, open the default statistic.
-                            const jobCountNode = child.findChild("id", nodeId);
+                            const jobCountNode = child.findChild("id", defaultStatistic);
                             if (jobCountNode && !jobCountNode.disabled) {
                                 tree.getSelectionModel().select(jobCountNode);
                                 return;
