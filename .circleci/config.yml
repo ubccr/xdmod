@@ -67,6 +67,12 @@ jobs:
       - run:
           name: Build XDMoD RPM
           command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
+
+      # This when condition will only trigger if the build is being run by:
+      #   - a scheduled pipline ( cron job ) called "xdmod-time-trigger"
+      # OR
+      #   - if the build has the "schedule-name" parameter set to "xdmod-time-trigger"
+      # This is so that we can manually trigger code coverage generation for testing purposes.
       - when:
           condition:
             or:

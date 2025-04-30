@@ -500,13 +500,7 @@ echo ${arg_r}
 echo
 echo $PROCESS_FILE_INSTALL_PATH
 
-#~/bin/services restart
-
 ### Create / Update privs for the directory that will contain the code coverage reports.
 mkdir "${arg_c}"
 chmod 777 "${arg_c}"
 chown root:apache "${arg_c}"
-
-### Make sure to restart the services so that these changes take effect.x
-#~/bin/services stop
-#~/bin/services start
