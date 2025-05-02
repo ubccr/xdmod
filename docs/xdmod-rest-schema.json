@@ -568,19 +568,7 @@ layout: null
                     "totalCount": 0,
                     "results": [],
                     "data": [],
-                    "message": "No Token Provided.",
-                    "code": 0
-                }
-            },
-            "malformed-token": {
-                "value": {
-                    "success": false,
-                    "count": 0,
-                    "total": 0,
-                    "totalCount": 0,
-                    "results": [],
-                    "data": [],
-                    "message": "Invalid token format.",
+                    "message": "No API token provided.",
                     "code": 0
                 }
             },
@@ -604,7 +592,7 @@ layout: null
                     "totalCount": 0,
                     "results": [],
                     "data": [],
-                    "message": "The API Token has expired.",
+                    "message": "API token has expired.",
                     "code": 0
                 }
             }
@@ -3061,9 +3049,6 @@ layout: null
                                 "examples": {
                                     "empty-token": {
                                         "$ref": "#/components/examples/empty-token"
-                                    },
-                                    "malformed-token": {
-                                        "$ref": "#/components/examples/malformed-token"
                                     },
                                     "invalid-token": {
                                         "$ref": "#/components/examples/invalid-token"

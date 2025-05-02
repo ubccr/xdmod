@@ -161,11 +161,11 @@ abstract class TokenAuthTest extends BaseTest
             // separate key in the output test artifact for each token type.
             } elseif ('token_required' === $input['authentication_type']) {
                 $messages = [
-                    'empty_token' => 'No Token Provided.',
-                    'malformed_token' => 'Invalid token format.',
-                    'invalid_token' => 'Invalid API token.',
-                    'expired_token' => 'The API Token has expired.',
-                    'revoked_token' => 'Invalid API token.'
+                    'empty_token' => Tokens::MISSING_TOKEN_MESSAGE,
+                    'malformed_token' => Tokens::INVALID_TOKEN_MESSAGE,
+                    'invalid_token' => Tokens::INVALID_TOKEN_MESSAGE,
+                    'expired_token' => Tokens::EXPIRED_TOKEN_MESSAGE,
+                    'revoked_token' => Tokens::INVALID_TOKEN_MESSAGE
                 ];
                 $output = [
                     'status_code' => 401,
@@ -192,55 +192,28 @@ abstract class TokenAuthTest extends BaseTest
             ];
         }
 
-        // Do one request with the token in both the header and the query
-        // parameters (because the Apache server eats the 'Authorization'
-        // header on EL7) and one request with the token only in the query
-        // parameters, to make sure the result is the same.
-        $actualBodies = [];
-        foreach (['token_in_header', 'token_not_in_header'] as $mode) {
-            // Construct a test helper for making the request.
-            $helper = new XdmodTestHelper();
+        // Construct a test helper for making the request.
+        $helper = new XdmodTestHelper();
 
-            // Add the token to the header.
-            if ('token_in_header' === $mode) {
-                $helper->addheader(
-                    'Authorization',
-                    Tokens::HEADER_KEY . ' ' . $token
-                );
-            }
-
-            // Add the token to the query parameters.
-            parent::assertRequiredKeys(['params'], $input, '$input');
-            if (is_null($input['params'])) {
-                $input['params'] = [];
-            }
-            $input['params'][Tokens::HEADER_KEY] = $token;
-
-            // Make the request and validate the response.
-            $actualBodies[$mode] = parent::requestAndValidateJson(
-                $helper,
-                $input,
-                $output
-            );
-        }
-        $this->assertSame(
-            json_encode($actualBodies['token_in_header']),
-            json_encode($actualBodies['token_not_in_header']),
-            json_encode(
-                $actualBodies['token_in_header'],
-                JSON_PRETTY_PRINT
-            )
-            . "\n"
-            . json_encode(
-                $actualBodies['token_not_in_header'],
-                JSON_PRETTY_PRINT
-            )
+        // Add the token to the header.
+        $helper->addheader(
+            'Authorization',
+            Tokens::HEADER_KEY . ' ' . $token
         );
+
+        // Make the request and validate the response.
+        $actualBody = parent::requestAndValidateJson(
+            $helper,
+            $input,
+            $output
+        );
+
         // If the token is expired, unexpire it.
         if ('expired_token' === $tokenType) {
             self::unexpireToken($role);
         }
-        return $actualBodies['token_in_header'];
+
+        return $actualBody;
     }
 
     /**
