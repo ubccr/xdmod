@@ -959,27 +959,48 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
             updateDisabledMenus.call(this, true);
 
-            var node = tree.getSelectionModel().getSelectedNode();
+            const node = tree.getSelectionModel().getSelectedNode();
 
             if (node != null) return;
 
-            var root = tree.getRootNode();
+            const root = tree.getRootNode();
 
             if (root.hasChildNodes()) {
+                const parts = CCR.tokenize(document.location.hash);
+                const params = new URLSearchParams(parts.params);
+                const realm = params.get('realm');
+                const groupBy = params.get('group_by');
+                const statistic = params.get('statistic');
 
-                var child = root.findChildBy(function (n) {
-                    return !n.disabled;
-                }, this);
+                const searchString = `group_by&realm=${realm}&group_by=${groupBy}`;
+                let child = root.findChildBy(function (n) {
+                        return !n.disabled && n.id === searchString;
+                });
+
+                // Check if the URL is pointing at a summary node
+                if (child && !statistic) {
+                    tree.getSelectionModel().select(child);
+                    return;
+                }
+
+                // If we found nothing try loading first available node
+                if (!child) {
+                    child = root.findChildBy(function (n) {
+                        return !n.disabled;
+                    });
+                }
 
                 if (child) {
-
-                    tree.expandPath(child.getPath(), null, function (success) {
+                    // trim off 'node=' for the node's ID
+                    let defaultStatistic = parts.params.slice(5);
+                    if (!realm || !groupBy || !statistic) {
+                        defaultStatistic = 'statistic&realm=Jobs&group_by=none&statistic=total_cpu_hours';
+                    }
+                    tree.expandPath(child.getPath(), null, (success) => {
                         // If the summary node was successfully expanded...
                         if (success) {
                             // If available, open the default statistic.
-                            //
-                            var defaultStatistic = 'total_cpu_hours';
-                            var jobCountNode = child.findChild("statistic", defaultStatistic);
+                            const jobCountNode = child.findChild("id", defaultStatistic);
                             if (jobCountNode && !jobCountNode.disabled) {
                                 tree.getSelectionModel().select(jobCountNode);
                                 return;
