@@ -972,9 +972,9 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 const groupBy = params.get('group_by');
                 const statistic = params.get('statistic');
 
-                const searchString = `group_by&realm=${realm}&group_by=${groupBy}`;
+                const searchId = `node=group_by&realm=${realm}&group_by=${groupBy}`;
                 let child = root.findChildBy(function (n) {
-                        return !n.disabled && n.id === searchString;
+                        return !n.disabled && n.id === searchId;
                 });
 
                 // Check if the URL is pointing at a summary node
@@ -983,7 +983,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                     return;
                 }
 
-                // If we found nothing try loading first available node
+                // If we found nothing try loading first available parent node
                 if (!child) {
                     child = root.findChildBy(function (n) {
                         return !n.disabled;
