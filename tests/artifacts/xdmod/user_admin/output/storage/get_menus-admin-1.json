@@ -1,7 +1,7 @@
 [
     {
         "text": "Storage Summary",
-        "id": "group_by&realm=Storage&group_by=none",
+        "id": "node=group_by&realm=Storage&group_by=none",
         "group_by": "none",
         "query_group": "tg_usage",
         "category": "Storage",
@@ -15,7 +15,7 @@
     },
     {
         "text": "Storage by Decanal Unit",
-        "id": "group_by&realm=Storage&group_by=nsfdirectorate",
+        "id": "node=group_by&realm=Storage&group_by=nsfdirectorate",
         "group_by": "nsfdirectorate",
         "query_group": "tg_usage",
         "category": "Storage",
@@ -29,7 +29,7 @@
     },
     {
         "text": "Storage by Department",
-        "id": "group_by&realm=Storage&group_by=parentscience",
+        "id": "node=group_by&realm=Storage&group_by=parentscience",
         "group_by": "parentscience",
         "query_group": "tg_usage",
         "category": "Storage",
@@ -43,7 +43,7 @@
     },
     {
         "text": "Storage by Mountpoint",
-        "id": "group_by&realm=Storage&group_by=mountpoint",
+        "id": "node=group_by&realm=Storage&group_by=mountpoint",
         "group_by": "mountpoint",
         "query_group": "tg_usage",
         "category": "Storage",
@@ -57,7 +57,7 @@
     },
     {
         "text": "Storage by PI",
-        "id": "group_by&realm=Storage&group_by=pi",
+        "id": "node=group_by&realm=Storage&group_by=pi",
         "group_by": "pi",
         "query_group": "tg_usage",
         "category": "Storage",
@@ -71,7 +71,7 @@
     },
     {
         "text": "Storage by PI Group",
-        "id": "group_by&realm=Storage&group_by=fieldofscience",
+        "id": "node=group_by&realm=Storage&group_by=fieldofscience",
         "group_by": "fieldofscience",
         "query_group": "tg_usage",
         "category": "Storage",
@@ -85,7 +85,7 @@
     },
     {
         "text": "Storage by Resource",
-        "id": "group_by&realm=Storage&group_by=resource",
+        "id": "node=group_by&realm=Storage&group_by=resource",
         "group_by": "resource",
         "query_group": "tg_usage",
         "category": "Storage",
@@ -99,7 +99,7 @@
     },
     {
         "text": "Storage by Resource Type",
-        "id": "group_by&realm=Storage&group_by=resource_type",
+        "id": "node=group_by&realm=Storage&group_by=resource_type",
         "group_by": "resource_type",
         "query_group": "tg_usage",
         "category": "Storage",
@@ -113,7 +113,7 @@
     },
     {
         "text": "Storage by System Username",
-        "id": "group_by&realm=Storage&group_by=username",
+        "id": "node=group_by&realm=Storage&group_by=username",
         "group_by": "username",
         "query_group": "tg_usage",
         "category": "Storage",
@@ -127,7 +127,7 @@
     },
     {
         "text": "Storage by User",
-        "id": "group_by&realm=Storage&group_by=person",
+        "id": "node=group_by&realm=Storage&group_by=person",
         "group_by": "person",
         "query_group": "tg_usage",
         "category": "Storage",
