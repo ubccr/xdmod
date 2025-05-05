@@ -1,7 +1,7 @@
 [
     {
         "text": "Jobs Summary",
-        "id": "group_by&realm=Jobs&group_by=none",
+        "id": "node=group_by&realm=Jobs&group_by=none",
         "group_by": "none",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -15,7 +15,7 @@
     },
     {
         "text": "Jobs by Decanal Unit",
-        "id": "group_by&realm=Jobs&group_by=nsfdirectorate",
+        "id": "node=group_by&realm=Jobs&group_by=nsfdirectorate",
         "group_by": "nsfdirectorate",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -29,7 +29,7 @@
     },
     {
         "text": "Jobs by Department",
-        "id": "group_by&realm=Jobs&group_by=parentscience",
+        "id": "node=group_by&realm=Jobs&group_by=parentscience",
         "group_by": "parentscience",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -43,7 +43,7 @@
     },
     {
         "text": "Jobs by GPU Count",
-        "id": "group_by&realm=Jobs&group_by=gpucount",
+        "id": "node=group_by&realm=Jobs&group_by=gpucount",
         "group_by": "gpucount",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -57,7 +57,7 @@
     },
     {
         "text": "Jobs by Job Size",
-        "id": "group_by&realm=Jobs&group_by=jobsize",
+        "id": "node=group_by&realm=Jobs&group_by=jobsize",
         "group_by": "jobsize",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -71,7 +71,7 @@
     },
     {
         "text": "Jobs by Job Wait Time",
-        "id": "group_by&realm=Jobs&group_by=jobwaittime",
+        "id": "node=group_by&realm=Jobs&group_by=jobwaittime",
         "group_by": "jobwaittime",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -85,7 +85,7 @@
     },
     {
         "text": "Jobs by Job Wall Time",
-        "id": "group_by&realm=Jobs&group_by=jobwalltime",
+        "id": "node=group_by&realm=Jobs&group_by=jobwalltime",
         "group_by": "jobwalltime",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -99,7 +99,7 @@
     },
     {
         "text": "Jobs by Node Count",
-        "id": "group_by&realm=Jobs&group_by=nodecount",
+        "id": "node=group_by&realm=Jobs&group_by=nodecount",
         "group_by": "nodecount",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -113,7 +113,7 @@
     },
     {
         "text": "Jobs by PI",
-        "id": "group_by&realm=Jobs&group_by=pi",
+        "id": "node=group_by&realm=Jobs&group_by=pi",
         "group_by": "pi",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -127,7 +127,7 @@
     },
     {
         "text": "Jobs by PI Group",
-        "id": "group_by&realm=Jobs&group_by=fieldofscience",
+        "id": "node=group_by&realm=Jobs&group_by=fieldofscience",
         "group_by": "fieldofscience",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -141,7 +141,7 @@
     },
     {
         "text": "Jobs by QOS",
-        "id": "group_by&realm=Jobs&group_by=qos",
+        "id": "node=group_by&realm=Jobs&group_by=qos",
         "group_by": "qos",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -155,7 +155,7 @@
     },
     {
         "text": "Jobs by Queue",
-        "id": "group_by&realm=Jobs&group_by=queue",
+        "id": "node=group_by&realm=Jobs&group_by=queue",
         "group_by": "queue",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -169,7 +169,7 @@
     },
     {
         "text": "Jobs by Resource",
-        "id": "group_by&realm=Jobs&group_by=resource",
+        "id": "node=group_by&realm=Jobs&group_by=resource",
         "group_by": "resource",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -183,7 +183,7 @@
     },
     {
         "text": "Jobs by Resource Type",
-        "id": "group_by&realm=Jobs&group_by=resource_type",
+        "id": "node=group_by&realm=Jobs&group_by=resource_type",
         "group_by": "resource_type",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -197,7 +197,7 @@
     },
     {
         "text": "Jobs by System Username",
-        "id": "group_by&realm=Jobs&group_by=username",
+        "id": "node=group_by&realm=Jobs&group_by=username",
         "group_by": "username",
         "query_group": "tg_usage",
         "category": "Jobs",
@@ -211,7 +211,7 @@
     },
     {
         "text": "Jobs by User",
-        "id": "group_by&realm=Jobs&group_by=person",
+        "id": "node=group_by&realm=Jobs&group_by=person",
         "group_by": "person",
         "query_group": "tg_usage",
         "category": "Jobs",
