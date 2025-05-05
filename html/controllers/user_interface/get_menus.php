@@ -101,7 +101,7 @@ try {
                     }
 
                     $nodeId = (
-                        'group_by'
+                        'node=group_by'
                         . '&realm='
                         . $categoryName
                         . '&group_by='
@@ -161,7 +161,7 @@ try {
         }
     } elseif (
         isset($_REQUEST['node'])
-        && substr($_REQUEST['node'], 0, 9) == 'group_by&'
+        && substr($_REQUEST['node'], 0, 13) == 'node=group_by'
     ) {
         if (isset($_REQUEST['category'])) {
             $categoryName = $_REQUEST['category'];
@@ -208,7 +208,7 @@ try {
                         }
                         $returnData[] = array(
                             'text'                 => $statistic_object->getName(false),
-                            'id'                   => 'statistic'
+                            'id'                   => 'node=statistic'
                             . '&realm='
                             . $realm_name
                             . '&group_by='

@@ -991,16 +991,15 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 }
 
                 if (child) {
-                    // trim off 'node=' for the node's ID
-                    let defaultStatistic = parts.params.slice(5);
+                    let nodeId = parts.params;
                     if (!realm || !groupBy || !statistic) {
-                        defaultStatistic = 'statistic&realm=Jobs&group_by=none&statistic=total_cpu_hours';
+                        nodeId = 'node=statistic&realm=Jobs&group_by=none&statistic=total_cpu_hours';
                     }
                     tree.expandPath(child.getPath(), null, (success) => {
                         // If the summary node was successfully expanded...
                         if (success) {
                             // If available, open the default statistic.
-                            const jobCountNode = child.findChild("id", defaultStatistic);
+                            const jobCountNode = child.findChild("id", nodeId);
                             if (jobCountNode && !jobCountNode.disabled) {
                                 tree.getSelectionModel().select(jobCountNode);
                                 return;
@@ -1226,7 +1225,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             if (!self.getDurationSelector().validate()) return;
 
             Ext.History.un('change', onHistoryChange);
-            Ext.History.add(layoutId + '?node=' + n.id, true);
+            Ext.History.add(layoutId + '?' + n.id, true);
             Ext.History.on('change', onHistoryChange);
 
             chartStore.loadStartTime = new Date().getTime();
@@ -2384,36 +2383,20 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
             if (token) {
 
-                var parts = CCR.tokenize(document.location.hash);
+                const parts = CCR.tokenize(document.location.hash);
 
-                var tab = CCR.exists(parts.tab) ? parts.tab : layoutId;
-                var params = CCR.exists(parts.params) ? parts.params.split('&') : null;
+                const tab = CCR.exists(parts.tab) ? parts.tab : layoutId;
+                const nodeId = CCR.exists(parts.params) ? parts.params : null;
 
-                var retrieveNode = function(params, layout) {
-                    if (params !== null) {
-                        for (var i = 0; i < params.length; i++) {
-                            var param = params[i].split('=');
-                            if (param && param.length > 0) {
-                                var key = param[0];
-                                if (key === layout) {
-                                    return param[1];
-                                }
-                            }
-                        }
-                    }
-                    return null;
-                }; // retrieveNode
-
-                if (params) {
-                    var node = retrieveNode(params, 'node');
-                    var treePanel = Ext.getCmp('tree_' + tab);
-                    var nodeToSelect = treePanel ? treePanel.getNodeById(node) : null;
+                if (nodeId) {
+                    const treePanel = Ext.getCmp('tree_' + tab);
+                    const nodeToSelect = treePanel ? treePanel.getNodeById(nodeId) : null;
 
                     if (nodeToSelect) {
                         Ext.menu.MenuMgr.hideAll();
                         treePanel.getSelectionModel().select(nodeToSelect);
                     } // if (nodeToSelect)
-                } // if (params)
+                } // if (nodeId)
 
             } //if (token)
 
