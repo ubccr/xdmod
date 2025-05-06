@@ -16,7 +16,7 @@
         "phpmailer/phpmailer": "~6.9",
         "robrichards/xmlseclibs": "~3.0",
         "sencha/extjs-gpl": "3.4.*",
-        "silex/silex": "~1.2",
+        "silex/silex": "v2.3.0",
         "simplesamlphp/simplesamlphp": "^1.16",
         "symfony/polyfill-php56": "~1.11",
         "symfony/process": "~2.0",

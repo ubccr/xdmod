@@ -7,7 +7,6 @@ use Configuration\XdmodConfiguration;
 use Rest\Controllers\BaseControllerProvider;
 use Rest\Utilities\Authentication;
 use Silex\Application;
-use Silex\Provider\UrlGeneratorServiceProvider;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -64,7 +63,7 @@ class XdmodApplicationFactory
         $app['debug'] = filter_var(\xd_utilities\getConfiguration('general', 'debug_mode'), FILTER_VALIDATE_BOOLEAN);
 
         // REGISTER: a URL Generator.
-        $app->register(new UrlGeneratorServiceProvider());
+        $app->register(new \Silex\Provider\RoutingServiceProvider());
 
         // SET: the regex that will be used to filter the API_SYMBOL in a route.
         //      in this case we're using it as our base url.
@@ -74,14 +73,14 @@ class XdmodApplicationFactory
         // representing the latest version.
         $app['controllers']->value(self::API_SYMBOL, 'latest');
 
-        $app['logger.db'] = $app->share(function () {
+        $app['logger.db'] = function () {
             return \CCR\Log::factory('rest.logger.db', array(
                 'console' => false,
                 'file' => false,
                 'mail' => false,
                 'dbLogLevel' => \CCR\Log::INFO
             ));
-        });
+        };
 
         $app->before(function (Request $request, Application $app) {
             $request->attributes->set('timing.start', microtime(true));
@@ -226,7 +225,7 @@ class XdmodApplicationFactory
         }
 
         // SETUP: error handler
-        $app->error(function (\Exception $e, $code) use ($app) {
+        $app->error(function (\Exception $e, Request $request, $code) {
             if($code == 405 && strtoupper($_SERVER['REQUEST_METHOD']) === 'OPTIONS' && array_key_exists('HTTP_ORIGIN', $_SERVER)){
                 try {
                     $corsDomains = \xd_utilities\getConfiguration('cors', 'domains');
