@@ -196,7 +196,7 @@
                 }
             ],
             "orderby": [
-                "order_id"
+                "long_name"
             ],
             "records": {
                 "id": "organization_id",

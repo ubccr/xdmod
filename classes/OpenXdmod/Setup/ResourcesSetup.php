@@ -124,9 +124,11 @@ class ResourcesSetup extends SubMenuSetupItem
 
         $availableTypes = XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types'];
         $availableResourceAllocationTypes = XdmodConfiguration::assocArrayFactory('resource_allocation_types.json', CONFIG_DIR)['resource_allocation_types'];
+        $organizations = XdmodConfiguration::assocArrayFactory('organization.json', CONFIG_DIR);
 
         $typeAbbrev = 'UNK';
         $resourceAllocationTypeAbbrev = 'UNK';
+        $organizationAbbrev = 'UNK';
 
         foreach($availableTypes as $abbrev => $type) {
             if (strtolower($abbrev) === $resource['type']) {
@@ -142,11 +144,19 @@ class ResourcesSetup extends SubMenuSetupItem
             }
         }
 
+        foreach($organizations as $abbrev => $type) {
+            if (strtolower($type['abbrev']) === $resource['organization']) {
+                $organizationAbbrev = $type['abbrev'];
+                break;
+            }
+        }
+
         $this->resources[] = array(
             'resource'                  => $resource['resource'],
             'resource_type'             => $typeAbbrev,
             'name'                      => $resource['name'],
-            'resource_allocation_type'  => $resourceAllocationTypeAbbrev
+            'resource_allocation_type'  => $resourceAllocationTypeAbbrev,
+            'organization'              => $organizationAbbrev
         );
 
         $this->resourceSpecs[] = array(
