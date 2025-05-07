@@ -1,0 +1,11 @@
+title
+"Logical Usage (Bytes): by Service Provider"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Quarter,"[screw] Logical Usage (Bytes)"
+"2018 Q4",801135330517333
+"2019 Q1",779503078246400
+---------

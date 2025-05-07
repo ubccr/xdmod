@@ -98,6 +98,15 @@
               }
             },
             {
+                "name": "serviceprovider",
+                "alias": "sp",
+                "join": {
+                    "primaryKey": "organization_id",
+                    "foreignTableAlias": "jr",
+                    "foreignKey": "resource_organization_id"
+                }
+            },
+            {
                 "schema": "modw",
                 "name": "nodecount",
                 "alias": "nc",
@@ -142,6 +151,14 @@
                 "column": "name",
                 "group": "Administration",
                 "documentation": "The resource that ran the job.",
+                "batchExport": true
+            },
+            {
+                "name": "Service Provider",
+                "tableAlias": "sp",
+                "column": "long_name",
+                "group": "Administration",
+                "documentation": "The organization of the resource that ran the job.",
                 "batchExport": true
             },
             {

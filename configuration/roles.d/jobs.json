@@ -60,6 +60,10 @@
                 },
                 {
                     "realm": "Jobs",
+                    "group_by": "provider"
+                },
+                {
+                    "realm": "Jobs",
                     "group_by": "resource_type"
                 },
                 {

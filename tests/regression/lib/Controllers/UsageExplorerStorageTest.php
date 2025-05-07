@@ -66,6 +66,7 @@ class UsageExplorerStorageTest extends \PHPUnit\Framework\TestCase
             'pi_institution',
             'resource',
             'resource_type',
+            'provider',
             'username',
             'person',
             'institution'

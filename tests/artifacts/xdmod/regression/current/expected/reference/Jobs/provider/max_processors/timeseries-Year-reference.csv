@@ -1,0 +1,11 @@
+title
+"Job Size: Max (Core Count): by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[screw] Job Size: Max (Core Count)","[wrench] Job Size: Max (Core Count)"
+2016,336,80
+2017,192,24
+---------

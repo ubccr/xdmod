@@ -7,6 +7,7 @@
             "id": "su.storage_usage_id",
             "resource_id": "su.resource_id",
             "resourcetype_id": "res.resource_type_id",
+            "resource_organization_id": "res.organization_id",
             "mountpoint_id": "su.mountpoint_id",
             "person_id": "su.person_id",
             "person_organization_id": "person.organization_id",
