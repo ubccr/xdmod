@@ -98,6 +98,7 @@
               }
             },
             {
+                "schema": "modw",
                 "name": "serviceprovider",
                 "alias": "sp",
                 "join": {
