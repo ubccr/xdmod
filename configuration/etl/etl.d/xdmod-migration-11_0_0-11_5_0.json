@@ -23,6 +23,16 @@
     },
     "migration-11_0_0-11_5_0": [
         {
+            "name": "UpdateShredderJobTable",
+            "description": "Update end_time index on mod_shredder.shredded_job.",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "jobs/shredder/job.json"
+            ]
+        },
+        {
             "name": "manageOrganizationStagingTables",
             "description": "Changes to organization tables",
             "class": "ManageTables",
