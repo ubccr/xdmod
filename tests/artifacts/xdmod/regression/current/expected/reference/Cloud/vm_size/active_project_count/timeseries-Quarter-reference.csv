@@ -1,0 +1,10 @@
+title
+"Number of Projects: Active: by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[1] Number of Projects: Active","[2 - 3] Number of Projects: Active","[4 - 7] Number of Projects: Active"
+"2018 Q2",1,2,1
+---------

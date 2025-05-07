@@ -1,0 +1,10 @@
+title
+"Number of Resources: Active: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Quarter,"[Warbler, Blackburnian] Number of Resources: Active","[Warbler, Yellow] Number of Resources: Active","[Warbler, Yellow-rumped] Number of Resources: Active"
+"2018 Q2",1,1,1
+---------
