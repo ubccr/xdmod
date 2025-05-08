@@ -46,7 +46,7 @@ class Tokens
      * @throws Exception                 if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    private static function authenticateAPIToken($userID, $token)
+    private static function authenticateAPIToken($userId, $token)
     {
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
