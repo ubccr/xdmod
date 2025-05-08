@@ -102,6 +102,16 @@
   [
     {
       "_realm_name": "Jobs",
+      "_group_by_name": "pi_institution",
+      "_default_statisticname": "all",
+      "_order_id": 0,
+      "_show_menu": true,
+      "_disable_menu": false
+    }
+  ],
+  [
+    {
+      "_realm_name": "Jobs",
       "_group_by_name": "qos",
       "_default_statisticname": "all",
       "_order_id": 0,
@@ -142,6 +152,16 @@
   [
     {
       "_realm_name": "Jobs",
+      "_group_by_name": "provider",
+      "_default_statisticname": "all",
+      "_order_id": 0,
+      "_show_menu": true,
+      "_disable_menu": false
+    }
+  ],
+  [
+    {
+      "_realm_name": "Jobs",
       "_group_by_name": "username",
       "_default_statisticname": "all",
       "_order_id": 0,
@@ -153,6 +173,16 @@
     {
       "_realm_name": "Jobs",
       "_group_by_name": "person",
+      "_default_statisticname": "all",
+      "_order_id": 0,
+      "_show_menu": true,
+      "_disable_menu": false
+    }
+  ],
+  [
+    {
+      "_realm_name": "Jobs",
+      "_group_by_name": "institution",
       "_default_statisticname": "all",
       "_order_id": 0,
       "_show_menu": true,

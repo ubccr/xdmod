@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Month,"[screw] Average Number of GPU Nodes: Total"
-2016-12,520.0000
-2017-01,800.0000
+Month,"[screw] Average Number of GPU Nodes: Total","[wrench] Average Number of GPU Nodes: Total"
+2016-12,520.0000,0.0000
+2017-01,800.0000,0.0000
 ---------

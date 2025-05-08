@@ -98,6 +98,20 @@
         "leaf": false
     },
     {
+        "text": "Cloud by PI Institution",
+        "id": "group_by_Cloud_pi_institution",
+        "group_by": "pi_institution",
+        "query_group": "tg_usage",
+        "category": "Cloud",
+        "realm": "Cloud",
+        "defaultChartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "chartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "node_type": "group_by",
+        "iconCls": "menu",
+        "description": "PI Institution",
+        "leaf": false
+    },
+    {
         "text": "Cloud by Project",
         "id": "group_by_Cloud_project",
         "group_by": "project",
@@ -109,6 +123,20 @@
         "node_type": "group_by",
         "iconCls": "menu",
         "description": "Project",
+        "leaf": false
+    },
+    {
+        "text": "Cloud by Provider",
+        "id": "group_by_Cloud_provider",
+        "group_by": "provider",
+        "query_group": "tg_usage",
+        "category": "Cloud",
+        "realm": "Cloud",
+        "defaultChartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "chartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "node_type": "group_by",
+        "iconCls": "menu",
+        "description": "Provider",
         "leaf": false
     },
     {
@@ -165,6 +193,20 @@
         "node_type": "group_by",
         "iconCls": "menu",
         "description": "User",
+        "leaf": false
+    },
+    {
+        "text": "Cloud by User Institution",
+        "id": "group_by_Cloud_institution",
+        "group_by": "institution",
+        "query_group": "tg_usage",
+        "category": "Cloud",
+        "realm": "Cloud",
+        "defaultChartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "chartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "node_type": "group_by",
+        "iconCls": "menu",
+        "description": "User Institution",
         "leaf": false
     },
     {

@@ -1,0 +1,12 @@
+title
+"User Count (Number of Users): by User Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"User Institution","User Count (Number of Users)"
+"screw - Screwdriver",186
+"Unknown - Unknown Organization",139
+"wrench - Wrench",19
+---------

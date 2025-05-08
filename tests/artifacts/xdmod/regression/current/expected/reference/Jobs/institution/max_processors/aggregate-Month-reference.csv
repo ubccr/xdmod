@@ -1,0 +1,12 @@
+title
+"Job Size: Max (Core Count): by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","Job Size: Max (Core Count)"
+"screw - Screwdriver",336
+"Unknown - Unknown Organization",96
+"wrench - Wrench",96
+---------

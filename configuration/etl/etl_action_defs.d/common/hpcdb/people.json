@@ -5,7 +5,6 @@
     "source_query": {
         "records": {
             "person_id": "uup.union_user_pi_id",
-            "organization_id": "1",
             "last_name": "COALESCE(p.last_name, uup.union_user_pi_name)"
         },
         "joins": [

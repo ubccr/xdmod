@@ -1,0 +1,11 @@
+title
+"CPU Hours: Per Job: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Unknown - Unknown Organization] CPU Hours: Per Job","[screw - Screwdriver] CPU Hours: Per Job","[wrench - Wrench] CPU Hours: Per Job"
+"2016 Q4",688.11199573,28.38116752,7.58558972
+"2017 Q1",177.26399177,19.30022859,0.74608373
+---------

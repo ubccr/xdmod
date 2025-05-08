@@ -17,6 +17,9 @@
     "parentscience": {
         "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/parentscience"
     },
+    "provider": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/provider"
+    },
     "mountpoint": {
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
@@ -63,6 +66,12 @@
             }
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/person"
+    },
+    "institution": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/institution"
+    },
+    "pi_institution": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/pi_institution"
     },
     "pi": {
         "$overwrite": {

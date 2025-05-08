@@ -1,0 +1,20 @@
+title
+"Number of Jobs Ended: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[wrench - Wrench] Number of Jobs Ended","[screw - Screwdriver] Number of Jobs Ended","[Unknown - Unknown Organization] Number of Jobs Ended"
+2016-12-22,0,0,0
+2016-12-23,0,0,0
+2016-12-24,0,0,0
+2016-12-25,0,0,0
+2016-12-26,0,0,0
+2016-12-27,0,0,0
+2016-12-28,0,0,0
+2016-12-29,0,0,0
+2016-12-30,19108,7488,10
+2016-12-31,22115,6021,5
+2017-01-01,13931,2581,54
+---------
