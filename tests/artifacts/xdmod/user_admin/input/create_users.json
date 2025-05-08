@@ -55,7 +55,7 @@
       "acls": {
         "dev": []
       },
-      "long_name": "Albatross, Black-browed",
+      "long_name": "Warbler, Willow",
       "institution": 1,
       "output": "test.only_feature_acls",
       "expected_success": false
@@ -67,7 +67,7 @@
       "acls": {
         "mgr": []
       },
-      "long_name": "Albatross, Yellow-nosed",
+      "long_name": "Warbler, Yellow",
       "institution": 1,
       "output": "test.only_feature_acls",
       "expected_success": false
@@ -80,7 +80,7 @@
         "mgr": [],
         "dev": []
       },
-      "long_name": "Amherst's, Lady",
+      "long_name": "Pipit, Tawny",
       "institution": 1,
       "output": "test.only_feature_acls",
       "expected_success": false

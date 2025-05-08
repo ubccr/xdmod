@@ -67,6 +67,12 @@
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/person"
     },
+    "institution": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/institution"
+    },
+    "pi_institution": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/pi_institution"
+    },
     "pi": {
         "$overwrite": {
             "chart_options": {

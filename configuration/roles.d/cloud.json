@@ -39,6 +39,10 @@
                 },
                 {
                     "realm": "Cloud",
+                    "group_by": "institution"
+                },
+                {
+                    "realm": "Cloud",
                     "group_by": "username"
                 },
                 {
@@ -48,6 +52,10 @@
                 {
                     "realm": "Cloud",
                     "group_by": "pi"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "pi_institution"
                 },
                 {
                     "realm": "Cloud",
@@ -177,6 +185,10 @@
                 },
                 {
                     "realm": "Cloud",
+                    "group_by": "institution"
+                },
+                {
+                    "realm": "Cloud",
                     "group_by": "username",
                     "disable": true
                 },
@@ -187,6 +199,10 @@
                 {
                     "realm": "Cloud",
                     "group_by": "pi"
+                },
+                {
+                    "realm": "Cloud",
+                    "group_by": "pi_institution"
                 },
                 {
                     "realm": "Cloud",

@@ -1,0 +1,12 @@
+title
+"User Expansion Factor: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","User Expansion Factor"
+"wrench - Wrench",5.4674
+"screw - Screwdriver",2.6102
+"Unknown - Unknown Organization",1.0632
+---------

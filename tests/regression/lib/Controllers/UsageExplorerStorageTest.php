@@ -63,11 +63,13 @@ class UsageExplorerStorageTest extends \PHPUnit\Framework\TestCase
             'fieldofscience',
             'mountpoint',
             'pi',
+            'pi_institution',
             'resource',
             'resource_type',
             'provider',
             'username',
-            'person'
+            'person',
+            'institution'
         ];
 
         $settings = [

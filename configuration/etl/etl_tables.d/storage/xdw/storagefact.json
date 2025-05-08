@@ -48,10 +48,22 @@
                 "comment": "Person ID"
             },
             {
+                "name": "person_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Person Organization ID"
+            },
+            {
                 "name": "principalinvestigator_person_id",
                 "type": "int(11)",
                 "nullable": false,
                 "comment": "PI Person ID"
+            },
+            {
+                "name": "piperson_organization_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "PI Organization ID"
             },
             {
                 "name": "systemaccount_id",

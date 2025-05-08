@@ -1,0 +1,12 @@
+title
+"Wall Hours: Per Session: by User Institution"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"User Institution","Wall Hours: Per Session"
+"wrench - Wrench",36.50106481
+"screw - Screwdriver",27.87240741
+"Unknown - Unknown Organization",0.40878788
+---------

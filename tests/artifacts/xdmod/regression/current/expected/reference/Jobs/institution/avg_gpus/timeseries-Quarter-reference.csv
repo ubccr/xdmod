@@ -1,0 +1,11 @@
+title
+"GPU Count: Per Job: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[screw - Screwdriver] GPU Count: Per Job","[Unknown - Unknown Organization] GPU Count: Per Job","[wrench - Wrench] GPU Count: Per Job"
+"2016 Q4",0.0001,0.0000,0.0000
+"2017 Q1",0.0015,0.0000,0.0000
+---------

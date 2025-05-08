@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Institution","Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+"screw - Screwdriver",4.72510304,0.09890613604294525
+"wrench - Wrench",0.34389064,0.06376292819111527
+---------

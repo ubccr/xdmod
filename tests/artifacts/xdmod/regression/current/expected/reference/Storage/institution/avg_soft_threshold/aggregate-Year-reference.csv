@@ -1,0 +1,12 @@
+title
+"Quota: Soft Threshold (Bytes): by User Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"User Institution","Quota: Soft Threshold (Bytes)"
+"screw - Screwdriver",457000026112000.0000
+"wrench - Wrench",310000005120000.0000
+"Unknown - Unknown Organization",215000014848000.0000
+---------

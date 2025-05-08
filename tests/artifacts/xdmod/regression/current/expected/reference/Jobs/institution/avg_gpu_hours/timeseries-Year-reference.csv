@@ -1,0 +1,11 @@
+title
+"GPU Hours: Per Job: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[screw - Screwdriver] GPU Hours: Per Job","[Unknown - Unknown Organization] GPU Hours: Per Job","[wrench - Wrench] GPU Hours: Per Job"
+2016,0.03224974,0.00000000,0.00000000
+2017,0.01604804,0.00000000,0.00000000
+---------

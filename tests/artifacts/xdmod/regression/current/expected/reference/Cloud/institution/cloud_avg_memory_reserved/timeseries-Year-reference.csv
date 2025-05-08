@@ -1,0 +1,10 @@
+title
+"Average Memory Reserved Weighted By Wall Hours (Bytes): by User Institution"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Year,"[screw - Screwdriver] Average Memory Reserved Weighted By Wall Hours (Bytes)","[wrench - Wrench] Average Memory Reserved Weighted By Wall Hours (Bytes)","[Unknown - Unknown Organization] Average Memory Reserved Weighted By Wall Hours (Bytes)"
+2018,5602121263.9108,4471965428.8596,3804999079.2242
+---------

@@ -1,0 +1,19 @@
+title
+"User Count (Number of Users): by User Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Day,"[screw - Screwdriver] User Count (Number of Users)","[Unknown - Unknown Organization] User Count (Number of Users)","[wrench - Wrench] User Count (Number of Users)"
+2018-12-27,186,138,19
+2018-12-28,186,138,19
+2018-12-29,186,139,19
+2018-12-30,186,139,19
+2018-12-31,186,139,19
+2019-01-01,186,139,19
+2019-01-02,186,139,19
+2019-01-03,186,139,19
+2019-01-04,186,139,19
+2019-01-05,185,139,19
+---------

@@ -234,7 +234,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                     $index++;
                 }
 
-                $counts = [29, 17, 16];
+                $counts = [31, 19, 16];
                 for ($i = 0; $i < count($counts); $i++) {
                     $this->assertCount(
                         $counts[$i],
