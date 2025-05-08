@@ -591,6 +591,42 @@ layout: null
             }
         },
         "examples": {
+            "empty-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "No API token provided.",
+                    "code": 0
+                }
+            },
+            "invalid-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "Invalid API token.",
+                    "code": 0
+                }
+            },
+            "expired-token": {
+                "value": {
+                    "success": false,
+                    "count": 0,
+                    "total": 0,
+                    "totalCount": 0,
+                    "results": [],
+                    "data": [],
+                    "message": "API token has expired.",
+                    "code": 0
+                }
+            }
         }
     },
     "security": [
@@ -2876,21 +2912,18 @@ layout: null
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "allOf": [
-                                        { "$ref": "#/components/schemas/warehouse-error-0" },
-                                        {
-                                            "properties": {
-                                                "message": {
-                                                    "enum": [
-                                                        "No Token Provided.",
-                                                        "Invalid token format.",
-                                                        "Invalid API token.",
-                                                        "The API Token has expired."
-                                                    ]
-                                                }
-                                            }
-                                        }
-                                    ]
+                                    "$ref": "#/components/schemas/warehouse-error"
+                                },
+                                "examples": {
+                                    "empty-token": {
+                                        "$ref": "#/components/examples/empty-token"
+                                    },
+                                    "invalid-token": {
+                                        "$ref": "#/components/examples/invalid-token"
+                                    },
+                                    "expired-token": {
+                                        "$ref": "#/components/examples/expired-token"
+                                    }
                                 }
                             }
                         }

@@ -2,32 +2,58 @@
     "module": "xdmod",
     "defaults": {
         "migration-11_0_0-11_5_0": {
-          "namespace": "ETL\\Maintenance",
-          "options_class": "MaintenanceOptions",
-          "class": "ManageTables"
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "class": "DatabaseIngestor",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
+                    "schema": "mod_shredder"
+                },
+                "source": {
+                    "type": "mysql",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
+                    "schema": "mod_shredder"
+                }
+            }
         }
     },
     "migration-11_0_0-11_5_0": [
         {
             "name": "UpdateShredderJobTable",
             "description": "Update end_time index on mod_shredder.shredded_job.",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ManageTables",
             "definition_file_list": [
                 "jobs/shredder/job.json"
-            ],
-            "endpoints": {
-                "destination": {
-                    "type": "mysql",
-                    "name": "Shredder Database",
-                    "config": "shredder",
-                    "schema": "mod_shredder"
-                },
-                "source": {
-                    "type": "mysql",
-                    "name": "Shredder Database",
-                    "config": "shredder",
-                    "schema": "mod_shredder"
-                }
-            }
+            ]
+        },
+        {
+            "name": "manageOrganizationStagingTables",
+            "description": "Changes to organization tables",
+            "class": "ManageTables",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "common/staging/organization-config.json",
+                "common/staging/organization.json"
+            ]
+        },
+        {
+            "$ref": "${local_config_dir}/organizations.json#/ingest-organizations/0"
+        },
+        {
+            "$ref": "${local_config_dir}/organizations.json#/ingest-organizations/1"
+        },
+        {
+            "$ref": "${local_config_dir}/organizations.json#/ingest-organizations/2"
+        },
+        {
+            "$ref": "${local_config_dir}/organizations.json#/ingest-organizations/3"
         }
     ]
 }

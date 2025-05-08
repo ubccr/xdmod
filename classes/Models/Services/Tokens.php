@@ -2,6 +2,7 @@
 
 namespace Models\Services;
 
+use CCR\Log;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -30,21 +31,22 @@ class Tokens
      */
     const DELIMITER = '.';
 
+    const MISSING_TOKEN_MESSAGE = 'No token provided.';
+    const INVALID_TOKEN_MESSAGE = 'Invalid token.';
+    const EXPIRED_TOKEN_MESSAGE = 'Token has expired.';
+
     /**
-     * Perform token authentication for the provided $userId & $token combo. If the authentication is successful, an
-     * XDUser object will be returned for the provided $userId. If not, an exception will be thrown.
+     * Perform token authentication given the value of an Authorization header.
      *
-     * @param int|string $userId   The id used to look up the the users hashed token.
-     * @param string     $password The value to be checked against the retrieved hashed token.
+     * @param string $authorizationHeader
+     * @param string | null $endpoint the endpoint being requested, used only for logging.
      *
-     * @return XDUser for the provided $userId, if the authentication is successful else an exception will be thrown.
+     * @return XDUser the authenticated user.
      *
      * @throws Exception                 if unable to retrieve a database connection.
-     * @throws UnauthorizedHttpException if no token can be found for the provided $userId,
-     *                                   if the stored token for $userId has expired, or
-     *                                   if the provided $token doesn't match the stored hash.
+     * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    private static function authenticateAPIToken($userId, $password)
+    private static function authenticateAPIToken($userID, $token)
     {
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
@@ -60,7 +62,10 @@ SQL;
         $row = $db->query($query, array(':user_id' => $userId));
 
         if (count($row) === 0) {
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::INVALID_TOKEN_MESSAGE
+            );
         }
 
         $expectedToken = $row[0]['token'];
@@ -71,15 +76,20 @@ SQL;
         $now = new \DateTime();
         $expires = new \DateTime($expiresOn);
         if ($expires < $now) {
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'The API Token has expired.');
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::EXPIRED_TOKEN_MESSAGE
+            );
         }
 
-        // finally check that the provided token matches it's stored hash.
-        if (!password_verify($password, $expectedToken)) {
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
+        // finally check that the provided token matches its stored hash.
+        if (!password_verify($token, $expectedToken)) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::INVALID_TOKEN_MESSAGE
+            );
         }
 
-        // and if we've made it this far we can safely return the requested Users data.
         return XDUser::getUserByID($dbUserId);
     }
 
@@ -119,83 +129,75 @@ SQL;
      * This function is a stop-gap that is meant to be used to protect controller endpoints until they can be moved to
      * the new REST stack.
      *
-     * @return XDUser|null if the authentication is successful then an XDUser instance for the authenticated user will
-     * be returned, if the authentication is not successful then null will be returned.
+     * @return XDUser the authenticated user.
+     *
+     * @throws Exception                 if unable to retrieve a database connection.
+     * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    public static function authenticateToken()
+    public static function authenticateToken($request = null)
     {
-        $request = Request::createFromGlobals();
-        $rawToken = Tokens::getRawTokenFromRequest($request);
-        if (empty($rawToken)) {
-            return null;
+        // Only necessary to support old controllers
+        if (!$request) {
+            $request = Request::createFromGlobals();
         }
 
-        return Tokens::authenticateRawToken($rawToken);
-    }
+        // Check for existence of header
+        if (!$request->headers->has(Tokens::HEADER_NAME))
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::MISSING_TOKEN_MESSAGE
+            );
+        }
 
-    /**
-     * @param String rawToken
-     * @return XDUser or null
-     */
-    public static function authenticateRawToken($rawToken)
-    {
+        // Check for header key
+        $header = $request->headers->get(Tokens::HEADER_NAME);
+        $headerKey  = Tokens::HEADER_KEY . ' ';
+        if (0 !== strpos($header, $headerKey)) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::INVALID_TOKEN_MESSAGE
+            );
+        }
+
+        $rawToken = substr($header, strlen($headerKey));
+
+        // Determine token type
         $tokenParts = explode(Tokens::DELIMITER, $rawToken);
         $tokenPartsSize = sizeof($tokenParts);
         if ($tokenPartsSize === 2) {
             $userId = $tokenParts[0];
             $token = $tokenParts[1];
-            return Tokens::authenticateAPIToken($userId, $token);
+            $authenticatedUser = Tokens::authenticateAPIToken($userId, $token);
         } elseif ($tokenPartsSize === 3) {
-            return Tokens::authenticateJSONWebToken($rawToken);
+            $authenticatedUser = Tokens::authenticateJSONWebToken($rawToken);
         } else {
-            return null;
-        }
-    }
-
-    /**
-     * Attempt to retrieve the raw Token from one of the following sources:
-     *   - Headers
-     *   - GET Parameters
-     *   - POST Parameters
-     *
-     * @return null|string returns the token if found else it returns null.
-     */
-    public static function getRawTokenFromRequest($request)
-    {
-        $headerName = Tokens::HEADER_NAME;
-        $headerKey  = Tokens::HEADER_KEY;
-        $rawToken   = null;
-
-        if ($request->headers->has($headerName)) {
-            $header = $request->headers->get($headerName);
-            $rawToken = self::stripHeaderKey($header);
-        } elseif ($request->query->has($headerKey)) {
-            $rawToken = $request->query->get($headerKey);
-        } elseif ($request->request->has($headerKey)) {
-            $rawToken = $request->request->get($headerKey);
-        } else {
-            $allHeaders = getallheaders();
-            if (array_key_exists($headerName, $allHeaders)) {
-                $header = $allHeaders[$headerName];
-                $rawToken = self::stripHeaderKey($header);
-            } elseif (isset($_GET[$headerKey]) && is_string($_GET[$headerKey])) {
-                $rawToken = $_GET[$headerKey];
-            } elseif (isset($_POST[$headerKey]) && is_string($_POST[$headerKey])) {
-                $rawToken = $_POST[$headerKey];
-            }
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::INVALID_TOKEN_MESSAGE
+            );
         }
 
-        return $rawToken;
-    }
+        // Log the request so we can count it in our reporting of usage of the
+        // Data Analytics Framework.
+        $logger = Log::factory(
+            'daf',
+            [
+                'console' => false,
+                'file' => false,
+                'mail' => false
+            ]
+        );
 
-    private static function stripHeaderKey($header)
-    {
-        $headerKey = Tokens::HEADER_KEY .' ';
-        $rawToken = str_replace($headerKey, '', $header);
-        if ($rawToken === '')
-        {
-            return null;
+        $endpoint = $request->getPathInfo();
+        $logger->info(
+            'User '
+            . $authenticatedUser->getUserID()
+            . ' requested '
+            . (!is_null($endpoint) ? $endpoint : $_SERVER['SCRIPT_NAME'])
+            . ' with API token using '
+            . $_SERVER['HTTP_USER_AGENT']
+        );
+
+        return $authenticatedUser;
         }
-        return $rawToken;
     }
-}

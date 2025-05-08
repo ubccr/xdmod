@@ -752,28 +752,11 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      *
      * @param Request $request
      * @return \XDUser
-     * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
-     * @throws \Exception if the user's token from the db does not validate against the provided token.
+     * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
     protected function authenticateToken($request)
     {
-        $rawToken = Tokens::getRawTokenFromRequest($request);
-        if (empty($rawToken)) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                'No Token Provided.'
-            );
-        }
-
-        $authenticatedUser = Tokens::authenticateRawToken($rawToken);
-        if ($authenticateUser) {
-            return $authenticatedUser;
-        } else {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                'Invalid token format.'
-            );
-        }
+        return Tokens::authenticateToken($request);
     }
 
     /**
