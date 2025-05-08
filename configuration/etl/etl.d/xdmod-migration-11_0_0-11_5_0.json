@@ -64,28 +64,188 @@
             ]
         },
         {
-            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/0"
+            "name": "IngestResourceConfig",
+            "description": "Ingest resource configuration file. Modeled after action in staging-ingest-common.resource-config",
+            "definition_file": "common/staging/resource-config.json",
+            "class": "StructuredFileIngestor",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Resources configuration",
+                    "path": "${base_dir}/../resources.json",
+                    "record_schema_path": "common/resources.schema.json",
+                    "field_names": [
+                        "resource",
+                        "name",
+                        "description",
+                        "resource_type",
+                        "pi_column",
+                        "shared_jobs",
+                        "timezone",
+                        "resource_allocation_type",
+                        "organization"
+                    ]
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
         },
         {
-            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/1"
+            "class": "DatabaseIngestor",
+            "name": "IngestResourcesStaging",
+            "description": "Ingest resource names from staging table. Modeled after action in staging-ingest-common.resources",
+            "definition_file": "common/staging/resource.json",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
         },
         {
-            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/2"
+            "name": "resource-allocation-types",
+            "description": "Ingest resource allocation types file",
+            "definition_file": "common/staging/resource-allocation-type.json",
+            "class": "StructuredFileIngestor",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Resource types",
+                    "path": "${base_dir}/../resource_allocation_types.json",
+                    "record_schema_path": "common/resource-allocation-types.schema.json",
+                    "filters": [
+                        {
+                            "#": "Reformat config file for ETLs purposes.",
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'[ .resource_allocation_types | to_entries[]| {abbrev: .value.abbrev, description: .value.description} ] '"
+                        }
+                    ]
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                }
+            }
         },
         {
-            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/3"
+            "class": "DatabaseIngestor",
+            "name": "HpcdbIngestResources",
+            "description": "Ingest resources from staging table to table in modw_hpcdb. Modeled after action in hpcdb-ingest-common.resources",
+            "definition_file": "common/hpcdb/resources.json",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "HPCDB Database",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                }
+            }
         },
         {
-            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/4"
+            "class": "DatabaseIngestor",
+            "name": "IngestResourcefact",
+            "definition_file": "jobs/xdw/resource-fact.json",
+            "description": "Ingest resource information into resourcefact table. Modeled after hpcdb-xdw-ingest-common.resource",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "HPCDB",
+                    "config": "database",
+                    "schema": "mod_hpcdb"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw",
+                    "create_schema_if_not_exists": true
+                }
+            }
         },
         {
-            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/5"
+            "name": "IngestResourceTypeRealmRelationsStaging",
+            "description": "",
+            "definition_file": "common/staging/resource-type-realms.json",
+            "class": "StructuredFileIngestor",
+            "endpoints": {
+                "source": {
+                    "type": "configurationfile",
+                    "namespace": "ETL\\DataEndpoint",
+                    "options_class": "IngestorOptions",
+                    "name": "Resource Types configuration",
+                    "path": "${base_dir}/../resource_types.json",
+                    "field_names": [
+                        "abbrev",
+                        "realm"
+                    ],
+                    "filters": [
+                        {
+                            "#": "Reformat config file for ETLs purposes.",
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'[(.resource_types | keys) as $a | .resource_types as $rt |  $a[] | {abbrev: . , realm: $rt[.].realms[]}]'"
+                        }
+                    ]
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Shredder/Staging Database",
+                    "config": "database",
+                    "schema": "mod_shredder",
+                    "definition_file": "common/staging/resource-type-realms.json"
+                }
+            }
         },
+            {
+                "class": "DatabaseIngestor",
+                "name": "IngestInitialRealms",
+                "definition_file": "acls/realms.json",
+                "disable_keys": true,
+                "endpoints": {
+                    "source": {
+                        "type": "mysql",
+                        "name": "shredder",
+                        "config": "database",
+                        "schema": "mod_shredder"
+                    },
+                    "destination": {
+                        "type": "mysql",
+                        "name": "realm",
+                        "config": "database",
+                        "schema": "moddb"
+                    }
+                }
+            },
         {
-            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/6"
-        },
-        {
-            "$ref": "${local_config_dir}/ingest_resources.json#/ingest-resources/7"
+            "class": "DatabaseIngestor",
+            "name": "IngestResourcefactRealmRelations",
+            "definition_file": "common/hpcdb/resource-type-realms.json",
+            "description": "Ingest resource information into resourcefact table. Modeled after hpcdb-xdw-ingest-common.resource",
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "HPCDB",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "MODDB",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
         }
     ],
     "storage-migration-11-0-0_11-5-0": [
