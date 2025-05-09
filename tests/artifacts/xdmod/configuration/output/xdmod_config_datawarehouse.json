@@ -200,10 +200,6 @@
           "class": "ExpansionFactorStatistic"
         },
         {
-          "name": "normalized_avg_processors",
-          "class": "NormalizedAverageProcessorCountStatistic"
-        },
-        {
           "name": "avg_job_size_weighted_by_cpu_hours",
           "class": "JobSizeWeightedByCPUHours"
         },
