@@ -596,11 +596,24 @@ class RegressionTestHelper extends XdmodTestHelper
             $input,
             $role
         );
-        $data = str_replace("\x1e", '', $response[0]);
+        $data = $response[0];
         if ($sort) {
-            $lines = explode("\n", rtrim($data));
-            sort($lines);
-            $data = implode("\n", $lines) . "\n";
+            $chunks = [];
+            $line = strtok($data, "\r\n");
+            while (false !== $line) {
+                $chunk = ['size' => $line];
+                $line = strtok("\r\n");
+                $chunk['data'] = $line;
+                array_push($chunks, $chunk);
+                $line = strtok("\r\n");
+            }
+            usort($chunks, function ($a, $b) {
+                return strcmp($a['data'], $b['data']);
+            });
+            $chunks = array_map(function ($chunk) {
+                return $chunk['size'] . "\r\n" . $chunk['data'];
+            }, $chunks);
+            $data = implode("\r\n", $chunks);
         }
         $data = preg_replace(self::$replaceRegex, self::$replacements, $data);
         if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
