@@ -141,15 +141,16 @@ SQL;
             $request = Request::createFromGlobals();
             $headers = getallheaders();
             $header = $headers[Tokens::HEADER_NAME];
-            $request->headers->set(Tokens::HEADER_NAME, $header)
+            $request->headers->set(Tokens::HEADER_NAME, $header);
         }
 
         // Check for existence of header
-        if (!$request->headers->has(Tokens::HEADER_NAME))
+        if (!$request->headers->has(Tokens::HEADER_NAME)) {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
                 Tokens::MISSING_TOKEN_MESSAGE
             );
+        }
 
         // Check for header key
         $header = $request->headers->get(Tokens::HEADER_NAME);
