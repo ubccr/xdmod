@@ -137,8 +137,11 @@ SQL;
     public static function authenticateToken($request = null)
     {
         // Only necessary to support old controllers
-        if (!$request) {
+        if (is_null($request)) {
             $request = Request::createFromGlobals();
+            $headers = getallheaders();
+            $header = $headers[Tokens::HEADER_NAME];
+            $request->headers->set(Tokens::HEADER_NAME, $header)
         }
 
         // Check for existence of header
@@ -147,7 +150,6 @@ SQL;
                 Tokens::HEADER_KEY,
                 Tokens::MISSING_TOKEN_MESSAGE
             );
-        }
 
         // Check for header key
         $header = $request->headers->get(Tokens::HEADER_NAME);
