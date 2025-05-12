@@ -46,8 +46,11 @@ class Tokens
      * @throws Exception                 if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    private static function authenticateAPIToken($userId, $token)
+    private static function authenticateAPIToken($rawToken)
     {
+        $userId = $rawToken[0];
+        $token = $rawToken[1];
+
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
         SELECT
@@ -112,14 +115,13 @@ SQL;
 SQL;
 
         $row = $db->query($query, array(':username' => $username));
-        $rows = count($row);
-        if ($rows === 0) {
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid JSON Web Token for user ' . $username);
-        } elseif ($rows > 1) {
-            throw new UnauthorizedHttpException('', 'Invalid User');
+        if (count($row) !== 1) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::INVALID_TOKEN_MESSAGE
+            );
         }
         $dbUsername = $row[0]['username'];
-
         return XDUser::getUserByUserName($dbUsername);
 
     }
@@ -167,10 +169,10 @@ SQL;
         $tokenParts = explode(Tokens::DELIMITER, $rawToken);
         $tokenPartsSize = sizeof($tokenParts);
         if ($tokenPartsSize === 2) {
-            $userId = $tokenParts[0];
-            $token = $tokenParts[1];
-            $authenticatedUser = Tokens::authenticateAPIToken($userId, $token);
+            $tokenType = 'API Token';
+            $authenticatedUser = Tokens::authenticateAPIToken($rawToken);
         } elseif ($tokenPartsSize === 3) {
+            $tokenType = 'JSON Web Token';
             $authenticatedUser = Tokens::authenticateJSONWebToken($rawToken);
         } else {
             throw new UnauthorizedHttpException(
@@ -192,12 +194,12 @@ SQL;
 
         $endpoint = $request->getPathInfo();
         $logger->info(
-            'User '
-            . $authenticatedUser->getUserID()
+            'User ' . $authenticatedUser->getUserName()
+            . ' (' . $authenticatedUser->getUserID() . ')'
             . ' requested '
             . (!is_null($endpoint) ? $endpoint : $_SERVER['SCRIPT_NAME'])
-            . ' with API token using '
-            . $_SERVER['HTTP_USER_AGENT']
+            . ' with type ' . $tokenType
+            . ' using ' . $_SERVER['HTTP_USER_AGENT']
         );
 
         return $authenticatedUser;
