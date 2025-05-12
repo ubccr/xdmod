@@ -205,5 +205,5 @@ SQL;
         );
 
         return $authenticatedUser;
-        }
     }
+}
