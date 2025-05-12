@@ -141,8 +141,10 @@ SQL;
         if (is_null($request)) {
             $request = Request::createFromGlobals();
             $headers = getallheaders();
-            $header = $headers[Tokens::HEADER_NAME];
-            $request->headers->set(Tokens::HEADER_NAME, $header);
+            if (array_key_exists(Tokens::HEADER_NAME, $headers)) {
+                $header = $headers[Tokens::HEADER_NAME];
+                $request->headers->set(Tokens::HEADER_NAME, $header);
+            }
         }
 
         // Check for existence of header
