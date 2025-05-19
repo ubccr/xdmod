@@ -9,6 +9,8 @@ use Realm\GroupBy;
 class QueryDescripter
 {
 
+    protected $groupByInstance;
+
     /**
      * The GroupBy for this particular QueryDescripter.
      *
