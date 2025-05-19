@@ -4,6 +4,8 @@ namespace IntegrationTests\TestHarness;
 
 class XdmodTestHelper
 {
+    private $responseHeaders;
+
     private $config;
     private $siteurl;
     private $headers;

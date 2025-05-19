@@ -24,8 +24,14 @@ use Psr\Log\LoggerInterface;
 
 class CloudInstanceTypeStateIngestor extends pdoIngestor implements iAction
 {
+    protected $_end_time;
 
-    private $_instance_type_state;
+    /**
+     * @var null
+     */
+    protected $_instance_state;
+
+    protected $_instance_type_state;
 
     /**
      * @see ETL\Ingestor\pdoIngestor::__construct()

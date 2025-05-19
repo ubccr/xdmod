@@ -4,6 +4,8 @@ namespace UnitTests\DataWarehouse;
 
 class ExportBuilderTest extends \PHPUnit\Framework\TestCase
 {
+    private $_dummydata;
+
     public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         $this->_dummydata = array(array(

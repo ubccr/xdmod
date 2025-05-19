@@ -8,6 +8,8 @@ use \DataWarehouse\Query\TimeseriesQuery;
 class QueryDescripter
 {
 
+    protected $groupByInstance;
+
     /**
      * @var \Realm\iRealm The Realm that we are querying.
      */

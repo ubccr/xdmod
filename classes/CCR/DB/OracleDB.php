@@ -20,6 +20,8 @@ use Exception;
 
 class OracleDB extends PDODB
 {
+    protected $_dsn;
+
     /* ------------------------------------------------------------------------------------------
      * Set up the machinery. Oracle requires at minimum a database name (local naming,
      * this resolves to an entry in tnsnames.org) or a name, host, and optionally a port

@@ -7,6 +7,8 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class JobViewerTest extends BaseTest
 {
+    private $xdmodhelper;
+
     const ENDPOINT = 'rest/v0.1/warehouse/';
 
     public function setup(): void
