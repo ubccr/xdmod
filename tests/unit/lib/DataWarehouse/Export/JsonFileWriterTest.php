@@ -13,6 +13,9 @@ use IntegrationTests\TestHarness\TestFiles;
  */
 class JsonFileWriterTest extends TestCase
 {
+
+    private $testFiles;
+
     /**
      * Test artifacts path.
      * @var string

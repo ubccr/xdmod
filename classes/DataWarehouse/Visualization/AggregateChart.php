@@ -15,6 +15,11 @@ use DataWarehouse\RoleRestrictionsStringBuilder;
 */
 class AggregateChart
 {
+    protected $_legend_location;
+    protected $_hasLegend;
+    protected $_limit;
+    protected $show_filters;
+
     protected $_swapXY;
     protected $_chart;
     protected $_width;

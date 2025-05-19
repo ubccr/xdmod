@@ -25,6 +25,7 @@ use Psr\Log\LoggerInterface;
 
 class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iAction
 {
+    protected $_end_time;
 
     private $_instance_state;
 

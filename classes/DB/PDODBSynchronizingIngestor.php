@@ -12,6 +12,8 @@ use Psr\Log\LoggerInterface;
 class PDODBSynchronizingIngestor implements Ingestor
 {
 
+    protected $insertColumns;
+
     /**
      * Destination database.
      *

@@ -7,6 +7,8 @@ use Models\Services\Realms;
 
 abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
+    protected $testFiles;
+
     private static $TEST_ARTIFACT_OUTPUT_PATH;
 
     protected static $XDMOD_REALMS;

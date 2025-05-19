@@ -17,6 +17,8 @@ use Psr\Log\LoggerInterface;
 
 class EtlOverseerOptions extends \CCR\Loggable
 {
+    protected $resourceCodeToIdMapSql;
+
     // Start of the ETL period
     private $startDate = null;
 

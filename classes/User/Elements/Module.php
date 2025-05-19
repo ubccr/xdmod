@@ -12,6 +12,10 @@ namespace User\Elements;
 class Module extends \Common\Identity
 {
 
+    protected $_position;
+
+    protected $_permitted_modules;
+
     /**
      * Is this a default module?
      *
