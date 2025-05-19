@@ -1,0 +1,11 @@
+title
+"Wait Hours: Per Job: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[screw - Screwdriver] Wait Hours: Per Job","[wrench - Wrench] Wait Hours: Per Job","[Unknown - Unknown Organization] Wait Hours: Per Job"
+2016,12.50171258,2.39768363,0.84098718
+2017,3.60581740,1.47652005,3.00597222
+---------

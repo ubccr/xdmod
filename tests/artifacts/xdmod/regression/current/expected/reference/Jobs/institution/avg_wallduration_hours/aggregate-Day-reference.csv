@@ -1,0 +1,12 @@
+title
+"Wall Hours: Per Job: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","Wall Hours: Per Job","Std Dev: Wall Hours: Per Job"
+"Unknown - Unknown Organization",43.13635668,
+"screw - Screwdriver",6.63497498,0.06300842846115094
+"wrench - Wrench",0.33077656,0.00448519910411908
+---------

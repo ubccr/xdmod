@@ -1,0 +1,20 @@
+title
+"User Expansion Factor: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[wrench - Wrench] User Expansion Factor","[screw - Screwdriver] User Expansion Factor","[Unknown - Unknown Organization] User Expansion Factor"
+2016-12-22,0,1.0249,0
+2016-12-23,0,1.0302,0
+2016-12-24,0,1.0368,0
+2016-12-25,0,1.0813,0
+2016-12-26,0,1.1925,1.0000
+2016-12-27,2.3557,2.0483,1.0000
+2016-12-28,2.5090,1.1971,1.0025
+2016-12-29,2.5213,1.1484,1.0762
+2016-12-30,4.2448,5.2003,1.1008
+2016-12-31,7.4069,1.2561,1.0240
+2017-01-01,20.2136,1.7498,1.1085
+---------

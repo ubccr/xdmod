@@ -1,0 +1,12 @@
+title
+"CPU Hours: Total: by User Institution"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"User Institution","CPU Hours: Total"
+"screw - Screwdriver",1308.4550
+"wrench - Wrench",441.1961
+"Unknown - Unknown Organization",6.2383
+---------

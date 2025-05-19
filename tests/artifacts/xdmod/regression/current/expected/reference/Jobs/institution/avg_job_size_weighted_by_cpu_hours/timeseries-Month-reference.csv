@@ -1,0 +1,11 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[screw - Screwdriver] Job Size: Weighted By CPU Hours (Core Count)","[wrench - Wrench] Job Size: Weighted By CPU Hours (Core Count)","[Unknown - Unknown Organization] Job Size: Weighted By CPU Hours (Core Count)"
+2016-12,87.3101,50.5105,41.3946
+2017-01,14.9376,29.9663,52.1109
+---------

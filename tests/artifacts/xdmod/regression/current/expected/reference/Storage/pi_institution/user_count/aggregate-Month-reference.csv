@@ -1,0 +1,12 @@
+title
+"User Count (Number of Users): by PI Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"PI Institution","User Count (Number of Users)"
+"screw - Screwdriver",231
+"Unknown - Unknown Organization",80
+"wrench - Wrench",33
+---------
