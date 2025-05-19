@@ -13,6 +13,8 @@ use IntegrationTests\TestHarness\TestFiles;
  */
 class CsvFileWriterTest extends TestCase
 {
+    private $testFiles;
+
     /**
      * Test artifacts path.
      * @var string
