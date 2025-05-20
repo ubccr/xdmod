@@ -85,7 +85,7 @@
     },
     {
         "text": "Storage by PI Institution",
-        "id": "group_by_Storage_pi_institution",
+        "id": "node=group_by&realm=Storage&group_by=pi_institution",
         "group_by": "pi_institution",
         "query_group": "tg_usage",
         "category": "Storage",
@@ -127,7 +127,7 @@
     },
     {
         "text": "Storage by Service Provider",
-        "id": "group_by_Storage_provider",
+        "id": "node=group_by&realm=Storage&group_by=provider",
         "group_by": "provider",
         "query_group": "tg_usage",
         "category": "Storage",
@@ -169,7 +169,7 @@
     },
     {
         "text": "Storage by User Institution",
-        "id": "group_by_Storage_institution",
+        "id": "node=group_by&realm=Storage&group_by=institution",
         "group_by": "institution",
         "query_group": "tg_usage",
         "category": "Storage",
