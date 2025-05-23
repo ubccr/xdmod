@@ -3,6 +3,8 @@
 ## XXXX-XX-XX v11.5.0
 
 - Bug Fixes
+    - Fix bugs when updating user organizations
+      ([\#1975](https://github.com/ubccr/xdmod/pull/1975)).
     - Fix various bugs found when testing strict SQL modes
       ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
 - Enhancements
@@ -20,17 +22,19 @@
       "PI Institution," and "Service Provider"
       ([\#2026](https://github.com/ubccr/xdmod/pull/2026),
       [\#2007](https://github.com/ubccr/xdmod/pull/2007)).
+    - Add new resource type for "Program"
+      ([\#1943](https://github.com/ubccr/xdmod/pull/1943)).
     - Improve ingestion performance
       ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
       [\#2003](https://github.com/ubccr/xdmod/pull/2003),
       [\#1965](https://github.com/ubccr/xdmod/pull/1965),
       [\#1968](https://github.com/ubccr/xdmod/pull/1968)).
-- Maintenance / Code Quality
-    - Clean up CI bootstrap script
-      ([\#1954](https://github.com/ubccr/xdmod/pull/1954)).
 
 ## XXXX-XX-XX v11.0.2
 
+- Bug Fixes
+    - Make plots time zone aware
+      ([\#2031](https://github.com/ubccr/xdmod/pull/2031)).
 - Documentation
     - Update name of `tacc_stats` package to `HPCPerfStats`
       ([\#2019](https://github.com/ubccr/xdmod/pull/2019)).
