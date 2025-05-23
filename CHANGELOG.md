@@ -1,5 +1,65 @@
 # Open XDMoD Change Log
 
+## XXXX-XX-XX v11.5.0
+
+- Bug Fixes
+    - Fix bugs when updating user organizations
+      ([\#1975](https://github.com/ubccr/xdmod/pull/1975)).
+    - Fix various bugs found when testing strict SQL modes
+      ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
+- Enhancements
+    - Add the ability to support multiple organizations and to assign
+      organizations to people and to resources
+      ([\#1982](https://github.com/ubccr/xdmod/pull/1982)
+      [\#2026](https://github.com/ubccr/xdmod/pull/2026),
+      [\#2007](https://github.com/ubccr/xdmod/pull/2007)).
+    - Add statistics to the Cloud realm for "Number of Users," "Number of PIs,"
+      "Number of Resources," and "Number of Projects"
+      ([\#1976](https://github.com/ubccr/xdmod/pull/1976)).
+    - Add dimensions to the Jobs, Cloud, and Storage realms for "User
+      Institution" and "PI Institution"
+      ([\#2026](https://github.com/ubccr/xdmod/pull/2026)).
+    - Add dimension to the Storage realm for "Service Provider"
+      ([\#2007](https://github.com/ubccr/xdmod/pull/2007)).
+    - Update Jobs realm raw data to rename the "Organization" field to "User
+      Institution" ([\#2026](https://github.com/ubccr/xdmod/pull/2026)).
+    - Add raw data fields to the Jobs and Cloud realms for "User Institution,"
+      "PI Institution," and "Service Provider"
+      ([\#2026](https://github.com/ubccr/xdmod/pull/2026),
+      [\#2007](https://github.com/ubccr/xdmod/pull/2007)).
+    - Add new resource type for "Program"
+      ([\#1943](https://github.com/ubccr/xdmod/pull/1943)).
+    - Add the ability to ingest Storage realm data by a date range
+      ([\#2018](https://github.com/ubccr/xdmod/pull/2018)).
+    - Improve ingestion performance
+      ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
+      [\#2003](https://github.com/ubccr/xdmod/pull/2003),
+      [\#1965](https://github.com/ubccr/xdmod/pull/1965),
+      [\#1968](https://github.com/ubccr/xdmod/pull/1968)).
+    - Add an order to the raw data exported from the Resource Specifications
+      realm ([\#1979](https://github.com/ubccr/xdmod/pull/1979)).
+- Maintenance / Code Quality
+    - Remove code for supporting Internet Explorer
+      ([\#2013](https://github.com/ubccr/xdmod/pull/2013)).
+
+## XXXX-XX-XX v11.0.2
+
+- Bug Fixes
+    - Make plots time zone aware
+      ([\#2031](https://github.com/ubccr/xdmod/pull/2031)).
+- Enhancements
+    - Usage tab
+        - Add the ability to deep link into specific charts in the Usage tab
+          ([\#1888](https://github.com/ubccr/xdmod/pull/1888)).
+- Documentation
+    - Update name of `tacc_stats` package to `HPCPerfStats`
+      ([\#2019](https://github.com/ubccr/xdmod/pull/2019)).
+- Maintenance / Code Quality
+    - Update Silex and SimpleSAMLphp library dependencies to address security
+      vulnerabilities.
+    - Remove authentication via API token in GET/POST parameters
+      ([\#2037](https://github.com/ubccr/xdmod/pull/2037)).
+
 ## 2025-03-17 v11.0.1
 
 - Bug Fixes
