@@ -2,6 +2,9 @@
 
 ## XXXX-XX-XX v11.0.2
 
+- Bug Fixes
+    - Make plots time zone aware
+      ([\#2045](https://github.com/ubccr/xdmod/pull/2045)).
 - Enhancements
     - Usage tab
         - Add the ability to deep link into specific charts in the Usage tab
