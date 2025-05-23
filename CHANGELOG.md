@@ -27,6 +27,14 @@
     - Clean up CI bootstrap script
       ([\#1954](https://github.com/ubccr/xdmod/pull/1954)).
 
+## XXXX-XX-XX v11.0.2
+
+- Maintenance / Code Quality
+    - Update Silex and SimpleSAMLphp library dependencies to address security
+      vulnerabilities.
+    - Remove authentication via API token in GET/POST parameters
+      ([\#2037](https://github.com/ubccr/xdmod-xsede/pull/2037)).
+
 ## 2025-03-17 v11.0.1
 
 - Bug Fixes
