@@ -20,9 +20,10 @@
       "PI Institution," and "Service Provider"
       ([\#2026](https://github.com/ubccr/xdmod/pull/2026),
       [\#2007](https://github.com/ubccr/xdmod/pull/2007)).
-    - Improve performance of file ingestion
+    - Improve ingestion performance
       ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
-      [\#2003](https://github.com/ubccr/xdmod/pull/2003)).
+      [\#2003](https://github.com/ubccr/xdmod/pull/2003),
+      [\#1965](https://github.com/ubccr/xdmod/pull/1965)).
 - Maintenance / Code Quality
     - Clean up CI bootstrap script
       ([\#1954](https://github.com/ubccr/xdmod/pull/1954)).
