@@ -8,9 +8,14 @@
     - Fix various bugs found when testing strict SQL modes
       ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
 - Enhancements
-    - Add the ability to assign organizations to people and to resources
-      ([\#2026](https://github.com/ubccr/xdmod/pull/2026),
+    - Add the ability to support multiple organizations and to assign
+      organizations to people and to resources
+      ([\#1982](https://github.com/ubccr/xdmod/pull/1982)
+      [\#2026](https://github.com/ubccr/xdmod/pull/2026),
       [\#2007](https://github.com/ubccr/xdmod/pull/2007)).
+    - Add statistics to the Cloud realm for "Number of Users," "Number of PIs,"
+      "Number of Resources," and "Number of Projects"
+      ([\#1976](https://github.com/ubccr/xdmod/pull/1976)).
     - Add dimensions to the Jobs, Cloud, and Storage realms for "User
       Institution" and "PI Institution"
       ([\#2026](https://github.com/ubccr/xdmod/pull/2026)).
@@ -24,11 +29,18 @@
       [\#2007](https://github.com/ubccr/xdmod/pull/2007)).
     - Add new resource type for "Program"
       ([\#1943](https://github.com/ubccr/xdmod/pull/1943)).
+    - Add the ability to ingest Storage realm data by a date range
+      ([\#2018](https://github.com/ubccr/xdmod/pull/2018)).
     - Improve ingestion performance
       ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
       [\#2003](https://github.com/ubccr/xdmod/pull/2003),
       [\#1965](https://github.com/ubccr/xdmod/pull/1965),
       [\#1968](https://github.com/ubccr/xdmod/pull/1968)).
+    - Add an order to the raw data exported from the Resource Specifications
+      realm ([\#1979](https://github.com/ubccr/xdmod/pull/1979)).
+- Maintenance / Code Quality
+    - Remove code for supporting Internet Explorer
+      ([\#2013](https://github.com/ubccr/xdmod/pull/2013)).
 
 ## 2025-08-19 v11.0.2
 
