@@ -1,5 +1,18 @@
 # Open XDMoD Change Log
 
+## XXXX-XX-XX v11.0.2
+
+- Enhancements
+    - Usage tab
+        - Add the ability to deep link into specific charts in the Usage tab
+          ([\#2038](https://github.com/ubccr/xdmod/pull/2038)).
+- Maintenance / Code Quality
+    - Update Silex and SimpleSAMLphp library dependencies to address security
+      vulnerabilities ([`xdmod`
+      \#2036](https://github.com/ubccr/xdmod/pull/2036)).
+    - Remove authentication via API token in GET/POST parameters
+      ([\#2028](https://github.com/ubccr/xdmod-xsede/pull/2028)).
+
 ## 2025-03-17 v11.0.1
 
 - Bug Fixes
