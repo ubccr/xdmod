@@ -44,6 +44,10 @@
 
 ## XXXX-XX-XX v11.0.2
 
+- Enhancements
+    - Usage tab
+        - Add the ability to deep link into specific charts in the Usage tab
+          ([\#1888](https://github.com/ubccr/xdmod/pull/1888)).
 - Bug Fixes
     - Make plots time zone aware
       ([\#2031](https://github.com/ubccr/xdmod/pull/2031)).
