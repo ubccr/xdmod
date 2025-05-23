@@ -23,13 +23,17 @@
     - Improve ingestion performance
       ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
       [\#2003](https://github.com/ubccr/xdmod/pull/2003),
-      [\#1965](https://github.com/ubccr/xdmod/pull/1965)).
+      [\#1965](https://github.com/ubccr/xdmod/pull/1965),
+      [\#1968](https://github.com/ubccr/xdmod/pull/1968)).
 - Maintenance / Code Quality
     - Clean up CI bootstrap script
       ([\#1954](https://github.com/ubccr/xdmod/pull/1954)).
 
 ## XXXX-XX-XX v11.0.2
 
+- Documentation
+    - Update name of `tacc_stats` package to `HPCPerfStats`
+      ([\#2019](https://github.com/ubccr/xdmod/pull/2019)).
 - Maintenance / Code Quality
     - Update Silex and SimpleSAMLphp library dependencies to address security
       vulnerabilities.
