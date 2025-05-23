@@ -6,16 +6,20 @@
     - Fix various bugs found when testing strict SQL modes
       ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
 - Enhancements
-    - Add the ability to assign organizations to people
-      ([\#2026](https://github.com/ubccr/xdmod/pull/2026)).
+    - Add the ability to assign organizations to people and to resources
+      ([\#2026](https://github.com/ubccr/xdmod/pull/2026),
+      [\#2007](https://github.com/ubccr/xdmod/pull/2007)).
     - Add dimensions to the Jobs, Cloud, and Storage realms for "User
       Institution" and "PI Institution"
       ([\#2026](https://github.com/ubccr/xdmod/pull/2026)).
+    - Add dimension to the Storage realm for "Service Provider"
+      ([\#2007](https://github.com/ubccr/xdmod/pull/2007)).
     - Update Jobs realm raw data to rename the "Organization" field to "User
       Institution" ([\#2026](https://github.com/ubccr/xdmod/pull/2026)).
-    - Add raw data fields to the Jobs and Cloud realms for "User Institution"
-      and "PI Institution"
-      ([\#2026](https://github.com/ubccr/xdmod/pull/2026)).
+    - Add raw data fields to the Jobs and Cloud realms for "User Institution,"
+      "PI Institution," and "Service Provider"
+      ([\#2026](https://github.com/ubccr/xdmod/pull/2026),
+      [\#2007](https://github.com/ubccr/xdmod/pull/2007)).
     - Improve performance of file ingestion
       ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
       [\#2003](https://github.com/ubccr/xdmod/pull/2003)).
