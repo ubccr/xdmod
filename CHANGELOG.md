@@ -6,6 +6,9 @@
     - Usage tab
         - Add the ability to deep link into specific charts in the Usage tab
           ([\#2038](https://github.com/ubccr/xdmod/pull/2038)).
+- Documentation
+    - Update name of `tacc_stats` package to `HPCPerfStats`
+      ([\#2044](https://github.com/ubccr/xdmod/pull/2044)).
 - Maintenance / Code Quality
     - Update Silex and SimpleSAMLphp library dependencies to address security
       vulnerabilities ([\#2036](https://github.com/ubccr/xdmod/pull/2036)).
