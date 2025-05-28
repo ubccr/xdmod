@@ -30,7 +30,8 @@
         "kassner/log-parser": "~1.5",
         "geoip2/geoip2": "~2.0",
         "ua-parser/uap-php": "^3.9",
-        "mongodb/mongodb": "^1.14"
+        "mongodb/mongodb": "^1.14",
+        "firebase/php-jwt": "^6.10.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.0",
