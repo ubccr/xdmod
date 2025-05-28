@@ -4,11 +4,14 @@ namespace Rest\Controllers;
 
 use CCR\MailWrapper;
 use Models\Services\Acls;
+use Models\Services\JsonWebToken;
 use Models\Services\Organizations;
-use Silex\Application;
-use Symfony\Component\HttpFoundation\Request;
-
 use Rest\Utilities\Authentication;
+use Silex\Application;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use XDUser;
 
 /**
@@ -44,6 +47,7 @@ class AuthenticationControllerProvider extends BaseControllerProvider
         $controller->post("$root/login", '\Rest\Controllers\AuthenticationControllerProvider::login');
         $controller->post("$root/logout", '\Rest\Controllers\AuthenticationControllerProvider::logout');
         $controller->get("$root/idpredirect", '\Rest\Controllers\AuthenticationControllerProvider::getIdpRedirect');
+        $controller->get("$root/jwt-redirect", '\Rest\Controllers\AuthenticationControllerProvider::redirectWithJwt');
     }
 
     /**
@@ -107,5 +111,43 @@ class AuthenticationControllerProvider extends BaseControllerProvider
         }
 
         return $app->json($redirectUrl);
+    }
+
+    /**
+     * Redirect to a specified path with a new JSON Web Token in a cookie.
+     *
+     * @param Request $request must contain a 'next' parameter whose value is
+     *                         the path to which to redirect.
+     * @param Application $app
+     * @return RedirectResponse to the 'next' path if the user is
+     *                          authenticated, otherwise to the sign-in
+     *                          screen.
+     * @throws BadRequestHttpException if the 'next' parameter is not present
+     *                                 or does not start with '/'.
+     */
+    public function redirectWithJwt(Request $request, Application $app)
+    {
+        $next = $this->getStringParam($request, 'next', true);
+        if (0 !== strpos($next, '/')) {
+            throw new BadRequestHttpException("Invalid 'next' parameter.");
+        }
+        try {
+            $user = $this->authorize($request);
+        } catch (UnauthorizedHttpException $e) {
+            return new RedirectResponse('/#jwt-redirect?next=' . $next);
+        }
+        list($jwt, $expiration) = JsonWebToken::encode($user->getUsername());
+        $cookie = new Cookie(
+            'xdmod_jwt',
+            $jwt,
+            $expiration,
+            '/',  // path
+            null, // domain
+            true, // secure
+            true  // httpOnly
+        );
+        $response = $app->redirect($next);
+        $response->headers->setCookie($cookie);
+        return $response;
     }
 }

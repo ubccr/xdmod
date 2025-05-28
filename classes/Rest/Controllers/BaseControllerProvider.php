@@ -221,9 +221,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         }
 
         $authorized = $user->hasAcls($requirements);
-        if ($authorized === false && !$isPublicUser) {
+        if (!$authorized && !$isPublicUser) {
             throw new AccessDeniedHttpException(self::EXCEPTION_MESSAGE);
-        } elseif ($authorized === false && $isPublicUser) {
+        } elseif (!$authorized && $isPublicUser) {
             throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
 
@@ -755,15 +755,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
      */
     protected function authenticateToken($request)
     {
-        $authorizationHeader = null;
-        if (!$request->headers->has('Authorization')) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                Tokens::MISSING_TOKEN_MESSAGE
-            );
-        }
-        $authorizationHeader = $request->headers->get('Authorization');
-        return Tokens::authenticate($authorizationHeader, $request->getPathInfo());
+        return Tokens::authenticateToken($request);
     }
 
     /**

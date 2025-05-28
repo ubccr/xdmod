@@ -4,8 +4,10 @@ namespace Models\Services;
 
 use CCR\Log;
 use Exception;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+
+use Models\Services\JsonWebToken;
 use XDUser;
 
 /**
@@ -14,6 +16,11 @@ use XDUser;
  */
 class Tokens
 {
+    /**
+     *
+     */
+    const HEADER_NAME = 'Authorization';
+
     /**
      * This is the key that will be used when adding an API Token to a request's headers.
      */
@@ -24,9 +31,9 @@ class Tokens
      */
     const DELIMITER = '.';
 
-    const MISSING_TOKEN_MESSAGE = 'No API token provided.';
-    const INVALID_TOKEN_MESSAGE = 'Invalid API token.';
-    const EXPIRED_TOKEN_MESSAGE = 'API token has expired.';
+    const MISSING_TOKEN_MESSAGE = 'No token provided.';
+    const INVALID_TOKEN_MESSAGE = 'Invalid token.';
+    const EXPIRED_TOKEN_MESSAGE = 'Token has expired.';
 
     /**
      * Perform token authentication given the value of an Authorization header.
@@ -39,24 +46,10 @@ class Tokens
      * @throws Exception                 if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    public static function authenticate($authorizationHeader, $endpoint = null)
+    private static function authenticateAPIToken($rawToken)
     {
-        if (0 !== strpos($authorizationHeader, Tokens::HEADER_KEY . ' ')) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                Tokens::MISSING_TOKEN_MESSAGE
-            );
-        }
-        $rawToken = substr($authorizationHeader, strlen(Tokens::HEADER_KEY) + 1);
-        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
-        if (false === $delimPosition) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                Tokens::INVALID_TOKEN_MESSAGE
-            );
-        }
-        $userId = substr($rawToken, 0, $delimPosition);
-        $token = substr($rawToken, $delimPosition + 1);
+        $userId = $rawToken[0];
+        $token = $rawToken[1];
 
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
@@ -100,27 +93,37 @@ SQL;
             );
         }
 
-        // Log the request so we can count it in our reporting of usage of the
-        // Data Analytics Framework.
-        $logger = Log::factory(
-            'daf',
-            [
-                'console' => false,
-                'file' => false,
-                'mail' => false
-            ]
-        );
-        $logger->info(
-            'User '
-            . $dbUserId
-            . ' requested '
-            . (!is_null($endpoint) ? $endpoint : $_SERVER['SCRIPT_NAME'])
-            . ' with API token using '
-            . $_SERVER['HTTP_USER_AGENT']
-        );
-
-        // and if we've made it this far we can safely return the requested Users data.
         return XDUser::getUserByID($dbUserId);
+    }
+
+    /**
+     *
+     * Authenticate
+     */
+    private static function authenticateJSONWebToken($jwt)
+    {
+        $claims = JsonWebToken::decode($jwt);
+        $username = $claims->sub;
+
+        $db = \CCR\DB::factory('database');
+        $query = <<<SQL
+        SELECT
+            username
+        FROM moddb.Users
+        WHERE username = :username
+            AND account_is_active = 1
+SQL;
+
+        $row = $db->query($query, array(':username' => $username));
+        if (count($row) !== 1) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::INVALID_TOKEN_MESSAGE
+            );
+        }
+        $dbUsername = $row[0]['username'];
+        return XDUser::getUserByUserName($dbUsername);
+
     }
 
     /**
@@ -132,15 +135,75 @@ SQL;
      * @throws Exception                 if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    public static function authenticateToken()
+    public static function authenticateToken($request = null)
     {
-        $headers = getallheaders();
-        if (empty($headers['Authorization'])) {
+        // Only necessary to support old controllers
+        if (is_null($request)) {
+            $request = Request::createFromGlobals();
+            $headers = getallheaders();
+            if (array_key_exists(Tokens::HEADER_NAME, $headers)) {
+                $header = $headers[Tokens::HEADER_NAME];
+                $request->headers->set(Tokens::HEADER_NAME, $header);
+            }
+        }
+
+        // Check for existence of header
+        if (!$request->headers->has(Tokens::HEADER_NAME)) {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
                 Tokens::MISSING_TOKEN_MESSAGE
             );
         }
-        return Tokens::authenticate($headers['Authorization']);
+
+        // Check for header key
+        $header = $request->headers->get(Tokens::HEADER_NAME);
+        $headerKey  = Tokens::HEADER_KEY . ' ';
+        if (0 !== strpos($header, $headerKey)) {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::INVALID_TOKEN_MESSAGE
+            );
+        }
+
+        $rawToken = substr($header, strlen($headerKey));
+
+        // Determine token type
+        $tokenParts = explode(Tokens::DELIMITER, $rawToken);
+        $tokenPartsSize = sizeof($tokenParts);
+        if ($tokenPartsSize === 2) {
+            $tokenType = 'API Token';
+            $authenticatedUser = Tokens::authenticateAPIToken($rawToken);
+        } elseif ($tokenPartsSize === 3) {
+            $tokenType = 'JSON Web Token';
+            $authenticatedUser = Tokens::authenticateJSONWebToken($rawToken);
+        } else {
+            throw new UnauthorizedHttpException(
+                Tokens::HEADER_KEY,
+                Tokens::INVALID_TOKEN_MESSAGE
+            );
+        }
+
+        // Log the request so we can count it in our reporting of usage of the
+        // Data Analytics Framework.
+        $logger = Log::factory(
+            'daf',
+            [
+                'console' => false,
+                'file' => false,
+                'mail' => false
+            ]
+        );
+
+        $endpoint = $request->getPathInfo();
+        $logger->info(
+            'User ' . $authenticatedUser->getUserName()
+            . ' (' . $authenticatedUser->getUserID() . ')'
+            . ' requested '
+            . (!is_null($endpoint) ? $endpoint : $_SERVER['SCRIPT_NAME'])
+            . ' with type ' . $tokenType
+            . ' using ' . $_SERVER['HTTP_USER_AGENT']
+        );
+
+        return $authenticatedUser;
     }
 }

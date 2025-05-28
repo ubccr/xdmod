@@ -141,6 +141,18 @@ XDMoD.GlobalToolbar.Dashboard = {
 }; //XDMoD.GlobalToolbar.Dashboard
 
 // -------------------------------------------------
+XDMoD.GlobalToolbar.JupyterLab = {
+    text: 'JupyterLab',
+    scale: 'small',
+    iconCls: 'btn_jupyterlab',
+    id: 'global-toolbar-jupyterlab',
+    tooltip: 'Launch JupyterLab.',
+    handler: function () {
+        CCR.xdmod.initJupyterLab();
+    } //handler
+
+}; //XDMoD.GlobalToolbar.JupyterLab
+// -------------------------------------------------
 
 XDMoD.GlobalToolbar.SignUp = {
     text: 'Sign Up',
@@ -1614,6 +1626,12 @@ CCR.xdmod.initDashboard = function () {
         }
     });
 }; //CCR.xdmod.initDashboard
+
+CCR.xdmod.initJupyterLab = function () {
+    var JupyterHubURL = CCR.xdmod.JupyterHubURL;
+    window.open(JupyterHubURL);
+    window.focus();
+}; //CCR.xdmod.initJupyterLab
 
 // -----------------------------------
 

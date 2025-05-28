@@ -118,6 +118,17 @@ function getConfigurationSection($section, $useCachedOptions = true)
     return $iniData[$section];
 }
 
+function configurationSectionExists($section)
+{
+    try {
+        $configSection = getConfigurationSection($section);
+    } catch(\Exception $e) {
+        return false;
+    }
+
+    return true;
+}
+
 /**
  * Load the configuration data.
  *
