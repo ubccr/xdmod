@@ -17,16 +17,6 @@
                     "foreignKey": "id"
                 }
             },
-            {
-                "schema": "modw",
-                "name": "qos",
-                "alias": "qos",
-                "join": {
-                    "primaryKey": "id",
-                    "foreignTableAlias": "jr",
-                    "foreignKey": "qos_id"
-                }
-            },
             { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/service_provider" },
             { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/fos" },
             { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/pi" },
@@ -37,7 +27,17 @@
             { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_task" },
             { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_record" },
             { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_task_resource" },
-            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_node_count" }
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_node_count" },
+            {
+                "schema": "modw",
+                "name": "qos",
+                "alias": "qos",
+                "join": {
+                    "primaryKey": "id",
+                    "foreignTableAlias": "jr",
+                    "foreignKey": "qos_id"
+                }
+            }
         ],
         "fields": [
             { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/local_job_id" },
