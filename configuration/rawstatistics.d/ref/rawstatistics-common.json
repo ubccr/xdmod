@@ -69,7 +69,7 @@
                 "foreignTableAlias": "agg",
                 "foreignKey": "person_organization_id"
             }
-        },
+        }
     },
     "fields": {
         "resource_name": {
@@ -119,7 +119,7 @@
             "group": "Requested Resource",
             "documentation": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
             "batchExport": true
-        }
+        },
         "pi_id": {
             "name": "Principal Investigator ID",
             "tableAlias": "pi",
