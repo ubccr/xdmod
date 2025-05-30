@@ -158,8 +158,8 @@
                     "documentation": "The name of the principal investigator of the project that ran the VM."
                 }
             },
-            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_organization_id" },
-            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_organization_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_institution_id" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_institution_name" },
             {
                 "name": "Instance Type",
                 "tableAlias": "sr",
