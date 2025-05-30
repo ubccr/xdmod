@@ -192,6 +192,209 @@
             "group": "Administration",
             "documentation": "The name of the user's organization.",
             "batchExport": true
+        },
+        "local_job_id": {
+            "name": "Local Job Id",
+            "formula": "IF(jt.local_job_array_index = -1, jt.local_jobid, CONCAT(jt.local_jobid, '[', jt.local_job_array_index, ']'))",
+            "group": "Administration",
+            "documentation": "The unique identifier assigned to the job by the job scheduler.",
+            "batchExport": true
+        },
+        "job_name": {
+            "name": "Name",
+            "tableAlias": "jt",
+            "column": "name",
+            "documentation": "The name of the job as reported by the job scheduler.",
+            "group": "Executable",
+            "batchExport": false
+        },
+        "job_submit_time": {
+            "name": "Submit Time",
+            "tableAlias": "jt",
+            "column": "submit_time_ts",
+            "group": "Timing",
+            "units": "ts",
+            "documentation": "Task submission time",
+            "batchExport": true
+        },
+        "job_start_time": {
+            "name": "Start Time",
+            "tableAlias": "jt",
+            "column": "start_time_ts",
+            "group": "Timing",
+            "units": "ts",
+            "documentation": "The time that the job started running.",
+            "batchExport": true
+        },
+        "job_start_time": {
+            "name": "Start Time",
+            "tableAlias": "jt",
+            "column": "start_time_ts",
+            "group": "Timing",
+            "units": "ts",
+            "documentation": "The time that the job started running.",
+            "batchExport": true
+        },
+        "job_end_time": {
+            "name": "End Time",
+            "tableAlias": "jt",
+            "column": "end_time_ts",
+            "units": "ts",
+            "group": "Timing",
+            "documentation": "The time that the job ended.",
+            "batchExport": true
+        },
+        "job_eligible_time": {
+            "name": "Eligible Time",
+            "tableAlias": "jt",
+            "column": "eligible_time_ts",
+            "units": "ts",
+            "group": "Timing",
+            "documentation": "The time that the job was eligible for scheduling by the resource manager.",
+            "batchExport": true
+        },
+        "job_nodes": {
+            "name": "Nodes",
+            "tableAlias": "nc",
+            "column": "nodes",
+            "group": "Allocated Resource",
+            "documentation": "The number of nodes that were assigned to the job.",
+            "batchExport": true
+        },
+        "job_cores": {
+            "name": "Cores",
+            "tableAlias": "jt",
+            "column": "processor_count",
+            "group": "Allocated Resource",
+            "documentation": "The number of cores that were assigned to the job.",
+            "batchExport": true
+        },
+        "job_gpus": {
+            "name": "GPUs",
+            "tableAlias": "jt",
+            "column": "gpu_count",
+            "group": "Allocated Resource",
+            "documentation": "The number of GPUs that were assigned to the job.",
+            "batchExport": true
+        },
+        "job_memory_used": {
+            "name": "Memory Used",
+            "tableAlias": "jt",
+            "column": "memory_kb",
+            "group": "Allocated Resource",
+            "units": "kilobyte",
+            "documentation": "Memory consumed as reported by the resource manager.",
+            "batchExport": true
+        },
+        "job_wall_time": {
+            "name": "Wall Time",
+            "tableAlias": "jt",
+            "column": "wallduration",
+            "group": "Timing",
+            "units": "seconds",
+            "documentation": "Overall job duration.",
+            "batchExport": true
+        },
+        "job_wait_time": {
+            "name": "Wait Time",
+            "tableAlias": "jt",
+            "column": "waitduration",
+            "group": "Timing",
+            "units": "seconds",
+            "documentation": "Time the job waited in the queue",
+            "batchExport": true
+        },
+        "job_core_time": {
+            "name": "Core Time",
+            "tableAlias": "jt",
+            "column": "cpu_time",
+            "group": "Allocated Resource",
+            "units": "seconds",
+            "documentation": "The amount of CPU core time (Core Count * Wall Time)",
+            "batchExport": true
+        },
+        "job_gpu_time": {
+            "name": "GPU Time",
+            "tableAlias": "jt",
+            "column": "gpu_time",
+            "group": "Allocated Resource",
+            "units": "seconds",
+            "documentation": "The amount of GPU time (GPU Count * Wall Time)",
+            "batchExport": true
+        },
+        "job_unix_group_name": {
+            "name": "UNIX group name",
+            "tableAlias": "jt",
+            "column": "group_name",
+            "group": "Administration",
+            "documentation": "The name of the group that ran the job.",
+            "batchExport": false
+        },
+        "job_unix_group_gid": {
+            "name": "UNIX group GID",
+            "tableAlias": "jt",
+            "column": "gid_number",
+            "group": "Administration",
+            "documentation": "The GID of the group that ran the job.",
+            "batchExport": false
+        },
+        "job_unix_uid": {
+            "name": "UNIX UID",
+            "tableAlias": "jt",
+            "column": "uid_number",
+            "group": "Administration",
+            "documentation": "The UID of the user that ran the job.",
+            "batchExport": false
+        },
+        "job_exit_code": {
+            "name": "Exit Code",
+            "tableAlias": "jt",
+            "column": "exit_code",
+            "group": "Executable",
+            "documentation": "The code that the job exited with.",
+            "batchExport": true
+        },
+        "job_exit_state": {
+            "name": "Exit State",
+            "tableAlias": "jt",
+            "column": "exit_state",
+            "group": "Executable",
+            "documentation": "The state of the job when it completed.",
+            "batchExport": true
+        },
+        "job_requested_cores": {
+            "name": "Requested Cores",
+            "tableAlias": "jt",
+            "column": "cpu_req",
+            "group": "Requested Resource",
+            "documentation": "The number of CPUs required by the job.",
+            "batchExport": true
+        },
+        "job_requested_memory": {
+            "name": "Requested memory",
+            "tableAlias": "jt",
+            "column": "mem_req",
+            "group": "Requested Resource",
+            "units": "bytes",
+            "documentation": "The amount of memory required by the job.",
+            "batchExport": true
+        },
+        "job_requested_wall_time": {
+            "name": "Requested Wall Time",
+            "tableAlias": "jt",
+            "column": "timelimit",
+            "group": "Requested Resource",
+            "units": "seconds",
+            "documentation": "The time limit of the job.",
+            "batchExport": true
+        },
+        "job_queue": {
+            "name": "Queue",
+            "tableAlias": "jr",
+            "column": "queue",
+            "group": "Requested Resource",
+            "documentation": "The name of the queue to which the job was submitted.",
+            "batchExport": true
         }
     }
 }
