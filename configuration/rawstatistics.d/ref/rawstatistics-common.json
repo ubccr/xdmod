@@ -187,7 +187,7 @@
         },
         "user_institution_name": {
             "name": "User Institution",
-            "tableAlias": "uo",
+            "tableAlias": "ui",
             "column": "name",
             "group": "Administration",
             "documentation": "The name of the user's organization.",
