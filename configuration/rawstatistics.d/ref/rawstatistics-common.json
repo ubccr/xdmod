@@ -1,0 +1,197 @@
+{
+    "tables": {
+        "service_provider": {
+            "schema": "modw",
+            "name": "serviceprovider",
+            "alias": "sp",
+            "join": {
+                "primaryKey": "organization_id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "resource_organization_id"
+            }
+        },
+        "fos": {
+            "schema": "modw",
+            "name": "fieldofscience_hierarchy",
+            "alias": "fos",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "fos_id"
+            }
+        },
+        "pi": {
+            "schema": "modw",
+            "name": "person",
+            "alias": "pi",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "principalinvestigator_person_id"
+            }
+        },
+        "pi_institution": {
+            "schema": "modw",
+            "name": "organization",
+            "alias": "pii",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "piperson_organization_id"
+            }
+        },
+        "system_account": {
+            "schema": "modw",
+            "name": "systemaccount",
+            "alias": "sa",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "systemaccount_id"
+            }
+        },
+        "user": {
+            "schema": "modw",
+            "name": "person",
+            "alias": "p",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "person_id"
+            }
+        },
+        "user_institution": {
+            "schema": "modw",
+            "name": "organization",
+            "alias": "ui",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "person_organization_id"
+            }
+        },
+    },
+    "fields": {
+        "resource_name": {
+            "name": "Resource",
+            "tableAlias": "rf",
+            "column": "name",
+            "group": "Administration",
+            "documentation": "The resource on which the job was run.",
+            "batchExport": true
+        },
+        "service_provider_name": {
+            "name": "Service Provider",
+            "tableAlias": "sp",
+            "column": "long_name",
+            "group": "Administration",
+            "documentation": "The organization of the resource on which the job was run.",
+            "batchExport": true
+        },
+        "resource_time_zone": {
+            "name": "Timezone",
+            "tableAlias": "rf",
+            "column": "timezone",
+            "group": "Administration",
+            "documentation": "The time zone of the resource.",
+            "batchExport": true
+        },
+        "hierarchy_top_level": {
+            "name": "${HIERARCHY_TOP_LEVEL_LABEL}",
+            "tableAlias": "fos",
+            "column": "directorate_description",
+            "group": "Requested Resource",
+            "documentation": "${HIERARCHY_TOP_LEVEL_INFO}",
+            "batchExport": true
+        },
+        "hierarchy_middle_level": {
+            "name": "${HIERARCHY_MIDDLE_LEVEL_LABEL}",
+            "tableAlias": "fos",
+            "column": "parent_description",
+            "group": "Requested Resource",
+            "documentation": "${HIERARCHY_MIDDLE_LEVEL_INFO}",
+            "batchExport": true
+        },
+        "hierarchy_bottom_level": {
+            "name": "${HIERARCHY_BOTTOM_LEVEL_LABEL}",
+            "tableAlias": "fos",
+            "column": "description",
+            "group": "Requested Resource",
+            "documentation": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
+            "batchExport": true
+        }
+        "pi_id": {
+            "name": "Principal Investigator ID",
+            "tableAlias": "pi",
+            "column": "id",
+            "group": "Administration",
+            "documentation": "The numeric identifier assigned by XDMoD to the principal investigator of the project that ran the job.",
+            "batchExport": true
+        },
+        "pi_name": {
+            "name": "Principal Investigator",
+            "tableAlias": "pi",
+            "column": "long_name",
+            "group": "Administration",
+            "documentation": "The name of the principal investigator of the project that ran the job.",
+            "batchExport": true
+        },
+        "pi_institution_id": {
+            "name": "PI Institution ID",
+            "tableAlias": "pii",
+            "column": "id",
+            "group": "Administration",
+            "documentation": "The numeric identifier assigned by XDMoD to the PI's organization.",
+            "batchExport": true
+        },
+        "pi_institution_name": {
+            "name": "PI Institution",
+            "tableAlias": "pii",
+            "column": "name",
+            "group": "Administration",
+            "documentation": "The name of the PI's organization.",
+            "batchExport": true
+        },
+        "system_username": {
+            "name": "System Username",
+            "tableAlias": "sa",
+            "column": "username",
+            "group": "Administration",
+            "visibility": "non-public",
+            "documentation": "The username on the resource of the user who ran the job. May be a UID or string username depending on the resource.",
+            "batchExport": "anonymize"
+        },
+        "user_id": {
+            "name": "User ID",
+            "tableAlias": "p",
+            "column": "id",
+            "group": "Administration",
+            "documentation": "The numeric identifier assigned by XDMoD to the person who ran the job.",
+            "batchExport": true
+        },
+        "user_name": {
+            "name": "User",
+            "tableAlias": "p",
+            "column": "long_name",
+            "group": "Administration",
+            "documentation": "The name of the person who ran the job.",
+            "batchExport": true
+        },
+        "user_institution_id": {
+            "name": "User Institution ID",
+            "tableAlias": "ui",
+            "column": "id",
+            "group": "Administration",
+            "documentation": "The numeric identifier assigned by XDMoD to the user's organization.",
+            "batchExport": true
+        },
+        "user_institution_name": {
+            "name": "User Institution",
+            "tableAlias": "uo",
+            "column": "name",
+            "group": "Administration",
+            "documentation": "The name of the user's organization.",
+            "batchExport": true
+        }
+    }
+}

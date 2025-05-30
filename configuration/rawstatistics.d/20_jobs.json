@@ -49,82 +49,12 @@
             },
             {
                 "schema": "modw",
-                "name": "systemaccount",
-                "alias": "sa",
-                "join": {
-                    "primaryKey": "id",
-                    "foreignTableAlias": "jt",
-                    "foreignKey": "systemaccount_id"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "person",
-                "alias": "p",
-                "join": {
-                    "primaryKey": "id",
-                    "foreignTableAlias": "jt",
-                    "foreignKey": "person_id"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "organization",
-                "alias": "o",
-                "join": {
-                    "primaryKey": "id",
-                    "foreignTableAlias": "jt",
-                    "foreignKey": "person_organization_id"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "piperson",
-                "alias": "pi",
-                "join": {
-                    "primaryKey": "person_id",
-                    "foreignTableAlias": "jr",
-                    "foreignKey": "principalinvestigator_person_id"
-                }
-            },
-            {
-              "schema": "modw",
-              "name": "organization",
-              "alias": "pi_org",
-              "join": {
-                  "primaryKey": "id",
-                  "foreignTableAlias": "pi",
-                  "foreignKey": "organization_id"
-              }
-            },
-            {
-                "schema": "modw",
-                "name": "serviceprovider",
-                "alias": "sp",
-                "join": {
-                    "primaryKey": "organization_id",
-                    "foreignTableAlias": "jr",
-                    "foreignKey": "resource_organization_id"
-                }
-            },
-            {
-                "schema": "modw",
                 "name": "nodecount",
                 "alias": "nc",
                 "join": {
                     "primaryKey": "id",
                     "foreignTableAlias": "jt",
                     "foreignKey": "node_count"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "fieldofscience_hierarchy",
-                "alias": "fos",
-                "join": {
-                    "primaryKey": "id",
-                    "foreignTableAlias": "jr",
-                    "foreignKey": "fos_id"
                 }
             },
             {
@@ -136,7 +66,14 @@
                     "foreignTableAlias": "jr",
                     "foreignKey": "qos_id"
                 }
-            }
+            },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/service_provider" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/fos" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/pi" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/pi_institution" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/system_account" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/user" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/user_institution" }
         ],
         "fields": [
             {
@@ -146,71 +83,18 @@
                 "documentation": "The unique identifier assigned to the job by the job scheduler.",
                 "batchExport": true
             },
-            {
-                "name": "Resource",
-                "tableAlias": "rf",
-                "column": "name",
-                "group": "Administration",
-                "documentation": "The resource that ran the job.",
-                "batchExport": true
-            },
-            {
-                "name": "Service Provider",
-                "tableAlias": "sp",
-                "column": "long_name",
-                "group": "Administration",
-                "documentation": "The organization of the resource that ran the job.",
-                "batchExport": true
-            },
-            {
-                "name": "Timezone",
-                "tableAlias": "rf",
-                "column": "timezone",
-                "group": "Administration",
-                "documentation": "The timezone of the resource.",
-                "batchExport": true
-            },
-            {
-                "name": "System Username",
-                "tableAlias": "sa",
-                "column": "username",
-                "group": "Administration",
-                "visibility": "non-public",
-                "documentation": "The username on the resource of the user that ran the job. May be a UID or string username depending on the resource.",
-                "batchExport": "anonymize"
-            },
-            {
-                "name": "User",
-                "tableAlias": "p",
-                "column": "long_name",
-                "group": "Administration",
-                "documentation": "The name of the job owner.",
-                "batchExport": true
-            },
-            {
-                "name": "User Institution",
-                "tableAlias": "o",
-                "column": "name",
-                "group": "Administration",
-                "documentation": "The organization of the person who ran the task",
-                "batchExport": true
-            },
-            {
-                "name": "Principal Investigator",
-                "tableAlias": "pi",
-                "column": "long_name",
-                "group": "Administration",
-                "documentation": "The name of the PI assigned to the job.",
-                "batchExport": true
-            },
-            {
-              "name": "PI Institution",
-              "tableAlias": "pi_org",
-              "column": "name",
-              "group": "Administration",
-              "documentation": "The institution of the PI assigned to the job",
-              "batchExport": true
-            },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/resource_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/service_provider_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/resource_time_zone" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/system_username" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/user_id" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/user_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/user_institution_id" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/user_institution_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_id" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_institution_id" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_institution_name" },
             {
                 "name": "Quality of Service",
                 "tableAlias": "qos",
@@ -406,30 +290,9 @@
                 "documentation": "The name of the queue to which the job was submitted.",
                 "batchExport": true
             },
-            {
-                "name": "${HIERARCHY_TOP_LEVEL_LABEL}",
-                "tableAlias": "fos",
-                "column": "directorate_description",
-                "group": "Requested Resource",
-                "documentation": "${HIERARCHY_TOP_LEVEL_INFO}",
-                "batchExport": true
-            },
-            {
-                "name": "${HIERARCHY_MIDDLE_LEVEL_LABEL}",
-                "tableAlias": "fos",
-                "column": "parent_description",
-                "group": "Requested Resource",
-                "documentation": "${HIERARCHY_MIDDLE_LEVEL_INFO}",
-                "batchExport": true
-            },
-            {
-                "name": "${HIERARCHY_BOTTOM_LEVEL_LABEL}",
-                "tableAlias": "fos",
-                "column": "description",
-                "group": "Requested Resource",
-                "documentation": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
-                "batchExport": true
-            }
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/hierarchy_top_level" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/hierarchy_middle_level" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/hierarchy_bottom_level" }
         ]
     }
 }
