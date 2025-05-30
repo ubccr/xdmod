@@ -19,46 +19,6 @@
             },
             {
                 "schema": "modw",
-                "name": "job_tasks",
-                "alias": "jt",
-                "join": {
-                    "primaryKey": "job_id",
-                    "foreignTableAlias": "jl",
-                    "foreignKey": "jobid"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "job_records",
-                "alias": "jr",
-                "join": {
-                    "primaryKey": "job_record_id",
-                    "foreignTableAlias": "jt",
-                    "foreignKey": "job_record_id"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "resourcefact",
-                "alias": "rf",
-                "join": {
-                    "primaryKey": "id",
-                    "foreignTableAlias": "jt",
-                    "foreignKey": "resource_id"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "nodecount",
-                "alias": "nc",
-                "join": {
-                    "primaryKey": "id",
-                    "foreignTableAlias": "jt",
-                    "foreignKey": "node_count"
-                }
-            },
-            {
-                "schema": "modw",
                 "name": "qos",
                 "alias": "qos",
                 "join": {
@@ -73,7 +33,11 @@
             { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/pi_institution" },
             { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/system_account" },
             { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/user" },
-            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/user_institution" }
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/user_institution" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_task" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_record" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_task_resource" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_node_count" }
         ],
         "fields": [
             { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/local_job_id" },
