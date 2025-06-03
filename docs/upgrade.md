@@ -149,5 +149,11 @@ Make sure to update `/etc/httpd/conf.d/xdmod.conf` to change
 Additional 11.5.0 Upgrade Notes
 -------------------
 
+### Configuration File Changes
+
+The "Job Size: Normalized" statistic in the Jobs realm is removed from the
+default list of statistics. See [this
+page](howto-normalized-avg-processors.html) for more information.
+
 [github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
 [mysql-config]: configuration.html#mariadb-configuration
