@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Decanal Unit"
+"Screwdriver CPU Utilization (%): by Decanal Unit"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Decanal Unit","Screwdriver Utilization (%)"
+"Decanal Unit","Screwdriver CPU Utilization (%)"
 Engineering,1.7509
 "Mathematical and Physical Sciences",1.5997
 "Computer and Information Science and Engineering",1.5217

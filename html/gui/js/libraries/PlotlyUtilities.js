@@ -489,31 +489,7 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
 /* exported overrideLegendEvent */
 function overrideLegendEvent(chartDiv) {
     chartDiv.on('plotly_legendclick', (evt) => {
-        // First check if all traces are hidden.
-        // There is a bug with tick text manually set.
-        // We need to set the tickmode to auto if so.
-        const visibleData = evt.fullData.filter((trace) => trace.name !== 'gap connector' && trace.name !== 'area fix' && trace.visible === true);
-        const axis = (evt.layout.swapXY ? 'y' : 'x') + 'axis';
-        let tickType;
-        if (evt.layout[axis].type === 'date') {
-            if (
-                (
-                    evt.layout[axis].dtick === CCR.xdmod.ui.dtickDay
-                    && evt.data[evt.curveNumber].x.length > 7
-                ) || (
-                    visibleData.length === 1
-                    && visibleData[0].index === evt.curveNumber
-                )
-            ) {
-                tickType = 'auto';
-            } else {
-                tickType = 'date';
-            }
-        } else {
-            tickType = 'category';
-        }
-        Plotly.relayout(chartDiv, { [`${axis}.tickmode`]: tickType });
-
+        // Update std err bar based on legend event details.
         const { node } = evt;
         const nodeVisibility = evt.node.style.opacity;
         const errorBar = evt.layout.swapXY ? 'error_x.visible' : 'error_y.visible';

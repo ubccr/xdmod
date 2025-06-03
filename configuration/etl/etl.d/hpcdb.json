@@ -88,6 +88,19 @@
             ]
         },
         {
+            "name": "unknown_organization",
+            "definition_file": "common/hpcdb/unknown_organization.json",
+            "description": "Add unknown organization",
+            "class": "StructuredFileIngestor",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown organization",
+                    "path": "common/hpcdb/organizations.json"
+                }
+            }
+        },
+        {
             "name": "organizations",
             "description": "Ingest organizations",
             "definition_file": "common/hpcdb/organizations.json"
@@ -184,6 +197,22 @@
             "description": "Prepare for xdw (modw) ingestion using new jobs",
             "truncate_destination": true,
             "definition_file": "jobs/hpcdb/jobs-to-ingest-by-new-jobs.json"
+        }
+    ],
+    "hpcdb-prep-xdw-storage-ingest-by-date-range": [
+        {
+            "name": "storage-ingest-date-range",
+            "description": "Prepare storage usage to ingest using a date range",
+            "truncate_destination": true,
+            "definition_file": "storage/hpcdb/usage-to-ingest-date-range.json"
+        }
+    ],
+    "hpcdb-prep-xdw-storage-ingest-by-new-usage": [
+        {
+            "name": "storage-ingest-new-usage",
+            "description": "Prepare storage usage to ingest based on new usage information",
+            "truncate_destination": true,
+            "definition_file": "storage/hpcdb/usage-to-ingest-new-usage.json"
         }
     ],
     "hpcdb-ingest-storage": [

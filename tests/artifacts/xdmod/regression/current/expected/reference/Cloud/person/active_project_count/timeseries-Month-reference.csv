@@ -1,0 +1,10 @@
+title
+"Number of Projects: Active: by User"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[Warbler, Yellow] Number of Projects: Active","[Warbler, Blackburnian] Number of Projects: Active","[Warbler, Yellow-rumped] Number of Projects: Active"
+2018-04,2,1,1
+---------

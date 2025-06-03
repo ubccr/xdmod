@@ -54,9 +54,9 @@
     ],
     "staging-ingest-common": [
         {
-            "name": "organization",
+            "name": "organization-config",
             "description": "Ingest organization configuration file",
-            "definition_file": "common/staging/organization.json",
+            "definition_file": "common/staging/organization-config.json",
             "endpoints": {
                 "source": {
                     "type": "jsonfile",
@@ -69,11 +69,18 @@
                             "type": "external",
                             "name": "jq",
                             "path": "jq",
-                            "arguments": "'{id:1,name,abbrev}'"
+                            "arguments": "-c '[.[] | .[\"id\"] += if .[\"id\"] == null then null else .[\"id\"] end']"
                         }
                     ]
                 }
             }
+        },
+        {
+            "class": "DatabaseIngestor",
+            "name": "organization",
+            "truncate_destination": false,
+            "description": "Ingest resource names from resource config",
+            "definition_file": "common/staging/organization.json"
         },
         {
             "name": "resource-types",
@@ -147,7 +154,8 @@
                         "shared_jobs",
                         "timezone",
                         "resource_type",
-                        "resource_allocation_type"
+                        "resource_allocation_type",
+                        "organization"
                     ]
                 }
             }

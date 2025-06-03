@@ -1,0 +1,10 @@
+title
+"Number of Resources: Active: by VM Size: Memory"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Month,"[< 2 GB] Number of Resources: Active","[2 - 4 GB] Number of Resources: Active","[4 - 8 GB] Number of Resources: Active","[8 - 16 GB] Number of Resources: Active","[32 - 64 GB] Number of Resources: Active"
+2018-04,1,1,1,1,1
+---------

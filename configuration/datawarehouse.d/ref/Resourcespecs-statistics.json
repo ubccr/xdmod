@@ -56,7 +56,7 @@
         "unit": "Node Hour"
     },
     "total_avg_number_of_cpu_nodes": {
-        "description_html": "The average number of CPU nodes per day during the days in which the resource(s) were operational during selected time period. This does not take into account downtimes, outages of resources, or the percent of a resource allocated.",
+        "description_html": "The average number of CPU nodes per day during the days in which the resource(s) were operational during the selected time period. This does not take into account downtimes, outages of resources, or the percent of a resource allocated.",
         "formula": "COALESCE(SUM(agg.total_cpu_node_time) / (LEAST((SELECT MAX(end_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MAX(duration.${AGGREGATION_UNIT}_end_ts)) + 1 - GREATEST((SELECT MIN(start_date_ts) FROM modw.resourcespecs WHERE FIND_IN_SET(resource_id, GROUP_CONCAT(DISTINCT agg.record_resource_id)) <> 0), MIN(duration.${AGGREGATION_UNIT}_start_ts))), 0)",
         "name": "Average Number of CPU Nodes: Total",
         "precision": 0,

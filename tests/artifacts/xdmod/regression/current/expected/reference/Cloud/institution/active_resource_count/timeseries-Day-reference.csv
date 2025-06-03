@@ -1,0 +1,22 @@
+title
+"Number of Resources: Active: by User Institution"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+Day,"[Unknown - Unknown Organization] Number of Resources: Active","[screw - Screwdriver] Number of Resources: Active","[wrench - Wrench] Number of Resources: Active"
+2018-04-18,0,1,1
+2018-04-19,1,1,1
+2018-04-20,0,1,1
+2018-04-21,0,1,1
+2018-04-22,0,1,1
+2018-04-23,0,1,1
+2018-04-24,0,1,1
+2018-04-25,0,1,1
+2018-04-26,0,1,1
+2018-04-27,0,1,1
+2018-04-28,0,1,0
+2018-04-29,0,1,0
+2018-04-30,0,1,1
+---------

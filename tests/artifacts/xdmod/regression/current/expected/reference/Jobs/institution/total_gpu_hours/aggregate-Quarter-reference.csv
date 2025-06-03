@@ -1,0 +1,12 @@
+title
+"GPU Hours: Total: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","GPU Hours: Total"
+"screw - Screwdriver",506.9128
+"Unknown - Unknown Organization",0.0000
+"wrench - Wrench",0.0000
+---------

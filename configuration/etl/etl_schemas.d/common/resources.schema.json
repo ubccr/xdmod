@@ -40,6 +40,11 @@
             "type": "string",
             "description": "Timezone where this resource is located",
             "maxLength": 30
+        },
+        "organization": {
+            "type": "string",
+            "description": "The organization the resource belongs to",
+            "maxLength": 100
         }
     },
     "required": [

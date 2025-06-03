@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Node Count"
+"Screwdriver CPU Utilization (%): by Node Count"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Node Count","Screwdriver Utilization (%)"
+"Node Count","Screwdriver CPU Utilization (%)"
 1,2.1336
 8,1.9794
 12,1.5157

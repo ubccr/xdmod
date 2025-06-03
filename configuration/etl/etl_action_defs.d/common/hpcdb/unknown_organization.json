@@ -1,0 +1,5 @@
+{
+    "table_definition": {
+        "$ref": "${table_definition_dir}/common/hpcdb/organizations.json#/table_definition"
+    }
+}

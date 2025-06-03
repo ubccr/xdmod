@@ -101,10 +101,10 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <?php
 
-    $meta_description = "XSEDE Metrics on Demand (XDMoD) is a comprehensive auditing framework for XSEDE, the follow-on to NSF's TeraGrid program.  " .
-        "XDMoD provides detailed information on resource utilization and performance across all resource providers.";
+    $meta_description = "XDMoD (XD Metrics on Demand) is a comprehensive auditing framework for NSF's ACCESS program, the follow-on to NSF's XSEDE and TeraGrid programs.  " .
+        "XDMoD provides statistics, analytics, visualization, and reporting of cyberinfrastructure/HPC resource utilization and performance across multiple resource providers.";
 
-    $meta_keywords = "xdmod, xsede, analytics, metrics on demand, hpc, visualization, statistics, reporting, auditing, nsf, resources, resource providers";
+    $meta_keywords = "xdmod, access, xsede, analytics, metrics on demand, cyberinfrastructure, hpc, visualization, statistics, reporting, auditing, nsf, resources, resource providers";
 
     ?>
 
@@ -114,7 +114,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <title><?php print $page_title; ?></title>
 
     <link rel="shortcut icon" href="gui/icons/favicon_static.ico"/>
-    <script type="text/javascript" src="gui/lib/internet-explorer-polyfills.js"></script>
     <?php if (!$userLoggedIn): ?>
         <script type="text/javascript">
             /**
@@ -122,7 +121,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
              **/
             var XDMoD = XDMoD || {};
             XDMoD.referer = document.location.hash || 'main_tab_panel#tg_summary' // <-- TODO: HORRIBLE HORRIBLE HACK, FIX THIS;
-            console.log(XDMoD.referer);
         </script>
     <?php endif; ?>
     <?php
@@ -218,12 +216,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <link rel="stylesheet" type="text/css" href="gui/css/MetricExplorer.css"/>
     <link rel="stylesheet" type="text/css" href="gui/css/common.css"/>
-    <!--[if lte IE 9]>
-    <link rel="stylesheet" type="text/css" href="gui/css/common_ie9.css"/>
-    <![endif]-->
-    <!--[if lte IE 8]>
-    <link rel="stylesheet" type="text/css" href="gui/css/common_ie8.css"/>
-    <![endif]-->
     <?php if (!$userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/LoginPrompt.css"/>
     <?php endif; ?>

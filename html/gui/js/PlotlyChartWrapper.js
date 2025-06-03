@@ -16,7 +16,12 @@ Ext.namespace('XDMoD.utils');
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     const baseChartOptions = {};
-    const configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500 };
+    const configs = {
+        displayModeBar: false,
+        doubleClick: 'reset',
+        doubleClickDelay: 500,
+        showAxisRangeEntryBoxes: false
+    };
     XDMoD.utils.deepExtend(baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
 
@@ -70,33 +75,33 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             }
             baseChartOptions.layout.annotations.splice(0, endIndex);
         }
-        // Set tickmode to auto for thumbnail plots. Large amount of tick labels for thumbnail plots cause them
-        // to lag.
-        if (baseChartOptions.layout.thumbnail) {
-            const axesLabels = getMultiAxisObjects(baseChartOptions.layout);
-            if (baseChartOptions.swapXY) {
-                if (baseChartOptions.layout.yaxis.type === 'date') {
-                    baseChartOptions.layout.yaxis.nticks = 5;
-                    baseChartOptions.layout.yaxis.tickangle = -90;
-                }
-            } else if (baseChartOptions.layout.xaxis.type === 'date') {
-                baseChartOptions.layout.xaxis.nticks = 5;
-                baseChartOptions.layout.xaxis.tickangle = -90;
-            }
-            for (let i = 0; i < axesLabels.length; i++) {
-                baseChartOptions.layout[axesLabels[i]].nticks = 5;
-            }
-        }
         // Adjust trace ordering
         // Referenced https://stackoverflow.com/questions/45741397/javascript-sort-array-of-objects-by-2-properties
         // for comparison idea
         baseChartOptions.data.sort((trace1, trace2) => {
-            if (baseChartOptions.layout.barmode !== 'group') {
-                return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.traceorder - trace1.traceorder);
+            const containsBarSeries = baseChartOptions.data.some((elem) => elem.type === 'bar');
+            if (containsBarSeries && baseChartOptions.layout.barmode === 'stack') {
+                return Math.sign(trace2.traceorder - trace1.traceorder);
             }
-            const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.traceorder - trace2.traceorder);
-            return res;
+            return Math.sign(trace1.traceorder - trace2.traceorder);
         });
+
+        // Format timezone -- Plotly does not support timezones
+        // Therefore, we need to utilize moment JS.
+        const axis = baseChartOptions.layout.swapXY ? 'yaxis' : 'xaxis';
+        if (baseChartOptions.layout[axis].timeseries) {
+            const axisName = axis.slice(0, 1);
+            baseChartOptions.data.forEach((series) => {
+                series[axisName].forEach((elem, index, seriesArr) => {
+                    seriesArr[index] = moment.tz(elem, CCR.xdmod.timezone).format();
+                });
+            });
+
+            // Format timezone for the tickvals also
+            baseChartOptions.layout[axis].tickvals.forEach((tick, index, tickvals) => {
+                tickvals[index] = moment.tz(tick, CCR.xdmod.timezone).format();
+            });
+        }
     }
 
     const chart = Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, configs);

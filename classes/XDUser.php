@@ -832,9 +832,9 @@ SQL;
     {
         $result = 'UPDATE moddb.Users SET username = :username,  email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, user_type = :user_type, sticky = :sticky WHERE id = :id';
         if ($updateToken && $includePassword) {
-            $result = 'UPDATE moddb.Users SET username = :username, password = :password, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, token = :token, user_type = :user_type, password_last_updated = :password_last_updated, sticky = :sticky WHERE id = :id';
+            $result = 'UPDATE moddb.Users SET username = :username, password = :password, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, token = :token, user_type = :user_type, password_last_updated = NOW(), sticky = :sticky WHERE id = :id';
         } else if (!$updateToken && $includePassword) {
-            $result = 'UPDATE moddb.Users SET username = :username, password = :password, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, user_type = :user_type, password_last_updated = :password_last_updated, sticky = :sticky WHERE id = :id';
+            $result = 'UPDATE moddb.Users SET username = :username, password = :password, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, user_type = :user_type, password_last_updated = NOW(), sticky = :sticky WHERE id = :id';
         } else if ($updateToken && !$includePassword) {
             $result = 'UPDATE moddb.Users SET username = :usernam, email_address = :email_address, first_name = :first_name, middle_name = :middle_name, last_name = :last_name, account_is_active = :account_is_active, person_id = :person_id, organization_id = :organization_id, field_of_science = :field_of_science, token = :token, user_type = :user_type, sticky = :sticky WHERE id = :id';
         }
@@ -857,9 +857,9 @@ SQL;
     {
         $result = 'INSERT INTO moddb.Users (username, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, user_type, sticky) VALUES (:username, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :user_type, :sticky)';
         if ($updateToken && $includePassword) {
-            $result = 'INSERT INTO moddb.Users (username, password, password_last_updated, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, token, user_type, sticky) VALUES (:username, :password, :password_last_updated, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :token, :user_type, :sticky)';
+            $result = 'INSERT INTO moddb.Users (username, password, password_last_updated, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, token, user_type, sticky) VALUES (:username, :password, NOW(), :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :token, :user_type, :sticky)';
         } else if (!$updateToken && $includePassword) {
-            $result = 'INSERT INTO moddb.Users (username, password, password_last_updated,  email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, user_type, sticky) VALUES (:username, :password, :password_last_updated, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :user_type, :sticky)';
+            $result = 'INSERT INTO moddb.Users (username, password, password_last_updated,  email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, user_type, sticky) VALUES (:username, :password, NOW(), :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :user_type, :sticky)';
         } else if ($updateToken && !$includePassword) {
             $result = 'INSERT INTO moddb.Users (username, email_address, first_name, middle_name, last_name, account_is_active, person_id, organization_id, field_of_science, token, user_type, sticky) VALUES (:username, :email_address, :first_name, :middle_name, :last_name, :account_is_active, :person_id, :organization_id, :field_of_science, :token, :user_type, :sticky)';
         }
@@ -963,7 +963,6 @@ SQL;
                 $this->_password = password_hash($this->_password, PASSWORD_DEFAULT);
                 $update_data['password'] = $this->_password;
             }
-            $update_data['password_last_updated'] = 'NOW()';
         }
         $update_data['email_address'] = ($this->_email);
         $update_data['first_name'] = ($this->_firstName);
@@ -2470,7 +2469,7 @@ SQL;
 
         // If we have ssoAttrs available and this user's person's organization is 'Unknown' ( -1 ).
         // Then go ahead and lookup the organization value from sso.
-        if ($expectedOrganization == -1 && count($this->ssoAttrs) > 0) {
+        if ($expectedOrganization == -1 && isset($this->ssoAttrs['organization']) && count($this->ssoAttrs['organization']) > 0) {
             $expectedOrganization = Organizations::getIdByName($this->ssoAttrs['organization'][0]);
         }
 

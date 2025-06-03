@@ -1,0 +1,11 @@
+title
+"Screwdriver CPU Utilization (%): by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[screw] Screwdriver CPU Utilization (%)","[wrench] Screwdriver CPU Utilization (%)"
+2016,17.8993,6.2745
+2017,0.0457,0.0163
+---------

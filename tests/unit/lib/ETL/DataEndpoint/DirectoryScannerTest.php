@@ -29,7 +29,7 @@ use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use Psr\Log\LoggerInterface;
 
-class DirectoryScanner extends \PHPUnit\Framework\TestCase
+class DirectoryScannerTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";

@@ -1,0 +1,12 @@
+title
+"Quota Utilization: Logical (%): by PI Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"PI Institution","Quota Utilization: Logical (%)"
+"screw - Screwdriver",82.5019
+"wrench - Wrench",81.9568
+"Unknown - Unknown Organization",73.1483
+---------

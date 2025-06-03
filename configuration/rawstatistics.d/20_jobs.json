@@ -79,6 +79,36 @@
             },
             {
                 "schema": "modw",
+                "name": "piperson",
+                "alias": "pi",
+                "join": {
+                    "primaryKey": "person_id",
+                    "foreignTableAlias": "jr",
+                    "foreignKey": "principalinvestigator_person_id"
+                }
+            },
+            {
+              "schema": "modw",
+              "name": "organization",
+              "alias": "pi_org",
+              "join": {
+                  "primaryKey": "id",
+                  "foreignTableAlias": "pi",
+                  "foreignKey": "organization_id"
+              }
+            },
+            {
+                "schema": "modw",
+                "name": "serviceprovider",
+                "alias": "sp",
+                "join": {
+                    "primaryKey": "organization_id",
+                    "foreignTableAlias": "jr",
+                    "foreignKey": "resource_organization_id"
+                }
+            },
+            {
+                "schema": "modw",
                 "name": "nodecount",
                 "alias": "nc",
                 "join": {
@@ -125,6 +155,14 @@
                 "batchExport": true
             },
             {
+                "name": "Service Provider",
+                "tableAlias": "sp",
+                "column": "long_name",
+                "group": "Administration",
+                "documentation": "The organization of the resource that ran the job.",
+                "batchExport": true
+            },
+            {
                 "name": "Timezone",
                 "tableAlias": "rf",
                 "column": "timezone",
@@ -150,12 +188,28 @@
                 "batchExport": true
             },
             {
-                "name": "Organization",
+                "name": "User Institution",
                 "tableAlias": "o",
                 "column": "name",
                 "group": "Administration",
                 "documentation": "The organization of the person who ran the task",
                 "batchExport": true
+            },
+            {
+                "name": "Principal Investigator",
+                "tableAlias": "pi",
+                "column": "long_name",
+                "group": "Administration",
+                "documentation": "The name of the PI assigned to the job.",
+                "batchExport": true
+            },
+            {
+              "name": "PI Institution",
+              "tableAlias": "pi_org",
+              "column": "name",
+              "group": "Administration",
+              "documentation": "The institution of the PI assigned to the job",
+              "batchExport": true
             },
             {
                 "name": "Quality of Service",

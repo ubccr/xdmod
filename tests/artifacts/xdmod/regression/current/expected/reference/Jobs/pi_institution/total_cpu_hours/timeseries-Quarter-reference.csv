@@ -1,0 +1,11 @@
+title
+"CPU Hours: Total: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[screw - Screwdriver] CPU Hours: Total","[wrench - Wrench] CPU Hours: Total"
+"2016 Q4",563809.0869,206966.9119
+"2017 Q1",60140.8858,9638.9522
+---------

@@ -1,0 +1,12 @@
+title
+"Number of Resources: Active: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","Number of Resources: Active"
+"screw - Screwdriver",5
+"wrench - Wrench",5
+"Unknown - Unknown Organization",2
+---------

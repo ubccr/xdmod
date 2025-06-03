@@ -1,12 +1,12 @@
 title
-"Screwdriver Utilization (%): by System Username"
+"Screwdriver CPU Utilization (%): by System Username"
 parameters
 
 "*Restricted To: PI = Tern, C OR User = Tern, C"
 start,end
 2016-12-22,2017-01-01
 ---------
-"System Username","Screwdriver Utilization (%)"
+"System Username","Screwdriver CPU Utilization (%)"
 ovenb,0.0183
 swath,0.0062
 ybsbu,0.0034
