@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "puppeteer-core": "^19.7.5",
+    "puppeteer-core": "^24.10.0",
     "yargs": "^17.7.1"
   }
 }
