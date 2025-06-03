@@ -85,7 +85,7 @@ Univa Grid Engine is the only Grid Engine based product that is confirmed to
 report GPU count data.  If your Grid Engine based product reports GPU data in
 the same format then it will be interpreted in the same was as described here.
 
-Please report any issues to the email address on our [support page](support.md).
+Please report any issues to the email address on our [support page](support.html).
 
 The GPU count source for UGE is the `category` field in the accounting log
 files.  If a value is specified for `gpu` then that is used as the total number

@@ -126,7 +126,7 @@ The first column should be the username of the PI as seen in your resources even
 as seen in your resources event log files. The third column is the name of the resource in XDMoD.
 
 If you want the first and last name of the PI to be shown instead of their username when viewing this data you should add the PI username and
-first and last name to the `names.csv` file and ingested. Details on doing this can be found in the [`User/PI Names`](user-names.md) documentation.
+first and last name to the `names.csv` file and ingested. Details on doing this can be found in the [`User/PI Names`](user-names.html) documentation.
 
 ## Hierarchy
 
@@ -196,4 +196,4 @@ Cloud resources are added by using the xdmod-setup command.
 `php /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-resources`
 
 ### Ingesting cloud event data
-Cloud data is shredded and ingested using the [`xdmod-shredder`](shredder.md) and [`xdmod-ingestor`](ingestor.md) commands. Please see their respective guides for further information.
+Cloud data is shredded and ingested using the [`xdmod-shredder`](shredder.html) and [`xdmod-ingestor`](ingestor.html) commands. Please see their respective guides for further information.

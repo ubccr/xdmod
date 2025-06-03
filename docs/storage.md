@@ -78,8 +78,8 @@ must then be used in the JSON storage input files described above.
 
 ## Data Ingestion
 
-Storage data is shredded and ingested using the [`xdmod-shredder`](shredder.md)
-and [`xdmod-ingestor`](ingestor.md) commands. Please see their respective
+Storage data is shredded and ingested using the [`xdmod-shredder`](shredder.html)
+and [`xdmod-ingestor`](ingestor.html) commands. Please see their respective
 guides for further information.
 
 All of the following commands must be executed in the order specified below to

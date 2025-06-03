@@ -67,11 +67,11 @@ For [TORQUE and OpenPBS][pbs] use `pbs`, for [Sun Grid Engine][sge] use
     $ xdmod-shredder -f slurm ...
     $ xdmod-shredder -f lsf ...
 
-[pbs]:   resource-manager-pbs.md
-[sge]:   resource-manager-sge.md
-[uge]:   resource-manager-uge.md
-[slurm]: resource-manager-slurm.md
-[lsf]:   resource-manager-lsf.md
+[pbs]:   resource-manager-pbs.html
+[sge]:   resource-manager-sge.html
+[uge]:   resource-manager-uge.html
+[slurm]: resource-manager-slurm.html
+[lsf]:   resource-manager-lsf.html
 
 **Cloud:**
 
@@ -84,7 +84,7 @@ The convention for shredding cloud files is identical to job data:
 **Storage:**
 
 The shredder accepts one format for storage data.  See the [Storage
-Metrics](storage.md) documentation for an example.  The convention for
+Metrics](storage.html) documentation for an example.  The convention for
 shredding storage files is identical to job data:
 
     $ xdmod-shredder -f storage ...
