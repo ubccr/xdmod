@@ -18,46 +18,6 @@
                 }
             },
             {
-                "schema": "modw",
-                "name": "job_tasks",
-                "alias": "jt",
-                "join": {
-                    "primaryKey": "job_id",
-                    "foreignTableAlias": "jl",
-                    "foreignKey": "jobid"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "job_records",
-                "alias": "jr",
-                "join": {
-                    "primaryKey": "job_record_id",
-                    "foreignTableAlias": "jt",
-                    "foreignKey": "job_record_id"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "resourcefact",
-                "alias": "rf",
-                "join": {
-                    "primaryKey": "id",
-                    "foreignTableAlias": "jt",
-                    "foreignKey": "resource_id"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "systemaccount",
-                "alias": "sa",
-                "join": {
-                    "primaryKey": "id",
-                    "foreignTableAlias": "jt",
-                    "foreignKey": "systemaccount_id"
-                }
-            },
-            {
                 "schema": "modw_gateways",
                 "name": "gateway",
                 "alias": "p",
@@ -67,315 +27,85 @@
                     "foreignKey": "person_id"
                 }
             },
-            {
-                "schema": "modw",
-                "name": "organization",
-                "alias": "o",
-                "join": {
-                    "primaryKey": "id",
-                    "foreignTableAlias": "jt",
-                    "foreignKey": "person_organization_id"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "serviceprovider",
-                "alias": "sp",
-                "join": {
-                    "primaryKey": "organization_id",
-                    "foreignTableAlias": "jt",
-                    "foreignKey": "resource_organization_id"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "nodecount",
-                "alias": "nc",
-                "join": {
-                    "primaryKey": "id",
-                    "foreignTableAlias": "jt",
-                    "foreignKey": "node_count"
-                }
-            },
-            {
-                "schema": "modw",
-                "name": "fieldofscience_hierarchy",
-                "alias": "fos",
-                "join": {
-                    "primaryKey": "id",
-                    "foreignTableAlias": "jr",
-                    "foreignKey": "fos_id"
-                }
-            }
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/service_provider" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/fos" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/pi" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/pi_institution" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/system_account" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/user_institution" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_task" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_record" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_task_resource" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/job_node_count" }
         ],
         "fields": [
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/local_job_id" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/resource_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/service_provider_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/resource_time_zone" },
             {
-                "name": "Local Job Id",
-                "formula": "IF(jt.local_job_array_index = -1, jt.local_jobid, CONCAT(jt.local_jobid, '[', jt.local_job_array_index, ']'))",
-                "group": "Administration",
-                "documentation": "The unique identifier assigned to the job by the job scheduler.",
-                "batchExport": true
+                "$ref-with-overwrite": "rawstatistics.d/ref/rawstatistics-common.json#/fields/system_username",
+                "$overwrite": {
+                    "documentation": "The username on the resource of the gateway proxy user that ran the job. May be a UID or string username depending on the resource."
+                }
             },
             {
-                "name": "Resource",
-                "tableAlias": "rf",
-                "column": "name",
-                "group": "Administration",
-                "documentation": "The resource that ran the job.",
-                "batchExport": true
+                "$ref-with-overwrite": "rawstatistics.d/ref/rawstatistics-common.json#/fields/user_id",
+                "$overwrite": {
+                    "name": "Gateway ID",
+                    "documentation": "The numeric identifier assigned by XDMoD to the gateway from which the job was submitted."
+                }
             },
             {
-                "name": "Service Provider",
-                "tableAlias": "sp",
-                "column": "long_name",
-                "group": "Administration",
-                "documentation": "The organization of the resource that ran the job.",
-                "batchExport": true
+                "$ref-with-overwrite": "rawstatistics.d/ref/rawstatistics-common.json#/fields/user_name",
+                "$overwrite": {
+                    "name": "Gateway",
+                    "documentation": "The name of the gateway from which the job was submitted."
+                }
             },
             {
-                "name": "Timezone",
-                "tableAlias": "rf",
-                "column": "timezone",
-                "group": "Administration",
-                "documentation": "The timezone of the resource.",
-                "batchExport": true
+                "$ref-with-overwrite": "rawstatistics.d/ref/rawstatistics-common.json#/fields/user_institution_id",
+                "$overwrite": {
+                    "name": "Organization ID",
+                    "documentation": "The numeric identifier assigned by XDMoD to the organization associated with the gateway proxy user that ran the job."
+                }
             },
             {
-                "name": "System Username",
-                "tableAlias": "sa",
-                "column": "username",
-                "group": "Administration",
-                "visibility": "non-public",
-                "documentation": "The username on the resource of the gateway proxy user that ran the job. May be a UID or string username depending on the resource.",
-                "batchExport": "anonymize"
+                "$ref-with-overwrite": "rawstatistics.d/ref/rawstatistics-common.json#/fields/user_institution_name",
+                "$overwrite": {
+                    "name": "Organization",
+                    "documentation": "The name of the organization associated with the gateway proxy user that ran the job."
+                }
             },
-            {
-                "name": "Gateway",
-                "tableAlias": "p",
-                "column": "long_name",
-                "group": "Administration",
-                "documentation": "The name of the gateway from which the job was submitted.",
-                "batchExport": true
-            },
-            {
-                "name": "Organization",
-                "tableAlias": "o",
-                "column": "name",
-                "group": "Administration",
-                "documentation": "The organization associated with the gateway proxy user that ran the task",
-                "batchExport": true
-            },
-            {
-                "name": "Name",
-                "tableAlias": "jt",
-                "column": "name",
-                "documentation": "The name of the job as reported by the job scheduler.",
-                "group": "Executable",
-                "batchExport": false
-            },
-            {
-                "name": "Submit Time",
-                "tableAlias": "jt",
-                "column": "submit_time_ts",
-                "group": "Timing",
-                "units": "ts",
-                "documentation": "Task submission time",
-                "batchExport": true
-            },
-            {
-                "name": "Start Time",
-                "tableAlias": "jt",
-                "column": "start_time_ts",
-                "group": "Timing",
-                "units": "ts",
-                "documentation": "The time that the job started running.",
-                "batchExport": true
-            },
-            {
-                "name": "End Time",
-                "tableAlias": "jt",
-                "column": "end_time_ts",
-                "units": "ts",
-                "group": "Timing",
-                "documentation": "The time that the job ended.",
-                "batchExport": true
-            },
-            {
-                "name": "Eligible Time",
-                "tableAlias": "jt",
-                "column": "eligible_time_ts",
-                "units": "ts",
-                "group": "Timing",
-                "documentation": "The time that the job was eligible for scheduling by the resource manager.",
-                "batchExport": true
-            },
-            {
-                "name": "Nodes",
-                "tableAlias": "nc",
-                "column": "nodes",
-                "group": "Allocated Resource",
-                "documentation": "The number of nodes that were assigned to the job.",
-                "batchExport": true
-            },
-            {
-                "name": "Cores",
-                "tableAlias": "jt",
-                "column": "processor_count",
-                "group": "Allocated Resource",
-                "documentation": "The number of cores that were assigned to the job.",
-                "batchExport": true
-            },
-            {
-                "name": "GPUs",
-                "tableAlias": "jt",
-                "column": "gpu_count",
-                "group": "Allocated Resource",
-                "documentation": "The number of GPUs that were assigned to the job.",
-                "batchExport": true
-            },
-            {
-                "name": "Memory Used",
-                "tableAlias": "jt",
-                "column": "memory_kb",
-                "group": "Allocated Resource",
-                "units": "kilobyte",
-                "documentation": "Memory consumed as reported by the resource manager.",
-                "batchExport": true
-            },
-            {
-                "name": "Wall Time",
-                "tableAlias": "jt",
-                "column": "wallduration",
-                "group": "Timing",
-                "units": "seconds",
-                "documentation": "Overall job duration.",
-                "batchExport": true
-            },
-            {
-                "name": "Wait Time",
-                "tableAlias": "jt",
-                "column": "waitduration",
-                "group": "Timing",
-                "units": "seconds",
-                "documentation": "Time the job waited in the queue",
-                "batchExport": true
-            },
-            {
-                "name": "Core Time",
-                "tableAlias": "jt",
-                "column": "cpu_time",
-                "group": "Allocated Resource",
-                "units": "seconds",
-                "documentation": "The amount of CPU core time (Core Count * Wall Time)",
-                "batchExport": true
-            },
-            {
-                "name": "GPU Time",
-                "tableAlias": "jt",
-                "column": "gpu_time",
-                "group": "Allocated Resource",
-                "units": "seconds",
-                "documentation": "The amount of GPU time (GPU Count * Wall Time)",
-                "batchExport": true
-            },
-            {
-                "name": "UNIX group name",
-                "tableAlias": "jt",
-                "column": "group_name",
-                "group": "Administration",
-                "documentation": "The name of the group that ran the job.",
-                "batchExport": false
-            },
-            {
-                "name": "UNIX group GID",
-                "tableAlias": "jt",
-                "column": "gid_number",
-                "group": "Administration",
-                "documentation": "The GID of the group that ran the job.",
-                "batchExport": false
-            },
-            {
-                "name": "UNIX UID",
-                "tableAlias": "jt",
-                "column": "uid_number",
-                "group": "Administration",
-                "documentation": "The UID of the user that ran the job.",
-                "batchExport": false
-            },
-            {
-                "name": "Exit Code",
-                "tableAlias": "jt",
-                "column": "exit_code",
-                "group": "Executable",
-                "documentation": "The code that the job exited with.",
-                "batchExport": true
-            },
-            {
-                "name": "Exit State",
-                "tableAlias": "jt",
-                "column": "exit_state",
-                "group": "Executable",
-                "documentation": "The state of the job when it completed.",
-                "batchExport": true
-            },
-            {
-                "name": "Requested Cores",
-                "tableAlias": "jt",
-                "column": "cpu_req",
-                "group": "Requested Resource",
-                "documentation": "The number of CPUs required by the job.",
-                "batchExport": true
-            },
-            {
-                "name": "Requested memory",
-                "tableAlias": "jt",
-                "column": "mem_req",
-                "group": "Requested Resource",
-                "units": "bytes",
-                "documentation": "The amount of memory required by the job.",
-                "batchExport": true
-            },
-            {
-                "name": "Requested Wall Time",
-                "tableAlias": "jt",
-                "column": "timelimit",
-                "group": "Requested Resource",
-                "units": "seconds",
-                "documentation": "The time limit of the job.",
-                "batchExport": true
-            },
-            {
-                "name": "Queue",
-                "tableAlias": "jr",
-                "column": "queue",
-                "group": "Requested Resource",
-                "documentation": "The name of the queue to which the job was submitted.",
-                "batchExport": true
-            },
-            {
-                "name": "${HIERARCHY_TOP_LEVEL_LABEL}",
-                "tableAlias": "fos",
-                "column": "directorate_description",
-                "group": "Requested Resource",
-                "documentation": "${HIERARCHY_TOP_LEVEL_INFO}",
-                "batchExport": true
-            },
-            {
-                "name": "${HIERARCHY_MIDDLE_LEVEL_LABEL}",
-                "tableAlias": "fos",
-                "column": "parent_description",
-                "group": "Requested Resource",
-                "documentation": "${HIERARCHY_MIDDLE_LEVEL_INFO}",
-                "batchExport": true
-            },
-            {
-                "name": "${HIERARCHY_BOTTOM_LEVEL_LABEL}",
-                "tableAlias": "fos",
-                "column": "description",
-                "group": "Requested Resource",
-                "documentation": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
-                "batchExport": true
-            }
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_id" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_institution_id" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_institution_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_submit_time" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_start_time" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_end_time" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_eligible_time" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_nodes" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_cores" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_gpus" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_memory_used" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_wall_time" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_wait_time" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_core_time" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_gpu_time" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_unix_group_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_unix_group_gid" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_unix_uid" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_exit_code" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_exit_state" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_requested_cores" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_requested_memory" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_requested_wall_time" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/job_queue" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/hierarchy_top_level" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/hierarchy_middle_level" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/hierarchy_bottom_level" }
         ]
     }
 }
