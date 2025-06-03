@@ -181,7 +181,7 @@
             "tableAlias": "pii",
             "column": "id",
             "group": "Administration",
-            "documentation": "The numeric identifier assigned by XDMoD to the PI's organization.",
+            "documentation": "The numeric identifier assigned by XDMoD to the PI's institution.",
             "batchExport": true
         },
         "pi_institution_name": {
@@ -189,7 +189,7 @@
             "tableAlias": "pii",
             "column": "name",
             "group": "Administration",
-            "documentation": "The name of the PI's organization.",
+            "documentation": "The name of the PI's institution.",
             "batchExport": true
         },
         "system_username": {
@@ -222,7 +222,7 @@
             "tableAlias": "ui",
             "column": "id",
             "group": "Administration",
-            "documentation": "The numeric identifier assigned by XDMoD to the user's organization.",
+            "documentation": "The numeric identifier assigned by XDMoD to the user's institution.",
             "batchExport": true
         },
         "user_institution_name": {
@@ -230,7 +230,7 @@
             "tableAlias": "ui",
             "column": "name",
             "group": "Administration",
-            "documentation": "The name of the user's organization.",
+            "documentation": "The name of the user's institution.",
             "batchExport": true
         },
         "local_job_id": {
