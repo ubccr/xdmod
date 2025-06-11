@@ -65,6 +65,9 @@ use Psr\Log\LoggerInterface;
 
 class TimeseriesQuery extends Query implements iQuery
 {
+
+    protected $sortInfo;
+
     public function getQueryType()
     {
         return 'timeseries';

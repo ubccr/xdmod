@@ -14,6 +14,7 @@ namespace DataWarehouse\Data;
  */
 class SimpleData extends \Common\Identity
 {
+    protected $values;
     // ----------- instance variables ------------- //
 
     // SimpleData type may be one of 'dim', 'met', or 'time'
