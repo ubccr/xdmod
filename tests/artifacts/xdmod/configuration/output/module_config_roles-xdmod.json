@@ -88,6 +88,10 @@
         },
         {
           "realm": "Jobs",
+          "group_by": "pi_institution"
+        },
+        {
+          "realm": "Jobs",
           "group_by": "queue"
         },
         {
@@ -101,6 +105,10 @@
         {
           "realm": "Jobs",
           "group_by": "person"
+        },
+        {
+          "realm": "Jobs",
+          "group_by": "institution"
         },
         {
           "realm": "Jobs",
@@ -140,11 +148,19 @@
         },
         {
           "realm": "Cloud",
+          "group_by": "institution"
+        },
+        {
+          "realm": "Cloud",
           "group_by": "username"
         },
         {
           "realm": "Cloud",
           "group_by": "pi"
+        },
+        {
+          "realm": "Cloud",
+          "group_by": "pi_institution"
         },
         {
             "realm": "Cloud",
@@ -388,6 +404,10 @@
         },
         {
           "realm": "Jobs",
+          "group_by": "pi_institution"
+        },
+        {
+          "realm": "Jobs",
           "group_by": "queue"
         },
         {
@@ -401,6 +421,10 @@
         {
           "realm": "Jobs",
           "group_by": "person"
+        },
+        {
+          "realm": "Jobs",
+          "group_by": "institution"
         },
         {
           "realm": "Jobs",
@@ -441,11 +465,19 @@
         },
         {
           "realm": "Cloud",
+          "group_by": "institution"
+        },
+        {
+          "realm": "Cloud",
           "group_by": "username"
         },
         {
           "realm": "Cloud",
           "group_by": "pi"
+        },
+        {
+          "realm": "Cloud",
+          "group_by": "pi_institution"
         },
         {
             "realm": "Cloud",
@@ -560,6 +592,10 @@
         },
         {
           "realm": "Jobs",
+          "group_by": "pi_institution"
+        },
+        {
+          "realm": "Jobs",
           "group_by": "queue"
         },
         {
@@ -573,6 +609,10 @@
         {
           "realm": "Jobs",
           "group_by": "person"
+        },
+        {
+          "realm": "Jobs",
+          "group_by": "institution"
         },
         {
           "realm": "Jobs",
@@ -612,11 +652,19 @@
         },
         {
           "realm": "Cloud",
+          "group_by": "institution"
+        },
+        {
+          "realm": "Cloud",
           "group_by": "username"
         },
         {
           "realm": "Cloud",
           "group_by": "pi"
+        },
+        {
+          "realm": "Cloud",
+          "group_by": "pi_institution"
         },
         {
             "realm": "Cloud",
@@ -881,6 +929,10 @@
         },
         {
           "realm": "Jobs",
+          "group_by": "pi_institution"
+        },
+        {
+          "realm": "Jobs",
           "group_by": "queue"
         },
         {
@@ -894,6 +946,10 @@
         {
           "realm": "Jobs",
           "group_by": "person"
+        },
+        {
+          "realm": "Jobs",
+          "group_by": "institution"
         },
         {
           "realm": "Jobs",
@@ -933,11 +989,19 @@
         },
         {
           "realm": "Cloud",
+          "group_by": "institution"
+        },
+        {
+          "realm": "Cloud",
           "group_by": "username"
         },
         {
           "realm": "Cloud",
           "group_by": "pi"
+        },
+        {
+          "realm": "Cloud",
+          "group_by": "pi_institution"
         },
         {
             "realm": "Cloud",
@@ -1202,6 +1266,10 @@
         },
         {
           "realm": "Jobs",
+          "group_by": "pi_institution"
+        },
+        {
+          "realm": "Jobs",
           "group_by": "queue"
         },
         {
@@ -1215,6 +1283,10 @@
         {
           "realm": "Jobs",
           "group_by": "person"
+        },
+        {
+          "realm": "Jobs",
+          "group_by": "institution"
         },
         {
           "realm": "Jobs",
@@ -1254,11 +1326,19 @@
         },
         {
           "realm": "Cloud",
+          "group_by": "institution"
+        },
+        {
+          "realm": "Cloud",
           "group_by": "username"
         },
         {
           "realm": "Cloud",
           "group_by": "pi"
+        },
+        {
+          "realm": "Cloud",
+          "group_by": "pi_institution"
         },
         {
             "realm": "Cloud",
@@ -1523,6 +1603,10 @@
         },
         {
           "realm": "Jobs",
+          "group_by": "pi_institution"
+        },
+        {
+          "realm": "Jobs",
           "group_by": "queue"
         },
         {
@@ -1536,6 +1620,10 @@
         {
           "realm": "Jobs",
           "group_by": "person"
+        },
+        {
+          "realm": "Jobs",
+          "group_by": "institution"
         },
         {
           "realm": "Jobs",
@@ -1575,11 +1663,19 @@
         },
         {
           "realm": "Cloud",
+          "group_by": "institution"
+        },
+        {
+          "realm": "Cloud",
           "group_by": "username"
         },
         {
           "realm": "Cloud",
           "group_by": "pi"
+        },
+        {
+          "realm": "Cloud",
+          "group_by": "pi_institution"
         },
         {
             "realm": "Cloud",

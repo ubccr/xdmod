@@ -1,0 +1,12 @@
+title
+"File Count (Number of files): by User Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"User Institution","File Count (Number of files)"
+"screw - Screwdriver",138460194.0000
+"wrench - Wrench",89257561.0000
+"Unknown - Unknown Organization",5371930.5000
+---------

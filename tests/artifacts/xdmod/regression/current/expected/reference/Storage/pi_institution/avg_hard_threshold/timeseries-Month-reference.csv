@@ -1,0 +1,11 @@
+title
+"Quota: Hard Threshold (Bytes): by PI Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Month,"[screw - Screwdriver] Quota: Hard Threshold (Bytes)","[Unknown - Unknown Organization] Quota: Hard Threshold (Bytes)","[wrench - Wrench] Quota: Hard Threshold (Bytes)"
+2018-12,827035033600000,260005003264000,260005003264000
+2019-01,827035033600000,260005003264000,260005003264000
+---------

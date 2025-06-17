@@ -1,0 +1,11 @@
+title
+"Number of Resources: Active: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[screw - Screwdriver] Number of Resources: Active","[wrench - Wrench] Number of Resources: Active","[Unknown - Unknown Organization] Number of Resources: Active"
+"2016 Q4",5,5,2
+"2017 Q1",5,5,2
+---------
