@@ -18,8 +18,16 @@
           "class": "GroupByPerson"
         },
         {
+          "name": "institution",
+          "class": "GroupByInstitution"
+        },
+        {
           "name": "pi",
           "class": "GroupByPI"
+        },
+        {
+          "name": "pi_institution",
+          "class": "GroupByPIInstitution"
         },
         {
           "name": "resource",
@@ -243,8 +251,16 @@
           "class": "GroupByPerson"
         },
         {
+          "name": "institution",
+          "class": "GroupByInstitution"
+        },
+        {
           "name": "pi",
           "class": "GroupByPI"
+        },
+        {
+          "name": "pi_institution",
+          "class": "GroupByPIInstitution"
         },
         {
           "name": "username",
@@ -363,12 +379,20 @@
           "class": "GroupByPerson"
         },
         {
+          "name": "institution",
+          "class": "GroupByInstitution"
+        },
+        {
           "name": "username",
           "class": "GroupByUsername"
         },
         {
           "name": "pi",
           "class": "GroupByPI"
+        },
+        {
+          "name": "pi_institution",
+          "class": "GroupByPIInstitution"
         },
         {
           "name": "fieldofscience",

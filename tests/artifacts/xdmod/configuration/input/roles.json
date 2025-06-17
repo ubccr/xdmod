@@ -88,6 +88,10 @@
         },
         {
           "realm": "Jobs",
+          "group_by": "pi_institution"
+        },
+        {
+          "realm": "Jobs",
           "group_by": "queue"
         },
         {
@@ -101,6 +105,10 @@
         {
           "realm": "Jobs",
           "group_by": "person"
+        },
+        {
+          "realm": "Jobs",
+          "group_by": "institution"
         },
         {
           "realm": "Jobs",
@@ -336,6 +344,10 @@
         },
         {
           "realm": "Jobs",
+          "group_by": "pi_institution"
+        },
+        {
+          "realm": "Jobs",
           "group_by": "queue"
         },
         {
@@ -349,6 +361,10 @@
         {
           "realm": "Jobs",
           "group_by": "person"
+        },
+        {
+          "realm": "Jobs",
+          "group_by": "institution"
         },
         {
           "realm": "Jobs",

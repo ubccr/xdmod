@@ -1,0 +1,12 @@
+title
+"Wait Hours: Total: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","Wait Hours: Total"
+"screw - Screwdriver",186420.9531
+"wrench - Wrench",119857.7197
+"Unknown - Unknown Organization",66.6881
+---------

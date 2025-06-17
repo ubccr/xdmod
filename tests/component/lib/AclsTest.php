@@ -300,12 +300,15 @@ TXT;
             'nsfdirectorate',
             'parentscience',
             'person',
+            'institution',
             'pi',
+            'pi_institution',
             'qos',
             'queue',
             'resource',
             'resource_type',
             'username',
+            'provider'
         );
 
         $stats = array(

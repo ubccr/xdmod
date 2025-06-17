@@ -101,9 +101,10 @@ try {
                     }
 
                     $nodeId = (
-                        'group_by_'
+                        'node=group_by'
+                        . '&realm='
                         . $categoryName
-                        . '_'
+                        . '&group_by='
                         . $queryDescriptor->getGroupByName()
                     );
 
@@ -160,7 +161,7 @@ try {
         }
     } elseif (
         isset($_REQUEST['node'])
-        && substr($_REQUEST['node'], 0, 9) == 'group_by_'
+        && substr($_REQUEST['node'], 0, 13) == 'node=group_by'
     ) {
         if (isset($_REQUEST['category'])) {
             $categoryName = $_REQUEST['category'];
@@ -207,11 +208,12 @@ try {
                         }
                         $returnData[] = array(
                             'text'                 => $statistic_object->getName(false),
-                            'id'                   => 'statistic_'
+                            'id'                   => 'node=statistic'
+                            . '&realm='
                             . $realm_name
-                            . '_'
+                            . '&group_by='
                             . $group_by_name
-                            . '_'
+                            . '&statistic='
                             . $statName,
                             'statistic'            => $statName,
                             'group_by'             => $group_by_name,

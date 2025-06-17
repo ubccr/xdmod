@@ -608,6 +608,7 @@ class RegressionTestHelper extends XdmodTestHelper
                 'raw-data',
                 $testName,
                 $data,
+                $testName,
                 $testName
             );
         } else {
