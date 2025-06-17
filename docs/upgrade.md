@@ -176,5 +176,11 @@ below shows the steps that can be taken for each data type.
 | Hierarchy | Ensure the information in hierarchy.csv is encoded in UTF8 character set. Run the `xdmod-import-csv` and `xdmod-ingestor` as described in the [Hierarchy Guide](hierarchy.md) |
 | Job name in the single job viewer | The job name string for jobs that have already been shredded and ingested into XDMoD will not be corrected automatically. It is necessary to truncate the data for all jobs and reingest following the instruction in the [FAQ](faq.md#how-do-i-delete-all-my-job-data-from-open-xdmod). |
 
+### Configuration File Changes
+
+The "Job Size: Normalized" statistic in the Jobs realm is removed from the
+default list of statistics. See [this
+page](howto-normalized-avg-processors.html) for more information.
+
 [github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
 [mysql-config]: configuration.html#mariadb-configuration
