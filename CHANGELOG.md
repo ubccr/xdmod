@@ -39,6 +39,8 @@
     - Add an order to the raw data exported from the Resource Specifications
       realm ([\#1979](https://github.com/ubccr/xdmod/pull/1979)).
 - Maintenance / Code Quality
+    - Remove the "Job Size: Normalized" metric
+      ([\#1981](https://github.com/ubccr/xdmod/pull/1981)).
     - Remove code for supporting Internet Explorer
       ([\#2013](https://github.com/ubccr/xdmod/pull/2013)).
 
