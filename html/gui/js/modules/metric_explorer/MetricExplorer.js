@@ -6668,6 +6668,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
         self.on('open_in_nb', function () {
+            let graphTypeTest;
             config = self.getConfig();
             let retJson = {
                 "metadata": {
@@ -6689,7 +6690,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 "cell_type": "code",
                 "execution_count": 1,
                 "metadata": {},
-                "source": `import plotly.express as px\nimport plotly.io as pio\nimport pandas as pd\n#from xdmod_data.warehouse import DataWarehouse\n#dw = DataWarehouse('${document.location.origin}')`,
+                "source": `import plotly.express as px\nimport plotly.io as pio\nimport pandas as pd\nimport plotly.graph_objects as go\nimport xdmod_data.themes\npio.templates.default = "timeseries"\n#from xdmod_data.warehouse import DataWarehouse\n#dw = DataWarehouse('${document.location.origin}')`,
                 "outputs": [
                     {
                         "output_type": "stream",
@@ -6741,42 +6742,72 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     subTitle += `${id}: ${values.replace(/'/g, '')}`;
                 }
             }
-            let multiData = [];
+            let dataCalls = `
+# Call to Data Analytics Framework requesting data \n
+with dw:`;
             let plotChart;
-                for (let i = 0; i < config.data_series.total; i += 1) {
-                    const {
-                        realm = 'Jobs',
-                        metric = 'CPU Hours: Total',
-                        group_by: dimension = 'none',
-                        log_scale: logScale,
-                        display_type: displayType
-                    } = config.data_series.data[i];
-                    let graphType = displayType || 'line';
-                    let lineShape = '';
-                    if (graphType === 'column') {
-                        graphType = 'bar';
-                        lineShape = "barmode='group',";
-                    } else if (graphType === 'spline') {
-                        graphType = 'line';
-                        lineShape = "\nline_shape='spline',";
-                    } else if (graphType === 'line' && dataType === 'aggregate' && dimension === 'none') {
-                        graphType = 'scatter';
-                    } else if (graphType === 'areaspline') {
-                        graphType = 'area';
-                        lineShape = "\nline_shape='spline',";
-                    }
-                    let axis = '';
-                    if (swapXY && graphType !== 'pie') {
-                        axis = `\ty= data_${i}.columns[0],\n\tx= data_${i}.columns[1:],`;
-                    } else {
-                        axis = `labels={"value": label_${i}},`;
-                    }
-                    let dataView;
-
-                    if (dataType === 'aggregate') {
-                        let graph;
-                        if (graphType === 'pie') {
-                            graph = `
+            (config.data_series.total == 1) ? plotChart = '' : plotChart = 'plot = go.Figure()\n';
+            //variable for code for code at the end of last cell (updates layout of created charts)
+            let updateLayout = 'plot.update_layout(\n'
+            let isSpline;
+            let dataSetIndex = 0
+            //check if multiple realms / metrics
+            let multipleRealms = false
+            let multipleMetrics = false
+            let compRealm = config.data_series.data[0]['realm']
+            let compMetric = config.data_series.data[0]['metric']
+            for (let i = 0; i < config.data_series.total; i += 1) {
+                if (config.data_series.data[i]['realm'] != compRealm) {
+                    multipleRealms = true
+                }
+                if (config.data_series.data[i]['metric'] != compMetric) [
+                    multipleMetrics = true
+                ]                
+            }
+            let metricsList = []
+            currSide = 'left'
+            //loop through all datasets and produce the proper code
+            for (let i = 0; i < config.data_series.total; i += 1) {
+                const {
+                    realm = 'Jobs',
+                    metric = 'CPU Hours: Total',
+                    group_by: dimension = 'none',
+                    log_scale: logScale,
+                    display_type: displayType
+                } = config.data_series.data[i];
+                let graphType = displayType || 'line';
+                let lineShape = '';
+                if (graphType === 'column') {
+                    graphType = 'bar';
+                    lineShape = "barmode='group',";
+                } else if (graphType === 'spline') {
+                    isSpline = true
+                    graphType = 'line';
+                    lineShape = "\nline_shape='spline',";
+                } else if (graphType === 'line' && dataType === 'aggregate' && dimension === 'none') {
+                    graphType = 'scatter';
+                } else if (graphType === 'areaspline') {
+                    isSpline = true
+                    graphType = 'area';
+                    lineShape = "\nline_shape='spline',";
+                }
+                let axis = '';
+                if (swapXY && graphType !== 'pie') {
+                    axis = `\ty= data_${i}.columns[0],\n\tx= data_${i}.columns[1:],`;
+                } else {
+                    axis = `labels={"value": label_${i}},`;
+                }
+                let dataView;
+                //
+                if (metricsList.indexOf(config.data_series.data[i]) == -1) {
+                    metricsList.push(metric)
+                }
+                console.log(metricsList.indexOf(metric))
+                //
+                if (dataType === 'aggregate') {
+                    let graph;
+                    if (graphType === 'pie') {
+                        graph = `
 if(data_${i}.size > 10):
     others_sum=data_${i}[~data_${i}.isin(top_ten)].sum()
     data_${i} = top_ten.combine_first(pd.Series({'Other ' + String(data_${i}.size - 10): others_sum}))\n`;
@@ -6791,14 +6822,14 @@ data_${i} = data_${i}.to_frame()
 columns_list = data_${i}.columns.tolist()`;
                         } else {
                             dataView = `
-\n# Limit the number of data items/source to at most 10 and sort by descending\n
-columns_list = data_0.columns.tolist()
+\n# Limit the number of data items/source to at most 10 and sort by descending
+columns_list = data_${i}.columns.tolist()
 if (len(columns_list) > 10):
-    column_sums = data_0.sum()
+    column_sums = data_${i}.sum()
     top_ten_columns = column_sums.nlargest(10).index.tolist()
-    data_0 = data_0[top_ten_columns]\n`;
+    data_${i} = data_${i}[top_ten_columns]\n`;
                         }
-    multiData[i] = `
+    dataCalls += `
     data_${i} = dw.get_data(
         duration=('${duration}'),
         realm='${realm}',
@@ -6808,33 +6839,74 @@ if (len(columns_list) > 10):
         dataset_type='${dataType}',
         aggregation_unit='${aggregationUnit}',
     )
-    label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']`
-    plotChart = 
+    label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']\n`
+
+    //rename columns if multiple metrics or realms
+    if (multipleMetrics && multipleRealms) {
+        dataCalls += `
+    newColNames = {}
+    for col in data_${i}.columns :
+        newColNames[col] = '${realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
+    data_${i} = data_${i}.rename(columns=newColNames)
+`
+    } else if (multipleMetrics) {
+        dataCalls += `
+    newColNames = {}
+    for col in data_${i}.columns :
+        newColNames[col] = ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
+    data_${i} = data_${i}.rename(columns=newColNames)
+    `
+    } else if (multipleRealms) {
+        dataCalls += `
+    newColNames = {}
+    for col in data_${i}.columns :
+        newColNames[col] = '${realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'}
+    data_${i} = data_${i}.rename(columns=newColNames)
+    `
+    }
+
+    plotChart +=
     `${dataView}
-    ${(swapXY && graphType !== 'pie') ? `\tdata_0 = data_0.reset_index()` : ''}
-# Format and draw the graph to the screen\n
+    ${(swapXY && graphType !== 'pie') ? `\tdata_0 = data_0.reset_index()` : ''}`
+    if (config.data_series.total == 1) {
+        plotChart += `
+# Format and draw graph to the screen
 plot = px.${graphType}(
 data_0, ${(graphType === 'pie') ? `\nvalues= columns_list[0],\n names= data_0.index,` : ''}
 ${axis}
 title='${config.title || 'Untitled Query'}',${subTitle ? `\n&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt,` : ''}${logScale ? `log_${swapXY ? 'x' : 'y'}=True,` : ''}${lineShape}
-)
-plot.update_layout(
-    xaxis_automargin=True,
-    legend=dict(
-    yanchor="top",
-    y=-100,
-    xanchor="left",
-    x=0
-  )
-)
-plot.show()\n`;
-                    }
-                    let dataCalls = `
-# Call to Data Analytics Framework requesting data \n
-with dw:`;
-        multiData.forEach((data) => {
-            dataCalls += data;
-        });
+)\n`;
+    } else {
+        plotChart += `
+# Add axis from dataset ${i} to graph
+for col in data_${i}:
+    plot.add_trace(
+    go.${(graphType == 'bar') ? 'Bar' : 'Scatter'}(
+        x=data_${i}.index,
+        y=data_${i}[col].values,
+        name = col,
+        yaxis="y${i+1}",
+        ${(graphType === 'area') ? 'fill = "tozeroy",' : ''}
+        ${(isSpline) ? 'line_shape = "spline"' : ''}
+    ))\n`
+    updateLayout += 
+    `yaxis${i+1}=dict(
+        title=dict(
+            text=label_${i},
+        ),${(i == 0) ? '' : (`
+        anchor="free",
+        overlaying="y",
+        side="${currSide}"
+        `
+        )}
+    ),\n`
+    //switch side
+    if (currSide === 'right') {currSide = 'left'} else {currSide = 'right'}
+}
+    }   
+        console.log(metricsList)
+        updateLayout += ')\n'
+        plotChart += `${updateLayout}\nplot.update_layout(legend_x=0, legend_y=-100)\nplot.show()`
         retJson['cells'].push(
             {
                 "cell_type": "code",
@@ -6865,27 +6937,23 @@ with dw:`;
                 ]
             }
         )
-        retval = JSON.stringify(retJson,null,2)
-        
         const fetchNB = async () => {
-            const response = await fetch('http://localhost:8888/api/contents/', {
+            const response = await fetch(`http://localhost:8888/api/contents/${config.title}.ipynb`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    //'Access-Control-Allow-Origin': true,
-                    'Authorization': `Bearer a38893be323e56c332c5b677fbed197512e86135ba02aa71`
+                    'Authorization': `Bearer 45d99df463dc263863c06864ead230508a02c80ed30e9e65`,
                 },
-                body: {
-                    "name": "sampleNB.ipynb",
-                    "content": retval,
-                    "token": 'a38893be323e56c332c5b677fbed197512e86135ba02aa71'
-                },
-                  //mode: 'no-cors'
+                body: JSON.stringify({
+                    "content": retJson,
+                    "type": "notebook"
+                }),
             })
             .then(response => {
                 if (!response.ok) {
                   throw new Error(`HTTP error! Status: ${response.status}`);
                 }
+                console.log(response.status)
                 return response.json();
               })
               .then(data => {
