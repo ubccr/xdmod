@@ -4,6 +4,8 @@ namespace Reports;
 
 class ClassicReport
 {
+    protected $settings;
+
     private $styles = array();
     private $fonts = array();
     private $phpWord = null;

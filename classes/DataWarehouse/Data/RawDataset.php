@@ -4,6 +4,8 @@ namespace DataWarehouse\Data;
 
 class RawDataset
 {
+    protected $userType;
+
     private $query;
     private $query_results;
 
