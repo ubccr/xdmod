@@ -12,6 +12,7 @@ use Exception;
 use Models\Services\Acls;
 use Models\Services\Parameters;
 use Models\Services\Realms;
+use Models\Services\Tokens;
 use PDO;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
@@ -2133,7 +2134,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     public function getRawData(Request $request, Application $app)
     {
-        $user = parent::authenticateToken($request);
+        $user = Tokens::authenticate($request);
         $params = $this->validateRawDataParams($request, $user);
         $realmManager = new RealmManager();
         $queryClass = $realmManager->getRawDataQueryClass($params['realm']);

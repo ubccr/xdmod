@@ -62,10 +62,7 @@ abstract class TokenAuthTest extends BaseTest
         $role
     ) {
         $token = self::getToken('valid_token', $role);
-        $testHelper->addheader(
-            'Authorization',
-            Tokens::HEADER_KEY . ' ' . $token
-        );
+        $testHelper->addheader('Authorization', "Bearer $token");
         return BaseTest::makeHttpRequest($testHelper, $input);
     }
 
@@ -188,7 +185,7 @@ abstract class TokenAuthTest extends BaseTest
             && 'valid_token' !== $tokenType
         ) {
             $output['headers'] = [
-                'WWW-Authenticate' => Tokens::HEADER_KEY
+                'WWW-Authenticate' => 'Bearer'
             ];
         }
 
@@ -203,10 +200,7 @@ abstract class TokenAuthTest extends BaseTest
 
             // Add the token to the header.
             if ('token_in_header' === $mode) {
-                $helper->addheader(
-                    'Authorization',
-                    Tokens::HEADER_KEY . ' ' . $token
-                );
+                $helper->addheader('Authorization', "Bearer $token");
             }
 
             // Add the token to the query parameters.
@@ -214,7 +208,7 @@ abstract class TokenAuthTest extends BaseTest
             if (is_null($input['params'])) {
                 $input['params'] = [];
             }
-            $input['params'][Tokens::HEADER_KEY] = $token;
+            $input['params']['Bearer'] = $token;
 
             // Make the request and validate the response.
             $actualBodies[$mode] = parent::requestAndValidateJson(

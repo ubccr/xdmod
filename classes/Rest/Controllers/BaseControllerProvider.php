@@ -747,26 +747,6 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
     }
 
     /**
-     * Attempt to authorize the the provided `$request` via an included API Token.
-     *
-     * @param Request $request
-     * @return \XDUser
-     * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
-     */
-    protected function authenticateToken($request)
-    {
-        $authorizationHeader = null;
-        if (!$request->headers->has('Authorization')) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                Tokens::MISSING_TOKEN_MESSAGE
-            );
-        }
-        $authorizationHeader = $request->headers->get('Authorization');
-        return Tokens::authenticate($authorizationHeader, $request->getPathInfo());
-    }
-
-    /**
      * Attempts to convert the provided $value into an instance of DateTime by using the provided $format. If $value is
      * unable to be converted into a valid DateTime or if warnings are generated during the process it will be filtered
      * and null returned.
