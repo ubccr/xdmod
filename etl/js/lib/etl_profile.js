@@ -875,6 +875,8 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                     var join = col.join;
                     var tableSchema = join.schema;
                     var tableName = join.table;
+                    var primaryKey = join.primaryKey ? join.primaryKey : 'id';
+                    var foreignTableAlias = join.foreignTableAlias ? join.foreignTableAlias : 'jf';
                     var foreignKey = join.foreignKey ? join.foreignKey : key;
                     alias = name;
                     columnName = join.column ? join.column : 'name';
@@ -890,10 +892,8 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                             name: tableName,
                             alias: tableAlias,
                             join: {
-                                // All tables currently have primary key 'id'
-                                // and are joined to the fact table 'jf'.
-                                primaryKey: 'id',
-                                foreignTableAlias: 'jf',
+                                primaryKey: primaryKey,
+                                foreignTableAlias: foreignTableAlias,
                                 foreignKey: foreignKey
                             }
                         });

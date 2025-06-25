@@ -1,0 +1,440 @@
+{
+    "tables": {
+        "service_provider": {
+            "schema": "modw",
+            "name": "serviceprovider",
+            "alias": "sp",
+            "join": {
+                "primaryKey": "organization_id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "resource_organization_id"
+            }
+        },
+        "fos": {
+            "schema": "modw",
+            "name": "fieldofscience_hierarchy",
+            "alias": "fos",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "fos_id"
+            }
+        },
+        "pi": {
+            "schema": "modw",
+            "name": "person",
+            "alias": "pi",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "principalinvestigator_person_id"
+            }
+        },
+        "pi_institution": {
+            "schema": "modw",
+            "name": "organization",
+            "alias": "pii",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "piperson_organization_id"
+            }
+        },
+        "system_account": {
+            "schema": "modw",
+            "name": "systemaccount",
+            "alias": "sa",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "systemaccount_id"
+            }
+        },
+        "user": {
+            "schema": "modw",
+            "name": "person",
+            "alias": "p",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "person_id"
+            }
+        },
+        "user_institution": {
+            "schema": "modw",
+            "name": "organization",
+            "alias": "ui",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "agg",
+                "foreignKey": "person_organization_id"
+            }
+        },
+        "job_task": {
+            "schema": "modw",
+            "name": "job_tasks",
+            "alias": "jt",
+            "join": {
+                "primaryKey": "job_id",
+                "foreignTableAlias": "jl",
+                "foreignKey": "jobid"
+            }
+        },
+        "job_record": {
+            "schema": "modw",
+            "name": "job_records",
+            "alias": "jr",
+            "join": {
+                "primaryKey": "job_record_id",
+                "foreignTableAlias": "jt",
+                "foreignKey": "job_record_id"
+            }
+        },
+        "job_task_resource": {
+            "schema": "modw",
+            "name": "resourcefact",
+            "alias": "rf",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "jt",
+                "foreignKey": "resource_id"
+            }
+        },
+        "job_node_count": {
+            "schema": "modw",
+            "name": "nodecount",
+            "alias": "nc",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "jt",
+                "foreignKey": "node_count"
+            }
+        }
+    },
+    "fields": {
+        "resource_name": {
+            "name": "Resource",
+            "tableAlias": "rf",
+            "column": "name",
+            "group": "Administration",
+            "documentation": "The resource on which the job was run.",
+            "batchExport": true
+        },
+        "service_provider_name": {
+            "name": "Service Provider",
+            "tableAlias": "sp",
+            "column": "long_name",
+            "group": "Administration",
+            "documentation": "The organization of the resource on which the job was run.",
+            "batchExport": true
+        },
+        "resource_time_zone": {
+            "name": "Timezone",
+            "tableAlias": "rf",
+            "column": "timezone",
+            "group": "Administration",
+            "documentation": "The time zone of the resource.",
+            "batchExport": true
+        },
+        "hierarchy_top_level": {
+            "name": "${HIERARCHY_TOP_LEVEL_LABEL}",
+            "tableAlias": "fos",
+            "column": "directorate_description",
+            "group": "Requested Resource",
+            "documentation": "${HIERARCHY_TOP_LEVEL_INFO}",
+            "batchExport": true
+        },
+        "hierarchy_middle_level": {
+            "name": "${HIERARCHY_MIDDLE_LEVEL_LABEL}",
+            "tableAlias": "fos",
+            "column": "parent_description",
+            "group": "Requested Resource",
+            "documentation": "${HIERARCHY_MIDDLE_LEVEL_INFO}",
+            "batchExport": true
+        },
+        "hierarchy_bottom_level": {
+            "name": "${HIERARCHY_BOTTOM_LEVEL_LABEL}",
+            "tableAlias": "fos",
+            "column": "description",
+            "group": "Requested Resource",
+            "documentation": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
+            "batchExport": true
+        },
+        "pi_id": {
+            "name": "Principal Investigator ID",
+            "tableAlias": "pi",
+            "column": "id",
+            "group": "Administration",
+            "documentation": "The numeric identifier assigned by XDMoD to the principal investigator of the project that ran the job.",
+            "batchExport": true
+        },
+        "pi_name": {
+            "name": "Principal Investigator",
+            "tableAlias": "pi",
+            "column": "long_name",
+            "group": "Administration",
+            "documentation": "The name of the principal investigator of the project that ran the job.",
+            "batchExport": true
+        },
+        "pi_institution_id": {
+            "name": "PI Institution ID",
+            "tableAlias": "pii",
+            "column": "id",
+            "group": "Administration",
+            "documentation": "The numeric identifier assigned by XDMoD to the PI's institution.",
+            "batchExport": true
+        },
+        "pi_institution_name": {
+            "name": "PI Institution",
+            "tableAlias": "pii",
+            "column": "name",
+            "group": "Administration",
+            "documentation": "The name of the PI's institution.",
+            "batchExport": true
+        },
+        "system_username": {
+            "name": "System Username",
+            "tableAlias": "sa",
+            "column": "username",
+            "group": "Administration",
+            "visibility": "non-public",
+            "documentation": "The username on the resource of the user who ran the job. May be a UID or string username depending on the resource.",
+            "batchExport": "anonymize"
+        },
+        "user_id": {
+            "name": "User ID",
+            "tableAlias": "p",
+            "column": "id",
+            "group": "Administration",
+            "documentation": "The numeric identifier assigned by XDMoD to the person who ran the job.",
+            "batchExport": true
+        },
+        "user_name": {
+            "name": "User",
+            "tableAlias": "p",
+            "column": "long_name",
+            "group": "Administration",
+            "documentation": "The name of the person who ran the job.",
+            "batchExport": true
+        },
+        "user_institution_id": {
+            "name": "User Institution ID",
+            "tableAlias": "ui",
+            "column": "id",
+            "group": "Administration",
+            "documentation": "The numeric identifier assigned by XDMoD to the user's institution.",
+            "batchExport": true
+        },
+        "user_institution_name": {
+            "name": "User Institution",
+            "tableAlias": "ui",
+            "column": "name",
+            "group": "Administration",
+            "documentation": "The name of the user's institution.",
+            "batchExport": true
+        },
+        "local_job_id": {
+            "name": "Local Job Id",
+            "formula": "IF(jt.local_job_array_index = -1, jt.local_jobid, CONCAT(jt.local_jobid, '[', jt.local_job_array_index, ']'))",
+            "group": "Administration",
+            "documentation": "The unique identifier assigned to the job by the job scheduler.",
+            "batchExport": true
+        },
+        "job_name": {
+            "name": "Name",
+            "tableAlias": "jt",
+            "column": "name",
+            "documentation": "The name of the job as reported by the job scheduler.",
+            "group": "Executable",
+            "batchExport": false
+        },
+        "job_submit_time": {
+            "name": "Submit Time",
+            "tableAlias": "jt",
+            "column": "submit_time_ts",
+            "group": "Timing",
+            "units": "ts",
+            "documentation": "Task submission time",
+            "batchExport": true
+        },
+        "job_start_time": {
+            "name": "Start Time",
+            "tableAlias": "jt",
+            "column": "start_time_ts",
+            "group": "Timing",
+            "units": "ts",
+            "documentation": "The time that the job started running.",
+            "batchExport": true
+        },
+        "job_start_time": {
+            "name": "Start Time",
+            "tableAlias": "jt",
+            "column": "start_time_ts",
+            "group": "Timing",
+            "units": "ts",
+            "documentation": "The time that the job started running.",
+            "batchExport": true
+        },
+        "job_end_time": {
+            "name": "End Time",
+            "tableAlias": "jt",
+            "column": "end_time_ts",
+            "units": "ts",
+            "group": "Timing",
+            "documentation": "The time that the job ended.",
+            "batchExport": true
+        },
+        "job_eligible_time": {
+            "name": "Eligible Time",
+            "tableAlias": "jt",
+            "column": "eligible_time_ts",
+            "units": "ts",
+            "group": "Timing",
+            "documentation": "The time that the job was eligible for scheduling by the resource manager.",
+            "batchExport": true
+        },
+        "job_nodes": {
+            "name": "Nodes",
+            "tableAlias": "nc",
+            "column": "nodes",
+            "group": "Allocated Resource",
+            "documentation": "The number of nodes that were assigned to the job.",
+            "batchExport": true
+        },
+        "job_cores": {
+            "name": "Cores",
+            "tableAlias": "jt",
+            "column": "processor_count",
+            "group": "Allocated Resource",
+            "documentation": "The number of cores that were assigned to the job.",
+            "batchExport": true
+        },
+        "job_gpus": {
+            "name": "GPUs",
+            "tableAlias": "jt",
+            "column": "gpu_count",
+            "group": "Allocated Resource",
+            "documentation": "The number of GPUs that were assigned to the job.",
+            "batchExport": true
+        },
+        "job_memory_used": {
+            "name": "Memory Used",
+            "tableAlias": "jt",
+            "column": "memory_kb",
+            "group": "Allocated Resource",
+            "units": "kilobyte",
+            "documentation": "Memory consumed as reported by the resource manager.",
+            "batchExport": true
+        },
+        "job_wall_time": {
+            "name": "Wall Time",
+            "tableAlias": "jt",
+            "column": "wallduration",
+            "group": "Timing",
+            "units": "seconds",
+            "documentation": "Overall job duration.",
+            "batchExport": true
+        },
+        "job_wait_time": {
+            "name": "Wait Time",
+            "tableAlias": "jt",
+            "column": "waitduration",
+            "group": "Timing",
+            "units": "seconds",
+            "documentation": "Time the job waited in the queue",
+            "batchExport": true
+        },
+        "job_core_time": {
+            "name": "Core Time",
+            "tableAlias": "jt",
+            "column": "cpu_time",
+            "group": "Allocated Resource",
+            "units": "seconds",
+            "documentation": "The amount of CPU core time (Core Count * Wall Time)",
+            "batchExport": true
+        },
+        "job_gpu_time": {
+            "name": "GPU Time",
+            "tableAlias": "jt",
+            "column": "gpu_time",
+            "group": "Allocated Resource",
+            "units": "seconds",
+            "documentation": "The amount of GPU time (GPU Count * Wall Time)",
+            "batchExport": true
+        },
+        "job_unix_group_name": {
+            "name": "UNIX group name",
+            "tableAlias": "jt",
+            "column": "group_name",
+            "group": "Administration",
+            "documentation": "The name of the group that ran the job.",
+            "batchExport": false
+        },
+        "job_unix_group_gid": {
+            "name": "UNIX group GID",
+            "tableAlias": "jt",
+            "column": "gid_number",
+            "group": "Administration",
+            "documentation": "The GID of the group that ran the job.",
+            "batchExport": false
+        },
+        "job_unix_uid": {
+            "name": "UNIX UID",
+            "tableAlias": "jt",
+            "column": "uid_number",
+            "group": "Administration",
+            "documentation": "The UID of the user that ran the job.",
+            "batchExport": false
+        },
+        "job_exit_code": {
+            "name": "Exit Code",
+            "tableAlias": "jt",
+            "column": "exit_code",
+            "group": "Executable",
+            "documentation": "The code that the job exited with.",
+            "batchExport": true
+        },
+        "job_exit_state": {
+            "name": "Exit State",
+            "tableAlias": "jt",
+            "column": "exit_state",
+            "group": "Executable",
+            "documentation": "The state of the job when it completed.",
+            "batchExport": true
+        },
+        "job_requested_cores": {
+            "name": "Requested Cores",
+            "tableAlias": "jt",
+            "column": "cpu_req",
+            "group": "Requested Resource",
+            "documentation": "The number of CPUs required by the job.",
+            "batchExport": true
+        },
+        "job_requested_memory": {
+            "name": "Requested memory",
+            "tableAlias": "jt",
+            "column": "mem_req",
+            "group": "Requested Resource",
+            "units": "bytes",
+            "documentation": "The amount of memory required by the job.",
+            "batchExport": true
+        },
+        "job_requested_wall_time": {
+            "name": "Requested Wall Time",
+            "tableAlias": "jt",
+            "column": "timelimit",
+            "group": "Requested Resource",
+            "units": "seconds",
+            "documentation": "The time limit of the job.",
+            "batchExport": true
+        },
+        "job_queue": {
+            "name": "Queue",
+            "tableAlias": "jr",
+            "column": "queue",
+            "group": "Requested Resource",
+            "documentation": "The name of the queue to which the job was submitted.",
+            "batchExport": true
+        }
+    }
+}

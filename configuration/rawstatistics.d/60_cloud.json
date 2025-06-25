@@ -1,307 +1,220 @@
 {
     "+realms": [
-      {
-        "name": "Cloud",
-        "display": "Cloud"
-      }
+        {
+          "name": "Cloud",
+          "display": "Cloud"
+        }
     ],
     "Cloud": {
         "tables": [
-          {
-            "schema": "modw_cloud",
-            "name": "cloudfact_by_day_sessionlist",
-            "alias": "sl",
-            "join": {
-                "primaryKey": "agg_id",
-                "foreignTableAlias": "agg",
-                "foreignKey": "id"
-            }
-          },
-          {
-            "schema": "modw_cloud",
-            "name": "session_records",
-            "alias": "sr",
-            "join": {
-                "primaryKey": "session_id",
-                "foreignTableAlias": "sl",
-                "foreignKey": "session_id"
-            }
-          },
-          {
+            {
               "schema": "modw_cloud",
-              "name": "instance",
-              "alias": "i",
+              "name": "cloudfact_by_day_sessionlist",
+              "alias": "sl",
               "join": {
-                  "primaryKey": "instance_id",
-                  "foreignTableAlias": "sr",
-                  "foreignKey": "instance_id"
+                  "primaryKey": "agg_id",
+                  "foreignTableAlias": "agg",
+                  "foreignKey": "id"
               }
-          },
-          {
-              "schema": "modw",
-              "name": "resourcefact",
-              "alias": "rf",
-              "join": {
-                  "primaryKey": "id",
-                  "foreignTableAlias": "sr",
-                  "foreignKey": "resource_id"
-              }
-          },
-          {
-            "schema": "modw",
-            "name": "serviceprovider",
-            "alias": "sp",
-            "join": {
-                "primaryKey": "organization_id",
-                "foreignTableAlias": "sr",
-                "foreignKey": "service_provider"
-            }
-          },
-          {
-
-              "schema": "modw",
-              "name": "systemaccount",
-              "alias": "sa",
-              "join": {
-                  "primaryKey": "id",
-                  "foreignTableAlias": "sr",
-                  "foreignKey": "systemaccount_id"
-              }
-          },
-          {
-              "schema": "modw",
-              "name": "person",
-              "alias": "p",
-              "join": {
-                  "primaryKey": "id",
-                  "foreignTableAlias": "sr",
-                  "foreignKey": "person_id"
-              }
-          },
-          {
-            "schema": "modw",
-            "name": "organization",
-            "alias": "person_org",
-            "join": {
-                "primaryKey": "id",
-                "foreignTableAlias": "p",
-                "foreignKey": "organization_id"
-            }
-          },
-          {
-              "schema": "modw",
-              "name": "fieldofscience_hierarchy",
-              "alias": "fos",
-              "join": {
-                  "primaryKey": "id",
-                  "foreignTableAlias": "sr",
-                  "foreignKey": "fos_id"
-              }
-          },
-          {
+            },
+            {
               "schema": "modw_cloud",
-              "name": "account",
-              "alias": "a",
+              "name": "session_records",
+              "alias": "sr",
               "join": {
-                  "primaryKey": "account_id",
-                  "foreignTableAlias": "sr",
-                  "foreignKey": "account_id"
+                  "primaryKey": "session_id",
+                  "foreignTableAlias": "sl",
+                  "foreignKey": "session_id"
               }
-          },
-          {
+            },
+            {
+                "schema": "modw_cloud",
+                "name": "instance",
+                "alias": "i",
+                "join": {
+                    "primaryKey": "instance_id",
+                    "foreignTableAlias": "sr",
+                    "foreignKey": "instance_id"
+                }
+            },
+            {
+                "schema": "modw",
+                "name": "resourcefact",
+                "alias": "rf",
+                "join": {
+                    "primaryKey": "id",
+                    "foreignTableAlias": "sr",
+                    "foreignKey": "resource_id"
+                }
+            },
+            {
               "schema": "modw",
-              "name": "piperson",
-              "alias": "pi",
+              "name": "serviceprovider",
+              "alias": "sp",
               "join": {
-                  "primaryKey": "person_id",
+                  "primaryKey": "organization_id",
                   "foreignTableAlias": "sr",
-                  "foreignKey": "principalinvestigator_person_id"
+                  "foreignKey": "service_provider"
               }
-          },
-          {
-            "schema": "modw",
-            "name": "organization",
-            "alias": "pi_org",
-            "join": {
-                "primaryKey": "id",
-                "foreignTableAlias": "pi",
-                "foreignKey": "organization_id"
-            }
-          },
-          {
-              "schema": "modw_cloud",
-              "name": "domains",
-              "alias": "d",
-              "join": {
-                  "primaryKey": "id",
-                  "foreignTableAlias": "sr",
-                  "foreignKey": "domain_id"
-              }
-          },
-          {
-              "schema": "modw_cloud",
-              "name": "host",
-              "alias": "h",
-              "join": {
-                  "primaryKey": "host_id",
-                  "foreignTableAlias": "sr",
-                  "foreignKey": "host_id"
-              }
-          }
+            },
+            {
+                "schema": "modw_cloud",
+                "name": "account",
+                "alias": "a",
+                "join": {
+                    "primaryKey": "account_id",
+                    "foreignTableAlias": "sr",
+                    "foreignKey": "account_id"
+                }
+            },
+            {
+                "schema": "modw_cloud",
+                "name": "domains",
+                "alias": "d",
+                "join": {
+                    "primaryKey": "id",
+                    "foreignTableAlias": "sr",
+                    "foreignKey": "domain_id"
+                }
+            },
+            {
+                "schema": "modw_cloud",
+                "name": "host",
+                "alias": "h",
+                "join": {
+                    "primaryKey": "host_id",
+                    "foreignTableAlias": "sr",
+                    "foreignKey": "host_id"
+                }
+            },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/fos" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/pi" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/pi_institution" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/system_account" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/user" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/tables/user_institution" }
         ],
         "fields": [
-          {
-              "name": "Instance ID",
-              "tableAlias": "i",
-              "column": "provider_identifier",
-              "group": "Administration",
-              "documentation": "The UUID of the VM",
-              "batchExport": true
-          },
-          {
-              "name": "Resource",
-              "tableAlias": "rf",
-              "column": "name",
-              "group": "Administration",
-              "documentation": "The resource that ran the job.",
-              "batchExport": true
-          },
-          {
-            "name": "Service Provider",
-            "tableAlias": "sp",
-            "column": "long_name",
-            "group": "Administration",
-            "documentation": "The organization of the resource that ran the job.",
-            "batchExport": true
-        },
-          {
-              "name": "System Username",
-              "tableAlias": "sa",
-              "column": "username",
-              "group": "Administration",
-              "visibility": "non-public",
-              "documentation": "The username on the resource of the user that ran the job. May be a UID or string username depending on the resource.",
-              "batchExport": "anonymize"
-          },
-          {
-              "name": "User",
-              "tableAlias": "p",
-              "column": "long_name",
-              "group": "Administration",
-              "documentation": "The name of the job owner.",
-              "batchExport": true
-          },
-          {
-            "name": "User Institution",
-            "tableAlias": "person_org",
-            "column": "name",
-            "group": "Administration",
-            "documentation": "The institution of the VM owner.",
-            "batchExport": true
+            {
+                "name": "Instance ID",
+                "tableAlias": "i",
+                "column": "provider_identifier",
+                "group": "Administration",
+                "documentation": "The UUID of the VM",
+                "batchExport": true
             },
-          {
-              "name": "${HIERARCHY_TOP_LEVEL_LABEL}",
-              "tableAlias": "fos",
-              "column": "directorate_description",
-              "group": "Requested Resource",
-              "documentation": "${HIERARCHY_TOP_LEVEL_INFO}",
-              "batchExport": true
-          },
-          {
-              "name": "${HIERARCHY_MIDDLE_LEVEL_LABEL}",
-              "tableAlias": "fos",
-              "column": "parent_description",
-              "group": "Requested Resource",
-              "documentation": "${HIERARCHY_MIDDLE_LEVEL_INFO}",
-              "batchExport": true
-          },
-          {
-              "name": "${HIERARCHY_BOTTOM_LEVEL_LABEL}",
-              "tableAlias": "fos",
-              "column": "description",
-              "group": "Requested Resource",
-              "documentation": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
-              "batchExport": true
-          },
-          {
-              "name": "Project",
-              "tableAlias": "a",
-              "column": "display",
-              "group": "Administration",
-              "documentation": "The name of the project the VM is assigned to.",
-              "batchExport": true
-          },
-          {
-              "name": "Principal Investigator",
-              "tableAlias": "pi",
-              "column": "long_name",
-              "group": "Administration",
-              "documentation": "The name of the PI assigned to the VM.",
-              "batchExport": true
-          },
-          {
-            "name": "PI Institution",
-            "tableAlias": "pi_org",
-            "column": "name",
-            "group": "Administration",
-            "documentation": "The institution of the PI assigned to the VM.",
-            "batchExport": true
-          },
-          {
-              "name": "Instance Type",
-              "tableAlias": "sr",
-              "column": "instance_type",
-              "group": "Administration",
-              "documentation": "The instance type for the VM.",
-              "batchExport": true
-          },
-          {
-              "name": "Number of Cores",
-              "tableAlias": "sr",
-              "column": "num_cores",
-              "group": "Administration",
-              "documentation": "The amount of cores a VM has.",
-              "batchExport": true
-          },
-          {
-              "name": "Memory(MB)",
-              "tableAlias": "sr",
-              "column": "memory_mb",
-              "group": "Administration",
-              "documentation": "The amount of memory a VM has in MB.",
-              "batchExport": true
-          },
-          {
-              "name": "Root Volume Size",
-              "tableAlias": "sr",
-              "column": "disk_gb",
-              "group": "Administration",
-              "documentation": "The size of the root volume for the VM.",
-              "batchExport": true
-          },
-          {
-              "name": "Domain",
-              "tableAlias": "d",
-              "column": "name",
-              "group": "Administration",
-              "documentation": "Domain the VM was created in. Applicable to Open Stack VM's only.",
-              "batchExport": true
-          },
-          {
-              "name": "Host",
-              "tableAlias": "h",
-              "column": "hostname",
-              "group": "Administration",
-              "documentation": "The name of the host the VM resides on.",
-              "batchExport": true
-          },
-          {
-              "name": "Start Date",
-              "formula" : "(SELECT MIN(sr2.start_time) FROM modw_cloud.session_records AS sr2 WHERE sr2.instance_id = sr.instance_id)",
-              "group": "Administration",
-              "documentation": "The start date of a VM.",
-              "batchExport": true
-          }
+            {
+                "$ref-with-overwrite": "rawstatistics.d/ref/rawstatistics-common.json#/fields/resource_name",
+                "$overwrite": {
+                    "documentation": "The resource on which the VM was run."
+                }
+            },
+            {
+                "$ref-with-overwrite": "rawstatistics.d/ref/rawstatistics-common.json#/fields/service_provider_name",
+                "$overwrite": {
+                    "documentation": "The organization of the resource on which the VM was run."
+                }
+            },
+            {
+                "$ref-with-overwrite": "rawstatistics.d/ref/rawstatistics-common.json#/fields/system_username",
+                "$overwrite": {
+                    "documentation": "The username on the resource of the user who ran the VM. May be a UID or string username depending on the resource."
+                }
+            },
+            {
+                "$ref-with-overwrite": "rawstatistics.d/ref/rawstatistics-common.json#/fields/user_id",
+                "$overwrite": {
+                    "documentation": "The numeric identifier assigned by XDMoD to the person who ran the VM."
+                }
+            },
+            {
+                "$ref-with-overwrite": "rawstatistics.d/ref/rawstatistics-common.json#/fields/user_name",
+                "$overwrite": {
+                    "documentation": "The name of the person who ran the VM."
+                }
+            },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/user_institution_id" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/user_institution_name" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/hierarchy_top_level" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/hierarchy_middle_level" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/hierarchy_bottom_level" },
+            {
+                "name": "Project",
+                "tableAlias": "a",
+                "column": "display",
+                "group": "Administration",
+                "documentation": "The name of the project the VM is assigned to.",
+                "batchExport": true
+            },
+            {
+                "$ref-with-overwrite": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_id",
+                "$overwrite": {
+                    "documentation": "The numeric identifier assigned by XDMoD to the principal investigator of the project that ran the VM."
+                }
+            },
+            {
+                "$ref-with-overwrite": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_name",
+                "$overwrite": {
+                    "documentation": "The name of the principal investigator of the project that ran the VM."
+                }
+            },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_institution_id" },
+            { "$ref": "rawstatistics.d/ref/rawstatistics-common.json#/fields/pi_institution_name" },
+            {
+                "name": "Instance Type",
+                "tableAlias": "sr",
+                "column": "instance_type",
+                "group": "Administration",
+                "documentation": "The instance type for the VM.",
+                "batchExport": true
+            },
+            {
+                "name": "Number of Cores",
+                "tableAlias": "sr",
+                "column": "num_cores",
+                "group": "Administration",
+                "documentation": "The amount of cores a VM has.",
+                "batchExport": true
+            },
+            {
+                "name": "Memory(MB)",
+                "tableAlias": "sr",
+                "column": "memory_mb",
+                "group": "Administration",
+                "documentation": "The amount of memory a VM has in MB.",
+                "batchExport": true
+            },
+            {
+                "name": "Root Volume Size",
+                "tableAlias": "sr",
+                "column": "disk_gb",
+                "group": "Administration",
+                "documentation": "The size of the root volume for the VM.",
+                "batchExport": true
+            },
+            {
+                "name": "Domain",
+                "tableAlias": "d",
+                "column": "name",
+                "group": "Administration",
+                "documentation": "Domain the VM was created in. Applicable to Open Stack VM's only.",
+                "batchExport": true
+            },
+            {
+                "name": "Host",
+                "tableAlias": "h",
+                "column": "hostname",
+                "group": "Administration",
+                "documentation": "The name of the host the VM resides on.",
+                "batchExport": true
+            },
+            {
+                "name": "Start Date",
+                "formula" : "(SELECT MIN(sr2.start_time) FROM modw_cloud.session_records AS sr2 WHERE sr2.instance_id = sr.instance_id)",
+                "group": "Administration",
+                "documentation": "The start date of a VM.",
+                "batchExport": true
+            }
         ]
     }
 }
