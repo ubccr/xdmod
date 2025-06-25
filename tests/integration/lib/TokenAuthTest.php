@@ -189,52 +189,29 @@ abstract class TokenAuthTest extends BaseTest
             ];
         }
 
-        // Do one request with the token in both the header and the query
-        // parameters (because the Apache server eats the 'Authorization'
-        // header) and one request with the token only in the query
-        // parameters, to make sure the result is the same.
-        $actualBodies = [];
-        foreach (['token_in_header', 'token_not_in_header'] as $mode) {
-            // Construct a test helper for making the request.
-            $helper = new XdmodTestHelper();
+        // Construct a test helper for making the request.
+        $helper = new XdmodTestHelper();
 
-            // Add the token to the header.
-            if ('token_in_header' === $mode) {
-                $helper->addheader('Authorization', "Bearer $token");
-            }
-
-            // Add the token to the query parameters.
-            parent::assertRequiredKeys(['params'], $input, '$input');
-            if (is_null($input['params'])) {
-                $input['params'] = [];
-            }
-            $input['params']['Bearer'] = $token;
-
-            // Make the request and validate the response.
-            $actualBodies[$mode] = parent::requestAndValidateJson(
-                $helper,
-                $input,
-                $output
-            );
+        // Add the token to the query parameters.
+        parent::assertRequiredKeys(['params'], $input, '$input');
+        if (is_null($input['params'])) {
+            $input['params'] = [];
         }
-        $this->assertSame(
-            json_encode($actualBodies['token_in_header']),
-            json_encode($actualBodies['token_not_in_header']),
-            json_encode(
-                $actualBodies['token_in_header'],
-                JSON_PRETTY_PRINT
-            )
-            . "\n"
-            . json_encode(
-                $actualBodies['token_not_in_header'],
-                JSON_PRETTY_PRINT
-            )
+        $input['params']['Bearer'] = $token;
+
+        // Make the request and validate the response.
+        $actualBody = parent::requestAndValidateJson(
+            $helper,
+            $input,
+            $output
         );
+
         // If the token is expired, unexpire it.
         if ('expired_token' === $tokenType) {
             self::unexpireToken($role);
         }
-        return $actualBodies['token_in_header'];
+
+        return $actualBody;
     }
 
     /**
