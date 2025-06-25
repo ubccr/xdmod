@@ -3,7 +3,6 @@
 namespace Rest\Controllers;
 
 use DateTime;
-use Models\Services\Tokens;
 use Rest\Utilities\Authentication;
 use Silex\Application;
 use Silex\ControllerCollection;

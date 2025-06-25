@@ -3,9 +3,6 @@
 namespace Models\Services;
 
 use CCR\Log;
-use Exception;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use XDUser;
 
@@ -27,11 +24,11 @@ class Tokens
     /**
      * Attempt to authenticate a user via an API token included in a given request.
      *
-     * @param Request $request
+     * @param \Symfony\Component\HttpFoundation\Request $request
      *
      * @return XDUser the succesfully authenticated user.
      *
-     * @throws Exception                 if unable to retrieve a database connection.
+     * @throws \Exception                if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
     public static function authenticate($request)
@@ -59,7 +56,7 @@ class Tokens
      *
      * @return XDUser the successfully authenticated user.
      *
-     * @throws Exception                 if unable to retrieve a database connection.
+     * @throws \Exception                if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
     public static function authenticateController()
@@ -94,7 +91,7 @@ class Tokens
      *
      * @return XDUser the successfully authenticated user.
      *
-     * @throws Exception                 if unable to retrieve a database connection.
+     * @throws \Exception                if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
     private static function authenticateToken($rawToken, $endpoint = null)
