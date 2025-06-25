@@ -170,10 +170,10 @@ SQL;
      */
     public static function getTokenFromHeader($header)
     {
-        if (0 !== strpos($authorizationHeader, 'Bearer ')) {
+        if (0 !== strpos($header, 'Bearer ')) {
             return null;
         }
-        return substr($authorizationHeader, strlen('Bearer') + 1);
+        return substr($header, strlen('Bearer') + 1);
     }
 
     /**
