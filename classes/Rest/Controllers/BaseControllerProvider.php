@@ -3,7 +3,6 @@
 namespace Rest\Controllers;
 
 use DateTime;
-use Models\Services\Tokens;
 use Rest\Utilities\Authentication;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -744,18 +743,6 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         }
 
         return $date;
-    }
-
-    /**
-     * Attempt to authorize the the provided `$request` via an included API Token.
-     *
-     * @param Request $request
-     * @return \XDUser
-     * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
-     */
-    protected function authenticateToken($request)
-    {
-        return Tokens::authenticateToken($request);
     }
 
     /**

@@ -10,6 +10,7 @@ use DataWarehouse\Export\QueryHandler;
 use DataWarehouse\Export\RealmManager;
 use DateTime;
 use Exception;
+use Models\Services\Tokens;
 use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -96,7 +97,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         // We need to wrap the token authentication because we want the token authentication to be optional, proceeding
         // to the normal session authentication if a token is not provided.
         try {
-            $user = parent::authenticateToken($request);
+            $user = Tokens::authenticate($request);
         } catch (Exception $e) {
             // NOOP
         }
