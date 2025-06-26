@@ -98,7 +98,7 @@ class Tokens
      * @throws \Exception                if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    public static function authenticateToken($rawToken, $endpoint = null)
+    private static function authenticateToken($rawToken, $endpoint = null)
     {
         // Determine token type
         $tokenParts = explode(self::DELIMITER, $rawToken);
