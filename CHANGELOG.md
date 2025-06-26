@@ -59,8 +59,10 @@
 - Maintenance / Code Quality
     - Update Silex and SimpleSAMLphp library dependencies to address security
       vulnerabilities.
-    - Remove authentication via API token in GET/POST parameters
-      ([\#2037](https://github.com/ubccr/xdmod/pull/2037)).
+    - Refactor API token authentication code and update error messages to be
+      consistent
+      ([\#2037](https://github.com/ubccr/xdmod/pull/2037),
+      [\#2055](https://github.com/ubccr/xdmod/pull/2055)).
 
 ## 2025-03-17 v11.0.1
 
