@@ -3,8 +3,6 @@
 namespace Models\Services;
 
 use CCR\Log;
-use Exception;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use XDUser;
 
@@ -15,11 +13,6 @@ use XDUser;
 class Tokens
 {
     /**
-     * This is the key that will be used when adding an API Token to a request's headers.
-     */
-    const HEADER_KEY = 'Bearer';
-
-    /**
      * This is the delimiter that's used when returning a newly created API token to the user.
      */
     const DELIMITER = '.';
@@ -29,31 +22,83 @@ class Tokens
     const EXPIRED_TOKEN_MESSAGE = 'API token has expired.';
 
     /**
-     * Perform token authentication given the value of an Authorization header.
+     * Attempt to authenticate a user via an API token included in a given request.
      *
-     * @param string $authorizationHeader
-     * @param string | null $endpoint the endpoint being requested, used only for logging.
+     * @param \Symfony\Component\HttpFoundation\Request $request
      *
-     * @return XDUser the authenticated user.
+     * @return XDUser the succesfully authenticated user.
      *
-     * @throws Exception                 if unable to retrieve a database connection.
+     * @throws \Exception                if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    public static function authenticate($authorizationHeader, $endpoint = null)
+    public static function authenticate($request)
     {
-        if (0 !== strpos($authorizationHeader, Tokens::HEADER_KEY . ' ')) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                Tokens::MISSING_TOKEN_MESSAGE
-            );
+        $token = null;
+        // Try to extract the token from the header.
+        if ($request->headers->has('Authorization')) {
+            $token = self::getTokenFromHeader($request->headers->get('Authorization'));
         }
-        $rawToken = substr($authorizationHeader, strlen(Tokens::HEADER_KEY) + 1);
+        // If the token is not in the header, then fall back to extracting from
+        // the GET/POST params.
+        if (empty($token)) {
+            $token = $request->get('Bearer');
+        }
+        // If we still haven't found a token, then authentication fails.
+        if (empty($token)) {
+            self::throwUnauthorized(self::MISSING_TOKEN_MESSAGE);
+        }
+        return self::authenticateToken($token, $request->getPathInfo());
+    }
+
+    /**
+     * This function is a stop-gap that is meant to be used to protect controller endpoints until they can be moved to
+     * the new REST stack.
+     *
+     * @return XDUser the successfully authenticated user.
+     *
+     * @throws \Exception                if unable to retrieve a database connection.
+     * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
+     */
+    public static function authenticateController()
+    {
+        $token = null;
+        // Try to extract the token from the header.
+        $headers = getallheaders();
+        if (!empty($headers['Authorization'])) {
+            $token = self::getTokenFromHeader($headers['Authorization']);
+        }
+        // If the token is not in the header, then fall back to extracting from
+        // the GET/POST params.
+        if (empty($token)) {
+            if (isset($_GET['Bearer']) && is_string($_GET['Bearer'])) {
+                $token = $_GET['Bearer'];
+            } elseif (isset($_POST['Bearer']) && is_string($_POST['Bearer'])) {
+                $token = $_POST['Bearer'];
+            }
+        }
+        // If we still haven't found a token, then authentication fails.
+        if (empty($token)) {
+            self::throwUnauthorized(self::MISSING_TOKEN_MESSAGE);
+        }
+        return self::authenticateToken($token);
+    }
+
+    /**
+     * Perform authentication given a token.
+     *
+     * @param string $rawToken
+     * @param string | null $endpoint the endpoint being requested, used only for logging.
+     *
+     * @return XDUser the successfully authenticated user.
+     *
+     * @throws \Exception                if unable to retrieve a database connection.
+     * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
+     */
+    private static function authenticateToken($rawToken, $endpoint = null)
+    {
         $delimPosition = strpos($rawToken, Tokens::DELIMITER);
         if (false === $delimPosition) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                Tokens::INVALID_TOKEN_MESSAGE
-            );
+            self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
         $userId = substr($rawToken, 0, $delimPosition);
         $token = substr($rawToken, $delimPosition + 1);
@@ -72,10 +117,7 @@ SQL;
         $row = $db->query($query, array(':user_id' => $userId));
 
         if (count($row) === 0) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                Tokens::INVALID_TOKEN_MESSAGE
-            );
+            self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
 
         $expectedToken = $row[0]['token'];
@@ -86,18 +128,12 @@ SQL;
         $now = new \DateTime();
         $expires = new \DateTime($expiresOn);
         if ($expires < $now) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                Tokens::EXPIRED_TOKEN_MESSAGE
-            );
+            self::throwUnauthorized(self::EXPIRED_TOKEN_MESSAGE);
         }
 
         // finally check that the provided token matches its stored hash.
         if (!password_verify($token, $expectedToken)) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                Tokens::INVALID_TOKEN_MESSAGE
-            );
+            self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
 
         // Log the request so we can count it in our reporting of usage of the
@@ -119,28 +155,33 @@ SQL;
             . $_SERVER['HTTP_USER_AGENT']
         );
 
-        // and if we've made it this far we can safely return the requested Users data.
+        // and if we've made it this far we can safely return the requested user's data.
         return XDUser::getUserByID($dbUserId);
     }
 
     /**
-     * This function is a stop-gap that is meant to be used to protect controller endpoints until they can be moved to
-     * the new REST stack.
+     * Extract the bearer token from an authorization header string.
      *
-     * @return XDUser the authenticated user.
-     *
-     * @throws Exception                 if unable to retrieve a database connection.
-     * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
+     * @param string $header
+     * @return string | null the token if the header has the 'Bearer' key, null otherwise.
      */
-    public static function authenticateToken()
+    public static function getTokenFromHeader($header)
     {
-        $headers = getallheaders();
-        if (empty($headers['Authorization'])) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                Tokens::MISSING_TOKEN_MESSAGE
-            );
+        if (0 !== strpos($header, 'Bearer ')) {
+            return null;
         }
-        return Tokens::authenticate($headers['Authorization']);
+        return substr($header, strlen('Bearer') + 1);
+    }
+
+    /**
+     * Throw a 401 Unauthorized exception with the given message and indicating
+     * that a Bearer token should be used for authentication.
+     *
+     * @param string $message
+     * @throws UnauthorizedHttpException
+     */
+    public static function throwUnauthorized($message)
+    {
+        throw new UnauthorizedHttpException('Bearer', $message);
     }
 }
