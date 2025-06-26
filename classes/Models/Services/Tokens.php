@@ -3,7 +3,6 @@
 namespace Models\Services;
 
 use CCR\Log;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 use Models\Services\JsonWebToken;
