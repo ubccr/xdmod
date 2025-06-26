@@ -147,9 +147,9 @@ XDMoD.GlobalToolbar.JupyterLab = {
     iconCls: 'btn_jupyterlab',
     id: 'global-toolbar-jupyterlab',
     tooltip: 'Launch JupyterLab.',
-    handler: function () {
+    handler() {
         CCR.xdmod.initJupyterLab();
-    } //handler
+    }
 
 }; //XDMoD.GlobalToolbar.JupyterLab
 // -------------------------------------------------

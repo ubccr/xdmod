@@ -9,7 +9,7 @@ use Firebase\JWT\Key;
 
 class JsonWebToken
 {
-    const signingAlgorithm = 'RS256';
+    const SIGNING_ALGORITHM = 'RS256';
 
     private static $xdmodPrivateKey = null;
     private static $jupyterhubPublicKey = null;
@@ -35,7 +35,7 @@ class JsonWebToken
                 'sub' => $subject
             ],
             self::$xdmodPrivateKey,
-            self::signingAlgorithm
+            self::SIGNING_ALGORITHM
         );
         return [$jwt, $expiration];
     }
@@ -52,7 +52,7 @@ class JsonWebToken
                 . 'jupyterhub-public.pem'
             );
         }
-        $secretKey = new Key(self::$jupyterhubPublicKey, self::signingAlgorithm);
+        $secretKey = new Key(self::$jupyterhubPublicKey, self::SIGNING_ALGORITHM);
         return JWT::decode($jwt, $secretKey);
     }
 }
