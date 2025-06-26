@@ -6721,6 +6721,18 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             } else {
                 duration = 'Previous Month';
             }
+            //get the distance from start and end date and determines how to display x values
+            let durationDist = Number(config.end_date.slice(0,4)) - Number(config.start_date.slice(0, 4))
+            let xValueLabels
+            if (durationDist < 1 || config.aggregation_unit === 'Day') {
+                xValueLabels = ``
+            } else if (durationDist < 10 || config.aggregation_unit === 'Month') {
+                xValueLabels = `xaxis_tickformat = '%b %Y'`
+            } else if (durationDist >= 10 || config.aggregation_unit === 'Quarter'){
+                xValueLabels = `xaxis_tickformat = 'Q%q %Y'`
+            } else if (config.aggregation_unit === 'Year') {
+                xValueLabels = `xaxis_tickformat = '%Y'`
+            }
             const dataType = config.timeseries ? 'timeseries' : 'aggregate';
             const aggregationUnit = config.aggregation_unit || 'Auto';
             const swapXY = config.swap_xy;
@@ -6742,30 +6754,58 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     subTitle += `${id}: ${values.replace(/'/g, '')}`;
                 }
             }
-            let dataCalls = `
-# Call to Data Analytics Framework requesting data \n
+            let dataCalls = 
+`# Call to Data Analytics Framework requesting data \n
 with dw:`;
             let plotChart;
             (config.data_series.total == 1) ? plotChart = '' : plotChart = 'plot = go.Figure()\n';
             //variable for code for code at the end of last cell (updates layout of created charts)
-            let updateLayout = 'plot.update_layout(\n'
+            let updateLayout = '\n\n# Format and label the axes\nplot.update_layout('
             let isSpline;
-            let dataSetIndex = 0
             //check if multiple realms / metrics
             let multipleRealms = false
             let multipleMetrics = false
             let compRealm = config.data_series.data[0]['realm']
-            let compMetric = config.data_series.data[0]['metric']
+            let compMetric = this.realms[config.data_series.data[0]['realm']]['metrics'][config.data_series.data[0]['metric']]['text']
             for (let i = 0; i < config.data_series.total; i += 1) {
                 if (config.data_series.data[i]['realm'] != compRealm) {
                     multipleRealms = true
                 }
-                if (config.data_series.data[i]['metric'] != compMetric) [
+                if (this.realms[config.data_series.data[i]['realm']]['metrics'][config.data_series.data[i]['metric']]['text'] != compMetric) [
                     multipleMetrics = true
                 ]                
             }
-            let metricsList = []
+            // code for renaming columns if multiple metrics or realms
+            renameColsCode = (i, realm, dimension) => {
+                let retval = '';
+                if (multipleMetrics && multipleRealms) {
+                    retval = 
+   `\n# Rename column names to specify Realm and/or Metric
+    newColNames = {}
+    for col in data_${i}.columns :
+        newColNames[col] = '${(realm === 'ResourceSpecifications') ? 'Resource Specifications' : realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
+    data_${i} = data_${i}.rename(columns=newColNames)`
+                } else if (multipleMetrics) {
+                    retval = 
+    `\n# Rename column names to specify Realm and/or Metric
+    newColNames = {}
+    for col in data_${i}.columns :
+        newColNames[col] = ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
+    data_${i} = data_${i}.rename(columns=newColNames)`
+                } else if (multipleRealms) {
+                    retval = 
+    `\n# Rename column names to specify Realm and/or Metric
+    newColNames = {}
+    for col in data_${i}.columns :
+        newColNames[col] = '${(realm === 'ResourceSpecifications') ? 'Resource Specifications' : realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'}
+    data_${i} = data_${i}.rename(columns=newColNames)`
+                }
+                return retval;
+            };
+            //side of y label switches after each axes plotted
             currSide = 'left'
+            //metrics list used to keep track of which metrics are used so that if the same metric is used more than once, we combine the dataset with one previously fetched that has the same metric
+            let metricsList = {}
             //loop through all datasets and produce the proper code
             for (let i = 0; i < config.data_series.total; i += 1) {
                 const {
@@ -6791,6 +6831,31 @@ with dw:`;
                     graphType = 'area';
                     lineShape = "\nline_shape='spline',";
                 }
+                // Checks if metric used in previous dataset; if not, get added to array for future reference
+                let metric_text = this.realms[realm]['metrics'][metric]['text']
+                if (!Object.keys(metricsList).includes(metric_text)) {
+                    metricsList[metric_text] = i
+                } else {
+                    // if metric used in previous dataseries, combine it with that dataseries and move on
+                    dataCalls += `
+    \n\n# Fetch data ${i}
+    data_${i} = dw.get_data(
+        duration=('${duration}'),
+        realm='${realm}',
+        metric='${metric}',
+        dimension='${dimension}',
+        filters={${filters}},
+        dataset_type='${dataType}',
+        aggregation_unit='${aggregationUnit}',
+    )
+    \n# Set data ${i}'s metric label
+    label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
+    ${renameColsCode(i,realm,dimension)}
+    \n# Merge data ${i} into data ${metricsList[metric_text]} since they share the same metric
+    data_${metricsList[metric_text]} = (data_${metricsList[metric_text]}.merge(data_${i}, on='Time', how='outer', sort=True))`
+                    continue;
+                }
+                // if metric never used, fetch and plot normally
                 let axis = '';
                 if (swapXY && graphType !== 'pie') {
                     axis = `\ty= data_${i}.columns[0],\n\tx= data_${i}.columns[1:],`;
@@ -6798,12 +6863,6 @@ with dw:`;
                     axis = `labels={"value": label_${i}},`;
                 }
                 let dataView;
-                //
-                if (metricsList.indexOf(config.data_series.data[i]) == -1) {
-                    metricsList.push(metric)
-                }
-                console.log(metricsList.indexOf(metric))
-                //
                 if (dataType === 'aggregate') {
                     let graph;
                     if (graphType === 'pie') {
@@ -6822,14 +6881,15 @@ data_${i} = data_${i}.to_frame()
 columns_list = data_${i}.columns.tolist()`;
                         } else {
                             dataView = `
-\n# Limit the number of data items/source to at most 10 and sort by descending
+\n\n# Limit the number of data items/source to at most 10 and sort by descending
 columns_list = data_${i}.columns.tolist()
 if (len(columns_list) > 10):
     column_sums = data_${i}.sum()
     top_ten_columns = column_sums.nlargest(10).index.tolist()
-    data_${i} = data_${i}[top_ten_columns]\n`;
+    data_${i} = data_${i}[top_ten_columns]`;
                         }
     dataCalls += `
+    \n\n# Fetch data ${i}
     data_${i} = dw.get_data(
         duration=('${duration}'),
         realm='${realm}',
@@ -6839,46 +6899,23 @@ if (len(columns_list) > 10):
         dataset_type='${dataType}',
         aggregation_unit='${aggregationUnit}',
     )
-    label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']\n`
-
-    //rename columns if multiple metrics or realms
-    if (multipleMetrics && multipleRealms) {
-        dataCalls += `
-    newColNames = {}
-    for col in data_${i}.columns :
-        newColNames[col] = '${realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
-    data_${i} = data_${i}.rename(columns=newColNames)
-`
-    } else if (multipleMetrics) {
-        dataCalls += `
-    newColNames = {}
-    for col in data_${i}.columns :
-        newColNames[col] = ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
-    data_${i} = data_${i}.rename(columns=newColNames)
-    `
-    } else if (multipleRealms) {
-        dataCalls += `
-    newColNames = {}
-    for col in data_${i}.columns :
-        newColNames[col] = '${realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'}
-    data_${i} = data_${i}.rename(columns=newColNames)
-    `
-    }
-
+    \n# Set data ${i}'s metric label
+    label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
+    ${renameColsCode(i, realm, dimension)}`
     plotChart +=
     `${dataView}
     ${(swapXY && graphType !== 'pie') ? `\tdata_0 = data_0.reset_index()` : ''}`
     if (config.data_series.total == 1) {
         plotChart += `
-# Format and draw graph to the screen
+\n# Format and draw graph to the screen
 plot = px.${graphType}(
-data_0, ${(graphType === 'pie') ? `\nvalues= columns_list[0],\n names= data_0.index,` : ''}
-${axis}
-title='${config.title || 'Untitled Query'}',${subTitle ? `\n&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt,` : ''}${logScale ? `log_${swapXY ? 'x' : 'y'}=True,` : ''}${lineShape}
+    data_0, ${(graphType === 'pie') ? `\nvalues= columns_list[0],\n names= data_0.index,` : ''}
+    ${axis}
+    title='${config.title || 'Untitled Query'}',${subTitle ? `\n&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt,` : ''}${logScale ? `log_${swapXY ? 'x' : 'y'}=True,` : ''}${lineShape}
 )\n`;
     } else {
         plotChart += `
-# Add axis from dataset ${i} to graph
+\n# Add axis from dataset ${i} to graph
 for col in data_${i}:
     plot.add_trace(
     go.${(graphType == 'bar') ? 'Bar' : 'Scatter'}(
@@ -6888,25 +6925,24 @@ for col in data_${i}:
         yaxis="y${i+1}",
         ${(graphType === 'area') ? 'fill = "tozeroy",' : ''}
         ${(isSpline) ? 'line_shape = "spline"' : ''}
-    ))\n`
-    updateLayout += 
-    `yaxis${i+1}=dict(
+    ))`
+    updateLayout += `
+    yaxis${i+1}=dict(
         title=dict(
             text=label_${i},
         ),${(i == 0) ? '' : (`
         anchor="free",
         overlaying="y",
-        side="${currSide}"
-        `
+        autoshift = True,
+        side="${currSide}"`
         )}
-    ),\n`
+    ),`
     //switch side
     if (currSide === 'right') {currSide = 'left'} else {currSide = 'right'}
 }
     }   
-        console.log(metricsList)
-        updateLayout += ')\n'
-        plotChart += `${updateLayout}\nplot.update_layout(legend_x=0, legend_y=-100)\nplot.show()`
+        updateLayout += '\n)\n'
+        plotChart += `${updateLayout}\n# Format legend and set index interval\nplot.update_layout(legend_x=0, legend_y=-0.3, ${xValueLabels})\n\nplot.show()`
         retJson['cells'].push(
             {
                 "cell_type": "code",
@@ -6964,8 +7000,10 @@ for col in data_${i}:
               });
         }
         fetchNB()
+        window.open(`http://localhost:8888/lab/tree/${config.title}.ipynb`)
         
-        /*let ipynbFileRaw = JSON.stringify(retJson, null, 2)
+        /* Downloads ipynb file
+        let ipynbFileRaw = JSON.stringify(retJson, null, 2)
         const link = document.createElement("a");
         link.id = "downloadipynb"
         const file = new Blob([ipynbFileRaw], { type: 'application/json' });
