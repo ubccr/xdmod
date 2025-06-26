@@ -8,7 +8,7 @@ $logger = new \CCR\RequestLogger();
 
 // Attempt authentication by API token.
 try {
-    $user = Tokens::authenticateToken();
+    $user = Tokens::authenticateController();
 } catch (UnauthorizedHttpException $e) {
     // If token authentication failed then fall back to the standard
     // session-based authentication method.
