@@ -151,7 +151,7 @@ XDMoD.GlobalToolbar.JupyterLab = {
         CCR.xdmod.initJupyterLab();
     }
 
-}; //XDMoD.GlobalToolbar.JupyterLab
+}; // XDMoD.GlobalToolbar.JupyterLab
 // -------------------------------------------------
 
 XDMoD.GlobalToolbar.SignUp = {
@@ -1628,10 +1628,10 @@ CCR.xdmod.initDashboard = function () {
 }; //CCR.xdmod.initDashboard
 
 CCR.xdmod.initJupyterLab = function () {
-    var JupyterHubURL = CCR.xdmod.JupyterHubURL;
+    const { JupyterHubURL } = CCR.xdmod;
     window.open(JupyterHubURL);
     window.focus();
-}; //CCR.xdmod.initJupyterLab
+};
 
 // -----------------------------------
 
