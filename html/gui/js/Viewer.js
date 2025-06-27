@@ -417,10 +417,8 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
                 var hasTabToken = tabToken && tabToken.length > 2;
                 if (hasToken) {
                     if (token.root === '' && token.tab === 'jwt-redirect' && !CCR.xdmod.publicUser) {
-                        document.location = (
-                            '/rest/auth/jwt-redirect'
-                            + (token.params ? '?' + token.params : '')
-                        );
+                        const params = token.params ? '?${token.params}' : ''
+                        document.location = ('/rest/auth/jwt-redirect{$params}');
                     }
                     Ext.History.fireEvent('change', token);
                 } else if (hasTabToken) {

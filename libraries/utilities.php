@@ -122,7 +122,8 @@ function configurationSectionExists($section)
 {
     try {
         $configSection = getConfigurationSection($section);
-    } catch(\Exception $e) {}
+    } catch(\Exception $e) {
+    }
 
     return isset($configSection);
 }
