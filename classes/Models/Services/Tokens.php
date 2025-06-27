@@ -4,11 +4,14 @@ namespace Models\Services;
 
 use CCR\Log;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+
+use Models\Services\JsonWebToken;
 use XDUser;
 
 /**
- * A static helper function for authenticating using API Tokens. REST endpoints are meant to use the `authenticate`
- * function while controller functions should use `authenticateToken`.
+ * A static helper function for authenticating either API tokens or JSON Web Tokens.
+ * REST endpoints are meant to use the `authenticate` function while controller functions
+ * should use `authenticateController`.
  */
 class Tokens
 {
@@ -17,12 +20,13 @@ class Tokens
      */
     const DELIMITER = '.';
 
-    const MISSING_TOKEN_MESSAGE = 'No API token provided.';
-    const INVALID_TOKEN_MESSAGE = 'Invalid API token.';
-    const EXPIRED_TOKEN_MESSAGE = 'API token has expired.';
+    const MISSING_TOKEN_MESSAGE = 'No token provided.';
+    const INVALID_TOKEN_MESSAGE = 'Invalid token.';
+    const EXPIRED_TOKEN_MESSAGE = 'Token has expired.';
+
 
     /**
-     * Attempt to authenticate a user via an API token included in a given request.
+     * Attempt to authenticate a user via an authentication token included in a given request.
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
@@ -84,7 +88,7 @@ class Tokens
     }
 
     /**
-     * Perform authentication given a token.
+     * Authenticate either an API token or JSON Web token.
      *
      * @param string $rawToken
      * @param string | null $endpoint the endpoint being requested, used only for logging.
@@ -96,12 +100,49 @@ class Tokens
      */
     private static function authenticateToken($rawToken, $endpoint = null)
     {
-        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
-        if (false === $delimPosition) {
+        // Determine token type
+        $tokenParts = explode(self::DELIMITER, $rawToken);
+        $tokenPartsSize = sizeof($tokenParts);
+        if ($tokenPartsSize === 2) {
+            $tokenType = 'API Token';
+            $authenticatedUser = self::authenticateAPIToken($tokenParts);
+        } elseif ($tokenPartsSize === 3) {
+            $tokenType = 'JSON Web Token';
+            $authenticatedUser = self::authenticateJSONWebToken($rawToken);
+        } else {
             self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
-        $userId = substr($rawToken, 0, $delimPosition);
-        $token = substr($rawToken, $delimPosition + 1);
+
+        // Log the request so we can count it in our reporting of usage of the
+        // Data Analytics Framework.
+        $logger = Log::factory(
+            'daf',
+            [
+                'console' => false,
+                'file' => false,
+                'mail' => false
+            ]
+        );
+
+        $logger->info(
+            'User ' . $authenticatedUser->getUserName()
+            . ' (' . $authenticatedUser->getUserID() . ')'
+            . ' requested '
+            . (!is_null($endpoint) ? $endpoint : $_SERVER['SCRIPT_NAME'])
+            . ' with type ' . $tokenType
+            . ' using ' . $_SERVER['HTTP_USER_AGENT']
+        );
+
+        return $authenticatedUser;
+    }
+
+    /**
+     *
+     */
+    private static function authenticateAPIToken($rawToken)
+    {
+        $userId = $rawToken[0];
+        $token = $rawToken[1];
 
         $db = \CCR\DB::factory('database');
         $query = <<<SQL
@@ -136,27 +177,33 @@ SQL;
             self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
 
-        // Log the request so we can count it in our reporting of usage of the
-        // Data Analytics Framework.
-        $logger = Log::factory(
-            'daf',
-            [
-                'console' => false,
-                'file' => false,
-                'mail' => false
-            ]
-        );
-        $logger->info(
-            'User '
-            . $dbUserId
-            . ' requested '
-            . (!is_null($endpoint) ? $endpoint : $_SERVER['SCRIPT_NAME'])
-            . ' with API token using '
-            . $_SERVER['HTTP_USER_AGENT']
-        );
-
-        // and if we've made it this far we can safely return the requested user's data.
         return XDUser::getUserByID($dbUserId);
+    }
+
+    /**
+     *
+     */
+    private static function authenticateJSONWebToken($jwt)
+    {
+        $claims = JsonWebToken::decode($jwt);
+        $username = $claims->sub;
+
+        $db = \CCR\DB::factory('database');
+        $query = <<<SQL
+        SELECT
+            username
+        FROM moddb.Users
+        WHERE username = :username
+            AND account_is_active = 1
+SQL;
+
+        $row = $db->query($query, array(':username' => $username));
+        if (count($row) !== 1) {
+            self:throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
+        }
+        $dbUsername = $row[0]['username'];
+        return XDUser::getUserByUserName($dbUsername);
+
     }
 
     /**

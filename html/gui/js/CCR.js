@@ -141,6 +141,19 @@ XDMoD.GlobalToolbar.Dashboard = {
 }; //XDMoD.GlobalToolbar.Dashboard
 
 // -------------------------------------------------
+XDMoD.GlobalToolbar.JupyterLab = {
+    text: 'JupyterLab',
+    scale: 'small',
+    iconCls: 'btn_jupyterlab',
+    id: 'global-toolbar-jupyterlab',
+    tooltip: 'Launch JupyterLab.',
+    handler() {
+        window.open(CCR.xdmod.JupyterHubURL);
+        window.focus();
+    }
+
+}; // XDMoD.GlobalToolbar.JupyterLab
+// -------------------------------------------------
 
 XDMoD.GlobalToolbar.SignUp = {
     text: 'Sign Up',
