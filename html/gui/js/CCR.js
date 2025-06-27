@@ -148,7 +148,8 @@ XDMoD.GlobalToolbar.JupyterLab = {
     id: 'global-toolbar-jupyterlab',
     tooltip: 'Launch JupyterLab.',
     handler() {
-        CCR.xdmod.initJupyterLab();
+        window.open(CCR.xdmod.JupyterHubURL);
+        window.focus();
     }
 
 }; // XDMoD.GlobalToolbar.JupyterLab
@@ -1626,12 +1627,6 @@ CCR.xdmod.initDashboard = function () {
         }
     });
 }; //CCR.xdmod.initDashboard
-
-CCR.xdmod.initJupyterLab = function () {
-    const { JupyterHubURL } = CCR.xdmod;
-    window.open(JupyterHubURL);
-    window.focus();
-};
 
 // -----------------------------------
 
