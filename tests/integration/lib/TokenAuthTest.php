@@ -15,7 +15,7 @@ abstract class TokenAuthTest extends BaseTest
     /**
      * HTTP path for endpoint that creates, reads, and deletes API tokens.
      */
-    const TOKEN_CRD_ENDPOINT = 'rest/users/current/api/token';
+    const API_TOKEN_CRD_ENDPOINT = 'rest/users/current/api/token';
 
     /**
      * Valid, expired, and revoked tokens for any of the non-public base roles
@@ -43,12 +43,15 @@ abstract class TokenAuthTest extends BaseTest
     public static function provideTokenAuthTestData()
     {
         return [
-            ['pub', 'empty_token'],
-            ['pub', 'malformed_token'],
-            ['usr', 'invalid_token'],
-            ['usr', 'expired_token'],
-            ['usr', 'revoked_token'],
-            ['usr', 'valid_token']
+            ['pub', 'empty_token', 'api'],
+            ['pub', 'malformed_token', 'api'],
+            ['usr', 'invalid_token', 'api'],
+            ['usr', 'expired_token', 'api'],
+            ['usr', 'revoked_token', 'api'],
+            ['usr', 'valid_token', 'api'],
+            ['usr', 'invalid_token', 'jwt'],
+            ['usr', 'expired_token', 'jwt'],
+            ['usr', 'valid_token', 'jwt']
         ];
     }
 
@@ -56,7 +59,7 @@ abstract class TokenAuthTest extends BaseTest
      * Same as BaseTest::makeHttpRequest() but with an API token for the
      * given user role added to the request header.
      */
-    public static function makeHttpRequestWithValidToken(
+    public static function makeHttpRequestWithValidAPIToken(
         XdmodTestHelper $testHelper,
         array $input,
         $role
@@ -253,7 +256,7 @@ abstract class TokenAuthTest extends BaseTest
             // User tokens cannot be obtained after they have been created,
             // so if the user already has a token, we don't know what it is
             // and need to revoke it before creating a new one.
-            $helper->delete(self::TOKEN_CRD_ENDPOINT);
+            $helper->delete(self::API_TOKEN_CRD_ENDPOINT);
 
             // Create a new token.
             $token = self::createToken($helper);
@@ -273,7 +276,7 @@ abstract class TokenAuthTest extends BaseTest
             );
 
             // Revoke the created token and store it.
-            $helper->delete(self::TOKEN_CRD_ENDPOINT);
+            $helper->delete(self::API_TOKEN_CRD_ENDPOINT);
             self::$tokens[$role]['revoked_token'] = $token;
 
             // Create a new token and store it.
@@ -294,7 +297,7 @@ abstract class TokenAuthTest extends BaseTest
     private static function createToken($helper)
     {
         $response = $helper->post(
-            self::TOKEN_CRD_ENDPOINT,
+            self::API_TOKEN_CRD_ENDPOINT,
             null,
             null
         );

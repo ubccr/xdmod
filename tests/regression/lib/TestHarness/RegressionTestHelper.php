@@ -591,7 +591,7 @@ class RegressionTestHelper extends XdmodTestHelper
                 'Raw data test cannot be performed with public user.'
             );
         }
-        $response = TokenAuthTest::makeHttpRequestWithValidToken(
+        $response = TokenAuthTest::makeHttpRequestWithValidAPIToken(
             $this,
             $input,
             $role
