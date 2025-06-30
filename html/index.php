@@ -369,8 +369,8 @@ JS;
         print "CCR.xdmod.timezone = " . json_encode(date_default_timezone_get()) . ";\n";
 
         try {
-            print "CCR.xdmod.isJupyterHubConfigured = true;\n";
             $jupyterhubURL = xd_utilities\getConfiguration('jupyterhub', 'url');
+            print "CCR.xdmod.isJupyterHubConfigured = true;\n";
             print "CCR.xdmod.JupyterHubURL = " . json_encode($jupyterhubURL) . ";\n";
         } catch(\Exception $e) {
             print "CCR.xdmod.isJupyterHubConfigured = false;\n";
