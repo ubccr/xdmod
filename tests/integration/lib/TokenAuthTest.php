@@ -272,7 +272,7 @@ abstract class TokenAuthTest extends BaseTest
 
             // Create and store an invalid token.
             self::$tokens[$role]['invalid_token'] = (
-                self::$userIds[$role] . '.' . 'asdf'
+                self::$userIds[$role] . '.asdf'
             );
 
             // Revoke the created token and store it.

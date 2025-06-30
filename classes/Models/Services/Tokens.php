@@ -134,10 +134,10 @@ class Tokens
     }
 
     /**
-     * Authenticate an API token for a given user.
+     * Authenticate a user using an API token.
      *
-     * @param string $userId A user ID to check an API token's value
-     * @param string $token The API token's value
+     * @param string $userId
+     * @param string $token
      *
      * @return XDUser The successfully authenticated user.
      *
@@ -182,9 +182,9 @@ SQL;
     }
 
     /**
-     * Authenticate a JSON Web Token.
+     * Authenticate a user using a JSON Web Token.
      *
-     * @param string $jwt A JSON Web Token
+     * @param string $jwt
      *
      * @return XDUser The successfully authenticated user.
      *
