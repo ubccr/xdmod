@@ -26,8 +26,60 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
-        }
+            "Access\\": "src/",
+            "Authentication\\": "classes/Authentication/",
+            "CCR\\": "classes/CCR/",
+            "Common\\": "classes/Common/",
+            "Configuration\\": "classes/Configuration/",
+            "DataWarehouse\\": "classes/DataWarehouse/",
+            "ETL\\": "classes/ETL/",
+            "Log\\": "classes/Log/",
+            "Models\\": "classes/Models/",
+            "OpenXdmod\\": "classes/OpenXdmod/",
+            "Realm\\": "classes/Realm/",
+            "ReportTemplates\\": "classes/ReportTemplates/",
+            "Reports\\": "classes/Reports/",
+            "Rest\\": "classes/Rest/",
+            "User\\": "classes/User/",
+            "Xdmod\\": "classes/Xdmod/"
+        },
+        "files": [
+            "configuration/constants.php",
+            "libraries/response.php",
+            "libraries/debug.php",
+            "libraries/web_message.php",
+            "libraries/rest.php",
+            "libraries/versioning.php",
+            "libraries/date.php",
+            "libraries/utilities.php",
+            "libraries/dashboard.php",
+            "libraries/security.php",
+            "libraries/regression.php",
+            "libraries/conversions.php",
+            "libraries/controller.php",
+            "libraries/domdocument.php",
+            "libraries/charting.php"
+        ],
+        "classmap": [
+            "classes/DataWarehouse.php",
+            "classes/XDChartPool.php",
+            "classes/XDStatistics.php",
+            "classes/SessionExpiredException.php",
+            "classes/XDController.php",
+            "classes/XDUser.php",
+            "classes/UniqueException.php",
+            "classes/XDError.php",
+            "classes/XDUserProfile.php",
+            "classes/UserException.php",
+            "classes/XDException.php",
+            "classes/XDWarehouse.php",
+            "classes/UserStorage.php",
+            "classes/XDReportManager.php",
+            "classes/XDAdmin.php",
+            "classes/XDSessionManager.php",
+            "classes/ExtJS",
+            "classes/DB"
+        ]
     },
     "autoload-dev": {
         "psr-4": {
