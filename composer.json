@@ -21,6 +21,7 @@
         "phpoffice/phpword": "^1.4",
         "plotly/plotly": "^2.29",
         "sencha/extjs-gpl": "3.4.1.1",
+        "swaggest/json-schema": "^0.12.43",
         "symfony/console": "6.4.*",
         "symfony/dotenv": "6.4.*",
         "symfony/flex": "^2",
