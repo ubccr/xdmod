@@ -2,9 +2,9 @@
 
 namespace Models\Services;
 
+use CCR\DB;
 use CCR\Log;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
-
 use Models\Services\JsonWebToken;
 use XDUser;
 
@@ -15,11 +15,6 @@ use XDUser;
  */
 class Tokens
 {
-    /**
-     * This is the delimiter that's used when returning a newly created API token to the user.
-     */
-    const DELIMITER = '.';
-
     const MISSING_TOKEN_MESSAGE = 'No token provided.';
     const INVALID_TOKEN_MESSAGE = 'Invalid token.';
     const EXPIRED_TOKEN_MESSAGE = 'Token has expired.';
@@ -88,7 +83,7 @@ class Tokens
     }
 
     /**
-     * Authenticate either an API token or JSON Web token.
+     * Authenticate either an API token or a JSON Web Token.
      *
      * @param string $rawToken
      * @param string | null $endpoint the endpoint being requested, used only for logging.
@@ -101,11 +96,13 @@ class Tokens
     private static function authenticateToken($rawToken, $endpoint = null)
     {
         // Determine token type
-        $tokenParts = explode(self::DELIMITER, $rawToken);
+        $tokenParts = explode('.', $rawToken);
         $tokenPartsSize = sizeof($tokenParts);
         if ($tokenPartsSize === 2) {
-            $tokenType = 'API Token';
-            $authenticatedUser = self::authenticateAPIToken($tokenParts);
+            $userId = $tokenParts[0];
+            $token = $tokenParts[1];
+            $tokenType = 'API token';
+            $authenticatedUser = self::authenticateAPIToken($userId, $token);
         } elseif ($tokenPartsSize === 3) {
             $tokenType = 'JSON Web Token';
             $authenticatedUser = self::authenticateJSONWebToken($rawToken);
@@ -129,7 +126,7 @@ class Tokens
             . ' (' . $authenticatedUser->getUserID() . ')'
             . ' requested '
             . (!is_null($endpoint) ? $endpoint : $_SERVER['SCRIPT_NAME'])
-            . ' with type ' . $tokenType
+            . ' with ' . $tokenType
             . ' using ' . $_SERVER['HTTP_USER_AGENT']
         );
 
@@ -137,14 +134,18 @@ class Tokens
     }
 
     /**
+     * Authenticate an API token for a given user.
      *
+     * @param string $userId A user ID to check an API token's value
+     * @param string $token The API token's value
+     *
+     * @return XDUser The successfully authenticated user.
+     *
+     * @throws UnauthorizedHttpException if the token is malformed, invalid, or expired
      */
-    private static function authenticateAPIToken($rawToken)
+    private static function authenticateAPIToken($userId, $token)
     {
-        $userId = $rawToken[0];
-        $token = $rawToken[1];
-
-        $db = \CCR\DB::factory('database');
+        $db = DB::factory('database');
         $query = <<<SQL
         SELECT
             ut.user_id,
@@ -181,6 +182,13 @@ SQL;
     }
 
     /**
+     * Authenticate a JSON Web Token.
+     *
+     * @param string $jwt A JSON Web Token
+     *
+     * @return XDUser The successfully authenticated user.
+     *
+     * @throws UnauthorizedHttpException if the token is invalid or expired
      *
      */
     private static function authenticateJSONWebToken($jwt)
@@ -188,7 +196,7 @@ SQL;
         $claims = JsonWebToken::decode($jwt);
         $username = $claims->sub;
 
-        $db = \CCR\DB::factory('database');
+        $db = DB::factory('database');
         $query = <<<SQL
         SELECT
             username
@@ -203,7 +211,6 @@ SQL;
         }
         $dbUsername = $row[0]['username'];
         return XDUser::getUserByUserName($dbUsername);
-
     }
 
     /**

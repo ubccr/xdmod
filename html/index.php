@@ -87,8 +87,6 @@ if ($userLoggedIn) {
 
 $page_title = xd_utilities\getConfiguration('general', 'title');
 
-$jupyterhubConfigured = xd_utilities\configurationSectionExists('jupyterhub');
-
 // Set REST cookies.
 \xd_rest\setCookies();
 
@@ -370,11 +368,12 @@ JS;
         print "CCR.xdmod.features = " . json_encode($features) . ";\n";
         print "CCR.xdmod.timezone = " . json_encode(date_default_timezone_get()) . ";\n";
 
-        if ($jupyterhubConfigured) {
+        try {
             print "CCR.xdmod.isJupyterHubConfigured = true;\n";
-
             $jupyterhubURL = xd_utilities\getConfiguration('jupyterhub', 'url');
             print "CCR.xdmod.JupyterHubURL = " . json_encode($jupyterhubURL) . ";\n";
+        } catch(\Exception $e) {
+            print "CCR.xdmod.isJupyterHubConfigured = false;\n";
         }
         ?>
 

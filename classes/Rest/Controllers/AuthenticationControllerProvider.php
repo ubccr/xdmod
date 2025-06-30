@@ -146,7 +146,7 @@ class AuthenticationControllerProvider extends BaseControllerProvider
             true, // secure
             true  // httpOnly
         );
-        $response = $app->redirect($next);
+        $response = new RedirectResponse($next);
         $response->headers->setCookie($cookie);
         return $response;
     }
