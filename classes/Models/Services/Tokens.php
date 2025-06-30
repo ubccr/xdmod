@@ -4,8 +4,11 @@ namespace Models\Services;
 
 use CCR\DB;
 use CCR\Log;
+use Firebase\JWT\SignatureInvalidException;
+use Firebase\JWT\ExpiredException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Models\Services\JsonWebToken;
+use UnexpectedValueException;
 use XDUser;
 
 /**
@@ -193,7 +196,13 @@ SQL;
      */
     private static function authenticateJSONWebToken($jwt)
     {
-        $claims = JsonWebToken::decode($jwt);
+        try {
+            $claims = JsonWebToken::decode($jwt);
+        } catch (UnexpectedValueException | SignatureInvalidException $e) {
+            self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
+        } catch (ExpiredException $e) {
+            self::throwUnauthorized(self::EXPIRED_TOKEN_MESSAGE);
+        }
         $username = $claims->sub;
 
         $db = DB::factory('database');
