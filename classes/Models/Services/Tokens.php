@@ -11,7 +11,6 @@ use Models\Services\JsonWebToken;
 use UnexpectedValueException;
 use XDUser;
 
-
 /**
  * A static helper class for authenticating either API tokens or JSON Web Tokens.
  * REST endpoints are meant to use the `authenticate` function while controller functions
