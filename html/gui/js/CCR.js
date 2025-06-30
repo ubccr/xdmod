@@ -149,7 +149,6 @@ XDMoD.GlobalToolbar.JupyterLab = {
     tooltip: 'Launch JupyterLab.',
     handler() {
         window.open(CCR.xdmod.JupyterHubURL);
-        window.focus();
     }
 
 }; // XDMoD.GlobalToolbar.JupyterLab
