@@ -114,6 +114,7 @@
         "symfony": {
             "allow-contrib": false,
             "require": "6.4.*"
-        }
+        },
+        "public-dir": "html"
     }
 }
