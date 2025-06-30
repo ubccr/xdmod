@@ -209,7 +209,6 @@ SQL;
         if (count($row) !== 1) {
             self:throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
-        $dbUsername = $row[0]['username'];
         return XDUser::getUserByUserName($username);
     }
 
