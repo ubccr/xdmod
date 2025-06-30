@@ -9,7 +9,7 @@ use Models\Services\JsonWebToken;
 use XDUser;
 
 /**
- * A static helper function for authenticating either API tokens or JSON Web Tokens.
+ * A static helper class for authenticating either API tokens or JSON Web Tokens.
  * REST endpoints are meant to use the `authenticate` function while controller functions
  * should use `authenticateController`.
  */
@@ -210,7 +210,7 @@ SQL;
             self:throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
         $dbUsername = $row[0]['username'];
-        return XDUser::getUserByUserName($dbUsername);
+        return XDUser::getUserByUserName($username);
     }
 
     /**
