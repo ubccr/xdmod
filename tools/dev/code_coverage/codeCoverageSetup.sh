@@ -441,7 +441,7 @@ fi
 OS_VERSION=$(cat /etc/os-release | grep "VERSION_ID" | cut -d'=' -f 2 | tr -d '"')
 XDEBUG_VERSION=3.1.6
 ### Install Pre-Reqs
-yum -y install php-devel php-pear gcc gcc-c++ autoconf automake
+yum -y install php-devel
 
 ### Install xdebug
 pecl install Xdebug-"$XDEBUG_VERSION"
@@ -500,13 +500,7 @@ echo ${arg_r}
 echo
 echo $PROCESS_FILE_INSTALL_PATH
 
-~/bin/services restart
-
 ### Create / Update privs for the directory that will contain the code coverage reports.
 mkdir "${arg_c}"
 chmod 777 "${arg_c}"
 chown root:apache "${arg_c}"
-
-### Make sure to restart the services so that these changes take effect.x
-#~/bin/services stop
-#~/bin/services start
