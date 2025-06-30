@@ -198,7 +198,7 @@ SQL;
     {
         try {
             $claims = JsonWebToken::decode($jwt);
-        } catch (UnexpectedValueException $e | SignatureInvalidException $e) {
+        } catch (UnexpectedValueException | SignatureInvalidException $e) {
             self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         } catch (ExpiredException $e) {
             self::throwUnauthorized(self::EXPIRED_TOKEN_MESSAGE);
