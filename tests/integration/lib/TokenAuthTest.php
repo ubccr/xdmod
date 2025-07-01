@@ -81,7 +81,7 @@ abstract class TokenAuthTest extends BaseTest
      */
     private function getTestToken($type, $format, $role)
     {
-        if ('expired_token' === $type and 'api' === $type) {
+        if ('expired_token' === $type && 'api' === $type) {
             // Expire the token (it will be unexpired at the end of this
             // test).
             self::expireAPIToken($role);
@@ -221,7 +221,7 @@ abstract class TokenAuthTest extends BaseTest
         );
 
         // If the token is expired, unexpire it.
-        if ('expired_token' === $tokenType and 'api' === $tokenFormat) {
+        if ('expired_token' === $tokenType && 'api' === $tokenFormat) {
             self::unexpireAPIToken($role);
         }
 
@@ -241,13 +241,14 @@ abstract class TokenAuthTest extends BaseTest
     /**
      * Return the generated token for the given role and token type.
      *
-     * @param string $tokenType either 'valid_token', 'invalid_token', or
-     *                          'revoked_token'.
+     * @param string $type either 'valid_token', 'invalid_token',
+     *                          'revoked_token', 'malformed_token',
+     *                          or 'expired_token'
      * @param string $role one of the non-public roles from
      *                     @see BaseTest::getBaseRoles().
      * @return string the token.
      */
-    private static function getToken($tokenType, $format, $role)
+    private static function getToken($type, $format, $role)
     {
         // If the valid, invalid, and revoked tokens have not already been
         // generated for the role, generate them.
@@ -284,12 +285,12 @@ abstract class TokenAuthTest extends BaseTest
                     strpos($token, '.')
                 );
 
-                if ('invalid_token' === $tokenType) {
+                if ('invalid_token' === $type) {
                     // Create and store an invalid token.
                     self::$userIds[$role][$format] . '.asdf';
-                } elseif ('malformed_token' === $tokenType) {
+                } elseif ('malformed_token' === $type) {
                     self::$userIds[$role][$format] . 'asdf';
-                } elseif ('empty_token' === $tokenType) {
+                } elseif ('empty_token' === $type) {
                     self::$userIds[$role][$format] . '';
                 }
 
@@ -306,7 +307,7 @@ abstract class TokenAuthTest extends BaseTest
                 self::$tokens[$role][$format][$type] = $token;
             }
         }
-        return self::$tokens[$role][$format][$tokenType];
+        return self::$tokens[$role][$format][$type];
     }
 
     private static function createJSONWebToken($tokenType)

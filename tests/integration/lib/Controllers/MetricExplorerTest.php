@@ -203,10 +203,11 @@ class MetricExplorerTest extends TokenAuthTest
     /**
      * @dataProvider provideTokenAuthTestData
      */
-    public function testGetDwDescripterTokenAuth($role, $tokenType) {
+    public function testGetDwDescripterTokenAuth($role, $tokenType, $tokenFormat) {
         parent::runTokenAuthTest(
             $role,
             $tokenType,
+            $tokenFormat,
             array_replace(
                 self::getDefaultRequestInput(),
                 ['data' => ['operation' => 'get_dw_descripter']]
@@ -221,7 +222,7 @@ class MetricExplorerTest extends TokenAuthTest
     /**
      * @dataProvider getDimensionFiltersProvider
      */
-    public function testGetDimensionFilters($role, $tokenType, $expectedCount)
+    public function testGetDimensionFilters($role, $tokenType, $tokenFormat, $expectedCount)
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -230,6 +231,7 @@ class MetricExplorerTest extends TokenAuthTest
         parent::runTokenAuthTest(
             $role,
             $tokenType,
+            $tokenFormat,
             array_replace(
                 self::getDefaultRequestInput(),
                 [
