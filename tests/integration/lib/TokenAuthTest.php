@@ -82,7 +82,7 @@ abstract class TokenAuthTest extends BaseTest
      */
     private function getTestToken($type, $format, $role)
     {
-        switch($type) {
+        switch($format) {
             case "api":
             case "jwt":
                 if ('expired_token' === $type && 'api' === $type) {
