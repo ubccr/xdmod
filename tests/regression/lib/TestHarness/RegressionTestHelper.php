@@ -478,7 +478,7 @@ class RegressionTestHelper extends XdmodTestHelper
             [$outputDir, $referenceFileName]
         );
 
-        if (file_exists($referenceFile)) {
+        if (!is_null($referenceFileName) && file_exists($referenceFile)) {
             $reference = file_get_contents($referenceFile);
             if ($reference === $data) {
                 return true;
