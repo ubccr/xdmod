@@ -82,7 +82,7 @@ abstract class TokenAuthTest extends BaseTest
      */
     private function getTestToken($type, $format, $role)
     {
-        if ('api' === $type || 'jwt' === $type) {
+        if ('api' !== $type || 'jwt' !== $type) {
             throw new Exception(
                 'Unknown token format: "' . $format . '".'
             );
@@ -282,7 +282,7 @@ abstract class TokenAuthTest extends BaseTest
                 // Store the role's user ID so it can be used to create an
                 // invalid token and later used for expiring and unexpiring
                 // tokens.
-                self::$userIds[$role][$format] = substr(
+                self::$userIds[$role]['api'] = substr(
                     $token,
                     0,
                     strpos($token, '.')
@@ -291,29 +291,29 @@ abstract class TokenAuthTest extends BaseTest
                 if ('invalid_token' === $type) {
                     // Create and store an invalid token.
                     $token = (
-                        self::$userIds[$role][$format] . '.asdf'
+                        self::$userIds[$role]['api'][$type] . '.asdf'
                     );
                 } elseif ('malformed_token' === $type) {
                     $token = (
-                        self::$userIds[$role][$format] . 'asdf'
+                        self::$userIds[$role]['api'][$type] . 'asdf'
                     );
                 } elseif ('empty_token' === $type) {
                     $token = (
-                        self::$userIds[$role][$format] . ''
+                        self::$userIds[$role]['api'][$type] . ''
                     );
                 }
-                self::$tokens[$role][$format][$type] = $token;
+                self::$tokens[$role]['api'][$type] = $token;
 
                 // Revoke the created token and store it.
                 $helper->delete(self::API_TOKEN_CRD_ENDPOINT);
-                self::$tokens[$role][$format]['revoked_token'] = $token;
+                self::$tokens[$role]['api']['revoked_token'] = $token;
 
                 // Create a new token and store it.
-                self::$tokens[$role][$format]['valid_token'] = self::createAPIToken(
+                self::$tokens[$role]['api']['valid_token'] = self::createAPIToken(
                     $helper
                 );
             } elseif ('jwt' === $format) {
-                self::$tokens[$role][$format][$type] = self::createJSONWebToken();
+                self::$tokens[$role]['jwt'][$type] = self::createJSONWebToken();
             }
         }
         return self::$tokens[$role][$format][$type];
