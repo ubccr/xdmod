@@ -864,6 +864,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                 $id,
                 'usr',
                 'valid_token',
+                'api',
                 parent::mergeParams(
                     $validInput,
                     'params',

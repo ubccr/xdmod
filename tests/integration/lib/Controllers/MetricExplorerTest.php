@@ -299,9 +299,9 @@ class MetricExplorerTest extends TokenAuthTest
     {
         $tests = [];
         foreach (parent::provideTokenAuthTestData() as $testData) {
-            list($role, $tokenType) = $testData;
+            list($role, $tokenType, $format) = $testData;
             if ('valid_token' !== $tokenType) {
-                $tests[] = [$role, $tokenType, null];
+                $tests[] = [$role, $tokenType, $format, null];
             }
         }
         $expectedCounts = [
@@ -312,7 +312,7 @@ class MetricExplorerTest extends TokenAuthTest
             'mgr' => 0
         ];
         foreach ($expectedCounts as $role => $count) {
-            $tests[] = [$role, 'valid_token', $count];
+            $tests[] = [$role, 'valid_token', $format, $count];
         }
         return $tests;
     }
