@@ -290,11 +290,17 @@ abstract class TokenAuthTest extends BaseTest
 
                 if ('invalid_token' === $type) {
                     // Create and store an invalid token.
-                    $token = self::$userIds[$role][$format] . '.asdf';
+                    $token = (
+                        self::$userIds[$role][$format] . '.asdf'
+                    );
                 } elseif ('malformed_token' === $type) {
-                    $token = self::$userIds[$role][$format] . 'asdf';
+                    $token = (
+                        self::$userIds[$role][$format] . 'asdf'
+                    );
                 } elseif ('empty_token' === $type) {
-                    $token = self::$userIds[$role][$format] . '';
+                    $token = (
+                        self::$userIds[$role][$format] . ''
+                    );
                 }
                 self::$tokens[$role][$format][$type] = $token
 
@@ -307,13 +313,13 @@ abstract class TokenAuthTest extends BaseTest
                     $helper
                 );
             } elseif ('jwt' === $format) {
-                self::$tokens[$role][$format][$type] = self::createJSONWebToken($type);
+                self::$tokens[$role][$format][$type] = self::createJSONWebToken();
             }
         }
         return self::$tokens[$role][$format][$type];
     }
 
-    private static function createJSONWebToken($tokenType)
+    private static function createJSONWebToken()
     {
         $token = JsonWebToken::encode('testuser');
         return $token;
