@@ -71,6 +71,7 @@ jobs:
             mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
             cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
             cp /etc/xdmod/organization.json ./configuration/organization.json
+            mkdir ./configuration/keys
             openssl genrsa -out ./configuration/keys/jupyterhub-private.pem 2048
             openssl genrsa -out ./configuration/keys/xdmod-private.pem 2048
             openssl pkey -in ./configuration/keys/xdmod-private.pem -pubout -out ./configuration/keys/xdmod-public.pem
