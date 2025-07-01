@@ -5,6 +5,7 @@ namespace IntegrationTests;
 use CCR\DB;
 use Exception;
 use Models\Services\Tokens;
+use Models\Services\JsonWebToken;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
 /**
@@ -81,6 +82,12 @@ abstract class TokenAuthTest extends BaseTest
      */
     private function getTestToken($type, $format, $role)
     {
+        if ('api' === $type || 'jwt' === $type) {
+            throw new Exception(
+                'Unknown token format: "' . $format . '".'
+            );
+        }
+
         if ('expired_token' === $type && 'api' === $type) {
             // Expire the token (it will be unexpired at the end of this
             // test).
@@ -95,10 +102,6 @@ abstract class TokenAuthTest extends BaseTest
             // since revoked and invalid tokens are expected to produce the
             // same response.
             $type = 'invalid_token';
-        } else {
-            throw new Exception(
-                'Unknown token format: "' . $format . '".'
-            );
         }
 
         return [$token, $type];
