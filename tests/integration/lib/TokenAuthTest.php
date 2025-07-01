@@ -291,15 +291,15 @@ abstract class TokenAuthTest extends BaseTest
                 if ('invalid_token' === $type) {
                     // Create and store an invalid token.
                     $token = (
-                        self::$userIds[$role][$format] . '.asdf'
+                        self::$userIds[$role][$format] . ".asdf"
                     );
                 } elseif ('malformed_token' === $type) {
                     $token = (
-                        self::$userIds[$role][$format] . 'asdf'
+                        self::$userIds[$role][$format] . "asdf"
                     );
                 } elseif ('empty_token' === $type) {
                     $token = (
-                        self::$userIds[$role][$format] . ''
+                        self::$userIds[$role][$format] . ""
                     );
                 }
                 self::$tokens[$role][$format][$type] = $token
