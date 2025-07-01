@@ -82,29 +82,31 @@ abstract class TokenAuthTest extends BaseTest
      */
     private function getTestToken($type, $format, $role)
     {
-        if ('api' !== $type || 'jwt' !== $type) {
-            throw new Exception(
-                'Unknown token format: "' . $format . '".'
-            );
-        }
+        switch($type) {
+            case "api":
+            case "jwt":
+                if ('expired_token' === $type && 'api' === $type) {
+                    // Expire the token (it will be unexpired at the end of this
+                    // test).
+                    self::expireAPIToken($role);
+                    $token = self::getToken('valid_token', $format, $role);
+                } else {
+                    $token = self::getToken($type, $format, $role);
+                }
 
-        if ('expired_token' === $type && 'api' === $type) {
-            // Expire the token (it will be unexpired at the end of this
-            // test).
-            self::expireAPIToken($role);
-            $token = self::getToken('valid_token', $format, $role);
-        } else {
-            $token = self::getToken($type, $format, $role);
-        }
+                if ('revoked_token' === $type) {
+                    // The key in the test output artifact should now be switched
+                    // since revoked and invalid tokens are expected to produce the
+                    // same response.
+                    $type = 'invalid_token';
+                }
 
-        if ('revoked_token' === $type) {
-            // The key in the test output artifact should now be switched
-            // since revoked and invalid tokens are expected to produce the
-            // same response.
-            $type = 'invalid_token';
+                return [$token, $type];
+            default:
+                throw new Exception(
+                    'Unknown token format: "' . $format . '".'
+                );
         }
-
-        return [$token, $type];
     }
 
     /**
