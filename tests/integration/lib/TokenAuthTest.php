@@ -302,7 +302,7 @@ abstract class TokenAuthTest extends BaseTest
                         self::$userIds[$role][$format] . ""
                     );
                 }
-                self::$tokens[$role][$format][$type] = $token
+                self::$tokens[$role][$format][$type] = $token;
 
                 // Revoke the created token and store it.
                 $helper->delete(self::API_TOKEN_CRD_ENDPOINT);
