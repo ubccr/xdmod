@@ -777,11 +777,12 @@ class WarehouseControllerProviderTest extends TokenAuthTest
     /**
      * @dataProvider provideGetRawData
      */
-    public function testGetRawData($id, $role, $tokenType, $input, $output)
+    public function testGetRawData($id, $role, $tokenType, $tokenFormat, $input, $output)
     {
         parent::runTokenAuthTest(
             $role,
             $tokenType,
+            $tokenFormat,
             $input,
             $output
         );
