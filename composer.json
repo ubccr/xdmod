@@ -17,23 +17,32 @@
         "moment/moment-min-file": "^2.13",
         "moment/moment-timezone-min-file": "^0.5.4",
         "mongodb/mongodb": "^1.19",
+        "nbgrp/onelogin-saml-bundle": "*",
         "phpmailer/phpmailer": "^6.10",
         "phpoffice/phpword": "^1.4",
         "plotly/plotly": "^2.29",
         "sencha/extjs-gpl": "3.4.1.1",
         "swaggest/json-schema": "^0.12.43",
+        "symfony/asset": "6.4.*",
         "symfony/console": "6.4.*",
         "symfony/dotenv": "6.4.*",
         "symfony/flex": "^2",
         "symfony/framework-bundle": "6.4.*",
+        "symfony/monolog-bundle": "^3.10",
+        "symfony/property-access": "6.4.*",
+        "symfony/property-info": "6.4.*",
         "symfony/runtime": "6.4.*",
+        "symfony/security-bundle": "6.4.*",
+        "symfony/twig-bundle": "6.4.*",
         "symfony/yaml": "6.4.*",
         "tildeio/rsvpjs-min-file": "^3.0",
         "ua-parser/uap-php": "^3.9",
         "zendframework/zendframework-minimal": "^1.12"
     },
     "require-dev": {
-        "icanhazstring/composer-unused": "^0.9.3"
+        "icanhazstring/composer-unused": "^0.9.3",
+        "symfony/stopwatch": "6.4.*",
+        "symfony/web-profiler-bundle": "6.4.*"
     },
     "repositories": [
         {
