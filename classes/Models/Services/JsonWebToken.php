@@ -41,7 +41,7 @@ class JsonWebToken
      * @return \stdClass the claims in the JWT.
      */
     public static function decode($jwt) {
-        self::$jupyterhubPublicKey = file_get_contents(
+        $jupyterhubPublicKey = file_get_contents(
             CONFIG_DIR
             . DIRECTORY_SEPARATOR
             . 'keys'
