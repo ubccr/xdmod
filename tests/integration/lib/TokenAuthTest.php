@@ -72,44 +72,6 @@ abstract class TokenAuthTest extends BaseTest
     }
 
     /**
-     * Retrieve the token for testing based on the format.
-     *
-     * @param string $role the user role to use when authenticating.
-     * @param string $tokenType the type of token being provided
-     *                          (@see provideTokenAuthTestData()).
-     * @param string $format The authentication token type.
-     *                            This can be either 'api' for API token
-     *                            or 'jwt' for JSON Web Token.
-     */
-    private function getTestToken($type, $format, $role)
-    {
-        switch($format) {
-            case "api":
-            case "jwt":
-                if ('expired_token' === $type && 'api' === $type) {
-                    // Expire the token (it will be unexpired at the end of this
-                    // test).
-                    self::expireAPIToken($role);
-                    $token = self::getToken('valid_token', $format, $role);
-                } else {
-                    $token = self::getToken($type, $format, $role);
-                }
-
-                if ('revoked_token' === $type) {
-                    // The key in the test output artifact should now be switched
-                    // since revoked and invalid tokens are expected to produce the
-                    // same response.
-                    $type = 'invalid_token';
-                }
-                return [$token, $type];
-            default:
-                throw new Exception(
-                    'Unknown token format: "' . $format . '".'
-                );
-        }
-    }
-
-    /**
      * Make an HTTP request to an endpoint involving API token authentication
      * and validate the response.
      *
@@ -244,6 +206,44 @@ abstract class TokenAuthTest extends BaseTest
     }
 
     /**
+     * Retrieve the token for testing based on the format.
+     *
+     * @param string $role the user role to use when authenticating.
+     * @param string $tokenType the type of token being provided
+     *                          (@see provideTokenAuthTestData()).
+     * @param string $format The authentication token type.
+     *                            This can be either 'api' for API token
+     *                            or 'jwt' for JSON Web Token.
+     */
+    private function getTestToken($type, $format, $role)
+    {
+        switch($format) {
+            case "api":
+            case "jwt":
+                if ('expired_token' === $type && 'api' === $type) {
+                    // Expire the token (it will be unexpired at the end of this
+                    // test).
+                    self::expireAPIToken($role);
+                    $token = self::getToken('valid_token', $format, $role);
+                } else {
+                    $token = self::getToken($type, $format, $role);
+                }
+
+                if ('revoked_token' === $type) {
+                    // The key in the test output artifact should now be switched
+                    // since revoked and invalid tokens are expected to produce the
+                    // same response.
+                    $type = 'invalid_token';
+                }
+                return [$token, $type];
+            default:
+                throw new Exception(
+                    'Unknown token format: "' . $format . '".'
+                );
+        }
+    }
+
+    /**
      * Return the generated token for the given role and token type.
      *
      * @param string $type either 'valid_token', 'invalid_token',
@@ -310,14 +310,19 @@ abstract class TokenAuthTest extends BaseTest
                     $helper
                 );
             } elseif ('jwt' === $format) {
+                // This assumes the $userIds attribute has been set
+                // by the API token generation.
                 $userId = self::$userIds[$role];
                 if ('invalid_token' === $type) {
-                    self::$tokens[$role]['jwt'][$type] = 'asdf';
+                    $testToken = 'asdf';
                 } elseif ('malformed_token' === $type) {
-                    self::$tokens[$role]['jwt'][$type] = self::createJSONWebToken($userId);
+                    $testToken = 'asdf';
                 } elseif ('empty_token') {
-                    self::$tokens[$role]['jwt'][$type] = '';
+                    $testToken = '';
+                } else {
+                    $testToken = self::createJSONWebToken($userId);
                 }
+                self::$tokens[$role]['jwt'][$type] = $testToken;
             }
         }
         return self::$tokens[$role][$format][$type];
