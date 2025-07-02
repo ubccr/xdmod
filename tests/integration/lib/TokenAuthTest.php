@@ -6,6 +6,7 @@ use CCR\DB;
 use Exception;
 use Models\Services\Tokens;
 use Models\Services\JsonWebToken;
+use Firebase\JWT\JWT;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 use XDUser;
 
@@ -315,8 +316,6 @@ abstract class TokenAuthTest extends BaseTest
                 $userId = self::$userIds[$role];
                 if ('invalid_token' === $type) {
                     $testToken = 'asdf';
-                } elseif ('malformed_token' === $type) {
-                    $testToken = 'asdf';
                 } elseif ('empty_token') {
                     $testToken = '';
                 } else {
@@ -331,8 +330,24 @@ abstract class TokenAuthTest extends BaseTest
     private static function createJSONWebToken($userId)
     {
         $username = XDUser::getUserByID($userId);
-        $jwt = JsonWebToken::encode($username);
-        return $jwt[0];
+        $privateKey = file_get_contents(
+            CONFIG_DIR
+            . DIRECTORY_SEPARATOR
+            . 'keys'
+            . DIRECTORY_SEPARATOR
+            . 'xdmod-private.pem'
+        );
+        $issuedAt = new DateTimeImmutable();
+        $expiration = $issuedAt->modify('+300 seconds')->getTimestamp();
+        $jwt = JWT::encode(
+            [
+                'exp' => $expiration,
+                'sub' => $username
+            ],
+            $privateKey,
+            self::SIGNING_ALGORITHM
+        );
+        return $jwt;
     }
 
     /**
