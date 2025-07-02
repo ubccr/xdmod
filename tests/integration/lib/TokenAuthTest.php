@@ -310,13 +310,13 @@ abstract class TokenAuthTest extends BaseTest
                     $helper
                 );
             } elseif ('jwt' === $format) {
-                $userId = $userIds[$role]['jwt'];
+                $userId = self::$userIds[$role]['jwt'];
                 if ('invalid_token' === $type) {
-                    self::$tokens[$role]['jwt'][$type] = 'asdf'
-                } elseif ('malformed_token' === $type)
+                    self::$tokens[$role]['jwt'][$type] = 'asdf';
+                } elseif ('malformed_token' === $type) {
                     self::$tokens[$role]['jwt'][$type] = self::createJSONWebToken($userId);
                 } elseif ('empty_token') {
-                    self::$tokens[$role]['jwt'][$type] = ''
+                    self::$tokens[$role]['jwt'][$type] = '';
                 }
             }
         }
