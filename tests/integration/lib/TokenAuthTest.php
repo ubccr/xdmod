@@ -4,7 +4,6 @@ namespace IntegrationTests;
 
 use CCR\DB;
 use Exception;
-use Firebase\JWT\JWT;
 use Models\Services\Tokens;
 use Models\Services\JsonWebToken;
 use IntegrationTests\TestHarness\XdmodTestHelper;
@@ -323,7 +322,8 @@ abstract class TokenAuthTest extends BaseTest
 
     private static function createJSONWebToken()
     {
-        return JsonWebToken::encode('testuser');
+        list($jwt, $expiration) = JsonWebToken::encode('testuser');
+        return $jwt;
     }
 
     /**
