@@ -357,7 +357,7 @@ abstract class TokenAuthTest extends BaseTest
     private static function expireAPIToken($role)
     {
         self::updateAPITokenExpirationDate(
-            self::$userIds[$role]['api'],
+            self::$userIds[$role],
             'SUBDATE(NOW(), 1)'
         );
     }
@@ -372,7 +372,7 @@ abstract class TokenAuthTest extends BaseTest
     private static function unexpireAPIToken($role)
     {
         self::updateAPITokenExpirationDate(
-            self::$userIds[$role]['api'],
+            self::$userIds[$role],
             'DATE_ADD(NOW(), INTERVAL 1 DAY)'
         );
     }
