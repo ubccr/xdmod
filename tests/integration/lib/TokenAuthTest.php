@@ -7,6 +7,7 @@ use Exception;
 use Models\Services\Tokens;
 use Models\Services\JsonWebToken;
 use IntegrationTests\TestHarness\XdmodTestHelper;
+use XDUser;
 
 /**
  * Provides methods for testing API token authentication for HTTP endpoints.
@@ -100,7 +101,6 @@ abstract class TokenAuthTest extends BaseTest
                     // same response.
                     $type = 'invalid_token';
                 }
-
                 return [$token, $type];
             default:
                 throw new Exception(
@@ -295,13 +295,9 @@ abstract class TokenAuthTest extends BaseTest
                     // Create and store an invalid token.
                     $token = self::$userIds[$role]['api'] . '.asdf';
                 } elseif ('malformed_token' === $type) {
-                    $token = (
-                        self::$userIds[$role]['api'] . 'asdf'
-                    );
+                    $token = self::$userIds[$role]['api'] . 'asdf';
                 } elseif ('empty_token' === $type) {
-                    $token = (
-                        self::$userIds[$role]['api'] . ''
-                    );
+                    $token = self::$userIds[$role]['api'] . '';
                 }
                 self::$tokens[$role]['api'][$type] = $token;
 
@@ -314,16 +310,24 @@ abstract class TokenAuthTest extends BaseTest
                     $helper
                 );
             } elseif ('jwt' === $format) {
-                self::$tokens[$role]['jwt'][$type] = self::createJSONWebToken();
+                $userId = $userIds[$role]['jwt'];
+                if ('invalid_token' === $type) {
+                    self::$tokens[$role]['jwt'][$type] = 'asdf'
+                } elseif ('malformed_token' === $type)
+                    self::$tokens[$role]['jwt'][$type] = self::createJSONWebToken($userId);
+                } elseif ('empty_token') {
+                    self::$tokens[$role]['jwt'][$type] = ''
+                }
             }
         }
         return self::$tokens[$role][$format][$type];
     }
 
-    private static function createJSONWebToken()
+    private static function createJSONWebToken($userId)
     {
-        list($jwt, $expiration) = JsonWebToken::encode('testuser');
-        return $jwt;
+        $username = XDUser::getUserByID($userId);
+        $jwt = JsonWebToken::encode($username);
+        return $jwt[0];
     }
 
     /**
