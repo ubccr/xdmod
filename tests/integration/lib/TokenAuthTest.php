@@ -286,18 +286,18 @@ abstract class TokenAuthTest extends BaseTest
                 // Store the role's user ID so it can be used to create an
                 // invalid token and later used for expiring and unexpiring
                 // tokens.
-                self::$userIds[$role]['api'] = substr(
+                self::$userIds[$role] = substr(
                     $token,
                     0,
                     strpos($token, '.')
                 );
                 if ('invalid_token' === $type) {
                     // Create and store an invalid token.
-                    $token = self::$userIds[$role]['api'] . '.asdf';
+                    $token = self::$userIds[$role] . '.asdf';
                 } elseif ('malformed_token' === $type) {
-                    $token = self::$userIds[$role]['api'] . 'asdf';
+                    $token = self::$userIds[$role] . 'asdf';
                 } elseif ('empty_token' === $type) {
-                    $token = self::$userIds[$role]['api'] . '';
+                    $token = self::$userIds[$role] . '';
                 }
                 self::$tokens[$role]['api'][$type] = $token;
 
@@ -310,7 +310,7 @@ abstract class TokenAuthTest extends BaseTest
                     $helper
                 );
             } elseif ('jwt' === $format) {
-                $userId = self::$userIds[$role]['jwt'];
+                self::$userIds[$role] = $userId;
                 if ('invalid_token' === $type) {
                     self::$tokens[$role]['jwt'][$type] = 'asdf';
                 } elseif ('malformed_token' === $type) {
