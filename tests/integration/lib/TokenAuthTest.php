@@ -291,7 +291,6 @@ abstract class TokenAuthTest extends BaseTest
                     0,
                     strpos($token, '.')
                 );
-                self::$userIds[$role]['api'][$type];
                 if ('invalid_token' === $type) {
                     // Create and store an invalid token.
                     $token = self::$userIds[$role]['api'] . '.asdf';
