@@ -310,7 +310,7 @@ abstract class TokenAuthTest extends BaseTest
                     $helper
                 );
             } elseif ('jwt' === $format) {
-                self::$userIds[$role] = $userId;
+                $userId = self::$userIds[$role];
                 if ('invalid_token' === $type) {
                     self::$tokens[$role]['jwt'][$type] = 'asdf';
                 } elseif ('malformed_token' === $type) {
