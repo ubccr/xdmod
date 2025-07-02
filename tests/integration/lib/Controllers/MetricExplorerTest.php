@@ -203,10 +203,11 @@ class MetricExplorerTest extends TokenAuthTest
     /**
      * @dataProvider provideTokenAuthTestData
      */
-    public function testGetDwDescripterTokenAuth($role, $tokenType) {
+    public function testGetDwDescripterTokenAuth($role, $tokenType, $tokenFormat) {
         parent::runTokenAuthTest(
             $role,
             $tokenType,
+            $tokenFormat,
             array_replace(
                 self::getDefaultRequestInput(),
                 ['data' => ['operation' => 'get_dw_descripter']]
@@ -221,7 +222,7 @@ class MetricExplorerTest extends TokenAuthTest
     /**
      * @dataProvider getDimensionFiltersProvider
      */
-    public function testGetDimensionFilters($role, $tokenType, $expectedCount)
+    public function testGetDimensionFilters($role, $tokenType, $tokenFormat, $expectedCount)
     {
         //TODO: Needs further integration for other realms
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
@@ -230,6 +231,7 @@ class MetricExplorerTest extends TokenAuthTest
         parent::runTokenAuthTest(
             $role,
             $tokenType,
+            $tokenFormat,
             array_replace(
                 self::getDefaultRequestInput(),
                 [
@@ -297,9 +299,9 @@ class MetricExplorerTest extends TokenAuthTest
     {
         $tests = [];
         foreach (parent::provideTokenAuthTestData() as $testData) {
-            list($role, $tokenType) = $testData;
+            list($role, $tokenType, $format) = $testData;
             if ('valid_token' !== $tokenType) {
-                $tests[] = [$role, $tokenType, null];
+                $tests[] = [$role, $tokenType, $format, null];
             }
         }
         $expectedCounts = [
@@ -310,7 +312,7 @@ class MetricExplorerTest extends TokenAuthTest
             'mgr' => 0
         ];
         foreach ($expectedCounts as $role => $count) {
-            $tests[] = [$role, 'valid_token', $count];
+            $tests[] = [$role, 'valid_token', $format, $count];
         }
         return $tests;
     }

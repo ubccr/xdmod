@@ -190,10 +190,11 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
      * @covers ::getRealms
      * @dataProvider provideTokenAuthTestData
      */
-    public function testGetRealmsTokenAuth($role, $tokenType) {
+    public function testGetRealmsTokenAuth($role, $tokenType, $tokenFormat) {
         parent::runTokenAuthTest(
             $role,
             $tokenType,
+            $tokenFormat,
             [
                 'path' => 'rest/warehouse/export/realms',
                 'method' => 'get',
