@@ -265,6 +265,8 @@ abstract class TokenAuthTest extends BaseTest
         }
         if (!isset(self::$tokens[$role][$format])) {
             self::$tokens[$role][$format] = [];
+        }
+        if (!isset(self::$tokens[$role][$format][$type])) {
             if ('api' === $format) {
                 // Construct a test helper for making HTTP requests to create
                 // and revoke tokens.
@@ -289,19 +291,17 @@ abstract class TokenAuthTest extends BaseTest
                     0,
                     strpos($token, '.')
                 );
-
+                self::$userIds[$role]['api'][$type];
                 if ('invalid_token' === $type) {
                     // Create and store an invalid token.
-                    $token = (
-                        self::$userIds[$role]['api'][$type] . '.asdf'
-                    );
+                    $token = self::$userIds[$role]['api'] . '.asdf';
                 } elseif ('malformed_token' === $type) {
                     $token = (
-                        self::$userIds[$role]['api'][$type] . 'asdf'
+                        self::$userIds[$role]['api'] . 'asdf'
                     );
                 } elseif ('empty_token' === $type) {
                     $token = (
-                        self::$userIds[$role]['api'][$type] . ''
+                        self::$userIds[$role]['api'] . ''
                     );
                 }
                 self::$tokens[$role]['api'][$type] = $token;
