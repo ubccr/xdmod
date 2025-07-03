@@ -528,14 +528,14 @@ class RegressionTestHelper extends XdmodTestHelper
                 array_push(
                     $testParams,
                     [
-                        "$realm.json",
+                        "$realm.txt",
                         array_merge(
                             $baseInput,
                             ['params' => $params['base']]
                         )
                     ],
                     [
-                        "$realm-fields-and-filters.json",
+                        "$realm-fields-and-filters.txt",
                         array_merge(
                             $baseInput,
                             ['params' => array_merge(
@@ -556,7 +556,7 @@ class RegressionTestHelper extends XdmodTestHelper
      * otherwise compare the result to an existing test artifact file.
      *
      * @param string $testName name of test artifact file not including the
-     *                         `.json` extension.
+     *                         `.txt` extension.
      * @param array $input describes the HTTP request,
      *                     @see BaseTest::makeHttpRequest().
      * @return bool true if the test artifact file already exists and
@@ -629,13 +629,6 @@ class RegressionTestHelper extends XdmodTestHelper
             if ($expected === $data) {
                 return true;
             }
-            $differences = [];
-            self::compareJsonData(
-                $differences,
-                '/',
-                json_decode($expected, true),
-                json_decode($data, true)
-            );
             throw new ExpectationFailedException(
                 sprintf(
                     "Response does not match artifact:\nExpected:\n%s\nActual:\n%s\n",
@@ -643,82 +636,6 @@ class RegressionTestHelper extends XdmodTestHelper
                     $data
                 )
             );
-        }
-    }
-
-    /**
-     * Recursively compare an expected JSON value to an actual JSON value,
-     * updating a list of differences between the two.
-     *
-     * @param array $differences list of differences.
-     * @param string $path used to refer to the JSON value relative to the root
-     *                     JSON object, e.g., if '/' refers to the root,
-     *                     '/->foo' refers to a property within the object
-     *                     called 'foo', '/->foo->bar' refers to a 'bar'
-     *                     property of the 'foo' object, etc.
-     * @param mixed $expected the expected JSON value.
-     * @param mixed $actual the actual JSON value.
-     * @return null
-     */
-    private static function compareJsonData(
-        array &$differences,
-        $path,
-        $expected,
-        $actual
-    ) {
-        if (is_array($expected) && is_array($actual)) {
-            self::compareJsonArrays($differences, $path, $expected, $actual);
-        } elseif (is_array($expected) && !is_array($actual)) {
-            $differences[] = (
-                "Expected array but got value '"
-                . var_export($actual, true) . "' for property: $path"
-            );
-        } elseif (!is_array($expected) && is_array($actual)) {
-            $differences[] = (
-                "Expected value '" . var_export($expected, true)
-                . "' but got array for property: $path"
-            );
-        } elseif ($expected !== $actual) {
-            $differences[] = (
-                "Expected value '" . var_export($expected, true)
-                . "' but got value '" . var_export($actual, true)
-                . "' for property: $path"
-            );
-        }
-    }
-
-    /**
-     * Same as self::compareJsonData() but specifically for the case where both
-     * the expected and actual values are known to be arrays.
-     */
-    private static function compareJsonArrays(
-        array &$differences,
-        $path,
-        array $expected,
-        array $actual
-    ) {
-        foreach ($expected as $key => $value) {
-            if (!array_key_exists($key, $actual)) {
-                $differences[] = (
-                    'Missing ' . (is_numeric($key) ? 'item' : 'key')
-                    . ": $path->$key"
-                );
-            } else {
-                self::compareJsonData(
-                    $differences,
-                    "$path->$key",
-                    $value,
-                    $actual[$key]
-                );
-            }
-        }
-        foreach ($actual as $key => $value) {
-            if (!array_key_exists($key, $expected)) {
-                $differences[] = (
-                    'Extra ' . (is_numeric($key) ? 'item' : 'key')
-                    . ": $path->$key"
-                );
-            }
         }
     }
 
