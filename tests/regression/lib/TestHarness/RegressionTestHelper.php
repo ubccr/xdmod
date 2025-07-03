@@ -566,24 +566,17 @@ class RegressionTestHelper extends XdmodTestHelper
      *                         `.json` extension.
      * @param array $input describes the HTTP request,
      *                     @see BaseTest::makeHttpRequest().
-     * @param bool $sort whether to sort the result before saving or comparing
-     *                   it.
      * @return bool true if the test artifact file already exists and
      *              contains the response body from the HTTP request.
-     * @throws SkippedTestError if REG_TEST_USER_ROLE is
-     *                                             not set or if
-     *                                             REG_TEST_FORCE_GENERATION is
-     *                                             set and the test artifact
-     *                                             file was successfully
-     *                                             created.
-     * @throws ExpectationFailedException
-     *                                             if REG_TEST_FORCE_GENERATION
-     *                                             is not set and the HTTP
-     *                                             response body does not match
-     *                                             the contents of the test
-     *                                             artifact file.
+     * @throws SkippedTestError if REG_TEST_USER_ROLE is not set or if
+     *                          REG_TEST_FORCE_GENERATION is set and the test
+     *                          artifact file was successfully created.
+     * @throws ExpectationFailedException if REG_TEST_FORCE_GENERATION
+     *                                    is not set and the HTTP response body
+     *                                    does not match the contents of the
+     *                                    test artifact file.
      */
-    public function checkRawData($testName, array $input, $sort = false)
+    public function checkRawData($testName, array $input)
     {
         $role = self::getEnvUserrole();
         if ('public' === $role) {
@@ -597,24 +590,24 @@ class RegressionTestHelper extends XdmodTestHelper
             $role
         );
         $data = $response[0];
-        if ($sort) {
-            $chunks = [];
-            $line = strtok($data, "\r\n");
-            while (false !== $line) {
-                $chunk = ['size' => $line];
-                $line = strtok("\r\n");
-                $chunk['data'] = $line;
-                array_push($chunks, $chunk);
-                $line = strtok("\r\n");
-            }
-            usort($chunks, function ($a, $b) {
-                return strcmp($a['data'], $b['data']);
-            });
-            $chunks = array_map(function ($chunk) {
-                return $chunk['size'] . "\r\n" . $chunk['data'];
-            }, $chunks);
-            $data = implode("\r\n", $chunks);
+        // Sort the data.
+        $chunks = [];
+        $line = strtok($data, "\r\n");
+        while (false !== $line) {
+            $chunk = ['size' => $line];
+            $line = strtok("\r\n");
+            $chunk['data'] = $line;
+            array_push($chunks, $chunk);
+            $line = strtok("\r\n");
         }
+        usort($chunks, function ($a, $b) {
+            return strcmp($a['data'], $b['data']);
+        });
+        $chunks = array_map(function ($chunk) {
+            return $chunk['size'] . "\r\n" . $chunk['data'];
+        }, $chunks);
+        $data = implode("\r\n", $chunks);
+        // Make any replacements in the data.
         $data = preg_replace(self::$replaceRegex, self::$replacements, $data);
         if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
             return $this->generateArtifact(
