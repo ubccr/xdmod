@@ -523,35 +523,28 @@ class RegressionTestHelper extends XdmodTestHelper
         ];
         $realms = Utilities::getRealmsToTest();
         $testParams = [];
-        $testMode = getenv('XDMOD_TEST_MODE');
         foreach ($realmParams as $realm => $params) {
             if (in_array($realm, $realms)) {
-                $testFileName = "$realm.json";
-                // In fresh_install mode, the jobs are re-ingested, which
-                // reorders some of them from the Posidriv resource, producing
-                // differently-ordered results than in upgrade mode. To work
-                // around this, each mode has its own artifact file for the
-                // Jobs realm.
-                if ('jobs' === $realm) {
-                    $testFileName = "$realm-$testMode.json";
-                }
-                $testParams[] = [
-                    $testFileName,
-                    array_merge(
-                        $baseInput,
-                        ['params' => $params['base']]
-                    )
-                ];
-                $testParams[] = [
-                    "$realm-fields-and-filters.json",
-                    array_merge(
-                        $baseInput,
-                        ['params' => array_merge(
-                            $params['base'],
-                            $params['fields_and_filters']
-                        )]
-                    )
-                ];
+                array_push(
+                    $testParams,
+                    [
+                        "$realm.json",
+                        array_merge(
+                            $baseInput,
+                            ['params' => $params['base']]
+                        )
+                    ],
+                    [
+                        "$realm-fields-and-filters.json",
+                        array_merge(
+                            $baseInput,
+                            ['params' => array_merge(
+                                $params['base'],
+                                $params['fields_and_filters']
+                            )]
+                        )
+                    ]
+                );
             }
         }
         return $testParams;
