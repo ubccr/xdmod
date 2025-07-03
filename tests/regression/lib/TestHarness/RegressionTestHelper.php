@@ -599,7 +599,7 @@ class RegressionTestHelper extends XdmodTestHelper
         $chunks = array_map(function ($chunk) {
             return $chunk['size'] . "\r\n" . $chunk['data'];
         }, $chunks);
-        $data = implode("\r\n", $chunks) . "\r\n";
+        $data = implode("\r\n", $chunks) . "\n";
         // Make any replacements in the data.
         $data = preg_replace(self::$replaceRegex, self::$replacements, $data);
         if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
