@@ -396,5 +396,21 @@ will have the following columns added:
 
 Then, the Cloud realm will be reaggregated.
 
+Additional 11.0.2 Upgrade Notes
+-------------------
+
+Open XDMoD 11.0.2 changes the `/rest/warehouse/raw-data` endpoint used by the
+[Data Analytics Framework](data-analytics-framework.md) to respond with chunked
+transfer encoding rather than a JSON text sequence. An effect of this is that
+if a connection is closed unexpectedly before all the data is sent, it can now
+be detected by the absense of `0\r\n\r\n` at the end of the stream. Previously,
+there was no way to detect such an error from the client side.
+
+After the upgrade, users wishing to use the
+[`xdmod-data`](https://github.com/ubccr/xdmod-data) Python package to retrieve
+data from your Open XDMoD installation will need `xdmod-data` version 1.1.0 or
+greater. To upgrade the Python package to the latest version, users can run
+`pip install --upgrade xdmod-data`.
+
 [github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
 [mysql-config]: configuration.html#mariadb-configuration
