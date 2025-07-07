@@ -2845,7 +2845,7 @@ layout: null
                     "Data Analytics Framework"
                 ],
                 "summary": "Get raw data from the data warehouse",
-                "description": "On success, returns a stream of content type `application/json-seq` containing one line with an array containing the `display` property of each obtained field followed by one line for each obtained record with an array containing the obtained field values for that record. Each line starts with an ASCII Record Separator character and ends with an ASCII Line Feed character.",
+                "description": "On success, streams chunks of data of type `text/plain`. The beginning of each chunk is a string of hex digits indicating the size of the chunk data in octets, followed by `\\r\\n`, followed by the chunk data, followed by another `\\r\\n`. The first chunk contains an array that contains the `display` property of each obtained field. Each subsequent chunk contains an array that contains the obtained field values for the next row of raw data. The final chunk is of length zero to indicate the end of the stream.",
                 "operationId": "get-warehouse-raw-data",
                 "security": [
                     { "http_bearer": [] },
@@ -2904,7 +2904,7 @@ layout: null
                     "200": {
                         "description": "OK",
                         "content": {
-                            "application/json-seq": {}
+                            "text/plain": {}
                         }
                     },
                     "400": {
