@@ -3,6 +3,7 @@
 namespace Rest\Controllers;
 
 use CCR\MailWrapper;
+use Exception;
 use Models\Services\Acls;
 use Models\Services\JsonWebToken;
 use Models\Services\Organizations;
@@ -11,6 +12,7 @@ use Silex\Application;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use xd_utilities;
 use XDUser;
@@ -114,19 +116,23 @@ class AuthenticationControllerProvider extends BaseControllerProvider
         return $app->json($redirectUrl);
     }
 
-    /**
-     * Redirect to the JupyterHub with a new JSON Web Token in a cookie.
+     /**
+     * If a JupyterHub is configured, redirect to it with a new JSON Web Token in a cookie.
      *
      * @param Request $request
      * @param Application $app
      * @return RedirectResponse to the configured JupyterHub root if the user is
      *                          authenticated, otherwise to the sign-in
      *                          screen.
-     * @throws BadRequestHttpException if the 'next' parameter is not present
-     *                                 or does not start with '/'.
+     * @throws HttpException if a JupyterHub is not configured.
      */
     public function redirectWithJwt(Request $request, Application $app)
     {
+        try {
+            $jupyterhub_url = xd_utilities\getConfiguration('jupyterhub', 'url');
+        } catch (Exception $e) {
+            throw new HttpException(501, 'JupyterHub not configured');
+        }
         try {
             $user = $this->authorize($request);
         } catch (UnauthorizedHttpException $e) {
@@ -142,7 +148,6 @@ class AuthenticationControllerProvider extends BaseControllerProvider
             true, // secure
             true  // httpOnly
         );
-        $jupyterhub_url = xd_utilities\getConfiguration('jupyterhub', 'url');
         $response = new RedirectResponse($jupyterhub_url);
         $response->headers->setCookie($cookie);
         return $response;
