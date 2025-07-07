@@ -975,25 +975,19 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 const end = params.get('end_time');
                 const duration = params.get('duration');
 
-                //parsing the 'start_time' and 'end_time' URL parameters into Date objects
+                // Third parameter "strict" defaults to false, allowing date rollover
                 const startDate = Date.parseDate(start, 'Y-m-d');
                 const endDate = Date.parseDate(end, 'Y-m-d');
-                
-                // Validate that both parsed values are valid Date instances
                 const startValid = startDate instanceof Date;
                 const endValid = endDate instanceof Date;
 
-
                 // If both dates are valid and the start is not after the end,
                 // set the date range in the duration selector
+                // Else if no valid dates are provided but a duration is present (e.g. "Last 30 Days"),
+                // fall back to setting that instead
                 if ((startValid && endValid) && (startDate <= endDate)) {
                     self.getDurationSelector().setValues(start, end);
-                }
-
-                
-                // If no valid dates are provided but a duration is present (e.g. "Last 30 Days"),
-                // fall back to setting that instead
-                else if (duration != null) {
+                } else if (duration != null) {
                     self.getDurationSelector().selectCustomDateRange(duration);
                 }
 
