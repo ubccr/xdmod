@@ -16,7 +16,7 @@ class JsonWebToken
      *               time of the JWT.
      */
     public static function encode($subject) {
-        self::$xdmodPrivateKey = file_get_contents(
+        $xdmodPrivateKey = file_get_contents(
             CONFIG_DIR
             . DIRECTORY_SEPARATOR
             . 'keys'
@@ -30,7 +30,7 @@ class JsonWebToken
                 'exp' => $expiration,
                 'sub' => $subject
             ],
-            self::$xdmodPrivateKey,
+            $xdmodPrivateKey,
             self::SIGNING_ALGORITHM
         );
         return [$jwt, $expiration];
@@ -41,14 +41,14 @@ class JsonWebToken
      * @return \stdClass the claims in the JWT.
      */
     public static function decode($jwt) {
-        self::$jupyterhubPublicKey = file_get_contents(
+        $jupyterhubPublicKey = file_get_contents(
             CONFIG_DIR
             . DIRECTORY_SEPARATOR
             . 'keys'
             . DIRECTORY_SEPARATOR
             . 'jupyterhub-public.pem'
         );
-        $secretKey = new Key(self::$jupyterhubPublicKey, self::SIGNING_ALGORITHM);
+        $secretKey = new Key($jupyterhubPublicKey, self::SIGNING_ALGORITHM);
         return JWT::decode($jwt, $secretKey);
     }
 }

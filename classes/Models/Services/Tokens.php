@@ -216,7 +216,7 @@ SQL;
 
         $row = $db->query($query, array(':username' => $username));
         if (count($row) !== 1) {
-            self:throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
+            self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
         return XDUser::getUserByUserName($username);
     }

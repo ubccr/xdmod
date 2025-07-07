@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use xd_utilities;
 use XDUser;
 
 /**
@@ -114,12 +115,11 @@ class AuthenticationControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Redirect to a specified path with a new JSON Web Token in a cookie.
+     * Redirect to the JupyterHub with a new JSON Web Token in a cookie.
      *
-     * @param Request $request must contain a 'next' parameter whose value is
-     *                         the path to which to redirect.
+     * @param Request $request
      * @param Application $app
-     * @return RedirectResponse to the 'next' path if the user is
+     * @return RedirectResponse to the configured JupyterHub root if the user is
      *                          authenticated, otherwise to the sign-in
      *                          screen.
      * @throws BadRequestHttpException if the 'next' parameter is not present
@@ -127,14 +127,10 @@ class AuthenticationControllerProvider extends BaseControllerProvider
      */
     public function redirectWithJwt(Request $request, Application $app)
     {
-        $next = $this->getStringParam($request, 'next', true);
-        if (0 !== strpos($next, '/')) {
-            throw new BadRequestHttpException("Invalid 'next' parameter.");
-        }
         try {
             $user = $this->authorize($request);
         } catch (UnauthorizedHttpException $e) {
-            return new RedirectResponse('/#jwt-redirect?next=' . $next);
+            return new RedirectResponse('/#jwt-redirect');
         }
         list($jwt, $expiration) = JsonWebToken::encode($user->getUsername());
         $cookie = new Cookie(
@@ -146,7 +142,7 @@ class AuthenticationControllerProvider extends BaseControllerProvider
             true, // secure
             true  // httpOnly
         );
-        $response = new RedirectResponse($next);
+        $jupyterhub_url = xd_utilities\getConfiguration('jupyterhub', 'url');
         $response->headers->setCookie($cookie);
         return $response;
     }
