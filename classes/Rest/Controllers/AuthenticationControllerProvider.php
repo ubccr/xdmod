@@ -143,6 +143,7 @@ class AuthenticationControllerProvider extends BaseControllerProvider
             true  // httpOnly
         );
         $jupyterhub_url = xd_utilities\getConfiguration('jupyterhub', 'url');
+        $response = new RedirectResponse($jupyterhub_url);
         $response->headers->setCookie($cookie);
         return $response;
     }
