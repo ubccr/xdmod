@@ -49,6 +49,9 @@
 - Bug Fixes
     - Make plots time zone aware
       ([\#2031](https://github.com/ubccr/xdmod/pull/2031)).
+    - Change content returned by warehouse raw data REST endpoint to help
+      clients catch silent errors
+      ([\#2032](https://github.com/ubccr/xdmod/pull/2032)).
     - Fix bug when reingesting cloud logs
       ([\#2056](https://github.com/ubccr/xdmod/pull/2056)).
 - Enhancements
