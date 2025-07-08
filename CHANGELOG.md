@@ -49,6 +49,8 @@
 - Bug Fixes
     - Make plots time zone aware
       ([\#2031](https://github.com/ubccr/xdmod/pull/2031)).
+    - Fix bug when reingesting cloud logs
+      ([\#2056](https://github.com/ubccr/xdmod/pull/2056)).
 - Enhancements
     - Usage tab
         - Add the ability to deep link into specific charts in the Usage tab
