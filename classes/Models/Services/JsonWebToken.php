@@ -18,8 +18,8 @@ class JsonWebToken
         . 'keys'
         . DIRECTORY_SEPARATOR
     );
-    const XDMOD_PRIVATE_KEY_FILE = KEYS_DIR . 'xdmod-private.pem';
-    const JUPYTERHUB_PUBLIC_KEY_FILE = KEYS_DIR . 'jupyterhub-public.pem';
+    const XDMOD_PRIVATE_KEY_FILE = self::KEYS_DIR . 'xdmod-private.pem';
+    const JUPYTERHUB_PUBLIC_KEY_FILE = self::KEYS_DIR . 'jupyterhub-public.pem';
 
     /**
      * @param string $subject the 'sub' property of the JWT to encode.
@@ -27,11 +27,11 @@ class JsonWebToken
      *               time of the JWT.
      */
     public static function encode($subject) {
-        $xdmodPrivateKey = file_get_contents(XDMOD_PRIVATE_KEY_FILE);
+        $xdmodPrivateKey = file_get_contents(self::XDMOD_PRIVATE_KEY_FILE);
         if (false === $xdmodPrivateKey) {
             throw new Exception(
                 'This XDMoD portal is missing a private key at `'
-                . XDMOD_PRIVATE_KEY_FILE
+                . self::XDMOD_PRIVATE_KEY_FILE
                 . '` for signing JSON Web Tokens.'
             );
         }
@@ -49,7 +49,7 @@ class JsonWebToken
         } catch (DomainException $e) {
             throw new Exception(
                 'Error signing the JSON Web Token using `'
-                . XDMOD_PRIVATE_KEY_FILE
+                . self::XDMOD_PRIVATE_KEY_FILE
                 . '`.'
             );
         }
@@ -61,11 +61,11 @@ class JsonWebToken
      * @return \stdClass the claims in the JWT.
      */
     public static function decode($jwt) {
-        $jupyterhubPublicKey = file_get_contents(JUPYTERHUB_PUBLIC_KEY_FILE);
+        $jupyterhubPublicKey = file_get_contents(self::JUPYTERHUB_PUBLIC_KEY_FILE);
         if (false === $jupyterhubPublicKey) {
             throw new Exception(
                 'This XDMoD portal is missing a public key at `'
-                . JUPYTERHUB_PUBLIC_KEY_FILE
+                . self::JUPYTERHUB_PUBLIC_KEY_FILE
                 . '` for decoding JSON Web Tokens.'
             );
         }
@@ -75,7 +75,7 @@ class JsonWebToken
         } catch (InvalidArgumentException $e) {
             throw new Exception(
                 'The public key file at `'
-                . JUPYTERHUB_PUBLIC_KEY_FILE
+                . self::JUPYTERHUB_PUBLIC_KEY_FILE
                 . '` is empty.'
             );
         }
