@@ -115,6 +115,11 @@ jobs:
               if [ -e /var/log/php_errors.log ]; then
                   test `egrep -v "PHP Deprecated.*vendor\/.*|PHP Notice:  fread()" /var/log/php_errors.log | wc -l` = 0;
               fi
+      - run:
+          name: 'Validate script for exporting saved metric explorer charts'
+          command: |
+              ./tests/ci/scripts/metric-saved-charts-test-setup.sh
+              test -e /tmp/*ME*.svg
       - store_artifacts:
           path: /tmp/screenshots
       - store_artifacts:
