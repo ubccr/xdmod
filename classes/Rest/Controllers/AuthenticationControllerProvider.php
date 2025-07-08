@@ -131,7 +131,7 @@ class AuthenticationControllerProvider extends BaseControllerProvider
         try {
             $jupyterhub_url = xd_utilities\getConfiguration('jupyterhub', 'url');
         } catch (Exception $e) {
-            throw new HttpException(501, 'JupyterHub not configured');
+            throw new HttpException(501, 'JupyterHub not configured.');
         }
         try {
             $user = $this->authorize($request);
