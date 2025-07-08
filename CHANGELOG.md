@@ -46,6 +46,9 @@
 
 ## XXXX-XX-XX v11.0.2
 
+- New Features
+    - Add support for hosting the Data Analytics Framework via JupyterHub
+      ([\#2060](https://github.com/ubccr/xdmod/pull/2060)).
 - Bug Fixes
     - Make plots time zone aware
       ([\#2031](https://github.com/ubccr/xdmod/pull/2031)).
