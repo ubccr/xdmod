@@ -71,6 +71,11 @@ jobs:
             mv ./configuration/portal_settings.ini ./configuration/portal_settings.ini.old
             cp /etc/xdmod/portal_settings.ini ./configuration/portal_settings.ini
             cp /etc/xdmod/organization.json ./configuration/organization.json
+            mkdir ./configuration/keys
+            openssl genrsa -out ./configuration/keys/xdmod-private.pem 2048
+            openssl pkey -in ./configuration/keys/xdmod-private.pem -pubout -out ./configuration/keys/xdmod-public.pem
+            cp ./configuration/keys/xdmod-private.pem ./configuration/keys/jupyterhub-private.pem
+            cp ./configuration/keys/xdmod-public.pem ./configuration/keys/jupyterhub-public.pem
       - run:
           name: Setup & Run QA Tests
           command: |

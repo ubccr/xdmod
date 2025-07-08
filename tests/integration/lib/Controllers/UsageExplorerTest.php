@@ -1224,11 +1224,12 @@ END;
     /**
      * @dataProvider provideTokenAuthTestData
      */
-    public function testGetDataTokenAuth($role, $tokenType)
+    public function testGetDataTokenAuth($role, $tokenType, $tokenFormat)
     {
         parent::runTokenAuthTest(
             $role,
             $tokenType,
+            $tokenFormat,
             [
                 'path' => 'controllers/user_interface.php',
                 'method' => 'post',
