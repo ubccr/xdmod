@@ -2,7 +2,7 @@
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 XDMOD_SOURCE_DIR=${XDMOD_SOURCE_DIR:-$BASEDIR/../../../}
-XDMOD_URL="$( jq -r '(.url[:-1] + ":443")' ../testing.json)"
+XDMOD_URL="$( jq -r '(.url[:-1] + ":443")' "${BASEDIR}"/../testing.json)"
 CD_USENAME="$( jq '.role.cd.username' "${BASEDIR}"/../testing.json)"
 CD_PASSWORD="$( jq '.role.cd.username' "${BASEDIR}"/../testing.json)"
 BUILDENV="ME-export-saved-charts-venv"
