@@ -35,6 +35,8 @@ sed -i "s|site_address = ''|site_address = '${XDMOD_URL}'|g" $XDMOD_SOURCE_DIR/d
 # Change output dir to tmp
 sed -i "s|export_dir = '.'|export_dir = '/tmp'|g" $XDMOD_SOURCE_DIR/docs/assets/scripts/export-metric-explorer-charts.py
 
+sed -i '/session = requests.Session()/a session.verify = False' $XDMOD_SOURCE_DIR/docs/assets/scripts/export-metric-explorer-charts.py
+
 # Call script to export ME saved chart
 chmod +x $XDMOD_SOURCE_DIR/docs/assets/scripts/export-metric-explorer-charts.py
 $XDMOD_SOURCE_DIR/docs/assets/scripts/export-metric-explorer-charts.py
