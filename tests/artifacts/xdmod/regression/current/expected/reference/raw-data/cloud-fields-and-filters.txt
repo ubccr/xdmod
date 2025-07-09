@@ -1,0 +1,12 @@
+0
+
+55
+["172df8e9-b2ec-4864-898d-a4d401de85f0","Polar Ocean and Climate Systems","m1.small"]
+55
+["4d5e602e-97b7-4839-8818-097d6bcc8e62","Polar Ocean and Climate Systems","m1.small"]
+2a
+["Instance ID","PI Group","Instance Type"]
+56
+["b9c560b9-1066-483c-895e-aebb8b3c7ac1","Polar Ocean and Climate Systems","m1.medium"]
+49
+["dde9e2fb-a519-4299-a35f-8a096a46404c","Galactic Astronomy","m1.medium"]
