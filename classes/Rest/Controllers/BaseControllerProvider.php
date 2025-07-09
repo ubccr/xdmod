@@ -3,7 +3,6 @@
 namespace Rest\Controllers;
 
 use DateTime;
-use Models\Services\Tokens;
 use Rest\Utilities\Authentication;
 use Rest\Utilities\Authorization;
 use Silex\Application;
@@ -222,9 +221,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         }
 
         $authorized = $user->hasAcls($requirements);
-        if ($authorized === false && !$isPublicUser) {
+        if (!$authorized && !$isPublicUser) {
             throw new AccessDeniedHttpException(self::EXCEPTION_MESSAGE);
-        } elseif ($authorized === false && $isPublicUser) {
+        } elseif (!$authorized && $isPublicUser) {
             throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
 
@@ -745,26 +744,6 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         }
 
         return $date;
-    }
-
-    /**
-     * Attempt to authorize the the provided `$request` via an included API Token.
-     *
-     * @param Request $request
-     * @return \XDUser
-     * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
-     */
-    protected function authenticateToken($request)
-    {
-        $authorizationHeader = null;
-        if (!$request->headers->has('Authorization')) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                Tokens::MISSING_TOKEN_MESSAGE
-            );
-        }
-        $authorizationHeader = $request->headers->get('Authorization');
-        return Tokens::authenticate($authorizationHeader, $request->getPathInfo());
     }
 
     /**

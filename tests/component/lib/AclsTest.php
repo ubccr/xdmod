@@ -328,7 +328,6 @@ TXT;
             'job_count',
             'max_processors',
             'min_processors',
-            'normalized_avg_processors',
             'running_job_count',
             'started_job_count',
             'submitted_job_count',

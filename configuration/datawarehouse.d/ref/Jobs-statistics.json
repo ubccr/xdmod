@@ -117,18 +117,6 @@
         "precision": 0,
         "unit": "Core Count"
     },
-    "normalized_avg_processors": {
-        "aggregate_formula": {
-            "$include": "datawarehouse.d/include/Jobs-norm-avg-proc-agg.sql"
-        },
-        "description_html": "The percentage average size ${ORGANIZATION_NAME} job divided by the total number of cores in the resource where the job ran. The job normalization calculation assumes that the resource size is constant. This statistic should not be used with a time range where the resource size changes, because the statistic will be incorrect.<br><i>Normalized Job Size: </i>The ratio of the total number of processor cores used by a (parallel) job over the total number of cores on the resource.",
-        "name": "Job Size: Normalized",
-        "precision": 1,
-        "timeseries_formula": {
-            "$include": "datawarehouse.d/include/Jobs-norm-avg-proc-time.sql"
-        },
-        "unit": "% of Total Cores"
-    },
     "running_job_count": {
         "#": "Support different formulas for aggregate and timeseries queries",
         "aggregate_formula": "COALESCE(SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0)",
