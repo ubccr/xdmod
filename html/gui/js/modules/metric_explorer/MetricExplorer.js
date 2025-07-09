@@ -6685,8 +6685,13 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 "nbformat_minor": 0,
                 "cells": []
             }
+            retJson['cells'][0] = {
+                "cell_type": "markdown",
+                "metadata": {},
+                "source": "The following cell includes all the necessary imports",
+            }
             //uncomment out datawarehouse import and dw declaration after api key is no longer required
-            retJson["cells"][0] = {
+            retJson["cells"][1] = {
                 "cell_type": "code",
                 "execution_count": 1,
                 "metadata": {},
@@ -6700,7 +6705,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 ]
             }
             //remove this cell once api key no longer needed
-            retJson["cells"][1] = {
+            retJson["cells"][2] = {
                 "cell_type": "code",
                 "execution_count": 1,
                 "metadata": {},
@@ -6939,10 +6944,17 @@ for col in data_${i}:
     ),`
     //switch side
     if (currSide === 'right') {currSide = 'left'} else {currSide = 'right'}
+    }
 }
-    }   
         updateLayout += '\n)\n'
-        plotChart += `${updateLayout}\n# Format legend and set index interval\nplot.update_layout(legend_x=0, legend_y=-0.3, ${xValueLabels})\n\nplot.show()`
+        plotChart += `${updateLayout}\n# Format legend and set index interval\nplot.update_layout(legend_x=0, legend_y=-0.3, ${xValueLabels})${(config.data_series.total > 1) ? `\nplot.update_yaxes(showgrid=False)` : ''}\n\nplot.show()`
+        retJson['cells'].push(
+            {
+                "cell_type": "markdown",
+                "metadata": {},
+                "source": "The following cell fetches all the necessary data from the data analytics framework",
+            }
+        )
         retJson['cells'].push(
             {
                 "cell_type": "code",
@@ -6956,6 +6968,13 @@ for col in data_${i}:
                         "text": "",
                     }
                 ]
+            }
+        )
+        retJson['cells'].push(
+            {
+                "cell_type": "markdown",
+                "metadata": {},
+                "source": "The following cell uses the data fetched in the previous cell to plot the chart and display it",
             }
         )
         retJson['cells'].push(
@@ -6978,7 +6997,7 @@ for col in data_${i}:
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer 45d99df463dc263863c06864ead230508a02c80ed30e9e65`,
+                    'Authorization': `Bearer 9469899acaf5bf1938afced54fb937fae3aec8e2c56b3fe6`,
                 },
                 body: JSON.stringify({
                     "content": retJson,
@@ -6999,6 +7018,7 @@ for col in data_${i}:
                 console.error('Fetch error:', error);
               });
         }
+        console.log(CCR.xdmod.ui.metricExplorer.getConfig()['limit'])
         fetchNB()
         window.open(`http://localhost:8888/lab/tree/${config.title}.ipynb`)
         
