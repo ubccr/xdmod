@@ -62,10 +62,7 @@ abstract class TokenAuthTest extends BaseTest
         $role
     ) {
         $token = self::getToken('valid_token', $role);
-        $testHelper->addheader(
-            'Authorization',
-            Tokens::HEADER_KEY . ' ' . $token
-        );
+        $testHelper->addheader('Authorization', "Bearer $token");
         return BaseTest::makeHttpRequest($testHelper, $input);
     }
 
@@ -188,18 +185,19 @@ abstract class TokenAuthTest extends BaseTest
             && 'valid_token' !== $tokenType
         ) {
             $output['headers'] = [
-                'WWW-Authenticate' => Tokens::HEADER_KEY
+                'WWW-Authenticate' => 'Bearer'
             ];
         }
 
         // Construct a test helper for making the request.
         $helper = new XdmodTestHelper();
 
-        // Add the token to the header.
-        $helper->addheader(
-            'Authorization',
-            Tokens::HEADER_KEY . ' ' . $token
-        );
+        // Add the token to the query parameters.
+        parent::assertRequiredKeys(['params'], $input, '$input');
+        if (is_null($input['params'])) {
+            $input['params'] = [];
+        }
+        $input['params']['Bearer'] = $token;
 
         // Make the request and validate the response.
         $actualBody = parent::requestAndValidateJson(
@@ -266,12 +264,12 @@ abstract class TokenAuthTest extends BaseTest
             self::$userIds[$role] = substr(
                 $token,
                 0,
-                strpos($token, Tokens::DELIMITER)
+                strpos($token, '.')
             );
 
             // Create and store an invalid token.
             self::$tokens[$role]['invalid_token'] = (
-                self::$userIds[$role] . Tokens::DELIMITER . 'asdf'
+                self::$userIds[$role] . '.asdf'
             );
 
             // Revoke the created token and store it.
