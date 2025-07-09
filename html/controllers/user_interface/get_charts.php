@@ -1,15 +1,17 @@
 <?php
 
 use DataWarehouse\Access\Usage;
+use Models\Services\Tokens;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 $logger = new \CCR\RequestLogger();
 
 // Attempt authentication by API token.
-$user = \Models\Services\Tokens::authenticateToken();
-
-// If token authentication failed then fall back to the standard session-based
-// authentication method.
-if ($user === null) {
+try {
+    $user = Tokens::authenticateController();
+} catch (UnauthorizedHttpException $e) {
+    // If token authentication failed then fall back to the standard
+    // session-based authentication method.
     $user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
 }
 

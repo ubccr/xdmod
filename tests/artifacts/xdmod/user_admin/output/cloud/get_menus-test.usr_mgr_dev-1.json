@@ -1,7 +1,7 @@
 [
     {
         "text": "Cloud Summary",
-        "id": "group_by_Cloud_none",
+        "id": "node=group_by&realm=Cloud&group_by=none",
         "group_by": "none",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -15,7 +15,7 @@
     },
     {
         "text": "Cloud by Decanal Unit",
-        "id": "group_by_Cloud_nsfdirectorate",
+        "id": "node=group_by&realm=Cloud&group_by=nsfdirectorate",
         "group_by": "nsfdirectorate",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -29,7 +29,7 @@
     },
     {
         "text": "Cloud by Department",
-        "id": "group_by_Cloud_parentscience",
+        "id": "node=group_by&realm=Cloud&group_by=parentscience",
         "group_by": "parentscience",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -43,7 +43,7 @@
     },
     {
         "text": "Cloud by Domain",
-        "id": "group_by_Cloud_domain",
+        "id": "node=group_by&realm=Cloud&group_by=domain",
         "group_by": "domain",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -57,7 +57,7 @@
     },
     {
         "text": "Cloud by Instance Type",
-        "id": "group_by_Cloud_configuration",
+        "id": "node=group_by&realm=Cloud&group_by=configuration",
         "group_by": "configuration",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -71,7 +71,7 @@
     },
     {
         "text": "Cloud by PI",
-        "id": "group_by_Cloud_pi",
+        "id": "node=group_by&realm=Cloud&group_by=pi",
         "group_by": "pi",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -85,7 +85,7 @@
     },
     {
         "text": "Cloud by PI Group",
-        "id": "group_by_Cloud_fieldofscience",
+        "id": "node=group_by&realm=Cloud&group_by=fieldofscience",
         "group_by": "fieldofscience",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -99,7 +99,7 @@
     },
     {
         "text": "Cloud by Project",
-        "id": "group_by_Cloud_project",
+        "id": "node=group_by&realm=Cloud&group_by=project",
         "group_by": "project",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -113,7 +113,7 @@
     },
     {
         "text": "Cloud by Resource",
-        "id": "group_by_Cloud_resource",
+        "id": "node=group_by&realm=Cloud&group_by=resource",
         "group_by": "resource",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -127,7 +127,7 @@
     },
     {
         "text": "Cloud by Submission Venue",
-        "id": "group_by_Cloud_submission_venue",
+        "id": "node=group_by&realm=Cloud&group_by=submission_venue",
         "group_by": "submission_venue",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -141,7 +141,7 @@
     },
     {
         "text": "Cloud by System Username",
-        "id": "group_by_Cloud_username",
+        "id": "node=group_by&realm=Cloud&group_by=username",
         "group_by": "username",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -155,7 +155,7 @@
     },
     {
         "text": "Cloud by User",
-        "id": "group_by_Cloud_person",
+        "id": "node=group_by&realm=Cloud&group_by=person",
         "group_by": "person",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -169,7 +169,7 @@
     },
     {
         "text": "Cloud by VM Size: Cores",
-        "id": "group_by_Cloud_vm_size",
+        "id": "node=group_by&realm=Cloud&group_by=vm_size",
         "group_by": "vm_size",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -183,7 +183,7 @@
     },
     {
         "text": "Cloud by VM Size: Memory",
-        "id": "group_by_Cloud_vm_size_memory",
+        "id": "node=group_by&realm=Cloud&group_by=vm_size_memory",
         "group_by": "vm_size_memory",
         "query_group": "tg_usage",
         "category": "Cloud",
@@ -197,7 +197,7 @@
     },
     {
         "text": "Cloud by VM State",
-        "id": "group_by_Cloud_instance_state",
+        "id": "node=group_by&realm=Cloud&group_by=instance_state",
         "group_by": "instance_state",
         "query_group": "tg_usage",
         "category": "Cloud",
