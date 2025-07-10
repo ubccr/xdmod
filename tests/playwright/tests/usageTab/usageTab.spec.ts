@@ -145,7 +145,7 @@ test.describe('Usage', async () => {
                 await page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary')).click();
                 await expect(page.locator(usg.selectors.topTreeNodeByName('Jobs by System Username'))).toBeVisible();
                 await page.locator(usg.selectors.topTreeNodeByName('Jobs by System Username')).click();
-                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)', true))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle('CPU Hours: Per Job', true))).toBeVisible();
             });
         });
     }
