@@ -44,5 +44,8 @@ const selectors ={
         return `//div[@id='chart_config_menu_chart_toolbar_tg_usage']//span[contains(text(), '${text}')]//ancestor::li[contains(@class, 'x-menu-list-item')]`;
     },
     signInLink: '#sign_in_link',
+    summaryChartLinkByName : function (text) {
+        return `//div[@id="tg_usage"]//div[contains(@class, "chart_thumb")]//span[contains(text(), "${text}")]/..//a`
+    }
 }
 export default selectors;
