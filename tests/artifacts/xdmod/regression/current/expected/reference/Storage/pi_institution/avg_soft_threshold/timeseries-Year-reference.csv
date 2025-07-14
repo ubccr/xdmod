@@ -1,0 +1,11 @@
+title
+"Quota: Soft Threshold (Bytes): by PI Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Year,"[screw - Screwdriver] Quota: Soft Threshold (Bytes)","[wrench - Wrench] Quota: Soft Threshold (Bytes)","[Unknown - Unknown Organization] Quota: Soft Threshold (Bytes)"
+2018,572000034816000,210000003072000,200000008192000
+2019,572000034816000,210000003072000,200000008192000
+---------

@@ -1,0 +1,11 @@
+title
+"Number of Jobs Submitted: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[screw - Screwdriver] Number of Jobs Submitted","[wrench - Wrench] Number of Jobs Submitted"
+"2016 Q4",49614,6595
+"2017 Q1",12642,392
+---------

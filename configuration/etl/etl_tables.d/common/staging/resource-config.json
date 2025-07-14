@@ -51,6 +51,12 @@
                 "type": "varchar(30)",
                 "nullable": true,
                 "comment": "Allocation unit type such as CPU, GPU, or Node."
+            },
+            {
+                "name": "organization",
+                "type": "varchar(30)",
+                "nullable": true,
+                "comment": "Organization for the resource"
             }
         ],
         "indexes": [

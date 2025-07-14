@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Year,"[screw] Average Number of GPUs: Total (GPU Count)"
-2016,5200.0000
-2017,8000.0000
+Year,"[screw] Average Number of GPUs: Total (GPU Count)","[wrench] Average Number of GPUs: Total (GPU Count)"
+2016,5200.0000,0.0000
+2017,8000.0000,0.0000
 ---------

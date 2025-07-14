@@ -26,6 +26,8 @@ class UsageChartsTest extends \PHPUnit\Framework\TestCase
     // Used when running in hash-generation mode.
     protected static $imagehashes = array();
 
+    protected static $fileNameToTestNames = array();
+
     /**
      * Determine which JSON file to use for expected hash data.
      */
@@ -84,6 +86,14 @@ class UsageChartsTest extends \PHPUnit\Framework\TestCase
                 print json_encode(self::$imagehashes, JSON_PRETTY_PRINT);
             }
         }
+
+        // If we're saving images then make sure to save the metadata
+        if (!empty(self::$fileNameToTestNames)) {
+            echo "Saving Regression Usage Chart Metadata!\n";
+            $fileName = implode(DIRECTORY_SEPARATOR, array('/tmp', 'reg_usage_chart_metadata.json'));
+            file_put_contents($fileName, json_encode(self::$fileNameToTestNames, JSON_PRETTY_PRINT));
+            echo "Saved to $fileName";
+        }
     }
 
     private function phash($type, $imageData)
@@ -133,6 +143,23 @@ class UsageChartsTest extends \PHPUnit\Framework\TestCase
 
         $imageData = $response[0];
         $actualHash = $this->phash($input['format'], $imageData);
+
+        if (getenv('REG_TEST_SAVE_IMAGE')) {
+            $fileHash = md5(var_export($input, true));
+            $fileExt = 'png';
+            if (strpos($imageData, 'svg') !== false) {
+                $fileExt = 'svg';
+            }
+            $filePath = implode(DIRECTORY_SEPARATOR, array('/tmp', "$fileHash.$fileExt"));
+            self::$fileNameToTestNames[] = array(
+                'test_name' => $testName,
+                'file_hash' => $fileHash,
+                'expected_hash' => $expectedHash,
+                'actual_hash' => $actualHash,
+                'input' => $input
+            );
+            file_put_contents($filePath, $imageData);
+        }
 
         if ($expectedHash === false || getenv('REG_TEST_FORCE_GENERATION') === '1') {
             self::$imagehashes[$testName] = $actualHash;

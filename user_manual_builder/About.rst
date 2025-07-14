@@ -48,7 +48,7 @@ follow.
       Role Delegation Menu
 
 Also in the **My Profile** window is a tab that allows you to create an
-**API Token** to use with the
+**API token** to use with the
 `Data Analytics Framework <https://pypi.org/project/xdmod-data>`_
 (:numref:`api_token_menu`).
 

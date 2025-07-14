@@ -1,0 +1,23 @@
+{
+    "table_definition": {
+        "name": "hpcdb_storage_usage_to_ingest",
+        "engine": "InnoDB",
+        "comment": "Storage usage data to ingest",
+        "columns": [
+            {
+                "name": "storage_usage_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Storage usage record ID"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "storage_usage_id"
+                ]
+            }
+        ]
+    }
+}

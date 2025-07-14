@@ -2,14 +2,17 @@
 
 use Models\Services\Acls;
 use Models\Services\Realms;
+use Models\Services\Tokens;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 @require_once('common.php');
 
-// To enable API Token
-$user = \Models\Services\Tokens::authenticateToken();
-
-// If token authentication failed then fallback to the standard session based authentication method.
-if ($user === null) {
+// Attempt authentication by API token.
+try {
+    $user = Tokens::authenticateController();
+} catch (UnauthorizedHttpException $e) {
+    // If token authentication failed then fall back to the standard
+    // session-based authentication method.
     $user = \xd_security\getLoggedInUser();
 }
 

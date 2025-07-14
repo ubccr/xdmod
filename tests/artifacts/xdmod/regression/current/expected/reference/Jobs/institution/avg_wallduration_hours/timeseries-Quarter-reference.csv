@@ -1,0 +1,11 @@
+title
+"Wall Hours: Per Job: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Unknown - Unknown Organization] Wall Hours: Per Job","[screw - Screwdriver] Wall Hours: Per Job","[wrench - Wrench] Wall Hours: Per Job"
+"2016 Q4",36.93729487,6.33118628,0.41747659
+"2017 Q1",10.65711934,5.95598788,0.05962972
+---------

@@ -3,7 +3,6 @@
 namespace Rest\Controllers;
 
 use DateTime;
-use Models\Services\Tokens;
 use Rest\Utilities\Authentication;
 use Rest\Utilities\Authorization;
 use Silex\Application;
@@ -222,9 +221,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         }
 
         $authorized = $user->hasAcls($requirements);
-        if ($authorized === false && !$isPublicUser) {
+        if (!$authorized && !$isPublicUser) {
             throw new AccessDeniedHttpException(self::EXCEPTION_MESSAGE);
-        } elseif ($authorized === false && $isPublicUser) {
+        } elseif (!$authorized && $isPublicUser) {
             throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
 
@@ -745,60 +744,6 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         }
 
         return $date;
-    }
-
-    /**
-     * Attempt to authorize the the provided `$request` via an included API Token.
-     *
-     * @param Request $request
-     * @return \XDUser
-     * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
-     * @throws \Exception if the user's token from the db does not validate against the provided token.
-     */
-    protected function authenticateToken($request)
-    {
-        // NOTE: While we prefer token's to be pulled from the 'Authorization' header, we also support a fallback lookup
-        // to the request's query params.
-
-        // Also, we check `getallheaders` because for some reason Silex seems to gobble up the `Authorization` header.
-        $allHeaders = getallheaders();
-
-        $authorizationHeader = null;
-        if ($request->headers->has('Authorization')) {
-            $authorizationHeader = $request->headers->get('Authorization');
-        } elseif (array_key_exists('Authorization', $allHeaders)) {
-            $authorizationHeader = $allHeaders['Authorization'];
-        }
-
-        // Fall back to getting the token from the request(PATH,GET,BODY).
-        if (empty($authorizationHeader) || strpos($authorizationHeader, Tokens::HEADER_KEY) === false) {
-            $rawToken = $request->get(Tokens::HEADER_KEY);
-        } else {
-            $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1);
-        }
-
-        // If it's still empty, then no token == no access.
-        if (empty($rawToken)) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                'No Token Provided.'
-            );
-        }
-
-
-        // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
-        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
-        if ($delimPosition === false) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                'Invalid token format.'
-            );
-        }
-
-        $userId = substr($rawToken, 0, $delimPosition);
-        $token = substr($rawToken, $delimPosition + 1);
-
-        return Tokens::authenticate($userId, $token);
     }
 
     /**

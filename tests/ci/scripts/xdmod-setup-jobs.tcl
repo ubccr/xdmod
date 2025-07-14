@@ -9,11 +9,11 @@
 set resources [list]
 
 # Job Resources
-lappend resources [list frearson Frearson hpc cpu 2016-12-27 400 4000]
-lappend resources [list mortorq Mortorq hpc gpu 2016-12-26 400 4000 400 4000]
-lappend resources [list phillips Phillips hpc cpunode 2016-12-22 400 4000]
-lappend resources [list pozidriv Posidriv hpc cpu 2016-12-21 400 4000]
-lappend resources [list robertson Robertson hpc gpunode 2016-12-12 400 4000 400 4000]
+lappend resources [list frearson Frearson hpc cpu screw 2016-12-27 400 4000]
+lappend resources [list mortorq Mortorq hpc gpu screw 2016-12-26 400 4000 400 4000]
+lappend resources [list phillips Phillips hpc cpunode screw 2016-12-22 400 4000]
+lappend resources [list pozidriv Posidriv hpc cpu wrench 2016-12-21 400 4000]
+lappend resources [list robertson Robertson hpc gpunode screw 2016-12-12 400 4000 400 4000]
 # -------------
 
 #-------------------------------------------------------------------------------
@@ -37,12 +37,13 @@ foreach resource $resources {
 	provideInput {Formal Name:} [lindex $resource 1]
 	provideInput {Resource Type*} [lindex $resource 2]
 	provideInput {Resource Allocation Type*} [lindex $resource 3]
-	provideInput {Resource Start Date, in YYYY-mm-dd format*} [lindex $resource 4]
-	provideInput {How many CPU nodes does this resource have?} [lindex $resource 5]
-	provideInput {How many total CPU processors (cpu cores) does this resource have?} [lindex $resource 6]
+	provideInput {Organization*} [lindex $resource 4]
+	provideInput {Resource Start Date, in YYYY-mm-dd format*} [lindex $resource 5]
+	provideInput {How many CPU nodes does this resource have?} [lindex $resource 6]
+	provideInput {How many total CPU processors (cpu cores) does this resource have?} [lindex $resource 7]
 	if { [lindex $resource 3] == "gpu" || [lindex $resource 3] == "gpunode" } {
-		provideInput {How many GPU nodes does this resource have?} [lindex $resource 7]
-		provideInput {How many total GPUs does this resource have?} [lindex $resource 8]
+		provideInput {How many GPU nodes does this resource have?} [lindex $resource 8]
+		provideInput {How many total GPUs does this resource have?} [lindex $resource 9]
 	}
 }
 
