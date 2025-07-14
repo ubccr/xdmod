@@ -975,7 +975,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 const end = params.get('end_time');
                 const duration = params.get('duration');
 
-                // Third parameter "strict" defaults to false, allowing date rollover
                 const startDate = Date.parseDate(start, 'Y-m-d');
                 const endDate = Date.parseDate(end, 'Y-m-d');
                 const startValid = startDate instanceof Date;
