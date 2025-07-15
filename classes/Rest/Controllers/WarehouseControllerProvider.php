@@ -286,6 +286,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         // Metrics routes
         $controller
+            ->get("$root/resources", "$current::getResources");
+
+        $controller
             ->get("$root/realms", "$current::getRealms");
 
         $controller
@@ -711,6 +714,52 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         return $results;
 
+    }
+
+    /**
+     * Get the list of resources known to XDMoD and the metadata about them
+     *
+     * @param  Request $request The request used to make this call.
+     * @param  Application $app The router application.
+     * @return Response             A response containing the following info:
+     *                              success: A boolean indicating if the call was successful.
+     *                              results: An object containing data about
+     *                                       the dimensions retrieved.
+     */
+    public function getResources(Request $request, Application $app)
+    {
+        Tokens::authenticate($request);
+
+        $config = \Configuration\XdmodConfiguration::assocArrayFactory('resource_metadata.json', CONFIG_DIR);
+
+        $query_sql = $config['resource_query'];
+        $params = array();
+        $wheres = array();
+
+        foreach ($config['where_conditions'] as $param => $wherecond) {
+            $value = $this->getStringParam($request, $param);
+            if ($value) {
+                $params[$param] = $value;
+                array_push($wheres, $wherecond);
+            }
+        }
+
+        if (count($wheres) > 0) {
+            $query_sql .= " WHERE " . implode(" AND ", $wheres);
+        }
+
+        $db = DB::factory('database');
+        $stmt = $db->prepare($query_sql);
+        $stmt->execute($params);
+
+        $resourceData = array();
+        while ($result = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $resourceData[$result['resource_name']] = $result;
+        }
+        return $app->json(array(
+            'success' => true,
+            'results' => $resourceData
+        ));
     }
 
     /**
