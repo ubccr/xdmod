@@ -12,7 +12,6 @@ use Exception;
 use Models\Services\Acls;
 use Models\Services\Parameters;
 use Models\Services\Realms;
-use Models\Services\Tokens;
 use PDO;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
@@ -285,6 +284,9 @@ class WarehouseControllerProvider extends BaseControllerProvider
             ->convert('action', "$conversions::toString");
 
         // Metrics routes
+        $controller
+            ->get("$root/resources", "$current::getResources");
+
         $controller
             ->get("$root/realms", "$current::getRealms");
 
@@ -711,6 +713,53 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         return $results;
 
+    }
+
+    /**
+     * Get the list of resources known to XDMoD and the metadata about them
+     *
+     * @param  Request $request The request used to make this call.
+     * @param  Application $app The router application.
+     * @return Response             A response containing the following info:
+     *                              success: A boolean indicating if the call was successful.
+     *                              results: An object containing data about
+     *                                       the dimensions retrieved.
+     */
+    public function getResources(Request $request, Application $app)
+    {
+        $user = parent::authenticateToken($request);
+
+        $config = \Configuration\XdmodConfiguration::assocArrayFactory('resource_metadata.json', CONFIG_DIR);
+
+        $query_sql = $config['resource_query'];
+        $params = array();
+        $wheres = array();
+
+        foreach ($config['where_conditions'] as $param => $wherecond) {
+            $value = $this->getStringParam($request, $param);
+            if ($value) {
+                $params[$param] = $value;
+                array_push($wheres, $wherecond);
+            }
+        }
+
+        if (count($wheres) > 0) {
+            $query_sql .= " WHERE " . implode(" AND ", $wheres);
+        }
+
+        $db = DB::factory('database');
+        $stmt = $db->prepare($query_sql);
+        $stmt->execute($params);
+
+        $resourceData = array();
+        while ($result = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $resourceData[$result['resource_name']] = $result;
+        }
+            
+        return $app->json(array(
+            'success' => true,
+            'results' => $resourceData
+        ));
     }
 
     /**
@@ -2115,14 +2164,10 @@ class WarehouseControllerProvider extends BaseControllerProvider
      *            given dimensions match one of the corresponding given values.
      * - offset: starting row index of data to get.
      *
-     * If successful, the response will be a stream of chunks of data of type
-     * `text/plain`. The beginning of each chunk is a string of hex digits
-     * indicating the size of the chunk data in octets, followed by `\\r\\n`,
-     * followed by the chunk data, followed by another `\\r\\n`. The first
-     * chunk contains an array that contains the `display` property of each
-     * obtained field. Each subsequent chunk contains an array that contains
-     * the obtained field values for the next row of raw data. The final chunk
-     * is of length zero to indicate the end of the stream.
+     * If successful, the response will be a JSON text sequence. The first line
+     * will be an array containing the `display` property of each obtained
+     * field. Subsequent lines will be arrays containing the obtained field
+     * values for each record.
      *
      * @param Request $request
      * @param Application $app
@@ -2138,7 +2183,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     public function getRawData(Request $request, Application $app)
     {
-        $user = Tokens::authenticate($request);
+        $user = parent::authenticateToken($request);
         $params = $this->validateRawDataParams($request, $user);
         $realmManager = new RealmManager();
         $queryClass = $realmManager->getRawDataQueryClass($params['realm']);
@@ -2157,7 +2202,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             if ('Jobs' === $params['realm']) {
                 $currentDate = $params['start_date'];
                 while ($currentDate <= $params['end_date']) {
-                    self::echoRawData(
+                    $this->echoRawData(
                         $queryClass,
                         $currentDate,
                         $currentDate,
@@ -2178,7 +2223,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             } else {
                 // All other realms query the entire date range in a single
                 // query.
-                self::echoRawData(
+                $this->echoRawData(
                     $queryClass,
                     $params['start_date'],
                     $params['end_date'],
@@ -2196,7 +2241,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
         return $app->stream(
             $streamCallback,
             200,
-            ['Content-Type' => 'text/plain']
+            ['Content-Type' => 'application/json-seq']
         );
     }
 
@@ -2270,8 +2315,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
     }
 
     /**
-     * Perform an unbuffered database query and echo the result using chunked
-     * transfer encoding, flushing every 10000 rows.
+     * Perform an unbuffered database query and echo the result as a JSON text sequence, flushing every 10000 rows.
      *
      * @param string $queryClass the fully qualified name of the query class.
      * @param string $startDate the start date of the query in ISO 8601 format.
@@ -2292,7 +2336,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @throws Exception if $startDate or $endDate are invalid ISO 8601 dates, if there is an error connecting to
      *                   or querying the database, or if invalid fields have been specified in the query parameters.
      */
-    private static function echoRawData(
+    private function echoRawData(
         $queryClass,
         $startDate,
         $endDate,
@@ -2312,8 +2356,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
             ],
             'batch'
         );
-        $query = self::setRawDataQueryFilters($query, $params);
-        $dataset = self::getRawBatchDataset(
+        $query = $this->setRawDataQueryFilters($query, $params);
+        $dataset = $this->getRawBatchDataset(
             $user,
             $params,
             $query,
@@ -2322,12 +2366,12 @@ class WarehouseControllerProvider extends BaseControllerProvider
         $pdo = DB::factory($query->_db_profile)->handle();
         if ($isFirstQueryInSeries) {
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
-            self::echoRawDataRow($dataset->getHeader());
+            echo "\036" . json_encode($dataset->getHeader()) . "\n";
         }
         foreach ($dataset as $row) {
             if ($reachedOffset || $i > $offset) {
                 $reachedOffset = true;
-                self::echoRawDataRow($row);
+                echo "\036" . json_encode($row) . "\n";
             }
             if (10000 === $i) {
                 ob_flush();
@@ -2340,20 +2384,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $i++;
         }
         if ($isLastQueryInSeries) {
-            echo "0\r\n\r\n";
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         }
-    }
-
-    /**
-     * Echo a row of raw data using chunked transfer encoding.
-     *
-     * @param mixed $row
-     * @return null
-     */
-    private static function echoRawDataRow($row) {
-        $chunk = json_encode($row);
-        echo dechex(strlen($chunk)) . "\r\n$chunk\r\n";
     }
 
     /**
@@ -2367,7 +2399,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @throws Exception if the `fields` parameter contains invalid field
      *                   aliases.
      */
-    private static function getRawBatchDataset(
+    private function getRawBatchDataset(
         $user,
         $params,
         $query,
@@ -2501,7 +2533,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      * @return \DataWarehouse\Query\RawQuery the query with the filters
      *                                       applied.
      */
-    private static function setRawDataQueryFilters($query, $params)
+    private function setRawDataQueryFilters($query, $params)
     {
         if (is_array($params['filters']) && count($params['filters']) > 0) {
             $f = new stdClass();
