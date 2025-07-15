@@ -756,7 +756,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
         while ($result = $stmt->fetch(\PDO::FETCH_ASSOC)) {
             $resourceData[$result['resource_name']] = $result;
         }
-            
         return $app->json(array(
             'success' => true,
             'results' => $resourceData
