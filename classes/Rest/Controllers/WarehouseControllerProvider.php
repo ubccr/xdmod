@@ -728,7 +728,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
      */
     public function getResources(Request $request, Application $app)
     {
-        $user = Tokens::authenticate($request);
+        Tokens::authenticate($request);
 
         $config = \Configuration\XdmodConfiguration::assocArrayFactory('resource_metadata.json', CONFIG_DIR);
 
