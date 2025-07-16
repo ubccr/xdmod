@@ -115,7 +115,7 @@ describe('Usage', function () {
                 // since nothing should happen, there is no action to wait for, so we
                 // have to pause for a bit
                 browser.pause(500);
-                browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)', true));
+                browser.waitForExist(usg.chartByTitle('CPU Hours: Per Job', true));
             });
         });
     }
