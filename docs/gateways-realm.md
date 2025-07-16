@@ -28,7 +28,7 @@ Verify:
 Successful execution results in creation of the modw_gateways database schema with empty enduser, gateway, gatewayfact_by_day_joblist, and job_metadata tables.
 
 ### b. Select and ingest jobs data for the modw_gateways database
-XDMoD needs a mechanism to identify HPC jobs that were run via a gateway. The default mechanism is to use the last name associated with the user account that ran the jobs. Instructions for configuring the names are in the (User/PI Names guide)[user-names.md]. The steps to use this mechanism are:
+XDMoD needs a mechanism to identify HPC jobs that were run via a gateway. The default mechanism is to use the last name associated with the user account that ran the jobs. Instructions for configuring the names are in the (User/PI Names guide)[user-names.html]. The steps to use this mechanism are:
 1) Choose a suitable identifier to be used for a gateway (such as 'Gateway Proxy User')
 1) Update the last name entries in `names.csv` for each gateway proxy user account.
 1) Import the updated `names.csv`
