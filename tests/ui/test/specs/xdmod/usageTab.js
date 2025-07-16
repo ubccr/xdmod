@@ -56,6 +56,20 @@ describe('Usage', function () {
                     expect(usg.toolbarMenuItemIsEnabled(menuLabel)).to.equal(true);
                 });
             });
+            it('Page reload on base chart returns the same chart', function () {
+                browser.waitForLoadedThenClick(usg.treeNodeByPath('Jobs Summary', 'Job Size: Min'));
+                browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)', true));
+
+                browser.refresh();
+
+                browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)', true));
+            });
+            it('Drilldown on summary chart', function () {
+                browser.waitForLoadedThenClick(usg.topTreeNodeByName('Jobs Summary'));
+                browser.waitForLoadedThenClick(usg.summaryChartLinkByName('CPU Hours: Per Job'));
+
+                browser.waitForExist(usg.chartByTitle('CPU Hours: Per Job', true));
+            });
         });
         logIn.logout();
         describe('(Public User)', function () {
@@ -79,6 +93,20 @@ describe('Usage', function () {
                 browser.waitForLoadedThenClick(usg.treeNodeByPath('Jobs Summary', 'Job Size: Min'));
                 browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)', true));
                 usg.checkLegendText(expected.centerdirector.legend);
+            });
+            it('Page reload on base chart returns the same chart', function () {
+                browser.waitForLoadedThenClick(usg.treeNodeByPath('Jobs Summary', 'Job Size: Min'));
+                browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)', true));
+
+                browser.refresh();
+
+                browser.waitForExist(usg.chartByTitle('Job Size: Min (Core Count)', true));
+            });
+            it('Drilldown on summary chart', function () {
+                browser.waitForLoadedThenClick(usg.topTreeNodeByName('Jobs Summary'));
+                browser.waitForLoadedThenClick(usg.summaryChartLinkByName('CPU Hours: Per Job'));
+
+                browser.waitForExist(usg.chartByTitle('CPU Hours: Per Job', true));
             });
             it('Confirm System Username is not selectable', function () {
                 browser.waitForLoadedThenClick(usg.unfoldTreeNodeByName('Jobs Summary'));
