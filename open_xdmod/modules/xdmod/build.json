@@ -79,6 +79,7 @@
             "configuration/resource_specs.json",
             "configuration/resource_types.json",
             "configuration/resource_allocation_types.json",
+            "configuration/resource_metadata.json",
             "configuration/resources.json",
             "configuration/roles.json",
             "configuration/roles.d",
