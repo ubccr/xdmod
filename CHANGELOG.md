@@ -17,6 +17,9 @@
     - Usage tab
         - Add the ability to deep link into specific charts in the Usage tab
           ([\#2038](https://github.com/ubccr/xdmod/pull/2038)).
+    - Data Analytics Framework
+        - Add a REST endpoint for getting metadata about resources
+          ([\#2066](https://github.com/ubccr/xdmod/pull/2066)).
 - Documentation
     - Update name of `tacc_stats` package to `HPCPerfStats`
       ([\#2044](https://github.com/ubccr/xdmod/pull/2044)).
