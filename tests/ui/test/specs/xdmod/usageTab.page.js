@@ -44,7 +44,7 @@ class Usage {
         };
         this.summaryChartLinkByName = function (text) {
             return `//div[@id="tg_usage"]//div[contains(@class, "chart_thumb")]//span[contains(text(), "${text}")]/..//a`
-        }
+        };
     }
 
     checkLegendText(text) {
