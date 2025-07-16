@@ -43,7 +43,7 @@ class Usage {
             return `//div[@id='chart_config_menu_chart_toolbar_tg_usage']//span[contains(text(), '${text}')]//ancestor::li[contains(@class, 'x-menu-list-item')]`;
         };
         this.summaryChartLinkByName = function (text) {
-            return `//div[@id="tg_usage"]//div[contains(@class, "chart_thumb")]//span[contains(text(), "${text}")]/..//a`
+            return `//div[@id="tg_usage"]//div[contains(@class, "chart_thumb")]//span[contains(text(), "${text}")]/..//a`;
         };
     }
 
