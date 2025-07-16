@@ -60,7 +60,8 @@
 - Enhancements
     - Usage tab
         - Add the ability to deep link into specific charts in the Usage tab
-          ([\#1888](https://github.com/ubccr/xdmod/pull/1888)).
+          ([\#1888](https://github.com/ubccr/xdmod/pull/1888),
+          [\#2064](https://github.com/ubccr/xdmod/pull/2064)).
     - Data Analytics Framework
         - Add a REST endpoint for getting metadata about resources
           ([\#2067](https://github.com/ubccr/xdmod/pull/2067),
