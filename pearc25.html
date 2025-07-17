@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PEARC'25 XDMoD Tutorial and BOF</title>
-  <link rel="icon" type="image/x-icon" href="/xdmod-jekyll-theme/assets/images/favicon.ico" />
-  <link rel="stylesheet" type="text/css" href="/xdmod-jekyll-theme/assets/css/effervescence.css" />
+  <title>PEARC ‘25 July 2025</title>
+  <link rel="icon" type="image/x-icon" href="./xdmod-jekyll-theme/assets/images/favicon.ico" />
+  <link rel="stylesheet" type="text/css" href="./xdmod-jekyll-theme/assets/css/effervescence.css" />
 </head>
 <body>
   <div id="page-container">
@@ -13,7 +13,7 @@
     <div id="page-header" role="banner">
       <a href="https://www.nsf.gov"><img src="/xdmod-jekyll-theme/assets/images/NSF_4-Color_bitmap_Logo.png" alt="National Science Foundation" class='nsflogo' /></a>
       <a href="http://open.xdmod.org"><img src="/xdmod-jekyll-theme/assets/images/xdmod_logo.png" alt="XDMoD" class='xdmodlogo' /></a>
-      <span class="maintitle">PEARC'25 XDMoD Tutorial and BOF</span>
+      <span class="maintitle">PEARC'25 July 2025</span>
       <label class="hamb" for="side-menu"><span class="hamb-line"></span></label>
     </div>
     
@@ -22,244 +22,86 @@
       <input class="side-menu" type="checkbox" id="side-menu"/>
       <div id="page-menu" role="navigation">
           <div class="page-menu-toc">
-<!--
-                <h2>About</h2>
+                <h2>Schedule</h2>
                     <ul>
-                            <li class="active"><a href="/11.0/">Overview</a></li>
-                            <li ><a href="/11.0/notices.html">License Notices</a></li>
-                            <li ><a href="/11.0/architecture.html">Architecture</a></li>
-                            <li ><a href="https://trello.com/b/mdFESh6j">Roadmap</a></li>
-                            <li ><a href="/11.0/docs-conventions.html">Documentation Conventions</a></li>
+                            <li ><a href="#schedule_mon">Monday</a></li>
+                            <li ><a href="#schedule_tue">Tuesday</a></li>
+                            <li ><a href="#schedule_wed">Wednesday</a></li>
                     </ul>
                 
             
-                <h2>Support</h2>
+                <h2>Tutorial</h2>
                 
                     <ul>
-                    
-                            
-                            <li ><a href="/11.0/support.html">Support</a></li>
-                            
-                    
+                            <li ><a href="#tutorial_slides">Slides</a></li>
+                            <li ><a href="#tutorial_prereq">Prerequisites</a></li>
+                            <li ><a href="#tutorial_links">Links</a></li>
+                            <li ><a href="#tutorial_ref">References</a></li>
                     </ul>
                 
             
-                <h2>Download</h2>
+                <h2>Users Group Meeting</h2>
                 
                     <ul>
-                    
-                            
-                            <li ><a href="/11.0/latest-releases.html">Latest Release</a></li>
-                            
-                    
-                            
-                            <li ><a href="https://github.com/ubccr/xdmod/">GitHub Project Page</a></li>
-                            
-                    
+                            <li ><a href="#bof_slides">Slides</a></li>
+                            <li ><a href="#bof_links">Links</a></li>
                     </ul>
-                
-            
-                <h2>Installing</h2>
-                
-                    <ul>
-                    
-                            
-                            <li ><a href="/11.0/software-requirements.html">Software Requirements</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/hardware-requirements.html">Hardware Requirements</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/install.html">Installation Guides</a></li>
-                            
-                              <ul>
-                              
-                                    
-                                    <li class=""><a href="/11.0/install-rpm.html">RPM Installation Guide</a></li>
-                              
-                                    
-                                    <li class=""><a href="/11.0/install-source.html">Source Installation Guide</a></li>
-                              
-                              </ul>
-                            
-                    
-                            
-                            <li ><a href="/11.0/configuration.html">Configuration Guide</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/simpleSAMLphp.html">Single Sign On Authentication</a></li>
-                            
-                              <ul>
-                              
-                                    
-                                    <li class=""><a href="/11.0/simpleSAMLphp-ldap.html">LDAP Authentication</a></li>
-                              
-                              </ul>
-                            
-                    
-                            
-                            <li ><a href="/11.0/upgrade.html">Upgrade Guide</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/gateways-realm.html">Gateways Realm (alpha)</a></li>
-                            
-                    
-                    </ul>
-                
-            
-                <h2>Using</h2>
-                
-                    <ul>
-                    
-                            
-                            <li ><a href="/11.0/shredder.html">Shredder Guide</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/ingestor.html">Ingestor Guide</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/user-names.html">User/PI Names Guide</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/hierarchy.html">Hierarchy Guide</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/logo-image.html">Logo Image Notes</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/commands.html">Command Reference</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/howto.html">HOWTOs</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/faq.html">Frequently Asked Questions</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/troubleshooting.html">Troubleshooting</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/cloud.html">Cloud Metrics</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/resource-specifications.html">Resource Specifications Metrics</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/storage.html">Storage Metrics</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/gpu-metrics.html">GPU Metrics</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/dw-export.html">Data Warehouse Export</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/dashboard.html">User Dashboard Guide</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/data-analytics-framework.html">Data Analytics Framework</a></li>
-                            
-                    
-                    </ul>
-                
-            
-                <h2>Resource Manager Notes</h2>
-                
-                    <ul>
-                    
-                            
-                            <li ><a href="/11.0/resource-manager-slurm.html">Slurm</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/resource-manager-sge.html">SGE/Grid Engine</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/resource-manager-uge.html">Univa Grid Engine</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/resource-manager-pbs.html">PBS/TORQUE</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/resource-manager-lsf.html">LSF</a></li>
-                            
-                    
-                    </ul>
-                
-            
-                <h2>Optional modules</h2>
-                
-                    <ul>
-                    
-                            
-                            <li ><a href="http://appkernels.xdmod.org/ak-overview.html">Application Kernels</a></li>
-                            
-                    
-                            
-                            <li ><a href="http://supremm.xdmod.org/supremm-overview.html">Job Performance (SUPReMM)</a></li>
-                            
-                    
-                            
-                            <li ><a href="https://ondemand.xdmod.org/">Open OnDemand</a></li>
-                            
-                    
-                    </ul>
-                
-            
-                <h2>Developing</h2>
-                
-                    <ul>
-                    
-                            
-                            <li ><a href="/11.0/dev-code-organization.html">Code Organization</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/dashboard-devel.html">User Dashboard Components</a></li>
-                            
-                    
-                            
-                            <li ><a href="/11.0/rest.html">Rest API</a></li>
-                            
-                    
-                    </ul>
-                
-            
-   -->     
-    
             
           </div>
       </div>
       <div id="page-content" role="main">
-         <h1>CI Usage and Performance Data Analysis with XDMoD and NetSage for Resource Providers</h1>
-         <h2>PEARC ‘25 July 2025</h2>
-         <p>Links:</p>
+         <h1>XDMoD and NetSage at PEARC</h1>
+         <table>
+            <thead><tr><th>When</th><th>Where</th><th>What</th></tr></thead>
+
+<tbody>
+<tr> <td><a id="schedule_mon" /> Monday  1:30 PM-5:00 PM     </td> <td> A214      </td> <td> Tutorial-12: CI Usage and Performance Data Analysis with XDMoD and NetSage for Resource Providers </td></tr>
+<tr> <td><a id="schedule_tue" /> Tuesday 11:00 AM-11:25 AM   </td> <td> A110-A111 </td> <td> S&amp;SS-1-1: Data Driven CI System Design and Procurement with Open XDMoD </td> </tr>
+<tr> <td> Tuesday 11:36 AM-11:45 AM   </td> <td> A226      </td> <td> ABST-1-5: Enhancing an HPC Resources Modeling Framework with a Realistic, Slurm-Like, HPC Resource Model </td></tr>
+<tr> <td><a id="schedule_wed" /> Wednesday 11:00 AM-12:00 PM </td> <td> A211-A212 </td> <td> BOF-10: XDMoD Users Group </td> </tr>
+<tr> <td> Wednesday 11:55 AM-12:10 PM </td> <td> A110-A111 </td> <td> S&amp;SS-4-4: Predictive Modeling of HPC Job Queue Times: Improving User Decision-Making and Resource Utilization </td></tr>
+<tr> <td> Wednesday 4:15 PM-5:15 PM   </td> <td> A213-A215 </td> <td> BOF-18: Node to Joy: Finding the Right Compute Resources </td> </tr>
+<tr> <td> Wednesday 5:30 PM-7:30 PM   </td> <td> Eisenman / Trott Rooms </td> <td> Poster#8: Continuous HPC Performance Monitoring: Can It Run Without Affecting User Jobs?  </td> </tr>
+
+</tbody>
+         </table>
+
+         <h1 style="margin-top:2em;">Tutorial: CI Usage and Performance Data Analysis with XDMoD and NetSage for Resource Providers</h1>
+         <h2>Monday  1:30 PM-5:00 PM room A214</h2>
+         <div style="margin:auto;width:403px;"><a href="#" id="tutorial_slides"><img src="assets/images/pearc25_slides_thumbnail.png" alt="Thumbnail image of the tutorial title slide that contains the text CI Usage and Performance Data Analysis with XDMoD and NetSage for Resource Providers" /><br />Download Slides.</a></div>
+
+         <h3 id="tutorial_prereq">Prerequisites</h3>
+         <p>To follow along with the tutorial you will need to <a href="https://identity.access-ci.org/new-user">Register for an ACCESS ID</a>.</p>
+
+         <h3 id="tutorial_links">Tutorial Links</h3>
+         <ul>
+          <li><a href="https://xdmod.access-ci.org">ACCESS XDMoD</a></li>
+          <li><a href="https://access.netsage.io">NetSage for ACCESS</a></li>
+         </ul>
+
+         <h3 id="tutorial_ref">References</h3>
+         <p>ACCESS</p>
+         <ul>
+            <li><a href="https://access-ci.org">ACCESS Project</a></li>
+            <li><a href="https://support.access-ci.org/help-ticket">ACCESS Help Tickets</a></li>
+            <li><a href="https://xdmod.access-ci.org">ACCESS XDMoD</a></li>
+            <li><a href="https://access.netsage.io">NetSage for ACCESS</a></li>
+         </ul>
+
+        <p>Open XDMoD</p>
          <ul>
             <li><a href="https://open.xdmod.org">Open XDMoD download and install instructions.</a></li>
-            <li><a href="https://access.netsage.io">ACCESS NetSage Portal</a></li>
+            <li><a href="https://open.xdmod.org/support.html">Open XDMoD Support</a></li>
+            <li><a href="https://listserv.buffalo.edu/scripts/wa.exe?SUBED1=ccr-xdmod-list&A=1">Open XDMoD mailing list</a></li>
          </ul>
+
+         <h1 style="margin-top:2em;">Open XDMoD Users Group Meeting</h1>
+
+         <h2>Wednesday 11:00 AM-12:00 PM</h2>
+
+         <div style="margin:auto;width:403px;"><a href="#" id="bof_slides"><img src="assets/images/users_group_slides_thumbnail.png" alt="Thumbnail image of the Users group title slide that contains the text XDMoD Users GRoup meeting PEARC25" /><br />Download Slides.</a></div>
+
+
       </div>
       <div class="clear"></div>
       <div id="page-footer" role="contentinfo">
