@@ -1,5 +1,38 @@
 # Open XDMoD Change Log
 
+## XXXX-XX-XX v11.0.2
+
+- New Features
+    - Add support for hosting the Data Analytics Framework via JupyterHub
+      ([\#2046](https://github.com/ubccr/xdmod/pull/2046)).
+- Bug Fixes
+    - Make plots time zone aware
+      ([\#2045](https://github.com/ubccr/xdmod/pull/2045)).
+    - Change content returned by warehouse raw data REST endpoint to help
+      clients catch silent errors
+      ([\#2058](https://github.com/ubccr/xdmod/pull/2058)).
+    - Fix bug when reingesting cloud logs
+      ([\#2061](https://github.com/ubccr/xdmod/pull/2061)).
+- Enhancements
+    - Usage tab
+        - Add the ability to deep link into specific charts in the Usage tab
+          ([\#2038](https://github.com/ubccr/xdmod/pull/2038),
+          [\#2070](https://github.com/ubccr/xdmod/pull/2070)).
+    - Data Analytics Framework
+        - Add a REST endpoint for getting metadata about resources
+          ([\#2066](https://github.com/ubccr/xdmod/pull/2066),
+          [\#2068](https://github.com/ubccr/xdmod/pull/2068)).
+- Documentation
+    - Update name of `tacc_stats` package to `HPCPerfStats`
+      ([\#2044](https://github.com/ubccr/xdmod/pull/2044)).
+- Maintenance / Code Quality
+    - Update Silex and SimpleSAMLphp library dependencies to address security
+      vulnerabilities ([\#2036](https://github.com/ubccr/xdmod/pull/2036)).
+    - Refactor API token authentication code and update error messages to be
+      consistent
+      ([\#2028](https://github.com/ubccr/xdmod/pull/2028),
+      [\#2054](https://github.com/ubccr/xdmod/pull/2054)).
+
 ## 2025-03-17 v11.0.1
 
 - Bug Fixes
