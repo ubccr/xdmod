@@ -122,7 +122,7 @@ class DataWarehouse
         }
 
 
-        $query = "SELECT DISTINCT
+        $query = "SELECT
                                 als.allocation_id,
                                 als.principalinvestigator_person_id,
                                 als.person_id,
@@ -140,16 +140,14 @@ class DataWarehouse
                                 als.status,
                                 als.initial_start_date as start,
                                 als.end_date as end
-                        FROM modw_aggregates.allocation_summary als, resourcefact re, person pti, allocation a, transactiontype t
+                        FROM modw_aggregates.allocation_summary als
+                        STRAIGHT_JOIN allocation a ON als.allocation_id = a.id
+                        STRAIGHT_JOIN transactiontype t ON a.allocation_type_id = t.id
                         WHERE als.person_id = $person_id
-                            AND als.resource_id = re.id
                             AND als.allocation_id = a.id
                             $pi
-                            AND pti.id = als.person_id
                             ".($allocation_id > -1 ? " " :" AND als.status = '".($showActive?'active':'expired')."' ")."
                             AND als.allocation_id ".($allocation_id > 0?" = ".$allocation_id:" > -1 ")."
-                        GROUP BY
-                                als.allocation_id
                         ORDER BY
                                 end
                         DESC";
@@ -230,8 +228,7 @@ class DataWarehouse
             $query = "SELECT ab.allocation_id, ab.person_id, p.last_name, p.first_name, ab.used_allocation
 				FROM modw.allocationbreakdown AS ab, modw.person AS p
 				WHERE ab.person_id = p.id
-				AND ab.allocation_id
-				AND FIND_IN_SET(ab.allocation_id, :allocation_ids)
+				AND ab.allocation_id IN (:allocation_ids)
 				ORDER BY ab.person_id";
 
             $results = self::$db->query($query, array(':allocation_ids' => $allocation_ids));
