@@ -77,6 +77,24 @@ test.describe('Usage', async () => {
                     await expect(check).toBe(true);
                 }
             });
+            await test.step('Page reload on base chart returns the same chart', async () => {
+                await expect(page.locator(usg.selectors.treeNodeByPath('Jobs Summary', 'Job Size: Min'))).toBeVisible();
+                await page.locator(usg.selectors.treeNodeByPath('Jobs Summary', 'Job Size: Min')).click();
+                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)', true))).toBeVisible();
+
+                await page.reload();
+
+                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)', true))).toBeVisible();
+
+            });
+            await test.step('Drilldown on summary chart', async () => {
+                await expect(page.locator(usg.selectors.topTreeNodeByName('Jobs Summary'))).toBeVisible();
+                await page.locator(usg.selectors.topTreeNodeByName('Jobs Summary')).click();
+                await expect(page.locator(usg.selectors.summaryChartLinkByName('CPU Hours: Per Job'))).toBeVisible();
+                await page.locator(usg.selectors.summaryChartLinkByName('CPU Hours: Per Job')).click();
+                await expect(page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary', 'CPU Hours: Per Job'))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle('CPU Hours: Per Job', true))).toBeVisible();
+            });
         });
         test('(Public User)', async ({page}) => {
             await page.goto('/');
@@ -104,12 +122,30 @@ test.describe('Usage', async () => {
                 await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)', true))).toBeVisible();
                 await usg.checkLegendText(expected.centerdirector.legend);
             });
+            await test.step('Page reload on base chart returns the same chart', async () => {
+                await expect(page.locator(usg.selectors.treeNodeByPath('Jobs Summary', 'Job Size: Min'))).toBeVisible();
+                await page.locator(usg.selectors.treeNodeByPath('Jobs Summary', 'Job Size: Min')).click();
+                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)', true))).toBeVisible();
+
+                await page.reload();
+
+                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)', true))).toBeVisible();
+            });
+            await test.step('Drilldown on summary chart', async () => {
+                await expect(page.locator(usg.selectors.topTreeNodeByName('Jobs Summary'))).toBeVisible();
+                await page.locator(usg.selectors.topTreeNodeByName('Jobs Summary')).click();
+                await expect(page.locator(usg.selectors.summaryChartLinkByName('CPU Hours: Per Job'))).toBeVisible();
+                await page.locator(usg.selectors.summaryChartLinkByName('CPU Hours: Per Job')).click();
+                await expect(page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary', 'CPU Hours: Per Job'))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle('CPU Hours: Per Job', true))).toBeVisible();
+            });
+
             await test.step('Confirm System Username is not selectable', async () => {
                 await expect(page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary'))).toBeVisible();
                 await page.locator(usg.selectors.unfoldTreeNodeByName('Jobs Summary')).click();
                 await expect(page.locator(usg.selectors.topTreeNodeByName('Jobs by System Username'))).toBeVisible();
                 await page.locator(usg.selectors.topTreeNodeByName('Jobs by System Username')).click();
-                await expect(page.locator(usg.selectors.chartByTitle('Job Size: Min (Core Count)', true))).toBeVisible();
+                await expect(page.locator(usg.selectors.chartByTitle('CPU Hours: Per Job', true))).toBeVisible();
             });
         });
         test('loads chart with valid start and end date from URL', async ({ page }) => {
