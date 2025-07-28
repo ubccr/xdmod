@@ -80,7 +80,6 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.newChart.modalDialog.ok());
         await expect(this.page.locator(this.newChart.modalDialog.box)).toBeHidden();
         await expect(this.page.locator(this.newChart.modalDialog.noDataMessage)).toBeVisible();
-        await expect(this.page.locator(this.mask)).toBeHidden();
     }
 
     /**

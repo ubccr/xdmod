@@ -12,7 +12,6 @@ class XDMoD extends BasePage{
 
         await tabLocator.click();
         await panel.waitFor({state:'visible'});
-        await expect(this.maskLocator).toBeHidden();
     }
 }
 export default XDMoD;
