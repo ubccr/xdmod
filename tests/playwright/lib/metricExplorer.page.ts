@@ -605,7 +605,7 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.optionsAggregate);
         await this.clickLogo();
         await expect(this.page.locator(this.optionsAggregate)).toBeHidden();
-        await expect(this.page.locator(this.mask)).toBeHidden();
+        await expect(this.page.locator(this.mask)).toHaveCount(0);
     }
 
     /**
