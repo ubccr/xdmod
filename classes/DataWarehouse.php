@@ -228,10 +228,10 @@ class DataWarehouse
             $query = "SELECT ab.allocation_id, ab.person_id, p.last_name, p.first_name, ab.used_allocation
 				FROM modw.allocationbreakdown AS ab, modw.person AS p
 				WHERE ab.person_id = p.id
-				AND ab.allocation_id IN (:allocation_ids)
+				AND ab.allocation_id IN ($allocation_ids)
 				ORDER BY ab.person_id";
 
-            $results = self::$db->query($query, array(':allocation_ids' => $allocation_ids));
+            $results = self::$db->query($query);
 
             $user_pool = array();
 
