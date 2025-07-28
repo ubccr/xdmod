@@ -7,6 +7,8 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class MetricExplorerTest extends TokenAuthTest
 {
+    private $helper;
+
     protected function setup(): void
     {
         $this->helper = new XdmodTestHelper();
