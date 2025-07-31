@@ -7,6 +7,8 @@
       ([\#1975](https://github.com/ubccr/xdmod/pull/1975)).
     - Fix various bugs found when testing strict SQL modes
       ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
+    - Show unknown users the Summary tab instead of the Dashboard tab
+      ([\#2065](https://github.com/ubccr/xdmod/pull/2065)).
 - Enhancements
     - Add the ability to support multiple organizations and to assign
       organizations to people and to resources
@@ -38,6 +40,8 @@
       [\#1968](https://github.com/ubccr/xdmod/pull/1968)).
     - Add an order to the raw data exported from the Resource Specifications
       realm ([\#1979](https://github.com/ubccr/xdmod/pull/1979)).
+    - Add support for ingesting Slurm logs in JSON format
+      ([\#1963](https://github.com/ubccr/xdmod/pull/1963)).
 - Maintenance / Code Quality
     - Remove the "Job Size: Normalized" metric
       ([\#1981](https://github.com/ubccr/xdmod/pull/1981)).
