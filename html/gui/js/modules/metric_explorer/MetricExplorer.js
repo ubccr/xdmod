@@ -6709,7 +6709,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 "cell_type": "code",
                 "execution_count": 1,
                 "metadata": {},
-                "source": "from pathlib import Path\nfrom os.path import expanduser\nxdmod_data_env_path = Path(expanduser('~/xdmod-data.env'))\ntry:\n\twith open(xdmod_data_env_path):\n\t\tpass\nexcept FileNotFoundError:\n\twith open(xdmod_data_env_path, 'w') as xdmod_data_env_file:\n\t\txdmod_data_env_file.write('XDMOD_API_TOKEN=')\n\txdmod_data_env_path.chmod(0o600)\nfrom dotenv import load_dotenv\nload_dotenv(xdmod_data_env_path, override=True)\nfrom xdmod_data.warehouse import DataWarehouse\ndw = DataWarehouse('https://xdmod-dev.ccr.xdmod.org/')",
+                "source": "from pathlib import Path\nfrom os.path import expanduser\nxdmod_data_env_path = Path(expanduser('~/xdmod-data.env'))\ntry:\n\twith open(xdmod_data_env_path):\n\t\tpass\nexcept FileNotFoundError:\n\twith open(xdmod_data_env_path, 'w') as xdmod_data_env_file:\n\t\txdmod_data_env_file.write('XDMOD_API_TOKEN=')\n\txdmod_data_env_path.chmod(0o600)\nfrom dotenv import load_dotenv\nload_dotenv(xdmod_data_env_path, override=True)\nfrom xdmod_data.warehouse import DataWarehouse\ndw = DataWarehouse('https://xdmod.access-ci.org/')",
                 "outputs": [
                     {
                         "output_type": "stream",
@@ -6992,12 +6992,41 @@ for col in data_${i}:
                 ]
             }
         )
+
         const fetchNB = async () => {
+            const response = await fetch(`http://localhost:8000/services/testing/notebooks`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "content": retJson,
+                    "type": "notebook",
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                console.log(response.status)
+                return response.json();
+              })
+              .then(data => {
+                console.log('Data received:', data);
+              })
+              .catch(error => {
+                console.error('Fetch error:', error);
+              });
+        }
+        
+
+        const openNB = async () => {
             const response = await fetch(`http://localhost:8888/api/contents/${config.title}.ipynb`, {
+            //const response = await fetch(`http://localhost:8000/user/admin/lab${config.title}.ipynb`, {    
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer 9469899acaf5bf1938afced54fb937fae3aec8e2c56b3fe6`,
+                    'Authorization': `Bearer c880c53e81dc485aac89c49744a01862f3a9d865dc509736`,
                 },
                 body: JSON.stringify({
                     "content": retJson,
@@ -7018,19 +7047,11 @@ for col in data_${i}:
                 console.error('Fetch error:', error);
               });
         }
-        console.log(CCR.xdmod.ui.metricExplorer.getConfig()['limit'])
         fetchNB()
+        openNB()
         window.open(`http://localhost:8888/lab/tree/${config.title}.ipynb`)
-        
-        /* Downloads ipynb file
-        let ipynbFileRaw = JSON.stringify(retJson, null, 2)
-        const link = document.createElement("a");
-        link.id = "downloadipynb"
-        const file = new Blob([ipynbFileRaw], { type: 'application/json' });
-        link.href = URL.createObjectURL(file);
-        link.download = "sample.ipynb";
-        link.click();
-        URL.revokeObjectURL(link.href);*/
+
+        console.log(CCR.xdmod.ui.metricExplorer.getConfig()['limit'])
     }); // self.on('open in nb', ...
       
 
