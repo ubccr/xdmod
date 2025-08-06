@@ -4,7 +4,6 @@ import selectors from "./xdmod.selectors";
 
 class XDMoD extends BasePage{
     readonly selectors = selectors;
-    readonly maskLocator = this.page.locator(selectors.mask);
 
     async selectTab(tabId:string){
         const tabLocator = this.page.locator(this.selectors.tab(tabId));
@@ -12,7 +11,7 @@ class XDMoD extends BasePage{
 
         await tabLocator.click();
         await panel.waitFor({state:'visible'});
-        await expect(this.maskLocator).toBeHidden();
+        await expect(this.page.locator(this.selectors.mask)).toHaveCount(0);
     }
 }
 export default XDMoD;
