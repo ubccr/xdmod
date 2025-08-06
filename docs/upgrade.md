@@ -412,5 +412,9 @@ data from your Open XDMoD installation will need `xdmod-data` version 1.1.0 or
 greater. To upgrade the Python package to the latest version, users can run
 `pip install --upgrade xdmod-data`.
 
+Open XDMoD 11.0.2 also enables the use of an XDMoD-hosted JupyterHub for
+analyzing data via the Data Analytics Framework for XDMoD, see [this
+page](data-analytics-framework.md) for details.
+
 [github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
 [mysql-config]: configuration.html#mariadb-configuration
