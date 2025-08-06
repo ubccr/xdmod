@@ -1,5 +1,88 @@
 # Open XDMoD Change Log
 
+## XXXX-XX-XX v11.5.0
+
+- Bug Fixes
+    - Fix bugs when updating user organizations
+      ([\#1975](https://github.com/ubccr/xdmod/pull/1975)).
+    - Fix various bugs found when testing strict SQL modes
+      ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
+    - Show unknown users the Summary tab instead of the Dashboard tab
+      ([\#2065](https://github.com/ubccr/xdmod/pull/2065)).
+    - Fix bug when reingesting cloud logs
+      ([\#2072](https://github.com/ubccr/xdmod/pull/2072)).
+- Enhancements
+    - Add the ability to support multiple organizations and to assign
+      organizations to people and to resources
+      ([\#1982](https://github.com/ubccr/xdmod/pull/1982)
+      [\#2026](https://github.com/ubccr/xdmod/pull/2026),
+      [\#2007](https://github.com/ubccr/xdmod/pull/2007)).
+    - Add statistics to the Cloud realm for "Number of Users," "Number of PIs,"
+      "Number of Resources," and "Number of Projects"
+      ([\#1976](https://github.com/ubccr/xdmod/pull/1976)).
+    - Add dimensions to the Jobs, Cloud, and Storage realms for "User
+      Institution" and "PI Institution"
+      ([\#2026](https://github.com/ubccr/xdmod/pull/2026)).
+    - Add dimension to the Storage realm for "Service Provider"
+      ([\#2007](https://github.com/ubccr/xdmod/pull/2007)).
+    - Update Jobs realm raw data to rename the "Organization" field to "User
+      Institution" ([\#2026](https://github.com/ubccr/xdmod/pull/2026)).
+    - Add raw data fields to the Jobs and Cloud realms for "User Institution,"
+      "PI Institution," and "Service Provider"
+      ([\#2026](https://github.com/ubccr/xdmod/pull/2026),
+      [\#2007](https://github.com/ubccr/xdmod/pull/2007)).
+    - Add new resource type for "Program"
+      ([\#1943](https://github.com/ubccr/xdmod/pull/1943)).
+    - Add the ability to ingest Storage realm data by a date range
+      ([\#2018](https://github.com/ubccr/xdmod/pull/2018)).
+    - Improve ingestion performance
+      ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
+      [\#2003](https://github.com/ubccr/xdmod/pull/2003),
+      [\#1965](https://github.com/ubccr/xdmod/pull/1965),
+      [\#1968](https://github.com/ubccr/xdmod/pull/1968)).
+    - Add an order to the raw data exported from the Resource Specifications
+      realm ([\#1979](https://github.com/ubccr/xdmod/pull/1979)).
+    - Add support for ingesting Slurm logs in JSON format
+      ([\#1963](https://github.com/ubccr/xdmod/pull/1963)).
+- Maintenance / Code Quality
+    - Remove the "Job Size: Normalized" metric
+      ([\#1981](https://github.com/ubccr/xdmod/pull/1981)).
+    - Remove code for supporting Internet Explorer
+      ([\#2013](https://github.com/ubccr/xdmod/pull/2013)).
+
+## XXXX-XX-XX v11.0.2
+
+- New Features
+    - Add support for hosting the Data Analytics Framework via JupyterHub
+      ([\#2060](https://github.com/ubccr/xdmod/pull/2060)).
+- Bug Fixes
+    - Make plots time zone aware
+      ([\#2031](https://github.com/ubccr/xdmod/pull/2031)).
+    - Change content returned by warehouse raw data REST endpoint to help
+      clients catch silent errors
+      ([\#2032](https://github.com/ubccr/xdmod/pull/2032)).
+    - Fix bug when reingesting cloud logs
+      ([\#2056](https://github.com/ubccr/xdmod/pull/2056)).
+- Enhancements
+    - Usage tab
+        - Add the ability to deep link into specific charts in the Usage tab
+          ([\#1888](https://github.com/ubccr/xdmod/pull/1888),
+          [\#2064](https://github.com/ubccr/xdmod/pull/2064)).
+    - Data Analytics Framework
+        - Add a REST endpoint for getting metadata about resources
+          ([\#2067](https://github.com/ubccr/xdmod/pull/2067),
+          [\#2069](https://github.com/ubccr/xdmod/pull/2069)).
+- Documentation
+    - Update name of `tacc_stats` package to `HPCPerfStats`
+      ([\#2019](https://github.com/ubccr/xdmod/pull/2019)).
+- Maintenance / Code Quality
+    - Update Silex and SimpleSAMLphp library dependencies to address security
+      vulnerabilities.
+    - Refactor API token authentication code and update error messages to be
+      consistent
+      ([\#2037](https://github.com/ubccr/xdmod/pull/2037),
+      [\#2055](https://github.com/ubccr/xdmod/pull/2055)).
+
 ## 2025-03-17 v11.0.1
 
 - Bug Fixes
