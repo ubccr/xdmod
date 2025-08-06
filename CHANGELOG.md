@@ -9,6 +9,8 @@
       ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
     - Show unknown users the Summary tab instead of the Dashboard tab
       ([\#2065](https://github.com/ubccr/xdmod/pull/2065)).
+    - Fix bug when reingesting cloud logs
+      ([\#2072](https://github.com/ubccr/xdmod/pull/2072)).
 - Enhancements
     - Add the ability to support multiple organizations and to assign
       organizations to people and to resources
