@@ -89,6 +89,10 @@ layout: null
             }
         },
         "schemas": {
+            "date-YmdHis": {
+                "type": "string",
+                "pattern": "[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}"
+            },
             "get_data": {
              "type": "object",
                 "additionalProperties": false,
@@ -3026,14 +3030,11 @@ layout: null
                                                     "type": "string"
                                                 },
                                                 "resource_id":  {
-                                                    "type": "string"
+                                                    "type": "string",
+                                                    "pattern": "[1-9][0-9]*"
                                                 },
-                                                "start_date": {
-                                                    "type": "string"
-                                                },
-                                                "end_date": {
-                                                    "type": "string"
-                                                },
+                                                "start_date": { "$ref": "#/components/schemas/date-YmdHis" },
+                                                "end_date": { "$ref": "#/components/schemas/date-YmdHis" },
                                                 "resource_type": {
                                                     "type": "string"
                                                 },
@@ -3043,17 +3044,21 @@ layout: null
                                                 "info_resource_id": {
                                                     "type": "string"
                                                 }
-                                            }
+                                            },
+                                            "required": [
+                                                "resource_name",
+                                                "resource_id",
+                                                "start_date",
+                                                "end_date",
+                                                "resource_type",
+                                                "allocation_type",
+                                                "info_resource_id"
+                                            ]
                                         }
                                     },
                                     "required": [
-                                        "resource_name",
-                                        "resource_id",
-                                        "start_date",
-                                        "end_date",
-                                        "resource_type",
-                                        "allocation_type",
-                                        "info_resource_id"
+                                        "success",
+                                        "results"
                                     ]
                                 },
                                 "examples": {
