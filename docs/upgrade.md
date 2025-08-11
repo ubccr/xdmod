@@ -416,5 +416,11 @@ Open XDMoD 11.0.2 also enables the use of an XDMoD-hosted JupyterHub for
 analyzing data via the Data Analytics Framework for XDMoD, see [this
 page](data-analytics-framework.md) for details.
 
+### Configuration File Changes
+
+A new file `resource_metadata.json` will be added during the upgrade; this file
+contains the SQL that is used by a new `/rest/warehouse/resources` REST
+endpoint that is used by the Data Analytics Framework.
+
 [github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
 [mysql-config]: configuration.html#mariadb-configuration

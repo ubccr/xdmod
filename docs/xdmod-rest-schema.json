@@ -514,6 +514,27 @@ layout: null
             }
         },
         "responses": {
+            "api-token-401": {
+                "description": "Unauthorized",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/warehouse-error"
+                        },
+                        "examples": {
+                            "empty-token": {
+                                "$ref": "#/components/examples/empty-token"
+                            },
+                            "invalid-token": {
+                                "$ref": "#/components/examples/invalid-token"
+                            },
+                            "expired-token": {
+                                "$ref": "#/components/examples/expired-token"
+                            }
+                        }
+                    }
+                }
+            },
             "api-token-404": {
                 "description": "Not Found",
                 "content": {
@@ -529,6 +550,44 @@ layout: null
                                     }
                                 }
                             ]
+                        }
+                    }
+                }
+            },
+            "session-401": {
+                "description": "Unauthorized",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "success": {
+                                    "enum": [false]
+                                },
+                                "count": {
+                                    "type": "integer"
+                                },
+                                "total": {
+                                    "type": "integer"
+                                },
+                                "totalCount": {
+                                    "type": "integer"
+                                },
+                                "results": {
+                                    "type": "array",
+                                    "items": {}
+                                },
+                                "data": {
+                                    "type": "array",
+                                    "items": {}
+                                },
+                                "message": {
+                                    "enum": ["An error was encountered while attempting to process the requested authorization procedure."]
+                                },
+                                "code": {
+                                    "type": "integer"
+                                }
+                            }
                         }
                     }
                 }
@@ -1882,45 +1941,7 @@ layout: null
                             }
                         }
                     },
-                    "401": {
-                        "description": "An unauthorized request to this endpoint.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "enum": [false]
-                                        },
-                                        "count": {
-                                            "type": "integer"
-                                        },
-                                        "total": {
-                                            "type": "integer"
-                                        },
-                                        "totalCount": {
-                                            "type": "integer"
-                                        },
-                                        "results": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "message": {
-                                            "enum": ["An error was encountered while attempting to process the requested authorization procedure."]
-                                        },
-                                        "code": {
-                                            "type": "integer"
-                                        }
-                                    }
-                                }
-                            }
-
-                        }
-                    },
+                    "401": { "$ref": "#/components/responses/session-401" },
                     "404": { "$ref": "#/components/responses/api-token-404" }
                 }
             },
@@ -1965,46 +1986,7 @@ layout: null
                             }
                         }
                     },
-                    "401": {
-                        "description": "An unauthorized request to this endpoint.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "enum": [false]
-                                        },
-                                        "count": {
-                                            "type": "integer"
-                                        },
-                                        "total": {
-                                            "type": "integer"
-                                        },
-                                        "totalCount": {
-                                            "type": "integer"
-                                        },
-                                        "results": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "message": {
-                                            "enum": [
-                                                "An error was encountered while attempting to process the requested authorization procedure."
-                                            ]
-                                        },
-                                        "code": {
-                                            "type": "integer"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
+                    "401": { "$ref": "#/components/responses/session-401" },
                     "409": {
                         "description": "Conflict",
                         "content": {
@@ -2057,48 +2039,7 @@ layout: null
                             }
                         }
                     },
-                    "401": {
-                        "description": "An unauthorized request to this endpoint.",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "success": {
-                                            "enum": [
-                                                false
-                                            ]
-                                        },
-                                        "count": {
-                                            "type": "integer"
-                                        },
-                                        "total": {
-                                            "type": "integer"
-                                        },
-                                        "totalCount": {
-                                            "type": "integer"
-                                        },
-                                        "results": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "data": {
-                                            "type": "array",
-                                            "items": {}
-                                        },
-                                        "message": {
-                                            "enum": [
-                                                "An error was encountered while attempting to process the requested authorization procedure."
-                                            ]
-                                        },
-                                        "code": {
-                                            "type": "integer"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
+                    "401": { "$ref": "#/components/responses/session-401" },
                     "404": { "$ref": "#/components/responses/api-token-404" },
                     "500": {
                         "description": "Internal Server Error",
@@ -3039,27 +2980,128 @@ layout: null
                             }
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "401": { "$ref": "#/components/responses/api-token-401" }
+                }
+            }
+        },
+        "/warehouse/resources": {
+            "get": {
+                "tags": [
+                    "Data Warehouse",
+                    "Data Analytics Framework"
+                ],
+                "summary": "Get resource metadata from the data warehouse",
+                "operationId": "get-warehouse-resources",
+                "security": [
+                    { "http_bearer": [] },
+                    { "query_param_bearer": [] }
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "service_provider",
+                        "required": false,
+                        "description": "The abbreviated name of the service provider",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "success":  {
+                                            "type": "boolean",
+                                            "enum": [ true ]
+                                        },
+                                        "results": {
+                                            "type": "object",
+                                            "properties": {
+                                                "resource_name":  {
+                                                    "type": "string"
+                                                },
+                                                "resource_id":  {
+                                                    "type": "string"
+                                                },
+                                                "start_date": {
+                                                    "type": "string"
+                                                },
+                                                "end_date": {
+                                                    "type": "string"
+                                                },
+                                                "resource_type": {
+                                                    "type": "string"
+                                                },
+                                                "allocation_type": {
+                                                    "type": "string"
+                                                },
+                                                "info_resource_id": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "resource_name",
+                                        "resource_id",
+                                        "start_date",
+                                        "end_date",
+                                        "resource_type",
+                                        "allocation_type",
+                                        "info_resource_id"
+                                    ]
+                                },
+                                "examples": {
+                                    "stanford": {
+                                        "value": {
+                                            "success":true,
+                                            "results": {
+                                                "Stanford XSTREAM": {
+                                                    "resource_name": "Stanford XSTREAM",
+                                                    "resource_id": "2823",
+                                                    "start_date": "2016-03-01 00:00:00",
+                                                    "end_date": "2018-10-09 00:00:00",
+                                                    "resource_type": "High-performance computing",
+                                                    "allocation_type": "CPU Node Allocated",
+                                                    "info_resource_id": "xstream.stanford.xsede.org"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
                         "content": {
                             "application/json": {
                                 "schema": {
                                     "$ref": "#/components/schemas/warehouse-error"
                                 },
                                 "examples": {
-                                    "empty-token": {
-                                        "$ref": "#/components/examples/empty-token"
-                                    },
-                                    "invalid-token": {
-                                        "$ref": "#/components/examples/invalid-token"
-                                    },
-                                    "expired-token": {
-                                        "$ref": "#/components/examples/expired-token"
+                                    "service-provider-malformed": {
+                                        "value": {
+                                            "success": false,
+                                            "count": 0,
+                                            "total": 0,
+                                            "totalCount": 0,
+                                            "results": [],
+                                            "data": [],
+                                            "message": "Invalid value for service_provider. Must be a(n) string.",
+                                            "code": 0
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
+                    },
+                    "401": { "$ref": "#/components/responses/api-token-401" }
                 }
             }
         },
