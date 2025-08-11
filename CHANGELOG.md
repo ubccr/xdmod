@@ -49,6 +49,8 @@
       ([\#1981](https://github.com/ubccr/xdmod/pull/1981)).
     - Remove code for supporting Internet Explorer
       ([\#2013](https://github.com/ubccr/xdmod/pull/2013)).
+    - Fix slow queries in Allocations realm (applies to ACCESS XDMoD)
+      ([\#2073](https://github.com/ubccr/xdmod/pull/2073)).
 
 ## 2025-08-19 v11.0.2
 
