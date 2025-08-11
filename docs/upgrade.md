@@ -402,7 +402,7 @@ Additional 11.0.2 Upgrade Notes
 Open XDMoD 11.0.2 changes the `/rest/warehouse/raw-data` endpoint used by the
 [Data Analytics Framework](data-analytics-framework.md) to respond with chunked
 transfer encoding rather than a JSON text sequence. An effect of this is that
-if a connection is closed unexpectedly before all the data is sent, it can now
+if a connection is closed unexpectedly before all the data are sent, it can now
 be detected by the absense of `0\r\n\r\n` at the end of the stream. Previously,
 there was no way to detect such an error from the client side.
 
