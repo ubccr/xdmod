@@ -146,17 +146,21 @@ XDMoD.GlobalToolbar.JupyterLab = {
     scale: 'small',
     iconCls: 'btn_jupyterlab',
     id: 'global-toolbar-jupyterlab',
-    tooltip: 'Launch single-user JupyterLab server.',
+    tooltip: 'Launch your single-user JupyterLab server.',
     handler() {
-        Ext.MessageBox.confirm(
-            'Launch single-user JupyterLab server',
-            'WARNING: You are about to launch a single-user JupyterLab server that has a limited lifespan and no persistent storage. Please remember to periodically download any files you want to save from the server. Do you wish to continue?',
-            function (btn) {
-                if (btn === 'yes') {
-                    window.open(CCR.xdmod.JupyterHubURL);
+        if (typeof CCR.xdmod.JupyterHubLaunchWarning === 'string') {
+            Ext.MessageBox.confirm(
+                'Launch JupyterLab',
+                CCR.xdmod.JupyterHubLaunchWarning,
+                function (btn) {
+                    if (btn === 'yes') {
+                        window.open(CCR.xdmod.JupyterHubURL);
+                    }
                 }
-            }
-        );
+            );
+        } else {
+            window.open(CCR.xdmod.JupyterHubURL);
+        }
     }
 
 }; // XDMoD.GlobalToolbar.JupyterLab

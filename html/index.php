@@ -372,6 +372,11 @@ JS;
             $jupyterhubURL = xd_utilities\getConfiguration('jupyterhub', 'url');
             print "CCR.xdmod.isJupyterHubConfigured = true;\n";
             print "CCR.xdmod.JupyterHubURL = " . json_encode($jupyterhubURL) . ";\n";
+            try {
+                $launchWarning = xd_utilities\getConfiguration('jupyterhub', 'launch_warning');
+                print "CCR.xdmod.JupyterHubLaunchWarning = " . json_encode($launchWarning) . ";\n";
+            } catch(\Exception $e) {
+            }
         } catch(\Exception $e) {
             print "CCR.xdmod.isJupyterHubConfigured = false;\n";
         }
