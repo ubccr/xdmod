@@ -10,6 +10,7 @@ require_once __DIR__ . '/../../configuration/linker.php';
 
 ini_set('memory_limit', -1);
 
+use Access\Logging\LogOutput;
 use CCR\Log;
 use OpenXdmod\Build\Packager;
 
@@ -19,8 +20,8 @@ try {
     exit;
 } catch (Exception $e) {
     $logger = getLogger();
-    $logger->err($e->getMessage());
-    $logger->err($e->getTraceAsString());
+    $logger->error($e->getMessage());
+    $logger->error($e->getTraceAsString());
     exit(1);
 }
 
@@ -137,13 +138,13 @@ function main()
 
     $cmd = implode(' ', array_map('escapeshellarg', $argv));
     $logger->info("Command: $cmd");
-    $logger->debug(array_merge(
+    $logger->debug(LogOutput::from(array_merge(
         array('message' => 'Parsed args'),
         $args
-    ));
+    )));
 
     if ($module === null) {
-        $logger->err('No module specified');
+        $logger->error('No module specified');
         exit(1);
     }
 

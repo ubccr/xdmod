@@ -80,7 +80,7 @@ class JsonReferenceWithFallbackTest extends TestCase
      */
     public function testLastFileDNE($value)
     {
-        $this->expectExceptionMessageMatches("/Failed to open file '[^']+file_does_not_exist.txt': file_get_contents\([^)]+\): failed to open stream: No such file or directory/");
+        $this->expectExceptionMessageMatches("/Failed to open file '[^']+file_does_not_exist.txt': file_get_contents\([^)]+\): Failed to open stream: No such file or directory/");
         $this->expectException(Exception::class);
         $this->runTransformTest($value);
     }

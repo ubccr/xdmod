@@ -73,7 +73,7 @@ class JsonPointer
      * ------------------------------------------------------------------------------------------
      */
 
-    public static function isValidPointer($pointer, $expectedFirstToken = null)
+    public static function isValidPointer(string $pointer, $expectedFirstToken = null)
     {
         if ( '' !== $pointer && ! is_string($pointer) ) {
             return false;
@@ -138,7 +138,7 @@ class JsonPointer
 
             if ( json_last_error() !== JSON_ERROR_NONE ) {
                 if ( null !== self::$loggable ) {
-                    self::$loggable->getLogger()->err('Invalid JSON');
+                    self::$loggable->getLogger()->error('Invalid JSON');
                 }
                 throw new Exception('Invalid JSON');
             }

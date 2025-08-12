@@ -2,6 +2,7 @@
 
 namespace CCR;
 
+use Access\Logging\LogOutput;
 use Exception;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\NativeMailerHandler;
@@ -91,7 +92,7 @@ class Log
      *   - dbLogLevel      => DB Logger log level.
      *   - mailLogLevel    => Mail logger log level.
      *
-     * @return LoggerInterface
+     * @return Logger
      * @throws Exception @see getLogger()
      */
     public static function factory(
@@ -118,13 +119,13 @@ class Log
                 | E_STRICT | E_DEPRECATED | E_USER_DEPRECATED;
 
             if ($e !== null && ($e['type'] & $mask) == 0) {
-                $logger->crit(
+                $logger->critical(LogOutput::from(
                     array(
                         'message' => $e['message'],
                         'file'    => $e['file'],
                         'line'    => $e['line'],
                         'type'    => $e['type'],
-                    )
+                    ))
                 );
             }
 
@@ -158,7 +159,7 @@ class Log
      * @param string $ident    The unique string identifier for this logger.
      * @param array $conf      The configuration options to be used when instantiating this loggers handlers.
      *
-     * @return LoggerInterface By default, this returns a Monolog\Logger.
+     * @return Logger By default, this returns a Monolog\Logger.
      *
      * @throws Exception       If there are any problems w/ instantiating the requested handlers.
      */

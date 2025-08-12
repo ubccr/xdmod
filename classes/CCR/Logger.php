@@ -20,19 +20,23 @@ class Logger extends \Monolog\Logger implements LoggerInterface
     /**
      * @inheritDoc
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = array()): void
     {
         // This is so that when code calls $logger->log(\CCR\Log::DEBUG, "Message"); it doesn't bork.
         if ($level < \Monolog\Logger::DEBUG) {
             $level = Log::convertToMonologLevel($level);
         }
-        return parent::log($level, $this->extractMessage($message), $context);
+        parent::log($level, $this->extractMessage($message), $context);
     }
 
     /**
+     * @param int|mixed|\Monolog\Level $level
+     * @param string $message
+     * @param array $context
+     * @param $datetime
      * @inheritDoc
      */
-    public function addRecord($level, $message, array $context = array())
+    public function addRecord($level, $message, array $context = array(), $datetime = null): bool
     {
         return parent::addRecord($level, $this->extractMessage($message), $context);
     }
@@ -49,7 +53,7 @@ class Logger extends \Monolog\Logger implements LoggerInterface
         if (is_array($record)) {
             return json_encode($this->recursivelyStringifyObjects($record), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
         }
-        return json_encode(array('message' => $record), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
+        return $record;
     }
 
     /**

@@ -23,7 +23,7 @@ abstract class Visualization
         return ($a << 24) + ($r << 16) + ($g << 8) + $b;
     }
     //http://martin.ankerl.com/2009/12/09/how-to-create-random-colors-programmatically/
-    public static function getColors($count = NULL, $palleteIndex = 0, $includeWhite = true)
+    public static function getColors($count=null, $palleteIndex = 0, $includeWhite = true)
     {
         $ret = array();
         $colors = json_decode(COLORS);
@@ -39,7 +39,11 @@ abstract class Visualization
             }
         }
         $ret_count = count($ret);
-        srand($count);
+        if ($count === null) {
+            srand();
+        } else {
+            srand($count);
+        }
         if ($count != NULL && $ret_count < $count)
         {
             $value = 15;

@@ -5,5 +5,5 @@
   "totalCount": 0,
   "results": [],
   "data": [],
-  "message": "'group_filter' not specified."
+  "message": "'group_filter' not present."
 }

@@ -131,12 +131,12 @@ class MetricExplorerTest extends TokenAuthTest
 
         unset($params['font_size']);
 
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
         $output = json_decode($response[0]);
         $this->assertEquals($output->data[0]->layout->annotations[0]->font->size, "19");
 
         $params['data_series'] = '[object Object]';
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
         $this->assertEquals(400, $response[1]['http_code']);
     }
 
@@ -185,19 +185,19 @@ class MetricExplorerTest extends TokenAuthTest
         $this->helper->authenticate('cd');
 
         unset($params['start_date']);
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
         $this->assertFalse($response[0]['success']);
-        $this->assertEquals('missing required start_date parameter', $response[0]['message']);
+        $this->assertEquals('start_date is a required parameter.', $response[0]['message']);
 
         $params['start_date'] = '2016-12-29';
         unset($params['end_date']);
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
         $this->assertFalse($response[0]['success']);
-        $this->assertEquals('missing required end_date parameter', $response[0]['message']);
+        $this->assertEquals('end_date is a required parameter.', $response[0]['message']);
 
         $params['end_date'] = '2016-12-29';
         $params['data_series'] = '[object Object]';
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
         $this->assertFalse($response[0]['success']);
         $this->assertEquals('Invalid data_series specified', $response[0]['message']);
     }
@@ -447,7 +447,7 @@ class MetricExplorerTest extends TokenAuthTest
 
         $this->helper->authenticate('cd');
 
-        $response = $this->helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $this->helper->post('controllers/metric_explorer.php', null, $params);
 
         $this->assertArrayHasKey('data', $response[0]);
         $this->assertCount($limit, $response[0]['data']);

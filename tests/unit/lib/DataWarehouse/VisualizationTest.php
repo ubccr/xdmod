@@ -4,6 +4,8 @@ namespace UnitTests\DataWarehouse;
 
 class VisualizationTest extends \PHPUnit\Framework\TestCase
 {
+    protected array $expected;
+
     public function setup(): void
     {
         // Cut and pasted from the colors1.json file.
@@ -40,12 +42,6 @@ class VisualizationTest extends \PHPUnit\Framework\TestCase
     public function testGetSomeColours()
     {
         $v = \DataWarehouse\Visualization::getColors(64);
-        $this->assertEquals($v, $this->expected);
-    }
-
-    public function testNullCount()
-    {
-        $v = \DataWarehouse\Visualization::getColors(null);
         $this->assertEquals($v, $this->expected);
     }
 

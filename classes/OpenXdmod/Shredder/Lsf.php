@@ -7,6 +7,7 @@
 
 namespace OpenXdmod\Shredder;
 
+use Access\Logging\LogOutput;
 use Exception;
 use DateTime;
 use DateTimeZone;
@@ -246,7 +247,7 @@ class Lsf extends Shredder
         $firstSpacePos = strpos($line, ' ');
 
         if ($firstSpacePos === false) {
-            $this->logger->err(array(
+            $this->logger->error(array(
                 'message' => 'Unexpected lsb.acct format',
                 'line'    => $line,
             ));
@@ -297,12 +298,12 @@ class Lsf extends Shredder
             = ($job['ru_utime'] > 0 ? $job['ru_utime'] : 0)
             + ($job['ru_stime'] > 0 ? $job['ru_stime'] : 0);
 
-        $this->logger->debug(array(
+        $this->logger->debug(LogOutput::from(array(
             'message'  => 'Estimating walltime with data from rusage',
             'ru_utime' => $job['ru_utime'],
             'ru_stime' => $job['ru_stime'],
             'walltime' => $job['walltime'],
-        ));
+        )));
 
         $job['resource_name'] = $this->getResource();
 

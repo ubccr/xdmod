@@ -66,7 +66,7 @@ class HostListParser
      *
      * @return array Expanded host list.
      */
-    public function expandHostList($hostList)
+    public function expandHostList(string $hostList)
     {
         $this->logger->debug("Expanding host list '$hostList'");
 

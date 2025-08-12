@@ -13,7 +13,7 @@ class JobViewerTest extends BaseTest
 
     public function setup(): void
     {
-        $xdmodConfig = array( 'decodetextasjson' => true );
+        $xdmodConfig = array( 'decodetextasjson' => true);
         $this->xdmodhelper = new XdmodTestHelper($xdmodConfig);
     }
 
@@ -105,6 +105,9 @@ class JobViewerTest extends BaseTest
         );
         $response = $xdmodhelper->get(self::ENDPOINT . 'dimensions/' . $dimension, $queryparams);
 
+        if (200 !== $response[1]['http_code']) {
+            echo var_export($response, true);
+        }
         $this->assertEquals(200, $response[1]['http_code']);
 
         $resdata = $response[0];
@@ -174,6 +177,9 @@ class JobViewerTest extends BaseTest
         }
         $result = $this->xdmodhelper->get(self::ENDPOINT . 'search/jobs', $searchparams);
 
+        if (false === $result[0]['success'] ){
+            echo var_export($result, true) . "\n";
+        }
         $this->assertArrayHasKey('success', $result[0]);
         $this->assertTrue($result[0]['success']);
         $this->assertArrayHasKey('results', $result[0]);

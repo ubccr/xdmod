@@ -5,6 +5,7 @@
 
 namespace OpenXdmod\Build;
 
+use Access\Logging\LogOutput;
 use CCR\Log;
 use Exception;
 use ArrayIterator;
@@ -296,8 +297,26 @@ class Packager
         $this->copyModuleFiles();
         $this->createModuleFile();
         $this->createInstallScript();
+        $this->addEnvFile();
         $this->createTarFile();
         $this->cleanUp();
+    }
+
+    /**
+     * Since we're using Symfony we need a .env file now. This function copies it into place.
+     *
+     * @return void
+     * @throws Exception
+     */
+    private function addEnvFile()
+    {
+        $fileName = '.env';
+        $srcFile = implode(DIRECTORY_SEPARATOR, array($this->srcDir, $fileName));
+        $destFile = implode(DIRECTORY_SEPARATOR, array($this->getPackageDir(),$fileName));
+
+        $this->logger->info(sprintf('Copying %s to %s', $srcFile, $destFile));
+
+        $this->copyFile($srcFile, $destFile);
     }
 
     /**

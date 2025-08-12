@@ -14,9 +14,9 @@ namespace DataWarehouse\Visualization;
 class ColorGenerator
 {
     // If the number of datasets is below the threhold, then the mapping
-    // is a fixed map of dataset name -> dataset color. If the number of 
-    // datasets is above the threshold, then a simple first-come first-served 
-    // mapping is used. 
+    // is a fixed map of dataset name -> dataset color. If the number of
+    // datasets is above the threshold, then a simple first-come first-served
+    // mapping is used.
     const COLOR_MAP_THRESHOLD = 64;
 
     private $colors = array();
@@ -31,10 +31,10 @@ class ColorGenerator
     //
     //public function __construct( $configColor=null )
     // ---------------------------------------------------------
-    public function __construct($datanamevalues=null, 
-                                $limit=null, 
+    public function __construct($datanamevalues=null,
+                                $limit=null,
                                 $useShortNames=null,
-                                $configColor=null ) 
+                                $configColor=null )
     {
         $this->colors = array();
         $this->color_idx = NULL;
@@ -45,16 +45,16 @@ class ColorGenerator
         // if configColor is null, color idx is 0
         $this->setConfigColor( $configColor );
     }
-    
+
     // ---------------------------------------------------------
-    // getConfigColor() 
-    // 
+    // getConfigColor()
+    //
     // Assign configColor and return it.
     //
-    // if user has selected a starting color for the dataseries, 
+    // if user has selected a starting color for the dataseries,
     // set it as the initial color for the plot.
     // ---------------------------------------------------------
-    public function getConfigColor( $configColor ) 
+    public function getConfigColor( $configColor )
     {
         $this->setConfigColor( $configColor );
         $colorVal = $this->getColorByIdx( $this->color_idx );
@@ -62,23 +62,23 @@ class ColorGenerator
     }
 
     // ---------------------------------------------------------
-    // setConfigColor() 
+    // setConfigColor()
     //
-    // if user has selected a starting color for the dataseries, 
+    // if user has selected a starting color for the dataseries,
     // set it as the initial color for the plot.
     // ---------------------------------------------------------
-    public function setConfigColor( $configColor ) 
+    public function setConfigColor( $configColor )
     {
         // if configColor is null, color idx is 0
-        if (is_null($configColor)) 
+        if (is_null($configColor))
         {
             $this->color_idx = 0;
 
         } else {
             // If configColor found in colors array, set that as current idx.
             $si = array_search( $configColor, $this->colors);
-            $this->color_idx = ($si > -1) 
-                                ? $si 
+            $this->color_idx = ($si > -1)
+                                ? $si
                                 : 0; // default 0
         }
         //return $this->color_idx;
@@ -103,14 +103,14 @@ class ColorGenerator
             if(isset($this->colors[$idx]) )
             {
                 return $this->colors[$idx];
-            } 
-            else 
+            }
+            else
             {
                 return $this->limit_color;
             }
         }
     }
-        
+
     // ---------------------------------------------------------
     // build_roundrobinmapping()
     //
@@ -119,7 +119,7 @@ class ColorGenerator
     private function build_roundrobinmapping()
     {
         $this->mode = "ROUND_ROBIN";
-        $this->colors = \DataWarehouse\Visualization::getColors(NULL, 0, false);
+        $this->colors = \DataWarehouse\Visualization::getColors(null, 0, false);
     }
 
     // ---------------------------------------------------------
@@ -160,7 +160,7 @@ class ColorGenerator
             $this->colors[$datalabel_to_overall[$mapval]] = $colors[$key];
         }
 
-        if($color_count > 0 ) 
+        if($color_count > 0 )
         {
             $this->limit_color = $colors[ $color_count - 1 ];
         }
@@ -187,8 +187,8 @@ class ColorGenerator
             if(isset($this->colors[$dataseriesname]) )
             {
                 return $this->colors[$dataseriesname];
-            } 
-            else 
+            }
+            else
             {
                 return $this->limit_color;
             }

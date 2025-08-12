@@ -2,6 +2,7 @@
 
 namespace DataWarehouse\Export\FileWriter;
 
+use Access\Logging\LogOutput;
 use CCR\Loggable;
 
 /**
@@ -21,12 +22,12 @@ class FileWriterFactory extends Loggable
      */
     public function createFileWriter($format, $file)
     {
-        $this->logger->debug([
+        $this->logger->debug(LogOutput::from([
             'module' => self::LOG_MODULE,
             'message' => 'Creating new file writer',
             'format' => $format,
             'file' => $file
-        ]);
+        ]));
 
         switch (strtolower($format)) {
             case 'csv':

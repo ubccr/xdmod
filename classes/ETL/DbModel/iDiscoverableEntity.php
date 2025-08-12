@@ -31,5 +31,5 @@ interface iDiscoverableEntity
      * ------------------------------------------------------------------------------------------
      */
 
-    public function discover($source);
+    public function discover(string $source);
 }  // interface iDiscoverableEntity

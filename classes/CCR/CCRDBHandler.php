@@ -71,16 +71,17 @@ class CCRDBHandler extends AbstractProcessingHandler
     /**
      * @see AbstractProcessingHandler::write()
      */
-    protected function write(array $record)
+    protected function write(array|\Monolog\LogRecord $record): void
     {
-        $sql = sprintf("INSERT INTO %s.%s (id, logtime, ident, priority, message) VALUES(:id, NOW(), :ident, :priority, :message)", $this->schema, $this->table);
-
-        $this->db->execute($sql, array(
+        $params = array(
             ':id' => $this->getNextId(),
             ':ident' => $record['channel'],
             ':priority' => Log::convertToCCRLevel($record['level']),
             ':message' => $record['message']
-        ));
+        );
+
+        $sql = sprintf("INSERT INTO %s.%s (id, logtime, ident, priority, message) VALUES(:id, NOW(), :ident, :priority, :message)", $this->schema, $this->table);
+        $this->db->execute($sql, $params);
     }
 
     /**

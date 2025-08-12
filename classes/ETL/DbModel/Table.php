@@ -227,7 +227,7 @@ class Table extends SchemaEntity implements iEntity, iDiscoverableEntity, iAlter
      * ------------------------------------------------------------------------------------------
      */
 
-    public function discover($source)
+    public function discover(string $source)
     {
         if ( 2 != func_num_args() ) {
             $this->logAndThrowException(

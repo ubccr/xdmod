@@ -72,7 +72,7 @@ class TimeseriesDataset
         $seriesIds = array();
 
         while($row = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
-            $seriesIds[] = "${row[$groupIdColumn]}";
+            $seriesIds[] = "{$row[$groupIdColumn]}";
         }
 
         return $seriesIds;
@@ -205,7 +205,7 @@ class TimeseriesDataset
      * @param integer $normalizeBy The total number of series to be summarized.
      * @return array the sql fragment, series name and summariation algorthm type.
      */
-    protected function getSummaryOp($column_name, $normalizeBy)
+    protected function getSummaryOp(string $column_name, $normalizeBy)
     {
         $series_name = "All $normalizeBy Others";
         $sql = "SUM(t.$column_name)";

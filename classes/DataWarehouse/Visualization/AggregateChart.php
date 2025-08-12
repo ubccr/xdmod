@@ -978,6 +978,9 @@ class AggregateChart
                     $labelsAllocated = 0;
                     $pieSum = array_sum($yValues);
                     for ($i = 0; $i < count($xValues); $i++) {
+                        if (is_null($yValues[$i])) {
+                            $yValues[$i] = 0.0;
+                        }
                         if ($isThumbnail || ($labelsAllocated < $labelLimit && (($yValues[$i] / $pieSum) * 100) >= 2.0)) {
                             $label = $xValues[$i];
                             // Truncate long data labels to improve visibility.

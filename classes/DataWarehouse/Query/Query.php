@@ -30,6 +30,7 @@ class Query extends Loggable
     public $filterParameterDescriptions;
     private $pdoparams;
     private $pdoindex;
+    protected $sortInfo;
 
     /**
      * @var Realm The Realm that this query will provide data for.
@@ -106,6 +107,7 @@ class Query extends Loggable
      * @var bool True if this query should use DISTINCT.
      */
     private $isDistinct = false;
+    protected array $parameters;
 
     public function __construct(
         $realmId,

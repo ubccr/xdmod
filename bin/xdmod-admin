@@ -157,12 +157,12 @@ function main()
     $logger->info("Command: $cmd");
 
     if ($entity === null) {
-        $logger->crit('No entity type specified');
+        $logger->critical('No entity type specified');
         exit(1);
     }
 
     if ($action === null) {
-        $logger->crit('No action specified');
+        $logger->critical('No action specified');
         exit(1);
     }
 
@@ -173,7 +173,7 @@ function main()
                     listResources();
                     break;
                 default:
-                    $logger->crit("Cannot perform '$action' on '$entity'");
+                    $logger->critical("Cannot perform '$action' on '$entity'");
                     exit(1);
                     break;
             }
@@ -184,13 +184,13 @@ function main()
                     truncateJobs();
                     break;
                 default:
-                    $logger->crit("Cannot perform '$action' on '$entity'");
+                    $logger->critical("Cannot perform '$action' on '$entity'");
                     exit(1);
                     break;
             }
             break;
         default:
-            $logger->crit("Unknown entity type '$entity'");
+            $logger->critical("Unknown entity type '$entity'");
             exit(1);
             break;
     }

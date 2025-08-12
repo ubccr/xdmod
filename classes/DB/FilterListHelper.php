@@ -65,7 +65,7 @@ class FilterListHelper
                 $firstId = $groupBy2Id;
                 $secondId = $groupBy1Id;
             }
-            $tableName .= "${firstId}___{$secondId}";
+            $tableName .= "{$firstId}___{$secondId}";
         }
 
         return $tableName;

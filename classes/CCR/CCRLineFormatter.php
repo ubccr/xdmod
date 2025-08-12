@@ -6,13 +6,13 @@ use Monolog\Formatter\LineFormatter;
 
 class CCRLineFormatter extends LineFormatter
 {
-    public function format(array $record)
+    public function format(array|\Monolog\LogRecord $record): string
     {
-        if (isset($record['level_name'])) {
+        /*if (isset($record['level_name'])) {
             $record['level_name'] = strtolower($record['level_name']);
-        }
+        }*/
 
-        $record['message'] = $this->extractMessage($record);
+        /*$record['message'] = $this->extractMessage($record);*/
 
         return parent::format($record);
     }
@@ -24,40 +24,45 @@ class CCRLineFormatter extends LineFormatter
      *
      * @return string
      */
-    protected function extractMessage($record)
+    public static function extractMessage($record)
     {
-        $json = json_decode($record['message'], true);
-
-        if ($json !== null)
-        {
-            $parts = array();
-
-            if (isset($json['message'])) {
-                $parts[] = $json['message'];
-                unset($json['message']);
-            }
-
-            if (count($json) > 0) {
-                $nonMessageParts = array();
-
-                foreach ($json as $key => $value) {
-                    $nonMessageParts[] = "$key: $value";
-                }
-
-                $parts[] = '(' . implode(', ', $nonMessageParts) . ')';
-            }
-
-            $record['message'] = implode(' ', $parts);
+        $json = null;
+        if (is_array($record) && array_key_exists('message', $record) && is_string($record['message'])) {
+            $json = json_decode($record['message'], true);
+        } elseif (is_array($record)) {
+            $json = $record;
         }
 
-        /* Otherwise, we assume the message is a string. */
-        return $record['message'];
+        // If we were unable to parse json from $record['message'] or if $record is a string then just return $record;
+        if ($json === null || is_string($record)) {
+            return $record;
+        }
+
+        // If we've made it this far then we should have an associative array.
+        $parts = array();
+
+        if (isset($json['message'])) {
+            $parts[] = $json['message'];
+            unset($json['message']);
+        }
+
+        if (count($json) > 0) {
+            $nonMessageParts = array();
+
+            foreach ($json as $key => $value) {
+                $nonMessageParts[] = "$key: $value";
+            }
+
+            $parts[] = '(' . implode(', ', $nonMessageParts) . ')';
+        }
+
+        return implode(' ', $parts);
     }
 
     /**
      * @see LineFormatter::replaceNewlines
      */
-    protected function replaceNewlines($str)
+    protected function replaceNewlines($str): string
     {
         return str_replace(array('\r', '\n'), array("\r", "\n"), $str);
     }

@@ -501,7 +501,14 @@ class TimeseriesChart extends AggregateChart
                                 $xValues[] = $start_ts_array[$i]*1000;
                                 $dates[] = $start_ts_array[$i]*1000;
                                 $yValues[] = $v;
-                                $text[] = number_format($v, $decimals, '.', ',');
+
+                                // This bit has been added due to `number_format` no longer supporting passing nulls.
+                                if (is_null($v)) {
+                                    $formatted = number_format(0.0, $decimals, '.', ',');
+                                } else {
+                                    $formatted = number_format($v, $decimals, '.', ',');
+                                }
+                                $text[] = $formatted;
                                 $seriesValue = array(
                                     'x' => $start_ts_array[$i]*1000,
                                     'y' => $v,

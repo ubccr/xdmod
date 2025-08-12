@@ -1,5 +1,6 @@
 <?php
 
+use Access\Logging\LogOutput;
 use CCR\Log;
 
 $baseDir = dirname(dirname(__FILE__));
@@ -24,7 +25,7 @@ function xdmodAutoload($className)
     $pathList = explode(":", ini_get('include_path'));
 
    // if class does not have a namespace
-    if(strpos($className, '\\') === false) {
+    if(!is_null($className) && strpos($className, '\\') === false) {
         $includeFile = $className.".php";
         foreach ($pathList as $path) {
             if (is_readable("$path/$includeFile")) {
@@ -118,14 +119,17 @@ function handle_uncaught_exception($exception)
     );
 
     $logger = Log::singleton('exception', $logConf);
-
-    $logger->err(array( 'message' => 'Exception Code: '.$exception->getCode()));
-    $logger->err(array( 'message' => 'Message: '.$exception->getMessage()));
-    $logger->err(array( 'message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')'));
+    echo "Exception Code: " . $exception->getCode() . "\n";
+    echo "Message: " . $exception->getMessage() . "\n";
+    echo "Origin: " . $exception->getFile() . "\n";
+    echo "Trace: " . $exception->getTraceAsString() . "\n";
+    $logger->error(LogOutput::from(array( 'message' => 'Exception Code: '.$exception->getCode())));
+    $logger->error(LogOutput::from(array( 'message' => 'Message: '.$exception->getMessage())));
+    $logger->error(LogOutput::from(array( 'message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')')));
 
     $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
 
-    $logger->err(array('message' => "Trace:\n".$stringTrace."\n-------------------------------------------------------"));
+    $logger->error(LogOutput::from(array('message' => "Trace:\n".$stringTrace."\n-------------------------------------------------------")));
 
    // If working in a server context, build headers to output.
     $httpCode = 500;

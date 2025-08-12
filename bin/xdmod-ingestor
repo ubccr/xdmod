@@ -10,6 +10,7 @@
 
 require_once __DIR__ . '/../configuration/linker.php';
 
+use Access\Logging\LogOutput;
 use CCR\DB;
 use CCR\Log;
 use OpenXdmod\DataWarehouseInitializer;
@@ -165,7 +166,7 @@ function main()
         $startDate !== null
         && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDate)
     ) {
-        $logger->crit("Invalid start date '$startDate'");
+        $logger->critical("Invalid start date '$startDate'");
         exit(1);
     }
 
@@ -173,16 +174,16 @@ function main()
         $endDate !== null
         && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate)
     ) {
-        $logger->crit("Invalid end date '$endDate'");
+        $logger->critical("Invalid end date '$endDate'");
         exit(1);
     }
     if ($lastModifiedStartDate !== null && strtotime($lastModifiedStartDate) === false) {
-        $logger->crit("Invalid last modified start date '$lastModifiedStartDate'");
+        $logger->critical("Invalid last modified start date '$lastModifiedStartDate'");
         exit(1);
     }
 
     if ($startDate === null && $endDate !== null) {
-        $logger->crit('Must specify start date with end date');
+        $logger->critical('Must specify start date with end date');
         exit(1);
     }
 
@@ -192,13 +193,13 @@ function main()
     }
 
     if($datatype !== false && $datatypeValue === null){
-        $logger->crit("You must specify the type of data you want to ingest");
+        $logger->critical("You must specify the type of data you want to ingest");
         exit(1);
     }
 
     if ($realmToAggregate !== false
         && !in_array($realmToAggregate, ['job', 'cloud', 'storage', 'resourcespecs'])) {
-        $logger->crit("Invalid realm '$value' specified for aggregation");
+        $logger->critical("Invalid realm '$value' specified for aggregation");
         exit(1);
     }
 
@@ -212,10 +213,10 @@ function main()
     }
 
     // NOTE: "process_start_time" is needed for the log summary.
-    $logger->notice(array(
+    $logger->notice(LogOutput::from(array(
         'message'            => 'xdmod-ingestor start',
         'process_start_time' => date('Y-m-d H:i:s'),
-    ));
+    )));
 
     try {
         $logger->debug('Creating data warehouse initilializer');
@@ -223,10 +224,10 @@ function main()
     } catch (Exception $e) {
         $msg = 'Failed to create data warehouse initializer: '
             . $e->getMessage();
-        $logger->crit(array(
+        $logger->critical(LogOutput::from(array(
             'message'    => $msg,
             'stacktrace' => $e->getTraceAsString(),
-        ));
+        )));
         exit(1);
     }
 
@@ -285,10 +286,10 @@ function main()
                 exit($aclstatus);
             }
         } catch (Exception $e) {
-            $logger->crit(array(
+            $logger->critical(LogOutput::from(array(
                 'message'    => 'Ingestion failed: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString(),
-            ));
+            )));
             exit(1);
         }
         $logger->info('Done ingesting data');
@@ -314,20 +315,20 @@ function main()
                 $dwi->aggregateResourceSpecs($lastModifiedStartDate);
             }
         } catch (Exception $e) {
-            $logger->crit(array(
+            $logger->critical(LogOutput::from(array(
                 'message'    => 'Aggregation failed: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString(),
-            ));
+            )));
             exit(1);
         }
         $logger->info('Done aggregating data');
     }
 
     // NOTE: "process_end_time" is needed for the log summary.
-    $logger->notice(array(
+    $logger->notice(LogOutput::from(array(
         'message'          => 'xdmod-ingestor end',
         'process_end_time' => date('Y-m-d H:i:s'),
-    ));
+    )));
 
     exit;
 }

@@ -2,6 +2,7 @@
 
 namespace DataWarehouse\Export;
 
+use Access\Logging\LogOutput;
 use CCR\Loggable;
 use DataWarehouse\Data\BatchDataset;
 use DataWarehouse\Data\RawStatisticsConfiguration;
@@ -61,11 +62,11 @@ class FileManager extends Loggable
                 'export_directory'
             );
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->error(LogOutput::from([
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
-            ]);
+            ]));
             throw new Exception('Export directory is not configured', 0, $e);
         }
 
@@ -161,11 +162,11 @@ class FileManager extends Loggable
      */
     public function writeDataSetToFile(BatchDataset $dataSet, $format)
     {
-        $this->logger->info([
+        $this->logger->info(LogOutput::from([
             'module' => self::LOG_MODULE,
             'message' => 'Writing data to file',
             'format' => $format
-        ]);
+        ]));
 
         try {
             $tmpDir = sys_get_temp_dir();
@@ -183,11 +184,11 @@ class FileManager extends Loggable
                 $dataFile
             );
 
-            $this->logger->debug([
+            $this->logger->debug(LogOutput::from([
                 'module' => self::LOG_MODULE,
                 'message' => 'Created file writer',
                 'file_writer' => $fileWriter
-            ]);
+            ]));
 
             $fileWriter->writeRecord($dataSet->getHeader());
 
@@ -199,11 +200,11 @@ class FileManager extends Loggable
 
             return $dataFile;
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->error(LogOutput::from([
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
-            ]);
+            ]));
             throw new Exception('Failed to write data set to file', 0, $e);
         }
     }
@@ -220,13 +221,13 @@ class FileManager extends Loggable
     {
         $zipFile = $this->getExportDataFilePath($request['id']);
 
-        $this->logger->info([
+        $this->logger->info(LogOutput::from([
             'module' => self::LOG_MODULE,
             'message' => 'Creating zip file',
             'batch_export_request.id' => $request['id'],
             'data_file' => $dataFile,
             'zip_file' => $zipFile
-        ]);
+        ]));
 
         try {
             $zip = new ZipArchive();
@@ -270,11 +271,11 @@ class FileManager extends Loggable
 
             return $zipFile;
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->error(LogOutput::from([
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
-            ]);
+            ]));
             throw new Exception('Failed to create zip file', 0, $e);
         }
     }
@@ -289,12 +290,12 @@ class FileManager extends Loggable
     {
         $zipFile = $this->getExportDataFilePath($id);
 
-        $this->logger->info([
+        $this->logger->info(LogOutput::from([
             'module' => self::LOG_MODULE,
             'message' => 'Removing export file',
             'batch_export_request.id' => $id,
             'zip_file' => $zipFile
-        ]);
+        ]));
 
         if (!unlink($zipFile)) {
             throw new Exception(sprintf('Failed to delete "%s"', $zipFile));
@@ -312,12 +313,12 @@ class FileManager extends Loggable
         foreach ($deletedRequestIds as $id) {
             $exportFile = $this->getExportDataFilePath($id);
             if (is_file($exportFile)) {
-                $this->logger->info([
+                $this->logger->info(LogOutput::from([
                     'module' => self::LOG_MODULE,
                     'message' => 'Removing export file',
                     'batch_export_request.id' => $id,
                     'zip_file' => $exportFile
-                ]);
+                ]));
                 if (!unlink($exportFile)) {
                     throw new Exception(sprintf(
                         'Failed to delete "%s"',

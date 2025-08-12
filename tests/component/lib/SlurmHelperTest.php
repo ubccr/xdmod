@@ -61,6 +61,9 @@ class SlurmHelperTest extends BaseTest
         }
 
         $result = $this->executeSlurmHelper($sacctOutputType, $sacctExitStatus);
+        if ($exitStatus !== $result['exit_status']) {
+            echo var_export($result, true). "\n";
+        }
         $this->assertEquals($exitStatus, $result['exit_status']);
         $this->assertMatchesRegularExpression($stdoutRegex, $result['stdout']);
         $this->assertMatchesRegularExpression($stderrRegex, $result['stderr']);

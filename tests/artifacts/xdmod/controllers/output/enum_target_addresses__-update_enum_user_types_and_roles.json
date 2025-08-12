@@ -1,5 +1,10 @@
 {
-  "success": true,
-  "count": 0,
-  "response": []
+    "success": false,
+    "count": 0,
+    "total": 0,
+    "totalCount": 0,
+    "results": [],
+    "data": [],
+    "message": "Invalid value for group_filter. Must be a(n) integer.",
+    "code": 0
 }

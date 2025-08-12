@@ -178,7 +178,7 @@ function main()
     } catch (Exception $e) {
         $msg = 'Upgrading from this version is not possible: '
             . $e->getMessage();
-        $logger->crit($msg);
+        $logger->critical($msg);
         exit(1);
     }
 

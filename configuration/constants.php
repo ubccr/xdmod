@@ -128,7 +128,7 @@ define('EXCEPTION_PKI', 10);
  */
 
 define('CHARLIM_USERNAME', '200');
-define('CHARLIM_PASSWORD', '20');
+define('CHARLIM_PASSWORD', '255');
 define('CHARLIM_FIRST_NAME', '50');
 define('CHARLIM_LAST_NAME', '50');
 define('CHARLIM_EMAIL', '200');
