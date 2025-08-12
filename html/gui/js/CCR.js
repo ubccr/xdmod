@@ -152,7 +152,7 @@ XDMoD.GlobalToolbar.JupyterLab = {
             Ext.MessageBox.confirm(
                 'Launch JupyterLab',
                 CCR.xdmod.JupyterHubLaunchWarning,
-                function (btn) {
+                (btn) => {
                     if (btn === 'yes') {
                         window.open(CCR.xdmod.JupyterHubURL);
                     }
