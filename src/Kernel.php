@@ -23,8 +23,4 @@ class Kernel extends BaseKernel
     {
         return BASE_DIR;
     }
-
-
-
-
 }

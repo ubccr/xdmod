@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}"/>
+    <meta name="keywords" content="{{ keywords }}">
+
+    <link rel="shortcut icon" href={{ asset('gui/icons/favicon_static.ico') }}/>
+
+    <!-- Include Ext stylesheets here: -->
+    <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/ext-all.css">
+    <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/xtheme-gray.css">
+    <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/debug.css">
+
+    <!-- Include custom script to stop Ext from checking for Flash: -->
+    <script type="text/javascript" src="{{ extjs_path }}/ext-stop-flash-check.js"></script>
+
+    <!-- Include Ext and app-specific scripts: -->
+    <script type="text/javascript" src="{{ extjs_path }}/{{ extjs_version }}/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="{{ extjs_path }}/{{ extjs_version }}/ext-all-debug-w-comments.js"></script>
+    <script type="text/javascript" src="{{ extjs_path }}/{{ extjs_version }}/src/debug.js"></script>
+
+    <!-- ExtJS {{ extjs_version }} support files END -->
+    <script type="text/javascript">
+        Ext.BLANK_IMAGE_URL = '{{ extjs_path }}/{{ extjs_version }}/resources/images/default/s.gif';
+    </script>
+
+    <script type="text/javascript" src={{ asset('gui/lib/ext-oldie-history-patch.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/jquery/jquery-3.7.1.min.js') }}></script>
+
+    <!--Additional css -->
+    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/viewer.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/helptour.css') }}">
+
+    {% if user is not null %}
+        <script type="text/javascript" src="{{ asset('gui/lib/RowExpander.js') }}"></script>
+    {% endif %}
+
+    <script type="text/javascript" src="{{ asset('js_classes/DateUtilities.js') }}"></script>
+
+    {% if user is not null %}
+        <script type="text/javascript" src="{{ asset('js_classes/StringUtilities.js') }}"></script>
+    {% endif %}
+
+    <!-- Globals -->
+    <script type="text/javascript" src={{ asset('gui/js/Error.js.php') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/globals.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/StringExtensions.js') }}></script>
+    <!-- Plugins -->
+    <script type="text/javascript" src={{ asset('gui/js/plugins/ContextSensitiveHelper.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/plugins/CollapsedPanelTitlePlugin.js') }}></script>
+    <!-- Libraries -->
+    <script type="text/javascript" src={{ asset('gui/js/libraries/utilities.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/SessionManager.js') }}></script>
+    <!-- RESTProxy -->
+    <script type="text/javascript" src={{ asset('gui/js/RESTProxy.js') }}></script>
+
+    <!-- REST Variables -->
+    <script type="text/javascript">
+        Ext.namespace('XDMoD.REST');
+        XDMoD.REST.token = '{{ rest_token }}';
+        XDMoD.REST.url = '{{ rest_url }}';
+    </script>
+    <script type="text/javascript" src={{ asset('gui/js/REST.js') }}></script>
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/MultiSelect.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('gui/lib/extjs/examples/ux/css/Spinner.css') }}"/>
+    {% if user is not null %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('gui/lib/extjs/examples/ux/css/LockingGridView.css') }}"/>
+    {% endif %}
+    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/aboutus.css') }}"/>
+    {% if user is not null %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/GroupTab.css') }}"/>
+    {% endif %}
+
+    {% if user is not null %}
+        <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/LockingGridView.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/ProgressBarPager.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/treegrid/TreeGridSorter.js') }}></script>
+        <script type="text/javascript"
+                src={{ asset('gui/lib/extjs/examples/ux/treegrid/TreeGridColumnResizer.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/treegrid/TreeGridNodeUI.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/treegrid/TreeGridLoader.js') }}></script>
+        <script type="text/javascript"
+                src={{ asset('gui/lib/extjs/examples/ux/treegrid/TreeGridColumns.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/treegrid/TreeGrid.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/GroupTabPanel.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/GroupTab.js') }}></script>
+    {% endif %}
+
+    <script type="text/javascript" src={{ asset('gui/lib/MultiSelect.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/ItemSelector.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/modules/HelpTip.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/modules/HelpTipTour.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/NumberFormat.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/multiline-tree-nodes.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/MessageWindow.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/CCR.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/PlotlyChartWrapper.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/printer/Printer-all.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/TGUserDropDown.js') }}></script>
+
+    {% if user is not null %}
+        <script type="text/javascript" src={{ asset('gui/js/LoginPrompt.js') }}></script>
+    {% endif %}
+
+    <script type="text/javascript" src={{ asset('gui/lib/CheckColumn.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/ClearableComboBox.js') }}></script>
+
+    <script type="text/javascript" src={{ asset('gui/js/ContainerMask.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/ContainerBodyMask.js') }}></script>
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/MetricExplorer.css') }}"/>
+    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/common.css') }}"/>
+
+    {% if user is null %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/LoginPrompt.css') }}"/>
+    {% endif %}
+
+    <script type="text/javascript">
+        // If we don't have any realms than make sure to alert the user.
+        {% if realms|length is same as 0 %}
+        Ext.onReady(function () {
+            Ext.MessageBox.alert(
+                'Invalid State Detected',
+                'This Open XDMoD installation is in an invalid state.<br/><br/>' +
+                'Before Open XDMoD can be utilized you must run ingestion at least once.<br/><br/>' +
+                'If ingestion has already been run then make sure that you have run the acl-config CLI application and that it has completed successfully.<br/><br/>' +
+                '<b>NOTE: Open XDMoD will not function correctly until this problem has been resolved.</b>'
+            );
+        });
+        {% endif %}
+        CCR.xdmod.publicUser = {{ is_public_user ? 'true' : 'false' }};
+        CCR.xdmod.tech_support_recipient = CCR.xdmod.support_email = '{{ tech_support_recipient }}';
+        CCR.xdmod.version = '{{ xdmod_portal_version }}';
+        CCR.xdmod.short_version = "{{ xdmod_portal_version_short }}";
+        CCR.xdmod.ui.username = '{{ user ? user.getUsername : '__public__' }}';
+
+        {% if user is not null %}
+        CCR.xdmod.ui.fullName = "{{ user.getFormalName }}";
+        CCR.xdmod.ui.usertype = "{{ user.getUserType }}";
+        CCR.xdmod.ui.userIsSSO = {{ user.isSSOUser ? 'true' : 'false' }};
+        CCR.xdmod.ui.mappedPID = "{{ user.getPersonID }}";
+        CCR.xdmod.ui.mappedPName = "{{ person_name }}";
+        CCR.xdmod.ui.isManager = {{ user.isManager ? 'true' : 'false' }};
+        CCR.xdmod.ui.isDeveloper = {{ user.isDeveloper ? 'true' : 'false' }};
+        CCR.xdmod.ui.isCenterDirector = {{ isCenterDirector ? 'true' : 'false' }};
+        CCR.xdmod.ui.allRoles = {{ all_user_roles | raw }};
+        CCR.xdmod.ui.colors = {{ colors | raw }}
+            {% endif %}
+
+            CCR.xdmod.ui.rawDataAllowedRealms = {{ raw_data_realms | raw }};
+        CCR.xdmod.ui.disabledMenus = {{ disabled_menus | raw }};
+        CCR.xdmod.org_name = "{{ ORGANIZATION_NAME }}";
+        CCR.xdmod.org_abbrev = "{{ ORGANIZATION_NAME_ABBREV }}";
+        CCR.xdmod.logged_in = !CCR.xdmod.publicUser;
+        CCR.xdmod.captcha_sitekey = "{{ captcha_site_key }}";
+        CCR.xdmod.features = {{ xdmod_features | raw }};
+        CCR.xdmod.timezone = "{{ timezone }}";
+        CCR.xdmod.org_name = "{{ org_name }}";
+
+        {% if is_sso_configured %}
+        CCR.xdmod.isSSOConfigured = {{ is_sso_configured }};
+        CCR.xdmod.SSOLoginLink = {{ sso_login_link | raw }};
+        CCR.xdmod.SSOShowLocalLogin = {% if sso_show_local_login %} true {% else %} false {% endif %};
+        CCR.xdmod.SSODirectLInk = {% if sso_direct_link %} true {% else %} false {% endif %};
+        CCR.xdmod.SSOLogoutPath = '{{ sso_logout_path | raw }}';
+        {% endif %}
+
+        {% if is_granted('IS_IMPERSONATOR') %}
+        CCR.xdmod.ui.isImpersonating = true;
+        {% else %}
+        CCR.xdmod.ui.isImpersonating = false;
+        {% endif %}
+    </script>
+
+    {# Profile Editor #}
+    {% if user is not null %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/ProfileEditor.css') }}"/>
+        <script type="text/javascript" src={{ asset('gui/js/profile_editor/ProfileApiToken.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/profile_editor/ProfileGeneralSettings.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/profile_editor/ProfileRoleDelegation.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/profile_editor/ProfileEditor.js') }}></script>
+    {% endif %}
+
+    <!-- Data Warehouse -->
+    <script type="text/javascript" src={{ asset('gui/js/common/data_warehouse/AddFilterWindow.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/common/data_warehouse/FilterStore.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/common/data_warehouse/QuickFilterStore.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/common/data_warehouse/QuickFilterButton.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/common/data_warehouse/QuickFilterToolbar.js') }}></script>
+
+    <!-- Reporting -->
+    {% if user is not null %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/ChartDateEditor.css') }}"/>
+        <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/ReportManager.css') }}"/>
+        <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/AvailableCharts.css') }}"/>
+
+        <script type="text/javascript" src={{ asset('gui/js/report_builder/ChartThumbPreview.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/report_builder/ReportExportMenu.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/report_builder/ReportCloneMenu.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/report_builder/ChartDateEditor.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/report_builder/Reporting.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/report_builder/ReportManager.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/report_builder/AvailableCharts.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/report_builder/SaveReportAsDialog.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/report_builder/ReportCreatorGrid.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/report_builder/ReportCreator.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/report_builder/ReportsOverview.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/report_builder/ReportPreview.js') }}></script>
+    {% endif %}
+
+    <script type="text/javascript" src={{ asset('gui/lib/moment/moment.min.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/moment-timezone/moment-timezone-with-data.min.js') }}></script>
+
+    <script type="text/javascript" src={{ asset('gui/lib/plotly/plotly-2.29.1.min.js') }}></script>
+    <script type="text/javascript" src="{{ asset('gui/js/libraries/PlotlyUtilities.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/PlotlyPanel.js') }}"></script>
+
+    {% if user is not null %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/ChartDragDrop.css') }}"/>
+    {% endif %}
+
+    <script type="text/javascript" src={{ asset('gui/js/CustomJsonStore.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/Portal.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/PortalColumn.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/Portlet.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/Portlet.js') }}></script>
+
+    {% if user is not null %}
+        <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/TreeCheckbox.css') }}"/>
+        <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/TriStateNodeUI.css') }}"/>
+
+        <script type="text/javascript" src={{ asset('gui/js/TreeCheckbox.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/TriStateNodeUI.js') }}></script>
+    {% endif %}
+
+    <script type="text/javascript" src={{ asset('gui/js/RESTTree.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/BufferView.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/Spinner.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/SpinnerField.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/CustomCheckItem.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/CustomDateField.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/CustomSplitButton.js') }}></script>
+
+    {% if user is not null %}
+        <script type="text/javascript" src={{ asset('gui/js/CustomTwinTriggerField.js') }}></script>
+    {% endif %}
+
+    <script type="text/javascript" src={{ asset('gui/js/CustomRowNumberer.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/CustomPagingToolbar.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/DynamicGridPanel.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/DurationToolbar.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/ChartConfigMenu.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/ChartToolbar.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/DrillDownMenu.js') }}></script>
+
+    <script type="text/javascript" src={{ asset('gui/js/ChartDragDrop.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/DataView-more.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/FilterDimensionPanel.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/Spotlight.js') }}></script>
+
+    {% if user is not null %}
+        <script type="text/javascript" src={{ asset('gui/js/CustomMenu.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/AddDataPanel.js') }}></script>
+    {% endif %}
+
+    <script type="text/javascript" src={{ asset('gui/js/ExportPanel.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/CaptchaField.js') }}></script>
+
+    {% if user is null %}
+        <script type="text/javascript" src={{ asset('gui/js/SignUpDialog.js') }}></script>
+    {% endif %}
+
+    <script type="text/javascript" src={{ asset('gui/js/ContactDialog.js') }}></script>
+
+    {% if user is not null %}
+        <script type="text/javascript" src={{ asset('gui/js/RealTimeValidatingTextField.js') }}></script>
+    {% endif %}
+
+    <script type="text/javascript" src={{ asset('gui/js/PortalModule.js') }}></script>
+    {% if user is not null and user_dashboard %}
+        <script type="text/javascript" src={{ asset('gui/js/modules/Dashboard.js') }}></script>
+    {% else %}
+        <script type="text/javascript" src={{ asset('gui/js/modules/Summary.js') }}></script>
+    {% endif %}
+
+    <script type="text/javascript" src={{ asset('gui/js/modules/Usage.js') }}></script>
+
+    {% if user is not null %}
+        <script type="text/javascript" src={{ asset('gui/js/modules/ReportGenerator.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/DataExport.js') }}></script>
+    {% endif %}
+    <script type="text/javascript" src={{ asset('gui/js/modules/About.js') }}></script>
+
+    {% if user is not null %}
+        <script type="text/javascript" src={{ asset('gui/js/modules/metric_explorer/MetricExplorer.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/metric_explorer/StatusButton.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/ChangeStack.js') }}></script>
+    {% if raw_data_realms|length > 0 %}
+        <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/JobViewer.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/ChartPanel.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/ChartTab.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/GanttChart.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/VMStateChartPanel.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/AnalyticChartPanel.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/TimeSeriesStore.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/SearchPanel.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/SearchHistoryTree.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/SearchHistoryPanel.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/JobPanel.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/NestedViewPanel.js') }}></script>
+        <script type="text/javascript"
+                src={{ asset('gui/lib/rsvp/rsvp-1979d5ad89293dadbe7656dd53d152f7426fa35e.min.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/lib/groupdataview.js') }}></script>
+        <script type="text/javascript" src={{ asset('gui/lib/groupcombo.js') }}></script>
+    {% endif %}
+    {% endif %}
+
+    {% if use_center_logo %}
+        <style>
+            .custom_center_logo {
+                height: 25px;
+                width: {{ logo_width }} px;
+                background: url(data:image/png;base64, {{ img_data }}) right no-repeat;
+            }
+        </style>
+    {% endif %}
+    <script type="text/javascript" src="{{ asset('gui/js/Viewer.js') }}"></script>
+
+    {% if user is not null and not is_public_user %}
+        {{ asset_paths | raw }}
+    {% endif %}
+
+
+    <script type="text/javascript">
+
+        var xsedeProfilePrompt = function () {
+        };
+
+        {% if user is null %}
+        Ext.onReady(xdmodviewer.init, xdmodviewer);
+        {% elseif not profile_editor_init_flag is empty %}
+        xsedeProfilePrompt = function () {
+
+            (function () {
+
+                var profileEditor = new XDMoD.ProfileEditor();
+                profileEditor.init();
+
+            }).defer(1000);
+
+        };
+        {% endif %}
+    </script>
+
+    {% if user is not null %}
+        <script type="text/javascript">Ext.onReady(xdmodviewer.init, xdmodviewer);</script>
+    {% endif %}
+    {% if captcha_site_key|length > 0 %}
+        <script src="https://www.google.com/recaptcha/api.js?render=explicit"></script>
+    {% endif %}
+
+</head>
+
+<body>
+<!-- Fields required for history management -->
+<form id="history-form" class="x-hidden">
+    <input type="hidden" id="x-history-field"/>
+    <iframe id="x-history-frame"></iframe>
+</form>
+
+<!-- Tag used to render XDMoD -->
+<div id="viewer"></div>
+
+<noscript>
+    {{ no_script_message }}
+</noscript>
+</body>
+</html>
