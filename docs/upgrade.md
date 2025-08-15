@@ -413,8 +413,7 @@ greater. To upgrade the Python package to the latest version, users can run
 `pip install --upgrade xdmod-data`.
 
 Open XDMoD 11.0.2 also enables the use of an XDMoD-hosted JupyterHub for
-analyzing data via the Data Analytics Framework for XDMoD, see [this
-page](data-analytics-framework.md) for details.
+analyzing data via the Data Analytics Framework for XDMoD.
 
 ### Configuration File Changes
 
