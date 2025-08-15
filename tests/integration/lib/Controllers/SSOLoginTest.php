@@ -106,8 +106,6 @@ class SSOLoginTest extends BaseUserAdminTest
      */
     public function testLogin($ssoSettings, $expected, $testOptions = array())
     {
-        $this->markTestSkipped('No SSO at the moment.');
-
         $helper = new XdmodTestHelper();
         $peopleHelper = new PeopleHelper();
 

@@ -200,6 +200,7 @@ class UserInterfaceController extends BaseController
         $user = $this->getXDUser($request->getSession());
 
         $node = $this->getStringParam($request, 'node');
+        $this->logger->error('Getting Menus for ', [$node]);
         if (isset($node) && $node === 'realms') {
             $this->logger->error('Getting Menus for realms');
             $queryGroupName = $this->getStringParam($request, 'query_group', false, 'tg_usage');
@@ -340,7 +341,10 @@ class UserInterfaceController extends BaseController
                     ];
                 }
             }
-        } elseif (isset($node) && substr($node, 0, 9) === 'group_by_') {
+        } elseif (
+            isset($_REQUEST['node'])
+            && substr($_REQUEST['node'], 0, 13) == 'node=group_by'
+        ) {
             $this->logger->error('Getting Menus for group_by');
             $category = $this->getStringParam($request, 'category');
             if ($category) {
@@ -382,11 +386,11 @@ class UserInterfaceController extends BaseController
                             }
                             $returnData[] = [
                                 'text' => $statistic->getName(false),
-                                'id' => 'statistic'
+                                'id' => 'node=statistic&realm='
                                     . $realm_name
-                                    . '_'
+                                    . '&group_by='
                                     . $groupByName
-                                    . '_'
+                                    . '&statistic='
                                     . $statName,
                                 'statistic' => $statName,
                                 'group_by' => $groupByName,

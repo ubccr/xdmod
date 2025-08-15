@@ -315,7 +315,7 @@ XDMoD.Admin.RoleGrid = Ext.extend(Ext.grid.EditorGridPanel,  {
 
             return '<div style="margin-top: -1px; margin-left: 14px">' +
                    '<a title="Specify Centers" href="javascript:void(0)" onClick="XDMoD.Admin.RoleGrid.prepCenterMenu(this, ' + activeType + ', \'' + self.id + '\')">' +
-                   '<img src="images/center_edit.png"></a></div>';
+                   '<img src="/html/gui/images/dashboard/center_edit.png"></a></div>';
 
 
          }
@@ -338,7 +338,7 @@ XDMoD.Admin.RoleGrid = Ext.extend(Ext.grid.EditorGridPanel,  {
          if (entryData.role == 'Center Director' || entryData.role == 'Center Staff') {
 
             return '<div style="margin-top: -1px; margin-left: 14px">' +
-                   '<img title="Click on the edit icon to the left to manage the primary role regarding centers" src="images/arrow_left.png">' +
+                   '<img title="Click on the edit icon to the left to manage the primary role regarding centers" src="/html/gui/images/dashboard/arrow_left.png">' +
                    '</div>';
 
 
@@ -346,7 +346,7 @@ XDMoD.Admin.RoleGrid = Ext.extend(Ext.grid.EditorGridPanel,  {
          else if (entryData.role == 'Manager' || entryData.role == 'Developer') {
 
             return '<div style="margin-top: -1px; margin-left: 14px">' +
-                   '<img title="The ' + entryData.role + ' role cannot be primary" src="images/arrow_left.png">' +
+                   '<img title="The ' + entryData.role + ' role cannot be primary" src="/html/gui/images/dashboard/arrow_left.png">' +
                    '</div>';
 
          }
@@ -564,7 +564,7 @@ XDMoD.Admin.RoleGrid = Ext.extend(Ext.grid.EditorGridPanel,  {
 
           autoLoad: false,  // Load the store before render
           autoDestroy: true,
-          url: '../controllers/user_admin.php',
+          url: '/controllers/user_admin.php',
           baseParams: {operation: 'enum_roles'},
           root: 'roles',
           fields: ['role', 'role_id', 'include', 'primary']
@@ -676,7 +676,7 @@ XDMoD.Admin.RoleGrid.CenterSelector = Ext.extend(Ext.menu.Menu,  {
 
       var store = new Ext.data.JsonStore({
 
-         url: '../controllers/user_admin.php',
+         url: '/controllers/user_admin.php',
          fields: ['id', 'organization'],
          root: 'providers',
          idProperty: 'id',

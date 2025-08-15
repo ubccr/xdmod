@@ -20,7 +20,7 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
 
         self.storeProvider = new DashboardStore({
 
-            url: 'controllers/controller.php',
+            url: '/internal_dashboard/controllers/controller.php',
             root: 'response',
             successProperty: 'success',
             baseParams: { operation: 'enum_existing_users' },
@@ -157,7 +157,7 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
         this.on('activate', function () {
             Ext.Ajax.request({
 
-                url: 'controllers/controller.php',
+                url: '/internal_dashboard/controllers/controller.php',
                 params: { operation: 'enum_user_types_and_roles' },
                 method: 'POST',
                 callback: function (options, success, response) {
@@ -404,7 +404,7 @@ XDMoD.CurrentUsers = Ext.extend(Ext.Panel, {
                         text: 'Log In As Selected User',
                         handler: function () {
                             var uid = existingUserGrid.getSelectionModel().getSelected().data.id;
-                            window.open('controllers/pseudo_login.php?uid=' + uid);
+                            window.open('/internal_dashboard/controllers/pseudo_login.php?uid=' + uid);
                         }
                     },
 

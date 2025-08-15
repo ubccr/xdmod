@@ -29,7 +29,7 @@ class InternalDashboardController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/internal_dashboard', requirements: ['prefix' => '.*'])]
+    #[Route('/internal_dashboard')]
     public function index(Request $request): Response
     {
         $user = $this->getXDUser($request->getSession());
@@ -97,7 +97,7 @@ class InternalDashboardController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/internal_dashboard/menus', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('/internal_dashboard/menus', methods: ['POST'])]
     public function getMenus(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -137,7 +137,7 @@ class InternalDashboardController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/internal_dashboard/users/summary', requirements: ['prefix' => '.*'])]
+    #[Route('/internal_dashboard/users/summary')]
     public function getUserSummary(Request $request): Response
     {
         $pdo = DB::factory('database');
@@ -203,6 +203,8 @@ class InternalDashboardController extends BaseController
                 return $this->enumUserVisits($request, $operation);
             case 'ak_rr':
                 return $this->akrr($request);
+            case 'logout':
+                return $this->redirectToRoute('xdmod_logout');
         }
 
         return $this->json([

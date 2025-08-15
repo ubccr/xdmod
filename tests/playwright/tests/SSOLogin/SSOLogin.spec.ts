@@ -1,7 +1,9 @@
 import {test, expect} from '@playwright/test';
 
-test('Single Sign On Login', async ({page}) =>{
+test('Single Sign On Login', async ({page}) => {
     await test.step('Should have the Single Sign On option', async () => {
+        page.on('request', request => console.log('>>', request.method(), request.url()));
+        page.on('response', response => console.log('<<', response.status(), response.url()));
         await page.goto('/');
         await expect(page.locator("//a[@id='sign_in_link']")).toBeVisible();
         await page.locator("//a[@id='sign_in_link']").click();
@@ -11,11 +13,19 @@ test('Single Sign On Login', async ({page}) =>{
         await page.locator('#SSOLoginLink').click();
     });
     await test.step('Should goto the Single Sign On login page and login', async () => {
-        await expect(page.locator('//button[@id="btn-sign-in"]')).toBeVisible();
-        await page.click('//button[@id="btn-sign-in"]');
+        console.log(await page.title());
+        // for Keycloak
+        // const signInButton = '//input[@id="kc-login"]';
+        // For js idp test
+        const signInButton = '//button[@id="btn-sign-in"]';
+        await expect(page.locator(signInButton)).toBeVisible();
+        await page.fill('//input[@id="username"]', 'samlj');
+        await page.fill('//input[@id="password"]', 'allthesesnakesonmfplane');
+        await page.screenshot({path: '/tmp/sso_login.png'})
+        await page.click(signInButton);
     });
     await test.step('Display Logged in Users Name', async () => {
-        await expect(page.locator('#welcome_message')).toBeVisible({timeout:10000});
+        await expect(page.locator('#welcome_message')).toBeVisible({timeout: 10000});
         const msg = await page.locator('#welcome_message').textContent();
         await expect(msg).toEqual('Saml Jackson');
         await expect(page.locator('#main_tab_panel__about_xdmod')).toBeVisible();
@@ -41,11 +51,17 @@ test('Single Sign On Login w/ deep link', async ({page}) => {
         await page.locator('#SSOLoginLink').click();
     });
     await test.step('Should goto the Single Sign On login page and login', async () => {
-        await expect(page.locator('//button[@id="btn-sign-in"]')).toBeVisible();
-        await page.click('//button[@id="btn-sign-in"]');
+        // for Keycloak
+        // const signInButton = '//input[@id="kc-login"]';
+        // For js idp test
+        const signInButton = '//button[@id="btn-sign-in"]';
+        await expect(page.locator(signInButton)).toBeVisible();
+        await page.fill('//input[@id="username"]', 'samlj');
+        await page.fill('//input[@id="password"]', 'allthesesnakesonmfplane');
+        await page.click(signInButton);
     });
     await test.step('Load Metric Explorer tab', async () => {
-        await expect(page.locator('#welcome_message')).toBeVisible({timeout:10000});
+        await expect(page.locator('#welcome_message')).toBeVisible({timeout: 10000});
         await expect(page.locator('#welcome_message')).toContainText('Saml Jackson');
         await expect(page.locator('#metric_explorer')).toBeVisible();
     });

@@ -1,12 +1,12 @@
 /* Styling for message prompt (defined in CCR.js as CCR.xdmod.ui.userManagementMessage) */
 
 .user_management_message_prompt {
-    background-image: url('../../gui/images/people_16.png');
+    background-image: url('../../images/people_16.png');
 }
 
 .admin_panel_invalid_text_entry {
     background-color: #fdc6c8 !important;
-    background-image: url('../../gui/images/exclamation.png') !important;
+    background-image: url('../../images/exclamation.png') !important;
     background-repeat:  no-repeat !important;
     background-position: right !important;
 }
@@ -128,7 +128,7 @@
 }
 
 .admin_panel_btn_create_user {
-    background: url('../../gui/images/user_add.png') no-repeat !important;
+    background: url('../../images/user_add.png') no-repeat !important;
 }
 
 .admin_panel_user_details {
@@ -136,7 +136,7 @@
 }
 
 .admin_panel_btn_save_icon {
-    background: url('../../gui/images/disk.png') no-repeat !important;
+    background: url('../../images/disk.png') no-repeat !important;
 }
 
 .admin_panel_user_list_selector .x-hide-label {
@@ -179,16 +179,16 @@ div.admin_panel_existing_user_settings div.x-form-item {
 
 .btn_center_selections_reset
 {
-    background-image: url('../images/icon_reset.png') !important;
+    background-image: url('../../images/dashboard/icon_reset.png') !important;
 }
 
 .btn_center_selections_save
 {
-    background-image: url('../images/icon_save.png') !important;
+    background-image: url('../../images/dashboard/icon_save.png') !important;
 }
 
 .btn_ingestion_exception
 {
-    background-image: url('../images/icon_exception.png') !important;
+    background-image: url('../../images/dashboard/icon_exception.png') !important;
 }
 

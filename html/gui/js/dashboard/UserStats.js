@@ -20,7 +20,7 @@ XDMoD.UVGrid = Ext.extend(Ext.grid.GridPanel,  {
          },
 
          proxy: new Ext.data.HttpProxy({
-            url:'controllers/controller.php'
+            url:'/internal_dashboard/controllers/controller.php'
          }),
 
          reader: new Ext.data.JsonReader(
@@ -78,7 +78,7 @@ XDMoD.UVGrid = Ext.extend(Ext.grid.GridPanel,  {
 
       self.prepCSV = function() {
 
-         CCR.invokePost('controllers/controller.php', {
+         CCR.invokePost('/internal_dashboard/controllers/controller.php', {
             operation: 'enum_user_visits_export',
             timeframe: activeTimeframe,
             user_types: activeUserTypes.join(',')
@@ -480,7 +480,7 @@ XDMoD.UserStatsComponents.ClientActivity = Ext.extend(Ext.Panel, {
 
          // Check that the user is authenticated. If so, then change the page.
          activeChangePageRequest = Ext.Ajax.request({
-            url: '../controllers/user_auth.php',
+            url: '..//internal_dashboard/controllers/user_auth.php',
             params: {
                operation: 'session_check',
                public_user: false,

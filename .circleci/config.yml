@@ -60,8 +60,21 @@ jobs:
             docker exec xdmod mkdir /root/code_coverage_raw
             docker exec xdmod mkdir /root/code_coverage
       - run:
+          name: Make XDMoD's directory safe
+          command: docker exec xdmod git config --global --add safe.directory /root/xdmod
+      - run:
           name: Install XDMoD Composer Dependencies
           command: docker exec -w /root/xdmod xdmod composer install
+      - run:
+          name: Fixup php.ini for debugging
+          command: |
+            docker exec xdmod bash -c "sed -i 's|error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT|error_reporting = E_ALL|g' /etc/php.ini"
+            docker exec xdmod bash -c "sed -i 's|display_errors = Off|display_errors = On|g' /etc/php.ini"
+            docker exec xdmod bash -c "sed -i 's|display_startup_errors = Off|display_startup_errors = On|g' /etc/php.ini"
+            docker exec xdmod bash -c "sed -i 's|;error_log = php_errors.log|error_log = php_errors.log|g' /etc/php.ini"
+      - run:
+          name: Install MariaDB ( REMOVE BEFORE COMMITING )
+          command: docker exec xdmod dnf install -y mariadb-server
       - run:
           name: Build XDMoD RPM
           command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
@@ -126,7 +139,6 @@ jobs:
             docker exec xdmod mv /root/xdmod/configuration/portal_settings.ini /root/xdmod/configuration/portal_settings.ini.old
             docker exec xdmod cp /etc/xdmod/portal_settings.ini /root/xdmod/configuration/portal_settings.ini
             docker exec xdmod cp /etc/xdmod/organization.json /root/xdmod/configuration/organization.json
-
       - run:
           name: Running Integration Tests
           command: docker exec -w /root/xdmod xdmod /root/xdmod/tests/integration/runtests.sh --junit-output-dir /root/phpunit
@@ -136,12 +148,6 @@ jobs:
       - run:
           name: Run Component Tests
           command: docker exec -w /root/xdmod xdmod /root/xdmod/tests/component/runtests.sh --junit-output-dir /root/phpunit
-      - run:
-          name: Update the HTTPD config file
-          command: docker exec xdmod sed -i 's/ServerName localhost/ServerName xdmod/g' /etc/httpd/conf.d/xdmod.conf
-      - run:
-          name: Restart XDMoD's services
-          command: docker exec xdmod /root/bin/services restart
       - run:
           name: Run Playwright Tests
           command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.string_os >>

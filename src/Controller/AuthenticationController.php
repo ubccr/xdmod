@@ -5,14 +5,20 @@ declare(strict_types=1);
 namespace Access\Controller;
 
 use Access\Security\Helpers\Tokens;
+use Drenso\OidcBundle\Exception\OidcCodeChallengeMethodNotSupportedException;
+use Drenso\OidcBundle\Exception\OidcConfigurationException;
+use Drenso\OidcBundle\Exception\OidcConfigurationResolveException;
+use Drenso\OidcBundle\OidcClientInterface;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
 use xd_security\SessionSingleton;
 
@@ -55,6 +61,7 @@ class AuthenticationController extends BaseController
      * @return Response
      */
     #[Route('{prefix}/login', name: 'xdmod_login', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('/login', name: 'xdmod_new_login', methods: ['POST'])]
     public function formLogin(): Response
     {
         $user = $this->getUser();
@@ -117,10 +124,12 @@ class AuthenticationController extends BaseController
      * @param Request $request
      * @return Response
      */
-    #[Route('{prefix}/logout', name: 'xdmod_logout', requirements: ['prefix' => '.*'], methods: ['POST', 'GET'])]
+    #[Route('/rest/logout', name: 'xdmod_logout', methods: ['POST', 'GET'])]
+    #[Route('/logout', name: 'xdmod_new_logout', methods: ['POST'])]
+    #[Route('/rest/auth/logout', name: 'xdmod_rest_auth_logout', methods: ['POST'])]
     public function formLogout(Request $request): Response
     {
-        $this->logger->info('*** FormLogout ***');
+        $this->logger->error('*** FormLogout ***');
         $token = $request->getSession()->get('xdmod_token');
         \XDSessionManager::logoutUser($token);
         $request->getSession()->invalidate();

@@ -18,7 +18,7 @@ XDMoD.BatchMailClient = Ext.extend(Ext.Window, {
 
          Ext.Ajax.request({
 
-            url: 'controllers/controller.php',
+            url: '/internal_dashboard/controllers/controller.php',
             params: {operation: 'enum_user_types_and_roles'},
             method: 'POST',
             callback: function(options, success, response) {
@@ -52,7 +52,7 @@ XDMoD.BatchMailClient = Ext.extend(Ext.Window, {
 
          Ext.Ajax.request({
 
-            url: 'controllers/mailer.php',
+            url: '/internal_dashboard/controllers/mailer.php',
             params: {operation: 'enum_presets'},
             method: 'POST',
             callback: function(options, success, response) {
@@ -195,7 +195,7 @@ XDMoD.BatchMailClient = Ext.extend(Ext.Window, {
 
                      Ext.Ajax.request({
 
-                        url: 'controllers/mailer.php',
+                        url: '/internal_dashboard/controllers/mailer.php',
                         params: {
                            operation: 'fetch_preset_message',
                            preset: strippedPreset
@@ -248,7 +248,7 @@ XDMoD.BatchMailClient = Ext.extend(Ext.Window, {
 
          Ext.Ajax.request({
 
-            url: 'controllers/mailer.php',
+            url: '/internal_dashboard/controllers/mailer.php',
             params: {
                'operation' : mode,
                'group_filter' : current_group_visibility,

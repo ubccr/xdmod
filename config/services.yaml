@@ -1,6 +1,6 @@
 parameters:
     sso:
-        login_link: https://localhost:8443/realms/xdmod/protocol/saml/clients/xdmod-saml
+        login_link: https://localhost:7000/
         show_local_login: true
         direct_link: false
         parameters:

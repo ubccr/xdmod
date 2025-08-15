@@ -3,3 +3,5 @@ controllers:
         path: ../src/Controller
         namespace: Access\Controller
     type: attribute
+ngrp_saml:
+    resource: "@NbgrpOneloginSamlBundle/Resources/config/routes.php"

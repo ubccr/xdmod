@@ -12,7 +12,7 @@ const selectors = {
     trelloBoard: '//div[contains(@class,"full-bleed-trello-board")]',
     expiredMessageBox: '.x-window',
     continueLogoutButton: '.x-window .x-btn',
-    logoutLink: '//a[@id="logout_link"]',
+    logoutLink: '//button[@id="logout_link"]',
     signInLink: '//a[@id="sign_in_link"]'
 };
 

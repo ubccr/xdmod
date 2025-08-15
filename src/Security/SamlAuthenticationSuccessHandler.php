@@ -25,7 +25,7 @@ class SamlAuthenticationSuccessHandler extends \Nbgrp\OneloginSamlBundle\Securit
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): ?Response
     {
-        $this->logger->warning('OnAutheneticationSuccess Called!!!!');
+        $this->logger->warning('OnAuthenticationSuccess Called!!!!');
         $ssoSettings = $this->parameters->get('sso');
         $this->logger->warning('SSO Settings', [$ssoSettings]);
         if (empty($ssoSettings) || !array_key_exists('parameters', $ssoSettings)) {

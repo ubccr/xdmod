@@ -333,9 +333,9 @@ class UserAdminController extends BaseController
         $potentialParameters = [
             'first_name' => $this->getStringParam($request, 'first_name', false, null, RESTRICTION_FIRST_NAME),
             'last_name' => $this->getStringParam($request, 'last_name', false, null, RESTRICTION_LAST_NAME),
-            'user_type' => $this->getStringParam($request, 'user_type', false, null, RESTRICTION_GROUP),
-            'institution' => $this->getStringParam($request, 'institution', false, null, RESTRICTION_INSTITUTION),
-            'person' => $this->getStringParam($request, 'assignment', false, null, RESTRICTION_ASSIGNMENT),
+            'user_type' => $this->getIntParam($request, 'user_type'),
+            'institution' => $this->getIntParam($request, 'institution'),
+            'person' => $this->getIntParam($request, 'assigned_user'),
             'is_active' => $this->getBooleanParam($request, 'is_active')
         ];
 

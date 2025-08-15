@@ -1123,11 +1123,20 @@ var logoutCallback = function () {
 
 CCR.xdmod.ui.actionLogout = function () {
     XDMoD.TrackEvent("Portal", "logout link clicked");
-    XDMoD.REST.Call({
-        action: CCR.xdmod.SSOLogoutPath,
-        method: 'POST',
-        callback: logoutCallback
-    });
+    Ext.Ajax.request(
+        {
+            url: '/rest/logout',
+            method: 'POST',
+            params: {
+                returnTo: '/' + document.location.hash
+            },
+            success: function (response) {
+                location.href = '/';
+            },
+            failure: function (response, opts) {
+            }
+        }
+    );
 }; //actionLogout
 
 

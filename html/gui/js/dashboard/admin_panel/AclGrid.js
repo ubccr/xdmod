@@ -56,7 +56,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
                 if (data.displays_center === true) {
                     return '<div style="text-align:center;">' +
                       '<a title="Specify Centers" href="javascript:void(0)">' +
-                      '<img src="images/center_edit.png">' +
+                      '<img src="/html/gui/images/dashboard/center_edit.png">' +
                       '</a>' +
                       '</div>'
                     ;
@@ -144,7 +144,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
             parent: self,
             autoLoad: false,
             autoDestroy: true,
-            url: '../controllers/user_admin.php',
+            url: '/controllers/user_admin.php',
             root: 'acls',
             fields: ['acl', 'acl_id', 'include', 'requires_center', 'displays_center'],
             listeners: {
@@ -164,7 +164,7 @@ XDMoD.Admin.AclGrid = Ext.extend(Ext.grid.EditorGridPanel, {
         // the default service provider.
         if (CCR.xdmod.features.multiple_service_providers === false) {
             Ext.Ajax.request({
-                url: '../controllers/user_admin.php',
+                url: '/controllers/user_admin.php',
                 params: {
                     operation: 'enum_resource_providers'
                 },
@@ -280,7 +280,7 @@ XDMoD.Admin.AclGrid.CenterSelector = Ext.extend(Ext.menu.Menu, {
     initComponent: function () {
         var self = this;
         this.store = new Ext.data.JsonStore({
-            url: '../controllers/user_admin.php',
+            url: '/controllers/user_admin.php',
             fields: ['id', 'organization'],
             root: 'providers',
             idProperty: 'id',

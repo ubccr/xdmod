@@ -65,7 +65,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
         $this->options = array_merge([
             'username_parameter' => 'username',
             'password_parameter' => 'password',
-            'check_path' => 'xdmod_login',
+            'check_paths' => ['xdmod_login', 'xdmod_new_login'],
             'failure_path' => 'xdmod_home',
             'post_only' => true,
             'form_only' => true,
@@ -91,11 +91,18 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
         }
         $this->logger->debug('Checking Path', [$requestPath]);
 
-        $requestPathMatches = $this->httpUtils->checkRequestPath($request, $this->options['check_path']);
+        $found = false;
+        foreach ($this->options['check_paths'] as $checkPath) {
+            $requestPathMatches = $this->httpUtils->checkRequestPath($request, $checkPath);
+            if ($requestPathMatches) {
+                $found = true;
+                break;
+            }
+        }
 
-        $this->logger->debug('Checking if FormLoginAuthenticator supports request', [$postOnly, $requestPathMatches, $formOnly]);
+        $this->logger->debug('Checking if FormLoginAuthenticator supports request', [$postOnly, $found, $formOnly]);
 
-        return $postOnly && $requestPathMatches && $formOnly;
+        return $postOnly && $found && $formOnly;
     }
 
     /**

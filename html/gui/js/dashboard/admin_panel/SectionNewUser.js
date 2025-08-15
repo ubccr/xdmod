@@ -11,7 +11,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
 
     initComponent: function () {
         var self = this;
-        var base_controller = '../controllers/user_admin.php';
+        var base_controller = '/controllers/user_admin.php';
 
         // conditionally overridden in the call to initialize()
         var account_request_id = '';
@@ -40,7 +40,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             cls: 'new_user_map_to',
             dashboardMode: true,
             user_management_mode: true,
-            controllerBase: '../controllers/sab_user.php',
+            controllerBase: '/controllers/sab_user.php',
             fieldLabel: 'Map To',
             emptyText: 'User not mapped',
             hiddenName: 'nm_new_user_mapping',
@@ -301,7 +301,7 @@ XDMoD.CreateUser = Ext.extend(Ext.form.FormPanel, {
             prompt = prompt || false;
 
             Ext.Ajax.request({
-                url: '../controllers/user_admin.php',
+                url: '/controllers/user_admin.php',
 
                 params: {
                     operation: 'search_users',

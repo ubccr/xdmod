@@ -3,7 +3,7 @@ Ext.namespace('XDMoD');
 // eslint-disable-next-line no-unused-vars
 var displayExceptionEmails = function () {
     Ext.Ajax.request({
-        url: '../controllers/user_admin.php',
+        url: '/controllers/user_admin.php',
         params: { operation: 'enum_exception_email_addresses' },
         method: 'POST',
         callback: function (options, success, response) {
@@ -226,7 +226,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------------------------------
 
         var storeUserType = new DashboardStore({
-            url: '../controllers/user_admin.php',
+            url: '/controllers/user_admin.php',
             root: 'user_types',
             autoLoad: true,
             baseParams: { operation: 'enum_user_types' },
@@ -310,7 +310,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         this.on('activate', function () {
             Ext.Ajax.request({
-                url: '../controllers/user_admin.php',
+                url: '/controllers/user_admin.php',
                 params: { operation: 'enum_user_types' },
                 method: 'POST',
 
@@ -396,7 +396,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         var storeUserListing = new DashboardStore(
             {
                 autoload: true,
-                url: '../controllers/user_admin.php',
+                url: '/controllers/user_admin.php',
                 baseParams: {
                     operation: 'list_users',
                     group: ''
@@ -464,7 +464,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         var userManagementAction = function (objParams) {
             Ext.Ajax.request({
-                url: '../controllers/user_admin.php',
+                url: '/controllers/user_admin.php',
                 params: objParams,
                 method: 'POST',
 
@@ -722,7 +722,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
         // ------------------------------------------
 
         var cmbUserMapping = new CCR.xdmod.ui.TGUserDropDown({
-            controllerBase: '../controllers/sab_user.php',
+            controllerBase: '/controllers/sab_user.php',
             dashboardMode: true,
             user_management_mode: true,
             fieldLabel: 'Map To',
@@ -957,7 +957,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
                 };
 
                 Ext.Ajax.request({
-                    url: '../controllers/user_admin.php',
+                    url: '/controllers/user_admin.php',
                     params: objParams,
                     method: 'POST',
 
@@ -1166,7 +1166,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         var fetchUserDetails = function (user_id, reset_controls) {
             Ext.Ajax.request({
-                url: '../controllers/user_admin.php',
+                url: '/controllers/user_admin.php',
                 params: {
                     operation: 'get_user_details',
                     uid: user_id

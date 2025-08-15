@@ -229,6 +229,7 @@ class MetricExplorerController extends BaseController
             } else {
                 $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
                 if (isset($user) && $user instanceof XDUser) {
+                    $this->logger->error(sprintf("Updating Query for: %s",$user->getUsername()));
                     $queries = new \UserStorage($user, self::QUERIES_STORE);
 
                     $query = $queries->getById($queryId);

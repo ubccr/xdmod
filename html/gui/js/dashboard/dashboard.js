@@ -2,7 +2,7 @@ var current_users;
 
 var actionLogout = function () {
     Ext.Ajax.request({
-        url: 'controllers/controller.php',
+        url: '/internal_dashboard/controllers/controller.php',
         params: {operation: 'logout'},
         method: 'POST',
         callback: function(options, success, response) {
@@ -32,7 +32,7 @@ Ext.onReady(function () {
         new XDMoD.Dashboard.Viewport({ items: items });
     });
 
-    // Allowing functions since the 'item' function is ridiculous and looks to 
+    // Allowing functions since the 'item' function is ridiculous and looks to
     // be broken by design.
     Ext.ComponentMgr.all.allowFunctions = true;
 }, window, true);

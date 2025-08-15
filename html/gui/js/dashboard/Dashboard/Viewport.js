@@ -12,7 +12,7 @@ XDMoD.Dashboard.Viewport = Ext.extend(Ext.Viewport, {
     firstload:true,
     constructor: function (config) {
         config = config || {};
-        
+
         var active_tab="top-tab-panel";
         var i_active_tab=0;
         //var tabpanel=this.getComponent("dashboard-tabpanel");
@@ -41,8 +41,8 @@ XDMoD.Dashboard.Viewport = Ext.extend(Ext.Viewport, {
                     backgroundColor: '#fef5e9'
                 },
                 html: '<table><tr>' +
-                    '<td style="width:300px;"><img src="images/masthead.png"></td>' +
-                    '<td>Welcome, <b>' + Ext.util.Format.htmlEncode(dashboard_user_full_name) + '</b>' +
+                    '<td style="width:300px;"><img src="gui/images/dashboard/masthead.png"></td>' +
+                    '<td>Welcome, <b>' + Ext.util.Format.htmlEncode(CCR.dashboard_user_full_name) + '</b>' +
                     ' [<a href="javascript:void(0)" onClick="return false;" id="header-logout">Logout</a>]</td>' +
                     '</tr></table>'
             },
@@ -74,7 +74,7 @@ XDMoD.Dashboard.Viewport = Ext.extend(Ext.Viewport, {
                                     }
                                 }
                             }
-                            
+
                             Ext.History.add(hist);
                         },
                         scope: this
