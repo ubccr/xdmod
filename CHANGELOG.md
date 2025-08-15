@@ -1,6 +1,6 @@
 # Open XDMoD Change Log
 
-## XXXX-XX-XX v11.0.2
+## 2025-08-18 v11.0.2
 
 - New Features
     - Add support for hosting the Data Analytics Framework via JupyterHub
