@@ -9,15 +9,18 @@ namespace DB;
 class EtlJournalHelper
 {
 
-    public function __construct($schema, $table) {
+    public function __construct($schema, $table, $database = 'datawarehouse', $last_modified_column = 'last_modified') {
 
         $this->schema = $schema;
         $this->table = $table;
+        $this->lastModifiedColumn = $last_modified_column;
 
+        $this->sourcedb = \CCR\DB::factory($database, false);
         $this->dwdb = \CCR\DB::factory('datawarehouse', false);
 
-        $this->lastModified = null;
-        $this->mostRecent = null;
+        // These are both POSIX timestamps
+        $this->lastModifiedTs = null;
+        $this->mostRecentTs = null;
     }
 
     /*
@@ -30,26 +33,40 @@ class EtlJournalHelper
      */
     public function getLastModified() {
 
-        $mostRecent = $this->dwdb->query(
-            'SELECT UNIX_TIMESTAMP(last_modified) + 1 AS most_recent FROM `' . $this->schema . '`.`' . $this->table . '` ORDER BY last_modified DESC LIMIT 1'
-        );
+        if (get_class($this->sourcedb) == 'CCR\DB\PostgresDB') {
+            $srcQuery = 'SELECT FLOOR(EXTRACT(EPOCH FROM ' . $this->lastModifiedColumn . ')) AS most_recent FROM ' . $this->schema . '.' . $this->table . ' ORDER BY ' . $this->lastModifiedColumn . ' DESC LIMIT 1';
+        } else {
+            $srcQuery = 'SELECT UNIX_TIMESTAMP( MAX(' . $this->lastModifiedColumn . ')) + 1 AS most_recent FROM `' . $this->schema . '`.`' . $this->table . '`';
+        }
+
+        $mostRecent = $this->sourcedb->query($srcQuery);
+
+        $this->sourcedb->disconnect();
 
         if (count($mostRecent) > 0) {
-            $this->mostRecent = $mostRecent[0]['most_recent'];
+            $this->mostRecentTs = $mostRecent[0]['most_recent'];
         }
 
         $lastRunInfo = $this->dwdb->query(
-            'SELECT FROM_UNIXTIME(max_index) AS last_modified FROM modw_etl.log WHERE etlProfileName = ? ORDER BY max_index DESC LIMIT 1',
+            'SELECT FROM_UNIXTIME(max_index) AS last_modified, max_index AS last_modified_ts  FROM modw_etl.log WHERE etlProfileName = ? ORDER BY max_index DESC LIMIT 1',
             array($this->schema . '.' . $this->table)
         );
 
         $this->dwdb->disconnect();
 
+        $lastModifiedStr = null;
+
         if (count($lastRunInfo) > 0) {
-            $this->lastModified = $lastRunInfo[0]['last_modified'];
+            $this->lastModifiedTs = $lastRunInfo[0]['last_modified_ts'];
+            if (get_class($this->sourcedb) == 'CCR\DB\PostgresDB') {
+                $dti = new \DateTimeImmutable('@' . $this->lastModifiedTs);
+                $lastModifiedStr = $dti->format(\DateTimeInterface::RFC3339);
+            } else {
+                $lastModifiedStr = lastRunInfo[0]['last_modified'];
+            }
         }
 
-        return $this->lastModified;
+        return $lastModifiedStr;
     }
 
     /*
@@ -59,14 +76,14 @@ class EtlJournalHelper
     public function markAsDone($process_start_time, $process_end_time) {
 
         $markAsDone = $this->dwdb->prepare(
-            'INSERT INTO modw_etl.log (etlProfileName, min_index, max_index, start_ts, end_ts) VALUES (?, UNIX_TIMESTAMP(?), ?, UNIX_TIMESTAMP(?), UNIX_TIMESTAMP(?))'
+            'INSERT INTO modw_etl.log (etlProfileName, min_index, max_index, start_ts, end_ts) VALUES (?, ?, ?, UNIX_TIMESTAMP(?), UNIX_TIMESTAMP(?))'
         );
 
         $markAsDone->execute(
             array(
                 $this->schema . '.' . $this->table,
-                $this->lastModified,
-                $this->mostRecent,
+                $this->lastModifiedTs,
+                $this->mostRecentTs,
                 $process_start_time,
                 $process_end_time
             )
