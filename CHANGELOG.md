@@ -32,6 +32,8 @@
       consistent
       ([\#2028](https://github.com/ubccr/xdmod/pull/2028),
       [\#2054](https://github.com/ubccr/xdmod/pull/2054)).
+    - Fix slow queries in Allocations realm (applies to ACCESS XDMoD)
+      ([\#2071](https://github.com/ubccr/xdmod/pull/2071)).
 
 ## 2025-03-17 v11.0.1
 
