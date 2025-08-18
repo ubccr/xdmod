@@ -5,11 +5,11 @@ title: Data Analytics Framework
 The Data Analytics Framework for XDMoD provides REST API access to the XDMoD
 data warehouse. Users can access the API programmatically using the
 [xdmod-data](https://github.com/ubccr/xdmod-data) package. XDMoD can be
-configured to provide one-click access to a hosted JupyterLab environment with
-the `xdmod-data` package pre-installed and authentication happening
-automatically. Users can also authenticate outside of such an environment by
-generating an API token through the XDMoD portal interface; see the "API Token
-Generation" section below.
+configured to provide one-click access to a hosted JupyterLab environment (via
+JupyterHub) with the `xdmod-data` package pre-installed and authentication
+happening automatically. Users can also authenticate outside of such an
+environment by generating an API token through the XDMoD portal interface; see
+the "API Token Generation" section below.
 
 ## Configuration
 
