@@ -3,7 +3,7 @@
 ## 2025-08-19 v11.0.2
 
 - New Features
-    - Add support for hosting the Data Analytics Framework via JupyterHub
+    - Add support for hosting a JupyterHub
       ([\#2046](https://github.com/ubccr/xdmod/pull/2046)).
 - Bug Fixes
     - Make plots time zone aware
