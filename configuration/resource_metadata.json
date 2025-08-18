@@ -1,0 +1,6 @@
+{
+    "resource_query": "SELECT REPLACE(rf.code, '-', ' ') AS resource_name, rf.id AS resource_id, rf.start_date, rf.end_date, COALESCE(rt.description, 'Unknown') AS resource_type, COALESCE(rat.resource_allocation_type_description, 'Unknown') AS allocation_type FROM `modw`.`resourcefact` rf LEFT JOIN `modw`.`resource_allocation_type` rat ON rat.resource_allocation_type_id = rf.resource_allocation_type_id LEFT JOIN `modw`.`resourcetype` rt ON rt.id = rf.resourcetype_id JOIN `modw`.`organization` o ON o.id = rf.organization_id",
+    "where_conditions": {
+        "service_provider": "o.abbrev = :service_provider"
+    }
+}
