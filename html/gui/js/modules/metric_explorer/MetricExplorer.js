@@ -7026,7 +7026,7 @@ for col in data_${i}:
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer c880c53e81dc485aac89c49744a01862f3a9d865dc509736`,
+                    'Authorization': `Bearer 53760b0bf394ca5b0340e0ea2d1a87938fe9295f7843e93c`,
                 },
                 body: JSON.stringify({
                     "content": retJson,
@@ -7050,8 +7050,6 @@ for col in data_${i}:
         fetchNB()
         openNB()
         window.open(`http://localhost:8888/lab/tree/${config.title}.ipynb`)
-
-        console.log(CCR.xdmod.ui.metricExplorer.getConfig()['limit'])
     }); // self.on('open in nb', ...
       
 
