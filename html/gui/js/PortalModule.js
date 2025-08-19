@@ -3,17 +3,17 @@
    XDMoD.PortalModule
 
    Author: Ryan Gentner
-   Last Updated: Wednesday, June 12, 2013 
-   
+   Last Updated: Wednesday, June 12, 2013
+
    Each of the tabs / modules in XDMoD extend XDMoD.PortalModule.  This class provides functional UI components
    which are common among most tabs / modules, such as
-   
+
    - Duration selector
    - Filter dialog (?)
    - Display menu (?)
    - Export menu
    - Add to report checkbox
-   
+
 */
 
 Ext.namespace('XDMoD');
@@ -61,7 +61,7 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
       printButton: false,
       reportCheckbox: false,
       chartLinkButton: false,
-      openAsNBButton: false,
+      openAsNBButton: false
       
    },//toolbarItems
    
@@ -216,17 +216,16 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
          return chartLinkButton;
      }; // createChartLinkButton
 
-
      var createOpenAsNBButton = function (module_id) {
-      var openAsNBButton = new Ext.Button({
+         var openAsNBButton = new Ext.Button({
 
-          text: 'Open in Jupyter',
-          iconCls: 'chart_bar_link',
-          tooltip: 'Open as a Jupyter Notebook',
-          scope: this,
-          handler: function () {
-            self.fireEvent('open_in_nb')
-          } // handler
+            text: 'Open in Jupyter',
+            iconCls: 'chart_bar_link',
+            tooltip: 'Open as a Jupyter Notebook',
+            scope: this,
+            handler: function () {
+               self.fireEvent('open_in_nb');
+            } // handler
 
       }); // openAsNBButton
 
@@ -235,7 +234,7 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
       };
 
       return openAsNBButton;
-  }; //createOpenAsNBButton
+  }; // createOpenAsNBButton
 
      // ----------------------------------------
       var moduleConfig = {
