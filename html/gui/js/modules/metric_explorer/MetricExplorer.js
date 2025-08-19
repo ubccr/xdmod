@@ -452,7 +452,7 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                             closeAction: 'destroy',
                             items: [{
                                 autoScroll: true,
-                                html: `<pre>Python API code \n************************************************\n<code>${generatePythonCode(instance.getConfig())} </code>\n************************************************<br></br>The link to the data analytisc API can be found <a href="https://github.com/ubccr/xdmod-data" target="_blank">here</a><br></br>Infomation about the Plotly Express Libary can be found <a href="https://plotly.com/python/plotly-express/" target="_blank">here</a><br></br>Example XDmod API Notebooks can be found <a href="https://github.com/ubccr/xdmod-notebooks" target="_blank">here</a></pre>`
+                                html: `<pre>Python API code \n************************************************\nClick "Open in Jupyter" button to view and run Python Code \n************************************************<br></br>The link to the data analytisc API can be found <a href="https://github.com/ubccr/xdmod-data" target="_blank">here</a><br></br>Infomation about the Plotly Express Libary can be found <a href="https://plotly.com/python/plotly-express/" target="_blank">here</a><br></br>Example XDmod API Notebooks can be found <a href="https://github.com/ubccr/xdmod-notebooks" target="_blank">here</a></pre>`
                             }]
                         });
                         win.show();
