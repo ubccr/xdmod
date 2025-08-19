@@ -6339,7 +6339,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             retJson['cells'][0] = {
                 "cell_type": "markdown",
                 "metadata": {},
-                "source": "The following cell includes all the necessary imports",
+                "source": "The following cell includes all the necessary imports.  Currently, must run XDMOD-Data-First-Example at least once in order for any generated code to work.",
             }
             //uncomment out datawarehouse import and dw declaration after api key is no longer required
             retJson["cells"][1] = {
@@ -6427,9 +6427,9 @@ with dw:`;
                 if (config.data_series.data[i]['realm'] != compRealm) {
                     multipleRealms = true
                 }
-                if (this.realms[config.data_series.data[i]['realm']]['metrics'][config.data_series.data[i]['metric']]['text'] != compMetric) [
+                if (this.realms[config.data_series.data[i]['realm']]['metrics'][config.data_series.data[i]['metric']]['text'] != compMetric) {
                     multipleMetrics = true
-                ]                
+                }                
             }
             // code for renaming columns if multiple metrics or realms
             renameColsCode = (i, realm, dimension) => {
@@ -6673,7 +6673,7 @@ for col in data_${i}:
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer 53760b0bf394ca5b0340e0ea2d1a87938fe9295f7843e93c`,
+                    'Authorization': `Bearer 4bfb5c606fb1dc132b463694baf58ceabdea6c9b154aa664`, /* <-- temporary token */
                 },
                 body: JSON.stringify({
                     "content": retJson,
