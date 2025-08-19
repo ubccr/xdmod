@@ -1,9 +1,9 @@
 # Open XDMoD Change Log
 
-## XXXX-XX-XX v11.0.2
+## 2025-08-19 v11.0.2
 
 - New Features
-    - Add support for hosting the Data Analytics Framework via JupyterHub
+    - Add support for hosting a JupyterHub
       ([\#2046](https://github.com/ubccr/xdmod/pull/2046)).
 - Bug Fixes
     - Make plots time zone aware
@@ -32,6 +32,8 @@
       consistent
       ([\#2028](https://github.com/ubccr/xdmod/pull/2028),
       [\#2054](https://github.com/ubccr/xdmod/pull/2054)).
+    - Fix slow queries in Allocations realm (applies to ACCESS XDMoD)
+      ([\#2071](https://github.com/ubccr/xdmod/pull/2071)).
 
 ## 2025-03-17 v11.0.1
 
