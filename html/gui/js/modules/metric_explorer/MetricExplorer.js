@@ -6319,7 +6319,6 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
         self.on('open_in_nb', function () {
-            let graphTypeTest;
             config = self.getConfig();
             let retJson = {
                 "metadata": {
@@ -6432,7 +6431,7 @@ with dw:`;
                 }                
             }
             // code for renaming columns if multiple metrics or realms
-            renameColsCode = (i, realm, dimension) => {
+            let renameColsCode = (i, realm, dimension) => {
                 let retval = '';
                 if (multipleMetrics && multipleRealms) {
                     retval = 
@@ -6459,7 +6458,7 @@ with dw:`;
                 return retval;
             };
             //side of y label switches after each axes plotted
-            currSide = 'left'
+            let currSide = 'left'
             //metrics list used to keep track of which metrics are used so that if the same metric is used more than once, we combine the dataset with one previously fetched that has the same metric
             let metricsList = {}
             //loop through all datasets and produce the proper code
@@ -6644,7 +6643,7 @@ for col in data_${i}:
             }
         )
         const fetchNB = async () => {
-            const response = await fetch(`http://localhost:8000/services/testing/notebooks`, {
+            await fetch(`http://localhost:8000/services/testing/notebooks`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -6669,7 +6668,7 @@ for col in data_${i}:
               });
         }
         const openNB = async () => {
-            const response = await fetch(`http://localhost:8888/api/contents/${config.title}.ipynb`, {
+            await fetch(`http://localhost:8888/api/contents/${config.title}.ipynb`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
