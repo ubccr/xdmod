@@ -217,7 +217,7 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
      }; // createChartLinkButton
 
 
-     var createOpenAsNBButton = function () {
+     var createOpenAsNBButton = function (module_id) {
       var openAsNBButton = new Ext.Button({
 
           text: 'Open in Jupyter',
