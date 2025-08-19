@@ -26,7 +26,7 @@ url: "https://open.xdmod.org" # the base hostname & protocol for your site
 github_username: ubccr
 github_url: https://github.com/ubccr/xdmod
 latest_version: "11.0"
-latest_sw_version: "11.0.1"
+latest_sw_version: "11.0.2"
 version_list:
   - "11.0"
 unsupported_version_list:
@@ -46,8 +46,8 @@ defaults:
       layout: "page"
       version: "11.0"
       prev_sw_version: "10.5.1"
-      sw_version: "11.0.1"
-      rpm_version: "11.0.1-1"
+      sw_version: "11.0.2"
+      rpm_version: "11.0.2-3"
       style: "effervescence"
       tocversion: "v11_0toc"
   -
