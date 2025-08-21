@@ -2,27 +2,29 @@
 
 namespace Models\Services;
 
+use CCR\DB;
 use CCR\Log;
+use Firebase\JWT\SignatureInvalidException;
+use Firebase\JWT\ExpiredException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use Models\Services\JsonWebToken;
+use UnexpectedValueException;
 use XDUser;
 
 /**
- * A static helper function for authenticating using API Tokens. REST endpoints are meant to use the `authenticate`
- * function while controller functions should use `authenticateToken`.
+ * A static helper class for authenticating either API tokens or JSON Web Tokens.
+ * REST endpoints are meant to use the `authenticate` function while controller functions
+ * should use `authenticateController`.
  */
 class Tokens
 {
-    /**
-     * This is the delimiter that's used when returning a newly created API token to the user.
-     */
-    const DELIMITER = '.';
+    const MISSING_TOKEN_MESSAGE = 'No token provided.';
+    const INVALID_TOKEN_MESSAGE = 'Invalid token.';
+    const EXPIRED_TOKEN_MESSAGE = 'Token has expired.';
 
-    const MISSING_TOKEN_MESSAGE = 'No API token provided.';
-    const INVALID_TOKEN_MESSAGE = 'Invalid API token.';
-    const EXPIRED_TOKEN_MESSAGE = 'API token has expired.';
 
     /**
-     * Attempt to authenticate a user via an API token included in a given request.
+     * Attempt to authenticate a user via an authentication token included in a given request.
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
      *
@@ -84,7 +86,7 @@ class Tokens
     }
 
     /**
-     * Perform authentication given a token.
+     * Authenticate either an API token or a JSON Web Token.
      *
      * @param string $rawToken
      * @param string | null $endpoint the endpoint being requested, used only for logging.
@@ -96,14 +98,57 @@ class Tokens
      */
     private static function authenticateToken($rawToken, $endpoint = null)
     {
-        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
-        if (false === $delimPosition) {
+        // Determine token type
+        $tokenParts = explode('.', $rawToken);
+        $tokenPartsSize = sizeof($tokenParts);
+        if ($tokenPartsSize === 2) {
+            $userId = $tokenParts[0];
+            $token = $tokenParts[1];
+            $tokenType = 'API token';
+            $authenticatedUser = self::authenticateAPIToken($userId, $token);
+        } elseif ($tokenPartsSize === 3) {
+            $tokenType = 'JSON Web Token';
+            $authenticatedUser = self::authenticateJSONWebToken($rawToken);
+        } else {
             self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
-        $userId = substr($rawToken, 0, $delimPosition);
-        $token = substr($rawToken, $delimPosition + 1);
 
-        $db = \CCR\DB::factory('database');
+        // Log the request so we can count it in our reporting of usage of the
+        // Data Analytics Framework.
+        $logger = Log::factory(
+            'daf',
+            [
+                'console' => false,
+                'file' => false,
+                'mail' => false
+            ]
+        );
+
+        $logger->info(
+            'User ' . $authenticatedUser->getUserName()
+            . ' (' . $authenticatedUser->getUserID() . ')'
+            . ' requested '
+            . (!is_null($endpoint) ? $endpoint : $_SERVER['SCRIPT_NAME'])
+            . ' with ' . $tokenType
+            . ' using ' . $_SERVER['HTTP_USER_AGENT']
+        );
+
+        return $authenticatedUser;
+    }
+
+    /**
+     * Authenticate a user using an API token.
+     *
+     * @param string $userId
+     * @param string $token
+     *
+     * @return XDUser The successfully authenticated user.
+     *
+     * @throws UnauthorizedHttpException if the token is malformed, invalid, or expired
+     */
+    private static function authenticateAPIToken($userId, $token)
+    {
+        $db = DB::factory('database');
         $query = <<<SQL
         SELECT
             ut.user_id,
@@ -136,27 +181,44 @@ SQL;
             self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
 
-        // Log the request so we can count it in our reporting of usage of the
-        // Data Analytics Framework.
-        $logger = Log::factory(
-            'daf',
-            [
-                'console' => false,
-                'file' => false,
-                'mail' => false
-            ]
-        );
-        $logger->info(
-            'User '
-            . $dbUserId
-            . ' requested '
-            . (!is_null($endpoint) ? $endpoint : $_SERVER['SCRIPT_NAME'])
-            . ' with API token using '
-            . $_SERVER['HTTP_USER_AGENT']
-        );
-
-        // and if we've made it this far we can safely return the requested user's data.
         return XDUser::getUserByID($dbUserId);
+    }
+
+    /**
+     * Authenticate a user using a JSON Web Token.
+     *
+     * @param string $jwt
+     *
+     * @return XDUser The successfully authenticated user.
+     *
+     * @throws UnauthorizedHttpException if the token is invalid or expired
+     *
+     */
+    private static function authenticateJSONWebToken($jwt)
+    {
+        try {
+            $claims = JsonWebToken::decode($jwt);
+        } catch (UnexpectedValueException | SignatureInvalidException $e) {
+            self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
+        } catch (ExpiredException $e) {
+            self::throwUnauthorized(self::EXPIRED_TOKEN_MESSAGE);
+        }
+        $username = $claims->sub;
+
+        $db = DB::factory('database');
+        $query = <<<SQL
+        SELECT
+            username
+        FROM moddb.Users
+        WHERE username = :username
+            AND account_is_active = 1
+SQL;
+
+        $row = $db->query($query, array(':username' => $username));
+        if (count($row) !== 1) {
+            self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
+        }
+        return XDUser::getUserByUserName($username);
     }
 
     /**
