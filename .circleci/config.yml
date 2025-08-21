@@ -89,7 +89,7 @@ jobs:
           command: docker exec -w /root/xdmod xdmod composer install
       - run:
           name: Setup the SimpleSAML server etc. so we can test SSO
-          command: docker exec xdmod /root/xdmod/tests/ci/samlSetup.sh
+          command: docker exec xdmod /root/xdmod/tests/ci/samlSetup.sh -h xdmod
       - when:
           condition:
             equal: [ << parameters.install-type >>, 'upgrade' ]

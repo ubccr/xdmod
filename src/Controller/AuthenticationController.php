@@ -209,13 +209,17 @@ class AuthenticationController extends BaseController
     public function idpRedirect(Request $request): Response
     {
         $returnTo = $this->getStringParam($request, 'returnTo');
-
+        $value = $this->ssoUrl;
         if (!empty($returnTo)) {
+            $ssoUrl = $this->generateUrl('saml_login');
             $this->logger->warning(sprintf('SSO Url: %s', var_export($this->ssoUrl, true)));
             $this->logger->warning(sprintf('Return To: %s', var_export($returnTo, true)));
-            /*$value = "$ssoUrl?returnTo=$returnTo";*/
+            $returnTo = urlencode($returnTo);
+            $value = "{$ssoUrl}?returnTo=$returnTo";
+            $request->getSession()->set('_security.main.target_path', $returnTo);
         }
-        return new Response($this->ssoUrl, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
+        $this->logger->error(sprintf('Redirecting To: %s', $value));
+        return new Response($value, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
     }
 }
 

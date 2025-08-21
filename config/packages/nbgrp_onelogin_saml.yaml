@@ -3,21 +3,21 @@ nbgrp_onelogin_saml:
         default:
             # Basic settings
             idp:
-                entityId: 'https://localhost:8443/realms/xdmod'
+                entityId: 'https://xdmod/realms/xdmod'
                 singleSignOnService:
-                    url: 'https://localhost:7000/'
+                    url: 'https://xdmod:7000/'
                     binding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
                 singleLogoutService:
-                    url: 'https://localhost:7000/signout'
+                    url: 'https://xdmod:7000/signout'
                     binding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
                 x509cert: ''
             sp:
                 entityId: 'xdmod-sp'
                 assertionConsumerService:
-                    url: 'https://localhost:8080/saml/acs'
+                    url: 'https://xdmod/saml/acs'
                     binding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
                 singleLogoutService:
-                    url: 'https://localhost:8080/saml/logout'
+                    url: 'https://xdmod/saml/logout'
                     binding: 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect'
                 privateKey: ''
             # Optional settings

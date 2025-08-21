@@ -170,7 +170,7 @@ define('RESTRICTION_ROLE', '/^[a-z]{2,3}$/');
 define('RESTRICTION_ROLES_DELIM', '/^[a-z]{2,}(;[a-z]{2,})*$/');
 define('RESTRICTION_PASSWORD_FLAG', '/^[ny]$/');
 define('RESTRICTION_ACTIVE_FLAG', RESTRICTION_PASSWORD_FLAG);
-define('RESTRICTION_ASSIGNMENT', '/^[0-9]+$/');
+define('RESTRICTION_ASSIGNMENT', '/^-?[0-9]+$/');
 define('RESTRICTION_GROUP', '/^[0-9]+$/');
 define('RESTRICTION_FIELD_OF_SCIENCE', '/^[0-9]+$/');
 define('RESTRICTION_CHART_TITLE', '/^.{1,}$/');

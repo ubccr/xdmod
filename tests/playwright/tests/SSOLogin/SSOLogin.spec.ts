@@ -1,9 +1,8 @@
 import {test, expect} from '@playwright/test';
 
 test('Single Sign On Login', async ({page}) => {
+
     await test.step('Should have the Single Sign On option', async () => {
-        page.on('request', request => console.log('>>', request.method(), request.url()));
-        page.on('response', response => console.log('<<', response.status(), response.url()));
         await page.goto('/');
         await expect(page.locator("//a[@id='sign_in_link']")).toBeVisible();
         await page.locator("//a[@id='sign_in_link']").click();
@@ -13,14 +12,8 @@ test('Single Sign On Login', async ({page}) => {
         await page.locator('#SSOLoginLink').click();
     });
     await test.step('Should goto the Single Sign On login page and login', async () => {
-        console.log(await page.title());
-        // for Keycloak
-        // const signInButton = '//input[@id="kc-login"]';
-        // For js idp test
         const signInButton = '//button[@id="btn-sign-in"]';
         await expect(page.locator(signInButton)).toBeVisible();
-        await page.fill('//input[@id="username"]', 'samlj');
-        await page.fill('//input[@id="password"]', 'allthesesnakesonmfplane');
         await page.screenshot({path: '/tmp/sso_login.png'})
         await page.click(signInButton);
     });
@@ -45,19 +38,17 @@ test('Single Sign On Login', async ({page}) => {
 });
 
 test('Single Sign On Login w/ deep link', async ({page}) => {
+    page.on('request', request => console.log('>>', request.method(), request.url()));
+    page.on('response', response => console.log('<<', response.status(), response.url()));
     await test.step('Should have the Single Sign On option', async () => {
         await page.goto('/#main_tab_panel:metric_explorer');
         await expect(page.locator('#SSOLoginLink')).toBeVisible();
         await page.locator('#SSOLoginLink').click();
     });
     await test.step('Should goto the Single Sign On login page and login', async () => {
-        // for Keycloak
-        // const signInButton = '//input[@id="kc-login"]';
         // For js idp test
         const signInButton = '//button[@id="btn-sign-in"]';
         await expect(page.locator(signInButton)).toBeVisible();
-        await page.fill('//input[@id="username"]', 'samlj');
-        await page.fill('//input[@id="password"]', 'allthesesnakesonmfplane');
         await page.click(signInButton);
     });
     await test.step('Load Metric Explorer tab', async () => {

@@ -9,6 +9,21 @@ DEFAULT_VENDOR_DIR=$DEFAULT_INSTALL_DIR/vendor
 INSTALL_DIR=${INSTALL_DIR:-$DEFAULT_INSTALL_DIR}
 VENDOR_DIR=${VENDOR_DIR:-$DEFAULT_VENDOR_DIR}
 
+HOSTNAME="localhost:8080"
+while getopts h: flag
+do
+    case "${flag}" in
+        h) HOSTNAME=${OPTARG};;
+        *) echo "Invalid argument"; exit 1;
+    esac
+done
+
+
+# For using the SSO locally we need the HOSTNAME to be localhost
+#HOSTNAME=localhost:8181
+# For using the SSO via playwright then we need `xdmod`
+#HOSTNAME=$(hostname)
+
 httpd -k stop
 cd /tmp
 
@@ -124,114 +139,118 @@ module.exports = {
   metadata: metadata
 }
 EOF
-sed -i -- "s%#Alias /simplesaml $DEFAULT_VENDOR_DIR/simplesamlphp/simplesamlphp/www%Alias /simplesaml $VENDOR_DIR/simplesamlphp/simplesamlphp/www%" /etc/httpd/conf.d/xdmod.conf
-sed -i -- "s%#<Directory $DEFAULT_VENDOR_DIR/simplesamlphp/simplesamlphp/www>%<Directory $VENDOR_DIR/simplesamlphp/simplesamlphp/www>%" /etc/httpd/conf.d/xdmod.conf
-sed -i -- 's/#    Options FollowSymLinks/    Options FollowSymLinks/' /etc/httpd/conf.d/xdmod.conf
-sed -i -- 's/#    AllowOverride All/    AllowOverride All/' /etc/httpd/conf.d/xdmod.conf
-sed -i -- 's/#    <IfModule mod_authz_core.c>/    <IfModule mod_authz_core.c>/' /etc/httpd/conf.d/xdmod.conf
-sed -i -- 's/#        Require all granted/       Require all granted/' /etc/httpd/conf.d/xdmod.conf
-sed -i -- 's%#    </IfModule>%    </IfModule>%' /etc/httpd/conf.d/xdmod.conf
-sed -i -- 's%#</Directory>%</Directory>%' /etc/httpd/conf.d/xdmod.conf
+#sed -i -- "s%#Alias /simplesaml $DEFAULT_VENDOR_DIR/simplesamlphp/simplesamlphp/www%Alias /simplesaml $VENDOR_DIR/simplesamlphp/simplesamlphp/www%" /etc/httpd/conf.d/xdmod.conf
+#sed -i -- "s%#<Directory $DEFAULT_VENDOR_DIR/simplesamlphp/simplesamlphp/www>%<Directory $VENDOR_DIR/simplesamlphp/simplesamlphp/www>%" /etc/httpd/conf.d/xdmod.conf
+#sed -i -- 's/#    Options FollowSymLinks/    Options FollowSymLinks/' /etc/httpd/conf.d/xdmod.conf
+#sed -i -- 's/#    AllowOverride All/    AllowOverride All/' /etc/httpd/conf.d/xdmod.conf
+#sed -i -- 's/#    <IfModule mod_authz_core.c>/    <IfModule mod_authz_core.c>/' /etc/httpd/conf.d/xdmod.conf
+#sed -i -- 's/#        Require all granted/       Require all granted/' /etc/httpd/conf.d/xdmod.conf
+#sed -i -- 's%#    </IfModule>%    </IfModule>%' /etc/httpd/conf.d/xdmod.conf
+#sed -i -- 's%#</Directory>%</Directory>%' /etc/httpd/conf.d/xdmod.conf
 
 
-cp "$VENDOR_DIR/simplesamlphp/simplesamlphp/config-templates/config.php" "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php"
-sed -i -- "s/'trusted.url.domains' => array(),/'trusted.url.domains' => array('localhost'),/" "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php"
+#cp "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php.dist" "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php"
+#sed -i -- "s|'trusted.url.domains' => \[\]|'trusted.url.domains' => \['localhost'\]|g" "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/config.php"
 
-cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/authsources.php" <<EOF
-<?php
-\$config = array(
-  'xdmod-sp' => array(
-    'saml:SP',
-    'idp' => 'urn:example:idp',
-    //'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
-    'authproc' => array(
-      40 => array(
-        'class' => 'core:AttributeMap',
-        'email' => 'email_address',
-        'firstName' => 'first_name',
-        'middleName' => 'middle_name',
-        'lastName' => 'last_name',
-        'personId' => 'person_id',
-        'orgId' => 'organization',
-        'fieldOfScience' => 'field_of_science',
-        'itname' => 'username'
-      ),
-      60 => array(
-        'class' => 'authorize:Authorize',
-        'username' => array(
-          '/\S+/'
-        ),
-      ),
-      61 => array(
-        'class' => 'authorize:Authorize',
-        'organization' => array(
-          '/\S+/'
-        )
-      )
-    )
-  ),
-  'admin' => array(
-    // The default is to use core:AdminPassword, but it can be replaced with
-    // any authentication source.
-    'core:AdminPassword',
-  ),
-);
-EOF
 
-CERTCONTENTS=`sed -n '2,21p' idp-public-cert.pem | perl -ne 'chomp and print'`
-HOSTNAME=$(hostname)
+#cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/config/authsources.php" <<EOF
+#<?php
+#\$config = array(
+#  'xdmod-sp' => array(
+#    'saml:SP',
+#    'entityID' => 'https://$HOSTNAME/xdmod-sp',
+#    'idp' => 'urn:example:idp',
+#    //'signature.algorithm' => 'http://www.w3.org/2001/04/xmldsig-more#rsa-sha256',
+#    'authproc' => array(
+#      40 => array(
+#        'class' => 'core:AttributeMap',
+#        'email' => 'email_address',
+#        'firstName' => 'first_name',
+#        'middleName' => 'middle_name',
+#        'lastName' => 'last_name',
+#        'personId' => 'person_id',
+#        'orgId' => 'organization',
+#        'fieldOfScience' => 'field_of_science',
+#        'itname' => 'username'
+#      ),
+#      60 => array(
+#        'class' => 'authorize:Authorize',
+#        'username' => array(
+#          '/\S+/'
+#        ),
+#      ),
+#      61 => array(
+#        'class' => 'authorize:Authorize',
+#        'organization' => array(
+#          '/\S+/'
+#        )
+#      )
+#    )
+#  ),
+#  'admin' => array(
+#    // The default is to use core:AdminPassword, but it can be replaced with
+#    // any authentication source.
+#    'core:AdminPassword',
+#  ),
+#);
+#EOF
 
-cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <<EOF
-<?php
+NEW_CERT=`sed -n '2,21p' idp-public-cert.pem | perl -ne 'chomp and print'`
+CUR_CERT=$(grep x509 /usr/share/xdmod/config/packages/nbgrp_onelogin_saml.yaml | cut -d"'" -f 2)
 
-\$metadata['urn:example:idp'] = array (
-  'entityid' => 'urn:example:idp',
-  'contacts' =>
-  array (
-  ),
-  'metadata-set' => 'saml20-idp-remote',
-  'SingleSignOnService' =>
-  array (
-    0 =>
-    array (
-      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'https://$HOSTNAME:7000',
-    ),
-    1 =>
-    array (
-      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
-      'Location' => 'https://$HOSTNAME:7000',
-    ),
-  ),
-  'SingleLogoutService' =>
-  array (
-    0 =>
-    array (
-      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-      'Location' => 'https://$HOSTNAME:7000/signout',
-    ),
-  ),
-  'ArtifactResolutionService' =>
-  array (
-  ),
-  'NameIDFormats' =>
-  array (
-    0 => 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
-    1 => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
-    2 => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
-  ),
-  'keys' =>
-  array (
-    0 =>
-    array (
-      'encryption' => false,
-      'signing' => true,
-      'type' => 'X509Certificate',
-      'X509Certificate' => '$CERTCONTENTS',
-    ),
-  ),
-);
-EOF
+sed -i "s|x509cert: '$CUR_CERT'|x509cert: '$NEW_CERT'|g" /usr/share/xdmod/config/packages/nbgrp_onelogin_saml.yaml
 
-node app.js  --acs https://$HOSTNAME/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp --aud https://$HOSTNAME/simplesaml/module.php/saml/sp/metadata.php/xdmod-sp --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
+#cat > "$VENDOR_DIR/simplesamlphp/simplesamlphp/metadata/saml20-idp-remote.php" <<EOF
+#<?php
+#
+#\$metadata['urn:example:idp'] = array (
+#  'entityid' => 'urn:example:idp',
+#  'contacts' =>
+#  array (
+#  ),
+#  'metadata-set' => 'saml20-idp-remote',
+#  'SingleSignOnService' =>
+#  array (
+#    0 =>
+#    array (
+#      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+#      'Location' => 'https://$HOSTNAME:7000',
+#    ),
+#    1 =>
+#    array (
+#      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST',
+#      'Location' => 'https://$HOSTNAME:7000',
+#    ),
+#  ),
+#  'SingleLogoutService' =>
+#  array (
+#    0 =>
+#    array (
+#      'Binding' => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
+#      'Location' => 'https://$HOSTNAME:7000/signout',
+#    ),
+#  ),
+#  'ArtifactResolutionService' =>
+#  array (
+#  ),
+#  'NameIDFormats' =>
+#  array (
+#    0 => 'urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress',
+#    1 => 'urn:oasis:names:tc:SAML:2.0:nameid-format:persistent',
+#    2 => 'urn:oasis:names:tc:SAML:2.0:nameid-format:transient',
+#  ),
+#  'keys' =>
+#  array (
+#    0 =>
+#    array (
+#      'encryption' => false,
+#      'signing' => true,
+#      'type' => 'X509Certificate',
+#      'X509Certificate' => '$NEW_CERT',
+#    ),
+#  ),
+#);
+#EOF
+
+node app.js  --acs https://$HOSTNAME/saml/acs --aud https://$HOSTNAME/saml/metadata --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
 httpd -k start
