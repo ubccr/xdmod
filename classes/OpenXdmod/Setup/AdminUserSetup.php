@@ -40,7 +40,7 @@ class AdminUserSetup extends SetupItem
                 $lastName,
                 array(ROLE_ID_MANAGER, ROLE_ID_USER),
                 ROLE_ID_MANAGER,
-                -1,
+                -2,
                 -1
             );
 

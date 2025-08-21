@@ -30,6 +30,7 @@ define('NO_EMAIL_ADDRESS_SET', 'no_email_address_set');
 define('SSO_USER_TYPE', 5);
 define('DEMO_USER_TYPE', 4);
 define('UNKNOWN_USER_TYPE', -1);
+define('PERSON_ID_UNASSOCIATED', -2);
 
 /**
  * SECURITY LIBRARY
