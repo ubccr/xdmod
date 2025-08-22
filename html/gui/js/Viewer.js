@@ -299,7 +299,9 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
         if (CCR.xdmod.publicUser) {
             welcome_message = 'Hello, <b><a id="sign_in_link" href="javascript:CCR.xdmod.ui.actionLogin()">Sign In</a></b> to view personalized information.';
         } else {
-            welcome_message = 'Hello, <b id="welcome_message">' + Ext.util.Format.htmlEncode(CCR.xdmod.ui.fullName) + '</b> ' + additionalWelcomeDetails + '(<form style="display:inline;" action="/rest/logout" method="post"><button id="logout_link" type="submit" style="color:rgb(0,0,238);background: none!important;border: none;padding: 0!important;/*optional*/font-family: arial, sans-serif;text-decoration: underline;cursor: pointer;" id="logout_link">logout</button></form>)'; if (CCR.xdmod.ui.isManager) {
+            var logoutMessage = CCR.xdmod.ui.isImpersonating ? 'Stop Impersonating' : 'logout';
+            welcome_message = 'Hello, <b id="welcome_message">' + Ext.util.Format.htmlEncode(CCR.xdmod.ui.fullName) + '</b> ' + additionalWelcomeDetails + ' (<a href="javascript:CCR.xdmod.ui.actionLogout()" id="logout_link">' + logoutMessage + ' </a>)';
+            if (CCR.xdmod.ui.isManager) {
                 userToolbar.push(XDMoD.GlobalToolbar.Dashboard);
             }
             if (CCR.xdmod.isJupyterHubConfigured) {
