@@ -33,7 +33,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Docker Compose corresponding OS file
-          command: docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
+          command: pushd ~/project/tests/playwright/Docker && docker compose up -d; popd
       - run:
           name: Generate Key for XDMoD
           command: docker exec xdmod openssl genrsa -out /etc/pki/tls/private/localhost.key -rand /proc/cpuinfo:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048
