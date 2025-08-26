@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Access\Entity;
 
-use Nbgrp\OneloginSamlBundle\Security\User\SamlUserInterface;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -12,7 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 /**
  *
  */
-class User implements UserInterface, PasswordAuthenticatedUserInterface, SamlUserInterface
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * @var string

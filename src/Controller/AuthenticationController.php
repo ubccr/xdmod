@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Access\Controller;
 
 use Access\Security\Helpers\Tokens;
+use Authentication\SAML\XDSamlAuthentication;
 use Drenso\OidcBundle\Exception\OidcCodeChallengeMethodNotSupportedException;
 use Drenso\OidcBundle\Exception\OidcConfigurationException;
 use Drenso\OidcBundle\Exception\OidcConfigurationResolveException;
@@ -211,14 +212,12 @@ class AuthenticationController extends BaseController
         $returnTo = $this->getStringParam($request, 'returnTo');
         $value = $this->ssoUrl;
         if (!empty($returnTo)) {
-            $ssoUrl = $this->generateUrl('saml_login');
-            $this->logger->warning(sprintf('SSO Url: %s', var_export($this->ssoUrl, true)));
-            $this->logger->warning(sprintf('Return To: %s', var_export($returnTo, true)));
+            $ssoUrl = $this->ssoUrl;
             $returnTo = urlencode($returnTo);
-            $value = "{$ssoUrl}?returnTo=$returnTo";
+            $value = "{$ssoUrl}?ReturnTo=$returnTo";
             $request->getSession()->set('_security.main.target_path', $returnTo);
         }
-        $this->logger->error(sprintf('Redirecting To: %s', $value));
+        $this->logger->debug('IDP Redirect', [$value]);
         return new Response($value, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
     }
 }

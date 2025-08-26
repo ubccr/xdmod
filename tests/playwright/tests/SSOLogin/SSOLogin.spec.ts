@@ -38,8 +38,6 @@ test('Single Sign On Login', async ({page}) => {
 });
 
 test('Single Sign On Login w/ deep link', async ({page}) => {
-    page.on('request', request => console.log('>>', request.method(), request.url()));
-    page.on('response', response => console.log('<<', response.status(), response.url()));
     await test.step('Should have the Single Sign On option', async () => {
         await page.goto('/#main_tab_panel:metric_explorer');
         await expect(page.locator('#SSOLoginLink')).toBeVisible();

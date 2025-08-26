@@ -61,7 +61,6 @@ EML;
     public function __construct()
     {
         $e = new \Exception();
-        throw new \Exception(sprintf('Contstructing XDSamlAuthentication: %s', $e->getTraceAsString()));
         $this->logger = Log::factory(
             'XDSamlAuthentication',
             array(

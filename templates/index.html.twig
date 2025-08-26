@@ -165,7 +165,6 @@
         CCR.xdmod.SSOLoginLink = {{ sso_login_link | raw }};
         CCR.xdmod.SSOShowLocalLogin = {% if sso_show_local_login %} true {% else %} false {% endif %};
         CCR.xdmod.SSODirectLInk = {% if sso_direct_link %} true {% else %} false {% endif %};
-        CCR.xdmod.SSOLogoutPath = '{{ sso_logout_path | raw }}';
         {% endif %}
 
         {% if is_granted('IS_IMPERSONATOR') %}

@@ -19,21 +19,12 @@ security:
         main:
             lazy: true
             provider: all_users
-            saml:
-                identifier_attribute: itname
-                use_attribute_friendly_name: false
-                check_path: saml_acs
-                login_path: saml_login
-                always_use_default_target_path: true
-                user_factory: Access\Security\SSOUserFactory
-                failure_path: xdmod_home
-                failure_handler: Access\Security\AuthenticationFailureHandler
-                success_handler: Access\Security\SamlAuthenticationSuccessHandler
             custom_authenticators:
                 - Access\Security\Authenticators\FormLoginAuthenticator
+                - Access\Security\Authenticators\SimpleSamlPhpAuthenticator
             switch_user: true
             logout:
-                path: saml_logout
+                path: xdmod_logout
                 invalidate_session: true
             access_denied_handler: Access\Security\AccessDeniedHandler
             entry_point: Access\Security\Authenticators\FormLoginAuthenticator

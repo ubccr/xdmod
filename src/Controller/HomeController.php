@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Access\Controller;
 
 use Access\Security\Helpers\Tokens;
+use Authentication\SAML\XDSamlAuthentication;
 use CCR\DB;
 use Exception;
 use Models\Services\Acls;
@@ -13,6 +14,7 @@ use Models\Realm;
 use OpenXdmod\Assets;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -48,7 +50,8 @@ class HomeController extends BaseController
         ]
     ];
     private $parameters;
-    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper,  ContainerBagInterface $parameters)
+
+    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters)
     {
         parent::__construct($logger, $twig, $tokenHelper);
         $this->parameters = $parameters;
@@ -72,6 +75,15 @@ class HomeController extends BaseController
         }
 
         $session = $request->getSession();
+        $returnTo = $session->get('_security.main.target_path');
+        if (!empty($returnTo)) {
+            $returnTo = urldecode($returnTo);
+            $url = $this->generateUrl('xdmod_home');
+            $this->logger->warning('redirecting to', ["$returnTo"]);
+            $session->set('_security.main.target_path', null);
+            $response = new RedirectResponse("$returnTo");
+            return $response;
+        }
         $user = $this->getXDUser($session);
 
         $session->set('xdUser', $user->getUserID());
@@ -82,6 +94,7 @@ class HomeController extends BaseController
         }, []);
 
         $features = $this->getFeatures();
+
         $isSSOConfigured = false;
         $ssoLoginLink = [
             'organization' => [
@@ -90,28 +103,14 @@ class HomeController extends BaseController
             ]
         ];
         $ssoSettings = $this->getParameter('sso');
-        $samlSettings = $this->getParameter('nbgrp_onelogin_saml.onelogin_settings');
-
-        if (array_key_exists('default', $samlSettings)) {
-            $samlSettings = $samlSettings['default'];
+        try {
+            $auth = new XDSamlAuthentication();
+            $ssoLoginLink = $auth->getLoginLink();
+            $isSSOConfigured = true;
+        } catch (\Exception $e) {
+            $this->logger->error($e->getMessage(), [$e]);
         }
 
-        $isSSOConfigured = $this->isSSOSetup($samlSettings);
-
-        if ($isSSOConfigured && empty($ssoSettings)) {
-            // NOTIFY the user that SSO is not setup correctly and only local login is available.
-        }
-
-        $ssoIcon = array_key_exists('icon', $samlSettings['organization']['en']) && !empty($samlSettings['organization']['en']['icon'])
-            ? $samlSettings['organization']['en']['icon']
-            : '';
-        $ssoLoginLink = [
-            "organization" => [
-                'en' => $samlSettings['organization']['en']['displayname'],
-                'icon' => $ssoIcon
-            ]
-        ];
-        $ssoLogoutPath = $this->generateUrl('saml_logout');
         try {
             $db = DB::factory('database');
             $personInfo = $db->query(
@@ -122,7 +121,7 @@ class HomeController extends BaseController
             $personInfo = [
                 [
                     'first_name' => 'Unknown',
-                    'last_name'=> 'Unknown'
+                    'last_name' => 'Unknown'
                 ]
             ];
         }
@@ -166,8 +165,7 @@ class HomeController extends BaseController
             'is_sso_configured' => $isSSOConfigured,
             'sso_login_link' => json_encode($ssoLoginLink),
             'sso_show_local_login' => $ssoSettings['show_local_login'],
-            'sso_direct_link' => $ssoSettings['direct_link'],
-            'sso_logout_path' => $ssoLogoutPath
+            'sso_direct_link' => $ssoSettings['direct_link']
         ];
 
         $logoData = $this->getLogoData();
@@ -237,10 +235,10 @@ class HomeController extends BaseController
         return null;
     }
 
-    private function getProfileEditorInitFlag($user)
+    private function getProfileEditorInitFlag(XDUser $user)
     {
         $profile_editor_init_flag = '';
-        $usersFirstLogin = ($user->getCreationTimestamp() == $user->getLastLoginTimestamp());
+        $usersFirstLogin = ($user->getCreationTimestamp() == $user->getUpdateTimestamp() && !$user->isPublicUser());
 
         // If the user logging in is an XSEDE/Single Sign On user, they may or may not have
         // an e-mail address set. The logic below assists in presenting the Profile Editor
