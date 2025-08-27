@@ -160,6 +160,11 @@
         CCR.xdmod.timezone = "{{ timezone }}";
         CCR.xdmod.org_name = "{{ org_name }}";
 
+        {% if is_jupyter_configured %}
+        CCR.xdmod.isJupyterHubConfigured = true;
+        CCR.xdmod.JupyterHubURL = "{{ jupyter_hub_url }}"
+        {% endif %}
+
         {% if is_sso_configured %}
         CCR.xdmod.isSSOConfigured = {{ is_sso_configured }};
         CCR.xdmod.SSOLoginLink = {{ sso_login_link | raw }};
