@@ -34,45 +34,45 @@ services:
             BASE_URL: https://xdmod
             XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
         command: sleep infinity
-    keycloak:
-      image: localhost:5000/keycloak_web:v1.0
-      build:
-        context: keycloak
-      container_name: keycloak
-      init: true
-      volumes:
-        - "./keycloak/exports/xdmod-realm-export.json:/opt/keycloak/data/import/xdmod-realm-export.json"
-      environment:
-        KC_BOOTSTRAP_ADMIN_USERNAME: admin
-        KC_BOOTSTRAP_ADMIN_PASSWORD: admin123
-        KC_LOG_LEVEL: "warning,org.keycloak.protocol.saml:trace,org.keycloak:debug,org.keycloak.transaction:warning,org.keycloak.timer:warning,org.keycloak.broker:warning,org.keycloak.quarkus:warning,org.keycloak.truststore:warning"
-        KC_HTTP_ENABLED: false
-        KC_TLS_HOSTNAME_VERIFIER: ANY
-        KC_HOSTNAME: https://keycloak:8443
-        KC_HOSTNAME_STRICT: false
-        KC_HOSTNAME_STRICT_BACKCHANNEL: false
-        KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
-        KC_HOSTNAME_DEBUG: true
-      command: start-dev --import-realm
-      depends_on:
-        - keycloak_db
-      ports:
-        - '8443:8443'
-      networks:
-        - xdmod_network
-    keycloak_db:
-      image: postgres:16
-      hostname: keycloak_db
-      container_name: keycloak_db
-      init: true
-      volumes:
-        - postgres_data_docker:/var/lib/postgresql/data
-      environment:
-        POSTGRES_DB: keycloak
-        POSTGRES_USER: keycloak
-        POSTGRES_PASSWORD: keycloak
-      networks:
-        - xdmod_network
+#    keycloak:
+#      image: localhost:5000/keycloak_web:v1.0
+#      build:
+#        context: keycloak
+#      container_name: keycloak
+#      init: true
+#      volumes:
+#        - "./keycloak/exports/xdmod-realm-export.json:/opt/keycloak/data/import/xdmod-realm-export.json"
+#      environment:
+#        KC_BOOTSTRAP_ADMIN_USERNAME: admin
+#        KC_BOOTSTRAP_ADMIN_PASSWORD: admin123
+#        KC_LOG_LEVEL: "warning,org.keycloak.protocol.saml:trace,org.keycloak:debug,org.keycloak.transaction:warning,org.keycloak.timer:warning,org.keycloak.broker:warning,org.keycloak.quarkus:warning,org.keycloak.truststore:warning"
+#        KC_HTTP_ENABLED: false
+#        KC_TLS_HOSTNAME_VERIFIER: ANY
+#        KC_HOSTNAME: https://keycloak:8443
+#        KC_HOSTNAME_STRICT: false
+#        KC_HOSTNAME_STRICT_BACKCHANNEL: false
+#        KC_HOSTNAME_BACKCHANNEL_DYNAMIC: true
+#        KC_HOSTNAME_DEBUG: true
+#      command: start-dev --import-realm
+#      depends_on:
+#        - keycloak_db
+#      ports:
+#        - '8443:8443'
+#      networks:
+#        - xdmod_network
+#    keycloak_db:
+#      image: postgres:16
+#      hostname: keycloak_db
+#      container_name: keycloak_db
+#      init: true
+#      volumes:
+#        - postgres_data_docker:/var/lib/postgresql/data
+#      environment:
+#        POSTGRES_DB: keycloak
+#        POSTGRES_USER: keycloak
+#        POSTGRES_PASSWORD: keycloak
+#      networks:
+#        - xdmod_network
 networks:
   xdmod_network:
 volumes:
