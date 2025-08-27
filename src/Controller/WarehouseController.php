@@ -20,6 +20,7 @@ use Exception;
 use Models\Services\Acls;
 use Models\Services\Parameters;
 use Models\Services\Realms;
+use Models\Services\Tokens;
 use PDO;
 use stdClass;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
@@ -2220,6 +2221,48 @@ class WarehouseController extends BaseController
         };
         /*TODO: Validate that this is how to do a streamed response. */
         return new StreamedResponse($streamCallback, 200, ['Content-Type' => 'application/json-seq']);
+    }
+
+    /**
+     * @param Request $request
+     * @return Response
+     */
+    #[Route('/warehouse/resources', methods: ['GET'])]
+    #[Route('{prefix}/warehouse/resources', requirements: ['prefix' => '.*'], methods: ['GET'])]
+    public function getResources(Request $request): Response
+    {
+        Tokens::authenticate($request);
+
+        $config = \Configuration\XdmodConfiguration::assocArrayFactory('resource_metadata.json', CONFIG_DIR);
+
+        $query_sql = $config['resource_query'];
+        $params = array();
+        $wheres = array();
+
+        foreach ($config['where_conditions'] as $param => $wherecond) {
+            $value = $this->getStringParam($request, $param);
+            if ($value) {
+                $params[$param] = $value;
+                array_push($wheres, $wherecond);
+            }
+        }
+
+        if (count($wheres) > 0) {
+            $query_sql .= " WHERE " . implode(" AND ", $wheres);
+        }
+
+        $db = DB::factory('database');
+        $stmt = $db->prepare($query_sql);
+        $stmt->execute($params);
+
+        $resourceData = array();
+        while ($result = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+            $resourceData[$result['resource_name']] = $result;
+        }
+        return $this->json(array(
+            'success' => true,
+            'results' => $resourceData
+        ));
     }
 
     /**

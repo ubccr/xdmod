@@ -628,7 +628,9 @@ class BaseController extends AbstractController
         if (empty($rawToken)) {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
-                'No API token provided.'
+                'No token provided.',
+                null,
+                0
             );
         }
 
@@ -638,7 +640,7 @@ class BaseController extends AbstractController
         if ($delimPosition === false) {
             throw new UnauthorizedHttpException(
                 Tokens::HEADER_KEY,
-                'Invalid API token.'
+                'Invalid token.'
             );
         }
 

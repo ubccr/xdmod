@@ -81,13 +81,13 @@ SQL;
         $expires = new DateTime($expiresOn);
         if ($expires < $now) {
             $this->logger->debug(sprintf('User\'s (%s) token is expired.', $userId));
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'API token has expired.');
+            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Token has expired.', null, 0);
         }
 
         // finally check that the provided token matches it's stored hash.
         if (!password_verify($password, $expectedToken)) {
             $this->logger->debug(sprintf('User\'s (%s) token is invalid.', $userId));
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
+            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid token.');
         }
 
         // and if we've made it this far we can safely return the requested Users data.

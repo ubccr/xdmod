@@ -176,7 +176,7 @@ class HomeController extends BaseController
             'sso_login_link' => json_encode($ssoLoginLink),
             'sso_show_local_login' => $ssoSettings['show_local_login'],
             'sso_direct_link' => $ssoSettings['direct_link'],
-            'jupyter_is_enabled' => $jupyterIsEnabled,
+            'is_jupyter_configured' => $jupyterIsEnabled,
             'jupyter_hub_url' => $jupyterHubURL
         ];
 
