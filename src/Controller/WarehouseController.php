@@ -2346,12 +2346,12 @@ class WarehouseController extends BaseController
         $pdo = DB::factory($query->_db_profile)->handle();
         if ($isFirstQueryInSeries) {
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
-            echo "\036" . json_encode($dataset->getHeader()) . "\n";
+            self::echoRawDataRow($dataset->getHeader());
         }
         foreach ($dataset as $row) {
             if ($reachedOffset || $i > $offset) {
                 $reachedOffset = true;
-                echo "\036" . json_encode($row) . "\n";
+                self::echoRawDataRow($row);
             }
             if (10000 === $i) {
                 ob_flush();
@@ -2364,8 +2364,20 @@ class WarehouseController extends BaseController
             $i++;
         }
         if ($isLastQueryInSeries) {
+            echo "0\r\n\r\n";
             $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         }
+    }
+
+    /**
+     * Echo a row of raw data using chunked transfer encoding.
+     *
+     * @param mixed $row
+     * @return null
+     */
+    private static function echoRawDataRow($row) {
+        $chunk = json_encode($row);
+        echo dechex(strlen($chunk)) . "\r\n$chunk\r\n";
     }
 
     /**
