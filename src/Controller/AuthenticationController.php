@@ -11,12 +11,15 @@ use Drenso\OidcBundle\Exception\OidcConfigurationException;
 use Drenso\OidcBundle\Exception\OidcConfigurationResolveException;
 use Drenso\OidcBundle\OidcClientInterface;
 use Exception;
+use Models\Services\JsonWebToken;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -219,6 +222,35 @@ class AuthenticationController extends BaseController
         }
         $this->logger->debug('IDP Redirect', [$value]);
         return new Response($value, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
+    }
+
+
+    #[Route('/jwt-redirect', methods: ['GET'])]
+    public function redirectWithJwt(Request $request): Response
+    {
+        try {
+            $jupyterhub_url = \xd_utilities\getConfiguration('jupyterhub', 'url');
+        } catch (Exception $e) {
+            throw new HttpException(501, 'JupyterHub not configured.');
+        }
+        try {
+            $user = $this->authorize($request);
+        } catch (UnauthorizedHttpException $e) {
+            return new RedirectResponse('/#jwt-redirect');
+        }
+        list($jwt, $expiration) = JsonWebToken::encode($user->getUsername());
+        $cookie = new Cookie(
+            'xdmod_jwt',
+            $jwt,
+            $expiration,
+            '/',  // path
+            null, // domain
+            true, // secure
+            true  // httpOnly
+        );
+        $response = new RedirectResponse($jupyterhub_url);
+        $response->headers->setCookie($cookie);
+        return $response;
     }
 }
 

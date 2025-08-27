@@ -126,6 +126,16 @@ class HomeController extends BaseController
             ];
         }
 
+        // JupyterHub Config
+        try {
+            $jupyterHubURL = \xd_utilities\getConfiguration('jupyterhub', 'url');
+            $jupyterIsEnabled = !empty($jupyterHubURL);
+        } catch (\Exception $e) {
+            $jupyterIsEnabled = false;
+            $jupyterHubURL = '';
+        }
+
+
         $params = [
             'user' => $user,
             'person_name' => sprintf('%s, %s', $personInfo[0]['last_name'], $personInfo[0]['first_name']),
@@ -165,7 +175,9 @@ class HomeController extends BaseController
             'is_sso_configured' => $isSSOConfigured,
             'sso_login_link' => json_encode($ssoLoginLink),
             'sso_show_local_login' => $ssoSettings['show_local_login'],
-            'sso_direct_link' => $ssoSettings['direct_link']
+            'sso_direct_link' => $ssoSettings['direct_link'],
+            'jupyter_is_enabled' => $jupyterIsEnabled,
+            'jupyter_hub_url' => $jupyterHubURL
         ];
 
         $logoData = $this->getLogoData();

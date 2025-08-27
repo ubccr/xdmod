@@ -568,7 +568,7 @@ layout: null
                     "totalCount": 0,
                     "results": [],
                     "data": [],
-                    "message": "No token provided.",
+                    "message": "No API token provided.",
                     "code": 0
                 }
             },
