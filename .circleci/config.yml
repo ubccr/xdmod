@@ -73,9 +73,6 @@ jobs:
             docker exec xdmod bash -c "sed -i 's|display_startup_errors = Off|display_startup_errors = On|g' /etc/php.ini"
             docker exec xdmod bash -c "sed -i 's|;error_log = php_errors.log|error_log = php_errors.log|g' /etc/php.ini"
       - run:
-          name: Install MariaDB ( REMOVE BEFORE COMMITING )
-          command: docker exec xdmod dnf install -y mariadb-server
-      - run:
           name: Build XDMoD RPM
           command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
       - run:
