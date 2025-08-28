@@ -14,7 +14,6 @@ test('Single Sign On Login', async ({page}) => {
     await test.step('Should goto the Single Sign On login page and login', async () => {
         const signInButton = '//button[@id="btn-sign-in"]';
         await expect(page.locator(signInButton)).toBeVisible();
-        await page.screenshot({path: '/tmp/sso_login.png'})
         await page.click(signInButton);
     });
     await test.step('Display Logged in Users Name', async () => {

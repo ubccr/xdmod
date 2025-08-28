@@ -248,9 +248,6 @@ test.describe('Internal Dashboard Tests', async () => {
                 });
             } else {
                 await test.step(`${setting.label}: Make sure that the user is selected`, async() => {
-                    if (setting.label === 'Map To') {
-                        await page.screenshot({path: '/tmp/2.png'});
-                    }
                     const userSelector = page.locator(InternalDashboard.selectors.create_manage_users.current_users.user_list.col_for_user('btest'));
                     await userSelector.click();
                     const userDetailsLocator = page.locator(InternalDashboard.selectors.create_manage_users.current_users.settings.toolbar.details_header('Bob Test'));

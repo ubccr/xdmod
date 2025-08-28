@@ -215,7 +215,6 @@ class MetricExplorer extends BasePage{
 
         let addFilter = this.page.locator(this.dataSeriesDef.addFilter())
         await addFilter.isVisible();
-        await this.page.screenshot({path: 'add_filter_visible.png'});
         await addFilter.click();
         await this.page.click(this.dataSeriesDef.filter(filter));
         await expect(this.page.locator(this.dataSeriesDef.name(name))).toBeVisible();
