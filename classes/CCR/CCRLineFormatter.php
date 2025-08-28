@@ -6,16 +6,6 @@ use Monolog\Formatter\LineFormatter;
 
 class CCRLineFormatter extends LineFormatter
 {
-    public function format(array|\Monolog\LogRecord $record): string
-    {
-        /*if (isset($record['level_name'])) {
-            $record['level_name'] = strtolower($record['level_name']);
-        }*/
-
-        /*$record['message'] = $this->extractMessage($record);*/
-
-        return parent::format($record);
-    }
 
     /**
      * This function was extracted from the class `\Log\Log_xdconsole` so that we can keep our log output the same.
