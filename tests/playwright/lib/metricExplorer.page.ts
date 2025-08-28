@@ -238,7 +238,7 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.dataSeriesDef.apply);
         await this.page.click(this.dataSeriesDef.header());
         await this.page.click(this.dataSeriesDef.addButton);
-        await this.page.locator(this.chart.legendContent(name)).waitFor({state:'detached'});
+        await this.page.locator(this.chart.legendContent(name)).first().waitFor({state:'detached'});
     }
 
     /**
