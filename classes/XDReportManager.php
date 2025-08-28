@@ -1245,9 +1245,6 @@ class XDReportManager
                     file_put_contents($temp_file, $blob);
                     return $blob;
                 }
-
-                exit;
-                break;
             case 'report':
                 $iq = $pdo->query(
                     "
@@ -1441,7 +1438,7 @@ class XDReportManager
     ) {
         $pdo = DB::factory('database');
         if (!is_null($logger)) {
-            $logger->error("Generating Chart Blob - Type: $type");
+            $logger->debug("Generating Chart Blob - Type: $type");
         }
         switch ($type) {
             case 'volatile':
@@ -1454,7 +1451,7 @@ class XDReportManager
 
                 $iq = array();
                 if (!is_null($logger)) {
-                    $logger->error("Checking if Volatile File Exists; $temp_file");
+                    $logger->debug("Checking if Volatile File Exists; $temp_file");
                 }
 
                 if (file_exists($temp_file) == true) {
