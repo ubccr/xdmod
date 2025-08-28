@@ -215,7 +215,6 @@ class EtlConfiguration extends Configuration
         foreach ( $this->parsedConfig->defaults->global->paths as $variable => $value ) {
             // Note that key transformers have not been run at this point so strip comments out of
             // the paths block.
-            // TODO: check if this should be reversed.
             if ( 0 !== strpos('#', $variable) ) {
                 $this->variableStore->$variable = $value;
             }
