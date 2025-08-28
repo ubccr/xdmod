@@ -1,6 +1,6 @@
 services:
     xdmod:
-        image: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.9.20231119-v11.0.0-1.0-03
+        image: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.9.20231119-v11.0.1-1-04-php8
         container_name: xdmod
         hostname: xdmod
         networks:
