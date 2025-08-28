@@ -230,6 +230,6 @@ workflows:
           matrix:
             parameters:
               os: [rocky8]
-              install-type: ["fresh_install", "upgrade"]
+              install-type: ["fresh_install"]
               string_os: [rocky8]
               schedule-name: ["xdmod-time-trigger"]
