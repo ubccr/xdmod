@@ -2696,7 +2696,7 @@ SQL;
 
     public function eraseCredentials()
     {
-        // TODO: Implement eraseCredentials() method.
+        // This function is required for Symfony's UserInterface but we don't actually support erasing a users credentials.
     }
 
     public function getUserIdentifier(): string
