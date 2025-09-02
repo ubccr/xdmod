@@ -3,12 +3,18 @@
 namespace Rest\Controllers;
 
 use CCR\MailWrapper;
+use Exception;
 use Models\Services\Acls;
+use Models\Services\JsonWebToken;
 use Models\Services\Organizations;
-use Silex\Application;
-use Symfony\Component\HttpFoundation\Request;
-
 use Rest\Utilities\Authentication;
+use Silex\Application;
+use Symfony\Component\HttpFoundation\Cookie;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
+use xd_utilities;
 use XDUser;
 
 /**
@@ -44,6 +50,7 @@ class AuthenticationControllerProvider extends BaseControllerProvider
         $controller->post("$root/login", '\Rest\Controllers\AuthenticationControllerProvider::login');
         $controller->post("$root/logout", '\Rest\Controllers\AuthenticationControllerProvider::logout');
         $controller->get("$root/idpredirect", '\Rest\Controllers\AuthenticationControllerProvider::getIdpRedirect');
+        $controller->get("$root/jwt-redirect", '\Rest\Controllers\AuthenticationControllerProvider::redirectWithJwt');
     }
 
     /**
@@ -107,5 +114,42 @@ class AuthenticationControllerProvider extends BaseControllerProvider
         }
 
         return $app->json($redirectUrl);
+    }
+
+     /**
+     * If a JupyterHub is configured, redirect to it with a new JSON Web Token in a cookie.
+     *
+     * @param Request $request
+     * @param Application $app
+     * @return RedirectResponse to the configured JupyterHub root if the user is
+     *                          authenticated, otherwise to the sign-in
+     *                          screen.
+     * @throws HttpException if a JupyterHub is not configured.
+     */
+    public function redirectWithJwt(Request $request, Application $app)
+    {
+        try {
+            $jupyterhub_url = xd_utilities\getConfiguration('jupyterhub', 'url');
+        } catch (Exception $e) {
+            throw new HttpException(501, 'JupyterHub not configured.');
+        }
+        try {
+            $user = $this->authorize($request);
+        } catch (UnauthorizedHttpException $e) {
+            return new RedirectResponse('/#jwt-redirect');
+        }
+        list($jwt, $expiration) = JsonWebToken::encode($user->getUsername());
+        $cookie = new Cookie(
+            'xdmod_jwt',
+            $jwt,
+            $expiration,
+            '/',  // path
+            null, // domain
+            true, // secure
+            true  // httpOnly
+        );
+        $response = new RedirectResponse($jupyterhub_url);
+        $response->headers->setCookie($cookie);
+        return $response;
     }
 }
