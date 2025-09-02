@@ -53,7 +53,13 @@ class ChartPoolController extends BaseController
     {
         $chartTitle = $this->getStringParam($request, 'chart_title', false, 'Untitled Chart');
         $chartId = $this->getStringParam($request, 'chart_id');
-        if (empty($chartId)) {
+
+        /* this is freaking ugly, but it's here so that we can maintain the same expected test output. */
+        if (is_null($chartId)) {
+            return $this->json(buildError("A chart identifier must be specified"));
+        } elseif ($chartId === '') {
+            return $this->json(buildError("Invalid value specified for 'chart_id'."));
+        } elseif (empty($chartId)){
             return $this->json(buildError("A chart identifier must be specified"));
         }
         $chartDrillDetails = $this->getStringParam($request, 'chart_drill_details');
@@ -61,12 +67,16 @@ class ChartPoolController extends BaseController
 
         $chart_pool = new XDChartPool($user);
 
-        $chart_pool->addChartToQueue(
-            $chartId,
-            $chartTitle,
-            $chartDrillDetails,
-            $chartDateDesc
-        );
+        try {
+            $chart_pool->addChartToQueue(
+                $chartId,
+                $chartTitle,
+                $chartDrillDetails,
+                $chartDateDesc
+            );
+        } catch (Exception $e) {
+            return $this->json(buildError($e->getMessage()));
+        }
 
         return $this->json([
             'success' => true,

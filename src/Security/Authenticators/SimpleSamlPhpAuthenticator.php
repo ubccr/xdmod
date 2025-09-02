@@ -20,8 +20,10 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use Symfony\Component\Security\Http\HttpUtils;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
 use SimpleSAML\Auth\Source;
+
 use XDUser;
 
 class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
@@ -38,17 +40,21 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     private string $authSourceName;
     private \SimpleSAML\Auth\Simple $authSource;
 
-    public function __construct(LoggerInterface $logger, HttpUtils $httpUtils, UrlGeneratorInterface $urlGenerator)
+    private ContainerBagInterface $parameters;
+
+    public function __construct(LoggerInterface $logger, HttpUtils $httpUtils, UrlGeneratorInterface $urlGenerator, ContainerBagInterface $parameters )
     {
         $this->logger = $logger;
         $this->httpUtils = $httpUtils;
         $this->urlGenerator = $urlGenerator;
+        $this->parameters = $parameters;
+
         $this->sources = Source::getSources();
-        $this->logger->warning('Auth Sources', [$this->sources]);
+        $this->logger->debug('Auth Sources', [$this->sources]);
         if (!empty($this->sources)) {
             try {
                 $authSource = \xd_utilities\getConfiguration('authentication', 'source');
-                $this->logger->warning('Found Auth Source', [$authSource]);
+                $this->logger->debug('Found Auth Source', [$authSource]);
             } catch (\Exception $e) {
                 $authSource = null;
             }
@@ -66,8 +72,8 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     public function supports(Request $request): ?bool
     {
         $referer = $request->headers->get('referer');
-        $this->logger->warning('Checking if Authenticator supports request', [$referer]);
-        return $referer === 'https://xdmod:7000/';
+        $this->logger->info('Checking if Authenticator supports request', [$referer]);
+        return $referer === $this->parameters->get('sso')['login_link'];
     }
 
     public function authenticate(Request $request): Passport
@@ -80,7 +86,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
                 new UserBadge(
                     $username,
                     function($userName, $samlAttributes) use ($logger) {
-                        $logger->warning('Loading SimpleSAMLPHP User');
+                        $logger->debug('Loading SimpleSAMLPHP User');
 
                         function getOrganizationId($samlAttrs, $personId)
                         {
@@ -93,13 +99,13 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
                         }
 
                         $xdmodUserId = \XDUser::userExistsWithUsername($userName);
-                        $logger->warning('XDMoD UserID ', [$xdmodUserId]);
+                        $logger->debug('XDMoD UserID ', [$xdmodUserId]);
                         if ($xdmodUserId !== INVALID) {
                             $user = \XDUser::getUserByID($xdmodUserId);
                             $user->setSSOAttrs($samlAttributes);
                             return User::fromXDUser($user);
                         }
-                        $logger->warning('Creating New SSO User!');
+                        $logger->debug('Creating New SSO User!');
                         // If we've gotten this far then we're creating a new user. Proceed with gathering the
                         // information we'll need to do so.
                         $emailAddress = isset($samlAttributes['email_address']) ? $samlAttributes['email_address'][0] : NO_EMAIL_ADDRESS_SET;
@@ -152,13 +158,13 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $this->logger->warning('SimpleSAMLPHP Authentication Succeeded!');
+        $this->logger->info('SimpleSAMLPHP Authentication Succeeded!');
         return null;
     }
 
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
-        $this->logger->error('SimpleSAMLPHP Authentication Failed!', [$exception]);
+        $this->logger->info('SimpleSAMLPHP Authentication Failed!', [$exception]);
     }
 
     public function start(Request $request, ?AuthenticationException $authException = null): Response

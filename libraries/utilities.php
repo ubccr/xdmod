@@ -324,7 +324,7 @@ function array_replace_key_value(array &$a, $key, $newValue, $default = null) {
  */
 function getParameterIn($param, $haystack)
 {
-    $num_matches = preg_match("/$param=(.)/", $haystack, $matches);
+    $num_matches = preg_match("/$param=(.+)/", $haystack, $matches);
 
     $param_value = '';
 

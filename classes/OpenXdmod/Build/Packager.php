@@ -5,7 +5,6 @@
 
 namespace OpenXdmod\Build;
 
-use Access\Logging\LogOutput;
 use CCR\Log;
 use Exception;
 use ArrayIterator;

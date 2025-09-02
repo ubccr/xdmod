@@ -119,10 +119,6 @@ function handle_uncaught_exception($exception)
     );
 
     $logger = Log::singleton('exception', $logConf);
-    echo "Exception Code: " . $exception->getCode() . "\n";
-    echo "Message: " . $exception->getMessage() . "\n";
-    echo "Origin: " . $exception->getFile() . "\n";
-    echo "Trace: " . $exception->getTraceAsString() . "\n";
     $logger->error(LogOutput::from(array( 'message' => 'Exception Code: '.$exception->getCode())));
     $logger->error(LogOutput::from(array( 'message' => 'Message: '.$exception->getMessage())));
     $logger->error(LogOutput::from(array( 'message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')')));

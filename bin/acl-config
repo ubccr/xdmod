@@ -21,6 +21,8 @@ use ETL\Utilities;
 use Models\Services\Realms;
 use User\Roles;
 
+use Access\Logging\LogOutput;
+
 const SCHEMA = 'moddb';
 
 $opts = array(
@@ -497,7 +499,7 @@ SQL;
                 ':module_name' => $module
             );
 
-            $log->debug(json_encode($params));
+            $log->debug(LogOutput::from($params));
 
             $modified = $db->execute($query, $params);
             $inserted += $modified;
@@ -1052,7 +1054,7 @@ SQL;
         ':module_name' => $module
     );
     $log->debug($query);
-    $log->debug(json_encode($params));
+    $log->debug(LogOutput::from($params));
 
     if ($dryRun) {
         $log->info("[SUCCESS] Processed Acl Type [ Module: $module, Name: $type, Display: $aclTypeDisplay]");
@@ -1155,7 +1157,7 @@ SQL;
             ':level' => $level,
             ':filter_override' => ( $filterOverride ? 1 : 0 )
         );
-        $log->debug(json_encode($params));
+        $log->debug(LogOutput::from($params));
 
         if ($dryRun) {
             $log->info("[SUCCESS] Processed Acl Hierarchy: $id");

@@ -2412,6 +2412,14 @@ SQL;
      */
     public static function validateRID($rid)
     {
+        $log = \CCR\Log::factory('xms.auth.rid', array(
+            'console' => false,
+            'db' => true,
+            'mail' => false,
+            'file' => LOG_DIR . '/xms-auth-rid.log',
+            'fileLogLevel' => Log::DEBUG
+        ));
+
         $results = array(
             'status' => INVALID,
             'user_first_name' => 'INVALID',
@@ -2424,6 +2432,7 @@ SQL;
 
         if ($now >= $expiration) {
             $expirationDate = date('Y-m-d H:i:s', $expiration);
+            $log->debug("RID Token expired for: $userId | expired: $expirationDate");
             return $results;
         }
 
@@ -2442,6 +2451,7 @@ SQL;
             // If there was an exception then it was because we couldn't find a user by that username
             // so log the error and return the default information.
             $expirationDate = date('Y-m-d H:i:s', $expiration);
+            $log->debug("Error occurred while validating RID for User: $userId, Expiration: $expirationDate");
         }
 
         return $results;

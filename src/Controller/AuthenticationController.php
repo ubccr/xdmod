@@ -5,11 +5,6 @@ declare(strict_types=1);
 namespace Access\Controller;
 
 use Access\Security\Helpers\Tokens;
-use Authentication\SAML\XDSamlAuthentication;
-use Drenso\OidcBundle\Exception\OidcCodeChallengeMethodNotSupportedException;
-use Drenso\OidcBundle\Exception\OidcConfigurationException;
-use Drenso\OidcBundle\Exception\OidcConfigurationResolveException;
-use Drenso\OidcBundle\OidcClientInterface;
 use Exception;
 use Models\Services\JsonWebToken;
 use Psr\Log\LoggerInterface;
@@ -21,10 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Twig\Environment;
-use xd_security\SessionSingleton;
 
 
 /**

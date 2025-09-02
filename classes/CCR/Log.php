@@ -4,6 +4,7 @@ namespace CCR;
 
 use Access\Logging\LogOutput;
 use Exception;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
@@ -220,7 +221,7 @@ class Log
             : self::getDefaultLogLevel('console');
 
         $handler = new StreamHandler('php://stdout', self::convertToMonologLevel($consoleLogLevel));
-        $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
+        $handler->setFormatter(new LineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
 
         return $handler;
     }
@@ -258,7 +259,7 @@ class Log
         $filePermission = isset($conf['mode']) ? $conf['mode'] : 0660;
 
         $handler = new StreamHandler($file, self::convertToMonologLevel($fileLogLevel), true, $filePermission);
-        $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
+        $handler->setFormatter(new LineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
 
         return $handler;
     }

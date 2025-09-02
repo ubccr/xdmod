@@ -320,6 +320,11 @@
         <script type="text/javascript" src={{ asset('gui/lib/groupdataview.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/lib/groupcombo.js') }}></script>
     {% endif %}
+        {# From gaq/xdmod.php #}
+        <script type="text/javascript">
+            var _gaq = _gaq || [];
+            var ga = function () {};
+        </script>
     {% endif %}
 
     {% if use_center_logo %}

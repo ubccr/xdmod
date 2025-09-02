@@ -480,7 +480,7 @@ XDMoD.UserStatsComponents.ClientActivity = Ext.extend(Ext.Panel, {
 
          // Check that the user is authenticated. If so, then change the page.
          activeChangePageRequest = Ext.Ajax.request({
-            url: '..//internal_dashboard/controllers/user_auth.php',
+            url: '../internal_dashboard/controllers/user_auth.php',
             params: {
                operation: 'session_check',
                public_user: false,

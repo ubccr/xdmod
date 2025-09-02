@@ -6,11 +6,9 @@ security:
         # used to reload user from session & other features (e.g. switch_user)
         app_user_provider:
             id: Access\Security\UsernameUserProvider
-        token_user_provider:
-            id: Access\Security\TokenUserProvider
         all_users:
             chain:
-                providers: [ 'token_user_provider', 'app_user_provider' ]
+                providers: [ 'app_user_provider' ]
 
     firewalls:
         dev:

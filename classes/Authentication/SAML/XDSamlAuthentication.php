@@ -60,7 +60,6 @@ EML;
 
     public function __construct()
     {
-        $e = new \Exception();
         $this->logger = Log::factory(
             'XDSamlAuthentication',
             array(

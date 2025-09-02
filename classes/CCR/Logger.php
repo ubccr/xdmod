@@ -30,10 +30,6 @@ class Logger extends \Monolog\Logger implements LoggerInterface
     }
 
     /**
-     * @param int|mixed|\Monolog\Level $level
-     * @param string $message
-     * @param array $context
-     * @param $datetime
      * @inheritDoc
      */
     public function addRecord($level, $message, array $context = array(), $datetime = null): bool

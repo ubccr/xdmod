@@ -45,18 +45,18 @@ class MailerController extends \Access\Controller\BaseController
     private function enumTargetAddresses(Request $request): Response
     {
         $groupFilter = $this->getStringParam($request, 'group_filter');
-        if (empty($groupFilter)) {
+        if (is_null($groupFilter)) {
             $groupFilter = $this->getIntParam($request, 'group_filter');
             if (is_null($groupFilter)) {
-                return $this->json(buildError("'group_filter' not present."));
+                return $this->json(buildError("'group_filter' not specified."));
             }
         }
 
         $aclFilter = $this->getStringParam($request, 'role_filter');
-        if (empty($aclFilter)) {
+        if (is_null($aclFilter)) {
             $aclFilter = $this->getIntParam($request, 'role_filter');
             if (is_null($aclFilter)) {
-                return $this->json(buildError("'role_filter' not present."));
+                return $this->json(buildError("'role_filter' not specified."));
             }
         }
 
