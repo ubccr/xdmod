@@ -149,7 +149,7 @@ class CloudInstanceTypeStateIngestor extends pdoIngestor implements iAction
         // is lost. To work around this we add a dummy row filled with zeroes.
         $colCount = count($this->etlSourceQuery->records);
         $unionValues = array_fill(0, $colCount, 0);
-        $sql .= "\nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 3 ASC, 9 ASC, 2 DESC";
+        $sql .= "\nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 3 ASC, 9 ASC, 8 ASC, 7 ASC, 2 DESC";
 
         return $sql;
     }
