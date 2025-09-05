@@ -2368,9 +2368,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $query,
             $logger
         );
-        $pdo = DB::factory($query->_db_profile)->handle();
         if ($isFirstQueryInSeries) {
-            $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
             self::echoRawDataRow($dataset->getHeader());
         }
         foreach ($dataset as $row) {
@@ -2390,7 +2388,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
         if ($isLastQueryInSeries) {
             echo "0\r\n\r\n";
-            $pdo->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
         }
     }
 
