@@ -2368,7 +2368,6 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $query,
             $logger
         );
-        $pdo = DB::factory($query->_db_profile)->handle();
         if ($isFirstQueryInSeries) {
             self::echoRawDataRow($dataset->getHeader());
         }
