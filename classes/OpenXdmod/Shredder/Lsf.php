@@ -246,7 +246,7 @@ class Lsf extends Shredder
         $firstSpacePos = strpos($line, ' ');
 
         if ($firstSpacePos === false) {
-            $this->logger->err(array(
+            $this->logger->error(array(
                 'message' => 'Unexpected lsb.acct format',
                 'line'    => $line,
             ));

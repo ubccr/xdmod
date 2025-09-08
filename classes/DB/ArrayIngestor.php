@@ -75,7 +75,7 @@ class ArrayIngestor implements Ingestor
             try {
                 $destStatementPrepared->execute($srcRow);
             } catch (PDOException $e) {
-                $this->_logger->err(array(
+                $this->_logger->error(array(
                     'message'    => $e->getMessage(),
                     'stacktrace' => $e->getTraceAsString(),
                     'source_row' => json_encode($srcRow),
@@ -89,7 +89,7 @@ class ArrayIngestor implements Ingestor
                 $this->_logger->debug("Post ingest update: $updateStatement");
                 $this->_dest_db->handle()->prepare($updateStatement)->execute();
             } catch (PDOException $e) {
-                $this->_logger->err(array(
+                $this->_logger->error(array(
                     'message'    => $e->getMessage(),
                     'stacktrace' => $e->getTraceAsString(),
                 ));

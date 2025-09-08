@@ -139,7 +139,7 @@ class BatchProcessor extends Loggable
         $user = XDUser::getUserByID($userId);
 
         if ($user === null) {
-            $this->logger->err([
+            $this->logger->error([
                 'module' => self::LOG_MODULE,
                 'message' => 'User not found',
                 'Users.id' => $userId,
@@ -171,7 +171,7 @@ class BatchProcessor extends Loggable
 
             // Delete file that was added to zip archive.
             if (!$this->dryRun && !unlink($dataFile)) {
-                $this->logger->err([
+                $this->logger->error([
                     'module' => self::LOG_MODULE,
                     'message' => sprintf('Failed to delete temporary data file "%s"', $dataFile)
                 ]);
@@ -183,7 +183,7 @@ class BatchProcessor extends Loggable
             $this->dbh->commit();
         } catch (Exception $e) {
             $this->dbh->rollback();
-            $this->logger->err([
+            $this->logger->error([
                 'module' => self::LOG_MODULE,
                 'message' => 'Failed to export data: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
@@ -240,7 +240,7 @@ class BatchProcessor extends Loggable
             $this->dbh->commit();
         } catch (Exception $e) {
             $this->dbh->rollback();
-            $this->logger->err([
+            $this->logger->error([
                 'module' => self::LOG_MODULE,
                 'message' => 'Failed to expire record: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
@@ -309,7 +309,7 @@ class BatchProcessor extends Loggable
             $dataSet = new BatchDataset($query, $user, $this->logger);
             return $dataSet;
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->error([
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()

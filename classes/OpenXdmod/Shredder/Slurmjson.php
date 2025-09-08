@@ -32,7 +32,7 @@ class Slurmjson extends Slurm
         $this->logger->notice("Shredding file '$file'");
 
         if (!is_file($file)) {
-            $this->logger->err("'$file' is not a file");
+            $this->logger->error("'$file' is not a file");
             return false;
         }
 
@@ -45,7 +45,7 @@ class Slurmjson extends Slurm
         $data = json_decode($contents);
 
         if ($data === null || !isset($data->jobs)) {
-            $this->logger->err("'$file' does not contain valid json");
+            $this->logger->error("'$file' does not contain valid json");
             return false;
         }
 

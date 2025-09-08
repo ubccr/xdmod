@@ -61,7 +61,7 @@ class FileManager extends Loggable
                 'export_directory'
             );
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->error([
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
@@ -199,7 +199,7 @@ class FileManager extends Loggable
 
             return $dataFile;
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->error([
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
@@ -270,7 +270,7 @@ class FileManager extends Loggable
 
             return $zipFile;
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->error([
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()

@@ -316,7 +316,7 @@ class Shredder
         $this->logger->notice("Shredding directory '$dir'");
 
         if (!is_dir($dir)) {
-            $this->logger->err("'$dir' is not a directory");
+            $this->logger->error("'$dir' is not a directory");
             return false;
         }
 
@@ -374,7 +374,7 @@ class Shredder
         $this->logger->notice("Shredding file '$file'");
 
         if (!is_file($file)) {
-            $this->logger->err("'$file' is not a file");
+            $this->logger->error("'$file' is not a file");
             return false;
         }
 
@@ -853,7 +853,7 @@ class Shredder
         if ($walltime === null) { $invalidCount++; }
 
         if ($invalidCount > 1) {
-            $this->logger->err(array(
+            $this->logger->error(array(
                 'message'    => 'Failed to correct job times',
                 'start_time' => $startTime,
                 'end_time'   => $endTime,

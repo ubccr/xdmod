@@ -119,13 +119,13 @@ function handle_uncaught_exception($exception)
 
     $logger = Log::singleton('exception', $logConf);
 
-    $logger->err(array( 'message' => 'Exception Code: '.$exception->getCode()));
-    $logger->err(array( 'message' => 'Message: '.$exception->getMessage()));
-    $logger->err(array( 'message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')'));
+    $logger->error(array( 'message' => 'Exception Code: '.$exception->getCode()));
+    $logger->error(array( 'message' => 'Message: '.$exception->getMessage()));
+    $logger->error(array( 'message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')'));
 
     $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
 
-    $logger->err(array('message' => "Trace:\n".$stringTrace."\n-------------------------------------------------------"));
+    $logger->error(array('message' => "Trace:\n".$stringTrace."\n-------------------------------------------------------"));
 
    // If working in a server context, build headers to output.
     $httpCode = 500;

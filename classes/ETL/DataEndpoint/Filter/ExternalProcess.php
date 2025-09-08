@@ -252,7 +252,7 @@ class ExternalProcess extends \php_user_filter
     private function logError($message)
     {
         if ( isset($this->params->logger) ) {
-            $this->params->logger->err($message);
+            $this->params->logger->error($message);
         } else {
             fwrite(STDERR, $message . PHP_EOL);
         }

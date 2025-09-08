@@ -283,7 +283,7 @@ class PDODBMultiIngestor implements Ingestor
                     $f = fopen($infile_name, 'w');
                 }
                 catch (Exception $e) {
-                    $this->_logger->err(array(
+                    $this->_logger->error(array(
                         'message'    => $e->getMessage(),
                         'stacktrace' => $e->getTraceAsString(),
                         'statement'  => $load_statement,
@@ -306,7 +306,7 @@ class PDODBMultiIngestor implements Ingestor
                 )->execute();
             }
             catch (PDOException $e) {
-                $this->_logger->err(array(
+                $this->_logger->error(array(
                     'message'    => $e->getMessage(),
                     'sql'        => $updateStatement,
                     'stacktrace' => $e->getTraceAsString(),
@@ -400,7 +400,7 @@ class PDODBMultiIngestor implements Ingestor
         $sadness = false;
         while($row = $stmt->fetch(PDO::FETCH_ASSOC) )
         {
-            $this->_logger->crit(array(
+            $this->_logger->critical(array(
                 'message'          => 'Missing row',
                 'rowdata'          => print_r($row, true),
                 'class'            => get_class($this)
