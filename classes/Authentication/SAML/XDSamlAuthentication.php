@@ -162,7 +162,7 @@ EML;
             try {
                 $newUser->saveUser();
             } catch (Exception $e) {
-                $this->logger->err('User creation failed: ' . $e->getMessage());
+                $this->logger->error('User creation failed: ' . $e->getMessage());
                 throw $e;
             }
 
@@ -297,7 +297,7 @@ EML;
                 $e->getTraceAsString()
             );
 
-            $this->logger->err("Error encountered while emailing\n$errorMsg");
+            $this->logger->error("Error encountered while emailing\n$errorMsg");
 
             throw $e;
         }

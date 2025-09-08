@@ -636,7 +636,7 @@ exit(0);
 function log_error_and_exit($msg)
 {
     global $logger;
-    $logger->err($msg);
+    $logger->error($msg);
     fwrite(STDERR, $msg . PHP_EOL);
     exit(1);
 }  // log_error_and_exit()

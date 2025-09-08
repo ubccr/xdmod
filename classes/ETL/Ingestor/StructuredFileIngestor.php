@@ -268,7 +268,7 @@ class StructuredFileIngestor extends aIngestor implements iAction
         }
 
         if ( 0 != count($invalidSourceValues) ) {
-            $this->logger->err(sprintf("First record:%s%s", PHP_EOL, print_r($firstRecord, true)));
+            $this->logger->error(sprintf("First record:%s%s", PHP_EOL, print_r($firstRecord, true)));
             $this->logAndThrowException(
                 sprintf(
                     "Source record contains non-scalar values that cannot be used as SQL params. %s",

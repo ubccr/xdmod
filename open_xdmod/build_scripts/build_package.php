@@ -19,8 +19,8 @@ try {
     exit;
 } catch (Exception $e) {
     $logger = getLogger();
-    $logger->err($e->getMessage());
-    $logger->err($e->getTraceAsString());
+    $logger->error($e->getMessage());
+    $logger->error($e->getTraceAsString());
     exit(1);
 }
 
@@ -143,7 +143,7 @@ function main()
     ));
 
     if ($module === null) {
-        $logger->err('No module specified');
+        $logger->error('No module specified');
         exit(1);
     }
 

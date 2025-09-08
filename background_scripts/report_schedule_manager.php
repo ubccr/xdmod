@@ -90,7 +90,7 @@ foreach ($active_frequencies as $frequency) {
         } catch (Exception $e) {
             $msg = "Failed to get user for id = {$details['user_id']}: "
                 . $e->getMessage();
-            $logger->err(array(
+            $logger->error(array(
                 'message'    => $msg,
                 'stacktrace' => $e->getTraceAsString(),
             ));
@@ -121,7 +121,7 @@ foreach ($active_frequencies as $frequency) {
             } catch(Exception $e) {
                 $msg = "Error Preparing report on " . gethostname() . " {$details['report_id']}: "
                     . $e->getMessage();
-                $logger->err(array(
+                $logger->error(array(
                     'message'    => $msg,
                     'stacktrace' => $e->getTraceAsString(),
                 ));

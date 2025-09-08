@@ -144,7 +144,7 @@ class QueryHandler extends Loggable
             return $id;
         } catch (Exception $e) {
             $this->dbh->rollBack();
-            $this->logger->err([
+            $this->logger->error([
                 'module' => self::LOG_MODULE,
                 'message' => 'Record creation failed: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
