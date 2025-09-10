@@ -8,6 +8,7 @@
 namespace OpenXdmod;
 
 use CCR\Log;
+use CCR\LogOutput;
 use Configuration\XdmodConfiguration;
 use Exception;
 use PDOException;
@@ -404,11 +405,11 @@ class Shredder
 
                 // skip empty lines
                 if ($line === '') {
-                    $this->logger->debug([
+                    $this->logger->debug(LogOutput::from([
                         'message'     => 'Skipping blank line',
                         'file'        => $file,
                         'line_number' => $lineNumber
-                    ]);
+                    ]));
                     continue;
                 }
 
@@ -421,12 +422,12 @@ class Shredder
                     // Ignore duplicate key errors.
                     if ($e->getCode() == 23000) {
                         $msg = 'Skipping duplicate data: ' . $e->getMessage();
-                        $this->logger->debug(array(
+                        $this->logger->debug(LogOutput::from(array(
                             'message'     => $msg,
                             'file'        => $file,
                             'line_number' => $lineNumber,
                             'line'        => $line,
-                        ));
+                        )));
                         $duplicateCount++;
                         continue;
                     } else {
@@ -853,12 +854,12 @@ class Shredder
         if ($walltime === null) { $invalidCount++; }
 
         if ($invalidCount > 1) {
-            $this->logger->error(array(
+            $this->logger->error(LogOutput::from(array(
                 'message'    => 'Failed to correct job times',
                 'start_time' => $startTime,
                 'end_time'   => $endTime,
                 'walltime'   => $walltime,
-            ));
+            )));
 
             return null;
         }

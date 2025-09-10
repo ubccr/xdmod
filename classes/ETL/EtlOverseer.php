@@ -15,6 +15,7 @@
 
 namespace ETL;
 
+use CCR\LogOutput;
 use \Exception;  // Base exception
 use ETL\Configuration\EtlConfiguration;
 use Psr\Log\LoggerInterface;
@@ -457,13 +458,13 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
      // @codingStandardsIgnoreLine
     private function _execute($actionName, iAction $actionObj)
     {
-        $this->logger->info(array(
+        $this->logger->info(LogOutput::from(array(
                                 'message'     => 'start',
                                 'action_name' => $actionName,
                                 'action'      => $actionObj,
                                 'start_date'  => $this->etlOverseerOptions->getStartDate(),
                                 'end_date'    => $this->etlOverseerOptions->getEndDate(),
-                                ));
+                                )));
 
         // Execute the action using the overseer options including date, resource ids, etc.  If this
         // action should halt the ETL process on an exception re-throw the exception, otherwise log it
@@ -483,10 +484,10 @@ class EtlOverseer extends \CCR\Loggable implements iEtlOverseer
             }
         }
 
-        $this->logger->info(array(
+        $this->logger->info(LogOutput::from(array(
                                 'message'    => 'end',
                                 'action_name' => $actionName,
                                 'action'     => $actionObj
-                                ));
+                                )));
     }  // _execute()
 }  // class EtlOverseer

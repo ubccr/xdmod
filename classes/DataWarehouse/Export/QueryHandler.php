@@ -27,6 +27,7 @@
 
 namespace DataWarehouse\Export;
 
+use CCR\LogOutput;
 use Exception;
 use CCR\DB;
 use CCR\Loggable;
@@ -127,7 +128,7 @@ class QueryHandler extends Loggable
                 'export_file_format' => $format
             );
 
-            $this->logger->info([
+            $this->logger->info(LogOutput::from([
                 'module' => self::LOG_MODULE,
                 'message' => 'Creating data warehouse export record',
                 'event' => 'INSERT',
@@ -137,18 +138,18 @@ class QueryHandler extends Loggable
                 'start_date' => $startDate,
                 'end_date' => $endDate,
                 'format' => $format
-            ]);
+            ]));
 
             $id = $this->dbh->insert($sql, $params);
             $this->dbh->commit();
             return $id;
         } catch (Exception $e) {
             $this->dbh->rollBack();
-            $this->logger->error([
+            $this->logger->error(LogOutput::from([
                 'module' => self::LOG_MODULE,
                 'message' => 'Record creation failed: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
-            ]);
+            ]));
             throw $e;
         }
     }
@@ -192,13 +193,13 @@ class QueryHandler extends Loggable
                 SET export_succeeded = 0 " .
                 $this->whereSubmitted .
                 "AND id = :id";
-        $this->logger->info([
+        $this->logger->info(LogOutput::from([
             'module' => self::LOG_MODULE,
             'message' => 'Transitioning data warehouse export record to failed state',
             'event' => 'UPDATE_STATE_TO_FAILED',
             'table' => 'moddb.batch_export_requests',
             'id' => $id
-        ]);
+        ]));
         return $this->dbh->execute($sql, array('id' => $id));
     }
 
@@ -231,13 +232,13 @@ class QueryHandler extends Loggable
             'id' => $id
         );
 
-        $this->logger->info([
+        $this->logger->info(LogOutput::from([
             'module' => self::LOG_MODULE,
             'message' => 'Transitioning data warehouse export record to available state',
             'event' => 'UPDATE_STATE_TO_AVAILABLE',
             'table' => 'moddb.batch_export_requests',
             'id' => $id
-        ]);
+        ]));
 
         return $this->dbh->execute($sql, $params);
     }
@@ -252,13 +253,13 @@ class QueryHandler extends Loggable
     {
         $sql = "UPDATE batch_export_requests SET export_expired = 1 " .
                 $this->whereAvailable . 'AND id = :id';
-        $this->logger->info([
+        $this->logger->info(LogOutput::from([
             'module' => self::LOG_MODULE,
             'message' => 'Transitioning data warehouse export record to expired state',
             'event' => 'UPDATE_STATE_TO_EXPIRED',
             'table' => 'moddb.batch_export_requests',
             'id' => $id
-        ]);
+        ]));
         return $this->dbh->execute($sql, array('id' => $id));
     }
 
@@ -402,14 +403,14 @@ class QueryHandler extends Loggable
     public function deleteRequest($id, $userId)
     {
         $sql = "UPDATE batch_export_requests SET is_deleted = 1 WHERE id = :request_id AND user_id = :user_id";
-        $this->logger->info([
+        $this->logger->info(LogOutput::from([
             'module' => self::LOG_MODULE,
             'message' => 'Deleting data warehouse export record',
             'event' => 'UPDATE_STATE_TO_DELETED',
             'table' => 'moddb.batch_export_requests',
             'id' => $id,
             'user_id' => $userId
-        ]);
+        ]));
         return $this->dbh->execute($sql, array('request_id' => $id, 'user_id' => $userId));
     }
 
@@ -422,13 +423,13 @@ class QueryHandler extends Loggable
     public function updateDownloadedDatetime($id)
     {
         $sql = 'UPDATE batch_export_requests SET downloaded_datetime = NOW() WHERE id = :request_id';
-        $this->logger->info([
+        $this->logger->info(LogOutput::from([
             'module' => self::LOG_MODULE,
             'message' => 'Updating data warehouse export record downloaded datetime',
             'event' => 'UPDATE_DOWNLOADED_DATETIME',
             'table' => 'moddb.batch_export_requests',
             'id' => $id
-        ]);
+        ]));
         return $this->dbh->execute($sql, ['request_id' => $id]);
     }
 }

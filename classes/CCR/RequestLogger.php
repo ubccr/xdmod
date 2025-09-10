@@ -5,6 +5,7 @@ namespace CCR;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Rest\Utilities\Authentication;
+use CCR\LogOutput;
 
 /**
  * This class is meant to provide logging functionality for use with the html controller operations akin to the logging
@@ -63,28 +64,28 @@ class RequestLogger
 
         switch ($level) {
             case \CCR\Log::EMERG:
-                $this->logger->emergency($retval);
+                $this->logger->emergency(LogOutput::from($retval));
                 break;
             case Log::ALERT:
-                $this->logger->alert($retval);
+                $this->logger->alert(LogOutput::from($retval));
                 break;
             case \CCR\Log::CRIT:
-                $this->logger->critical($retval);
+                $this->logger->critical(LogOutput::from($retval));
                 break;
             case \CCR\Log::ERR:
-                $this->logger->error($retval);
+                $this->logger->error(LogOutput::from($retval));
                 break;
             case Log::WARNING:
-                $this->logger->warning($retval);
+                $this->logger->warning(LogOutput::from($retval));
                 break;
             case \CCR\Log::NOTICE:
-                $this->logger->notice($retval);
+                $this->logger->notice(LogOutput::from($retval));
                 break;
             case \CCR\Log::INFO:
-                $this->logger->info($retval);
+                $this->logger->info(LogOutput::from($retval));
                 break;
             case \CCR\Log::DEBUG:
-                $this->logger->debug($retval);
+                $this->logger->debug(LogOutput::from($retval));
                 break;
         }
     }

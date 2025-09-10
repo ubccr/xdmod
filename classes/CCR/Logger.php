@@ -2,7 +2,10 @@
 
 namespace CCR;
 
+use Exception;
+use Monolog\Handler\StreamHandler;
 use Psr\Log\LoggerInterface;
+use Monolog\Logger as MLogger;
 
 /**
  * This class is meant to provide a shim between Monolog & our code so that we can continue providing arrays as log
@@ -14,61 +17,79 @@ use Psr\Log\LoggerInterface;
  *
  * @package CCR
  */
-class Logger extends \Monolog\Logger implements LoggerInterface
+class Logger extends MLogger implements LoggerInterface
 {
-
     /**
-     * @inheritDoc
-     */
-    public function log($level, $message, array $context = array())
-    {
-        // This is so that when code calls $logger->log(\CCR\Log::DEBUG, "Message"); it doesn't bork.
-        if ($level < \Monolog\Logger::DEBUG) {
-            $level = Log::convertToMonologLevel($level);
-        }
-        return parent::log($level, $this->extractMessage($message), $context);
-    }
-
-    /**
-     * @inheritDoc
+     * @param $level
+     * @param $message
+     * @param array $context
+     * @return bool
+     * @throws \DateInvalidTimeZoneException
      */
     public function addRecord($level, $message, array $context = array())
     {
-        return parent::addRecord($level, $this->extractMessage($message), $context);
-    }
-
-    /**
-     * This function was extracted from the class `\Log\Log_xdconsole` so that we can keep our log output the same.
-     *
-     * @param mixed $record
-     *
-     * @return string
-     */
-    protected function extractMessage($record)
-    {
-        if (is_array($record)) {
-            return json_encode($this->recursivelyStringifyObjects($record), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
+        if (!$this->handlers) {
+            $this->pushHandler(new StreamHandler('php://stderr', static::DEBUG));
         }
-        return json_encode(array('message' => $record), JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_NUMERIC_CHECK);
-    }
 
-    /**
-     * This function recursively iterates over the provided $array keys and values. If a value is an object it replaces
-     * the object with it's cast string value.
-     *
-     * @param array $array The array to be recursively iterated over
-     *
-     * @return array returns the provided $array w/ any object values cast to strings.
-     */
-    protected function recursivelyStringifyObjects(&$array)
-    {
-        foreach ($array as $key => $value) {
-            if (is_object($value)) {
-                $array[$key] = (string) $value;
-            } elseif (is_array($value)) {
-                $array[$key] = $this->recursivelyStringifyObjects($value);
+        $levelName = static::getLevelName($level);
+
+        // check if any handler will handle this message so we can return early and save cycles
+        $handlerKey = null;
+        reset($this->handlers);
+        while ($handler = current($this->handlers)) {
+            if ($handler->isHandling(array('level' => $level))) {
+                $handlerKey = key($this->handlers);
+                break;
             }
+
+            next($this->handlers);
         }
-        return $array;
+
+        if (null === $handlerKey) {
+            return false;
+        }
+
+        if (!static::$timezone) {
+            static::$timezone = new \DateTimeZone(date_default_timezone_get() ?: 'UTC');
+        }
+
+        // php7.1+ always has microseconds enabled, so we do not need this hack
+        if ($this->microsecondTimestamps && PHP_VERSION_ID < 70100) {
+            $ts = \DateTime::createFromFormat('U.u', sprintf('%.6F', microtime(true)), static::$timezone);
+        } else {
+            $ts = new \DateTime('now', static::$timezone);
+        }
+        $ts->setTimezone(static::$timezone);
+        if (is_array($message)) {
+            $message = LogOutput::from($message);
+        }
+        $record = array(
+            'message' => (string) $message,
+            'context' => $context,
+            'level' => $level,
+            'level_name' => strtolower($levelName),
+            'channel' => $this->name,
+            'datetime' => $ts,
+            'extra' => array('message' => $message),
+        );
+
+        try {
+            foreach ($this->processors as $processor) {
+                $record = call_user_func($processor, $record);
+            }
+
+            while ($handler = current($this->handlers)) {
+                if (true === $handler->handle($record)) {
+                    break;
+                }
+
+                next($this->handlers);
+            }
+        } catch (Exception $e) {
+            $this->handleException($e, $record);
+        }
+
+        return true;
     }
 }

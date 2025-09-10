@@ -7,6 +7,7 @@
 
 use CCR\DB\PDODB;
 use CCR\Log;
+use CCR\LogOutput;
 use Psr\Log\LoggerInterface;
 
 class PDODBSynchronizingIngestor implements Ingestor
@@ -168,14 +169,14 @@ class PDODBSynchronizingIngestor implements Ingestor
         $time = $timeEnd - $timeStart;
 
         // NOTE: This is needed for the log summary.
-        $this->logger->notice(array(
+        $this->logger->notice(LogOutput::from(array(
             'message'           => 'Finished ingestion',
             'class'             => get_class($this),
             'start_time'        => $timeStart,
             'end_time'          => $timeEnd,
             'records_examined'  => $sourceRows,
             'records_loaded'    => $insertedRows,
-        ));
+        )));
     }
 
     /**
