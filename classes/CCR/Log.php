@@ -239,7 +239,7 @@ class Log
         $filePermission = $conf['mode'] ?? 0660;
 
         $handler = new StreamHandler($file, self::convertToMonologLevel($fileLogLevel), true, $filePermission);
-        $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
+        $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat']));
 
         return $handler;
     }
