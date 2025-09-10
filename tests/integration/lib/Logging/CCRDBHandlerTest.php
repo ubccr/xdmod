@@ -18,11 +18,10 @@ class CCRDBHandlerTest extends \PHPUnit\Framework\TestCase
             array(
                 'file' => false,
                 'console' => false,
-                'mail' => false
+                'mail' => false,
+                'dbLogLevel' => Log::DEBUG
             )
         );
-
-        $logger->pushHandler(new \CCR\CCRDBHandler());
 
         $logger->debug("Testing DB Write Handler: $now");
 
@@ -48,7 +47,7 @@ class CCRDBHandlerTest extends \PHPUnit\Framework\TestCase
         $json = null;
         try {
             $json = json_decode($message);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->fail("Expected the `message` property to be json de-codable. Received: $message");
         }
 

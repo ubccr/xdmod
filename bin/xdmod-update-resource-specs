@@ -205,10 +205,10 @@ function main()
 
     $resourceSpecsData = Json::loadFile($resourceSpecsFile);
 
-    $logger->debug(array(
+    $logger->debug(LogOutput::from(array(
         'message' => 'Loaded resource spec data',
         'data'    => json_encode($resourceSpecsData),
-    ));
+    )));
 
     // Resource specs for the specified resource.
     $resourceData = array_filter(

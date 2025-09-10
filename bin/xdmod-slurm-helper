@@ -12,6 +12,7 @@ require_once __DIR__ . '/../configuration/linker.php';
 
 use CCR\DB;
 use CCR\Log;
+use CCR\LogOutput;
 use OpenXdmod\Shredder;
 
 // Disable memory limit.
@@ -132,20 +133,20 @@ function main()
     }
 
     // NOTE: "process_start_time" is needed for the log summary.
-    $logger->notice(array(
+    $logger->notice(LogOutput::from(array(
         'message'            => 'xdmod-slurm-helper start',
         'process_start_time' => date('Y-m-d H:i:s'),
-    ));
+    )));
 
     try {
         $logger->debug('Creating database connection');
         $db = DB::factory('shredder');
     } catch (Exception $e) {
         $msg = 'Failed to create database connection: ' . $e->getMessage();
-        $logger->crit(array(
+        $logger->crit(LogOutput::from(array(
             'message'    => $msg,
             'stacktrace' => $e->getTraceAsString(),
-        ));
+        )));
         exit(1);
     }
 
@@ -155,10 +156,10 @@ function main()
         $shredder->setResource($resource);
     } catch (Exception $e) {
         $msg = 'Failed to create shredder: ' . $e->getMessage();
-        $logger->crit(array(
+        $logger->crit(LogOutput::from(array(
             'message'    => $msg,
             'stacktrace' => $e->getTraceAsString(),
-        ));
+        )));
         exit(1);
     }
 
@@ -196,20 +197,20 @@ function main()
         $ingestor = $shredder->getJobIngestor();
         $ingestor->ingest();
     } catch (Exception $e) {
-        $logger->crit(array(
+        $logger->crit(LogOutput::from(array(
             'message'    => 'Ingestion failed: ' . $e->getMessage(),
             'stacktrace' => $e->getTraceAsString(),
-        ));
+        )));
         exit(1);
     }
 
     $logger->notice('Done normalizing data');
 
     // NOTE: "process_end_time" is needed for the log summary.
-    $logger->notice(array(
+    $logger->notice(LogOutput::from(array(
         'message'          => 'xdmod-slurm-helper end',
         'process_end_time' => date('Y-m-d H:i:s'),
-    ));
+    )));
 }
 
 function getSacctCmdArgs(

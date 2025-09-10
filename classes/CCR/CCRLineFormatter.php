@@ -6,59 +6,27 @@ use Monolog\Formatter\LineFormatter;
 
 class CCRLineFormatter extends LineFormatter
 {
-    public function format(array $record)
-    {
-        if (isset($record['level_name'])) {
-            $record['level_name'] = strtolower($record['level_name']);
-        }
-
-        $record['message'] = $this->extractMessage($record);
-
-        return parent::format($record);
-    }
-
     /**
-     * This function was extracted from the class `\Log\Log_xdconsole` so that we can keep our log output the same.
+     * We've overridden this function so that we can customize the way that arrays of data are displayed from the
+     * standard `{"key" => "value", ...}` to `(key: value)`
      *
-     * @param mixed $record
-     *
+     * @param mixed $data
+     * @param bool $ignoreErrors
      * @return string
      */
-    protected function extractMessage($record)
+    protected function toJson($data, $ignoreErrors = false): string
     {
-        $json = json_decode($record['message'], true);
+        $parts = [];
+        if (count($data) > 0) {
+            $nonMessageParts = array();
 
-        if ($json !== null)
-        {
-            $parts = array();
-
-            if (isset($json['message'])) {
-                $parts[] = $json['message'];
-                unset($json['message']);
+            foreach ($data as $key => $value) {
+                $nonMessageParts[] = "$key: $value";
             }
 
-            if (count($json) > 0) {
-                $nonMessageParts = array();
-
-                foreach ($json as $key => $value) {
-                    $nonMessageParts[] = "$key: $value";
-                }
-
-                $parts[] = '(' . implode(', ', $nonMessageParts) . ')';
-            }
-
-            $record['message'] = implode(' ', $parts);
+            $parts[] = '(' . implode(', ', $nonMessageParts) . ')';
         }
 
-        /* Otherwise, we assume the message is a string. */
-        return $record['message'];
-    }
-
-    /**
-     * @see LineFormatter::replaceNewlines
-     */
-    protected function replaceNewlines($str)
-    {
-        return str_replace(array('\r', '\n'), array("\r", "\n"), $str);
+        return implode(' ', $parts);
     }
 }

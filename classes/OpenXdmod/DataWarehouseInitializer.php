@@ -4,6 +4,7 @@ namespace OpenXdmod;
 
 use CCR\DB;
 use CCR\Log;
+use CCR\LogOutput;
 use Configuration\XdmodConfiguration;
 use Exception;
 use CCR\DB\iDatabase;
@@ -489,7 +490,7 @@ class DataWarehouseInitializer
         $endDate,
         $append = true
     ) {
-        $this->logger->info(array(
+        $this->logger->info(LogOutput::from(array(
             'message'    => 'start',
             'class'      => get_class($this),
             'function'   => __FUNCTION__,
@@ -497,7 +498,7 @@ class DataWarehouseInitializer
             'start_date' => $startDate,
             'end_date'   => $endDate,
             'append'     => $append,
-        ));
+        )));
 
         foreach ($this->aggregationUnits as $aggUnit) {
             $this->logger->info("Aggregating by $aggUnit");
@@ -515,11 +516,11 @@ class DataWarehouseInitializer
         $this->logger->info("Building filter lists");
         $agg->updateFilters();
 
-        $this->logger->info(array(
+        $this->logger->info(LogOutput::from(array(
             'message'  => 'end',
             'class'    => get_class($this),
             'function' => __FUNCTION__,
-        ));
+        )));
     }
 
     /**

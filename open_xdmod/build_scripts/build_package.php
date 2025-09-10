@@ -11,6 +11,7 @@ require_once __DIR__ . '/../../configuration/linker.php';
 ini_set('memory_limit', -1);
 
 use CCR\Log;
+use CCR\LogOutput;
 use OpenXdmod\Build\Packager;
 
 // Catch unexpected exceptions.
@@ -137,10 +138,10 @@ function main()
 
     $cmd = implode(' ', array_map('escapeshellarg', $argv));
     $logger->info("Command: $cmd");
-    $logger->debug(array_merge(
+    $logger->debug(LogOutput::from(array_merge(
         array('message' => 'Parsed args'),
         $args
-    ));
+    )));
 
     if ($module === null) {
         $logger->error('No module specified');
