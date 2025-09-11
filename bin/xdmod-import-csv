@@ -163,7 +163,7 @@ function main()
         $shredderDb = DB::factory('shredder');
     } catch (Exception $e) {
         $msg = 'Failed to create database connection: ' . $e->getMessage();
-        $logger->crit(LogOutput::from(array(
+        $logger->critical(LogOutput::from(array(
             'message'   => $msg,
             'stacktrace' => $e->getTraceAsString(),
         )));
@@ -227,7 +227,7 @@ function main()
         $logger->info('Committing database transaction');
         $db->commit();
     } catch (Exception $e) {
-        $logger->err(LogOutput::from(array(
+        $logger->error(LogOutput::from(array(
             'message'    => $e->getMessage(),
             'stacktrace' => $e->getTraceAsString(),
         )));
