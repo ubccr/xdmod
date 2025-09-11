@@ -273,7 +273,7 @@ class Log
         // This processor checks to see if a value has been set in the log records `extra` section called `message`.
         // This key is populated by `CCR\Logger` and is the unchanged `$message` being logged. This let's us have access
         // to the "raw" $message that was passed to the logger.
-        $processor = function($record) {
+        $processor = function ($record) {
             $extraMessage = $record['extra']['message'] ?? null;
 
             // Make sure that the contents of $record['formatted'] is json formatted for DBHandlers.
