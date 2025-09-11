@@ -182,7 +182,7 @@ class Log
             }
 
             $loggerAccessor = 'get' . ucfirst($type) . 'Handler';
-            $handler = call_user_func(array(get_called_class(), $loggerAccessor), $ident, $conf, $logger);
+            $handler = call_user_func(array(get_called_class(), $loggerAccessor), $ident, $conf);
 
             $logger->pushHandler($handler);
         }
