@@ -19,7 +19,7 @@ class CCRDBHandlerTest extends \PHPUnit\Framework\TestCase
                 'file' => false,
                 'console' => false,
                 'mail' => false,
-                'dbLogLevel' => Log::DEBUG
+                'dbLogLevel' => \CCR\Log::DEBUG
             )
         );
 
