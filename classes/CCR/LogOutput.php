@@ -2,14 +2,13 @@
 
 namespace CCR;
 
-
 /**
  * An adapter class to be used during the migration to PHP 8 versions of PSR\Logger. Allows instances where we directly
  * logged arrays of data `$logger->error(array('timestamp' => 2934908230498234, 'status' => 'good', 'code' => 200));`
  * to use this class as a wrapper, `$logger->error(LogOutput::from(array('timestamp' => 2934908230498234, 'status' => 'good', 'code' => 200));`
  * and not have to worry about formatting the message with something like `sprintf`.
  */
-class LogOutput  implements \Stringable
+class LogOutput implements \Stringable
 {
     /**
      * @var array the original array of data being logged.
@@ -70,7 +69,7 @@ class LogOutput  implements \Stringable
                 foreach( $this->recursivelyStringifyObjects($value) as $k => $v) {
                     $result[] = "$k: $v";
                 }
-                $array[$key] = '(' . implode(', ',$result  ) . ')';
+                $array[$key] = '(' . implode(', ', $result) . ')';
             }
         }
         return $array;
