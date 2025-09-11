@@ -42,7 +42,7 @@ class LogTest extends \PHPUnit\Framework\TestCase
         $logger->emerg('Emergency');
         $logger->alert('Alert');
         $logger->critical('Critical');
-      $logger->error('Error');
+        $logger->error('Error');
         $logger->warning('Warning');
         $logger->notice('Notice');
         $logger->info('Info');
