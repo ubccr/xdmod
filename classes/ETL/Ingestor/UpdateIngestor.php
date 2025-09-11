@@ -20,6 +20,7 @@ use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use ETL\DataEndpoint\iStructuredFile;
 use Psr\Log\LoggerInterface;
+use CCR\LogOutput;
 
 class UpdateIngestor extends aRdbmsDestinationAction implements iAction
 {
