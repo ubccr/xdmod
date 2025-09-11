@@ -3,7 +3,6 @@
 namespace CCR;
 
 use Exception;
-use Monolog\Formatter\JsonFormatter;
 use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\NativeMailerHandler;
@@ -269,7 +268,7 @@ class Log
         // the `%formatted%` variable that is populated by the processor we're adding to the handler we can ensure that
         // we don't change the "normal" format and still get the json formatted information we expect to be logged to
         // the db.
-        $handler->setFormatter(new CCRLineFormatter('%formatted%'));
+        $handler->setFormatter(new LineFormatter('%formatted%'));
 
         // This processor checks to see if a value has been set in the log records `extra` section called `message`.
         // This key is populated by `CCR\Logger` and is the unchanged `$message` being logged. This let's us have access
