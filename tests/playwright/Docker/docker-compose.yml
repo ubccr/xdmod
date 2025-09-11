@@ -4,11 +4,11 @@ services:
         container_name: xdmod
         hostname: xdmod
         networks:
-          - testing-rocky8
+            - testing-rocky8
         shm_size: 2g
         ports:
-          - "8080:443"
-          - "7000:7000"
+            - "8080:443"
+            - "7000:7000"
         environment:
             XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
             XDMOD_IS_CORE: true
