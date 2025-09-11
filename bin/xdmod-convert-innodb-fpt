@@ -208,7 +208,7 @@ function export_innodb_tables() {
     global $logger, $db, $directory, $file_suffix;
 
     if ( $directory === null) {
-        $logger->crit("You must specify the directory export the tables too using the ---dir flag");
+        $logger->critical("You must specify the directory export the tables too using the ---dir flag");
         return;
     }
 
@@ -286,7 +286,7 @@ function import_innodb_tables() {
     global $logger, $db, $directory, $file_suffix, $file_suffix_length;
 
     if ( $directory === null) {
-        $logger->crit("You must specify the directory export the tables too using the ---dir flag");
+        $logger->critical("You must specify the directory export the tables too using the ---dir flag");
         return;
     }
 

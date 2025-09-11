@@ -137,22 +137,22 @@ function main()
     $logger->debug('Checking for required arguments');
 
     if ($format === null) {
-        $logger->crit('No input format specified');
+        $logger->critical('No input format specified');
         exit(1);
     }
 
     if ($resource === null) {
-        $logger->crit('No resource name specified');
+        $logger->critical('No resource name specified');
         exit(1);
     }
 
     if ($dir === null && $file === null) {
-        $logger->crit('No input source specified');
+        $logger->critical('No input source specified');
         exit(1);
     }
 
     if ($dir !== null && $file !== null) {
-        $logger->crit('Multiple input sources specified');
+        $logger->critical('Multiple input sources specified');
         exit(1);
     }
 
@@ -173,7 +173,7 @@ function main()
         }
     } catch (Exception $e) {
         $msg = 'Failed to create database connection: ' . $e->getMessage();
-        $logger->crit(LogOutput::from(array(
+        $logger->critical(LogOutput::from(array(
             'message'    => $msg,
             'stacktrace' => $e->getTraceAsString(),
         )));
@@ -192,7 +192,7 @@ function main()
         }
     } catch (Exception $e) {
         $msg = 'Failed to create shredder: ' . $e->getMessage();
-        $logger->crit(LogOutput::from(array(
+        $logger->critical(LogOutput::from(array(
             'message'    => $msg,
             'stacktrace' => $e->getTraceAsString(),
         )));
@@ -213,7 +213,7 @@ function main()
          }
     } catch (Exception $e) {
         $msg = 'Failed to shred files: ' . $e->getMessage();
-        $logger->crit(LogOutput::from(array(
+        $logger->critical(LogOutput::from(array(
             'message'    => $msg,
             'stacktrace' => $e->getTraceAsString(),
         )));
@@ -244,7 +244,7 @@ function main()
                 $logger->notice('Done normalizing data');
             }
         } catch (Exception $e) {
-            $logger->crit(LogOutput::from(array(
+            $logger->critical(LogOutput::from(array(
                 'message'    => 'Ingestion failed: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString(),
             )));
