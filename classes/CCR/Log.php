@@ -199,8 +199,8 @@ class Log
      *   - lineFormat:      The line format to be used when this handler writes a log entry.
      *   - timeFormat:      The time format to be used when this handler writes a log entry.
      *
-     * @param string $ident  The unique string identifier for this handler's logger.
-     * @param array  $conf   The configuration to be used when constructing this handler.
+     * @param string $ident The unique string identifier for this handler's logger.
+     * @param array  $conf  The configuration to be used when constructing this handler.
      *
      * @return HandlerInterface
      *
@@ -226,8 +226,8 @@ class Log
      *   - lineFormat:      The line format to be used when this handler writes a log entry.
      *   - timeFormat:      The time format to be used when this handler writes a log entry.
      *
-     * @param string          $ident  The unique string identifier for this handlers Logger.
-     * @param array           $conf   The configuration to be used when constructing this handler.
+     * @param string $ident The unique string identifier for this handlers Logger.
+     * @param array  $conf  The configuration to be used when constructing this handler.
      *
      * @return HandlerInterface
      *
@@ -252,8 +252,8 @@ class Log
      * This function utilizes the following $conf keys:
      *   - dbLogLevel: The log level at which this handler will generate an entry.
      *
-     * @param string $ident  The unique string identifier for this handlers Logger.
-     * @param array  $conf   The configuration to be used when constructing this handler.
+     * @param string $ident The unique string identifier for this handlers Logger.
+     * @param array  $conf  The configuration to be used when constructing this handler.
      *
      * @return HandlerInterface
      *
@@ -303,8 +303,8 @@ class Log
      *   - emailSubject:   The value to be used as the 'subject' field.
      *   - maxColumnWidth: The maximum column width that the message lines will have.
      *
-     * @param string $ident  The unique string identifier for this handlers Logger.
-     * @param array  $conf   The configuration to be used when constructing this handler.
+     * @param string $ident The unique string identifier for this handlers Logger.
+     * @param array  $conf  The configuration to be used when constructing this handler.
      *
      * @return HandlerInterface
      *
