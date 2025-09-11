@@ -143,7 +143,7 @@ function main()
     $logger->info("Command: $cmd");
 
     if ($resource === null) {
-        $logger->crit('No resource specified');
+        $logger->critical('No resource specified');
         exit(1);
     }
 
@@ -151,7 +151,7 @@ function main()
         $startDate !== null
         && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDate)
     ) {
-        $logger->crit("Invalid start date '$startDate'");
+        $logger->critical("Invalid start date '$startDate'");
         exit(1);
     }
 
@@ -159,7 +159,7 @@ function main()
         $endDate !== null
         && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate)
     ) {
-        $logger->crit("Invalid end date '$endDate'");
+        $logger->critical("Invalid end date '$endDate'");
         exit(1);
     }
 
@@ -167,7 +167,7 @@ function main()
         $cpuNodes !== null
         && filter_var($cpuNodes, FILTER_VALIDATE_INT) === false
     ) {
-        $logger->crit("The cpu-node-count value must be an integer");
+        $logger->critical("The cpu-node-count value must be an integer");
         exit(1);
     }
 
@@ -175,7 +175,7 @@ function main()
         $gpuNodes !== null
         && filter_var($gpuNodes, FILTER_VALIDATE_INT) === false
     ) {
-        $logger->crit("The gpu-node-count value must be an integer");
+        $logger->critical("The gpu-node-count value must be an integer");
         exit(1);
     }
 
@@ -183,7 +183,7 @@ function main()
         $cpuProcessors !== null
         && filter_var($cpuProcessors, FILTER_VALIDATE_INT) === false
     ) {
-        $logger->crit("The cpu-count value must be an integer");
+        $logger->critical("The cpu-count value must be an integer");
         exit(1);
     }
 
@@ -191,7 +191,7 @@ function main()
         $gpuProcessors !== null
         && filter_var($gpuProcessors, FILTER_VALIDATE_INT) === false
     ) {
-        $logger->crit("The gpu-count value must be an integer");
+        $logger->critical("The gpu-count value must be an integer");
         exit(1);
     }
 
@@ -219,7 +219,7 @@ function main()
     );
 
     if (!verifyResourceSpecs($resourceData) && !$force) {
-        $logger->err('Current resource_specs.json is not valid (see above)');
+        $logger->error('Current resource_specs.json is not valid (see above)');
         exit(1);
     }
 
@@ -321,7 +321,7 @@ function main()
     $resourceData[] = $newEntry;
 
     if (!verifyResourceSpecs($resourceData) && !$force) {
-        $logger->err('New resource specs are not valid (see above)');
+        $logger->error('New resource specs are not valid (see above)');
         exit(1);
     }
 
@@ -379,14 +379,14 @@ function verifyResourceSpecs(array $resourceData)
             $startDate !== null
             && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDate)
         ) {
-            $logger->err("Invalid start date '$startDate'");
+            $logger->error("Invalid start date '$startDate'");
         }
 
         if (
             $endDate !== null
             && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate)
         ) {
-            $logger->err("Invalid end date '$endDate'");
+            $logger->error("Invalid end date '$endDate'");
         }
 
         // The last entry doesn't require an end date.
@@ -400,9 +400,9 @@ function verifyResourceSpecs(array $resourceData)
             && $lastStartDt->format('Y-m-d') == $startDate)
         {
             $valid = false;
-            $logger->err("The start time for this entry matches the start time for the previous entry.");
-            $logger->err("Previous entry: " . json_encode($prevEntry));
-            $logger->err("Current entry: " . json_encode($datum));
+            $logger->error("The start time for this entry matches the start time for the previous entry.");
+            $logger->error("Previous entry: " . json_encode($prevEntry));
+            $logger->error("Current entry: " . json_encode($datum));
         }
 
         // All entries require a start date.
@@ -410,7 +410,7 @@ function verifyResourceSpecs(array $resourceData)
             $valid = false;
             $msg = 'Entry is missing required start date: '
                 . json_encode($datum);
-            $logger->err($msg);
+            $logger->error($msg);
         }
 
         // End date should not be before start date.
@@ -422,7 +422,7 @@ function verifyResourceSpecs(array $resourceData)
             $valid = false;
             $msg = 'End date is before start date: '
                 . json_encode($datum);
-            $logger->err($msg);
+            $logger->error($msg);
         }
 
         // Check that the start date for an entry is one day ahead of the end date
@@ -436,7 +436,7 @@ function verifyResourceSpecs(array $resourceData)
             if ($startDate !== $expectedStartDate) {
                 $msg = "Expected start_date '$expectedStartDate', but"
                     . " found '$startDate': " . json_encode($datum);
-                $logger->err($msg);
+                $logger->error($msg);
                 $valid = false;
             }
         }
@@ -448,7 +448,7 @@ function verifyResourceSpecs(array $resourceData)
                 $valid = false;
                 $msg = 'Entry is missing required end date: '
                     . json_encode($datum);
-                $logger->err($msg);
+                $logger->error($msg);
             }
         }
 

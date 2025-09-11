@@ -142,18 +142,18 @@ function main()
     $logger->debug('Checking for required arguments');
 
     if ($input === null) {
-        $logger->crit('No input file specified');
+        $logger->critical('No input file specified');
         exit(1);
     } elseif (!is_file($input)) {
-        $logger->crit("'$input' is not a file");
+        $logger->critical("'$input' is not a file");
         exit(1);
     } elseif (!is_readable($input)) {
-        $logger->crit("'$input' is not readable");
+        $logger->critical("'$input' is not readable");
         exit(1);
     }
 
     if ($type === null) {
-        $logger->crit('No input type specified');
+        $logger->critical('No input type specified');
         exit(1);
     }
 
@@ -175,7 +175,7 @@ function main()
     $fh = fopen($input, 'r');
 
     if ($fh === false) {
-        $logger->crit("Failed to open file '$input'");
+        $logger->critical("Failed to open file '$input'");
         exit(1);
     }
 
@@ -195,7 +195,7 @@ function main()
     $logger->debug("Closing file '$input'");
 
     if (!fclose($fh)) {
-        $logger->crit("Failed to close file '$input'");
+        $logger->critical("Failed to close file '$input'");
         exit(1);
     }
 
@@ -219,7 +219,7 @@ function main()
                 updateCloudProjectToPI($data);
                 break;
             default:
-                $logger->crit("Unknown type '$type'");
+                $logger->critical("Unknown type '$type'");
                 exit(1);
                 break;
         }

@@ -128,7 +128,7 @@ function main()
     $logger->debug('Checking for required arguments');
 
     if ($resource === null) {
-        $logger->crit('No resource name specified');
+        $logger->critical('No resource name specified');
         exit(1);
     }
 
@@ -143,7 +143,7 @@ function main()
         $db = DB::factory('shredder');
     } catch (Exception $e) {
         $msg = 'Failed to create database connection: ' . $e->getMessage();
-        $logger->crit(LogOutput::from(array(
+        $logger->critical(LogOutput::from(array(
             'message'    => $msg,
             'stacktrace' => $e->getTraceAsString(),
         )));
@@ -156,7 +156,7 @@ function main()
         $shredder->setResource($resource);
     } catch (Exception $e) {
         $msg = 'Failed to create shredder: ' . $e->getMessage();
-        $logger->crit(LogOutput::from(array(
+        $logger->critical(LogOutput::from(array(
             'message'    => $msg,
             'stacktrace' => $e->getTraceAsString(),
         )));
@@ -176,7 +176,7 @@ function main()
     try {
         $logFile = executeSacctCommand($cmd, $resource);
     } catch (Exception $e) {
-        $logger->crit($e->getMessage());
+        $logger->critical($e->getMessage());
         exit(1);
     }
 
@@ -197,7 +197,7 @@ function main()
         $ingestor = $shredder->getJobIngestor();
         $ingestor->ingest();
     } catch (Exception $e) {
-        $logger->crit(LogOutput::from(array(
+        $logger->critical(LogOutput::from(array(
             'message'    => 'Ingestion failed: ' . $e->getMessage(),
             'stacktrace' => $e->getTraceAsString(),
         )));
@@ -340,7 +340,7 @@ function executeSacctCommand($cmd, $resource)
     }
 
     if (!fclose($logFilePointer)) {
-        $logger->err("Failed to close temporary file '$logFile'");
+        $logger->error("Failed to close temporary file '$logFile'");
     }
 
     $err = stream_get_contents($pipes[2]);
@@ -350,7 +350,7 @@ function executeSacctCommand($cmd, $resource)
     }
 
     if (!fclose($pipes[2])) {
-        $logger->err('Failed to close subprocess STDERR');
+        $logger->error('Failed to close subprocess STDERR');
     }
 
     $exitCode = stream_get_contents($pipes[3]);
@@ -363,7 +363,7 @@ function executeSacctCommand($cmd, $resource)
     $exitCode = trim($exitCode);
 
     if (!fclose($pipes[3])) {
-        $logger->err('Failed to close subprocess pipe 3');
+        $logger->error('Failed to close subprocess pipe 3');
     }
 
     $procStatus = proc_close($process);
