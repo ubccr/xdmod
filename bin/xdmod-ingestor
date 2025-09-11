@@ -166,7 +166,7 @@ function main()
         $startDate !== null
         && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $startDate)
     ) {
-        $logger->crit("Invalid start date '$startDate'");
+        $logger->critical("Invalid start date '$startDate'");
         exit(1);
     }
 
@@ -174,16 +174,16 @@ function main()
         $endDate !== null
         && !preg_match('/^\d{4}-\d{2}-\d{2}$/', $endDate)
     ) {
-        $logger->crit("Invalid end date '$endDate'");
+        $logger->critical("Invalid end date '$endDate'");
         exit(1);
     }
     if ($lastModifiedStartDate !== null && strtotime($lastModifiedStartDate) === false) {
-        $logger->crit("Invalid last modified start date '$lastModifiedStartDate'");
+        $logger->critical("Invalid last modified start date '$lastModifiedStartDate'");
         exit(1);
     }
 
     if ($startDate === null && $endDate !== null) {
-        $logger->crit('Must specify start date with end date');
+        $logger->critical('Must specify start date with end date');
         exit(1);
     }
 
@@ -193,13 +193,13 @@ function main()
     }
 
     if($datatype !== false && $datatypeValue === null){
-        $logger->crit("You must specify the type of data you want to ingest");
+        $logger->critical("You must specify the type of data you want to ingest");
         exit(1);
     }
 
     if ($realmToAggregate !== false
         && !in_array($realmToAggregate, ['job', 'cloud', 'storage', 'resourcespecs'])) {
-        $logger->crit("Invalid realm '$value' specified for aggregation");
+        $logger->critical("Invalid realm '$value' specified for aggregation");
         exit(1);
     }
 
@@ -224,7 +224,7 @@ function main()
     } catch (Exception $e) {
         $msg = 'Failed to create data warehouse initializer: '
             . $e->getMessage();
-        $logger->crit(LogOutput::from(array(
+        $logger->critical(LogOutput::from(array(
             'message'    => $msg,
             'stacktrace' => $e->getTraceAsString(),
         )));
@@ -286,7 +286,7 @@ function main()
                 exit($aclstatus);
             }
         } catch (Exception $e) {
-            $logger->crit(LogOutput::from(array(
+            $logger->critical(LogOutput::from(array(
                 'message'    => 'Ingestion failed: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString(),
             )));
@@ -315,7 +315,7 @@ function main()
                 $dwi->aggregateResourceSpecs($lastModifiedStartDate);
             }
         } catch (Exception $e) {
-            $logger->crit(LogOutput::from(array(
+            $logger->critical(LogOutput::from(array(
                 'message'    => 'Aggregation failed: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString(),
             )));
