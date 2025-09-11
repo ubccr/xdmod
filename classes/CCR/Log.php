@@ -100,15 +100,8 @@ class Log
         $ident = 'xdmod-logger',
         array $conf = array()
     ) {
-        $conf['lineFormat']
-            = isset($conf['lineFormat'])
-            ? $conf['lineFormat']
-            : self::LINE_FORMAT;
-
-        $conf['timeFormat']
-            = isset($conf['timeFormat'])
-            ? $conf['timeFormat']
-            :self::TIME_FORMAT;
+        $conf['lineFormat'] = $conf['lineFormat'] ?? self::LINE_FORMAT;
+        $conf['timeFormat'] = $conf['timeFormat'] ?? self::TIME_FORMAT;
 
         $logger = self::getLogger($ident, $conf);
 
@@ -206,15 +199,14 @@ class Log
      *   - lineFormat:      The line format to be used when this handler writes a log entry.
      *   - timeFormat:      The time format to be used when this handler writes a log entry.
      *
-     * @param string          $ident  The unique string identifier for this handler's logger.
-     * @param array           $conf   The configuration to be used when constructing this handler.
-     * @param LoggerInterface $logger The logger that this handler will be added to. Provided here to allow for adding a processor.
+     * @param string $ident  The unique string identifier for this handler's logger.
+     * @param array  $conf   The configuration to be used when constructing this handler.
      *
      * @return HandlerInterface
      *
      * @throws Exception if a StreamHandler to `php://stdout` cannot be instantiated.
      */
-    protected static function getConsoleHandler($ident, array $conf, $logger)
+    protected static function getConsoleHandler($ident, array $conf)
     {
         $consoleLogLevel = $conf['consoleLogLevel'] ?? self::getDefaultLogLevel('console');
 
@@ -236,20 +228,19 @@ class Log
      *
      * @param string          $ident  The unique string identifier for this handlers Logger.
      * @param array           $conf   The configuration to be used when constructing this handler.
-     * @param LoggerInterface $logger The logger that this handler will be added to. Provided here to allow for adding a processor.
      *
      * @return HandlerInterface
      *
      * @throws Exception If there is a problem instantiating the StreamHandler to the requested file.
      */
-    protected static function getFileHandler($ident, array $conf, $logger)
+    protected static function getFileHandler($ident, array $conf)
     {
         $fileLogLevel = $conf['fileLogLevel'] ?? self::getDefaultLogLevel('file');
         $file = $conf['file'] ?? LOG_DIR . '/' . strtolower(preg_replace('/\W/', '_', $ident)) . '.log';
         $filePermission = $conf['mode'] ?? 0660;
 
         $handler = new StreamHandler($file, self::convertToMonologLevel($fileLogLevel), true, $filePermission);
-        $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat']));
+        $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
 
         return $handler;
     }
@@ -261,21 +252,28 @@ class Log
      * This function utilizes the following $conf keys:
      *   - dbLogLevel: The log level at which this handler will generate an entry.
      *
-     * @param string          $ident  The unique string identifier for this handlers Logger.
-     * @param array           $conf   The configuration to be used when constructing this handler.
-     * @param LoggerInterface $logger The logger that this handler will be added to. Provided here to allow for adding a processor.
+     * @param string $ident  The unique string identifier for this handlers Logger.
+     * @param array  $conf   The configuration to be used when constructing this handler.
      *
      * @return HandlerInterface
      *
      * @throws Exception @see CCRDBHandler::__construct
      */
-    protected static function getDbHandler($ident, array $conf, $logger)
+    protected static function getDbHandler($ident, array $conf)
     {
         $dbLogLevel = $conf['dbLogLevel'] ?? self::getDefaultLogLevel('db');
-        // Adding the processor to the logger is only a stop-gap. In the more recent versions of Monolog handlers can have processors
-        // and we won't need to pass the logger to the get*Handler functions.
+
         $handler = new CCRDBHandler(null, null, null, self::convertToMonologLevel($dbLogLevel));
+
+        // This is one of the important changes to support the new version of Monolog, by setting the `format` to use
+        // the `%formatted%` variable that is populated by the processor we're adding to the handler we can ensure that
+        // we don't change the "normal" format and still get the json formatted information we expect to be logged to
+        // the db.
         $handler->setFormatter(new CCRLineFormatter('%formatted%'));
+
+        // This processor checks to see if a value has been set in the log records `extra` section called `message`.
+        // This key is populated by `CCR\Logger` and is the unchanged `$message` being logged. This let's us have access
+        // to the "raw" $message that was passed to the logger.
         $processor = function($record) {
             $extraMessage = $record['extra']['message'] ?? null;
 
@@ -290,9 +288,8 @@ class Log
 
             return $record;
         };
-
         $handler->pushProcessor($processor);
-        #$logger->pushProcessor($processor);
+
         return $handler;
     }
 
@@ -306,15 +303,14 @@ class Log
      *   - emailSubject:   The value to be used as the 'subject' field.
      *   - maxColumnWidth: The maximum column width that the message lines will have.
      *
-     * @param string          $ident  The unique string identifier for this handlers Logger.
-     * @param array           $conf   The configuration to be used when constructing this handler.
-     * @param LoggerInterface $logger The logger that this handler will be added to. Provided here to allow for adding a processor.
+     * @param string $ident  The unique string identifier for this handlers Logger.
+     * @param array  $conf   The configuration to be used when constructing this handler.
      *
      * @return HandlerInterface
      *
      * @throws Exception @see self::getConfiguration()
      */
-    protected static function getMailHandler($ident, array $conf, $logger)
+    protected static function getMailHandler($ident, array $conf)
     {
         $mailLogLevel = $conf['mailLogLevel'] ?? self::getDefaultLogLevel('mail');
         $from = $conf['emailFrom'] ?? self::getConfiguration('email_from');
