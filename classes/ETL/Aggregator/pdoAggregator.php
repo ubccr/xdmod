@@ -1113,8 +1113,8 @@ class pdoAggregator extends aAggregator
         if ( ! $this->options->truncate_destination && ! empty($aggregationPeriodList)) {
             try {
 
-                $minPeriodId = $aggregationPeriodList[0]['period_id'];
-                $maxPeriodId = $aggregationPeriodList[count($aggregationPeriodList) - 1]['period_id'];
+                $maxPeriodId = $aggregationPeriodList[0]['period_id'];
+                $minPeriodId = $aggregationPeriodList[count($aggregationPeriodList) - 1]['period_id'];
                 $deleteSql = null;
 
                 $restrictions = array();
@@ -1271,7 +1271,7 @@ class pdoAggregator extends aAggregator
                 $deleteSql .= " AND " . implode(" AND ", $sqlRestrictions);
             }
 
-            $this->logger->debug(
+            $this->logger->notice(
                 sprintf("Delete aggregation unit SQL %s:\n%s", $this->destinationEndpoint, $deleteSql)
             );
             $totalRowsDeleted += $this->destinationHandle->execute($deleteSql);
