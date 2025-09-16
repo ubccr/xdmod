@@ -35,15 +35,19 @@
       ([\#1943](https://github.com/ubccr/xdmod/pull/1943)).
     - Add the ability to ingest Storage realm data by a date range
       ([\#2018](https://github.com/ubccr/xdmod/pull/2018)).
-    - Improve ingestion performance
+    - Improve performance of database queries
       ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
       [\#2003](https://github.com/ubccr/xdmod/pull/2003),
       [\#1965](https://github.com/ubccr/xdmod/pull/1965),
-      [\#1968](https://github.com/ubccr/xdmod/pull/1968)).
+      [\#1968](https://github.com/ubccr/xdmod/pull/1968),
+      [\#2084](https://github.com/ubccr/xdmod/pull/2084)).
     - Add an order to the raw data exported from the Resource Specifications
       realm ([\#1979](https://github.com/ubccr/xdmod/pull/1979)).
     - Add support for ingesting Slurm logs in JSON format
       ([\#1963](https://github.com/ubccr/xdmod/pull/1963)).
+- Documentation
+    - Update list of publications and presentations
+      ([\#2080](https://github.com/ubccr/xdmod/pull/2080)).
 - Maintenance / Code Quality
     - Remove the "Job Size: Normalized" metric
       ([\#1981](https://github.com/ubccr/xdmod/pull/1981)).
