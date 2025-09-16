@@ -1140,7 +1140,7 @@ class pdoAggregator extends aAggregator
                     $restrictions = $dummyQuery->getOverseerRestrictionValues();
                 }  // if ( isset($this->parsedDefinitionFile->destination_query) ... )
 
-                $this->deleteAggregationPeriodData($aggregationUnit, $minPeriodId, $maxPeriodId, $restrictions);             
+                $this->deleteAggregationPeriodData($aggregationUnit, $minPeriodId, $maxPeriodId, $restrictions);
 
             } catch (PDOException $e ) {
                 $this->logAndThrowException(
