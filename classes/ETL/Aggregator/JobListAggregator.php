@@ -52,7 +52,7 @@ class JobListAggregator extends pdoAggregator implements iAction
                 $deleteSql .= " AND " . implode(" AND ", $sqlRestrictions);
             }
 
-            $this->logger->info(
+            $this->logger->debug(
                 sprintf("Delete aggregation unit SQL %s:\n%s", $this->destinationEndpoint, $deleteSql)
             );
             $totalRowsDeleted += $this->destinationHandle->execute($deleteSql);

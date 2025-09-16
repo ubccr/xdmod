@@ -1271,7 +1271,7 @@ class pdoAggregator extends aAggregator
                 $deleteSql .= " AND " . implode(" AND ", $sqlRestrictions);
             }
 
-            $this->logger->notice(
+            $this->logger->debug(
                 sprintf("Delete aggregation unit SQL %s:\n%s", $this->destinationEndpoint, $deleteSql)
             );
             $totalRowsDeleted += $this->destinationHandle->execute($deleteSql);
