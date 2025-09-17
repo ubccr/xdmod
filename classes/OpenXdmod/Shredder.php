@@ -417,7 +417,8 @@ class Shredder
                     // Ignore duplicate key errors.
                     if ($e->getCode() == 23000) {
                         $msg = 'Skipping duplicate data: ' . $e->getMessage();
-                        $this->logger->debug($msg,
+                        $this->logger->debug(
+                            $msg,
                             [
                                 'file'        => $file,
                                 'line_number' => $lineNumber,
@@ -850,7 +851,8 @@ class Shredder
         if ($walltime === null) { $invalidCount++; }
 
         if ($invalidCount > 1) {
-            $this->logger->error('Failed to correct job times',
+            $this->logger->error(
+                'Failed to correct job times',
                 [
                     'start_time' => $startTime,
                     'end_time'   => $endTime,

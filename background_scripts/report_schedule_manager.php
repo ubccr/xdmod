@@ -66,7 +66,7 @@ $logger = Log::factory('ReportScheduler', $conf);
 // =====================================================================
 
 // NOTE: "process_start_time" is needed for log summary.
-$logger->notice('Report scheduler start',['process_start_time' => date('Y-m-d H:i:s')]);
+$logger->notice('Report scheduler start', ['process_start_time' => date('Y-m-d H:i:s')]);
 
 $active_frequencies = getActiveFrequencies(true);
 
@@ -115,7 +115,7 @@ foreach ($active_frequencies as $frequency) {
             } catch(Exception $e) {
                 $msg = "Error Preparing report on " . gethostname() . " {$details['report_id']}: "
                     . $e->getMessage();
-                $logger->error($msg,['stacktrace' => $e->getTraceAsString()]);
+                $logger->error($msg, ['stacktrace' => $e->getTraceAsString()]);
             }
 
             if (isset($working_dir) && $working_dir != '/' && $working_dir != getcwd()) {

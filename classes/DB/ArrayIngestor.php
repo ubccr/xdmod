@@ -75,7 +75,8 @@ class ArrayIngestor implements Ingestor
             try {
                 $destStatementPrepared->execute($srcRow);
             } catch (PDOException $e) {
-                $this->_logger->error($e->getMessage(),
+                $this->_logger->error(
+                    $e->getMessage(),
                     [
                         'stacktrace' => $e->getTraceAsString(),
                         'source_row' => json_encode($srcRow)
@@ -101,7 +102,8 @@ class ArrayIngestor implements Ingestor
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->_logger->notice('Finished ingestion',
+        $this->_logger->notice(
+            'Finished ingestion',
             [
                 'class'            => get_class($this),
                 'records_examined' => $sourceRows,
