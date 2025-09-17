@@ -168,7 +168,8 @@ class PDODBSynchronizingIngestor implements Ingestor
         $time = $timeEnd - $timeStart;
 
         // NOTE: This is needed for the log summary.
-        $this->logger->notice('Finished ingestion',
+        $this->logger->notice(
+            'Finished ingestion',
             [
                 'class'             => get_class($this),
                 'start_time'        => $timeStart,

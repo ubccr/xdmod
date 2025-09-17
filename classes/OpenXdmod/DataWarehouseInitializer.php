@@ -489,7 +489,8 @@ class DataWarehouseInitializer
         $endDate,
         $append = true
     ) {
-        $this->logger->info('start',
+        $this->logger->info(
+            'start',
             [
                 'class'      => get_class($this),
                 'function'   => __FUNCTION__,

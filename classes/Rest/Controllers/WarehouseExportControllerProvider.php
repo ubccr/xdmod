@@ -379,13 +379,16 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
                 if ($count === 0) {
                     throw new NotFoundHttpException('Export request not found');
                 }
-                $this->logger->info('', [
-                    'module' => self::LOG_MODULE,
-                    'message' => 'Deleted data warehouse export request',
-                    'event' => 'DELETE_BY_USER',
-                    'id' => $id,
-                    'Users.id' => $user->getUserId()
-                ]);
+                $this->logger->info(
+                    '',
+                    [
+                        'module' => self::LOG_MODULE,
+                        'message' => 'Deleted data warehouse export request',
+                        'event' => 'DELETE_BY_USER',
+                        'id' => $id,
+                        'Users.id' => $user->getUserId()
+                    ]
+                );
             }
 
             $dbh->commit();

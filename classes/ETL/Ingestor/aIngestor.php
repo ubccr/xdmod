@@ -145,7 +145,8 @@ abstract class aIngestor extends aRdbmsDestinationAction
         $this->logger->info($message);
 
         // NOTE: This is needed for the log summary.
-        $this->logger->notice('',
+        $this->logger->notice(
+            '',
             [
                 'action' => (string)$this,
                 'start_time' => $time_start,

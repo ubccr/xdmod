@@ -76,13 +76,14 @@ class FilterListBuilder extends Loggable
         foreach ($currentRealm->getGroupByObjects() as $groupByObj) {
             $this->buildDimensionLists($realmQuery, $groupByObj, $currentRealm);
         }
-        $this->logger->notice('end',
-                [
-                    'action' => $realmName . '.build-filter-list',
-                    'start_time' => $startTime,
-                    'end_time' => microtime(true)
-                ]
-            );
+        $this->logger->notice(
+            'end',
+            [
+                'action' => $realmName . '.build-filter-list',
+                'start_time' => $startTime,
+                'end_time' => microtime(true)
+            ]
+        );
     }
 
     /**
@@ -107,7 +108,8 @@ class FilterListBuilder extends Loggable
         // exist, create it.
         $dimensionId = $groupBy->getId();
         $startTime = microtime(true);
-        $this->logger->notice('start',
+        $this->logger->notice(
+            'start',
             [
                 'action' => $currentRealm->getName() . '.build-filter-list.' . $dimensionId
             ]
@@ -243,7 +245,8 @@ class FilterListBuilder extends Loggable
 
             $this->builtListTables[$pairTableName] = true;
         }
-        $this->logger->notice('end',
+        $this->logger->notice(
+            'end',
             [
                 'action' => $currentRealm->getName() . '.build-filter-list.' . $dimensionId,
                 'start_time' => $startTime,

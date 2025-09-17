@@ -243,10 +243,12 @@ class pdoAggregator extends aAggregator
 
         if ( is_array($this->parsedDefinitionFile->table_definition) ) {
             if ( count($this->parsedDefinitionFile->table_definition) > 1 ) {
-                $this->logger->warning(sprintf(
+                $this->logger->warning(
+                    sprintf(
                     "%s does not support multiple ETL destination tables, using first table",
                     $this
-                ));
+                    )
+                );
             }
             $tableDefinition = $this->parsedDefinitionFile->table_definition;
             $this->parsedDefinitionFile->table_definition = array_shift($tableDefinition);
@@ -715,7 +717,8 @@ class pdoAggregator extends aAggregator
     {
         $time_start = microtime(true);
 
-        $this->logger->notice("aggregate start",
+        $this->logger->notice(
+            "aggregate start",
             [
                 "action" => (string) $this,
                 "unit" => $aggregationUnit,
@@ -1057,7 +1060,8 @@ class pdoAggregator extends aAggregator
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->logger->notice("aggregate end",
+        $this->logger->notice(
+            "aggregate end",
             [
                 "action" => (string)$this,
                 "unit" => $aggregationUnit,

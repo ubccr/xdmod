@@ -289,7 +289,8 @@ class VerifyDatabase extends aAction implements iAction
 
         $time_end = microtime(true);
         $time = $time_end - $time_start;
-        $this->logger->notice('',
+        $this->logger->notice(
+            '',
             array(
                 'action' => (string)$this,
                 'start_time' => $time_start,

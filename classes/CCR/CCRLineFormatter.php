@@ -2,7 +2,6 @@
 
 namespace CCR;
 
-
 use Monolog\Formatter\LineFormatter;
 use Monolog\Formatter\NormalizerFormatter;
 

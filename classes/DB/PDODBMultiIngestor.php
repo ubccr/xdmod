@@ -89,7 +89,8 @@ class PDODBMultiIngestor implements Ingestor
                 )->execute();
             }
             catch (PDOException $e) {
-                $this->_logger->info($e->getMessage(),
+                $this->_logger->info(
+                    $e->getMessage(),
                     [
                         'sql'        => $updateStatement,
                         'stacktrace' => $e->getTraceAsString()
@@ -284,7 +285,8 @@ class PDODBMultiIngestor implements Ingestor
                     $f = fopen($infile_name, 'w');
                 }
                 catch (Exception $e) {
-                    $this->_logger->error($e->getMessage(),
+                    $this->_logger->error(
+                        $e->getMessage(),
                         [
                             'stacktrace' => $e->getTraceAsString(),
                             'statement'  => $load_statement
@@ -308,7 +310,8 @@ class PDODBMultiIngestor implements Ingestor
                 )->execute();
             }
             catch (PDOException $e) {
-                $this->_logger->error($e->getMessage(),
+                $this->_logger->error(
+                    $e->getMessage(),
                     [
                         'sql'        => $updateStatement,
                         'stacktrace' => $e->getTraceAsString()
@@ -342,7 +345,8 @@ class PDODBMultiIngestor implements Ingestor
         $this->_logger->info($message);
 
         // NOTE: This is needed for the log summary.
-        $this->_logger->notice('Finished ingestion',
+        $this->_logger->notice(
+            'Finished ingestion',
             [
                 'class'            => get_class($this),
                 'start_time'       => $time_start,
@@ -404,10 +408,11 @@ class PDODBMultiIngestor implements Ingestor
         $sadness = false;
         while($row = $stmt->fetch(PDO::FETCH_ASSOC) )
         {
-            $this->_logger->critical('Missing row',
+            $this->_logger->critical(
+                'Missing row',
                 [
-                    'rowdata'          => print_r($row, true),
-                    'class'            => get_class($this)
+                    'rowdata' => print_r($row, true),
+                    'class' => get_class($this)
                 ]
             );
             $sadness = true;

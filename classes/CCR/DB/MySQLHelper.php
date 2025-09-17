@@ -219,9 +219,10 @@ class MySQLHelper
      */
     public function executeStatement($stmt)
     {
-        $this->logger->info('Executing SQL statement',
+        $this->logger->info(
+            'Executing SQL statement',
             [
-                'host'      => $this->db->_db_host,
+                'host' => $this->db->_db_host,
                 'port' => $this->db->_db_port,
                 'username' => $this->db->_db_username,
                 'database' => $this->db->_db_name,
@@ -259,7 +260,8 @@ class MySQLHelper
      */
     public function executeFile($file)
     {
-        $this->logger->info('Executing SQL file',
+        $this->logger->info(
+            'Executing SQL file',
             [
                 'host'     => $this->db->_db_host,
                 'port' => $this->db->_db_port,

@@ -240,7 +240,8 @@ class ExecuteSql extends aAction implements iAction
                 $statementPosition = ($numStatementsProcessed + 1);
                 $statementPositionDisplay = "( $statementPosition / $numSqlStatements)";
                 try {
-                    $this->logger->info("Executing statement " . $statementPositionDisplay,
+                    $this->logger->info(
+                        "Executing statement " . $statementPositionDisplay,
                         [
                             "action" => (string) $this . '-sql-' . $statementPosition,
                             "endpoint" => $this->destinationEndpoint,
@@ -279,11 +280,14 @@ class ExecuteSql extends aAction implements iAction
 
         $time_end = microtime(true);
         $time = $time_end - $time_start;
-        $this->logger->notice('', array(
-            'action'       => (string) $this,
-            'start_time' => $time_start,
-            'end_time' => $time_end,
-            'elapsed_time' => round($time, 5)
-        ));
+        $this->logger->notice(
+            '',
+            array(
+                'action' => (string)$this,
+                'start_time' => $time_start,
+                'end_time' => $time_end,
+                'elapsed_time' => round($time, 5)
+            )
+        );
     }  // execute()
 }  // class ExecuteSql

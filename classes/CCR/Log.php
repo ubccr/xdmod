@@ -112,7 +112,8 @@ class Log
                 | E_STRICT | E_DEPRECATED | E_USER_DEPRECATED;
 
             if ($e !== null && ($e['type'] & $mask) == 0) {
-                $logger->critical($e['message'],
+                $logger->critical(
+                    $e['message'],
                     [
                         'file'    => $e['file'],
                         'line'    => $e['line'],

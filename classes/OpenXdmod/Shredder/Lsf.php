@@ -294,7 +294,8 @@ class Lsf extends Shredder
             = ($job['ru_utime'] > 0 ? $job['ru_utime'] : 0)
             + ($job['ru_stime'] > 0 ? $job['ru_stime'] : 0);
 
-        $this->logger->debug('Estimating walltime with data from rusage',
+        $this->logger->debug(
+            'Estimating walltime with data from rusage',
             [
                 'ru_utime' => $job['ru_utime'],
                 'ru_stime' => $job['ru_stime'],
