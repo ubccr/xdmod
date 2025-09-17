@@ -18,7 +18,6 @@ const LIST_SEPARATOR = "\t";
 
 use CCR\Log;
 use CCR\DB;
-use CCR\LogOutput;
 use ETL\EtlOverseer;
 use ETL\iEtlOverseer;
 use ETL\Configuration\EtlConfiguration;
@@ -419,10 +418,7 @@ if ( $scriptOptions['dryrun']) {
 }
 
 if ( ! $showList)  {
-    $logger->notice(LogOutput::from(array(
-        'message'            => 'dw_extract_transform_load start',
-        'process_start_time' => date('Y-m-d H:i:s'),
-    )));
+    $logger->notice('dw_extract_transform_load start', ['process_start_time' => date('Y-m-d H:i:s')]);
 }
 
 try {
@@ -597,8 +593,7 @@ $overseerOptions->setResourceCodeToIdMapSql(sprintf("SELECT id, code from %s.res
 if ( count($scriptOptions['process-sections']) == 0 &&
      count($scriptOptions['actions']) == 0 ) {
     $logger->notice("No actions or sections requested, exiting.");
-    $logger->notice(LogOutput::from(array('message'          => 'dw_extract_transform_load end',
-                          'process_end_time' => date('Y-m-d H:i:s') )));
+    $logger->notice('dw_extract_transform_load end', ['process_end_time' => date('Y-m-d H:i:s')]);
     exit(0);
 }
 
@@ -623,8 +618,7 @@ try {
 
 // NOTE: "process_end_time" is needed for log summary."
 
-$logger->notice(LogOutput::from(array('message'          => 'dw_extract_transform_load end',
-                      'process_end_time' => date('Y-m-d H:i:s') )));
+$logger->notice('dw_extract_transform_load end', ['process_end_time' => date('Y-m-d H:i:s')]);
 
 exit(0);
 

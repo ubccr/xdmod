@@ -61,9 +61,7 @@ class Logger extends MLogger implements LoggerInterface
             $ts = new \DateTime('now', static::$timezone);
         }
         $ts->setTimezone(static::$timezone);
-        if (is_array($message)) {
-            $message = LogOutput::from($message);
-        }
+
         $record = array(
             'message' => (string) $message,
             'context' => $context,

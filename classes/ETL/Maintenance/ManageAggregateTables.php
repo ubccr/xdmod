@@ -12,7 +12,6 @@
 
 namespace ETL\Maintenance;
 
-use CCR\LogOutput;
 use Configuration\Configuration;
 use ETL\Configuration\EtlConfiguration;
 use ETL\EtlOverseerOptions;
@@ -131,10 +130,11 @@ class ManageAggregateTables extends ManageTables
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->logger->notice(LogOutput::from(array('action'       => (string) $this,
-                                    'start_time'   => $time_start,
-                                    'end_time'     => $time_end,
-                                    'elapsed_time' => round($time, 5)
-                                  )));
+        $this->logger->notice('', array(
+            'action' => (string)$this,
+            'start_time' => $time_start,
+            'end_time' => $time_end,
+            'elapsed_time' => round($time, 5)
+        ));
     }
 }

@@ -3,7 +3,6 @@
 use CCR\DB;
 use CCR\DB\MySQLHelper;
 use CCR\Loggable;
-use CCR\LogOutput;
 use DB\Exceptions\TableNotFoundException;
 use Realm\iGroupBy;
 use Realm\iRealm;
@@ -60,12 +59,7 @@ class FilterListBuilder extends Loggable
     {
         // Get a query for the given realm.
         $startTime = microtime(true);
-        $this->logger->notice(LogOutput::from(
-            array(
-                'message' => 'start',
-                'action' => $realmName . '.build-filter-list'
-            )
-        ));
+        $this->logger->notice('start', ['action' => $realmName . '.build-filter-list']);
 
         $realmQuery = new \DataWarehouse\Query\AggregateQuery(
             $realmName,
@@ -82,14 +76,13 @@ class FilterListBuilder extends Loggable
         foreach ($currentRealm->getGroupByObjects() as $groupByObj) {
             $this->buildDimensionLists($realmQuery, $groupByObj, $currentRealm);
         }
-        $this->logger->notice(LogOutput::from(
-            array(
-                'message' => 'end',
-                'action' => $realmName . '.build-filter-list',
-                'start_time' => $startTime,
-                'end_time' => microtime(true)
-            )
-        ));
+        $this->logger->notice('end',
+                [
+                    'action' => $realmName . '.build-filter-list',
+                    'start_time' => $startTime,
+                    'end_time' => microtime(true)
+                ]
+            );
     }
 
     /**
@@ -114,12 +107,11 @@ class FilterListBuilder extends Loggable
         // exist, create it.
         $dimensionId = $groupBy->getId();
         $startTime = microtime(true);
-        $this->logger->notice(LogOutput::from(
-            array(
-                'message' => 'start',
+        $this->logger->notice('start',
+            [
                 'action' => $currentRealm->getName() . '.build-filter-list.' . $dimensionId
-            )
-        ));
+            ]
+        );
 
         $mainTableName = FilterListHelper::getTableName($realmQuery, $groupBy);
 
@@ -251,14 +243,14 @@ class FilterListBuilder extends Loggable
 
             $this->builtListTables[$pairTableName] = true;
         }
-        $this->logger->notice(LogOutput::from(
-            array(
-                'message' => 'end',
+        $this->logger->notice('end',
+            [
                 'action' => $currentRealm->getName() . '.build-filter-list.' . $dimensionId,
                 'start_time' => $startTime,
                 'end_time' => microtime(true)
-            )
-        ));
+            ]
+        );
+
     }
 
     /**
