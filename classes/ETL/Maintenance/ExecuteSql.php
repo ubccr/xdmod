@@ -259,9 +259,10 @@ class ExecuteSql extends aAction implements iAction
                 }
 
                 $endTime = microtime(true);
-                $this->logger->info("Finished executing statement " . $statementPositionDisplay,
+                $this->logger->info(
+                    "Finished executing statement " . $statementPositionDisplay,
                     [
-                        "action" => (string) $this . '-sql-' . $statementPosition,
+                        "action" => (string)$this . '-sql-' . $statementPosition,
                         "rows" => $numRowsAffected,
                         "start_time" => $sqlStartTime,
                         "end_time" => $endTime,
