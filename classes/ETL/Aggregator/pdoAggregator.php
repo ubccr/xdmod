@@ -245,8 +245,8 @@ class pdoAggregator extends aAggregator
             if ( count($this->parsedDefinitionFile->table_definition) > 1 ) {
                 $this->logger->warning(
                     sprintf(
-                    "%s does not support multiple ETL destination tables, using first table",
-                    $this
+                        "%s does not support multiple ETL destination tables, using first table",
+                        $this
                     )
                 );
             }

@@ -269,7 +269,8 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new AccessDeniedHttpException('Exported data is not readable');
         }
 
-        $this->logger->info('',
+        $this->logger->info(
+            '',
             [
                 'module' => self::LOG_MODULE,
                 'message' => 'Sending data warehouse export file',
