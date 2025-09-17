@@ -12,7 +12,6 @@ require_once __DIR__ . '/../configuration/linker.php';
 
 use CCR\DB;
 use CCR\Log;
-use CCR\LogOutput;
 use OpenXdmod\DataWarehouseInitializer;
 
 // Disable memory limit.
@@ -213,10 +212,7 @@ function main()
     }
 
     // NOTE: "process_start_time" is needed for the log summary.
-    $logger->notice(LogOutput::from(array(
-        'message'            => 'xdmod-ingestor start',
-        'process_start_time' => date('Y-m-d H:i:s'),
-    )));
+    $logger->notice('xdmod-ingestor start', ['process_start_time' => date('Y-m-d H:i:s')]);
 
     try {
         $logger->debug('Creating data warehouse initilializer');
@@ -224,10 +220,7 @@ function main()
     } catch (Exception $e) {
         $msg = 'Failed to create data warehouse initializer: '
             . $e->getMessage();
-        $logger->critical(LogOutput::from(array(
-            'message'    => $msg,
-            'stacktrace' => $e->getTraceAsString(),
-        )));
+        $logger->critical($msg, ['stacktrace' => $e->getTraceAsString()]);
         exit(1);
     }
 
@@ -286,10 +279,7 @@ function main()
                 exit($aclstatus);
             }
         } catch (Exception $e) {
-            $logger->critical(LogOutput::from(array(
-                'message'    => 'Ingestion failed: ' . $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString(),
-            )));
+            $logger->critical('Ingestion failed: ' . $e->getMessage(), ['stacktrace' => $e->getTraceAsString()]);
             exit(1);
         }
         $logger->info('Done ingesting data');
@@ -315,20 +305,14 @@ function main()
                 $dwi->aggregateResourceSpecs($lastModifiedStartDate);
             }
         } catch (Exception $e) {
-            $logger->critical(LogOutput::from(array(
-                'message'    => 'Aggregation failed: ' . $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString(),
-            )));
+            $logger->critical('Aggregation failed: ' . $e->getMessage(), ['stacktrace' => $e->getTraceAsString()]);
             exit(1);
         }
         $logger->info('Done aggregating data');
     }
 
     // NOTE: "process_end_time" is needed for the log summary.
-    $logger->notice(LogOutput::from(array(
-        'message'          => 'xdmod-ingestor end',
-        'process_end_time' => date('Y-m-d H:i:s'),
-    )));
+    $logger->notice('xdmod-ingestor end', ['process_end_time' => date('Y-m-d H:i:s')]);
 
     exit;
 }

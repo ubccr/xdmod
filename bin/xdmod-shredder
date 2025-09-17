@@ -13,7 +13,6 @@ require_once __DIR__ . '/../configuration/linker.php';
 use CCR\DB;
 use CCR\DB\NullDB;
 use CCR\Log;
-use CCR\LogOutput;
 use OpenXdmod\Shredder;
 
 // Disable memory limit.
@@ -157,10 +156,7 @@ function main()
     }
 
     // NOTE: "process_start_time" is needed for the log summary.
-    $logger->notice(LogOutput::from(array(
-        'message'            => 'xdmod-shredder start',
-        'process_start_time' => date('Y-m-d H:i:s'),
-    )));
+    $logger->notice('xdmod-shredder start', ['process_start_time' => date('Y-m-d H:i:s')]);
 
     try {
         $logger->debug('Creating database connection');
@@ -173,10 +169,7 @@ function main()
         }
     } catch (Exception $e) {
         $msg = 'Failed to create database connection: ' . $e->getMessage();
-        $logger->critical(LogOutput::from(array(
-            'message'    => $msg,
-            'stacktrace' => $e->getTraceAsString(),
-        )));
+        $logger->critical($msg, ['stacktrace' => $e->getTraceAsString()]);
         exit(1);
     }
 
@@ -192,10 +185,7 @@ function main()
         }
     } catch (Exception $e) {
         $msg = 'Failed to create shredder: ' . $e->getMessage();
-        $logger->critical(LogOutput::from(array(
-            'message'    => $msg,
-            'stacktrace' => $e->getTraceAsString(),
-        )));
+        $logger->critical($msg, ['stacktrace' => $e->getTraceAsString()]);
         exit(1);
     }
 
@@ -213,10 +203,7 @@ function main()
          }
     } catch (Exception $e) {
         $msg = 'Failed to shred files: ' . $e->getMessage();
-        $logger->critical(LogOutput::from(array(
-            'message'    => $msg,
-            'stacktrace' => $e->getTraceAsString(),
-        )));
+        $logger->critical($msg, ['stacktrace' => $e->getTraceAsString()]);
         exit(1);
     }
 
@@ -244,19 +231,13 @@ function main()
                 $logger->notice('Done normalizing data');
             }
         } catch (Exception $e) {
-            $logger->critical(LogOutput::from(array(
-                'message'    => 'Ingestion failed: ' . $e->getMessage(),
-                'stacktrace' => $e->getTraceAsString(),
-            )));
+            $logger->critical('Ingestion failed: ' . $e->getMessage(), ['stacktrace' => $e->getTraceAsString()]);
             exit(1);
         }
     }
 
     // NOTE: "process_end_time" is needed for the log summary.
-    $logger->notice(LogOutput::from(array(
-        'message'          => 'xdmod-shredder end',
-        'process_end_time' => date('Y-m-d H:i:s'),
-    )));
+    $logger->notice('xdmod-shredder end', ['process_end_time' => date('Y-m-d H:i:s')]);
 
     exit;
 }

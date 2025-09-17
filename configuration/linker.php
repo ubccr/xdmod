@@ -1,7 +1,6 @@
 <?php
 
 use CCR\Log;
-use CCR\LogOutput;
 
 $baseDir = dirname(dirname(__FILE__));
 
@@ -120,13 +119,13 @@ function handle_uncaught_exception($exception)
 
     $logger = Log::singleton('exception', $logConf);
 
-    $logger->error(LogOutput::from(array( 'message' => 'Exception Code: '.$exception->getCode())));
-    $logger->error(LogOutput::from(array( 'message' => 'Message: '.$exception->getMessage())));
-    $logger->error(LogOutput::from(array( 'message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')')));
+    $logger->error('Exception Code: '.$exception->getCode());
+    $logger->error('Message: '.$exception->getMessage());
+    $logger->error('Origin: '.$exception->getFile().' (line '.$exception->getLine().')');
 
     $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
 
-    $logger->error(LogOutput::from(array('message' => "Trace:\n".$stringTrace."\n-------------------------------------------------------")));
+    $logger->error("Trace:\n".$stringTrace."\n-------------------------------------------------------");
 
    // If working in a server context, build headers to output.
     $httpCode = 500;

@@ -18,7 +18,6 @@ require_once __DIR__ . '/../configuration/linker.php';
 
 use CCR\DB;
 use CCR\Log;
-use CCR\LogOutput;
 
 // Disable memory limit.
 ini_set('memory_limit', -1);
@@ -134,10 +133,7 @@ function main()
     $logger = Log::factory('xdmod-import-csv', $conf);
 
     // NOTE: "process_start_time" is needed for the log summary.
-    $logger->notice(LogOutput::from(array(
-        'message'            => 'xdmod-import-csv start',
-        'process_start_time' => date('Y-m-d H:i:s'),
-    )));
+    $logger->notice('xdmod-import-csv start', ['process_start_time' => date('Y-m-d H:i:s')]);
 
     $logger->debug('Checking for required arguments');
 
@@ -163,10 +159,7 @@ function main()
         $shredderDb = DB::factory('shredder');
     } catch (Exception $e) {
         $msg = 'Failed to create database connection: ' . $e->getMessage();
-        $logger->critical(LogOutput::from(array(
-            'message'   => $msg,
-            'stacktrace' => $e->getTraceAsString(),
-        )));
+        $logger->critical($msg, ['stacktrace' => $e->getTraceAsString()]);
         exit(1);
     }
 
@@ -227,20 +220,14 @@ function main()
         $logger->info('Committing database transaction');
         $db->commit();
     } catch (Exception $e) {
-        $logger->error(LogOutput::from(array(
-            'message'    => $e->getMessage(),
-            'stacktrace' => $e->getTraceAsString(),
-        )));
+        $logger->error($e->getMessage(), ['stacktrace' => $e->getTraceAsString()]);
 
         $logger->info('Rolling back database transaction');
         $db->rollBack();
     }
 
     // NOTE: "process_end_time" is needed for the log summary.
-    $logger->notice(LogOutput::from(array(
-        'message'          => 'xdmod-import-csv end',
-        'process_end_time' => date('Y-m-d H:i:s'),
-    )));
+    $logger->notice('xdmod-import-csv end', ['process_end_time' => date('Y-m-d H:i:s')]);
 
     exit;
 }
@@ -324,13 +311,14 @@ function createPerson($username, $firstName, $lastName, $organizationId)
 {
     global $db, $shredderDb, $logger;
 
-    $logger->debug(LogOutput::from(array(
-        'message'    => 'Creating person',
-        'username'   => $username,
-        'first_name' => $firstName,
-        'last_name'  => $lastName,
-        'organization_id' => $organizationId
-    )));
+    $logger->debug('Creating person',
+        [
+            'username' => $username,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'organization_id' => $organizationId
+        ]
+    );
 
     $sql = "
         REPLACE INTO staging_union_user_pi SET
@@ -373,13 +361,14 @@ function updatePerson($personId, $firstName, $lastName, $organizationId)
 {
     global $db, $logger;
 
-    $logger->debug(LogOutput::from(array(
-        'message'    => 'Updating person',
-        'person_id'  => $personId,
-        'first_name' => $firstName,
-        'last_name'  => $lastName,
-        'organization_id' => $organizationId
-    )));
+    $logger->debug('Updating person',
+        [
+            'person_id' => $personId,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'organization_id' => $organizationId
+        ]
+    );
 
     $sql = "
         UPDATE hpcdb_people SET
@@ -463,12 +452,13 @@ function createHierarchyItem($abbrev, $desc = null, $parentId = null)
 {
     global $db, $logger;
 
-    $logger->debug(LogOutput::from(array(
-        'message'   => 'Creating hierarchy item',
-        'abbrev'    => $abbrev,
-        'desc'      => $desc,
-        'parent_id' => $parentId,
-    )));
+    $logger->debug('Creating hierarchy item',
+        [
+            'abbrev' => $abbrev,
+            'desc' => $desc,
+            'parent_id' => $parentId
+        ]
+    );
 
     $params = array('abbrev' => $abbrev);
 
@@ -513,13 +503,14 @@ function updateHierarchyItem(
 ) {
     global $db, $logger;
 
-    $logger->debug(LogOutput::from(array(
-        'message'      => 'Updating hierarchy item',
-        'hierarchy_id' => $hierarchyId,
-        'abbrev'       => $abbrev,
-        'desc'         => $desc,
-        'parent_id'    => $parentId,
-    )));
+    $logger->debug('Updating hierarchy item',
+        [
+            'hierarchy_id' => $hierarchyId,
+            'abbrev'       => $abbrev,
+            'desc'         => $desc,
+            'parent_id'    => $parentId
+        ]
+    );
 
     $params = array('abbrev' => $abbrev);
 
@@ -611,11 +602,12 @@ function createPi($groupname, $hierarchyId)
 {
     global $db, $shredderDb, $logger;
 
-    $logger->debug(LogOutput::from(array(
-        'message'      => 'Creating PI',
-        'groupname'    => $groupname,
-        'hierarchy_id' => $hierarchyId,
-    )));
+    $logger->debug('Creating PI',
+        [
+            'groupname' => $groupname,
+            'hierarchy_id' => $hierarchyId
+        ]
+    );
 
     $sql = "REPLACE INTO staging_pi SET pi_name = :pi_name";
     $piId = $shredderDb->insert($sql, array('pi_name' => $groupname));
@@ -676,11 +668,12 @@ function updatePersonHierarchyItem($personId, $hierarchyId)
 {
     global $db, $logger;
 
-    $logger->debug(LogOutput::from(array(
-        'message'      => 'Updating person to hierarchy map',
-        'person_id'    => $personId,
-        'hierarchy_id' => $hierarchyId,
-    )));
+    $logger->debug('Updating person to hierarchy map',
+        [
+            'person_id'    => $personId,
+            'hierarchy_id' => $hierarchyId
+        ]
+    );
 
     $sql = "
         UPDATE hpcdb_requests r

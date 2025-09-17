@@ -7,7 +7,6 @@ namespace DataWarehouse\Export;
 
 use CCR\DB;
 use CCR\Loggable;
-use CCR\LogOutput;
 use CCR\MailWrapper;
 use DataWarehouse\Data\BatchDataset;
 use Exception;
@@ -111,10 +110,10 @@ class BatchProcessor extends Loggable
      */
     private function processSubmittedRequests()
     {
-        $this->logger->info(LogOutput::from([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Processing submitted requests'
-        ]));
+        ]);
         foreach ($this->queryHandler->listSubmittedRecords() as $request) {
             $this->processSubmittedRequest($request);
         }
@@ -130,22 +129,22 @@ class BatchProcessor extends Loggable
         $requestId = $request['id'];
         $userId = $request['user_id'];
 
-        $this->logger->info(LogOutput::from([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Processing request',
             'Users.id' => $userId,
             'batch_export_request.id' => $requestId
-        ]));
+        ]);
 
         $user = XDUser::getUserByID($userId);
 
         if ($user === null) {
-            $this->logger->error(LogOutput::from([
+            $this->logger->error('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'User not found',
                 'Users.id' => $userId,
                 'batch_export_request.id' => $requestId
-            ]));
+            ]);
             return;
         }
 
@@ -161,21 +160,21 @@ class BatchProcessor extends Loggable
                 $zipFile = $this->fileManager->createZipFile($dataFile, $request);
             }
 
-            $this->logger->info(LogOutput::from([
+            $this->logger->info('', [
                 'module' => self::LOG_MODULE,
                 'event' => 'CREATED_EXPORT_FILE',
                 'message' => 'Created data warehouse export zip file',
                 'Users.id' => $userId,
                 'batch_export_request.id' => $requestId,
                 'file_path' => $zipFile
-            ]));
+            ]);
 
             // Delete file that was added to zip archive.
             if (!$this->dryRun && !unlink($dataFile)) {
-                $this->logger->error(LogOutput::from([
+                $this->logger->error('', [
                     'module' => self::LOG_MODULE,
                     'message' => sprintf('Failed to delete temporary data file "%s"', $dataFile)
-                ]));
+                ]);
             }
 
             // Query for same record to get expiration date.
@@ -184,11 +183,11 @@ class BatchProcessor extends Loggable
             $this->dbh->commit();
         } catch (Exception $e) {
             $this->dbh->rollback();
-            $this->logger->error(LogOutput::from([
+            $this->logger->error('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'Failed to export data: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
-            ]));
+            ]);
             if (!$this->dryRun) {
                 $this->queryHandler->submittedToFailed($requestId);
             }
@@ -204,10 +203,10 @@ class BatchProcessor extends Loggable
      */
     private function processExpiringRequests()
     {
-        $this->logger->info(LogOutput::from([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Processing expiring requests'
-        ]));
+        ]);
         foreach ($this->queryHandler->listExpiringRecords() as $request) {
             $this->processExpiringRequest($request);
         }
@@ -220,17 +219,17 @@ class BatchProcessor extends Loggable
      */
     private function processExpiringRequest(array $request)
     {
-        $this->logger->info(LogOutput::from([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Expiring request',
             'batch_export_request.id' => $request['id']
-        ]));
+        ]);
 
         if ($this->dryRun) {
-            $this->logger->notice(LogOutput::from([
+            $this->logger->notice('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'dry run: Not expiring export file'
-            ]));
+            ]);
             return;
         }
 
@@ -241,11 +240,11 @@ class BatchProcessor extends Loggable
             $this->dbh->commit();
         } catch (Exception $e) {
             $this->dbh->rollback();
-            $this->logger->error(LogOutput::from([
+            $this->logger->error('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'Failed to expire record: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
-            ]));
+            ]);
         }
     }
 
@@ -257,10 +256,10 @@ class BatchProcessor extends Loggable
      */
     private function processDeletedRequests()
     {
-        $this->logger->info(LogOutput::from([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Processing deleted requests'
-        ]));
+        ]);
         $this->fileManager->removeDeletedRequests(
             array_map(
                 function ($request) {
@@ -281,7 +280,7 @@ class BatchProcessor extends Loggable
      */
     private function getDataSet(array $request, XDUser $user)
     {
-        $this->logger->info(LogOutput::from([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Querying data',
             'Users.id' => $user->getUserID(),
@@ -292,14 +291,14 @@ class BatchProcessor extends Loggable
             'realm' => $request['realm'],
             'start_date' => $request['start_date'],
             'end_date' => $request['end_date']
-        ]));
+        ]);
 
         try {
             $className = $this->realmManager->getRawDataQueryClass($request['realm']);
-            $this->logger->debug(LogOutput::from([
+            $this->logger->debug('', [
                 'module' => self::LOG_MODULE,
                 'message' => sprintf('Instantiating query class "%s"', $className)
-            ]));
+            ]);
             $query = new $className(
                 [
                     'start_date' => $request['start_date'],
@@ -310,11 +309,11 @@ class BatchProcessor extends Loggable
             $dataSet = new BatchDataset($query, $user, $this->logger);
             return $dataSet;
         } catch (Exception $e) {
-            $this->logger->error(LogOutput::from([
+            $this->logger->error('', [
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
-            ]));
+            ]);
             throw new Exception('Failed to create batch export query', 0, $e);
         }
     }
@@ -328,18 +327,18 @@ class BatchProcessor extends Loggable
     private function sendExportSuccessEmail(XDUser $user, array $request)
     {
         if ($this->dryRun) {
-            $this->logger->notice(LogOutput::from([
+            $this->logger->notice('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'dry run: Not sending success email'
-            ]));
+            ]);
             return;
         }
 
-        $this->logger->info(LogOutput::from([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'event' => 'SENDING_SUCCESS_EMAIL',
             'message' => 'Sending success email'
-        ]));
+        ]);
 
         // Remove time from expiration date time.
         list($expirationDate) = explode(' ', $request['export_expires_datetime']);
@@ -379,19 +378,19 @@ class BatchProcessor extends Loggable
         Exception $e
     ) {
         if ($this->dryRun) {
-            $this->logger->notice(LogOutput::from([
+            $this->logger->notice('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'dry run: Not sending failure email'
-            ]));
+            ]);
             return;
         }
 
-        $this->logger->info(LogOutput::from([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'event' => 'SENDING_FAILURE_EMAIL',
             'message' => 'Sending failure email',
             'batch_export_request.id' => $request['id']
-        ]));
+        ]);
 
         $message = $e->getMessage();
         $stackTrace = $e->getTraceAsString();

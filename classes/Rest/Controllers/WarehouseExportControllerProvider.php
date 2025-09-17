@@ -4,7 +4,6 @@ namespace Rest\Controllers;
 
 use CCR\DB;
 use CCR\Log;
-use CCR\LogOutput;
 use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
@@ -270,13 +269,15 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new AccessDeniedHttpException('Exported data is not readable');
         }
 
-        $this->logger->info(LogOutput::from([
-            'module' => self::LOG_MODULE,
-            'message' => 'Sending data warehouse export file',
-            'event' => 'DOWNLOAD',
-            'id' => $id,
-            'Users.id' => $user->getUserId()
-        ]));
+        $this->logger->info('',
+            [
+                'module' => self::LOG_MODULE,
+                'message' => 'Sending data warehouse export file',
+                'event' => 'DOWNLOAD',
+                'id' => $id,
+                'Users.id' => $user->getUserId()
+            ]
+        );
 
         if ($request['downloaded_datetime'] === null) {
             $this->queryHandler->updateDownloadedDatetime($request['id']);
@@ -314,13 +315,13 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new NotFoundHttpException('Export request not found');
         }
 
-        $this->logger->info(LogOutput::from([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Deleted data warehouse export request',
             'event' => 'DELETE_BY_USER',
             'id' => $id,
             'Users.id' => $user->getUserId()
-        ]));
+        ]);
 
         return $app->json([
             'success' => true,
@@ -378,13 +379,13 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
                 if ($count === 0) {
                     throw new NotFoundHttpException('Export request not found');
                 }
-                $this->logger->info(LogOutput::from([
+                $this->logger->info('', [
                     'module' => self::LOG_MODULE,
                     'message' => 'Deleted data warehouse export request',
                     'event' => 'DELETE_BY_USER',
                     'id' => $id,
                     'Users.id' => $user->getUserId()
-                ]));
+                ]);
             }
 
             $dbh->commit();

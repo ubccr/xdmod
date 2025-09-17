@@ -5,7 +5,6 @@ namespace CCR;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Rest\Utilities\Authentication;
-use CCR\LogOutput;
 
 /**
  * This class is meant to provide logging functionality for use with the html controller operations akin to the logging
@@ -62,30 +61,32 @@ class RequestLogger
             $retval['data']['timestamp'] = date("Y-m-d H:i:s", $requestTime);
         }
 
+        $message = $retval['message'];
+        unset($retval['message']);
         switch ($level) {
             case \CCR\Log::EMERG:
-                $this->logger->emergency(LogOutput::from($retval));
+                $this->logger->emergency($message, $retval);
                 break;
             case Log::ALERT:
-                $this->logger->alert(LogOutput::from($retval));
+                $this->logger->alert($message, $retval);
                 break;
             case \CCR\Log::CRIT:
-                $this->logger->critical(LogOutput::from($retval));
+                $this->logger->critical($message, $retval);
                 break;
             case \CCR\Log::ERR:
-                $this->logger->error(LogOutput::from($retval));
+                $this->logger->error($message, $retval);
                 break;
             case Log::WARNING:
-                $this->logger->warning(LogOutput::from($retval));
+                $this->logger->warning($message, $retval);
                 break;
             case \CCR\Log::NOTICE:
-                $this->logger->notice(LogOutput::from($retval));
+                $this->logger->notice($message, $retval);
                 break;
             case \CCR\Log::INFO:
-                $this->logger->info(LogOutput::from($retval));
+                $this->logger->info($message, $retval);
                 break;
             case \CCR\Log::DEBUG:
-                $this->logger->debug(LogOutput::from($retval));
+                $this->logger->debug($message, $retval);
                 break;
         }
     }

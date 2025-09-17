@@ -16,7 +16,7 @@ class CCRLineFormatter extends LineFormatter
         if (!str_contains($format, '%context%')) {
             // first strip newlines from the format, then we'll add one at the end.
             $format = str_replace(["\n", "\r\n", "\r",], '', $format);
-            $format = "$format %context%\n";
+            $format = "$format%context%\n";
         }
         $this->normalizerFormatter = new NormalizerFormatter($dateFormat);
         parent::__construct($format, $dateFormat, $allowInlineLineBreaks, $ignoreEmptyContextAndExtra);

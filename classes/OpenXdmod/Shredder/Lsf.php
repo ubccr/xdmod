@@ -7,7 +7,6 @@
 
 namespace OpenXdmod\Shredder;
 
-use CCR\LogOutput;
 use Exception;
 use DateTime;
 use DateTimeZone;
@@ -247,10 +246,7 @@ class Lsf extends Shredder
         $firstSpacePos = strpos($line, ' ');
 
         if ($firstSpacePos === false) {
-            $this->logger->error(LogOutput::from(array(
-                'message' => 'Unexpected lsb.acct format',
-                'line'    => $line,
-            )));
+            $this->logger->error('Unexpected lsb.acct format', ['line'    => $line]);
             return;
         }
 
@@ -298,12 +294,13 @@ class Lsf extends Shredder
             = ($job['ru_utime'] > 0 ? $job['ru_utime'] : 0)
             + ($job['ru_stime'] > 0 ? $job['ru_stime'] : 0);
 
-        $this->logger->debug(LogOutput::from(array(
-            'message'  => 'Estimating walltime with data from rusage',
-            'ru_utime' => $job['ru_utime'],
-            'ru_stime' => $job['ru_stime'],
-            'walltime' => $job['walltime'],
-        )));
+        $this->logger->debug('Estimating walltime with data from rusage',
+            [
+                'ru_utime' => $job['ru_utime'],
+                'ru_stime' => $job['ru_stime'],
+                'walltime' => $job['walltime']
+            ]
+        );
 
         $job['resource_name'] = $this->getResource();
 
@@ -416,10 +413,7 @@ class Lsf extends Shredder
             static::$columnNamesAsKeys
         );
 
-        $this->logger->debug(LogOutput::from(array_merge(
-            array('message' => 'Column values: '),
-            $columnValues
-        )));
+        $this->logger->debug('Column values: ', $columnValues);
 
         $this->db->insert($sql, array_values($columnValues));
     }

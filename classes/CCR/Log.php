@@ -112,14 +112,13 @@ class Log
                 | E_STRICT | E_DEPRECATED | E_USER_DEPRECATED;
 
             if ($e !== null && ($e['type'] & $mask) == 0) {
-                $logger->critical(LogOutput::from(
-                    array(
-                        'message' => $e['message'],
+                $logger->critical($e['message'],
+                    [
                         'file'    => $e['file'],
                         'line'    => $e['line'],
-                        'type'    => $e['type'],
-                    )
-                ));
+                        'type'    => $e['type']
+                    ]
+                );
             }
 
             $logger->close();
@@ -277,9 +276,7 @@ class Log
             $extraMessage = $record['extra']['message'] ?? null;
 
             // Make sure that the contents of $record['formatted'] is json formatted for DBHandlers.
-            if ($extraMessage instanceof LogOutput) {
-                $record['formatted'] = json_encode($extraMessage->data, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            } elseif (is_array($extraMessage)) {
+            if (is_array($extraMessage)) {
                 $record['formatted'] = json_encode($extraMessage, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
             } else {
                 $record['formatted'] = json_encode(['message' => $record['message']], JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);

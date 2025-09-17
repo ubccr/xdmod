@@ -6,7 +6,6 @@
 
 namespace OpenXdmod\Shredder;
 
-use CCR\LogOutput;
 use Exception;
 use CCR\DB\iDatabase;
 use OpenXdmod\Shredder;
@@ -73,7 +72,7 @@ class Slurmjson extends Slurm
                     // Ignore duplicate key errors.
                     if ($e->getCode() == 23000) {
                         $msg = 'Skipping duplicate data: ' . $e->getMessage();
-                        $this->logger->debug(LogOutput::from(array( 'message' => $msg, 'file' => $file)));
+                        $this->logger->debug($msg, ['file' => $file]);
                         $duplicateCount++;
                         continue;
                     } else {
