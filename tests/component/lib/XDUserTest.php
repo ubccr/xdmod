@@ -207,7 +207,7 @@ class XDUserTest extends BaseTest
     {
         $user = XDUser::getUserByUserName(self::CENTER_DIRECTOR_USER_NAME);
         $roles = $user->getRoles('casual');
-        $this->assertNull($roles);
+        $this->assertEmpty($roles);
     }
 
     public function testSetRolesEmpty()

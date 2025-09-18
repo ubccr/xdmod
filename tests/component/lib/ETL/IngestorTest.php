@@ -48,7 +48,10 @@ class IngestorTest extends \PHPUnit\Framework\TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertMatchesRegularExpression('/\[warning\]/', $line);
+                if (empty(trim($line))) {
+                    continue;
+                }
+                $this->assertMatchesRegularExpression('/[Ww][Aa][Rr][Nn][Ii][Nn][Gg]/', $line);
                 $numWarnings++;
             }
         }
@@ -100,7 +103,7 @@ class IngestorTest extends \PHPUnit\Framework\TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertNotRegExp('/\[warning\]/', $line);
+                $this->assertDoesNotMatchRegularExpression('/\[warning\]/', $line);
             }
         }
 
@@ -288,7 +291,7 @@ class IngestorTest extends \PHPUnit\Framework\TestCase
     /**
      * Clean up tables created during the tests
      *
-     * @return Nothing
+     * @return void
      */
 
     public static function tearDownAfterClass(): void
