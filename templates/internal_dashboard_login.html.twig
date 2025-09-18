@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/splash.css') }}"/>
+    <title>XDMoD Internal Dashboard</title>
+
+    <!-- Include Ext stylesheets here: -->
+    <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/ext-all.css">
+    <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/xtheme-gray.css">
+    <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/debug.css">
+
+    <!-- Include custom script to stop Ext from checking for Flash: -->
+    <script type="text/javascript" src="{{ extjs_path }}/ext-stop-flash-check.js"></script>
+
+    <!-- Include Ext and app-specific scripts: -->
+    <script type="text/javascript" src="{{ extjs_path }}/{{ extjs_version }}/adapter/ext/ext-base.js"></script>
+    <script type="text/javascript" src="{{ extjs_path }}/{{ extjs_version }}/ext-all-debug-w-comments.js"></script>
+    <script type="text/javascript" src="{{ extjs_path }}/{{ extjs_version }}/src/debug.js"></script>
+
+    <!-- ExtJS {{ extjs_version }} support files END -->
+    <script type="text/javascript">
+        Ext.BLANK_IMAGE_URL = '{{ extjs_path }}/{{ extjs_version }}/resources/images/default/s.gif';
+    </script>
+
+    <script type="text/javascript" src={{ asset('gui/lib/ext-oldie-history-patch.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/jquery/jquery-1.12.4.min.js') }}></script>
+
+    <script type="text/javascript">
+        jQuery.noConflict();
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/viewer.css') }}">
+    <script type="text/javascript" src="{{ asset('gui/js/CCR.js') }}"></script>
+    <!-- REST Variables -->
+    <script type="text/javascript">
+        Ext.namespace('CCR');
+        Ext.namespace('XDMoD.REST');
+    </script>
+</head>
+
+<body onload="init()">
+
+<center>
+    <img src="{{ asset('gui/images/dashboard/masthead_splash.png') }}" alt="XDMoD Internal Dashboard"><br><br>
+
+    <table border=0 width=300 height=100 cellpadding=5>
+
+        <tr>
+            <td align="center" colspan=3 style="padding-bottom: 7px"><b>Please Sign In Below</b></td>
+        </tr>
+
+        <tr>
+            <td align="left" width=100>Username:</td>
+            <td align="left">
+                <input type="text" class="customTextField" id="field_username"
+                       name="username" onkeyup="keyListener(event)">
+            </td>
+        </tr>
+
+        <tr>
+            <td align="left" width=100>Password:</td>
+            <td align="left">
+                <input type="password" class="customTextField" id="field_password" name="password" onkeyup="keyListener(event)">
+            </td>
+
+        </tr>
+
+        <tr>
+            <td colspan="3" align="center" style="padding-top: 4px;">
+                <input type="submit" class="customButton" value="Log In" id="dashboard_login" onclick="login()">
+            </td>
+        </tr>
+
+    </table>
+</center>
+<script type="text/javascript">
+
+    function init() {
+        document.getElementById('field_username').focus();
+    }
+
+    function keyListener(e) {
+        if (e.keyCode === 13) {
+            login();
+            return false;
+        }
+    }
+
+    function login() {
+
+        var restArgs = {
+            username: document.getElementById('field_username').value,
+            password: document.getElementById('field_password').value
+        };
+        var loginHash = window.location.hash;
+        var loginHref = window.location.href;
+        Ext.Ajax.request({
+            url: '/login',
+            method: 'POST',
+            params: restArgs,
+            callback: function (options, success, response) {
+                var data = CCR.safelyDecodeJSONResponse(response);
+                var decodedResponse;
+
+                if (success) {
+                    decodedResponse = data;
+                }
+
+                if (decodedResponse) {
+                    // XDMoD.TrackEvent('Login Window', 'Successful Internal Dashboard Login', document.getElementById('field_username').value);
+                    XDMoD.REST.token = data.results.token;
+                    // presentLoginResponse('Welcome, ' + Ext.util.Format.htmlEncode(data.results.name) + '.', true, 'login_response');
+                    parent.location.hash = loginHash;
+                    parent.location.href = loginHref;
+                    parent.location.reload();
+                } else {
+                    // XDMoD.TrackEvent('Login Window', 'Failed Internal Dashboard login', document.getElementById('field_username').value);
+                    var message = data.message || 'There was an error encountered while logging in. Please try again.';
+                    message = Ext.util.Format.htmlEncode(message);
+                    message = message.replace(
+                        CCR.xdmod.support_email,
+                        '<br /><a href="mailto:' + CCR.xdmod.support_email + '?subject=Problem Logging In">' + CCR.xdmod.support_email + '</a>'
+                    );
+                    presentLoginResponse(message, false, 'login_response', function () {
+                        document.getElementById('field_password').focus();
+                    });
+                }
+            }
+        });
+    }
+
+
+</script>
+</body>
+</html>

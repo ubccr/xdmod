@@ -1625,6 +1625,7 @@ SQL;
 
     $log->debug($query);
     $log->debug('', $params);
+    $log->debug('Params', $params);
 
     if ($dryRun) {
         $log->info($successMsg);

@@ -1,0 +1,17 @@
+{% if header is not empty %}
+    <p>{{ header }}</p>
+{% endif %}
+
+{% if url is not empty %}
+    <iframe id='about_roadmap' title='Road Map' src='{{ url }}'></iframe>
+{% else %}
+    <div class='outer-center'>
+        <div class='inner-center'>
+            <h1>Roadmap Not Configured</h1>
+            <h4>
+                Please contact your Systems Administrator if you believe this is
+                in error.
+            </h4>
+        </div>
+    </div>
+{% endif %}

@@ -145,6 +145,12 @@ class XdmodTestHelper
         $this->userrole = $userrole;
         $this->setauthvariables(null);
         $authresult = $this->post("rest/auth/login", null, $this->config['role'][$userrole]);
+        if (!is_array($authresult[0]) || !array_key_exists('results', $authresult[0])) {
+            echo "Invalid Authentication for $userrole\n";
+            echo var_export($authresult, true) . "\n";
+            echo "*****\n";
+            echo var_export(array_keys($authresult[0]), true) . "\n";
+        }
         $authtokens = $authresult[0]['results'];
         $this->setauthvariables($authtokens['token']);
     }
@@ -236,7 +242,8 @@ class XdmodTestHelper
      */
     public function authenticateDashboard($userrole)
     {
-        if (! isset($this->config['role'][$userrole])) {
+        $this->authenticate($userrole);
+        /*if (! isset($this->config['role'][$userrole])) {
             throw new \Exception("User role $userrole not defined in testing.json file");
         }
         $this->userrole = $userrole;
@@ -247,7 +254,7 @@ class XdmodTestHelper
         );
         $authresult = $this->post("internal_dashboard/user_check.php", null, $data);
         $cookie = isset($authresult[2]['Set-Cookie']) ? $authresult[2]['Set-Cookie'] : null;
-        $this->setauthvariables('', $cookie);
+        $this->setauthvariables('', $cookie);*/
     }
 
     public function logout()
