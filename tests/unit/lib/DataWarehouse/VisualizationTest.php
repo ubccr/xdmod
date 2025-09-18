@@ -25,7 +25,8 @@ class VisualizationTest extends \PHPUnit\Framework\TestCase
             0x999900, 0xCC3300, 0x669999, 0x993333, 0x339966, 0xC42525, 0xA6C96A, 0x111111);
     }
 
-    public function tearDown(): void {
+    public function tearDown(): void
+    {
     }
 
 
@@ -35,7 +36,7 @@ class VisualizationTest extends \PHPUnit\Framework\TestCase
 
         $v = \DataWarehouse\Visualization::getColors($count);
 
-        $this->assertEquals(count($v), 65);
+        $this->assertEquals(65, count($v));
     }
 
     public function testGetFewColours()
@@ -61,14 +62,13 @@ class VisualizationTest extends \PHPUnit\Framework\TestCase
         $ncolours = 10;
 
         $v = \DataWarehouse\Visualization::getColors($ncolours, 0, false);
-        $this->assertEquals($v, array_slice($this->expected, 1) );
+        $this->assertEquals($v, array_slice($this->expected, 1));
         $this->assertGreaterThanOrEqual($ncolours, count($v));
     }
 
     public function testArraySizes()
     {
-        for($i = 0; $i < 300; $i++)
-        {
+        for ($i = 0; $i < 300; $i++) {
             $v = \DataWarehouse\Visualization::getColors($i, 0, false);
             $this->assertGreaterThanOrEqual($i, count($v));
 

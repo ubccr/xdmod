@@ -39,7 +39,7 @@ class LogTest extends \PHPUnit\Framework\TestCase
         // Log messages at each level and compare the number of actual lines output to the number
         // expected based on the log level mask.
 
-        $logger->emerg('Emergency');
+        $logger->emergency('Emergency');
         $logger->alert('Alert');
         $logger->critical('Critical');
         $logger->error('Error');

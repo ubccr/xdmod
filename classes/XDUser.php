@@ -7,13 +7,19 @@ use Models\Acl;
 use Models\Services\Acls;
 use Models\Services\Organizations;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
+use xd_security\SessionSingleton;
+
+use Symfony\Component\PasswordHasher\PasswordHasherInterface;
+use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * XDMoD Portal User
  *
  * @Class XDUser
  */
-class XDUser extends CCR\Loggable implements JsonSerializable
+class XDUser extends CCR\Loggable implements JsonSerializable, UserInterface, PasswordAuthenticatedUserInterface, LegacyPasswordAuthenticatedUserInterface
 {
 
     private $_pdo;                       // PDO Handle (set in __construct)
@@ -166,6 +172,11 @@ SQL;
      * @var boolean
      */
     private $sticky;
+
+    /**
+     * @var PasswordHasherInterface
+     */
+    private $hasher;
     // ---------------------------
 
     /*
@@ -194,9 +205,11 @@ SQL;
         $organization_id = null,
         $person_id = null,
         array $ssoAttrs = array(),
-        $sticky = false
-    ) {
-
+        $sticky = false,
+        $hasher = null
+    )
+    {
+        $this->hasher = $hasher;
         $this->_pdo = DB::factory('database');
 
         $userCheck = $this->_pdo->query("SELECT id FROM Users WHERE username=:username", array(
@@ -267,7 +280,7 @@ SQL;
                     'db' => false,
                     'mail' => false,
                     'console' => false,
-                    'file'=> LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile')
+                    'file' => LOG_DIR . "/" . xd_utilities\getConfiguration('general', 'exceptions_logfile')
                 )
             )
         );
@@ -622,7 +635,6 @@ SQL;
         // the results will be the same.
         $user->_roles = $user->getAcls(true);
 
-
         return $user;
 
     }//getUserByID
@@ -643,7 +655,7 @@ SQL;
             throw new AccessDeniedException("Permission Denied. Only local accounts may have their passwords modified.");
         }
 
-        return $this->_password = $raw_password;
+        $this->_password = $this->hash($raw_password);
     }//setPassword
 
     // ---------------------------
@@ -876,10 +888,18 @@ SQL;
      */
     public function arrayToString($array = array())
     {
+        $values = array_reduce(
+            array_values($array),
+            function ($carry, $item) {
+                $carry[] = var_export($item, true);
+                return $carry;
+            },
+            []
+        );
         $result = 'Keys [ ';
         $result .= implode(', ', array_keys($array)) . ']';
         $result .= 'Values [ ';
-        $result .= implode(', ', array_values($array)) . ']';
+        $result .= implode(', ', $values) . ']';
         return $result;
     }
 
@@ -955,15 +975,18 @@ SQL;
         }
 
         $update_data['username'] = $this->_username;
-        $includePassword = strlen($this->_password) <= CHARLIM_PASSWORD;
+        $includePassword = empty($this->_password) || strlen($this->_password) <= CHARLIM_PASSWORD;
         if ($includePassword) {
             if ($this->_password == "" || is_null($this->_password)) {
                 $update_data['password'] = NULL;
+            } else if (!$forUpdate) {
+                $this->_password = $this->hash($this->_password);
+                $update_data['password'] = $this->_password;
             } else {
-                $this->_password = password_hash($this->_password, PASSWORD_DEFAULT);
                 $update_data['password'] = $this->_password;
             }
         }
+
         $update_data['email_address'] = ($this->_email);
         $update_data['first_name'] = ($this->_firstName);
         $update_data['middle_name'] = ($this->_middleName);
@@ -1202,15 +1225,14 @@ SQL;
 
     // ---------------------------
 
-    /*
+    /**
      *
      * @function getUserType;
      *
      * @return int (maps to one of the TYPE_* class constants at the top of this file)
      *
      */
-
-    public function getUserType()
+    public function getUserType(): int
     {
         return $this->_user_type;
     }
@@ -1505,7 +1527,7 @@ SQL;
                 "A PDOException was thrown in 'XDUser::enumAllAvailableRoles'",
                 array(
                     'exception' => $e,
-                    'sql'=> $query
+                    'sql' => $query
                 )
             );
 
@@ -1780,7 +1802,7 @@ SQL;
      *
      */
 
-    public function getRoles($flag = 'informal')
+    public function getRoles($flag = 'informal'): array
     {
 
         if ($flag == 'informal') {
@@ -1816,7 +1838,7 @@ SQL;
 
             return $roles;
         }
-
+        return [];
     }//getRoles
 
     // ---------------------------
@@ -1895,7 +1917,7 @@ SQL;
 
     public function getUserID()
     {
-        return (empty($this->_id)) ? '0' : $this->_id;
+        return (empty($this->_id)) ? 0 : (int)$this->_id;
     }
 
     /*
@@ -1913,13 +1935,14 @@ SQL;
     {
 
         // NOTE: RESTful services do not operate on the concept of a session, so we need to check for $_SESSION[..] entities using isset
-
-        if (isset($_SESSION['xdUser']) && ($_SESSION['xdUser'] == $this->_id) && ($default == FALSE)) {
+        $session = \xd_security\SessionSingleton::getSession();
+        $xdUserId = $session->get('xdUser');
+        if (isset($xdUserId) && ($xdUserId === $this->_id) && ($default == FALSE)) {
 
             // The user object pertains to the user logged in..
-
-            if (isset($_SESSION['assumed_person_id'])) {
-                return $_SESSION['assumed_person_id'];
+            $assumedPersonId = $session->get('assumed_person_id');
+            if (isset($assumedPersonId)) {
+                return $assumedPersonId;
             }
 
         }
@@ -1993,7 +2016,7 @@ SQL;
      * (determines the formal description of a role based on its abbreviation)
      *
      * @param string $role_abbrev the role abbreviation to use when looking up the formal name.
-     * @param bool   $pubDisplay  Determines whether or not to return the public roles `display`
+     * @param bool $pubDisplay Determines whether or not to return the public roles `display`
      * property or it's `name` property. We default to true ( i.e. `display` ) as that is the
      * behavior that currently exists.
      *
@@ -2127,7 +2150,7 @@ SQL;
      */
     public function addAcl(Acl $acl, $overwrite = false)
     {
-        if ( ( !array_key_exists($acl->getName(), $this->_acls) && !$overwrite ) ||
+        if ((!array_key_exists($acl->getName(), $this->_acls) && !$overwrite) ||
             $overwrite === true
         ) {
             $this->_acls[$acl->getName()] = $acl;
@@ -2233,7 +2256,7 @@ SQL;
      * have the data XDMoD is providing to them filtered by a particular
      * organization.
      *
-     * @param string $aclName        the name of the acl that should have a
+     * @param string $aclName the name of the acl that should have a
      *                               relationship created for it with the
      *                               provided organization.
      * @param string $organizationId the name of the organization
@@ -2254,7 +2277,7 @@ SQL;
 
         $acl = Acls::getAclByName($aclName);
 
-        if ( null == $acl) {
+        if (null == $acl) {
             throw new Exception("Unable to retrieve acl for: $aclName");
         }
 
@@ -2267,7 +2290,7 @@ SQL;
 
         $this->_pdo->execute($cleanUserAclGroupByParameters, array(
             ':user_id' => $this->_id,
-            ':acl_id'  => $acl->getAclId()
+            ':acl_id' => $acl->getAclId()
         ));
 
         $populateUserAclGroupByParameters = <<<SQL
@@ -2292,28 +2315,28 @@ SQL;
 
         $this->_pdo->execute($populateUserAclGroupByParameters, array(
             ':user_id' => $this->_id,
-            ':acl_id'  => $acl->getAclId(),
-            ':value'   => $organizationId
+            ':acl_id' => $acl->getAclId(),
+            ':value' => $organizationId
         ));
     } // addAclOrganization
 
-        /**
+    /**
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
      * @return mixed data which can be serialized by <b>json_encode</b>,
      * which is a value of any type other than a resource.
      * @since 5.4.0
      */
-    public function jsonSerialize()
+    public function jsonSerialize(): mixed
     {
         $ignored = array(
-            '_pdo', '_primary_role', '_publicUser', '_timeCreated','_timeUpdated',
+            '_pdo', '_primary_role', '_publicUser', '_timeCreated', '_timeUpdated',
             '_timePasswordUpdated', '_token', 'logger'
         );
         $reflection = new ReflectionClass($this);
         $results = array();
         $properties = $reflection->getProperties();
-        foreach($properties as $property) {
+        foreach ($properties as $property) {
             $name = $property->getName();
             if (!in_array($name, $ignored)) {
                 $property->setAccessible(true);
@@ -2353,7 +2376,7 @@ SQL;
      * authenticating / authorizing a password reset. If an $expiration value is provided, that will
      * be used instead of generating one via the 'email_token_expiration' portal settings value.
      *
-     * @param int|null    $expiration the date after which this rid is considered invalid.
+     * @param int|null $expiration the date after which this rid is considered invalid.
      * @return string in the form "userId|expiration|hash"
      * @throws Exception If there are any missing configuration properties that this function relies
      * on. These include: email_token_expiration and application_secret.
@@ -2427,7 +2450,7 @@ SQL;
         } catch (Exception $e) {
             // If there was an exception then it was because we couldn't find a user by that username
             // so log the error and return the default information.
-            $expirationDate = date('Y-m-d H:i:s', $expiration );
+            $expirationDate = date('Y-m-d H:i:s', $expiration);
             $log->debug("Error occurred while validating RID for User: $userId, Expiration: $expirationDate");
         }
 
@@ -2439,7 +2462,8 @@ SQL;
      *
      * @throws Exception if there is a problem executing any of the required post logged in steps.
      */
-    public function postLogin() {
+    public function postLogin()
+    {
         if (!$this->isSticky()) {
             $this->updatePerson();
             $this->synchronizeOrganization();
@@ -2469,12 +2493,12 @@ SQL;
 
         // If we have ssoAttrs available and this user's person's organization is 'Unknown' ( -1 ).
         // Then go ahead and lookup the organization value from sso.
-        if ($expectedOrganization == -1 && isset($this->ssoAttrs['organization']) && count($this->ssoAttrs['organization']) > 0) {
-            $expectedOrganization = Organizations::getIdByName($this->ssoAttrs['organization'][0]);
+        if ($expectedOrganization == -1 && count($this->ssoAttrs) > 0) {
+            $expectedOrganization = Organizations::getIdByName($this->getSSOAttribute('organization'));
         }
 
         // If these don't match then the user's organization has been updated. Steps need to be taken.
-        if ($actualOrganization !== $expectedOrganization) {
+        if ($actualOrganization != $expectedOrganization) {
             $originalAcls = $this->getAcls(true);
 
             // if the user is currently assigned an acl that interacts with XDMoD's centers ( i.e.
@@ -2493,7 +2517,7 @@ SQL;
                 $this->setAcls(array());
 
                 // Update the user w/ their new set of acls.
-                foreach($otherAcls as $aclName) {
+                foreach ($otherAcls as $aclName) {
                     $acl = Acls::getAclByName($aclName);
                     $this->addAcl($acl);
                 }
@@ -2541,7 +2565,6 @@ SQL;
                     )
                 );
             }
-
             // Update / save the user with their new organization
             $this->setOrganizationId($expectedOrganization);
             $this->saveUser();
@@ -2558,16 +2581,16 @@ SQL;
     {
         $currentPersonId = $this->getPersonID();
         $hasSSO = count($this->ssoAttrs) > 0;
-
         if ($currentPersonId == -1 && $hasSSO) {
-            $username = $this->ssoAttrs['username'][0];
-            $systemUserName = isset($this->ssoAttrs['system_username']) ? $this->ssoAttrs['system_username'][0] : $username;
+            $username = $this->getSSOAttribute('username');
+            $systemUserName = $this->getSSOAttribute('system_username', $username);
             $expectedPersonId = \DataWarehouse::getPersonIdFromPII($systemUserName, null);
 
             // As long as the identified person is not Unknown and it is different than our current Person Id
             // go ahead and update this user with the new person & that person's organization.
             if ($expectedPersonId != -1 && $currentPersonId != $expectedPersonId) {
                 $organizationId = Organizations::getOrganizationIdForPerson($expectedPersonId);
+
                 $this->setPersonID($expectedPersonId);
                 $this->setOrganizationID($organizationId);
 
@@ -2668,4 +2691,114 @@ SQL;
 
         return $db->query($query, $params);
     } // public function getResources($resourceNames = array())
+
+    public function getPassword(): ?string
+    {
+        return $this->_password;
+    }
+
+
+
+    public function getSalt(): ?string
+    {
+        return null;
+    }
+
+    public function eraseCredentials()
+    {
+        // This function is required for Symfony's UserInterface but we don't actually support erasing a users credentials.
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->_username;
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            $this->_id,
+            $this->_username,
+            $this->_password,
+            $this->_email,
+            $this->_firstName,
+            $this->_middleName,
+            $this->_lastName,
+            $this->_timeCreated,
+            $this->_timeUpdated,
+            $this->_timePasswordUpdated,
+            $this->_roles,
+            $this->_field_of_science,
+            $this->_organizationID,
+            $this->_personID,
+            $this->_user_type,
+            $this->_token
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        [
+            $this->_id,
+            $this->_username,
+            $this->_password,
+            $this->_email,
+            $this->_firstName,
+            $this->_middleName,
+            $this->_lastName,
+            $this->_timeCreated,
+            $this->_timeUpdated,
+            $this->_timePasswordUpdated,
+            $this->_roles,
+            $this->_field_of_science,
+            $this->_organizationID,
+            $this->_personID,
+            $this->_user_type,
+            $this->_token
+        ]  = $data;
+    }
+
+    private function hash($password)
+    {
+        if (!isset($this->hasher)) {
+            return password_hash($password, PASSWORD_DEFAULT);
+        } else {
+            return $this->hasher->hash($password);
+        }
+    }
+
+    /**
+     * Get an SSO Attribute for this user. Handles when the sso attributes are in the form:
+     * ```
+     * [
+     *   "attributeName" => "attributeValue"
+     * ]
+     * ```
+     *
+     * and when they're in the form:
+     * ```
+     * [
+     *   "attributeName" => [
+     *     "attributeValue"
+     *   ]
+     * ]
+     * ```
+     * The latter is the original format of SSO attributes, while the former is the current.
+     *
+     * @param string $attributeName the name of the SSO attribute to return.
+     * @return mixed|null null is returned if the $attributeName does not exist within this users sso attributes, else
+     *                    the value of the sso attribute identified by $attributeName is returned.
+     */
+    private function getSSOAttribute($attributeName, $default = null)
+    {
+        $result = null;
+        if (isset($this->ssoAttrs[$attributeName])) {
+            if (!is_array($this->ssoAttrs[$attributeName])) {
+                $result = $this->ssoAttrs[$attributeName];
+            } else {
+                $result = $this->ssoAttrs[$attributeName][0];
+            }
+        }
+        return isset($result) ? $result : $default;
+    }
 }//XDUser

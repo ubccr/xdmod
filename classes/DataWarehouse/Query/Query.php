@@ -122,6 +122,12 @@ class Query extends Loggable
      */
     private $isDistinct = false;
 
+    private array $parameters;
+    /**
+     * @var array|array[]
+     */
+    private array $sortInfo;
+
     public function __construct(
         $realmId,
         $aggregationUnitName,

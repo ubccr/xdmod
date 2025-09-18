@@ -9,6 +9,7 @@ use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Psr\Log\LoggerInterface;
+
 use xd_utilities;
 
 /**
@@ -32,25 +33,25 @@ class Log
     const DEBUG   = 7;
 
     private static $logLevels = array(
-        self::EMERG => \Monolog\Logger::EMERGENCY,
-        self::ALERT => \Monolog\Logger::ALERT,
-        self::CRIT => \Monolog\Logger::CRITICAL,
-        self::ERR => \Monolog\Logger::ERROR,
-        self::WARNING => \Monolog\Logger::WARNING,
-        self::NOTICE => \Monolog\Logger::NOTICE,
-        self::INFO => \Monolog\Logger::INFO,
-        self::DEBUG => \Monolog\Logger::DEBUG
+        self::EMERG => \Monolog\Level::Emergency->value,
+        self::ALERT => \Monolog\Level::Alert->value,
+        self::CRIT => \Monolog\Level::Critical->value,
+        self::ERR => \Monolog\Level::Error->value,
+        self::WARNING => \Monolog\Level::Warning->value,
+        self::NOTICE => \Monolog\Level::Notice->value,
+        self::INFO => \Monolog\Level::Info->value,
+        self::DEBUG => \Monolog\Level::Debug->value
     );
 
     private static $flippedLogLevels = array(
-        \Monolog\Logger::EMERGENCY => self::EMERG,
-        \Monolog\Logger::ALERT => self::ALERT,
-        \Monolog\Logger::CRITICAL => self::CRIT,
-        \Monolog\Logger::ERROR => self::ERR,
-        \Monolog\Logger::WARNING => self::WARNING,
-        \Monolog\Logger::NOTICE => self::NOTICE,
-        \Monolog\Logger::INFO => self::INFO,
-        \Monolog\Logger::DEBUG => self::DEBUG
+        \Monolog\Level::Emergency->value => self::EMERG,
+        \Monolog\Level::Alert->value => self::ALERT,
+        \Monolog\Level::Critical->value => self::CRIT,
+        \Monolog\Level::Error->value => self::ERR,
+        \Monolog\Level::Warning->value => self::WARNING,
+        \Monolog\Level::Notice->value => self::NOTICE,
+        \Monolog\Level::Info->value => self::INFO,
+        \Monolog\Level::Debug->value => self::DEBUG
     );
 
     /**
@@ -165,7 +166,7 @@ class Log
             'mail'
         );
 
-        $logger = new Logger($ident);
+        $logger = new \Monolog\Logger($ident);
 
         // Short circuit the function if 'null' was asked for since this will be the only handler for the logger.
         if ($ident === 'null') {
@@ -262,7 +263,7 @@ class Log
     {
         $dbLogLevel = $conf['dbLogLevel'] ?? self::getDefaultLogLevel('db');
 
-        $handler = new CCRDBHandler(null, null, null, self::convertToMonologLevel($dbLogLevel));
+        $handler = new CCRDBHandler(null, null, null, $dbLogLevel);
 
         // This is one of the important changes to support the new version of Monolog, by setting the `format` to use
         // the `%formatted%` variable that is populated by the processor we're adding to the handler we can ensure that
@@ -363,7 +364,7 @@ class Log
         if (array_key_exists($monologLevel, self::$flippedLogLevels)) {
             return self::$flippedLogLevels[$monologLevel];
         }
-        throw new Exception('Unknown Log Level');
+        throw new Exception(sprintf('Unknown Monolog Log Level %s', $monologLevel));
     }
 
     /**
@@ -378,7 +379,7 @@ class Log
         if (array_key_exists($ccrLevel, self::$logLevels)) {
             return self::$logLevels[$ccrLevel];
         }
-        throw new Exception('Unknown Log Level');
+        throw new Exception(sprintf('Unknown CCR Log Level %s', $ccrLevel));
     }
 
     /**
