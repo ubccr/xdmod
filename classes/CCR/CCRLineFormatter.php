@@ -98,6 +98,11 @@ class CCRLineFormatter extends LineFormatter
         // remove leftover %extra.xxx% and %context.xxx% if any
         if (false !== strpos($output, '%')) {
             $output = preg_replace('/%(?:extra|context)\..+?%/', '', $output);
+            if (null === $output) {
+                $pcreErrorCode = preg_last_error();
+
+                throw new \RuntimeException('Failed to run preg_replace: ' . $pcreErrorCode . ' / ' . preg_last_error_msg());
+            }
         }
 
         return $output;

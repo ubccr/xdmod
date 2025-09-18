@@ -61,16 +61,7 @@ const selectors = {
              * @returns {string}
              */
             col_for_user: function (username, column_name) {
-                return `(
-                              //div[contains(@class, "existing_user_grid")]//div[contains(@class, "x-grid3-body")]//table//td[
-                                count(preceding-sibling::td) + 1 =
-                                count(//div[contains(@class, "existing_user_grid")]//div[contains(@class, "x-grid3-header")]//table//td[.="${column_name}"]/preceding-sibling::td) + 1
-                              ]
-                            ) [
-                              count(
-                                //div[contains(@class, "existing_user_grid")]//div[contains(@class, "x-grid3-body")]//table//td[.="${username}"]/preceding::div[contains(@class, 'x-grid3-row')]
-                              ) + 1
-                            ]`;
+                return `(//div[contains(@class, "existing_user_grid")]//div[contains(@class,"x-grid3-body")]//table//td[count(preceding-sibling::td) + 1 = count(//div[contains(@class,"existing_user_grid")]//div[contains(@class,"x-grid3-header")]//table//td[.="${column_name}"]/preceding-sibling::td) + 1 ])[count(//div[contains(@class,"existing_user_grid")]//div[contains(@class,"x-grid3-body")]//table//td[.="${username}"]/preceding::div[contains(@class,"x-grid3-row")]) + 1]`
             }
         }
     },
@@ -120,6 +111,9 @@ const selectors = {
                         itemWithText: function (text) {
                             return `${selectors.create_manage_users.current_users.settings.toolbar.actions.container}//span[.="${text}"]`;
                         }
+                    },
+                    details_header: function(user) {
+                        return `${selectors.create_manage_users.current_users.settings.container}//span[contains(@class, "x-panel-header-text") and contains(text(), "${user}")]`;
                     }
                 },
                 inputByLabel: function (labelText, inputType) {
@@ -193,6 +187,9 @@ const selectors = {
             },
             userType: function () {
                 return `${selectors.create_manage_users.new_user.container()}//input[contains(@class, "new_user_user_type")]`;
+            },
+            userTypeTrigger: function() {
+                return `${selectors.create_manage_users.new_user.userType()}/following-sibling::img[contains(@class, "x-form-trigger")]`
             },
             aclByName: function (name) {
                 return `${selectors.create_manage_users.new_user.container()}//div[contains(@class, "admin_panel_section_role_assignment_n")]//table[contains(@class, "x-grid3-row-table")]//td[div="${name}"]/following-sibling::td//div[contains(@class, "x-grid3-cell-inner")]/div`;

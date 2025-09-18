@@ -5,26 +5,81 @@
 
 namespace xd_security;
 
+use Egulias\EmailValidator\Validation\RFCValidation;
+use Exception;
+use SessionExpiredException;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\Storage\PhpBridgeSessionStorage;
+use XDUser;
+
+class SessionSingleton
+{
+
+    /**
+     * @var Session
+     */
+    private static $session;
+
+    /**
+     * @throws Exception
+     */
+    public function __construct()
+    {
+        throw new Exception('No touchee! This is a static utility class, no instantiation please.');
+    }
+
+    /**
+     * @return Session
+     */
+    public static function getSession(): Session
+    {
+        self::initSession();
+        return self::$session;
+    }
+
+    /**
+     * @return void
+     */
+    public static function initSession(): void
+    {
+        if (!isset(self::$session)) {
+            @session_start();
+            self::$session = new Session(new PhpBridgeSessionStorage());
+            self::$session->start();
+        }
+    }
+
+
+}
+
 /**
  * Wrapper for the session_start that ensures that the secure
  * cookie flag is set for the session cookie.
  */
 function start_session()
 {
-    $cParams = session_get_cookie_params();
-    session_set_cookie_params(
-        $cParams["lifetime"],
-        $cParams["path"],
-        $cParams['domain'],
-        true
-    );
-    @session_start();
+    switch (session_status()) {
+        case PHP_SESSION_NONE:
+            $cookieParams = session_get_cookie_params();
+            session_set_cookie_params(
+                $cookieParams['lifetime'],
+                $cookieParams['path'],
+                $cookieParams['domain'],
+                true
+            );
+            SessionSingleton::initSession();
+        case PHP_SESSION_ACTIVE:
+        case PHP_SESSION_DISABLED:
+        default:
+    }
+
 }
 
 /**
  * @param array $failover_methods
  *
- * @return \XDUser
+ * @return XDUser
+ * @throws SessionExpiredException
  */
 function detectUser($failover_methods = array())
 {
@@ -34,37 +89,37 @@ function detectUser($failover_methods = array())
     //   determine the next kind of user to fetch
     try {
         $user = getLoggedInUser();
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         if (count($failover_methods) == 0) {
             // Previously: Exception with 'Session Expired', No Logged In User code
-            throw new \SessionExpiredException(); 
+            throw new \SessionExpiredException();
         }
-
+        $session = SessionSingleton::getSession();
         switch ($failover_methods[0]) {
-            case \XDUser::PUBLIC_USER:
+            case XDUser::PUBLIC_USER:
                 if (
-                    isset($_REQUEST['public_user'])
-                    && $_REQUEST['public_user'] === 'true'
+                    (isset($_REQUEST['public_user']) && $_REQUEST['public_user'] === 'true') ||
+                    ($session->has('public_session_token'))
                 ) {
-                    return \XDUser::getPublicUser();
+                    return XDUser::getPublicUser();
                 } else {
                     // Previously: Exception with 'Session Expired', No Public User code
-                    throw new \SessionExpiredException();
+                    throw new \SessionExpiredException($e->getMessage());
                 }
                 break;
-            case \XDUser::INTERNAL_USER:
+            case XDUser::INTERNAL_USER:
                 try {
                     return getInternalUser();
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     if (
                         isset($failover_methods[1])
-                        && $failover_methods[1] == \XDUser::PUBLIC_USER
+                        && $failover_methods[1] == XDUser::PUBLIC_USER
                     ) {
                         if (
-                            isset($_REQUEST['public_user'])
-                            && $_REQUEST['public_user'] === 'true'
+                            (isset($_REQUEST['public_user']) && $_REQUEST['public_user'] === 'true') ||
+                            ($session->has('public_session_token'))
                         ) {
-                            return \XDUser::getPublicUser();
+                            return XDUser::getPublicUser();
                         } else {
                             // Previously: Exception with 'Session Expired', No Public User code
                             throw new \SessionExpiredException();
@@ -89,7 +144,8 @@ function detectUser($failover_methods = array())
  * This is merely to check if a dashboard user has logged in (and not
  * make use of the respective XDUser object)
  *
- * @return \XDUser
+ * @return XDUser
+ * @throws SessionExpiredException
  */
 function assertDashboardUserLoggedIn()
 {
@@ -99,20 +155,20 @@ function assertDashboardUserLoggedIn()
         // TODO: Refactor generic catch block below to handle specific exceptions,
         //       which would allow this block to be removed.
         throw $see;
-    } catch (\Exception $e) {
+    } catch (Exception $e) {
         \xd_controller\returnJSON(array(
             'success' => false,
-            'status'  => $e->getMessage(),
+            'status' => $e->getMessage(),
         ));
         exit;
     }
 }
 
 /**
- * @return \XDUser An instance of XDUser pertaining to the dashboard
+ * @return XDUser An instance of XDUser pertaining to the dashboard
  *     user.
  *
- * @throws \Exception If:
+ * @throws Exception If:
  *     - The session variable pertaining to the dashboard user does not
  *       exist.
  *     - The user_id stored in the session variable does not map to a
@@ -121,48 +177,52 @@ function assertDashboardUserLoggedIn()
  */
 function getDashboardUser()
 {
-    if (!isset($_SESSION['xdDashboardUser'])) {
+
+    $session = SessionSingleton::getSession();
+    $dashboardUserId = $session->get('xdDashboardUser');
+    if (!isset($dashboardUserId)) {
         throw new \SessionExpiredException('Dashboard session expired');
     }
 
-    $user = \XDUser::getUserByID($_SESSION['xdDashboardUser']);
+    $user = XDUser::getUserByID($dashboardUserId);
 
     if ($user == NULL) {
-        throw new \Exception('User does not exist');
+        throw new Exception('User does not exist');
     }
 
-    if ($user->isManager() == false) {
-        throw new \Exception('Permissions do not allow you to access the dashboard');
+    if (!$user->isManager()) {
+        throw new Exception('Permissions do not allow you to access the dashboard');
     }
 
     return $user;
 }
 
 /**
- * @return \XDUser
+ * @return XDUser
  *
- * @throws \Exception
+ * @throws Exception
  */
 function getLoggedInUser()
 {
-
-    if (!isset($_SESSION['xdUser'])) {
-        throw new \SessionExpiredException();
+    $session = SessionSingleton::getSession();
+    // This is where the
+    $sessionUserId = $session->get('xdUser');
+    if (empty($sessionUserId)) {
+        throw new Exception('Session Expired', 2);
     }
-
-    $user = \XDUser::getUserByID($_SESSION['xdUser']);
+    $user = XDUser::getUserByID($sessionUserId);
 
     if ($user == NULL) {
-        throw new \Exception('User does not exist');
+        throw new Exception('User does not exist');
     }
 
     return $user;
 }
 
 /**
- * @return \XDUser
+ * @return XDUser
  *
- * @throws \Exception
+ * @throws Exception
  */
 function getInternalUser()
 {
@@ -172,13 +232,13 @@ function getInternalUser()
         && $_SERVER['REMOTE_ADDR'] == '127.0.0.1'
         && isset($_REQUEST['user_id'])
     ) {
-        $user = \XDUser::getUserByID($_REQUEST['user_id']);
+        $user = XDUser::getUserByID($_REQUEST['user_id']);
 
         if ($user == NULL) {
-            throw new \Exception('Internal user does not exist');
+            throw new Exception('Internal user does not exist');
         }
     } else {
-        throw new \Exception('Internal user not specified');
+        throw new Exception('Internal user not specified');
     }
 
     return $user;
@@ -187,24 +247,27 @@ function getInternalUser()
 /**
  * @param array $requirements
  * @param string $session_variable
+ * @throws SessionExpiredException
  */
 function enforceUserRequirements($requirements, $session_variable = 'xdUser')
 {
     $returnData = array();
 
+    $session = SessionSingleton::getSession();
     if (in_array(STATUS_LOGGED_IN, $requirements)) {
-        if (!isset($_SESSION[$session_variable])) {
+        $sessionUserId = $session->get($session_variable);
+        if (!isset($sessionUserId)) {
             throw new \SessionExpiredException();
         }
 
-        $user = \XDUser::getUserByID($_SESSION[$session_variable]);
+        $user = XDUser::getUserByID($sessionUserId);
 
         if ($user == NULL) {
-            $returnData['status']     = 'user_does_not_exist';
-            $returnData['success']    = false;
+            $returnData['status'] = 'user_does_not_exist';
+            $returnData['success'] = false;
             $returnData['totalCount'] = 0;
-            $returnData['message']    = 'user_does_not_exist';
-            $returnData['data']       = array();
+            $returnData['message'] = 'user_does_not_exist';
+            $returnData['data'] = array();
             \xd_controller\returnJSON($returnData);
         }
 
@@ -217,33 +280,33 @@ function enforceUserRequirements($requirements, $session_variable = 'xdUser')
 
             // This user must be a member of the Science Advisory Board
             if (!$user->hasAcl('sab')) {
-                $returnData['status']     = 'not_sab_member';
-                $returnData['success']    = false;
+                $returnData['status'] = 'not_sab_member';
+                $returnData['success'] = false;
                 $returnData['totalCount'] = 0;
-                $returnData['message']    = 'not_sab_member';
-                $returnData['data']       = array();
+                $returnData['message'] = 'not_sab_member';
+                $returnData['data'] = array();
                 \xd_controller\returnJSON($returnData);
             }
         }
 
         if (in_array(STATUS_MANAGER_ROLE, $requirements)) {
             if (!($user->isManager())) {
-                $returnData['status']     = 'not_a_manager';
-                $returnData['success']    = false;
+                $returnData['status'] = 'not_a_manager';
+                $returnData['success'] = false;
                 $returnData['totalCount'] = 0;
-                $returnData['message']    = 'not_a_manager';
-                $returnData['data']       = array();
+                $returnData['message'] = 'not_a_manager';
+                $returnData['data'] = array();
                 \xd_controller\returnJSON($returnData);
             }
         }
 
         if (in_array(STATUS_CENTER_DIRECTOR_ROLE, $requirements)) {
             if (!$user->hasAcl(ROLE_ID_CENTER_DIRECTOR)) {
-                $returnData['status']     = 'not_a_center_director';
-                $returnData['success']    = false;
+                $returnData['status'] = 'not_a_center_director';
+                $returnData['success'] = false;
                 $returnData['totalCount'] = 0;
-                $returnData['message']    = 'not_a_center_director';
-                $returnData['data']       = array();
+                $returnData['message'] = 'not_a_center_director';
+                $returnData['data'] = array();
                 \xd_controller\returnJSON($returnData);
             }
         }
@@ -272,29 +335,47 @@ function secureCheck(&$required_params, $m, $enforce_all = true)
 
     $qualifyingParams = 0;
 
-    if ($m == 'GET')     { $param_array = $_GET; }
-    if ($m == 'POST')    { $param_array = $_POST; }
-    if ($m == 'REQUEST') { $param_array = $_REQUEST; }
+    if ($m == 'GET') {
+        $param_array = $_GET;
+    }
+    if ($m == 'POST') {
+        $param_array = $_POST;
+    }
+    if ($m == 'REQUEST') {
+        $param_array = $_REQUEST;
+    }
 
     foreach ($required_params as $param => $pattern) {
         if (!isset($param_array[$param])) {
-            if ($enforce_all) { return false; }
-            if (!$enforce_all) { continue; }
+            if ($enforce_all) {
+                return false;
+            }
+            if (!$enforce_all) {
+                continue;
+            }
         }
 
         $param_array[$param]
             = preg_replace('/\s+/', ' ', $param_array[$param]);
 
         if (preg_match($pattern, $param_array[$param]) == 0) {
-            if ($enforce_all) { return false; }
-            if (!$enforce_all) { continue; }
+            if ($enforce_all) {
+                return false;
+            }
+            if (!$enforce_all) {
+                continue;
+            }
         }
 
         $qualifyingParams++;
     }
 
-    if ($enforce_all) { return true; }
-    if (!$enforce_all) { return $qualifyingParams; }
+    if ($enforce_all) {
+        return true;
+    }
+    if (!$enforce_all) {
+        return $qualifyingParams;
+    }
 }
 
 /**
@@ -309,12 +390,12 @@ function assertParametersSet($requiredParams = array())
             // $v represents the format of the value that param must conform
             //    to (a regex)
             $param_name = $k;
-            $pattern    = $v;
+            $pattern = $v;
         } else {
 
             // $v represents the name of the param
             $param_name = $v;
-            $pattern    = '/.*/';
+            $pattern = '/.*/';
         }
 
         assertParameterSet($param_name, $pattern);
@@ -337,7 +418,8 @@ function assertParameterSet(
     $param_name,
     $pattern = '/.*/',
     $compress_whitespace = true
-) {
+)
+{
     if (!isset($_REQUEST[$param_name])) {
         \xd_response\presentError("'$param_name' not specified.");
     }
@@ -389,5 +471,5 @@ function assertEmailParameterSet($param_name)
 function isEmailValid($email)
 {
     $validator = new \Egulias\EmailValidator\EmailValidator();
-    return $validator->isValid($email);
+    return $validator->isValid($email, new RFCValidation());
 }

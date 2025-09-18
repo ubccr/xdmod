@@ -1,0 +1,18 @@
+controllers:
+    resource:
+        path: ../../src/Controller
+        namespace: Access\Controller
+        prefix: /rest
+        name_prefix: legacy_
+    type: attribute
+
+#legacy_versioned_rest:
+#    resource:
+#        path: ../../src/Controller
+#        namespace: Access\Controller
+#        prefix: /rest/{version}
+#        requirements:
+#            version: 'v[\d.]+'
+#        name_prefix: legacy_versioned_
+#    type: attribute
+

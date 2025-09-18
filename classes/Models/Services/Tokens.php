@@ -96,7 +96,7 @@ class Tokens
      * @throws \Exception                if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    private static function authenticateToken($rawToken, $endpoint = null)
+    private static function authenticateToken(string $rawToken, string $endpoint = null)
     {
         // Determine token type
         $tokenParts = explode('.', $rawToken);
@@ -227,7 +227,7 @@ SQL;
      * @param string $header
      * @return string | null the token if the header has the 'Bearer' key, null otherwise.
      */
-    public static function getTokenFromHeader($header)
+    public static function getTokenFromHeader(string $header)
     {
         if (0 !== strpos($header, 'Bearer ')) {
             return null;

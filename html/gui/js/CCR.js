@@ -490,7 +490,7 @@ XDMoD.constants.minPasswordLength = 5;
 /**
  * The maximum length of a password.
  */
-XDMoD.constants.maxPasswordLength = 20;
+XDMoD.constants.maxPasswordLength = 255;
 
 /**
  * The maximum length of a report name.
@@ -1122,13 +1122,30 @@ var logoutCallback = function () {
 };
 
 CCR.xdmod.ui.actionLogout = function () {
-    XDMoD.TrackEvent("Portal", "logout link clicked");
-    XDMoD.REST.Call({
-        action: 'auth/logout',
-        method: 'POST',
-        callback: logoutCallback
-    });
+    if (CCR.xdmod.ui.isImpersonating) {
+        CCR.xdmod.ui.stopImpersonation();
+    } else {
+        XDMoD.TrackEvent("Portal", "logout link clicked");
+        Ext.Ajax.request({
+            url: '/logout',
+            method: 'POST',
+            success: function () {
+                location.href = "/";
+            }
+        });
+    }
 }; //actionLogout
+
+CCR.xdmod.ui.stopImpersonation = function() {
+    XDMoD.TrackEvent('Portal', 'Exiting Impersonation');
+    Ext.Ajax.request({
+        url: '/' + '?_switch_user=_exit&token=' + XDMoD.REST.token,
+        method: 'GET',
+        success: function () {
+            location.reload();
+        }
+    });
+}
 
 
 // Used in html/gui/general/login.php
@@ -1214,10 +1231,10 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
             url: '/rest/auth/idpredirect',
             method: 'GET',
             params: {
-                returnTo: '/gui/general/login.php' + document.location.hash
+                returnTo: '/' + document.location.hash
             },
             success: function (response) {
-                document.location = Ext.decode(response.responseText);
+                document.location = Ext.decode('"' + response.responseText + '"');
             },
             failure: function (response, opts) {
                 var message = 'Please contact the XDMoD administrator.';
@@ -1381,10 +1398,10 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
                     url: '/rest/auth/idpredirect',
                     method: 'GET',
                     params: {
-                        returnTo: '/gui/general/login.php' + document.location.hash
+                        returnTo: '/' + document.location.hash
                     },
                     success: function (response) {
-                        var destination = Ext.decode(response.responseText);
+                        var destination = Ext.decode('"' + response.responseText + '"');
                         document.location = destination;
                     },
                     failure: function (response, opts) {

@@ -1,0 +1,60 @@
+security:
+    password_hashers:
+        ACCESS\Entity\User: 'auto'
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+    providers:
+        # used to reload user from session & other features (e.g. switch_user)
+        app_user_provider:
+            id: Access\Security\UsernameUserProvider
+        all_users:
+            chain:
+                providers: [ 'app_user_provider' ]
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            lazy: true
+            provider: all_users
+            custom_authenticators:
+                - Access\Security\Authenticators\FormLoginAuthenticator
+                - Access\Security\Authenticators\SimpleSamlPhpAuthenticator
+            switch_user: true
+            logout:
+                path: xdmod_logout
+                invalidate_session: true
+            access_denied_handler: Access\Security\AccessDeniedHandler
+            entry_point: Access\Security\Authenticators\FormLoginAuthenticator
+        api:
+            lazy: true
+            provider: all_users
+            json_login:
+                check_path: /api/login
+                login_path: /api/login
+            logout:
+                path: api_logout
+                target: /
+
+
+    # Easy way to control access for large sections of your site
+    # Note: Only the *first* access control that matches will be used
+    access_control:
+        - { path: ^/saml/login, roles: PUBLIC_ACCESS }
+        - { path: ^/saml/metadata, roles: PUBLIC_ACCESS }
+        # - { path: ^/, roles: PUBLIC_ACCESS}
+        # - { path: ^/admin, roles: ROLE_ADMIN }
+        # - { path: ^/profile, roles: ROLE_US1ER }
+
+when@test:
+    security:
+        password_hashers:
+            # By default, password hashers are resource intensive and take time. This is
+            # important to generate secure password hashes. In tests however, secure hashes
+            # are not important, waste resources and increase test times. The following
+            # reduces the work factor to the lowest possible values.
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4 # Lowest possible value for bcrypt
+                time_cost: 3 # Lowest possible value for argon
+                memory_cost: 10 # Lowest possible value for argon

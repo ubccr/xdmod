@@ -27,8 +27,8 @@ class Usage extends BasePage{
     async selectTab(){
         const xdmod = new XDMoD(this.page, this.page.baseUrl);
         await xdmod.selectTab('tg_usage');
-        await expect(this.chartLocator).toBeVisible();
-        await expect(this.maskLocator).toBeHidden();
+        await expect(await this.chartLocator.count()).toBeGreaterThan(0);
+        await expect(this.maskLocator).toHaveCount(0);
     }
 
     /**
@@ -120,8 +120,9 @@ class Usage extends BasePage{
      * @return {Boolean} True if the node is expanded.
      */
     async isTreeNodeExpanded(name){
-        const unfoldTreeSelector = selectors.unfoldTreeNodeByName(name);
-        const unfoldTreeClass = await this.page.getAttribute(unfoldTreeSelector, 'class');
+        const unfoldTreeSelector = this.page.locator(selectors.unfoldTreeNodeByName(name));
+        await expect(unfoldTreeSelector).toBeVisible();
+        const unfoldTreeClass = await unfoldTreeSelector.getAttribute('class');
         return unfoldTreeClass.match(/[$ ]x-tree-node-plus[^ ]/) === null;
     }
 
@@ -168,7 +169,9 @@ class Usage extends BasePage{
         if (!check){
             await this.expandTreeNode(topName);
         }
-        await this.page.locator(selectors.treeNodeByPath(topName, childName)).click();
+        const treeNodeLocator = this.page.locator(selectors.treeNodeByPath(topName, childName))
+        await expect(treeNodeLocator).toBeVisible();
+        await treeNodeLocator.click();
     }
 
     /**
