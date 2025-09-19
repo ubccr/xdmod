@@ -26,12 +26,19 @@ class CCRDBHandlerTest extends \PHPUnit\Framework\TestCase
             )
         );
 
+        // We should be able to just log strings
         $logger->debug("Testing DB Write Handler: $now");
+
+        // We should be able to log string messages w/ additional context.
+        $logger->debug("Testing DB Write Handler w/ Context", ['timestamp' => "$now"]);
+
+        // we should be able to log w/ no messages and only a context array.
+        $logger->debug('', ['message' => 'Testing 123', 'timestamp' => "$now"]);
 
         $results = $db->query("SELECT * FROM $schema.$table WHERE message LIKE '%$now%' ");
         $actual = count($results);
 
-        $this->assertEquals(1, $actual, sprintf("Expected 1 log record to be written, but received: %s", $actual));
+        $this->assertEquals(3, $actual, sprintf("Expected 2 log record to be written, but received: %s", $actual));
         $this->assertTrue(is_numeric($results[0]['id']), sprintf("Expected the id value to be numeric, received: %s", $results[0]['id']));
 
         // Check that the result has the required column
@@ -61,17 +68,21 @@ class CCRDBHandlerTest extends \PHPUnit\Framework\TestCase
         if (is_null($json) && $isActuallyJson) {
             echo "\n". var_export($result, true) . "\n";
         }
-        $this->assertTrue(is_null($json) && !$isActuallyJson);
 
-        // TODO: Double check to see if we actually use the JSON-ness of the log messages anywhere.
-        /*$this->assertObjectHasProperty(
-            'message',
-            $json,
-            sprintf(
-                "Expected decoded message to be an object with a `message` property. Received: %s",
-                print_r($json, true)
-            )
-        );*/
+        // If it's null & not json then cool, if json is not null, then we expect $isActuallyJson to also be true.
+        $valid = (is_null($json) && !$isActuallyJson) || (!is_null($json) && $isActuallyJson);
+        $this->assertTrue($valid);
 
+        // If we get valid json back, then make sure it has the `message` property.
+        if (!is_null($json)) {
+            $this->assertObjectHasProperty(
+                'message',
+                $json,
+                sprintf(
+                    "Expected decoded message to be an object with a `message` property. Received: %s",
+                    print_r($json, true)
+                )
+            );
+        }
     }
 }
