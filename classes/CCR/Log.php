@@ -8,6 +8,7 @@ use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
+use Monolog\Level;
 use Psr\Log\LoggerInterface;
 
 use xd_utilities;

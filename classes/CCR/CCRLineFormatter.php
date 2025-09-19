@@ -54,6 +54,9 @@ class CCRLineFormatter extends LineFormatter
             $vars['level_name'] = substr($vars['level_name'], 0, $this->maxLevelNameLength);
         }
 
+        // make sure that the level name is lower case, this is for legacy reasons.
+        $vars['level_name']= strtolower($vars['level_name']);
+
         $output = $this->format;
         foreach ($vars['extra'] as $var => $val) {
             if (false !== strpos($output, '%extra.'.$var.'%')) {
