@@ -4,6 +4,7 @@ namespace CCR;
 
 use Monolog\Formatter\LineFormatter;
 use Monolog\Formatter\NormalizerFormatter;
+use Monolog\LogRecord;
 
 class CCRLineFormatter extends LineFormatter
 {
@@ -45,19 +46,21 @@ class CCRLineFormatter extends LineFormatter
         return implode(' ', $parts);
     }
 
-    public function format(array $record)
+    public function format(LogRecord $record): string
     {
         $vars = $this->normalizerFormatter->format($record);
 
-        $output = $this->format;
+        if ($this->maxLevelNameLength !== null) {
+            $vars['level_name'] = substr($vars['level_name'], 0, $this->maxLevelNameLength);
+        }
 
+        $output = $this->format;
         foreach ($vars['extra'] as $var => $val) {
             if (false !== strpos($output, '%extra.'.$var.'%')) {
                 $output = str_replace('%extra.'.$var.'%', $this->stringify($val), $output);
                 unset($vars['extra'][$var]);
             }
         }
-
 
         foreach ($vars['context'] as $var => $val) {
             if (false !== strpos($output, '%context.'.$var.'%')) {
@@ -67,12 +70,12 @@ class CCRLineFormatter extends LineFormatter
         }
 
         if ($this->ignoreEmptyContextAndExtra) {
-            if (empty($vars['context'])) {
+            if (\count($vars['context']) === 0) {
                 unset($vars['context']);
                 $output = str_replace('%context%', '', $output);
             }
 
-            if (empty($vars['extra'])) {
+            if (\count($vars['extra']) === 0) {
                 unset($vars['extra']);
                 $output = str_replace('%extra%', '', $output);
             }
@@ -91,6 +94,11 @@ class CCRLineFormatter extends LineFormatter
         // remove leftover %extra.xxx% and %context.xxx% if any
         if (false !== strpos($output, '%')) {
             $output = preg_replace('/%(?:extra|context)\..+?%/', '', $output);
+            if (null === $output) {
+                $pcreErrorCode = preg_last_error();
+
+                throw new \RuntimeException('Failed to run preg_replace: ' . $pcreErrorCode . ' / ' . preg_last_error_msg());
+            }
         }
 
         return $output;
