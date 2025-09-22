@@ -1,6 +1,0 @@
-services:
-  xdmod:
-    image: tools-int-01.ccr.xdmod.org/xdmod:arm64-rockylinux8.9.20231119-v11.0.0-1.0-04-php8
-    volumes:
-      - "/Users/ryanrath/scratch/cache/rocky8/xdmod/dnf.conf:/etc/dnf/dnf.conf"
-      - "/Users/ryanrath/scratch/cache/rocky8/xdmod/dnf:/var/cache/dnf"
