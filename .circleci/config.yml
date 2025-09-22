@@ -203,7 +203,7 @@ jobs:
       - store_artifacts:
           path: /tmp/screenshots
       - store_artifacts:
-          path: /var/log/xdmod
+          path: /usr/share/xdmod/var/log
       - store_artifacts:
           path: /var/log/php-fpm
       - store_artifacts:
