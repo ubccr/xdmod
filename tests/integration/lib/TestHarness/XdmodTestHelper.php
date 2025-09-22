@@ -4,6 +4,11 @@ namespace IntegrationTests\TestHarness;
 
 class XdmodTestHelper
 {
+    /**
+     * Contains the response header values from a curl request.
+     *
+     * @var array
+     */
     private $responseHeaders;
 
     private $config;

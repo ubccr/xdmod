@@ -65,7 +65,17 @@ use Psr\Log\LoggerInterface;
 
 class TimeseriesQuery extends Query implements iQuery
 {
-
+    /**
+     * If set, is expected to be in the form:
+     * $sortInfo = [
+     *    [
+     *       "column_name" : "<value>",
+     *       "direction": "<value>"
+     *    ]
+     * ];
+     *
+     * @var array
+     */
     protected $sortInfo;
 
     public function getQueryType()

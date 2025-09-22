@@ -7,6 +7,11 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class JobViewerTest extends BaseTest
 {
+    /**
+     * A helper class that simplifies interacting with XDMoD's REST interface.
+     *
+     * @var XdmodTestHelper
+     */
     private $xdmodhelper;
 
     const ENDPOINT = 'rest/v0.1/warehouse/';

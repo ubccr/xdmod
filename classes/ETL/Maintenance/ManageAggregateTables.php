@@ -25,6 +25,11 @@ use ETL\DbModel\AggregationTable;
 class ManageAggregateTables extends ManageTables
 {
 
+    /**
+     * The aggregate table to be managed.
+     *
+     * @var AggregationTable
+     */
     protected $etlDestinationTable;
 
     /* ------------------------------------------------------------------------------------------

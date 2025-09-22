@@ -7,6 +7,11 @@ use Models\Services\Realms;
 
 abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * A helper class that simplifies interacting with a tests input / expected output.
+     *
+     * @var TestFiles
+     */
     protected $testFiles;
 
     private static $TEST_ARTIFACT_OUTPUT_PATH;

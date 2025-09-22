@@ -25,6 +25,11 @@ use Psr\Log\LoggerInterface;
 
 class CloudResourceSpecsStateTransformIngestor extends pdoIngestor implements iAction
 {
+    /**
+     * Used as a default value for `$this->_instance_state['end_date_ts']` if one is not provided via the ETL Configuration.
+     *
+     * @var false|string|null
+     */
     protected $_end_time;
 
     private $_instance_state;

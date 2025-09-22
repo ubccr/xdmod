@@ -12,8 +12,18 @@ namespace User\Elements;
 class Module extends \Common\Identity
 {
 
+    /**
+     * The position index of this module.
+     *
+     * @var ?int
+     */
     protected $_position;
 
+    /**
+     * An array of this Module's permitted modules.
+     *
+     * @var ?array
+     */
     protected $_permitted_modules;
 
     /**
@@ -81,7 +91,7 @@ class Module extends \Common\Identity
      *                        - cls               : javascript class that corresponds to this module.
      *                        - ref               : javascript static reference for the 'cls' property.
      *                        - tooltip           : the tooltip that should be displayed when the tab is receives the hover event.
-     *                        - userManualSectionName : the term that is meant to identify which User Manual Section corresponds with this module. 
+     *                        - userManualSectionName : the term that is meant to identify which User Manual Section corresponds with this module.
      */
     public function __construct( array $config )
     {

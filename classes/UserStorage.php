@@ -2,7 +2,17 @@
 
 class UserStorage
 {
+    /**
+     * The user to use when retrieving information.
+     *
+     * @var XDUser
+     */
     protected $_user;
+
+    /**
+     * Key within the provided user's profile to use as the data source for this UserStorage instance.
+     * @var string
+     */
     protected $_container;
 
     const MAX_RECORDS = 2000;
@@ -76,7 +86,7 @@ class UserStorage
         $storage['maxid'] = $newid;
         return $newid;
     }
-            
+
     public function upsert($id, $data)
     {
         $userProfile = $this->_user->getProfile();

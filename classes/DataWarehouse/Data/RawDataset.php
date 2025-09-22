@@ -4,6 +4,12 @@ namespace DataWarehouse\Data;
 
 class RawDataset
 {
+    /**
+     * This value corresponds to XDUser::PUBLIC_USER|INTERNAL_USER and
+     * constants.php#SSO_USER_TYPE|DEMO_USER_TYPE|UNKNOWN_USER_TYPE
+     *
+     * @var int
+     */
     protected $userType;
 
     private $query;

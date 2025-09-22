@@ -4,6 +4,11 @@ namespace Reports;
 
 class ClassicReport
 {
+    /**
+     * Contains the settings for this report.
+     *
+     * @var array
+     */
     protected $settings;
 
     private $styles = array();

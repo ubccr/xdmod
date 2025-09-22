@@ -17,6 +17,10 @@ use Psr\Log\LoggerInterface;
 
 class EtlOverseerOptions extends \CCR\Loggable
 {
+    /**
+     * The SQL query that will be used to generate the mapping between resource codes and resource Ids.
+     * @var string
+     */
     protected $resourceCodeToIdMapSql;
 
     // Start of the ETL period

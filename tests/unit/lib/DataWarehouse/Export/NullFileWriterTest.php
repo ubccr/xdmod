@@ -4,6 +4,7 @@ namespace UnitTests\DataWarehouse\Export;
 
 use CCR\Log;
 use DataWarehouse\Export\FileWriter\NullFileWriter;
+use IntegrationTests\TestHarness\XdmodTestHelper;
 use \PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use IntegrationTests\TestHarness\TestFiles;
@@ -14,6 +15,11 @@ use IntegrationTests\TestHarness\TestFiles;
 class NullFileWriterTest extends TestCase
 {
 
+    /**
+     * A helper class that simplifies interacting with XDMoD's REST interface.
+     *
+     * @var XdmodTestHelper
+     */
     private $testFiles;
 
     /**
