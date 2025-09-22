@@ -5,9 +5,9 @@
     <title>XDMoD Internal Dashboard</title>
     <link rel="icon" href="{{ asset('gui/icons/favicon_static.ico') }}"/>
 
-    <link rel="stylesheet" type="text/css" href={{ asset('gui/css/Dashboard/dashboard.css') }}>
-    <link rel="stylesheet" type="text/css" href={{ asset('gui/css/Dashboard/management.css') }}>
-    <link rel="stylesheet" type="text/css" href={{ asset('gui/css/Dashboard/AdminPanel.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ asset('gui/css/dashboard/dashboard.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ asset('gui/css/dashboard/management.css') }}>
+    <link rel="stylesheet" type="text/css" href={{ asset('gui/css/dashboard/AdminPanel.css') }}>
 
     <!-- Include Ext stylesheets here: -->
     <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/ext-all.css">
@@ -40,8 +40,8 @@
     <script type="text/javascript" src="{{ asset('js_classes/DateUtilities.js') }}"></script>
     <script type="text/javascript" src="{{ asset('js_classes/StringUtilities.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/messaging.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/DashboardStore.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/messaging.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/DashboardStore.js') }}"></script>
     <script type="text/javascript" src={{ asset('gui/lib/MessageWindow.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/js/CCR.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/js/ContainerMask.js') }}></script>
@@ -128,42 +128,42 @@
 
     <!-- User Management Panel -->
 
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/admin_panel/RoleGrid.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/admin_panel/AclGrid.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/admin_panel/SectionNewUser.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/admin_panel/SectionExistingUsers.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/admin_panel/AdminPanel.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/UserManagement/Panel.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/admin_panel/RoleGrid.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/admin_panel/AclGrid.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/admin_panel/SectionNewUser.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/admin_panel/SectionExistingUsers.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/admin_panel/AdminPanel.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/UserManagement/Panel.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/CommentEditor.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/AccountRequests.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/CommentEditor.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/AccountRequests.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/RecipientVerificationPrompt.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/BatchMailClient.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/CurrentUsers.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/RecipientVerificationPrompt.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/BatchMailClient.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/CurrentUsers.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/ExceptionLister.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/ExceptionLister.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/UserStats.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/UserStats.js') }}"></script>
 
     <!-- Summary Panel -->
 
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Summary/ConfigStore.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Summary/PortletsStore.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Summary/Portlet.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Summary/Portal.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Summary/TabPanel.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/DashboardTools.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Summary/ConfigStore.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Summary/PortletsStore.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Summary/Portlet.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Summary/Portal.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Summary/TabPanel.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/DashboardTools.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Log/SummaryStore.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Log/SummaryPortlet.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Log/LevelsStore.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Log/Store.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Log/GridPanel.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Log/TabPanel.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Log/SummaryStore.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Log/SummaryPortlet.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Log/LevelsStore.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Log/Store.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Log/GridPanel.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Log/TabPanel.js') }}"></script>
 
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/UsersSummary/Store.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/UsersSummary/Portlet.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/UsersSummary/Store.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/UsersSummary/Portlet.js') }}"></script>
 
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/GroupTab.css') }}"/>
     <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/GroupTabPanel.js') }}></script>
@@ -171,10 +171,10 @@
 
     <script type="text/javascript" src={{ asset('gui/js/ExportPanel.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/js/PortalModule.js') }}></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Dashboard/Factory.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Dashboard/MenuStore.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Dashboard/FramePanel.js') }}"></script>
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/Dashboard/Viewport.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Dashboard/Factory.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Dashboard/MenuStore.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Dashboard/FramePanel.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/Dashboard/Viewport.js') }}"></script>
 
     {% if user is not null and not is_public_user %}
         {{ asset_paths | raw }}
@@ -184,7 +184,7 @@
         CCR.xdmod.features = {{ xdmod_features | raw }};
     </script>
 
-    <script type="text/javascript" src="{{ asset('gui/js/Dashboard/dashboard.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('gui/js/dashboard/dashboard.js') }}"></script>
     {% if has_app_kernels %}
         <script type="text/javascript">
             Ext.onReady(function () {
