@@ -14,13 +14,6 @@ namespace DataWarehouse\Data;
  */
 class SimpleData extends \Common\Identity
 {
-    /**
-     * At the time of writing, this property does not seem to be used as the only function that uses it not only
-     * references a non-existent variable `NoValue` that would cause an exception, but the function itself `getMinMax`
-     * does not seem to be used.
-     *
-     * @var array
-     */
     protected $values;
     // ----------- instance variables ------------- //
 
