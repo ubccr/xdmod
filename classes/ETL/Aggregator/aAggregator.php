@@ -168,13 +168,13 @@ abstract class aAggregator extends aRdbmsDestinationAction
 
         // NOTE: This is needed for the log summary.
         $totalEndTime = microtime(true);
-        $this->logger->notice(array(
-                                  "message"        => "end",
-                                  'action'         => (string) $this,
-                                  'start_time'     => $totalStartTime,
-                                  'end_time'       => $totalEndTime,
-                                  'elapsed_time'   => round(($totalEndTime - $totalStartTime)/60, 3) . "m"
-                                  ));
+        $this->logger->notice("end", [
+            'action'         => (string) $this,
+                'start_time' => $totalStartTime,
+                'end_time' => $totalEndTime,
+                'elapsed_time' => round(($totalEndTime - $totalStartTime) / 60, 3) . "m"
+            ]
+        );
 
     }  // execute()
 

@@ -21,7 +21,7 @@ class AclConfigMigration extends Migration
         $hadError = strpos($output, 'error') !== false;
 
         if ($hadError) {
-            $this->logger->err($output);
+            $this->logger->error($output);
         }
     }
 }

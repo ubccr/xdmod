@@ -61,7 +61,7 @@ class FileManager extends Loggable
                 'export_directory'
             );
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->error('', [
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
@@ -161,7 +161,7 @@ class FileManager extends Loggable
      */
     public function writeDataSetToFile(BatchDataset $dataSet, $format)
     {
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Writing data to file',
             'format' => $format
@@ -183,7 +183,7 @@ class FileManager extends Loggable
                 $dataFile
             );
 
-            $this->logger->debug([
+            $this->logger->debug('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'Created file writer',
                 'file_writer' => $fileWriter
@@ -199,7 +199,7 @@ class FileManager extends Loggable
 
             return $dataFile;
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->error('', [
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
@@ -220,7 +220,7 @@ class FileManager extends Loggable
     {
         $zipFile = $this->getExportDataFilePath($request['id']);
 
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Creating zip file',
             'batch_export_request.id' => $request['id'],
@@ -270,7 +270,7 @@ class FileManager extends Loggable
 
             return $zipFile;
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->error('', [
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
@@ -289,7 +289,7 @@ class FileManager extends Loggable
     {
         $zipFile = $this->getExportDataFilePath($id);
 
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Removing export file',
             'batch_export_request.id' => $id,
@@ -312,7 +312,7 @@ class FileManager extends Loggable
         foreach ($deletedRequestIds as $id) {
             $exportFile = $this->getExportDataFilePath($id);
             if (is_file($exportFile)) {
-                $this->logger->info([
+                $this->logger->info('', [
                     'module' => self::LOG_MODULE,
                     'message' => 'Removing export file',
                     'batch_export_request.id' => $id,

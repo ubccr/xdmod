@@ -243,10 +243,12 @@ class pdoAggregator extends aAggregator
 
         if ( is_array($this->parsedDefinitionFile->table_definition) ) {
             if ( count($this->parsedDefinitionFile->table_definition) > 1 ) {
-                $this->logger->warning(sprintf(
-                    "%s does not support multiple ETL destination tables, using first table",
-                    $this
-                ));
+                $this->logger->warning(
+                    sprintf(
+                        "%s does not support multiple ETL destination tables, using first table",
+                        $this
+                    )
+                );
             }
             $tableDefinition = $this->parsedDefinitionFile->table_definition;
             $this->parsedDefinitionFile->table_definition = array_shift($tableDefinition);
@@ -601,12 +603,12 @@ class pdoAggregator extends aAggregator
 
             if ( null !== $this->currentStartDate ) {
                 $startDate = $this->sourceHandle->quote($this->currentStartDate);
-                $ranges[] = "$startDate <= d.${aggregationUnit}_end";
+                $ranges[] = "$startDate <= d.{$aggregationUnit}_end";
             }
 
             if ( null !== $this->currentEndDate ) {
                 $endDate = $this->sourceHandle->quote($this->currentEndDate);
-                $ranges[] = "$endDate >= d.${aggregationUnit}_start";
+                $ranges[] = "$endDate >= d.{$aggregationUnit}_start";
             }
 
             if ( 0 != count($ranges) ) {
@@ -665,16 +667,16 @@ class pdoAggregator extends aAggregator
             "SELECT distinct
          d.id as period_id,
          d.`year` as year_value,
-         d.`${aggregationUnit}` as period_value,
-         d.${aggregationUnit}_start as period_start,
-         d.${aggregationUnit}_end as period_end,
-         d.${aggregationUnit}_start_ts as period_start_ts,
-         d.${aggregationUnit}_end_ts as period_end_ts,
+         d.`{$aggregationUnit}` as period_value,
+         d.{$aggregationUnit}_start as period_start,
+         d.{$aggregationUnit}_end as period_end,
+         d.{$aggregationUnit}_start_ts as period_start_ts,
+         d.{$aggregationUnit}_end_ts as period_end_ts,
          d.hours as period_hours,
          d.seconds as period_seconds,
          $unitIdToStartDayId as period_start_day_id,
          $unitIdToEndDayId as period_end_day_id
-       FROM {$utilitySchema}.${aggregationUnit}s d"
+       FROM {$utilitySchema}.{$aggregationUnit}s d"
             . (null !== $minMaxJoin ? ",\n$minMaxJoin" : "" )
             . (null !== $dateRangeRestrictionSql ? "\nWHERE $dateRangeRestrictionSql" : "" ) . "
        ORDER BY 2 DESC, 3 DESC";
@@ -715,13 +717,15 @@ class pdoAggregator extends aAggregator
     {
         $time_start = microtime(true);
 
-        $this->logger->notice(array(
-            "message" => "aggregate start",
-            "action" => (string) $this,
-            "unit" => $aggregationUnit,
-            "start_date" => ( null === $this->currentStartDate ? "none" : $this->currentStartDate ),
-            "end_date" => ( null === $this->currentEndDate ? "none" : $this->currentEndDate )
-        ));
+        $this->logger->notice(
+            "aggregate start",
+            [
+                "action" => (string) $this,
+                "unit" => $aggregationUnit,
+                "start_date" => (null === $this->currentStartDate ? "none" : $this->currentStartDate),
+                "end_date" => (null === $this->currentEndDate ? "none" : $this->currentEndDate)
+            ]
+        );
 
         // Batching options
 
@@ -879,7 +883,7 @@ class pdoAggregator extends aAggregator
         //
         // NOTE: The ETL date range is supported when querying for dirty aggregation periods
 
-        $this->logger->info("Aggregate over $numAggregationPeriods ${aggregationUnit}s");
+        $this->logger->info("Aggregate over $numAggregationPeriods {$aggregationUnit}s");
 
         if ( ! $enableBatchAggregation ) {
 
@@ -1056,16 +1060,19 @@ class pdoAggregator extends aAggregator
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->logger->notice(array("message"      => "aggregate end",
-                                    "action"       => (string) $this,
-                                    "unit"         => $aggregationUnit,
-                                    "periods"      => $numAggregationPeriods,
-                                    "start_date"   => ( null === $this->currentStartDate ? "none" : $this->currentStartDate ),
-                                    "end_date"     => ( null === $this->currentEndDate ? "none" : $this->currentEndDate ),
-                                    "start_time"   => $time_start,
-                                    "end_time"     => $time_end,
-                                    "elapsed_time" => round($time, 5)
-        ));
+        $this->logger->notice(
+            "aggregate end",
+            [
+                "action" => (string)$this,
+                "unit" => $aggregationUnit,
+                "periods" => $numAggregationPeriods,
+                "start_date" => (null === $this->currentStartDate ? "none" : $this->currentStartDate),
+                "end_date" => (null === $this->currentEndDate ? "none" : $this->currentEndDate),
+                "start_time" => $time_start,
+                "end_time" => $time_end,
+                "elapsed_time" => round($time, 5)
+            ]
+        );
 
         return $numAggregationPeriods;
 
@@ -1201,7 +1208,7 @@ class pdoAggregator extends aAggregator
                     "unit"        => $aggregationUnit,
                     "num_records" => $numRecords
                 );
-                $this->logger->debug(array_merge($msg, $aggregationPeriodInfo));
+                $this->logger->debug('', array_merge($msg, $aggregationPeriodInfo));
 
                 // Insert the new rows.
 

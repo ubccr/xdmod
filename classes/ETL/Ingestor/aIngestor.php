@@ -145,14 +145,17 @@ abstract class aIngestor extends aRdbmsDestinationAction
         $this->logger->info($message);
 
         // NOTE: This is needed for the log summary.
-        $this->logger->notice(array(
-                                  'action'           => (string) $this,
-                                  'start_time'       => $time_start,
-                                  'end_time'         => $time_end,
-                                  'elapsed_time'     => round($time, 5),
-                                  'records_examined' => $totalRecordsProcessed,
-                                  'records_loaded'   => $totalRecordsProcessed
-                                  ));
+        $this->logger->notice(
+            '',
+            [
+                'action' => (string)$this,
+                'start_time' => $time_start,
+                'end_time' => $time_end,
+                'elapsed_time' => round($time, 5),
+                'records_examined' => $totalRecordsProcessed,
+                'records_loaded' => $totalRecordsProcessed
+            ]
+        );
     }  // execute()
 
     /* ------------------------------------------------------------------------------------------

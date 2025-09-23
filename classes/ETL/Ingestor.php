@@ -67,7 +67,7 @@ class Ingestor
         } else {
             $msg = __CLASS__ . ": Error creating ingestor '{$options->name}', class '$className' not found";
             if ( null !== $logger ) {
-                $logger->err($msg);
+                $logger->error($msg);
             }
             throw new Exception($msg);
         }
@@ -75,7 +75,7 @@ class Ingestor
         if ( ! $ingestor instanceof iAction ) {
             $msg = __CLASS__ . ": $className does not implenment interface iAction";
             if ( null !== $logger ) {
-                $logger->err($msg);
+                $logger->error($msg);
             }
             throw new Exception($msg);
         }

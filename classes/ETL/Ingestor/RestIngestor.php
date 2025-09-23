@@ -342,14 +342,14 @@ class RestIngestor extends aIngestor implements iAction
         while ( false !== ( $retval = curl_exec($this->sourceHandle) ) ) {
 
             if ( 0 !== curl_errno($this->sourceHandle) ) {
-                $this->logger->err("${this} Error during REST call: " . curl_error($this->sourceHandle));
+                $this->logger->error("{$this} Error during REST call: " . curl_error($this->sourceHandle));
                 break;
             }
 
             $response = json_decode($retval);
 
             if ( null === $response || ! is_object($response) ) {
-                $this->logger->err("{$this} Response is not an object: $retval");
+                $this->logger->error("{$this} Response is not an object: $retval");
                 break;
             }
 
@@ -633,7 +633,7 @@ class RestIngestor extends aIngestor implements iAction
                 try {
                     $this->restParameters[$parameter] = $this->applyDirectives($this->restParameters[$parameter], $directives);
                 } catch ( Exception $e ) {
-                    $this->logger->err(
+                    $this->logger->error(
                         "{$this} Parameter '$parameter' (" . $this->restParameters[$parameter]
                         . ") failed processing directives, skipping."
                     );

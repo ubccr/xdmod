@@ -253,7 +253,7 @@ class Pbs extends Shredder
                 } catch (Exception $e) {
                     $msg = "Failed to parse '$key' value '$value': "
                         . $e->getMessage();
-                    $this->logger->err($msg);
+                    $this->logger->error($msg);
                 }
 
                 $job[$key] = $parsedValue;

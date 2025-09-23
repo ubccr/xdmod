@@ -154,4 +154,39 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
         }
         return $tmpArray;
     }
+
+    /**
+     * This function provides away to determine if two arrays contain the same data. Ordering of keys will only affect
+     * the results if the arrays are numerically indexed.
+     *
+     * @param array $left
+     * @param array $right
+     * @param bool  $exact if true, then the values will also be strictly compared.
+     * @return void this function does not return a value. If the arrays are not the same then it will fail the test,
+     *              w/ the differences between the arrays that were found.
+     */
+    protected function arraysAreSame( array $left, array $right, bool $exact = true)
+    {
+        if (count(array_diff(array_keys($left), array_keys($right))) > 0) {
+            $this->fail('Keys are different');
+        }
+        $differences = [];
+        foreach($left as $lkey => $lvalue) {
+            $ltype = gettype($lvalue);
+            $rtype = gettype($right[$lkey]);
+            if ($ltype !== $rtype) {
+                $differences []= sprintf("Expected $lkey to be %s got %s", $ltype, $rtype);
+                if ($exact && $lvalue !== $right[$lkey]) {
+                    $differences []= sprintf("Expected $lkey value to be %s got %s", $lvalue, $right[$lkey]);
+                }
+            }
+        }
+        if (count($differences) > 0) {
+            $this->fail(sprintf(
+                "Differences Found:\n%s",
+                implode("\n", $differences)
+            ));
+        }
+        $this->assertTrue(true);
+    }
 }

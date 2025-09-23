@@ -14,6 +14,8 @@ use IntegrationTests\TestHarness\TestFiles;
  */
 class CsvFileWriterTest extends TestCase
 {
+    private $testFiles;
+
     /**
      * A helper class that simplifies interacting with XDMoD's REST interface.
      *

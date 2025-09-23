@@ -127,25 +127,19 @@ function main()
     $logger->debug('Checking for required arguments');
 
     if ($resource === null) {
-        $logger->crit('No resource name specified');
+        $logger->critical('No resource name specified');
         exit(1);
     }
 
     // NOTE: "process_start_time" is needed for the log summary.
-    $logger->notice(array(
-        'message'            => 'xdmod-slurm-helper start',
-        'process_start_time' => date('Y-m-d H:i:s'),
-    ));
+    $logger->notice('xdmod-slurm-helper start', ['process_start_time' => date('Y-m-d H:i:s')]);
 
     try {
         $logger->debug('Creating database connection');
         $db = DB::factory('shredder');
     } catch (Exception $e) {
         $msg = 'Failed to create database connection: ' . $e->getMessage();
-        $logger->crit(array(
-            'message'    => $msg,
-            'stacktrace' => $e->getTraceAsString(),
-        ));
+        $logger->critical($msg, ['stacktrace' => $e->getTraceAsString()]);
         exit(1);
     }
 
@@ -155,10 +149,7 @@ function main()
         $shredder->setResource($resource);
     } catch (Exception $e) {
         $msg = 'Failed to create shredder: ' . $e->getMessage();
-        $logger->crit(array(
-            'message'    => $msg,
-            'stacktrace' => $e->getTraceAsString(),
-        ));
+        $logger->critical($msg, ['stacktrace' => $e->getTraceAsString()]);
         exit(1);
     }
 
@@ -175,7 +166,7 @@ function main()
     try {
         $logFile = executeSacctCommand($cmd, $resource);
     } catch (Exception $e) {
-        $logger->crit($e->getMessage());
+        $logger->critical($e->getMessage());
         exit(1);
     }
 
@@ -196,20 +187,14 @@ function main()
         $ingestor = $shredder->getJobIngestor();
         $ingestor->ingest();
     } catch (Exception $e) {
-        $logger->crit(array(
-            'message'    => 'Ingestion failed: ' . $e->getMessage(),
-            'stacktrace' => $e->getTraceAsString(),
-        ));
+        $logger->critical('Ingestion failed: ' . $e->getMessage(), ['stacktrace' => $e->getTraceAsString()]);
         exit(1);
     }
 
     $logger->notice('Done normalizing data');
 
     // NOTE: "process_end_time" is needed for the log summary.
-    $logger->notice(array(
-        'message'          => 'xdmod-slurm-helper end',
-        'process_end_time' => date('Y-m-d H:i:s'),
-    ));
+    $logger->notice('xdmod-slurm-helper end', ['process_end_time' => date('Y-m-d H:i:s')]);
 }
 
 function getSacctCmdArgs(
@@ -339,7 +324,7 @@ function executeSacctCommand($cmd, $resource)
     }
 
     if (!fclose($logFilePointer)) {
-        $logger->err("Failed to close temporary file '$logFile'");
+        $logger->error("Failed to close temporary file '$logFile'");
     }
 
     $err = stream_get_contents($pipes[2]);
@@ -349,7 +334,7 @@ function executeSacctCommand($cmd, $resource)
     }
 
     if (!fclose($pipes[2])) {
-        $logger->err('Failed to close subprocess STDERR');
+        $logger->error('Failed to close subprocess STDERR');
     }
 
     $exitCode = stream_get_contents($pipes[3]);
@@ -362,7 +347,7 @@ function executeSacctCommand($cmd, $resource)
     $exitCode = trim($exitCode);
 
     if (!fclose($pipes[3])) {
-        $logger->err('Failed to close subprocess pipe 3');
+        $logger->error('Failed to close subprocess pipe 3');
     }
 
     $procStatus = proc_close($process);

@@ -5,6 +5,10 @@ namespace CCR;
 use CCR\DB\iDatabase;
 use Exception;
 use Monolog\Handler\AbstractProcessingHandler;
+use Monolog\Handler\StreamHandler;
+use Monolog\Level;
+use Monolog\LogRecord;
+use Psr\Log\LoggerInterface;
 
 /**
  * This class is meant to provide a means of writing log entries to a database within the Monolog framework.
@@ -32,6 +36,8 @@ class CCRDBHandler extends AbstractProcessingHandler
      */
     private $table;
 
+    private LoggerInterface $logger;
+
     /**
      * CCRDBHandler constructor.
      *
@@ -49,7 +55,7 @@ class CCRDBHandler extends AbstractProcessingHandler
      */
     public function __construct(iDatabase $db = null, $schema = null, $table = null, $level = Log::DEBUG, $bubble = true)
     {
-        parent::__construct($level, $bubble);
+        parent::__construct(Level::fromValue(Log::convertToMonologLevel($level)), $bubble);
 
         if (!isset($db)) {
             $db = DB::factory('logger');
@@ -66,21 +72,32 @@ class CCRDBHandler extends AbstractProcessingHandler
         $this->db = $db;
         $this->schema = $schema;
         $this->table = $table;
+
+        $this->logger = new \Monolog\Logger('ccr-db-handler');
+        $this->logger->pushHandler(new StreamHandler('/tmp/xdmod_debug.log'));
     }
 
     /**
      * @see AbstractProcessingHandler::write()
      */
-    protected function write(array $record)
+    protected function write(LogRecord $record): void
     {
-        $sql = sprintf("INSERT INTO %s.%s (id, logtime, ident, priority, message) VALUES(:id, NOW(), :ident, :priority, :message)", $this->schema, $this->table);
+        $message = array_merge(
+            [
+                'message' => $record->message
+            ],
+            $record->context
+        );
 
-        $this->db->execute($sql, array(
+        $sql = sprintf("INSERT INTO %s.%s (id, logtime, ident, priority, message) VALUES(:id, NOW(), :ident, :priority, :message)", $this->schema, $this->table);
+        $params = [
             ':id' => $this->getNextId(),
             ':ident' => $record['channel'],
             ':priority' => Log::convertToCCRLevel($record['level']),
-            ':message' => $record['message']
-        ));
+            ':message' => json_encode($message, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+        ];
+
+        $this->db->execute($sql, $params);
     }
 
     /**

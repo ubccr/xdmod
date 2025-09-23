@@ -67,7 +67,7 @@ class Maintenance
         } else {
             $msg = __CLASS__ . ": Error creating action '{$options->name}', class '$className' not found";
             if ( null !== $logger ) {
-                $logger->err($msg);
+                $logger->error($msg);
             }
             throw new Exception($msg);
         }
@@ -75,7 +75,7 @@ class Maintenance
         if ( ! $action instanceof iAction ) {
             $msg = __CLASS__ . ": $className does not implenment interface iAction";
             if ( null !== $logger ) {
-                $logger->err($msg);
+                $logger->error($msg);
             }
             throw new Exception($msg);
         }

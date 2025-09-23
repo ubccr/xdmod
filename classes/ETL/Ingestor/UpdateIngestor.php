@@ -245,13 +245,16 @@ class UpdateIngestor extends aRdbmsDestinationAction implements iAction
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->logger->notice(array(
-                                  'action'         => (string) $this,
-                                  'start_time'     => $time_start,
-                                  'end_time'       => $time_end,
-                                  'elapsed_time'   => round($time, 5),
-                                  'records_loaded' => $numRecordsProcessed,
-                                  'records_updated' => $numRecordsUpdated
-                                  ));
+        $this->logger->notice(
+            '',
+            [
+                'action' => (string)$this,
+                'start_time' => $time_start,
+                'end_time' => $time_end,
+                'elapsed_time' => round($time, 5),
+                'records_loaded' => $numRecordsProcessed,
+                'records_updated' => $numRecordsUpdated
+            ]
+        );
     }  // execute()
 }  // class StructuredFileIngestor
