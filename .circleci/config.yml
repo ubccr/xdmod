@@ -65,7 +65,7 @@ jobs:
       - when:
           condition:
             and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+#              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
               - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
 
           steps:
@@ -146,7 +146,7 @@ jobs:
       - when:
           condition:
             and:
-              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
+#              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
               - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
           steps:
             - run:
