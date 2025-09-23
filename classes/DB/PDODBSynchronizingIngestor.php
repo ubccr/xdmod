@@ -13,6 +13,13 @@ class PDODBSynchronizingIngestor implements Ingestor
 {
 
     /**
+     * The columns in the destination table.
+     *
+     * @var array
+     */
+    protected $insertColumns;
+
+    /**
      * Destination database.
      *
      * @var PDODB

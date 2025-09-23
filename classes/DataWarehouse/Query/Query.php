@@ -26,6 +26,21 @@ use Realm\Statistic;
 
 class Query extends Loggable
 {
+
+    /**
+     * Parameters for this query.
+     *
+     * @var array
+     */
+    public $parameters;
+
+    /**
+     * The column / direction for sorting this queries results.
+     *
+     * @var array<int, array{column_name: mixed, direction: string}>
+     */
+    public $sortInfo;
+
     public $roleParameterDescriptions;
     public $filterParameterDescriptions;
     private $pdoparams;
