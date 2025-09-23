@@ -16,7 +16,6 @@ use CCR\DB\iDatabase;
 use CCR\Log;
 use CCR\Json;
 
-use CCR\LogOutput;
 use Configuration\Configuration;
 use ETL\Utilities;
 use Models\Services\Realms;
@@ -480,7 +479,7 @@ SQL;
                 ':module_name' => $module
             );
 
-            $log->debug(LogOutput::from($params));
+            $log->debug('Params', $params);
 
             $modified = $db->execute($query, $params);
             $inserted += $modified;
@@ -1035,7 +1034,7 @@ SQL;
         ':module_name' => $module
     );
     $log->debug($query);
-    $log->debug(LogOutput::from($params));
+    $log->debug('', $params);
 
     if ($dryRun) {
         $log->info("[SUCCESS] Processed Acl Type [ Module: $module, Name: $type, Display: $aclTypeDisplay]");
@@ -1138,7 +1137,7 @@ SQL;
             ':level' => $level,
             ':filter_override' => ( $filterOverride ? 1 : 0 )
         );
-        $log->debug(LogOutput::from($params));
+        $log->debug('Params', $params);
 
         if ($dryRun) {
             $log->info("[SUCCESS] Processed Acl Hierarchy: $id");
@@ -1625,7 +1624,7 @@ SQL;
     );
 
     $log->debug($query);
-    $log->debug(LogOutput::from($params));
+    $log->debug('Params', $params);
 
     if ($dryRun) {
         $log->info($successMsg);
