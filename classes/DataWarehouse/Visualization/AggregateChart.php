@@ -16,6 +16,13 @@ use DataWarehouse\RoleRestrictionsStringBuilder;
 class AggregateChart
 {
     /**
+     * If set, limit the number of records returned.
+     *
+     * @var ?int
+     */
+    public $limit;
+
+    /**
      * Describes the location of this chart's legend. Is expected to be one of the following values:
      * - floating <location>
      * - top_center
