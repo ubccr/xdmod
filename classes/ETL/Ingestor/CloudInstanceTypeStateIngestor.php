@@ -24,8 +24,22 @@ use Psr\Log\LoggerInterface;
 
 class CloudInstanceTypeStateIngestor extends pdoIngestor implements iAction
 {
+    protected $_end_time;
 
-    private $_instance_type_state;
+    /**
+     * This property is used in the sense that there is code that is called that references this property, but it is not
+     * ever set.
+     *
+     * @var null
+     */
+    protected $_instance_state;
+
+    /**
+     * Array meant to track the state a Cloud Instance Ingestion.
+     *
+     * @var array
+     */
+    protected $_instance_type_state;
 
     /**
      * @see ETL\Ingestor\pdoIngestor::__construct()
