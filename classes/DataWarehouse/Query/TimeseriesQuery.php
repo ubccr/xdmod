@@ -76,7 +76,7 @@ class TimeseriesQuery extends Query implements iQuery
      *
      * @var array
      */
-    protected $sortInfo;
+    public $sortInfo;
 
     public function getQueryType()
     {
