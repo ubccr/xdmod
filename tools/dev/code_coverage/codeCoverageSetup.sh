@@ -500,7 +500,7 @@ echo ${arg_r}
 echo
 echo $PROCESS_FILE_INSTALL_PATH
 
-~/bin/services restart
+#~/bin/services restart
 
 ### Create / Update privs for the directory that will contain the code coverage reports.
 mkdir "${arg_c}"
