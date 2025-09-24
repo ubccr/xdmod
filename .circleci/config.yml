@@ -65,10 +65,9 @@ jobs:
       - when:
           condition:
             - equal: [ "xdmod-time-trigger", << parameters.string_os >> ]
-            and:
+#            and:
 #              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
-
+#              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
           steps:
             - run:
                 name: Installing Code Coverage Dependencies
