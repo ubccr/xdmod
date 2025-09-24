@@ -146,7 +146,7 @@ jobs:
           command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.string_os >>
       - when:
           condition:
-            - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
+              equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
 #            and:
 #              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
 #              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
@@ -211,8 +211,7 @@ jobs:
           path: ~/phpunit
       - when:
           condition:
-            and:
-              - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
+            equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
           #            and:
           #              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
           #              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
