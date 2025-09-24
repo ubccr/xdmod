@@ -12,6 +12,9 @@
     - Fix bug when reingesting cloud logs
       ([\#2072](https://github.com/ubccr/xdmod/pull/2072)).
 - Enhancements
+    - Add support for PHP 8.2
+      ([\#2041](https://github.com/ubccr/xdmod/pull/2041),
+      [\#2040](https://github.com/ubccr/xdmod/pull/2040)).
     - Add the ability to support multiple organizations and to assign
       organizations to people and to resources
       ([\#1982](https://github.com/ubccr/xdmod/pull/1982)
