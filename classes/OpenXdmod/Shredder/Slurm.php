@@ -295,9 +295,6 @@ class Slurm extends Shredder
             return;
         }
 
-        // Convert job name encoding.
-        $job['job_name'] = mb_convert_encoding($job['job_name'], 'ISO-8859-1', 'UTF-8');
-
         // Convert datetime strings into unix timestamps.
         $dateKeys = array(
             'submit_time',

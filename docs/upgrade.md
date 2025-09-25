@@ -85,6 +85,10 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 
     # xdmod-upgrade
 
+### Run the XDMoD ingestor
+
+    # xdmod-ingestor
+
 Source Package Upgrade Process
 ------------------------------
 
@@ -141,6 +145,10 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
+### Run the XDMoD ingestor
+
+    # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-ingestor
+
 ### Update Apache Configuration
 
 Make sure to update `/etc/httpd/conf.d/xdmod.conf` to change
@@ -148,6 +156,25 @@ Make sure to update `/etc/httpd/conf.d/xdmod.conf` to change
 
 Additional 11.5.0 Upgrade Notes
 -------------------
+
+Open XDMoD 11.5 updates the database tables to use UTF8 character encoding.
+Prior versions of Open XDMoD did not specify the character encoding and used the database
+software default values for the database tables (which was latin1
+for MariaDB 10). The ingestor and shredder pipelines used different character encoding
+(some used UTF8 encoding, some the database connection defaults).  This meant that non
+ASCII characters could be incorrectly displayed in XDMoD.
+
+This upgrade changes Open XDMoD database tables to support UTF8 character encoding and
+updates the shredder and ingestor to process UTF8 encoded files. This ensures
+that information in new logs loaded into Open XDMoD will display correctly. The upgrade
+does not automatically fix the display of previously loaded non-ASCII data. The table
+below shows the steps that can be taken for each data type.
+
+| Field  |    Remedy |
+| -----  | --------- |
+| User / PI names | Ensure the information in names.csv is encoded in UTF8 character set. Run the `xdmod-import-csv` and `xdmod-ingestor` as described in the [Names Guide](user-names.md) |
+| Hierarchy | Ensure the information in hierarchy.csv is encoded in UTF8 character set. Run the `xdmod-import-csv` and `xdmod-ingestor` as described in the [Hierarchy Guide](hierarchy.md) |
+| Job name in the single job viewer | The job name string for jobs that have already been shredded and ingested into XDMoD will not be corrected automatically. It is necessary to truncate the data for all jobs and reingest following the instruction in the [FAQ](faq.md#how-do-i-delete-all-my-job-data-from-open-xdmod). |
 
 ### Configuration File Changes
 

@@ -3,15 +3,21 @@
   "table_definition": {
     "name": "modify_table_test",
     "engine": "MyISAM",
+    "charset": "latin1",
+    "collation": "latin1_swedish_ci",
     "columns": [
       {
         "name": "resource",
         "type": "varchar(40)",
+        "charset": "latin1",
+        "collation": "latin1_swedish_ci",
         "nullable": true
       },
       {
         "name": "new_column_1",
         "type": "varchar(40)",
+        "charset": "latin1",
+        "collation": "latin1_swedish_ci",
         "nullable": true
       },
       {
