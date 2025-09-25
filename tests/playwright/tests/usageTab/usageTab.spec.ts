@@ -148,5 +148,44 @@ test.describe('Usage', async () => {
                 await expect(page.locator(usg.selectors.chartByTitle('CPU Hours: Per Job', true))).toBeVisible();
             });
         });
+        test('loads chart with valid start and end date from URL', async ({ page }) => {
+            const baseUrl = globalConfig.use.baseURL;
+            const usg = new Usage(page, baseUrl);
+            const start = '2012-06-01';
+            const end = '2017-06-20';
+            await page.goto(`${baseUrl}/#tg_usage?node=statistic_Jobs_none_total_cpu_hours&start_time=${start}&end_time=${end}`);
+            await page.waitForLoadState('networkidle');
+            await expect(usg.chartLocator).toBeVisible();
+            await expect(usg.maskLocator).toBeHidden();
+            const startValue = await usg.startFieldLocator.inputValue();
+            const endValue = await usg.endFieldLocator.inputValue();
+            expect(startValue).toContain(start);
+            expect(endValue).toContain(end);
+        });
+        test('ignores invalid date values from URL and falls back safely', async ({ page }) => {
+            const baseUrl = globalConfig.use.baseURL;
+            const usg = new Usage(page, baseUrl);
+            const start = 'hi';
+            const end = 'bye';
+            await page.goto(`${baseUrl}/#tg_usage?node=statistic_Jobs_none_total_cpu_hours&start_time=${start}&end_time=${end}`);
+            await page.waitForLoadState('networkidle');
+            await expect(usg.chartLocator).toBeVisible();
+            await expect(usg.maskLocator).toBeHidden();
+            const startValue = await usg.startFieldLocator.inputValue();
+            const endValue = await usg.endFieldLocator.inputValue();
+            expect(startValue).not.toContain(start);
+            expect(endValue).not.toContain(end);
+        });
+        test('applies duration filter from URL correctly', async ({ page }) => {
+            const baseUrl = globalConfig.use.baseURL;
+            const usg = new Usage(page, baseUrl);
+            const duration = 'Yesterday';
+            await page.goto(`${baseUrl}/#tg_usage?node=statistic_Jobs_none_total_cpu_hours&duration=${duration}`);
+            await page.waitForLoadState('networkidle');
+            await expect(usg.chartLocator).toBeVisible();
+            await expect(usg.maskLocator).toBeHidden();
+            const durationValue = await usg.durationButtonLocator.innerText();
+            expect(durationValue).toContain(duration);
+        });
     }
 });
