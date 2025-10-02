@@ -38,7 +38,7 @@ class JobListAggregator extends pdoAggregator implements iAction
     /* ------------------------------------------------------------------------------------------
      * Delete the old records from each destination table and its associated _job_list table
      */
-    protected function deleteAggregationPeriodData($aggregationUnit, $aggregationPeriodId, array $sqlRestrictions = array())
+    protected function deleteAggregationPeriodData($aggregationUnit, $aggregationPeriodStartId, $aggregationPeriodEndId, array $sqlRestrictions = array())
     {
         $totalRowsDeleted = 0;
 
@@ -46,7 +46,7 @@ class JobListAggregator extends pdoAggregator implements iAction
             $qualifiedDestTableName = $etlTable->getFullName();
 
             $joblisttable = $etlTable->getSchema() . '.`' . $etlTable->getName(false) . $this->joblistAppendTableName . '`';
-            $deleteSql = "DELETE $qualifiedDestTableName, $joblisttable FROM $qualifiedDestTableName LEFT JOIN $joblisttable ON $qualifiedDestTableName.id = $joblisttable.agg_id WHERE {$aggregationUnit}_id = $aggregationPeriodId";
+            $deleteSql = "DELETE $qualifiedDestTableName, $joblisttable FROM $qualifiedDestTableName LEFT JOIN $joblisttable ON $qualifiedDestTableName.id = $joblisttable.agg_id WHERE {$aggregationUnit}_id BETWEEN $aggregationPeriodStartId AND $aggregationPeriodEndId";
 
             if ( count($sqlRestrictions) > 0 ) {
                 $deleteSql .= " AND " . implode(" AND ", $sqlRestrictions);
