@@ -4,9 +4,17 @@ namespace User\Elements;
 
 use \DataWarehouse\Query\AggregateQuery;
 use \DataWarehouse\Query\TimeseriesQuery;
+use Realm\GroupBy;
 
 class QueryDescripter
 {
+
+    /**
+     * The GroupBy for this particular QueryDescripter.
+     *
+     * @var ?GroupBy
+     */
+    protected $groupByInstance;
 
     /**
      * @var \Realm\iRealm The Realm that we are querying.

@@ -24,6 +24,16 @@ use DataWarehouse\Data\TimeseriesDataset;
 */
 class TimeseriesChart extends AggregateChart
 {
+    /**
+     * @see AggregateChart
+     */
+    protected $show_filters;
+
+    /**
+     * @see AggregateChart
+     */
+    protected $_hasLegend;
+
     // ---------------------------------------------------------
     // __construct()
     //

@@ -4,6 +4,13 @@ namespace UnitTests\DataWarehouse;
 
 class VisualizationTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * The expected output for the tests in this file.
+     *
+     * @var array|int[]
+     */
+    public array $expected;
+
     public function setup(): void
     {
         // Cut and pasted from the colors1.json file.
