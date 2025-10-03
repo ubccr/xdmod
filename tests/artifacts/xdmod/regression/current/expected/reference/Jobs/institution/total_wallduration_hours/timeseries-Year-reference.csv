@@ -1,0 +1,11 @@
+title
+"Wall Hours: Total: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[screw - Screwdriver] Wall Hours: Total","[wrench - Wrench] Wall Hours: Total","[Unknown - Unknown Organization] Wall Hours: Total"
+2016,91384.3428,17412.9486,2400.9242
+2017,15372.4047,830.7017,575.4844
+---------

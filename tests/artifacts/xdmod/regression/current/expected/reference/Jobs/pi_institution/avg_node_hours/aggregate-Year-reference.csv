@@ -1,0 +1,11 @@
+title
+"Node Hours: Per Job: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Institution","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+"wrench - Wrench",2.54098323,0.3800903580498463
+"screw - Screwdriver",2.15386485,0.05625690194615745
+---------

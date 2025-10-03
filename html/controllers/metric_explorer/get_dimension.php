@@ -2,13 +2,15 @@
 @require_once('common.php');
 
 use DataWarehouse\Access\MetricExplorer;
+use Models\Services\Tokens;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 // Attempt authentication by API token.
-$user = \Models\Services\Tokens::authenticateToken();
-
-// If token authentication failed then fall back to the standard session-based
-// authentication method.
-if ($user === null) {
+try {
+    $user = Tokens::authenticateController();
+} catch (UnauthorizedHttpException $e) {
+    // If token authentication failed then fall back to the standard
+    // session-based authentication method.
     $user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
 }
 

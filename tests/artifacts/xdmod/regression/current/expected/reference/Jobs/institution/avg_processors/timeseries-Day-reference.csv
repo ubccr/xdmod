@@ -1,0 +1,20 @@
+title
+"Job Size: Per Job (Core Count): by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Unknown - Unknown Organization] Job Size: Per Job (Core Count)","[wrench - Wrench] Job Size: Per Job (Core Count)","[screw - Screwdriver] Job Size: Per Job (Core Count)"
+2016-12-22,0,0,12.0000
+2016-12-23,0,0,8.3333
+2016-12-24,0,0,8.3333
+2016-12-25,0,0,14.1667
+2016-12-26,16.0000,0,14.1667
+2016-12-27,16.0000,58.8333,25.3548
+2016-12-28,16.0000,63.4444,7.9484
+2016-12-29,26.4348,16.9966,4.4451
+2016-12-30,38.8571,9.2351,5.4104
+2016-12-31,21.2545,9.9797,4.8018
+2017-01-01,21.6296,9.1952,8.5335
+---------

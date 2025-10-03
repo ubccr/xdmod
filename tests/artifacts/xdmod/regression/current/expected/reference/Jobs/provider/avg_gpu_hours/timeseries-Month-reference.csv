@@ -1,0 +1,11 @@
+title
+"GPU Hours: Per Job: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[screw] GPU Hours: Per Job","[wrench] GPU Hours: Per Job"
+2016-12,0.01004798,0.00000000
+2017-01,0.00274705,0.00000000
+---------

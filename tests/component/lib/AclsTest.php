@@ -300,12 +300,15 @@ TXT;
             'nsfdirectorate',
             'parentscience',
             'person',
+            'institution',
             'pi',
+            'pi_institution',
             'qos',
             'queue',
             'resource',
             'resource_type',
             'username',
+            'provider'
         );
 
         $stats = array(
@@ -325,7 +328,6 @@ TXT;
             'job_count',
             'max_processors',
             'min_processors',
-            'normalized_avg_processors',
             'running_job_count',
             'started_job_count',
             'submitted_job_count',

@@ -87,6 +87,7 @@ class PDODB implements iDatabase
         $this->dsn = $this->generateDsn();
         $this->_dbh = new PDO($this->dsn, $this->_db_username, $this->_db_password);
         $this->_dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->_dbh->setAttribute(PDO::ATTR_STRINGIFY_FETCHES, true);
 
         return $this->_dbh;
     } // connect()
