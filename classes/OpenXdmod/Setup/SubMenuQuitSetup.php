@@ -11,6 +11,13 @@ namespace OpenXdmod\Setup;
 class SubMenuQuitSetup extends SetupItem
 {
 
+    /**
+     * The parent object for this SubMenuQuitSetup item.
+     *
+     * @var SubMenuSetupItem
+     */
+    protected $parent;
+
     public function __construct($console, SubMenuSetupItem $parent)
     {
         parent::__construct($console);
