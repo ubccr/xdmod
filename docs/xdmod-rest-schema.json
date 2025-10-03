@@ -25,7 +25,7 @@ layout: null
     "servers": [
         {
             "url": "https://xdmod.access-ci.org/",
-            "description": "Production server"
+            "description": "ACCESS production server"
         }
     ],
     "components": {
