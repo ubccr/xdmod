@@ -115,7 +115,7 @@ class Usage extends Common
 
                 $usageChart = array(
                         'hc_jsonstore' => array('title' => array('text' => '')),
-                        'id' => "statistic_${usageRealm}_${usageGroupBy}_${userStatistic}",
+                        'id' => "node=statistic&realm=${usageRealm}&group_by=${usageGroupBy}&statistic=${userStatistic}",
                         'short_title' => $statsClass->getName(),
                         'random_id' => 'chart_' . mt_rand(),
                         'subnotes' => $usageSubnotes,
@@ -714,8 +714,8 @@ class Usage extends Common
 
                 // Generate the expected IDs for the chart.
                 $usageMetric = $meRequest['data_series_unencoded'][0]['metric'];
-                $usageChartId = "statistic_${usageRealm}_${usageGroupBy}_${usageMetric}";
-                $usageChartMenuId = "group_by_${usageRealm}_${usageGroupBy}";
+                $usageChartId = "node=statistic&realm=${usageRealm}&group_by=${usageGroupBy}&statistic=${usageMetric}";
+                $usageChartMenuId = "node=group_by&realm=${usageRealm}&group_by=${usageGroupBy}";
 
                 // Remove extraneous x-axis properties.
                 if ($meRequestIsTimeseries) {

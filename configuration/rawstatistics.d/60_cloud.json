@@ -48,6 +48,16 @@
               }
           },
           {
+            "schema": "modw",
+            "name": "serviceprovider",
+            "alias": "sp",
+            "join": {
+                "primaryKey": "organization_id",
+                "foreignTableAlias": "sr",
+                "foreignKey": "service_provider"
+            }
+          },
+          {
 
               "schema": "modw",
               "name": "systemaccount",
@@ -67,6 +77,16 @@
                   "foreignTableAlias": "sr",
                   "foreignKey": "person_id"
               }
+          },
+          {
+            "schema": "modw",
+            "name": "organization",
+            "alias": "person_org",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "p",
+                "foreignKey": "organization_id"
+            }
           },
           {
               "schema": "modw",
@@ -97,6 +117,16 @@
                   "foreignTableAlias": "sr",
                   "foreignKey": "principalinvestigator_person_id"
               }
+          },
+          {
+            "schema": "modw",
+            "name": "organization",
+            "alias": "pi_org",
+            "join": {
+                "primaryKey": "id",
+                "foreignTableAlias": "pi",
+                "foreignKey": "organization_id"
+            }
           },
           {
               "schema": "modw_cloud",
@@ -137,6 +167,14 @@
               "batchExport": true
           },
           {
+            "name": "Service Provider",
+            "tableAlias": "sp",
+            "column": "long_name",
+            "group": "Administration",
+            "documentation": "The organization of the resource that ran the job.",
+            "batchExport": true
+        },
+          {
               "name": "System Username",
               "tableAlias": "sa",
               "column": "username",
@@ -153,6 +191,14 @@
               "documentation": "The name of the job owner.",
               "batchExport": true
           },
+          {
+            "name": "User Institution",
+            "tableAlias": "person_org",
+            "column": "name",
+            "group": "Administration",
+            "documentation": "The institution of the VM owner.",
+            "batchExport": true
+            },
           {
               "name": "${HIERARCHY_TOP_LEVEL_LABEL}",
               "tableAlias": "fos",
@@ -192,6 +238,14 @@
               "group": "Administration",
               "documentation": "The name of the PI assigned to the VM.",
               "batchExport": true
+          },
+          {
+            "name": "PI Institution",
+            "tableAlias": "pi_org",
+            "column": "name",
+            "group": "Administration",
+            "documentation": "The institution of the PI assigned to the VM.",
+            "batchExport": true
           },
           {
               "name": "Instance Type",

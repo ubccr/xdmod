@@ -1,0 +1,11 @@
+title
+"Logical Usage (Bytes): by User Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Month,"[screw - Screwdriver] Logical Usage (Bytes)","[Unknown - Unknown Organization] Logical Usage (Bytes)","[wrench - Wrench] Logical Usage (Bytes)"
+2018-12,413485221068800,215789796181333,171860313267200
+2019-01,386297955942400,220684979532800,172520142771200
+---------

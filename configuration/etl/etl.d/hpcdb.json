@@ -88,6 +88,19 @@
             ]
         },
         {
+            "name": "unknown_organization",
+            "definition_file": "common/hpcdb/unknown_organization.json",
+            "description": "Add unknown organization",
+            "class": "StructuredFileIngestor",
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "unknown organization",
+                    "path": "common/hpcdb/organizations.json"
+                }
+            }
+        },
+        {
             "name": "organizations",
             "description": "Ingest organizations",
             "definition_file": "common/hpcdb/organizations.json"
