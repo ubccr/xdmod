@@ -1,4 +1,6 @@
-# OpenID Connect Setup
+---
+title: OpenID Connect Setup
+---
 
 This documentation will only cover the additional steps required to configure XDMoD to use OpenID Connect as an SSO identity
 provider. All the file paths included below assume that an RPM installation has been performed. If you have a source install

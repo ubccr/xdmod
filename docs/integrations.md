@@ -1,4 +1,6 @@
-# Integrations
+---
+title: Integrations
+---
 
 Open XDMoD can be integrated with other applications such as [Open OnDemand](https://openondemand.org/)
 

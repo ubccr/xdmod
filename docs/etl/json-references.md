@@ -1,4 +1,6 @@
-# XDMoD ETL Support For RFC-6901 JSON References
+---
+title: XDMoD ETL Support For RFC-6901 JSON References
+---
 
 Reference handlers in JSON files will allow us to reference and include entities defined in external
 files into the current file, supporting re-use. This work is largely based on the JSON schema with

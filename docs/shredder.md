@@ -6,7 +6,7 @@ This guide will attempt to outline the use of the Open XDMoD shredder
 command line utility.  The shredder is responsible for loading data from
 resource manager log files into the Open XDMoD databases.  If you are
 running Slurm, you should first read the
-[Slurm Notes](resource-manager-slurm.html).
+[Slurm Notes](resource-manager-slurm.md).
 
 General Usage
 -------------
@@ -67,11 +67,11 @@ For [TORQUE and OpenPBS][pbs] use `pbs`, for [Sun Grid Engine][sge] use
     $ xdmod-shredder -f slurm ...
     $ xdmod-shredder -f lsf ...
 
-[pbs]:   resource-manager-pbs.md
-[sge]:   resource-manager-sge.md
-[uge]:   resource-manager-uge.md
+[pbs]: resource-manager-pbs.md
+[sge]: resource-manager-sge.md
+[uge]: resource-manager-uge.md
 [slurm]: resource-manager-slurm.md
-[lsf]:   resource-manager-lsf.md
+[lsf]: resource-manager-lsf.md
 
 **Cloud:**
 
@@ -83,8 +83,8 @@ The convention for shredding cloud files is identical to job data:
 
 **Storage:**
 
-The shredder accepts one format for storage data.  See the [Storage
-Metrics](storage.md) documentation for an example.  The convention for
+The shredder accepts one format for storage data.  See the [Storage Metrics](storage.md)
+ documentation for an example.  The convention for
 shredding storage files is identical to job data:
 
     $ xdmod-shredder -f storage ...
@@ -98,7 +98,7 @@ note that this is **not** currently supported for cloud and storage files:
     $ xdmod-shredder -i file ...
 
 An entire directory of files may be shredded.  For all job formats other than
-`pbs` (see [PBS Notes](resource-manager-pbs.html) for details) this will shred
+`pbs` (see [PBS Notes](resource-manager-pbs.md) for details) this will shred
 every file in the directory.  Cloud and storage files must end in `.json`.
 
     $ xdmod-shredder -d directory ...
