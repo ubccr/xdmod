@@ -6,8 +6,8 @@ title: Resource Specifications Realm
 - A full working installation of XDMoD. [XDMoD install instructions](install.html)
 
 ## What is the Resource Specifications realm?
-The Resource Specifications realm in Open XDMoD provides a way to track the changes in computing capacity over time, such as the number of CPUs and GPUs as well as CPU Hours, GPU Hours and other metrics. The source for this data is the `resource_specs.json` configuration file (see the [Configuration Guide](configuration.md)). The data
-for this file are ingested into the XDMoD database when `xdmod-ingestor` is run. The only extra command needed is to aggregate the data using the `xdmod-ingestor` command. Please see the [`xdmod-ingestor` guide](ingestor.md) for further information.
+The Resource Specifications realm in Open XDMoD provides a way to track the changes in computing capacity over time, such as the number of CPUs and GPUs as well as CPU Hours, GPU Hours and other metrics. The source for this data is the `resource_specs.json` configuration file (see the [Configuration Guide](configuration.html)). The data
+for this file are ingested into the XDMoD database when `xdmod-ingestor` is run. The only extra command needed is to aggregate the data using the `xdmod-ingestor` command. Please see the [`xdmod-ingestor` guide](ingestor.html) for further information.
 
 ## Available metrics
 - Average Number of CPU Cores: Allocated (Core Count)
