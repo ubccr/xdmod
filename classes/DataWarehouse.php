@@ -90,7 +90,7 @@ class DataWarehouse
         if(count($personId) === 1){
             return $personId[0]['person_id'];
         }
-        return -1;
+        return PERSON_ID_UNASSOCIATED;
     }
 
     /************************************************************

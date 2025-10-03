@@ -2559,14 +2559,14 @@ SQL;
         $currentPersonId = $this->getPersonID();
         $hasSSO = count($this->ssoAttrs) > 0;
 
-        if ($currentPersonId == -1 && $hasSSO) {
+        if ($currentPersonId == PERSON_ID_UNASSOCIATED && $hasSSO) {
             $username = $this->ssoAttrs['username'][0];
             $systemUserName = isset($this->ssoAttrs['system_username']) ? $this->ssoAttrs['system_username'][0] : $username;
             $expectedPersonId = \DataWarehouse::getPersonIdFromPII($systemUserName, null);
 
             // As long as the identified person is not Unknown and it is different than our current Person Id
             // go ahead and update this user with the new person & that person's organization.
-            if ($expectedPersonId != -1 && $currentPersonId != $expectedPersonId) {
+            if ($expectedPersonId != PERSON_ID_UNASSOCIATED && $currentPersonId != $expectedPersonId) {
                 $organizationId = Organizations::getOrganizationIdForPerson($expectedPersonId);
                 $this->setPersonID($expectedPersonId);
                 $this->setOrganizationID($organizationId);

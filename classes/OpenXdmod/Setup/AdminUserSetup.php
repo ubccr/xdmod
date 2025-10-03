@@ -41,7 +41,7 @@ class AdminUserSetup extends SetupItem
                 array(ROLE_ID_MANAGER, ROLE_ID_USER),
                 ROLE_ID_MANAGER,
                 -1,
-                -1
+                PERSON_ID_UNASSOCIATED
             );
 
             // Internal user.
