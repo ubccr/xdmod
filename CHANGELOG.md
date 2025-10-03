@@ -43,7 +43,8 @@
       [\#2003](https://github.com/ubccr/xdmod/pull/2003),
       [\#1965](https://github.com/ubccr/xdmod/pull/1965),
       [\#1968](https://github.com/ubccr/xdmod/pull/1968),
-      [\#2084](https://github.com/ubccr/xdmod/pull/2084)).
+      [\#2084](https://github.com/ubccr/xdmod/pull/2084),
+      [\#2088](https://github.com/ubccr/xdmod/pull/2088)).
     - Add an order to the raw data exported from the Resource Specifications
       realm ([\#1979](https://github.com/ubccr/xdmod/pull/1979)).
     - Add support for ingesting Slurm logs in JSON format
