@@ -1165,7 +1165,7 @@ class AggregateChart
                     'type' => $data_description->display_type == 'h_bar' || $data_description->display_type == 'column' ? 'bar' : $data_description->display_type,
                     'mode' => $data_description->display_type == 'scatter' ? 'markers' : 'lines+markers',
                     'hovertext' => $xValues,
-                    'hoveron'=>  $data_description->display_type == 'area' || $data_description->display_type == 'areaspline' ? 'points+fills' : 'points',
+                    'hoveron'=>  'points',
                     'hovertemplate' => $tooltip,
                     'showlegend' => true,
                     'text' => $data_description->display_type == 'pie' && $data_description->value_labels ? $text : array(),
