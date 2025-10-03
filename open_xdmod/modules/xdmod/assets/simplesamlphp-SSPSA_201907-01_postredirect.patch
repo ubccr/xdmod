@@ -1,0 +1,6 @@
+46a47,50
+> if (!\SimpleSAML\Utils\HTTP::isValidURL($postData['url'])) {
+>     throw new \SimpleSAML\Error\Exception('Invalid destination URL.');
+> }
+> 
+

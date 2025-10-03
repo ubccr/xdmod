@@ -24,8 +24,22 @@ use Psr\Log\LoggerInterface;
 
 class CloudInstanceTypeStateIngestor extends pdoIngestor implements iAction
 {
+    protected $_end_time;
 
-    private $_instance_type_state;
+    /**
+     * This property is used in the sense that there is code that is called that references this property, but it is not
+     * ever set.
+     *
+     * @var null
+     */
+    protected $_instance_state;
+
+    /**
+     * Array meant to track the state a Cloud Instance Ingestion.
+     *
+     * @var array
+     */
+    protected $_instance_type_state;
 
     /**
      * @see ETL\Ingestor\pdoIngestor::__construct()
@@ -143,7 +157,7 @@ class CloudInstanceTypeStateIngestor extends pdoIngestor implements iAction
         // is lost. To work around this we add a dummy row filled with zeroes.
         $colCount = count($this->etlSourceQuery->records);
         $unionValues = array_fill(0, $colCount, 0);
-        $sql .= "\nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 3 ASC, 9 ASC, 8 ASC, 2 DESC";
+        $sql .= "\nUNION ALL\nSELECT " . implode(',', $unionValues) . "\nORDER BY 1 DESC, 3 ASC, 9 ASC, 8 ASC, 7 ASC, 2 DESC";
 
         return $sql;
     }
