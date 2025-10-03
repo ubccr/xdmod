@@ -79,7 +79,7 @@ class CCRDBHandler extends AbstractProcessingHandler
             ':id' => $this->getNextId(),
             ':ident' => $record['channel'],
             ':priority' => Log::convertToCCRLevel($record['level']),
-            ':message' => $record['message']
+            ':message' => $record['formatted']
         ));
     }
 

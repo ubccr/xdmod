@@ -363,7 +363,7 @@ class Packager
 
         if ($returnVar != 0) {
             foreach ($output as $line) {
-                $this->logger->err($line);
+                $this->logger->error($line);
             }
 
             throw new Exception('Tests failed');

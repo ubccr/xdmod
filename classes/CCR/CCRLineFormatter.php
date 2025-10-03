@@ -3,62 +3,96 @@
 namespace CCR;
 
 use Monolog\Formatter\LineFormatter;
+use Monolog\Formatter\NormalizerFormatter;
 
 class CCRLineFormatter extends LineFormatter
 {
-    public function format(array $record)
+
+    private NormalizerFormatter $normalizerFormatter;
+
+    public function __construct($format = null, $dateFormat = null, $allowInlineLineBreaks = false, $ignoreEmptyContextAndExtra = false)
     {
-        if (isset($record['level_name'])) {
-            $record['level_name'] = strtolower($record['level_name']);
+        if (!str_contains($format, '%context%')) {
+            // first strip newlines from the format, then we'll add one at the end.
+            $format = str_replace(["\n", "\r\n", "\r",], '', $format);
+            $format = "$format%context%\n";
         }
-
-        $record['message'] = $this->extractMessage($record);
-
-        return parent::format($record);
+        $this->normalizerFormatter = new NormalizerFormatter($dateFormat);
+        parent::__construct($format, $dateFormat, $allowInlineLineBreaks, $ignoreEmptyContextAndExtra);
     }
 
     /**
-     * This function was extracted from the class `\Log\Log_xdconsole` so that we can keep our log output the same.
+     * We've overridden this function so that we can customize the way that arrays of data are displayed from the
+     * standard `{"key" => "value", ...}` to `(key: value)`
      *
-     * @param mixed $record
-     *
+     * @param mixed $data
+     * @param bool $ignoreErrors
      * @return string
      */
-    protected function extractMessage($record)
+    protected function toJson($data, $ignoreErrors = false): string
     {
-        $json = json_decode($record['message'], true);
+        $parts = [];
+        if (count($data) > 0) {
+            $nonMessageParts = array();
 
-        if ($json !== null)
-        {
-            $parts = array();
-
-            if (isset($json['message'])) {
-                $parts[] = $json['message'];
-                unset($json['message']);
+            foreach ($data as $key => $value) {
+                $nonMessageParts[] = "$key: $value";
             }
 
-            if (count($json) > 0) {
-                $nonMessageParts = array();
-
-                foreach ($json as $key => $value) {
-                    $nonMessageParts[] = "$key: $value";
-                }
-
-                $parts[] = '(' . implode(', ', $nonMessageParts) . ')';
-            }
-
-            $record['message'] = implode(' ', $parts);
+            $parts[] = '(' . implode(', ', $nonMessageParts) . ')';
         }
 
-        /* Otherwise, we assume the message is a string. */
-        return $record['message'];
+        return implode(' ', $parts);
     }
 
-    /**
-     * @see LineFormatter::replaceNewlines
-     */
-    protected function replaceNewlines($str)
+    public function format(array $record)
     {
-        return str_replace(array('\r', '\n'), array("\r", "\n"), $str);
+        $vars = $this->normalizerFormatter->format($record);
+
+        $output = $this->format;
+
+        foreach ($vars['extra'] as $var => $val) {
+            if (false !== strpos($output, '%extra.'.$var.'%')) {
+                $output = str_replace('%extra.'.$var.'%', $this->stringify($val), $output);
+                unset($vars['extra'][$var]);
+            }
+        }
+
+
+        foreach ($vars['context'] as $var => $val) {
+            if (false !== strpos($output, '%context.'.$var.'%')) {
+                $output = str_replace('%context.'.$var.'%', $this->stringify($val), $output);
+                unset($vars['context'][$var]);
+            }
+        }
+
+        if ($this->ignoreEmptyContextAndExtra) {
+            if (empty($vars['context'])) {
+                unset($vars['context']);
+                $output = str_replace('%context%', '', $output);
+            }
+
+            if (empty($vars['extra'])) {
+                unset($vars['extra']);
+                $output = str_replace('%extra%', '', $output);
+            }
+        }
+
+        foreach ($vars as $var => $val) {
+            if (false !== strpos($output, '%'.$var.'%')) {
+                $output = str_replace('%'.$var.'%', $this->stringify($val), $output);
+            }
+        }
+
+        if (false !== strpos($output, '%context%')) {
+            $output = str_replace($output, '%context%', $this->toJson($vars['context']));
+        }
+
+        // remove leftover %extra.xxx% and %context.xxx% if any
+        if (false !== strpos($output, '%')) {
+            $output = preg_replace('/%(?:extra|context)\..+?%/', '', $output);
+        }
+
+        return $output;
     }
 }

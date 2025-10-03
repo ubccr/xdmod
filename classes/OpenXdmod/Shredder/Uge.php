@@ -47,7 +47,7 @@ class Uge extends Sge
         // fields that have been added to the accounting log format
         // (e.g. "job_class").
         if (count($entries) < self::$minimumEntryCount) {
-            $this->logger->err("Malformed UGE acct line: '$line'");
+            $this->logger->error("Malformed UGE acct line: '$line'");
             return;
         }
 

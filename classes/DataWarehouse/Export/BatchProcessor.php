@@ -110,7 +110,7 @@ class BatchProcessor extends Loggable
      */
     private function processSubmittedRequests()
     {
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Processing submitted requests'
         ]);
@@ -129,7 +129,7 @@ class BatchProcessor extends Loggable
         $requestId = $request['id'];
         $userId = $request['user_id'];
 
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Processing request',
             'Users.id' => $userId,
@@ -139,7 +139,7 @@ class BatchProcessor extends Loggable
         $user = XDUser::getUserByID($userId);
 
         if ($user === null) {
-            $this->logger->err([
+            $this->logger->error('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'User not found',
                 'Users.id' => $userId,
@@ -160,7 +160,7 @@ class BatchProcessor extends Loggable
                 $zipFile = $this->fileManager->createZipFile($dataFile, $request);
             }
 
-            $this->logger->info([
+            $this->logger->info('', [
                 'module' => self::LOG_MODULE,
                 'event' => 'CREATED_EXPORT_FILE',
                 'message' => 'Created data warehouse export zip file',
@@ -171,7 +171,7 @@ class BatchProcessor extends Loggable
 
             // Delete file that was added to zip archive.
             if (!$this->dryRun && !unlink($dataFile)) {
-                $this->logger->err([
+                $this->logger->error('', [
                     'module' => self::LOG_MODULE,
                     'message' => sprintf('Failed to delete temporary data file "%s"', $dataFile)
                 ]);
@@ -183,7 +183,7 @@ class BatchProcessor extends Loggable
             $this->dbh->commit();
         } catch (Exception $e) {
             $this->dbh->rollback();
-            $this->logger->err([
+            $this->logger->error('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'Failed to export data: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
@@ -203,7 +203,7 @@ class BatchProcessor extends Loggable
      */
     private function processExpiringRequests()
     {
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Processing expiring requests'
         ]);
@@ -219,14 +219,14 @@ class BatchProcessor extends Loggable
      */
     private function processExpiringRequest(array $request)
     {
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Expiring request',
             'batch_export_request.id' => $request['id']
         ]);
 
         if ($this->dryRun) {
-            $this->logger->notice([
+            $this->logger->notice('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'dry run: Not expiring export file'
             ]);
@@ -240,7 +240,7 @@ class BatchProcessor extends Loggable
             $this->dbh->commit();
         } catch (Exception $e) {
             $this->dbh->rollback();
-            $this->logger->err([
+            $this->logger->error('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'Failed to expire record: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
@@ -256,7 +256,7 @@ class BatchProcessor extends Loggable
      */
     private function processDeletedRequests()
     {
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Processing deleted requests'
         ]);
@@ -280,7 +280,7 @@ class BatchProcessor extends Loggable
      */
     private function getDataSet(array $request, XDUser $user)
     {
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Querying data',
             'Users.id' => $user->getUserID(),
@@ -295,7 +295,7 @@ class BatchProcessor extends Loggable
 
         try {
             $className = $this->realmManager->getRawDataQueryClass($request['realm']);
-            $this->logger->debug([
+            $this->logger->debug('', [
                 'module' => self::LOG_MODULE,
                 'message' => sprintf('Instantiating query class "%s"', $className)
             ]);
@@ -309,7 +309,7 @@ class BatchProcessor extends Loggable
             $dataSet = new BatchDataset($query, $user, $this->logger);
             return $dataSet;
         } catch (Exception $e) {
-            $this->logger->err([
+            $this->logger->error('', [
                 'module' => self::LOG_MODULE,
                 'message' => $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
@@ -327,14 +327,14 @@ class BatchProcessor extends Loggable
     private function sendExportSuccessEmail(XDUser $user, array $request)
     {
         if ($this->dryRun) {
-            $this->logger->notice([
+            $this->logger->notice('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'dry run: Not sending success email'
             ]);
             return;
         }
 
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'event' => 'SENDING_SUCCESS_EMAIL',
             'message' => 'Sending success email'
@@ -378,14 +378,14 @@ class BatchProcessor extends Loggable
         Exception $e
     ) {
         if ($this->dryRun) {
-            $this->logger->notice([
+            $this->logger->notice('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'dry run: Not sending failure email'
             ]);
             return;
         }
 
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'event' => 'SENDING_FAILURE_EMAIL',
             'message' => 'Sending failure email',
