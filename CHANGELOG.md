@@ -1,45 +1,81 @@
 # Open XDMoD Change Log
 
+## 2025-08-19 v11.0.2
+
+- New Features
+    - Add support for hosting a JupyterHub
+      ([\#2046](https://github.com/ubccr/xdmod/pull/2046)).
+- Bug Fixes
+    - Make plots time zone aware
+      ([\#2045](https://github.com/ubccr/xdmod/pull/2045)).
+    - Change content returned by warehouse raw data REST endpoint to help
+      clients catch silent errors
+      ([\#2058](https://github.com/ubccr/xdmod/pull/2058)).
+    - Fix bug when reingesting cloud logs
+      ([\#2061](https://github.com/ubccr/xdmod/pull/2061)).
+- Enhancements
+    - Usage tab
+        - Add the ability to deep link into specific charts in the Usage tab
+          ([\#2038](https://github.com/ubccr/xdmod/pull/2038),
+          [\#2070](https://github.com/ubccr/xdmod/pull/2070)).
+    - Data Analytics Framework
+        - Add a REST endpoint for getting metadata about resources
+          ([\#2066](https://github.com/ubccr/xdmod/pull/2066),
+          [\#2068](https://github.com/ubccr/xdmod/pull/2068)).
+- Documentation
+    - Update name of `tacc_stats` package to `HPCPerfStats`
+      ([\#2044](https://github.com/ubccr/xdmod/pull/2044)).
+- Maintenance / Code Quality
+    - Update Silex and SimpleSAMLphp library dependencies to address security
+      vulnerabilities ([\#2036](https://github.com/ubccr/xdmod/pull/2036)).
+    - Refactor API token authentication code and update error messages to be
+      consistent
+      ([\#2028](https://github.com/ubccr/xdmod/pull/2028),
+      [\#2054](https://github.com/ubccr/xdmod/pull/2054)).
+    - Fix slow queries in Allocations realm (applies to ACCESS XDMoD)
+      ([\#2071](https://github.com/ubccr/xdmod/pull/2071)).
+
 ## 2025-03-17 v11.0.1
 
 - Bug Fixes
     - General
         - Remove plot range entry boxes in the corners of axes
-          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+          ([\#1887](https://github.com/ubccr/xdmod/pull/1887)).
         - Fix displays of markers on plots with null values
-          ([\#1980](https://github.com/ubccr/xdmod/pull/1980),
-          [\#1999](https://github.com/ubccr/xdmod/pull/1999)).
+          ([\#1941](https://github.com/ubccr/xdmod/pull/1941),
+          [\#1997](https://github.com/ubccr/xdmod/pull/1997)).
         - Fix the displayed lists of datasets when hovering over plots
-          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+          ([\#1921](https://github.com/ubccr/xdmod/pull/1921)).
         - Fix aggregate plot x-axis labels when multiple metrics are plotted
-          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+          ([\#1922](https://github.com/ubccr/xdmod/pull/1922)).
         - Fix pie chart data label display
-          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+          ([\#1885](https://github.com/ubccr/xdmod/pull/1885)).
         - Fix display of plots when swapping x- and y-axes
-          ([\#1980](https://github.com/ubccr/xdmod/pull/1980),
-          [\#1996](https://github.com/ubccr/xdmod/pull/1996)).
+          ([\#1961](https://github.com/ubccr/xdmod/pull/1961),
+          [\#1994](https://github.com/ubccr/xdmod/pull/1994)).
         - Fix display of bar and area plots with side-by-side grouping
-          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+          ([\#1883](https://github.com/ubccr/xdmod/pull/1883)).
         - Fix ordering of the date axis on timeseries plots with varying date
           intervals
-          ([\#1980](https://github.com/ubccr/xdmod/pull/1980),
-          [\#1989](https://github.com/ubccr/xdmod/pull/1989)).
+          ([\#1960](https://github.com/ubccr/xdmod/pull/1960),
+          [\#1988](https://github.com/ubccr/xdmod/pull/1988)).
         - Fix display of x-axis tick labels
-          ([\#1998](https://github.com/ubccr/xdmod/pull/1998)).
+          ([\#1992](https://github.com/ubccr/xdmod/pull/1992)).
     - ETL
         - Add missing endpoint to the exception message in `ExecuteSql`
-          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+          ([\#1929](https://github.com/ubccr/xdmod/pull/1929)).
         - Fix how the `pdoAggregator` class displays the day that was
           aggregated in its logging
-          ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+          ([\#1932](https://github.com/ubccr/xdmod/pull/1932)).
 - Enhancements
     - Cloud
         - Add database columns for person organization ID and PI organization
           ID to tables in the Cloud realm
-          ([\#1958](https://github.com/ubccr/xdmod/pull/1958)).
+          ([\#1957](https://github.com/ubccr/xdmod/pull/1957),
+          [\#1966](https://github.com/ubccr/xdmod/pull/1966)).
     - ETL
         - Add ability to specify multiple database migration classes
-          ([\#2001](https://github.com/ubccr/xdmod/pull/2001)).
+          ([\#1991](https://github.com/ubccr/xdmod/pull/1991)).
 - Documentation
     - Update list of ACCESS MMS team members
       ([\#1918](https://github.com/ubccr/xdmod/pull/1918),
@@ -53,22 +89,22 @@
       ([\#1913](https://github.com/ubccr/xdmod/pull/1913)).
     - Remove references to CentOS 7
       ([\#1931](https://github.com/ubccr/xdmod/pull/1931),
-      [\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+      [\#1933](https://github.com/ubccr/xdmod/pull/1933)).
     - Update version of MongoDB in software requirements
       ([\#1937](https://github.com/ubccr/xdmod/pull/1937)).
     - Update documentation of charts in the user manual
-      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+      ([\#1916](https://github.com/ubccr/xdmod/pull/1916)).
     - Replace references to XSEDE with ACCESS
-      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+      ([\#1935](https://github.com/ubccr/xdmod/pull/1935)).
     - Update the HTML metadata description of the index page
-      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+      ([\#1924](https://github.com/ubccr/xdmod/pull/1924)).
     - Add to the lists of publications and presentations
-      ([\#1962](https://github.com/ubccr/xdmod/pull/1962)).
+      ([\#1977](https://github.com/ubccr/xdmod/pull/1977)).
 - Maintenance / Code Quality
     - Fix PHPUnit test warnings
-      ([\#1945](https://github.com/ubccr/xdmod/pull/1945)).
+      ([\#1944](https://github.com/ubccr/xdmod/pull/1944)).
     - Add missing CI testing of exceptions
-      ([\#1980](https://github.com/ubccr/xdmod/pull/1980)).
+      ([\#1903](https://github.com/ubccr/xdmod/pull/1903)).
 
 ## 2024-09-16 v11.0.0
 - Important Notes

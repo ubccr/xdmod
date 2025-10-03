@@ -15,6 +15,50 @@ use DataWarehouse\RoleRestrictionsStringBuilder;
 */
 class AggregateChart
 {
+    /**
+     * If set, limit the number of records returned.
+     *
+     * @var ?int
+     */
+    public $limit;
+
+    /**
+     * Describes the location of this chart's legend. Is expected to be one of the following values:
+     * - floating <location>
+     * - top_center
+     * - left_center
+     * - left_top
+     * - left_bottom
+     * - right_center
+     * - right_top
+     * - right_bottom
+     * - bottom_center
+     * - none|off|<empty string>
+     *
+     * @var string
+     */
+    protected $_legend_location;
+
+    /**
+     * Indicates whether or not this chart has a legend.
+     *
+     * @var boolean
+     */
+    protected $_hasLegend;
+
+    /**
+     * This property is not used. Will be removed in a future PR.
+     * @var
+     */
+    protected $_limit;
+
+    /**
+     * If set to true, then the any filters set for this chart will be displayed in the final chart output.
+     *
+     * @var boolean
+     */
+    protected $show_filters;
+
     protected $_swapXY;
     protected $_chart;
     protected $_width;
