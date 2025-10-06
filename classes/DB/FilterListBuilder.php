@@ -132,7 +132,7 @@ class FilterListBuilder extends Loggable
             "CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
                 `{$dimensionId}` {$dimensionColumnType} NOT NULL,
                 PRIMARY KEY (`{$dimensionId}`)
-            );"
+            ) CHARACTER SET utf8 COLLATE utf8_unicode_ci"
         );
         $dimensionQuery = $this->createDimensionQuery($realmQuery, $groupBy);
 
@@ -217,7 +217,7 @@ class FilterListBuilder extends Loggable
                     `{$secondDimensionId}` {$secondDimensionColumnType} NOT NULL,
                     PRIMARY KEY (`{$firstDimensionId}`, `{$secondDimensionId}`),
                     INDEX `idx_second_dimension` (`{$secondDimensionId}` ASC)
-                )"
+                ) CHARACTER SET utf8 COLLATE utf8_unicode_ci"
             );
 
             $firstSelectTables = $firstDimensionQuery->getSelectTables();
