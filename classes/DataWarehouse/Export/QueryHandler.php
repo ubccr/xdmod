@@ -127,7 +127,7 @@ class QueryHandler extends Loggable
                 'export_file_format' => $format
             );
 
-            $this->logger->info([
+            $this->logger->info('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'Creating data warehouse export record',
                 'event' => 'INSERT',
@@ -144,7 +144,7 @@ class QueryHandler extends Loggable
             return $id;
         } catch (Exception $e) {
             $this->dbh->rollBack();
-            $this->logger->err([
+            $this->logger->error('', [
                 'module' => self::LOG_MODULE,
                 'message' => 'Record creation failed: ' . $e->getMessage(),
                 'stacktrace' => $e->getTraceAsString()
@@ -192,7 +192,7 @@ class QueryHandler extends Loggable
                 SET export_succeeded = 0 " .
                 $this->whereSubmitted .
                 "AND id = :id";
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Transitioning data warehouse export record to failed state',
             'event' => 'UPDATE_STATE_TO_FAILED',
@@ -231,7 +231,7 @@ class QueryHandler extends Loggable
             'id' => $id
         );
 
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Transitioning data warehouse export record to available state',
             'event' => 'UPDATE_STATE_TO_AVAILABLE',
@@ -252,7 +252,7 @@ class QueryHandler extends Loggable
     {
         $sql = "UPDATE batch_export_requests SET export_expired = 1 " .
                 $this->whereAvailable . 'AND id = :id';
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Transitioning data warehouse export record to expired state',
             'event' => 'UPDATE_STATE_TO_EXPIRED',
@@ -402,7 +402,7 @@ class QueryHandler extends Loggable
     public function deleteRequest($id, $userId)
     {
         $sql = "UPDATE batch_export_requests SET is_deleted = 1 WHERE id = :request_id AND user_id = :user_id";
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Deleting data warehouse export record',
             'event' => 'UPDATE_STATE_TO_DELETED',
@@ -422,7 +422,7 @@ class QueryHandler extends Loggable
     public function updateDownloadedDatetime($id)
     {
         $sql = 'UPDATE batch_export_requests SET downloaded_datetime = NOW() WHERE id = :request_id';
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Updating data warehouse export record downloaded datetime',
             'event' => 'UPDATE_DOWNLOADED_DATETIME',

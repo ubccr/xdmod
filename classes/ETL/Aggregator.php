@@ -67,7 +67,7 @@ class Aggregator
         } else {
             $msg = __CLASS__ . ": Error creating aggregator '{$options->name}', class '$className' not found";
             if ( null !== $logger ) {
-                $logger->err($msg);
+                $logger->error($msg);
             }
             throw new Exception($msg);
         }
@@ -75,7 +75,7 @@ class Aggregator
         if ( ! $aggregator instanceof iAction ) {
             $msg = __CLASS__ . ": $className does not implenment action interface iAction";
             if ( null !== $logger ) {
-                $logger->err($msg);
+                $logger->error($msg);
             }
             throw new Exception($msg);
         }

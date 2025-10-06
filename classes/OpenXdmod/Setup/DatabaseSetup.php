@@ -168,7 +168,7 @@ EOT
 
         passthru(BIN_DIR . '/acl-config', $aclstatus);
         if ($aclstatus !== 0) {
-            $logger->err('Error while running acl-config');
+            $logger->error('Error while running acl-config');
         }
     }
 }

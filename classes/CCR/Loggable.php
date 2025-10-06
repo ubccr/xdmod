@@ -141,7 +141,7 @@ class Loggable
 
         $logMessage['message'] = $message;
 
-        $this->logger->log($logLevel, $logMessage);
+        $this->logger->log(Log::convertToMonologLevel($logLevel), '', $logMessage);
         throw new Exception($message, $code);
 
     }
