@@ -59,6 +59,10 @@
       ([\#2013](https://github.com/ubccr/xdmod/pull/2013)).
     - Fix slow queries in Allocations realm (applies to ACCESS XDMoD)
       ([\#2073](https://github.com/ubccr/xdmod/pull/2073)).
+    - Update user manual builder dependencies
+      ([\#2033](https://github.com/ubccr/xdmod/pull/2033)).
+    - Update the hostname of the version check API
+      ([\#2023](https://github.com/ubccr/xdmod/pull/2023)).
 
 ## 2025-08-19 v11.0.2
 
