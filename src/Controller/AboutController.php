@@ -7,21 +7,19 @@ use CCR\DB;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 /**
  * This controller handles the urls for XDMoD's 'About' tab.
  */
-#[Route("/about")]
 class AboutController extends BaseController
 {
     /**
      * @return Response
      */
-    #[Route('/xdmod', methods: ["GET"])]
-    #[Route('/xdmod.php', methods: ["GET"])]
+    #[Route('/about/xdmod', methods: ["GET"])]
+    #[Route('/about/xdmod.html', methods: ["GET"])]
     public function xdmod(): Response
     {
         return $this->render('about/xdmod.html.twig', [
@@ -32,8 +30,8 @@ class AboutController extends BaseController
     /**
      * @return Response
      */
-    #[Route('/open_xdmod', methods: ["GET"])]
-    #[Route('/openxd.html', methods: ["GET"])]
+    #[Route('/about/open_xdmod', methods: ["GET"])]
+    #[Route('/about/openxd.html', methods: ["GET"])]
     public function openXdmod(): Response
     {
         return $this->render('about/open_xdmod.html.twig');
@@ -42,8 +40,8 @@ class AboutController extends BaseController
     /**
      * @return Response
      */
-    #[Route('/supremm', methods: ['GET'])]
-    #[Route('/supremm.html', methods: ['GET'])]
+    #[Route('/about/supremm', methods: ['GET'])]
+    #[Route('/about/supremm.html', methods: ['GET'])]
     public function supremm(): Response
     {
         return $this->render('about/supremm.html.twig');
@@ -53,8 +51,8 @@ class AboutController extends BaseController
      * @return Response
      * @throws Exception if unable to retrieve a connection to the 'datawarehouse' DB.
      */
-    #[Route('/federated', methods: ["GET"])]
-    #[Route('/federated.php', methods: ["GET"])]
+    #[Route('/about/federated', methods: ["GET"])]
+    #[Route('/about/federated.html', methods: ["GET"])]
     public function federated(): Response
     {
         $parameters = [];
@@ -102,21 +100,23 @@ class AboutController extends BaseController
     /**
      * @return Response
      */
-    #[Route('/roadmap', methods: ['GET'])]
-    #[Route('/roadmap.php', methods: ["GET"])]
+    #[Route('/about/roadmap', methods: ['GET'])]
+    #[Route('/about/roadmap.html', methods: ["GET"])]
     public function roadmap(): Response
     {
+        $header = $this->getConfigValue('roadmap', 'header');
+        $url = $this->getConfigValue('roadmap', 'url');
         return $this->render('about/roadmap.html.twig', [
-            'header' => $this->getConfigValue('roadmap', 'header'),
-            'url' => $this->getConfigValue('roadmap', 'url')
+            'header' => $header,
+            'url' => $url
         ]);
     }
 
     /**
      * @return Response
      */
-    #[Route('/team', methods: ['GET'])]
-    #[Route('/team.html', methods: ['GET'])]
+    #[Route('/about/team', methods: ['GET'])]
+    #[Route('/about/team.html', methods: ['GET'])]
     public function team(): Response
     {
         return $this->render('about/team.html.twig');
@@ -125,8 +125,8 @@ class AboutController extends BaseController
     /**
      * @return Response
      */
-    #[Route('/publications', methods: ['GET'])]
-    #[Route('/publications.html', methods: ['GET'])]
+    #[Route('/about/publications', methods: ['GET'])]
+    #[Route('/about/publications.html', methods: ['GET'])]
     public function publications(): Response
     {
         return $this->render('about/publications.html.twig');
@@ -135,8 +135,8 @@ class AboutController extends BaseController
     /**
      * @return Response
      */
-    #[Route('/links', methods: ['GET'])]
-    #[Route('/links.html', methods: ['GET'])]
+    #[Route('/about/links', methods: ['GET'])]
+    #[Route('/about/links.html', methods: ['GET'])]
     public function links(): Response
     {
         return $this->render('about/links.html.twig');
@@ -146,7 +146,7 @@ class AboutController extends BaseController
      * @param string $xdmodType
      * @return Response
      */
-    #[Route('/release_notes/{xdmodType}', methods: ['GET'])]
+    #[Route('/about/release_notes/{xdmodType}', methods: ['GET'])]
     public function releaseNotes(string $xdmodType): Response
     {
         if (str_contains($xdmodType, '.')) {
@@ -169,8 +169,8 @@ class AboutController extends BaseController
      * @param Request $request
      * @return Response
      */
-    #[Route('/presentations', methods: ['GET'])]
-    #[Route('/presentations.html', methods: ['GET'])]
+    #[Route('/about/presentations', methods: ['GET'])]
+    #[Route('/about/presentations.html', methods: ['GET'])]
     public function teamPresentations(Request $request): Response
     {
         return $this->render('about/presentations.html.twig');
