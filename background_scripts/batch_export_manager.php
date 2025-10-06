@@ -83,12 +83,12 @@ try {
     $logger = Log::factory('batch-export', $logConf);
     $logger->info('Command: ' . implode(' ', array_map('escapeshellarg', $argv)));
     // NOTE: "process_start_time" is needed for the log summary.
-    $logger->notice(['message' => 'batch_export_manager start', 'process_start_time' => date('Y-m-d H:i:s')]);
+    $logger->notice('batch_export_manager start', ['process_start_time' => date('Y-m-d H:i:s')]);
     $batchProcessor = new BatchProcessor($logger);
     $batchProcessor->setDryRun($dryRun);
     $batchProcessor->processRequests();
     // NOTE: "process_end_time" is needed for the log summary.
-    $logger->notice(['message' => 'batch_export_manager end', 'process_end_time' => date('Y-m-d H:i:s')]);
+    $logger->notice('batch_export_manager end', ['process_end_time' => date('Y-m-d H:i:s')]);
     @flock($lockFileHandle, LOCK_UN);
     @fclose($lockFileHandle);
     @unlink($lockFile);

@@ -316,7 +316,7 @@ class Sge extends Shredder
                 $entryCount,
                 $line
             );
-            $this->logger->err($msg);
+            $this->logger->error($msg);
             return;
         }
 
@@ -436,7 +436,7 @@ class Sge extends Shredder
                 } catch (Exception $e) {
                     $msg = "Failed to parse '$key' value '$value': "
                         . $e->getMessage();
-                    $this->logger->err($msg);
+                    $this->logger->error($msg);
                 }
 
                 $value = $parsedValue;

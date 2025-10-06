@@ -3,6 +3,7 @@
 namespace CCR;
 
 use Exception;
+use Monolog\Formatter\LineFormatter;
 use Monolog\Handler\HandlerInterface;
 use Monolog\Handler\NativeMailerHandler;
 use Monolog\Handler\NullHandler;
@@ -98,15 +99,8 @@ class Log
         $ident = 'xdmod-logger',
         array $conf = array()
     ) {
-        $conf['lineFormat']
-            = isset($conf['lineFormat'])
-            ? $conf['lineFormat']
-            : self::LINE_FORMAT;
-
-        $conf['timeFormat']
-            = isset($conf['timeFormat'])
-            ? $conf['timeFormat']
-            :self::TIME_FORMAT;
+        $conf['lineFormat'] = $conf['lineFormat'] ?? self::LINE_FORMAT;
+        $conf['timeFormat'] = $conf['timeFormat'] ?? self::TIME_FORMAT;
 
         $logger = self::getLogger($ident, $conf);
 
@@ -118,13 +112,13 @@ class Log
                 | E_STRICT | E_DEPRECATED | E_USER_DEPRECATED;
 
             if ($e !== null && ($e['type'] & $mask) == 0) {
-                $logger->crit(
-                    array(
-                        'message' => $e['message'],
+                $logger->critical(
+                    $e['message'],
+                    [
                         'file'    => $e['file'],
                         'line'    => $e['line'],
-                        'type'    => $e['type'],
-                    )
+                        'type'    => $e['type']
+                    ]
                 );
             }
 
@@ -205,7 +199,7 @@ class Log
      *   - timeFormat:      The time format to be used when this handler writes a log entry.
      *
      * @param string $ident The unique string identifier for this handler's logger.
-     * @param array $conf   The configuration to be used when constructing this handler.
+     * @param array  $conf  The configuration to be used when constructing this handler.
      *
      * @return HandlerInterface
      *
@@ -213,10 +207,7 @@ class Log
      */
     protected static function getConsoleHandler($ident, array $conf)
     {
-        $consoleLogLevel
-            = isset($conf['consoleLogLevel'])
-            ? $conf['consoleLogLevel']
-            : self::getDefaultLogLevel('console');
+        $consoleLogLevel = $conf['consoleLogLevel'] ?? self::getDefaultLogLevel('console');
 
         $handler = new StreamHandler('php://stdout', self::convertToMonologLevel($consoleLogLevel));
         $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
@@ -235,7 +226,7 @@ class Log
      *   - timeFormat:      The time format to be used when this handler writes a log entry.
      *
      * @param string $ident The unique string identifier for this handlers Logger.
-     * @param array $conf   The configuration to be used when constructing this handler.
+     * @param array  $conf  The configuration to be used when constructing this handler.
      *
      * @return HandlerInterface
      *
@@ -243,18 +234,9 @@ class Log
      */
     protected static function getFileHandler($ident, array $conf)
     {
-        $fileLogLevel
-            = isset($conf['fileLogLevel'])
-            ? $conf['fileLogLevel']
-            : self::getDefaultLogLevel('file');
-
-        $file
-            = isset($conf['file'])
-            ? $conf['file']
-            : LOG_DIR . '/' . strtolower(preg_replace('/\W/', '_', $ident))
-            . '.log';
-
-        $filePermission = isset($conf['mode']) ? $conf['mode'] : 0660;
+        $fileLogLevel = $conf['fileLogLevel'] ?? self::getDefaultLogLevel('file');
+        $file = $conf['file'] ?? LOG_DIR . '/' . strtolower(preg_replace('/\W/', '_', $ident)) . '.log';
+        $filePermission = $conf['mode'] ?? 0660;
 
         $handler = new StreamHandler($file, self::convertToMonologLevel($fileLogLevel), true, $filePermission);
         $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
@@ -270,7 +252,7 @@ class Log
      *   - dbLogLevel: The log level at which this handler will generate an entry.
      *
      * @param string $ident The unique string identifier for this handlers Logger.
-     * @param array $conf   The configuration to be used when constructing this handler.
+     * @param array  $conf  The configuration to be used when constructing this handler.
      *
      * @return HandlerInterface
      *
@@ -278,12 +260,34 @@ class Log
      */
     protected static function getDbHandler($ident, array $conf)
     {
-        $dbLogLevel
-            = isset($conf['dbLogLevel'])
-            ? $conf['dbLogLevel']
-            : self::getDefaultLogLevel('db');
+        $dbLogLevel = $conf['dbLogLevel'] ?? self::getDefaultLogLevel('db');
 
-        return new CCRDBHandler(null, null, null, self::convertToMonologLevel($dbLogLevel));
+        $handler = new CCRDBHandler(null, null, null, self::convertToMonologLevel($dbLogLevel));
+
+        // This is one of the important changes to support the new version of Monolog, by setting the `format` to use
+        // the `%formatted%` variable that is populated by the processor we're adding to the handler we can ensure that
+        // we don't change the "normal" format and still get the json formatted information we expect to be logged to
+        // the db.
+        $handler->setFormatter(new LineFormatter('%formatted%'));
+
+        // This processor checks to see if a value has been set in the log records `extra` section called `message`.
+        // This key is populated by `CCR\Logger` and is the unchanged `$message` being logged. This let's us have access
+        // to the "raw" $message that was passed to the logger.
+        $processor = function ($record) {
+            $extraMessage = $record['extra']['message'] ?? null;
+
+            // Make sure that the contents of $record['formatted'] is json formatted for DBHandlers.
+            if (is_array($extraMessage)) {
+                $record['formatted'] = json_encode($extraMessage, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+            } else {
+                $record['formatted'] = json_encode(['message' => $record['message']], JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            }
+
+            return $record;
+        };
+        $handler->pushProcessor($processor);
+
+        return $handler;
     }
 
     /**
@@ -297,7 +301,7 @@ class Log
      *   - maxColumnWidth: The maximum column width that the message lines will have.
      *
      * @param string $ident The unique string identifier for this handlers Logger.
-     * @param array $conf   The configuration to be used when constructing this handler.
+     * @param array  $conf  The configuration to be used when constructing this handler.
      *
      * @return HandlerInterface
      *
@@ -305,26 +309,10 @@ class Log
      */
     protected static function getMailHandler($ident, array $conf)
     {
-        $mailLogLevel
-            = isset($conf['mailLogLevel'])
-            ? $conf['mailLogLevel']
-            : self::getDefaultLogLevel('mail');
-
-        $from
-            = isset($conf['emailFrom'])
-            ? $conf['emailFrom']
-            : self::getConfiguration('email_from');
-
-        $to
-            = isset($conf['emailTo'])
-            ? $conf['emailTo']
-            : self::getConfiguration('email_to');
-
-        $subject
-            = isset($conf['emailSubject'])
-            ? $conf['emailSubject']
-            : self::getConfiguration('email_subject');
-
+        $mailLogLevel = $conf['mailLogLevel'] ?? self::getDefaultLogLevel('mail');
+        $from = $conf['emailFrom'] ?? self::getConfiguration('email_from');
+        $to = $conf['emailTo'] ?? self::getConfiguration('email_to');
+        $subject = $conf['emailSubject'] ?? self::getConfiguration('email_subject');
         $maxColumnWidth = array_key_exists('maxColumnWidth', $conf) ? $conf['maxColumnWidth'] : 70;
 
         return new NativeMailerHandler($to, $subject, $from, self::convertToMonologLevel($mailLogLevel), true, $maxColumnWidth);
