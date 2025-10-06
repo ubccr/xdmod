@@ -243,10 +243,12 @@ class pdoAggregator extends aAggregator
 
         if ( is_array($this->parsedDefinitionFile->table_definition) ) {
             if ( count($this->parsedDefinitionFile->table_definition) > 1 ) {
-                $this->logger->warning(sprintf(
-                    "%s does not support multiple ETL destination tables, using first table",
-                    $this
-                ));
+                $this->logger->warning(
+                    sprintf(
+                        "%s does not support multiple ETL destination tables, using first table",
+                        $this
+                    )
+                );
             }
             $tableDefinition = $this->parsedDefinitionFile->table_definition;
             $this->parsedDefinitionFile->table_definition = array_shift($tableDefinition);
@@ -715,13 +717,15 @@ class pdoAggregator extends aAggregator
     {
         $time_start = microtime(true);
 
-        $this->logger->notice(array(
-            "message" => "aggregate start",
-            "action" => (string) $this,
-            "unit" => $aggregationUnit,
-            "start_date" => ( null === $this->currentStartDate ? "none" : $this->currentStartDate ),
-            "end_date" => ( null === $this->currentEndDate ? "none" : $this->currentEndDate )
-        ));
+        $this->logger->notice(
+            "aggregate start",
+            [
+                "action" => (string) $this,
+                "unit" => $aggregationUnit,
+                "start_date" => (null === $this->currentStartDate ? "none" : $this->currentStartDate),
+                "end_date" => (null === $this->currentEndDate ? "none" : $this->currentEndDate)
+            ]
+        );
 
         // Batching options
 
@@ -1056,16 +1060,19 @@ class pdoAggregator extends aAggregator
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->logger->notice(array("message"      => "aggregate end",
-                                    "action"       => (string) $this,
-                                    "unit"         => $aggregationUnit,
-                                    "periods"      => $numAggregationPeriods,
-                                    "start_date"   => ( null === $this->currentStartDate ? "none" : $this->currentStartDate ),
-                                    "end_date"     => ( null === $this->currentEndDate ? "none" : $this->currentEndDate ),
-                                    "start_time"   => $time_start,
-                                    "end_time"     => $time_end,
-                                    "elapsed_time" => round($time, 5)
-        ));
+        $this->logger->notice(
+            "aggregate end",
+            [
+                "action" => (string)$this,
+                "unit" => $aggregationUnit,
+                "periods" => $numAggregationPeriods,
+                "start_date" => (null === $this->currentStartDate ? "none" : $this->currentStartDate),
+                "end_date" => (null === $this->currentEndDate ? "none" : $this->currentEndDate),
+                "start_time" => $time_start,
+                "end_time" => $time_end,
+                "elapsed_time" => round($time, 5)
+            ]
+        );
 
         return $numAggregationPeriods;
 
@@ -1110,6 +1117,46 @@ class pdoAggregator extends aAggregator
         $optimize = $this->allowSingleDatabaseOptimization();
         $numPeriodsProcessed = 0;
 
+        if ( ! $this->options->truncate_destination && ! empty($aggregationPeriodList)) {
+            try {
+
+                $maxPeriodId = $aggregationPeriodList[0]['period_id'];
+                $minPeriodId = $aggregationPeriodList[count($aggregationPeriodList) - 1]['period_id'];
+                $deleteSql = null;
+
+                $restrictions = array();
+
+                if ( isset($this->parsedDefinitionFile->destination_query)
+                     && isset($this->parsedDefinitionFile->destination_query->overseer_restrictions) )
+                {
+                    // The destination query block allows us to specify overseer restrictions
+                    // that apply to operations on the destination table (e.g., deleting records
+                    // from the table during aggregation). Create a dummy query object using the
+                    // overseer restrictions from the destination_query block so we can apply
+                    // the same restrictions to the delete query as specified in the config
+                    // file.
+
+                    $query = (object) array(
+                        'records' => (object) array('junk' => 0),
+                        'joins' => array( (object) array('name' => "table", 'schema' => "schema") ),
+                        'overseer_restrictions' => $this->parsedDefinitionFile->destination_query->overseer_restrictions
+                    );
+
+                    $dummyQuery = new Query($query, $this->destinationEndpoint->getSystemQuoteChar(), $this->logger);
+                    $this->getEtlOverseerOptions()->applyOverseerRestrictions($dummyQuery, $this->utilityEndpoint, $this);
+                    $restrictions = $dummyQuery->getOverseerRestrictionValues();
+                }  // if ( isset($this->parsedDefinitionFile->destination_query) ... )
+
+                $this->deleteAggregationPeriodData($aggregationUnit, $minPeriodId, $maxPeriodId, $restrictions);
+
+            } catch (PDOException $e ) {
+                $this->logAndThrowException(
+                    "Error removing existing aggregation data",
+                    array('exception' => $e, 'sql' => $deleteSql)
+                );
+            }
+        }
+
         foreach ($aggregationPeriodList as $aggregationPeriodInfo) {
             $dateIdStartTime = microtime(true);
             $numRecords = 0;
@@ -1120,47 +1167,6 @@ class pdoAggregator extends aAggregator
             $availableParamKeys = Utilities::createPdoBindVarsFromArrayKeys($aggregationPeriodInfo);
             $availableParams = array_combine($availableParamKeys, $aggregationPeriodInfo);
             $periodId = $aggregationPeriodInfo['period_id'];
-            $dummyQuery = null;
-            $deleteSql = null;
-
-            // If we're not completely re-aggregating, delete existing entries from the aggregation table
-            // matching the periods that we are aggregating. Be sure to restrict resources if necessary.
-
-            if ( ! $this->options->truncate_destination ) {
-                try {
-
-                    $restrictions = array();
-
-                    if ( isset($this->parsedDefinitionFile->destination_query)
-                         && isset($this->parsedDefinitionFile->destination_query->overseer_restrictions) )
-                    {
-                        // The destination query block allows us to specify overseer restrictions
-                        // that apply to operations on the destination table (e.g., deleting records
-                        // from the table during aggregation). Create a dummy query object using the
-                        // overseer restrictions from the destination_query block so we can apply
-                        // the same restrictions to the delete query as specified in the config
-                        // file.
-
-                        $query = (object) array(
-                            'records' => (object) array('junk' => 0),
-                            'joins' => array( (object) array('name' => "table", 'schema' => "schema") ),
-                            'overseer_restrictions' => $this->parsedDefinitionFile->destination_query->overseer_restrictions
-                        );
-
-                        $dummyQuery = new Query($query, $this->destinationEndpoint->getSystemQuoteChar(), $this->logger);
-                        $this->getEtlOverseerOptions()->applyOverseerRestrictions($dummyQuery, $this->utilityEndpoint, $this);
-                        $restrictions = $dummyQuery->getOverseerRestrictionValues();
-                    }  // if ( isset($this->parsedDefinitionFile->destination_query) ... )
-
-                    $this->deleteAggregationPeriodData($aggregationUnit, $periodId, $restrictions);
-
-                } catch (PDOException $e ) {
-                    $this->logAndThrowException(
-                        "Error removing existing aggregation data",
-                        array('exception' => $e, 'sql' => $deleteSql)
-                    );
-                }
-            }  // if ( ! $this->options->truncate_destination )
 
             // Perform aggregation on this aggregation period
 
@@ -1201,7 +1207,7 @@ class pdoAggregator extends aAggregator
                     "unit"        => $aggregationUnit,
                     "num_records" => $numRecords
                 );
-                $this->logger->debug(array_merge($msg, $aggregationPeriodInfo));
+                $this->logger->debug('', array_merge($msg, $aggregationPeriodInfo));
 
                 // Insert the new rows.
 
@@ -1245,25 +1251,27 @@ class pdoAggregator extends aAggregator
      *
      * @param string $aggregationUnit The aggregation unit granularity that we are currently processing
      *    (e.g., day, month, etc.)
-     * @param string $aggregationUnitId The id of the current aggregation unit that we are processing
+     * @param string $aggregationPeriodStartId The id of the start of aggregation unit that we are processing
+     *    (e.g., specific day)
+     * @param string $aggregationPeriodEndId The id of the end of the aggregation unit that we are processing
      *    (e.g., specific day)
      * @param array $sqlRestrictions A list of additional restrictions to add to the SQL DELETE statement,
      *    such as restricting to a particular resource.
      *
      * @return int The total number of rows deleted from all tables.
      */
-
-    protected function deleteAggregationPeriodData($aggregationUnit, $aggregationPeriodId, array $sqlRestrictions = array())
+    protected function deleteAggregationPeriodData($aggregationUnit, $aggregationPeriodStartId, $aggregationPeriodEndId, array $sqlRestrictions = array())
     {
         $totalRowsDeleted = 0;
 
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
             $qualifiedDestTableName = $etlTable->getFullName();
             $deleteSql = sprintf(
-                "DELETE FROM %s WHERE %s_id = %s",
+                "DELETE FROM %s WHERE %s_id BETWEEN %s and %s",
                 $qualifiedDestTableName,
                 $aggregationUnit,
-                $aggregationPeriodId
+                $aggregationPeriodStartId,
+                $aggregationPeriodEndId
             );
 
             if ( count($sqlRestrictions) > 0 ) {

@@ -24,6 +24,14 @@ use ETL\DbModel\AggregationTable;
 
 class ManageAggregateTables extends ManageTables
 {
+
+    /**
+     * The aggregate table to be managed.
+     *
+     * @var AggregationTable
+     */
+    protected $etlDestinationTable;
+
     /* ------------------------------------------------------------------------------------------
      * Override aRdbmsDestinationAction::createDestinationTableObjects() because there are
      * multiple definition files referenced by this action and we will be generating a
@@ -130,10 +138,11 @@ class ManageAggregateTables extends ManageTables
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->logger->notice(array('action'       => (string) $this,
-                                    'start_time'   => $time_start,
-                                    'end_time'     => $time_end,
-                                    'elapsed_time' => round($time, 5)
-                                  ));
+        $this->logger->notice('', array(
+            'action' => (string)$this,
+            'start_time' => $time_start,
+            'end_time' => $time_end,
+            'elapsed_time' => round($time, 5)
+        ));
     }
 }

@@ -19,8 +19,8 @@ try {
     exit;
 } catch (Exception $e) {
     $logger = getLogger();
-    $logger->err($e->getMessage());
-    $logger->err($e->getTraceAsString());
+    $logger->error($e->getMessage());
+    $logger->error($e->getTraceAsString());
     exit(1);
 }
 
@@ -137,13 +137,10 @@ function main()
 
     $cmd = implode(' ', array_map('escapeshellarg', $argv));
     $logger->info("Command: $cmd");
-    $logger->debug(array_merge(
-        array('message' => 'Parsed args'),
-        $args
-    ));
+    $logger->debug('Parsed args', $args);
 
     if ($module === null) {
-        $logger->err('No module specified');
+        $logger->error('No module specified');
         exit(1);
     }
 

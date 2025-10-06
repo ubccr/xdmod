@@ -297,7 +297,7 @@ function compareTables($srcTable, $destTable)
     if ( false !== strpos($srcTable, '.') ) {
         $parts = explode('.', $srcTable);
         if ( 2 != count($parts) ) {
-            $logger->err("Too many dots in source table name: '$srcTable'");
+            $logger->error("Too many dots in source table name: '$srcTable'");
             return false;
         }
         list($srcSchema, $srcTable) = $parts;
@@ -306,7 +306,7 @@ function compareTables($srcTable, $destTable)
     if ( false !== strpos($destTable, '.') ) {
         $parts = explode('.', $destTable);
         if ( 2 != count($parts) ) {
-            $logger->err("Too many dots in destination table name: '$destTable'");
+            $logger->error("Too many dots in destination table name: '$destTable'");
             return false;
         }
         list($destSchema, $destTable) = $parts;
@@ -340,7 +340,7 @@ function compareTables($srcTable, $destTable)
     $numDestColumns = count($destTableColumns);
 
     if ( ! $scriptOptions['ignore-column-count'] && $numSrcColumns != $numDestColumns ) {
-        $logger->err(sprintf(
+        $logger->error(sprintf(
             "Column number mismatch %s (%d); dest %s (%d)",
             $qualifiedSrcTable,
             $numSrcColumns,
@@ -391,7 +391,7 @@ function compareTables($srcTable, $destTable)
     }
 
     if ( 0 != count($missingDestColumns) ) {
-        $logger->err(sprintf("%s missing columns: %s", $qualifiedDestTable, implode(', ', $missingDestColumns)));
+        $logger->error(sprintf("%s missing columns: %s", $qualifiedDestTable, implode(', ', $missingDestColumns)));
         return false;
     }
 
@@ -421,7 +421,7 @@ function compareTables($srcTable, $destTable)
         }
 
         if ( $srcInfo != $destInfo && ! $scriptOptions['ignore-column-type'] ) {
-            $logger->err(sprintf(
+            $logger->error(sprintf(
                 "Column mismatch (name=%s, type=%s, is_nullable=%s%s) != (name=%s, type=%s, is_nullable=%s%s)",
                 $srcCol,
                 $srcInfo['type'],
@@ -505,13 +505,13 @@ ORDER BY ordinal_position ASC";
         $stmt = $dbh->prepare($sql);
         $stmt->execute($params);
     } catch ( Exception $e ) {
-        $logger->err("Error retrieving column names for '$tableName': " . $e->getMessage());
+        $logger->error("Error retrieving column names for '$tableName': " . $e->getMessage());
         exit();
     }
 
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     if ( 0 == count($result) ) {
-        $logger->err("Table '$tableName' does not exist");
+        $logger->error("Table '$tableName' does not exist");
         return false;
     }
 
@@ -559,7 +559,7 @@ ORDER BY ordinal_position ASC";
         $stmt = $dbh->prepare($sql);
         $stmt->execute($params);
     } catch ( Exception $e ) {
-        $logger->err("Error retrieving column names for '$tableName': " . $e->getMessage());
+        $logger->error("Error retrieving column names for '$tableName': " . $e->getMessage());
         exit();
     }
 
@@ -567,7 +567,7 @@ ORDER BY ordinal_position ASC";
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     if ( 0 == count($result) ) {
-        $logger->err("Table '$tableName' does not exist or does not have a primary key");
+        $logger->error("Table '$tableName' does not exist or does not have a primary key");
         return $retval;
     }
 
@@ -599,13 +599,13 @@ function getTableRows($table, $schema)
         $stmt = $dbh->prepare($sql);
         $stmt->execute();
     } catch ( Exception $e ) {
-        $logger->err("Error retrieving table information for '$tableName': " . $e->getMessage());
+        $logger->error("Error retrieving table information for '$tableName': " . $e->getMessage());
         exit();
     }
 
     $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
     if ( 0 == count($result) ) {
-        $logger->err("Table '$tableName' does not exist");
+        $logger->error("Table '$tableName' does not exist");
         exit();
     }
 

@@ -26,7 +26,9 @@ ini_set('memory_limit', -1);
  * @var array
  */
 $supportedUpgrades = array(
-    '11.0.0' => '11.5.0'
+    '11.0.0' => '11.0.1',
+    '11.0.1' => '11.0.2',
+    '11.0.2' => '11.5.0'
 );
 
 /**
@@ -178,7 +180,7 @@ function main()
     } catch (Exception $e) {
         $msg = 'Upgrading from this version is not possible: '
             . $e->getMessage();
-        $logger->crit($msg);
+        $logger->critical($msg);
         exit(1);
     }
 

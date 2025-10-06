@@ -418,10 +418,7 @@ if ( $scriptOptions['dryrun']) {
 }
 
 if ( ! $showList)  {
-    $logger->notice(array(
-        'message'            => 'dw_extract_transform_load start',
-        'process_start_time' => date('Y-m-d H:i:s'),
-    ));
+    $logger->notice('dw_extract_transform_load start', ['process_start_time' => date('Y-m-d H:i:s')]);
 }
 
 try {
@@ -596,8 +593,7 @@ $overseerOptions->setResourceCodeToIdMapSql(sprintf("SELECT id, code from %s.res
 if ( count($scriptOptions['process-sections']) == 0 &&
      count($scriptOptions['actions']) == 0 ) {
     $logger->notice("No actions or sections requested, exiting.");
-    $logger->notice(array('message'          => 'dw_extract_transform_load end',
-                          'process_end_time' => date('Y-m-d H:i:s') ));
+    $logger->notice('dw_extract_transform_load end', ['process_end_time' => date('Y-m-d H:i:s')]);
     exit(0);
 }
 
@@ -622,8 +618,7 @@ try {
 
 // NOTE: "process_end_time" is needed for log summary."
 
-$logger->notice(array('message'          => 'dw_extract_transform_load end',
-                      'process_end_time' => date('Y-m-d H:i:s') ));
+$logger->notice('dw_extract_transform_load end', ['process_end_time' => date('Y-m-d H:i:s')]);
 
 exit(0);
 
@@ -636,7 +631,7 @@ exit(0);
 function log_error_and_exit($msg)
 {
     global $logger;
-    $logger->err($msg);
+    $logger->error($msg);
     fwrite(STDERR, $msg . PHP_EOL);
     exit(1);
 }  // log_error_and_exit()
