@@ -1,4 +1,6 @@
-# Open XDMoD Module Assets
+---
+title: Open XDMoD Module Assets
+---
 
 An Open XDMoD module may contain JavaScript and CSS assets that will be
 included in the portal or internal (admin) dashboard.

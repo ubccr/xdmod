@@ -4,7 +4,6 @@ namespace CCR\DB;
 
 use CCR\Log;
 use Exception;
-use CCR\DB\MySQLDB;
 use Psr\Log\LoggerInterface;
 use xd_utilities;
 
@@ -220,14 +219,16 @@ class MySQLHelper
      */
     public function executeStatement($stmt)
     {
-        $this->logger->info(array(
-            'message'   => 'Executing SQL statement',
-            'host'      => $this->db->_db_host,
-            'port'      => $this->db->_db_port,
-            'username'  => $this->db->_db_username,
-            'database'  => $this->db->_db_name,
-            'statement' => $stmt,
-        ));
+        $this->logger->info(
+            'Executing SQL statement',
+            [
+                'host' => $this->db->_db_host,
+                'port' => $this->db->_db_port,
+                'username' => $this->db->_db_username,
+                'database' => $this->db->_db_name,
+                'statement' => $stmt
+            ]
+        );
 
         $optionsFile = static::createPasswordFile($this->db->_db_password);
 
@@ -259,14 +260,16 @@ class MySQLHelper
      */
     public function executeFile($file)
     {
-        $this->logger->info(array(
-            'message'  => 'Executing SQL file',
-            'host'     => $this->db->_db_host,
-            'port'     => $this->db->_db_port,
-            'username' => $this->db->_db_username,
-            'database' => $this->db->_db_name,
-            'file'     => $file,
-        ));
+        $this->logger->info(
+            'Executing SQL file',
+            [
+                'host'     => $this->db->_db_host,
+                'port' => $this->db->_db_port,
+                'username' => $this->db->_db_username,
+                'database' => $this->db->_db_name,
+                'file' => $file
+            ]
+        );
 
         $optionsFile = static::createPasswordFile($this->db->_db_password);
 

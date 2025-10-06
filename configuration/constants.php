@@ -193,9 +193,7 @@ define('RESTRICTION_DATE_RANGE_ID', '/^[0-9]{1,2}$/');
 define('COLORS', file_get_contents(CONFIG_DIR.'/colors1.json'));
 
 /**
- * The latest version of Open XDMoD currently available to the public.
- * This value must be updated on xdmod.ccr.buffalo.edu whenever a new
- * version of Open XDMoD is released.
+ * The version of base software.
  */
 
 define('OPEN_XDMOD_VERSION', '_BUILD_DEFINED_OPEN_XDMOD_VERSION_');

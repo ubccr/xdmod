@@ -96,10 +96,7 @@ function build($realms, $logger){
             $filterListBuilder->buildAllLists();
         }
     } catch (Exception $e) {
-        $logger->crit(array(
-            'message'    => 'Filter list building failed: ' . $e->getMessage(),
-            'stacktrace' => $e->getTraceAsString(),
-        ));
+        $logger->critical('Filter list building failed: ' . $e->getMessage(), ['stacktrace' => $e->getTraceAsString()]);
         exit(1);
     }
 }

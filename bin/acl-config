@@ -246,7 +246,7 @@ function main()
 
     $log->debug("*** Conducting Database Verification...");
     if (!verifyDatabase()) {
-        $log->err("Unable to connect to the database, please check the following: \n\t - settings for 'database' in portal_settings.ini are correct.\n\t - the database identified by the 'database' section of portal_settings.ini is running, accepting connections, and that the user specified has connection privileges.");
+        $log->error("Unable to connect to the database, please check the following: \n\t - settings for 'database' in portal_settings.ini are correct.\n\t - the database identified by the 'database' section of portal_settings.ini is running, accepting connections, and that the user specified has connection privileges.");
         exit(1);
     }
     $log->debug("*** Database Verification Passed!");
@@ -519,7 +519,7 @@ function processResult(iDatabase $db, $module, $moduleData, $modules)
     }
 
     if ($modules === null) {
-        $log->err("Unable to process $module, missing module information. Is there a $module.json file in CONF_DIR/datawarehouse.d?");
+        $log->error("Unable to process $module, missing module information. Is there a $module.json file in CONF_DIR/datawarehouse.d?");
         return;
     }
 
@@ -758,7 +758,7 @@ SQL;
     if ($updated === 1) {
         $log->info("[SUCCESS] Associated Module and Module Version.");
     } else {
-        $log->err("[FAILURE] Unable to associate Module and Module Version.");
+        $log->error("[FAILURE] Unable to associate Module and Module Version.");
     }
 }
 
@@ -1836,7 +1836,7 @@ function verifyAclSetup()
     $invalidSetupSections += ( ! verifyConfigData() ? 1 : 0);
 
     if ($invalidSetupSections > 0) {
-        $log->err("*** Verification Failed!");
+        $log->error("*** Verification Failed!");
     } else {
         $log->notice("*** All Configuration File Verification Steps Passed!");
     }
@@ -1871,7 +1871,7 @@ function verifyJsonSyntax()
             $fileJson = Json::loadFile($primaryFilePath);
 
             if (null === $fileJson) {
-                $log->err("[FAIL] $primaryFile in an invalid json file");
+                $log->error("[FAIL] $primaryFile in an invalid json file");
                 $inalid [] = $primaryFile;
             } else {
                 $log->info("[SUCCESS] $primaryFile is a valid json file.");
@@ -1899,7 +1899,7 @@ function verifyJsonSyntax()
                         $log->info("[SUCCESS] $fileId is a valid json file.");
                     } catch (Exception $e) {
                         $reason = $e->getMessage();
-                        $log->err("[FAIL] $fileId is not a valid json file. Reason:\n $reason");
+                        $log->error("[FAIL] $fileId is not a valid json file. Reason:\n $reason");
                         $invalid [] = $filePath;
                     }
                 }
@@ -1909,7 +1909,7 @@ function verifyJsonSyntax()
 
     $invalidCount = count($invalid);
     if ($invalidCount > 0) {
-        $log->err("[FAIL] $invalidCount invalid files found");
+        $log->error("[FAIL] $invalidCount invalid files found");
         return false;
     } else {
         $log->info("[SUCCESS] all files valid");
@@ -1957,7 +1957,7 @@ function syncTableData(iDatabase $db, array $tables)
 
     $committed = $db->commit();
     if ($committed === false) {
-        $log->crit("[FAIL] Attempt to commit staging data to production tables has failed. Rollback has been initiated");
+        $log->critical("[FAIL] Attempt to commit staging data to production tables has failed. Rollback has been initiated");
         $rolledBack = $db->rollBack();
 
         // We throw an Exception so that we do not leave the db in an inconsistent state.
@@ -1992,14 +1992,14 @@ function verifyConfigData()
             \Configuration\XdmodConfiguration::assocArrayFactory("$section.json", CONFIG_DIR);
             $log->info("[SUCCESS] $section loaded successfully.");
         } catch (Exception $e) {
-            $log->err(sprintf('[FAIL] Unable to load section %s: %s', $section, $e->getMessage()));
+            $log->error(sprintf('[FAIL] Unable to load section %s: %s', $section, $e->getMessage()));
             $invalid[] = $section;
         }
     }
 
     $invalidCount = count($invalid);
     if ($invalidCount > 0) {
-        $log->err("[FAIL] $invalidCount invalid sections found");
+        $log->error("[FAIL] $invalidCount invalid sections found");
         return false;
     } else {
         $log->info("[SUCCESS] all sections valid");
