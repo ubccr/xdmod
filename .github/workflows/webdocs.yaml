@@ -1,0 +1,36 @@
+name: Build and Test Web Docs
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Setup node env
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Setup link checker
+        run: npm install broken-link-checker http-server
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Build
+        uses: actions/jekyll-build-pages@v1
+        with:
+          source: './docs'
+          destination: './_site'
+          verbose: true
+
+       - name: Validate Site
+         run: |
+           ./node_modules/.bin/http-server ./_site -p 8080 &
+           ./node_modules/.bin/blc --input http://localhost:8080 --exclude-external
