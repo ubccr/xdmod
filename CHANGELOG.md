@@ -11,6 +11,8 @@
       ([\#2065](https://github.com/ubccr/xdmod/pull/2065)).
     - Fix bug when reingesting cloud logs
       ([\#2072](https://github.com/ubccr/xdmod/pull/2072)).
+    - Fix out of memory error for batch data export processor
+      ([\#2085](https://github.com/ubccr/xdmod/pull/2085)).
 - Enhancements
     - Add support for PHP 8.2
       ([\#2041](https://github.com/ubccr/xdmod/pull/2041),
