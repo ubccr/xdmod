@@ -20,6 +20,11 @@ use Exception;
 
 class OracleDB extends PDODB
 {
+    /**
+     * A string that has an associated data structure used to describe a connection to a data source.
+     */
+    protected string $_dsn;
+
     /* ------------------------------------------------------------------------------------------
      * Set up the machinery. Oracle requires at minimum a database name (local naming,
      * this resolves to an entry in tnsnames.org) or a name, host, and optionally a port

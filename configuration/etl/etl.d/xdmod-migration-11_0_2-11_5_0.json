@@ -1,7 +1,7 @@
 {
     "module": "xdmod",
     "defaults": {
-        "migration-11_0_0-11_5_0": {
+        "migration-11_0_2-11_5_0": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
             "class": "DatabaseIngestor",
@@ -20,7 +20,7 @@
                 }
             }
         },
-        "storage-migration-11-0-0_11-5-0": {
+        "storage-migration-11_0_2-11_5_0": {
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
             "class": "ExecuteSql",
@@ -40,7 +40,7 @@
             }
         }
     },
-    "migration-11_0_0-11_5_0": [
+    "migration-11_0_2-11_5_0": [
         {
             "name": "update-moddb-tables",
             "description": "Update managed tables in moddb",
@@ -371,7 +371,7 @@
             }
         }
     ],
-    "storage-migration-11-0-0_11-5-0": [
+    "storage-migration-11_0_2-11_5_0": [
         {
             "name": "manageStorageTables",
             "description": "Changes to storage tables",

@@ -65,6 +65,19 @@ use Psr\Log\LoggerInterface;
 
 class TimeseriesQuery extends Query implements iQuery
 {
+    /**
+     * If set, is expected to be in the form:
+     * $sortInfo = [
+     *    [
+     *       "column_name" : "<value>",
+     *       "direction": "<value>"
+     *    ]
+     * ];
+     *
+     * @var array
+     */
+    public $sortInfo;
+
     public function getQueryType()
     {
         return 'timeseries';
@@ -214,7 +227,7 @@ class TimeseriesQuery extends Query implements iQuery
         }
 
         $format = <<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   %s
 FROM
   %s

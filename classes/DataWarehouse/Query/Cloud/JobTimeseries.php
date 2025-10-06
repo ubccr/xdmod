@@ -17,6 +17,14 @@ use CCR\DB;
 
 class JobTimeseries
 {
+
+    /**
+     * The database connection that is used by this class to execute queries.
+     *
+     * @var DB\iDatabase
+     */
+    protected $db;
+
     public function __construct() {
         $this->db = DB::factory('datawarehouse');
     }

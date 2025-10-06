@@ -77,7 +77,7 @@ class AggregateQueryTest extends \PHPUnit\Framework\TestCase
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -113,7 +113,7 @@ SQL;
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   systemaccount.username as 'username_id',
   systemaccount.username as 'username_short_name',
   systemaccount.username as 'username_name',
@@ -154,7 +154,7 @@ SQL;
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -201,7 +201,7 @@ SQL;
         // present.
 
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS running_job_count,
   COALESCE(SUM(agg.ended_job_count), 0) AS job_count
 FROM
@@ -232,7 +232,7 @@ SQL;
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -279,7 +279,7 @@ SQL;
 
         $generated = $query->getQueryString(10, 0); // Also test limit=10 and offset=0
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -305,7 +305,7 @@ SQL;
 SELECT
   COUNT(*) AS row_count
 FROM (
-  SELECT
+  SELECT STRAIGHT_JOIN
   SUM(1) AS total
   FROM
     modw_aggregates.jobfact_by_day agg,
@@ -350,7 +350,7 @@ SQL;
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   queue.id as 'queue_id',
   queue.id as 'queue_short_name',
   queue.id as 'queue_name',
@@ -398,7 +398,7 @@ SQL;
         $query->addOrderByAndSetSortInfo($data_description);
         $generated = $query->getQueryString();
         $expected =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   -9999 as 'none_id',
   'Screwdriver' as 'none_short_name',
   'Screwdriver' as 'none_name',
@@ -450,7 +450,7 @@ SQL;
     public function testAddWhereJoin()
     {
         $expected =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -523,7 +523,7 @@ SQL;
 SELECT
   COUNT(*) AS row_count
 FROM (
-  SELECT
+  SELECT STRAIGHT_JOIN
   SUM(1) AS total
   FROM
     modw_aggregates.jobfact_by_day agg,

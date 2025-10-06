@@ -24,6 +24,14 @@ use ETL\DbModel\AggregationTable;
 
 class ManageAggregateTables extends ManageTables
 {
+
+    /**
+     * The aggregate table to be managed.
+     *
+     * @var AggregationTable
+     */
+    protected $etlDestinationTable;
+
     /* ------------------------------------------------------------------------------------------
      * Override aRdbmsDestinationAction::createDestinationTableObjects() because there are
      * multiple definition files referenced by this action and we will be generating a
