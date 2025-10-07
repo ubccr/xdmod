@@ -41,7 +41,7 @@ defaults:
       sw_version: "11.0.2"
       rpm_version: "11.0.2-1"
       style: "effervescence"
-      tocversion: "v11_0toc"
+      tocversion: "toc"
 
 # Build settings
 markdown: kramdown

@@ -5,7 +5,7 @@ on:
     branches:
       - main
 jobs:
-  Explore-GitHub-Actions:
+  Build-Validate-Website-Documentation:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
