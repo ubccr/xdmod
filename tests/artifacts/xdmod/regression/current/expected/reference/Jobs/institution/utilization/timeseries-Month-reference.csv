@@ -1,0 +1,11 @@
+title
+"Screwdriver CPU Utilization (%): by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[screw - Screwdriver] Screwdriver CPU Utilization (%)","[wrench - Wrench] Screwdriver CPU Utilization (%)","[Unknown - Unknown Organization] Screwdriver CPU Utilization (%)"
+2016-12,8.2062,6.3380,1.7920
+2017-01,0.3348,0.0699,0.1608
+---------

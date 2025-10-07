@@ -1,0 +1,12 @@
+title
+"Number of Users: Active: by VM Size: Cores"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"VM Size: Cores","Number of Users: Active"
+1,3
+"2 - 3",2
+"4 - 7",2
+---------

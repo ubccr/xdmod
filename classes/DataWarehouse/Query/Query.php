@@ -26,6 +26,21 @@ use Realm\Statistic;
 
 class Query extends Loggable
 {
+
+    /**
+     * Parameters for this query.
+     *
+     * @var array
+     */
+    public $parameters;
+
+    /**
+     * The column / direction for sorting this queries results.
+     *
+     * @var array<int, array{column_name: mixed, direction: string}>
+     */
+    public $sortInfo;
+
     public $roleParameterDescriptions;
     public $filterParameterDescriptions;
     private $pdoparams;
@@ -728,7 +743,7 @@ SQL;
         $select_order_by = $this->getSelectOrderBy();
 
         $format = <<<SQL
-SELECT%s
+SELECT STRAIGHT_JOIN%s
   %s
 FROM
   %s%s
@@ -769,7 +784,7 @@ SQL;
 SELECT
   COUNT(*) AS row_count
 FROM (
-  SELECT
+  SELECT STRAIGHT_JOIN
   %s AS total
   FROM
     %s

@@ -1,0 +1,12 @@
+title
+"Number of Users: Active: by System Username"
+parameters
+
+start,end
+2018-04-18,2018-04-30
+---------
+"System Username","Number of Users: Active"
+setusca,1
+yerwa,1
+ylwwa,1
+---------

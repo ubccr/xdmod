@@ -1,0 +1,19 @@
+title
+"User Count (Number of Users): by PI Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+Day,"[screw - Screwdriver] User Count (Number of Users)","[Unknown - Unknown Organization] User Count (Number of Users)","[wrench - Wrench] User Count (Number of Users)"
+2018-12-27,231,79,33
+2018-12-28,231,79,33
+2018-12-29,231,80,33
+2018-12-30,231,80,33
+2018-12-31,231,80,33
+2019-01-01,231,80,33
+2019-01-02,231,80,33
+2019-01-03,231,80,33
+2019-01-04,231,80,33
+2019-01-05,230,80,33
+---------

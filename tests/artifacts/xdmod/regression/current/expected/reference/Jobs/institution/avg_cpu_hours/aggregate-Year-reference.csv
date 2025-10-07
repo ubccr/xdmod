@@ -1,0 +1,12 @@
+title
+"CPU Hours: Per Job: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+"Unknown - Unknown Organization",786.94978663,49.52677870651827
+"screw - Screwdriver",28.55610080,2.8980680381420907
+"wrench - Wrench",5.92502157,0.5646676923859103
+---------

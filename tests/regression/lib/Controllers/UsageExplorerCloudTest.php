@@ -56,7 +56,11 @@ class UsageExplorerCloudTest extends \PHPUnit\Framework\TestCase
             'cloud_wall_time',
             'cloud_avg_cores_reserved',
             'cloud_avg_memory_reserved',
-            'cloud_avg_rv_storage_reserved'
+            'cloud_avg_rv_storage_reserved',
+            'active_person_count',
+            'active_pi_count',
+            'active_resource_count',
+            'active_project_count'
         );
 
         $group_bys = array(
@@ -65,7 +69,9 @@ class UsageExplorerCloudTest extends \PHPUnit\Framework\TestCase
             'configuration',
             'resource',
             'person',
+            'institution',
             'pi',
+            'pi_institution',
             'username',
             'vm_size_memory',
             'vm_size',

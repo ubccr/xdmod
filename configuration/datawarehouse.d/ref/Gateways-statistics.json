@@ -89,13 +89,6 @@
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/min_processors"
     },
-    "normalized_avg_processors": {
-        "$overwrite": {
-            "description_html": "The percentage average size ${ORGANIZATION_NAME} ${REALM_NAME} job over total machine cores.<br><i>Normalized Job Size: </i>The percentage total number of processor cores used by a (parallel) job over the total number of cores on the machine.",
-            "name": "Job Size: Normalized via ${REALM_NAME}"
-        },
-        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/normalized_avg_processors"
-    },
     "running_job_count": {
         "$overwrite": {
             "description_html": "The total number of ${ORGANIZATION_NAME} ${REALM_NAME} jobs that are running.<br/><i>Job: </i>A scheduled process for a computer resource in a batch processing environment.",

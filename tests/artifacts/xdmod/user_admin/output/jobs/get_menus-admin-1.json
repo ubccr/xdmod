@@ -140,6 +140,20 @@
         "leaf": false
     },
     {
+        "text": "Jobs by PI Institution",
+        "id": "node=group_by&realm=Jobs&group_by=pi_institution",
+        "group_by": "pi_institution",
+        "query_group": "tg_usage",
+        "category": "Jobs",
+        "realm": "Jobs",
+        "defaultChartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "chartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "node_type": "group_by",
+        "iconCls": "menu",
+        "description": "PI Institution",
+        "leaf": false
+    },
+    {
         "text": "Jobs by QOS",
         "id": "node=group_by&realm=Jobs&group_by=qos",
         "group_by": "qos",
@@ -196,6 +210,20 @@
         "leaf": false
     },
     {
+        "text": "Jobs by Service Provider",
+        "id": "node=group_by&realm=Jobs&group_by=provider",
+        "group_by": "provider",
+        "query_group": "tg_usage",
+        "category": "Jobs",
+        "realm": "Jobs",
+        "defaultChartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "chartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "node_type": "group_by",
+        "iconCls": "menu",
+        "description": "Service Provider",
+        "leaf": false
+    },
+    {
         "text": "Jobs by System Username",
         "id": "node=group_by&realm=Jobs&group_by=username",
         "group_by": "username",
@@ -221,6 +249,20 @@
         "node_type": "group_by",
         "iconCls": "menu",
         "description": "User",
+        "leaf": false
+    },
+    {
+        "text": "Jobs by User Institution",
+        "id": "node=group_by&realm=Jobs&group_by=institution",
+        "group_by": "institution",
+        "query_group": "tg_usage",
+        "category": "Jobs",
+        "realm": "Jobs",
+        "defaultChartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "chartSettings": "{\"dataset_type\":\"aggregate\",\"display_type\":\"h_bar\",\"combine_type\":\"stack\",\"limit\":3,\"offset\":0,\"log_scale\":\"n\",\"show_legend\":\"y\",\"show_trend_line\":\"n\",\"show_error_bars\":\"n\",\"show_guide_lines\":\"y\",\"show_aggregate_labels\":\"n\",\"show_error_labels\":\"n\",\"enable_errors\":\"y\",\"enable_trend_line\":\"y\"}",
+        "node_type": "group_by",
+        "iconCls": "menu",
+        "description": "User Institution",
         "leaf": false
     },
     {
