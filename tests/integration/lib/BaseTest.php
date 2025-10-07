@@ -891,4 +891,14 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
             : $str
         );
     }
+
+    protected function log($message)
+    {
+        if (getenv('TEST_VERBOSE') === '1') {
+            echo "\n*****************************\n";
+            echo "$message\n";
+        }
+    }
+
+
 }

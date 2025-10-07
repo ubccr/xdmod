@@ -53,7 +53,7 @@ class WebServerLogFileTest extends TestCase
         $endpoint->connect();
         $numIterations = 0;
         foreach ($endpoint as $record) {
-            $this->assertSame($expected[$numIterations], $record);
+            $this->arrays_are_same($expected[$numIterations], $record);
             $numIterations++;
         }
         $this->assertSame(
@@ -110,5 +110,29 @@ class WebServerLogFileTest extends TestCase
             );
         }
         return $tests;
+    }
+
+    private function arrays_are_same( array $left, array $right, bool $exact = true)
+    {
+        if (count(array_diff(array_keys($left), array_keys($right))) > 0) {
+            $this->fail('Keys are different');
+        }
+        $differences = [];
+        foreach($left as $lkey => $lvalue) {
+            $ltype = gettype($lvalue);
+            $rtype = gettype($right[$lkey]);
+            if ($ltype !== $rtype) {
+                $differences []= sprintf("Expected $lkey to be %s got %s", $ltype, $rtype);
+                if ($exact && $lvalue !== $right[$lkey]) {
+                    $differences []= sprintf("Expected $lkey value to be %s got %s", $lvalue, $right[$lkey]);
+                }
+            }
+        }
+        if (count($differences) > 0) {
+            $this->fail(sprintf(
+                "Differences Found:\n%s",
+                implode("\n", $differences)
+            ));
+        }
     }
 }

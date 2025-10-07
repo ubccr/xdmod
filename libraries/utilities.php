@@ -428,11 +428,15 @@ EOF;
  * \filter_var($value, $filter, $options)
  */
 
-function filter_var($value, $filter = FILTER_DEFAULT, $options = null)
+function filter_var($value, $filter = FILTER_DEFAULT, $options = null): mixed
 {
-    return ( FILTER_VALIDATE_BOOLEAN == $filter && false === $value
-             ? false
-             : \filter_var($value, $filter, $options) );
+    if (FILTER_VALIDATE_BOOLEAN === $filter && false === $value) {
+        return false;
+    }
+    if (isset($options) && (is_int($options) || is_array($options))) {
+        return \filter_var($value, $filter, $options);
+    }
+    return \filter_var($value, $filter);
 }
 
 /**
@@ -445,7 +449,7 @@ function filter_var($value, $filter = FILTER_DEFAULT, $options = null)
  * @return A fully qualified path, with the base path prepended to a relative path
  */
 
-function qualify_path($path, $base_path)
+function qualify_path(string $path, string $base_path)
 {
     if ( 0 !== strpos($path, DIRECTORY_SEPARATOR) && null !== $base_path && "" != $base_path ) {
         $path = $base_path . DIRECTORY_SEPARATOR . $path;
@@ -471,7 +475,10 @@ function resolve_path($path)
     // If we don't limit to filly qualified paths then relative paths such as "../../foo"
     // are not properly resolved.
 
-    if ( 0 !== strpos($path, DIRECTORY_SEPARATOR) ) {
+    if (!isset($path)) {
+        return null;
+    }
+    if (!str_starts_with($path, DIRECTORY_SEPARATOR)) {
         return $path;
     }
 
