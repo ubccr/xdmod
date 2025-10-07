@@ -1,3 +1,4 @@
+---
 name: Validate Documentation
 
 on:
@@ -38,3 +39,6 @@ jobs:
         run: |
           ./node_modules/.bin/http-server ./_site -p 8080 &
           ./node_modules/.bin/blc --input http://localhost:8080 --recursive
+
+      - name: Check for unprocessed markdown files
+        run: find _site ! -name README.md -name \*.md | { ! grep '^'; }
