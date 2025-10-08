@@ -1,5 +1,5 @@
 ---
-title: Howto Enable Job Size Normalized
+title: HOWTO Restore the "Job Size: Normalized" Statistic
 ---
 The "Job Size: Normalized" statistic in the Jobs realm was removed from the default list of statistics in version 11.5.0 of Open XDMoD because the values of the statistic were incorrect if the resource size changed during the time period of the dataset. The values of the statistic were also not physically meaningful except when grouping or filtering by a single resource.
 
