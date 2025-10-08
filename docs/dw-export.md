@@ -60,7 +60,7 @@ ways this file is used.
 **NOTE**: The format of this file will likely change in the future.  If this
 file is modified and the format changes in a future version the file must be
 manually updated to use the new format and any changes must be re-applied.  The
-[Job Performance](supremm) module uses a different format and that is also
+[Job Performance][supremm] module uses a different format and that is also
 expected to change in the future.
 
 This is an example of the general structure of this file and the location of

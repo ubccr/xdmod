@@ -19,7 +19,7 @@ The `expiration_interval` setting in the `api_token` section of
 `portal_settings.ini` specifies how long an API token stays valid before it is
 automatically revoked. The value of this setting must follow [PHP relative
 date/time
-formats](https://www.php.net/manual/en/datetime.formats.relative.php).
+formats](https://www.php.net/manual/en/datetime.formats.php#datetime.formats.relative)
 
 ```ini
 [api_token]
