@@ -168,8 +168,8 @@ jobs:
             docker cp xdmod:/root/phpunit ~/phpunit
             docker cp xdmod:/tmp/screenshots /tmp/screenshots
             mkdir ~/project/log ~/project/log/xdmod ~/project/log/php-fpm
-            docker cp xdmod:/var/log/xdmod ~/project/log/xdmod
-            docker cp xdmod:/var/log/php-fpm/ ~/project/log/php-fpm
+            docker cp xdmod:/var/log/xdmod/. ~/project/log/xdmod
+            docker cp xdmod:/var/log/php-fpm/. ~/project/log/php-fpm
             docker cp playwright:/root/xdmod/tests/playwright/test-results /tmp/screenshots
       - run:
           name: Copy Test results for Operating System
