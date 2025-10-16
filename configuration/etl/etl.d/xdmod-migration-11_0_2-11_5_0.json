@@ -330,26 +330,26 @@
                 }
             }
         },
-            {
-                "class": "DatabaseIngestor",
-                "name": "IngestInitialRealms",
-                "definition_file": "acls/realms.json",
-                "disable_keys": true,
-                "endpoints": {
-                    "source": {
-                        "type": "mysql",
-                        "name": "shredder",
-                        "config": "database",
-                        "schema": "mod_shredder"
-                    },
-                    "destination": {
-                        "type": "mysql",
-                        "name": "realm",
-                        "config": "database",
-                        "schema": "moddb"
-                    }
+        {
+            "class": "DatabaseIngestor",
+            "name": "IngestInitialRealms",
+            "definition_file": "acls/realms.json",
+            "disable_keys": true,
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "shredder",
+                    "config": "database",
+                    "schema": "mod_shredder"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "realm",
+                    "config": "database",
+                    "schema": "moddb"
                 }
-            },
+            }
+        },
         {
             "class": "DatabaseIngestor",
             "name": "IngestResourcefactRealmRelations",
@@ -365,6 +365,30 @@
                 "destination": {
                     "type": "mysql",
                     "name": "MODDB",
+                    "config": "database",
+                    "schema": "moddb"
+                }
+            }
+        },
+        {
+            "name": "update-person-id-mapping",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "description": "Switch users with person_id = -1 to -2, except for 'Public User'.",
+            "sql_file_list": [
+                "migration/update_person_id_mapping.sql"
+            ],
+            "endpoints": {
+                "source": {
+                    "type": "mysql",
+                    "name": "moddb",
+                    "config": "database",
+                    "schema": "moddb"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "moddb",
                     "config": "database",
                     "schema": "moddb"
                 }

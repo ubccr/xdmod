@@ -1,3 +1,7 @@
+---
+title: Cloud Metrics
+---
+
 ## Prerequisites
 - A full working installation of XDMoD. [XDMoD install instructions](install.html)
 
