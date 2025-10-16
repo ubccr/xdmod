@@ -337,37 +337,6 @@ function getParameterIn($param, $haystack)
 }
 
 /**
- * Create an XML error message
- *
- * @param $dom Document object model that the error will be inserted into
- * @param $nodeRoot Root of the error node
- * @param $code Error code
- * @param $message Error message
- *
- * @returns true if successful
- */
-function generateError($dom, $nodeRoot, $code, $message)
-{
-    \xd_domdocument\createElement($dom, $nodeRoot, "code", $code);
-    \xd_domdocument\createElement($dom, $nodeRoot, "reason", $message);
-
-    return true;
-}
-
-/**
- * Print a message, then "delete" it.
- */
-function printAndDelete($message)
-{
-    $message_length = strlen($message);
-
-    print $message;
-    print str_repeat(chr(8), $message_length);
-
-    return $message_length;
-}
-
-/**
  * Check for a center logo.
  *
  * @param bool $apply_css If true output CSS for the logo.
