@@ -477,7 +477,7 @@ JS;
 
     <?php /* Modules used by both XSEDE and Open XDMoD. */ ?>
 
-    <?php if ($userLoggedIn && isset($features['user_dashboard']) && filter_var($features['user_dashboard'], FILTER_VALIDATE_BOOLEAN) && $user->getPersonID() != -1): ?>
+    <?php if ($userLoggedIn && isset($features['user_dashboard']) && filter_var($features['user_dashboard'], FILTER_VALIDATE_BOOLEAN) && $user->getPersonID() != PERSON_ID_UNASSOCIATED): ?>
         <script type="text/javascript" src="gui/js/modules/Dashboard.js"></script>
     <?php else: ?>
         <script type="text/javascript" src="gui/js/modules/Summary.js"></script>

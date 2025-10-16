@@ -39,7 +39,7 @@ class Cloudresourcespecs extends Shredder
     public function shredDirectory($directory)
     {
         if (!is_dir($directory)) {
-            $this->logger->crit("'$directory' is not a directory");
+            $this->logger->critical("'$directory' is not a directory");
             return false;
         }
 

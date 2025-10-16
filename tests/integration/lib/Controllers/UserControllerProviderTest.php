@@ -78,7 +78,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
                 'admin@localhost',
                 'User',
                 'User',
-                '-1'
+                '-2'
             ]
         ];
         foreach ($expectedResultsByRole as $role => $expectedResults) {

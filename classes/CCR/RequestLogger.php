@@ -61,30 +61,32 @@ class RequestLogger
             $retval['data']['timestamp'] = date("Y-m-d H:i:s", $requestTime);
         }
 
+        $message = $retval['message'];
+        unset($retval['message']);
         switch ($level) {
             case \CCR\Log::EMERG:
-                $this->logger->emergency($retval);
+                $this->logger->emergency($message, $retval);
                 break;
             case Log::ALERT:
-                $this->logger->alert($retval);
+                $this->logger->alert($message, $retval);
                 break;
             case \CCR\Log::CRIT:
-                $this->logger->critical($retval);
+                $this->logger->critical($message, $retval);
                 break;
             case \CCR\Log::ERR:
-                $this->logger->error($retval);
+                $this->logger->error($message, $retval);
                 break;
             case Log::WARNING:
-                $this->logger->warning($retval);
+                $this->logger->warning($message, $retval);
                 break;
             case \CCR\Log::NOTICE:
-                $this->logger->notice($retval);
+                $this->logger->notice($message, $retval);
                 break;
             case \CCR\Log::INFO:
-                $this->logger->info($retval);
+                $this->logger->info($message, $retval);
                 break;
             case \CCR\Log::DEBUG:
-                $this->logger->debug($retval);
+                $this->logger->debug($message, $retval);
                 break;
         }
     }

@@ -75,11 +75,13 @@ class ArrayIngestor implements Ingestor
             try {
                 $destStatementPrepared->execute($srcRow);
             } catch (PDOException $e) {
-                $this->_logger->err(array(
-                    'message'    => $e->getMessage(),
-                    'stacktrace' => $e->getTraceAsString(),
-                    'source_row' => json_encode($srcRow),
-                ));
+                $this->_logger->error(
+                    $e->getMessage(),
+                    [
+                        'stacktrace' => $e->getTraceAsString(),
+                        'source_row' => json_encode($srcRow)
+                    ]
+                );
             }
             $rowsAffected += $destStatementPrepared->rowCount();
         }
@@ -89,10 +91,7 @@ class ArrayIngestor implements Ingestor
                 $this->_logger->debug("Post ingest update: $updateStatement");
                 $this->_dest_db->handle()->prepare($updateStatement)->execute();
             } catch (PDOException $e) {
-                $this->_logger->err(array(
-                    'message'    => $e->getMessage(),
-                    'stacktrace' => $e->getTraceAsString(),
-                ));
+                $this->_logger->error($e->getMessage(), ['stacktrace' => $e->getTraceAsString()]);
                 $this->_dest_db->handle()->rollback();
                 return;
             }
@@ -103,15 +102,17 @@ class ArrayIngestor implements Ingestor
         $time_end = microtime(true);
         $time = $time_end - $time_start;
 
-        $this->_logger->notice(array(
-            'message'          => 'Finished ingestion',
-            'class'            => get_class($this),
-            'records_examined' => $sourceRows,
-            'records_loaded'   => $rowsAffected,
-            'start_time'       => $time_start,
-            'end_time'         => $time_end,
-            'duration'         => number_format($time, 2) . ' s',
-        ));
+        $this->_logger->notice(
+            'Finished ingestion',
+            [
+                'class'            => get_class($this),
+                'records_examined' => $sourceRows,
+                'records_loaded' => $rowsAffected,
+                'start_time' => $time_start,
+                'end_time' => $time_end,
+                'duration' => number_format($time, 2) . ' s'
+            ]
+        );
     }
 
     public function setLogger(LoggerInterface $logger)

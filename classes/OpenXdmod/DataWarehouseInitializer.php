@@ -489,15 +489,17 @@ class DataWarehouseInitializer
         $endDate,
         $append = true
     ) {
-        $this->logger->info(array(
-            'message'    => 'start',
-            'class'      => get_class($this),
-            'function'   => __FUNCTION__,
-            'aggregator' => $aggregator,
-            'start_date' => $startDate,
-            'end_date'   => $endDate,
-            'append'     => $append,
-        ));
+        $this->logger->info(
+            'start',
+            [
+                'class'      => get_class($this),
+                'function'   => __FUNCTION__,
+                'aggregator' => $aggregator,
+                'start_date' => $startDate,
+                'end_date'   => $endDate,
+                'append'     => $append
+            ]
+        );
 
         foreach ($this->aggregationUnits as $aggUnit) {
             $this->logger->info("Aggregating by $aggUnit");
@@ -515,11 +517,7 @@ class DataWarehouseInitializer
         $this->logger->info("Building filter lists");
         $agg->updateFilters();
 
-        $this->logger->info(array(
-            'message'  => 'end',
-            'class'    => get_class($this),
-            'function' => __FUNCTION__,
-        ));
+        $this->logger->info('end', ['class' => get_class($this), 'function' => __FUNCTION__]);
     }
 
     /**
