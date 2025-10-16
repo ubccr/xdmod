@@ -183,7 +183,7 @@ jobs:
             fi
       - run:
           name: Check for php-fpm errors
-          command: test ! -s ~/project/log/php-fpm/www-error.log
+          command: if [ -s ~/project/log/php-fpm/www-error.log ]; then echo "Errors seen in php fpm log"; false; fi
       - run:
           name: Ensure that no PHP command-line errors were generated
           command: >
