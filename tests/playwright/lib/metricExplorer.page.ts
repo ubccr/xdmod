@@ -80,7 +80,7 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.newChart.modalDialog.ok());
         await expect(this.page.locator(this.newChart.modalDialog.box)).toBeHidden();
         await expect(this.page.locator(this.newChart.modalDialog.noDataMessage)).toBeVisible();
-        await expect(this.page.locator(this.mask)).toBeHidden();
+        await expect(this.page.locator(this.mask)).toHaveCount(0);
     }
 
     /**
@@ -106,7 +106,7 @@ class MetricExplorer extends BasePage{
         await this.endDateLocator.click();
         await this.page.fill(this.endDate, end);
         await this.page.click(this.toolbar.buttonByName('Refresh'));
-        await this.page.locator(this.mask).isHidden();
+        await expect(this.page.locator(this.mask)).toHaveCount(0);
     }
 
     /**
@@ -215,7 +215,6 @@ class MetricExplorer extends BasePage{
 
         let addFilter = this.page.locator(this.dataSeriesDef.addFilter())
         await addFilter.isVisible();
-        await this.page.screenshot({path: 'add_filter_visible.png'});
         await addFilter.click();
         await this.page.click(this.dataSeriesDef.filter(filter));
         await expect(this.page.locator(this.dataSeriesDef.name(name))).toBeVisible();
@@ -238,7 +237,7 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.dataSeriesDef.apply);
         await this.page.click(this.dataSeriesDef.header());
         await this.page.click(this.dataSeriesDef.addButton);
-        await this.page.locator(this.chart.legendContent(name)).waitFor({state:'detached'});
+        await this.page.locator(this.chart.legendContent(name)).first().waitFor({state:'detached'});
     }
 
     /**
@@ -356,7 +355,9 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.toolbar.buttonByName('Load Chart'), {delay:250});
         await this.page.locator(this.load.dialog).waitFor({state:'visible'});
         await expect(this.page.locator(this.load.dialog)).toBeVisible();
-        await this.page.click(this.load.chartByName(name));
+        const chartLocator = this.page.locator(this.load.chartByName(name));
+        await expect(chartLocator).toBeVisible();
+        await chartLocator.click();
         await this.page.locator(this.load.dialog).waitFor({state:'hidden'});
         await expect(this.page.locator(this.load.dialog)).toBeHidden();
         await this.page.locator(this.catalog.expandButton).waitFor({state:'visible', timeout: 10000});
@@ -605,7 +606,7 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.optionsAggregate);
         await this.clickLogo();
         await expect(this.page.locator(this.optionsAggregate)).toBeHidden();
-        await expect(this.page.locator(this.mask)).toBeHidden();
+        await expect(this.page.locator(this.mask)).toHaveCount(0);
     }
 
     /**
@@ -623,13 +624,11 @@ class MetricExplorer extends BasePage{
      * Click on the first data point
      */
     async clickFirstDataPoint() {
-        const elems = await this.page.locator(this.chart.seriesMarkers(0));
-        // Data points are returned in reverse order.
-        // for some unknown reason the first point click gets intercepted by the series
-        // menu.
-        await elems.nth(0).click({force: true});
-        // const num = await elems.count();
-        // await elems.nth(num - 1).click({force: true});
+        // normally we'd click on the element itself, but I was running into issues w/ another
+        // element intercepting the click, so I opted to use the page.mouse.click w/ coordinates.
+        const dataPoint = this.page.locator(this.chart.seriesMarkers(0)).nth(0);
+        let box = await dataPoint.boundingBox();
+        await this.page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     }
 
     /**

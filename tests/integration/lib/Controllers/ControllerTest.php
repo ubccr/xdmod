@@ -471,7 +471,7 @@ class ControllerTest extends BaseTest
 
         $expectedFile = $expected['file'];
         $expectedFileName = parent::getTestFiles()->getFile('controllers', $expectedFile);
-        $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'text/html; charset=UTF-8';
+        $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'application/json';
         $expectedHttpCode = array_key_exists('http_code', $expected) ? $expected['http_code'] : 200;
 
         $data = array_merge(
@@ -484,7 +484,11 @@ class ControllerTest extends BaseTest
         $helper = $options['helper'];
 
         $response = $helper->post("internal_dashboard/controllers/mailer.php", null, $data);
-
+        if (($expectedContentType !== $response[1]['content_type']) || ($expectedHttpCode !== $response[1]['http_code'])) {
+            echo var_export($response, true) . "\n";
+            echo var_export($data, true) . "\n";
+            echo "$expectedFileName\n";
+        }
         $this->assertEquals($expectedContentType, $response[1]['content_type']);
         $this->assertEquals($expectedHttpCode, $response[1]['http_code']);
 
@@ -503,7 +507,11 @@ class ControllerTest extends BaseTest
         }
 
         $expected = JSON::loadFile($expectedFileName);
-
+        if ($expected !== $actual) {
+            echo var_export($response, true) . "\n";
+            echo var_export($data, true) . "\n";
+            echo "$expectedFileName\n";
+        }
         $this->assertEquals($expected, $actual);
 
         if (isset($options['last'])) {
