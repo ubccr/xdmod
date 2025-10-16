@@ -1,4 +1,6 @@
-# Acl Table Overview
+---
+title: Acl Table Overview
+---
 What follows is a general overview of what tables have been created to support 
 the modular Acl framework. This will include what information they are meant to 
 contain, what purpose they fulfill, as well as how they relate to other tables in
