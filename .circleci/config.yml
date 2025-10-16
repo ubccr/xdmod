@@ -177,13 +177,19 @@ jobs:
             docker cp "playwright:/root/xdmod/tests/playwright/test_results-<< parameters.string_os >>.xml" ~/phpunit
       - run:
           name: Check for webserver errors
-          command: >
+          command: |
             if [ -e ~/project/log/xdmod/apache-error.log ]; then
                 test "$(fgrep -v ' [ssl:warn] ' ~/project/log/apache-error.log | wc -l)" = 0
             fi
       - run:
           name: Check for php-fpm errors
-          command: if [ -s ~/project/log/php-fpm/www-error.log ]; then echo "Errors seen in php fpm log"; false; fi
+          command: |
+            if [ -s ~/project/log/php-fpm/www-error.log ]; then
+                echo "Errors seen in php fpm log"; false;
+            else
+                echo "Hmm the php fpm log file is apparently empty"
+                cat ~/project/log/php-fpm/www-error.log
+            fi
       - run:
           name: Ensure that no PHP command-line errors were generated
           command: >
