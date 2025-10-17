@@ -238,7 +238,7 @@ class DataEndpoint
         if ( ! array_key_exists($options->type, self::$endpointClassMap) ) {
             $msg = sprintf("%s: Undefined data endpoint type: '%s'", __CLASS__, $options->type);
             if ( null !== $logger ) {
-                $logger->err($msg);
+                $logger->error($msg);
             }
             throw new Exception($msg);
         }
@@ -251,7 +251,7 @@ class DataEndpoint
         if ( ! $endpoint instanceof iDataEndpoint ) {
             $msg = sprintf("%s: %s does not implement iDataEndpoint", __CLASS__, $className);
             if ( null !== $logger ) {
-                $logger->err($msg);
+                $logger->error($msg);
             }
             throw new Exception($msg);
         }

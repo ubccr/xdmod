@@ -9,7 +9,6 @@
  * @package  CCR.About.Roadmap
  * @author   Ryan Rathsam <ryanrath@buffalo.edu>
  * @license  https://opensource.org/licenses/LGPL-3.0 LGPL-3.0
- * @link     https://xdmod.ccr.buffalo.edu
  */
 
 require_once __DIR__ . '/../../configuration/linker.php';

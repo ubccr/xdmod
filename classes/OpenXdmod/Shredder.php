@@ -316,7 +316,7 @@ class Shredder
         $this->logger->notice("Shredding directory '$dir'");
 
         if (!is_dir($dir)) {
-            $this->logger->err("'$dir' is not a directory");
+            $this->logger->error("'$dir' is not a directory");
             return false;
         }
 
@@ -374,7 +374,7 @@ class Shredder
         $this->logger->notice("Shredding file '$file'");
 
         if (!is_file($file)) {
-            $this->logger->err("'$file' is not a file");
+            $this->logger->error("'$file' is not a file");
             return false;
         }
 
@@ -404,11 +404,7 @@ class Shredder
 
                 // skip empty lines
                 if ($line === '') {
-                    $this->logger->debug([
-                        'message'     => 'Skipping blank line',
-                        'file'        => $file,
-                        'line_number' => $lineNumber
-                    ]);
+                    $this->logger->debug('Skipping blank line', ['file' => $file, 'line_number' => $lineNumber]);
                     continue;
                 }
 
@@ -421,12 +417,14 @@ class Shredder
                     // Ignore duplicate key errors.
                     if ($e->getCode() == 23000) {
                         $msg = 'Skipping duplicate data: ' . $e->getMessage();
-                        $this->logger->debug(array(
-                            'message'     => $msg,
-                            'file'        => $file,
-                            'line_number' => $lineNumber,
-                            'line'        => $line,
-                        ));
+                        $this->logger->debug(
+                            $msg,
+                            [
+                                'file'        => $file,
+                                'line_number' => $lineNumber,
+                                'line'        => $line
+                            ]
+                        );
                         $duplicateCount++;
                         continue;
                     } else {
@@ -853,12 +851,14 @@ class Shredder
         if ($walltime === null) { $invalidCount++; }
 
         if ($invalidCount > 1) {
-            $this->logger->err(array(
-                'message'    => 'Failed to correct job times',
-                'start_time' => $startTime,
-                'end_time'   => $endTime,
-                'walltime'   => $walltime,
-            ));
+            $this->logger->error(
+                'Failed to correct job times',
+                [
+                    'start_time' => $startTime,
+                    'end_time'   => $endTime,
+                    'walltime'   => $walltime
+                ]
+            );
 
             return null;
         }
