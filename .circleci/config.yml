@@ -191,6 +191,14 @@ jobs:
                 echo "PHP fpm error log file is empty"
             fi
       - run:
+          name: Check for etl_overseer errors
+          command: |
+            if grep -q error ~/project/log/xdmod/etl_overseer.log
+            then
+                echo "Errors seen in etl_overseer.log"
+                false;
+            fi
+      - run:
           name: Ensure that no PHP command-line errors were generated
           command: |
             docker exec xdmod /bin/bash -c "if [ -s /var/log/php_errors.log ]; then cat /var/log/php_errors.log; false; fi"
