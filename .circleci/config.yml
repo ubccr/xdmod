@@ -192,8 +192,8 @@ jobs:
             fi
       - run:
           name: Ensure that no PHP command-line errors were generated
-          command: >
-            if [ -e ~/project/log/php-fpm/error.log ]; then test `fgrep -v 'vendor/phpunit/phpunit/src' ~/project/log/php-fpm/error.log | wc -l` = 0; fi
+          command: |
+            docker exec pensive_boyd /bin/bash -c "if [ -s /var/log/php_errors.log ]; then cat /var/log/php_errors.log; false; fi"
       - store_artifacts:
           path: /tmp/screenshots
       - store_artifacts:
