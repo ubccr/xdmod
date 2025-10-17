@@ -479,7 +479,7 @@ SQL;
                 ':module_name' => $module
             );
 
-            $log->debug($params);
+            $log->debug('', $params);
 
             $modified = $db->execute($query, $params);
             $inserted += $modified;
@@ -1034,7 +1034,7 @@ SQL;
         ':module_name' => $module
     );
     $log->debug($query);
-    $log->debug($params);
+    $log->debug('', $params);
 
     if ($dryRun) {
         $log->info("[SUCCESS] Processed Acl Type [ Module: $module, Name: $type, Display: $aclTypeDisplay]");
@@ -1137,7 +1137,7 @@ SQL;
             ':level' => $level,
             ':filter_override' => ( $filterOverride ? 1 : 0 )
         );
-        $log->debug($params);
+        $log->debug('', $params);
 
         if ($dryRun) {
             $log->info("[SUCCESS] Processed Acl Hierarchy: $id");
@@ -1543,9 +1543,9 @@ SQL;
     $output = $databaseHelper->executeStatement($bulkload);
 
     if (count($output) > 0) {
-        $this->logger->warning($bulkload);
+        $log->warning($bulkload);
         foreach ($output as $line) {
-            $this->logger->warning($line);
+            $log->warning($line);
         }
     }
 
@@ -1624,7 +1624,7 @@ SQL;
     );
 
     $log->debug($query);
-    $log->debug($params);
+    $log->debug('', $params);
 
     if ($dryRun) {
         $log->info($successMsg);
