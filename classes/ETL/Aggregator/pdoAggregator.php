@@ -1119,11 +1119,7 @@ class pdoAggregator extends aAggregator
 
         if ( ! $this->options->truncate_destination && ! empty($aggregationPeriodList)) {
             try {
-
-                $maxPeriodId = $aggregationPeriodList[0]['period_id'];
-                $minPeriodId = $aggregationPeriodList[count($aggregationPeriodList) - 1]['period_id'];
                 $deleteSql = null;
-
                 $restrictions = array();
 
                 if ( isset($this->parsedDefinitionFile->destination_query)
