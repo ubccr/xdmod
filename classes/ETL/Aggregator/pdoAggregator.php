@@ -1147,7 +1147,7 @@ class pdoAggregator extends aAggregator
                     $restrictions = $dummyQuery->getOverseerRestrictionValues();
                 }  // if ( isset($this->parsedDefinitionFile->destination_query) ... )
 
-                $this->deleteAggregationPeriodData($aggregationUnit, $minPeriodId, $maxPeriodId, $restrictions);
+                $this->deleteAggregationPeriodData($aggregationUnit, $aggregationPeriodList, $restrictions);
 
             } catch (PDOException $e ) {
                 $this->logAndThrowException(
@@ -1260,18 +1260,18 @@ class pdoAggregator extends aAggregator
      *
      * @return int The total number of rows deleted from all tables.
      */
-    protected function deleteAggregationPeriodData($aggregationUnit, $aggregationPeriodStartId, $aggregationPeriodEndId, array $sqlRestrictions = array())
+    protected function deleteAggregationPeriodData($aggregationUnit, array $aggregationPeriodList, array $sqlRestrictions = array())
     {
         $totalRowsDeleted = 0;
+        $aggregationTimePeriods = implode(',', array_column($aggregationPeriodList, "period_id"));
 
         foreach ( $this->etlDestinationTableList as $etlTableKey => $etlTable ) {
             $qualifiedDestTableName = $etlTable->getFullName();
             $deleteSql = sprintf(
-                "DELETE FROM %s WHERE %s_id BETWEEN %s and %s",
+                "DELETE FROM %s WHERE %s_id IN (%s)",
                 $qualifiedDestTableName,
                 $aggregationUnit,
-                $aggregationPeriodStartId,
-                $aggregationPeriodEndId
+                $aggregationTimePeriods
             );
 
             if ( count($sqlRestrictions) > 0 ) {
