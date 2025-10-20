@@ -1,5 +1,5 @@
 ---
-site: Oracle Data Endpoint
+title: Oracle Data Endpoint
 ---
 
 The Oracle data endpoint requires that Oracle client libraries are installed and the oci8 extension

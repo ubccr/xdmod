@@ -10,7 +10,7 @@ Open Source Licenses
 The following libraries are licensed using [OSI-approved licenses][osi] except
 where denoted. These software products are free for commercial use.
 
-- [Ext JS 3.4.1.1](http://www.sencha.com/products/extjs/), which is
+- [Ext JS 3.4.1.1](https://www.sencha.com/products/extjs/), which is
   available under the [GPL 3.0][gpl3].
 - [Zend Framework 1.12.0](http://framework.zend.com/), which is available
   under the [New BSD License][new-bsd].
@@ -19,7 +19,7 @@ where denoted. These software products are free for commercial use.
   which is available under the [MIT License][mit].
 - [RSVP.js](https://github.com/tildeio/rsvp.js), which is available
   under the [MIT License][mit].
-- [Silex](http://silex.sensiolabs.org), which is available under the
+- [Silex](https://github.com/silexphp/Silex), which is available under the
   [MIT License][mit].
 - [SimpleSAMLphp](https://simplesamlphp.org), which is available under the
   [LGPL 2.1][lgpl2.1].
@@ -37,20 +37,20 @@ where denoted. These software products are free for commercial use.
   under the [Creative Commons Attribution 3.0 License][cc-by-3.0].
 - [Ext.ux.Printer](https://github.com/edspencer/Ext.ux.Printer), which is
   available under the [MIT License][mit].
-- [Ext.ux.MessageWindow](http://extjs.com/forum/showthread.php?t=48135), which
+- [Ext.ux.MessageWindow](https://forum.sencha.com/forum/showthread.php?48135-Ext.ux.MessageWindow), which
   is available under the [LGPL 3.0][lgpl3].
-- [PasswordStrengthMeter.js](http://geekwisdom.com), which is available under
+- [PasswordStrengthMeter.js](https://web.archive.org/web/20210715002116/http://archive.geekwisdom.com/dyn/passwdmeter.html), which is available under
   the [MIT License][mit].
-- [number-functions.js](http://www.xaprb.com/blog/2006/01/05/javascript-number-formatting/),
+- [number-functions.js](https://web.archive.org/web/20161030032830/http://www.xaprb.com/blog/2006/01/05/javascript-number-formatting)
   which is available under the [LGPL 2.1][lgpl2.1].
 - [console-polyfill](https://github.com/paulmillr/console-polyfill), which is
   available under the [MIT License][mit].
 - [reCAPTCHA PHP Library](https://developers.google.com/recaptcha/old/docs/php),
   which is available under the [MIT License][mit].
-- \*[Ext.ux.form.GroupComboBox](https://www.sencha.com/forum/showthread.php?45412-Ext-ux-form-GroupComboBox),
+- \*[Ext.ux.form.GroupComboBox](https://forum.sencha.com/forum/showthread.php?45412-Ext-ux-form-GroupComboBox)
   which is available under a "BSD" license (it is not clear which BSD license
   is being referred to).
-- [composer/installers](https://composer.github.io/installers), which is
+- [composer/installers](https://github.com/composer/installers), which is
   available under the [MIT License][mit].
 - [composer/ca-bundle](https://github.com/composer/ca-bundle), which is
   available under the [MIT License][mit].
