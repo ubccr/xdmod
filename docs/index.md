@@ -61,7 +61,7 @@ Jeanette Sperhac, Thomas Yearke, Ryan Rathsam, Martins Innus, Cynthia D. Corneli
 James C. Browne, William L. Barth, Richard T. Evans,
 "Open XDMoD: A Tool for the Comprehensive Management of High-Performance Computing Resources",
 *Computing in Science &amp; Engineering*, Vol 17, Issue 4, 2015, pp. 52-62.
-[10.1109/MCSE.2015.68](http://dx.doi.org/10.1109/MCSE.2015.68)
+[10.1109/MCSE.2015.68](https://doi.org/10.1109/MCSE.2015.68)
 
 License
 -------
