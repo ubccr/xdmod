@@ -4,6 +4,7 @@ namespace RegressionTests\Controllers;
 
 use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
+use ReflectionClass;
 
 class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
 {
@@ -424,11 +425,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
     private function generateFilterTests()
     {
         // Generate test scenario for filter tests.
-        $baseConfig = array(
-            array('realm' => 'Jobs', 'metric' => 'total_cpu_hours', 'date' => '2016-12-31'),
-            array('realm' => 'Storage', 'metric' => 'avg_logical_usage', 'date' => '2018-12-28'),
-            array('realm' => 'Cloud', 'metric' => 'cloud_core_time', 'date' => '2019-06-26')
-        );
+        $baseConfig = static::getFilterTestBaseConfig();
 
         $output = array();
 
@@ -475,9 +472,37 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
         return $output;
     }
 
+    /**
+     * This method is overridden by modules (SUPREMM, OnDemand).
+     */
+    protected static function getFilterTestBaseConfig()
+    {
+        return [
+            [
+                'realm' => 'Jobs',
+                'metric' => 'total_cpu_hours',
+                'date' => '2016-12-31'
+            ],
+            [
+                'realm' => 'Storage',
+                'metric' => 'avg_logical_usage',
+                'date' => '2018-12-28'
+            ],
+            [
+                'realm' => 'Cloud',
+                'metric' => 'cloud_core_time',
+                'date' => '2019-06-26'
+            ]
+        ];
+    }
+
     public function filterTestsProvider()
     {
-        $data_file = realpath(__DIR__ . '/../../../artifacts/xdmod/regression/chartFilterTests.json');
+        $testClass = new ReflectionClass($this);
+        $data_file = realpath(
+            dirname($testClass->getFilename())
+            . '/../../../artifacts/xdmod/regression/chartFilterTests.json'
+        );
         if (file_exists($data_file)) {
             $inputs = json_decode(file_get_contents($data_file), true);
         } else {
