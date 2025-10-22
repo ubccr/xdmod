@@ -69,6 +69,7 @@
       ([\#2033](https://github.com/ubccr/xdmod/pull/2033)).
     - Update the hostname of the version check API
       ([\#2023](https://github.com/ubccr/xdmod/pull/2023)).
+    - Remove legacy code ([\#2102](https://github.com/ubccr/xdmod/pull/2102)).
 
 ## 2025-08-19 v11.0.2
 
