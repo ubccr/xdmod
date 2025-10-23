@@ -216,7 +216,6 @@
         "files": [
             "configuration/constants.php",
             "libraries/response.php",
-            "libraries/debug.php",
             "libraries/web_message.php",
             "libraries/rest.php",
             "libraries/versioning.php",
@@ -225,9 +224,7 @@
             "libraries/dashboard.php",
             "libraries/security.php",
             "libraries/regression.php",
-            "libraries/conversions.php",
             "libraries/controller.php",
-            "libraries/domdocument.php",
             "libraries/charting.php"
         ],
         "classmap": [
