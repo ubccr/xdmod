@@ -1,5 +1,5 @@
 const selectors = {
-    mask: '.ext-el-mask',
+    mask: '//body/div[@class="ext-el-mask"]',
     logoutLink: '#logout_link',
     logo: '.xtb-text.logo93',
     tab: '#main_tab_panel__metric_explorer',
