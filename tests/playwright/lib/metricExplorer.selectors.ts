@@ -39,7 +39,7 @@ const selectors = {
             const mynumber = number + 1;
             return '.x-menu-floating:not(.x-hide-offsets) .x-grid3-body > div:nth-child(' + mynumber + ')';
         },
-        dialog: '//div[contains(@class,"x-grid3-header-inner")]//div[contains(@class,"x-grid3-hd-name") and text() = "Chart Name"]/ancestor::node()[8]',
+        dialog: '//div[contains(@class,"x-grid3-header-inner")]//div[contains(@class,"x-grid3-hd-name") and text() = "Chart Name"]/ancestor::node()[8]/ancestor::div[contains(@class, "x-menu") and not(contains(@style, "visibility: hidden"))]',
         chartByName: function (name) {
             return selectors.load.dialog + '//div[contains(@class,"x-grid3-cell-inner") and text() = "' + name + '"]';
         }
