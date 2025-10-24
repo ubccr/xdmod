@@ -15,6 +15,8 @@
       ([\#2085](https://github.com/ubccr/xdmod/pull/2085)).
     - Display Summary tab instead of Dashboard tab for unassociated users
       ([\#2082](https://github.com/ubccr/xdmod/pull/2082)).
+    - Change area plots to only show tooltip on markers
+      ([\#2077](https://github.com/ubccr/xdmod/pull/2077)).
 - Enhancements
     - Add support for PHP 8.2
       ([\#2041](https://github.com/ubccr/xdmod/pull/2041),
