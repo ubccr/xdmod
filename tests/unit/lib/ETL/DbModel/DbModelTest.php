@@ -108,7 +108,7 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
         $expected = "CREATE TABLE IF NOT EXISTS `table_no_schema` (
   `column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment',
   `column2` varchar(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'
-);";
+) CHARSET = utf8 COLLATE = utf8_unicode_ci;";
         $this->assertEquals($expected, $generated);
 
         // SQL with schema
@@ -117,7 +117,7 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
         $expected = "CREATE TABLE IF NOT EXISTS `my_schema`.`table_no_schema` (
   `column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment',
   `column2` varchar(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'
-);";
+) CHARSET = utf8 COLLATE = utf8_unicode_ci;";
         $this->assertEquals($expected, $generated);
     }
 

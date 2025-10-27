@@ -32,4 +32,4 @@ CREATE TABLE ${DESTINATION_SCHEMA}.`shredded_job_slurm` (
   `node_list` mediumtext NOT NULL,
   PRIMARY KEY (`shredded_job_slurm_id`),
   UNIQUE KEY `job` (`cluster_name`(20),`job_id`,`job_array_index`,`submit_time`,`end_time`)
-) ENGINE=InnoDB//
+) ENGINE=InnoDB CHARACTER SET utf8 COLLATE utf8_unicode_ci//
