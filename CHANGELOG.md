@@ -17,6 +17,9 @@
       ([\#2082](https://github.com/ubccr/xdmod/pull/2082)).
     - Change area plots to only show tooltip on markers
       ([\#2077](https://github.com/ubccr/xdmod/pull/2077)).
+    - Use UTF-8 character encoding for database tables to fix display of
+      non-ASCII characters
+      ([\#1948](https://github.com/ubccr/xdmod/pull/1948)).
 - Enhancements
     - Add support for PHP 8.2
       ([\#2041](https://github.com/ubccr/xdmod/pull/2041),
