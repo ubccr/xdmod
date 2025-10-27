@@ -61,6 +61,8 @@
       realm ([\#1979](https://github.com/ubccr/xdmod/pull/1979)).
     - Add support for ingesting Slurm logs in JSON format
       ([\#1963](https://github.com/ubccr/xdmod/pull/1963)).
+    - Add support for date URL parameters in the Usage tab
+      ([\#2059](https://github.com/ubccr/xdmod/pull/2059)).
 - Documentation
     - Update list of publications and presentations
       ([\#2080](https://github.com/ubccr/xdmod/pull/2080)).
