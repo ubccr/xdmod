@@ -3,7 +3,6 @@
   "table_definition": {
     "name": "domains",
     "engine": "InnoDB",
-    "charset": "utf8",
     "comment": "Which domains are currently being tracked by the Cloud realm",
     "columns": [
       {
@@ -23,6 +22,7 @@
         "name": "name",
         "type": "varchar(64)",
         "nullable": false,
+        "collation": "utf8_unicode_ci",
         "comment": "The human readable internal name, as received from the resource."
       }
     ],

@@ -1,6 +1,6 @@
 services:
     xdmod:
-        image: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.9.20231119-v11.0.0-1.0-03
+        image: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.10.20240528-v11.0.2-3-01
         container_name: xdmod
         hostname: xdmod
         networks:
@@ -16,7 +16,7 @@ services:
         tty: true
         command: sleep infinity
     playwright:
-        image:  mcr.microsoft.com/playwright:v1.51.1-jammy
+        image:  mcr.microsoft.com/playwright:v1.56.1-jammy
         hostname: playwright
         container_name: playwright
         networks:

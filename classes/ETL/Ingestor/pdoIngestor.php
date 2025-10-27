@@ -615,6 +615,7 @@ class pdoIngestor extends aIngestor
 
             if ( $this->options->force_load_data_infile_replace_into ) {
                 $loadStatement = "LOAD DATA LOCAL INFILE '$infileName' replace into table $qualifiedDestTableName "
+                   . "CHARACTER SET utf8 "
                     . "FIELDS TERMINATED BY " . sprintf("0x%02x", ord($this->fieldSeparator))
                     . " OPTIONALLY ENCLOSED BY " . sprintf("0x%02x", ord($this->stringEnclosure))
                     . " ESCAPED BY " . sprintf("0x%02x", ord($this->escapeChar))
@@ -639,6 +640,7 @@ class pdoIngestor extends aIngestor
                 $loadStatement = "CREATE TABLE $tmpTable LIKE $qualifiedDestTableName; "
                     . "ALTER TABLE $tmpTable DISABLE KEYS; "
                     . "LOAD DATA LOCAL INFILE '$infileName' INTO TABLE $tmpTable "
+                   . "CHARACTER SET utf8 "
                     . "FIELDS TERMINATED BY " . sprintf("0x%02x", ord($this->fieldSeparator))
                     . " OPTIONALLY ENCLOSED BY " . sprintf("0x%02x", ord($this->stringEnclosure))
                     . " ESCAPED BY " . sprintf("0x%02x", ord($this->escapeChar))

@@ -1,5 +1,5 @@
 const selectors = {
-    mask: '.ext-el-mask',
+    mask: '//body/div[@class="ext-el-mask"]',
     logoutLink: '#logout_link',
     logo: '.xtb-text.logo93',
     tab: '#main_tab_panel__metric_explorer',
@@ -180,7 +180,7 @@ const selectors = {
         titleCancelButton: 'div.x-menu.x-menu-floating.x-layer.x-menu-nosep[style*="visibili    ty: visible"] table.x-btn.x-btn-noicon.x-box-item:last-child button',
         contextMenu: {
             menuByTitle: function (title) {
-                return '//div[contains(@class, "x-menu x-menu-floating") and contains(@style    , "visibility: visible;")]//span[contains(@class, "menu-title") and contains(text(), "' + title + '"    )]//ancestor::node()[4]/ul';
+                return '//div[contains(@class, "x-menu x-menu-floating") and contains(@style, "visibility: visible;")]//span[contains(text(), "' + title + '")]//ancestor::node()[4]/ul';
             },
             menuItemByText: function (menuTitle, itemText) {
                 return selectors.chart.contextMenu.menuByTitle(menuTitle) + '//li/a//span[text()="' + itemText + '"]';

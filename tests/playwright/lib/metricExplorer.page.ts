@@ -80,7 +80,7 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.newChart.modalDialog.ok());
         await expect(this.page.locator(this.newChart.modalDialog.box)).toBeHidden();
         await expect(this.page.locator(this.newChart.modalDialog.noDataMessage)).toBeVisible();
-        await expect(this.page.locator(this.mask)).toBeHidden();
+        await expect(this.page.locator(this.mask)).toHaveCount(0);
     }
 
     /**
@@ -106,7 +106,7 @@ class MetricExplorer extends BasePage{
         await this.endDateLocator.click();
         await this.page.fill(this.endDate, end);
         await this.page.click(this.toolbar.buttonByName('Refresh'));
-        await this.page.locator(this.mask).isHidden();
+        await expect(this.page.locator(this.mask)).toHaveCount(0);
     }
 
     /**
@@ -214,7 +214,7 @@ class MetricExplorer extends BasePage{
         await this.openDataSeriesDefinitionFromDataPoint();
 
         let addFilter = this.page.locator(this.dataSeriesDef.addFilter())
-        await addFilter.isVisible();
+        await expect(addFilter).toBeVisible();
         await this.page.screenshot({path: 'add_filter_visible.png'});
         await addFilter.click();
         await this.page.click(this.dataSeriesDef.filter(filter));
@@ -268,7 +268,7 @@ class MetricExplorer extends BasePage{
      */
     async clear() {
         await this.page.reload();
-        await this.page.isVisible(this.logoutLink);
+        await expect(this.page.locator(this.logoutLink)).toBeVisible();
     }
 
     /**
@@ -328,7 +328,7 @@ class MetricExplorer extends BasePage{
      */
     async addDataViaMenu(maskName, n) {
         await this.page.locator(maskName).isHidden();
-        await this.catalogContainerLocator.isVisible();
+        await expect(this.catalogContainerLocator).toBeVisible();
         await this.page.click(this.addDataButton);
         await this.page.click(this.toolbar.addData('Jobs'));
         await this.page.click(this.toolbar.addDataGroupBy(n));
@@ -465,7 +465,7 @@ class MetricExplorer extends BasePage{
      */
     async verifyEditChartTitle() {
         await this.page.click(this.chart.title());
-        await expect(this.page.isVisible(this.chart.titleInput));
+        await expect(this.page.locator(this.chart.titleInput)).toBeVisible();
         const titleValue = await this.page.locator(this.chart.titleInput).inputValue();
         await expect(typeof(titleValue)).toEqual('string');
         await expect(titleValue).toEqual(this.newTitle);
@@ -489,7 +489,7 @@ class MetricExplorer extends BasePage{
      */
     async setChartTitleViaChart(title) {
         await this.page.click(this.chart.title());
-        await expect(this.page.locator(this.chart.titleInput)).isVisible();
+        await expect(this.page.locator(this.chart.titleInput)).toBeVisible();
         await this.page.clearElement(this.chart.titleInput);
         await this.page.fill(this.chart.titleInput, title);
         await this.page.click(this.chart.titleOkButton);
@@ -605,7 +605,7 @@ class MetricExplorer extends BasePage{
         await this.page.click(this.optionsAggregate);
         await this.clickLogo();
         await expect(this.page.locator(this.optionsAggregate)).toBeHidden();
-        await expect(this.page.locator(this.mask)).toBeHidden();
+        await expect(this.page.locator(this.mask)).toHaveCount(0);
     }
 
     /**
@@ -623,13 +623,11 @@ class MetricExplorer extends BasePage{
      * Click on the first data point
      */
     async clickFirstDataPoint() {
-        const elems = await this.page.locator(this.chart.seriesMarkers(0));
-        // Data points are returned in reverse order.
-        // for some unknown reason the first point click gets intercepted by the series
-        // menu.
-        await elems.nth(0).click({force: true});
-        // const num = await elems.count();
-        // await elems.nth(num - 1).click({force: true});
+        // normally we'd click on the element itself, but I was running into issues w/ another
+        // element intercepting the click, so I opted to use the page.mouse.click w/ coordinates.
+        const dataPoint = this.page.locator(this.chart.seriesMarkers(0)).nth(0);
+        let box = await dataPoint.boundingBox();
+        await this.page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
     }
 
     /**
