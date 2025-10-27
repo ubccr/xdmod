@@ -1,5 +1,5 @@
 const selectors ={
-    mask: '.ext-el-mask',
+    mask: '//body/div[@class="ext-el-mask"]',
     tab: function(tabId) {
         return '//div[contains(@class, "x-tab-strip-wrap")]//li[@id="main_tab_panel__' + tabId + '"]';
     },
