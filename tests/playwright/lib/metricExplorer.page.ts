@@ -214,7 +214,7 @@ class MetricExplorer extends BasePage{
         await this.openDataSeriesDefinitionFromDataPoint();
 
         let addFilter = this.page.locator(this.dataSeriesDef.addFilter())
-        await addFilter.isVisible();
+        await expect(addFilter).toBeVisible();
         await this.page.screenshot({path: 'add_filter_visible.png'});
         await addFilter.click();
         await this.page.click(this.dataSeriesDef.filter(filter));
@@ -268,7 +268,7 @@ class MetricExplorer extends BasePage{
      */
     async clear() {
         await this.page.reload();
-        await this.page.isVisible(this.logoutLink);
+        await expect(this.page.locator(this.logoutLink)).toBeVisible();
     }
 
     /**
@@ -328,7 +328,7 @@ class MetricExplorer extends BasePage{
      */
     async addDataViaMenu(maskName, n) {
         await this.page.locator(maskName).isHidden();
-        await this.catalogContainerLocator.isVisible();
+        await expect(this.catalogContainerLocator).toBeVisible();
         await this.page.click(this.addDataButton);
         await this.page.click(this.toolbar.addData('Jobs'));
         await this.page.click(this.toolbar.addDataGroupBy(n));
@@ -465,7 +465,7 @@ class MetricExplorer extends BasePage{
      */
     async verifyEditChartTitle() {
         await this.page.click(this.chart.title());
-        await expect(this.page.isVisible(this.chart.titleInput));
+        await expect(this.page.locator(this.chart.titleInput)).toBeVisible();
         const titleValue = await this.page.locator(this.chart.titleInput).inputValue();
         await expect(typeof(titleValue)).toEqual('string');
         await expect(titleValue).toEqual(this.newTitle);
@@ -489,7 +489,7 @@ class MetricExplorer extends BasePage{
      */
     async setChartTitleViaChart(title) {
         await this.page.click(this.chart.title());
-        await expect(this.page.locator(this.chart.titleInput)).isVisible();
+        await expect(this.page.locator(this.chart.titleInput)).toBeVisible();
         await this.page.clearElement(this.chart.titleInput);
         await this.page.fill(this.chart.titleInput, title);
         await this.page.click(this.chart.titleOkButton);

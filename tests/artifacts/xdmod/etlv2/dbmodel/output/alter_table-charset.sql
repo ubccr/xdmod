@@ -1,6 +1,5 @@
 ALTER TABLE `test_db_model`
-CHARSET = utf8mb4,
-COLLATE = utf8mb4_general_ci,
+CONVERT TO CHARACTER SET utf8mb4  COLLATE utf8mb4_general_ci,
 DROP INDEX `fk_instance`,
 ADD INDEX `fk_instance` USING BTREE (`instance_id`, `inferred`);
 ALTER TABLE `test_db_model`

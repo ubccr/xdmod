@@ -137,6 +137,11 @@ jobs:
           name: Run Component Tests
           command: docker exec -w /root/xdmod xdmod /root/xdmod/tests/component/runtests.sh --junit-output-dir /root/phpunit
       - run:
+          name: 'Run Post Install / Upgrade Tests'
+          command: |
+            docker exec -w /root/xdmod xdmod /root/xdmod/tests/post/bootstrap.sh
+            docker exec -w /root/xdmod xdmod /root/xdmod/tests/post/runtests.sh
+      - run:
           name: Update the HTTPD config file
           command: docker exec xdmod sed -i 's/ServerName localhost/ServerName xdmod/g' /etc/httpd/conf.d/xdmod.conf
       - run:
