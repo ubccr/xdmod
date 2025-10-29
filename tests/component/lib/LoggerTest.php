@@ -73,8 +73,8 @@ class LoggerTest extends BaseTest
         $logger->$level($message, $context);
 
         $logoutput = $db->query("SELECT priority, message FROM mod_logger.log_table WHERE ident = 'log-test' AND id > :start_id ORDER BY id ASC", $initial_vals[0]);
-	    $this->assertJsonStringEqualsJsonString($expectedJsonString, $logoutput[0]['message']);
-	    $this->assertEquals($expectedPriority, $logoutput[0]['priority']);
+        $this->assertJsonStringEqualsJsonString($expectedJsonString, $logoutput[0]['message']);
+        $this->assertEquals($expectedPriority, $logoutput[0]['priority']);
     }
 
     public function testDbExceptionFormat()
@@ -94,7 +94,8 @@ class LoggerTest extends BaseTest
 
         $logger = Log::factory($ident, $conf);
 
-        $logger->error('', array('other' => new \Exception('Test Exception'))); $exline = __LINE__;
+        $logger->error('', array('other' => new \Exception('Test Exception')));
+        $exline = __LINE__ - 1;
 
         $logoutput = $db->query("SELECT priority, message FROM mod_logger.log_table WHERE ident = '" . $ident . "' AND id > :start_id ORDER BY id ASC", $initial_vals[0]);
 
@@ -108,7 +109,7 @@ class LoggerTest extends BaseTest
 
         $this->assertEquals('Exception', $exceptionSerialization['other']['class']);
         $this->assertEquals('Test Exception', $exceptionSerialization['other']['message']);
-        $this->assertEquals( __FILE__ . ":$exline", $exceptionSerialization['other']['file']);
+        $this->assertEquals(__FILE__ . ":$exline", $exceptionSerialization['other']['file']);
     }
 
     public function testCombinedOutput()

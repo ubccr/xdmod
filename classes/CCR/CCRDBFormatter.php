@@ -24,5 +24,4 @@ class CCRDBFormatter extends NormalizerFormatter
 
         return json_encode($outdata, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
-
 }
