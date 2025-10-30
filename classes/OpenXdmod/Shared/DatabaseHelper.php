@@ -46,7 +46,7 @@ class DatabaseHelper
             $settings['xdmod_host']
         );
         $console->displayMessage(
-                'rows retuned' . $rows
+            'rows retuned' . $rows
         );
         if ($rows == false) {
             $console->displayMessage(
