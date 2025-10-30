@@ -380,7 +380,7 @@ class MySQLHelper
             return true;
         } else {
             $msg = 'Failed to check for existence of user: '
-                . implode("\n", array_map(function($row) {
+                . implode("\n", array_map(function ($row) {
                     return $row[0] . ' ' . $row[1];
                 }, $output));
             throw new Exception($msg);
