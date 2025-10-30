@@ -168,7 +168,7 @@ jobs:
                 command: docker cp xdmod:/root/code_coverage ~/code_coverage
 
       - run:
-          name: Copy Test Results into Unit
+          name: Copy Test Results from Container to Host
           command: |
             docker cp xdmod:/root/phpunit ~/phpunit
             docker cp xdmod:/tmp/screenshots /tmp/screenshots
@@ -176,10 +176,12 @@ jobs:
             docker cp xdmod:/var/log/xdmod/. ~/project/log/xdmod
             docker cp xdmod:/var/log/php-fpm/. ~/project/log/php-fpm
             docker cp playwright:/root/xdmod/tests/playwright/test-results /tmp/screenshots
+          when: always
       - run:
           name: Copy Test results for Operating System
           command: |
             docker cp "playwright:/root/xdmod/tests/playwright/test_results-<< parameters.string_os >>.xml" ~/phpunit
+          when: always
       - run:
           name: Check for webserver errors
           command: |
