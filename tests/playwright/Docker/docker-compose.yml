@@ -1,6 +1,7 @@
 services:
     xdmod:
-        image: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.10.20240528-v11.0.2-3-01
+        build:
+          context: xdmod
         container_name: xdmod
         hostname: xdmod
         networks:
@@ -10,9 +11,6 @@ services:
         ports:
             - 9006:443
             - 7000:7000
-        volumes:
-          - ./xdmod/root/bin/services:/root/bin/services
-          - ./xdmod/root/my.cnf:/root/.my.cnf:ro
         environment:
             XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
             XDMOD_IS_CORE: true
@@ -20,15 +18,14 @@ services:
         tty: true
         command: sleep infinity
     mariadb:
-      image: mariadb:10.3.39
+      build:
+        context: mariadb
       container_name: mariadb
       hostname: mariadb
       networks:
         - xdmod_default
       environment:
         MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
-      volumes:
-        - ./mariadb/etc/mysql/mariadb.conf.d/05-skipcache.cnf:/etc/mysql/mariadb.conf.d/05-skipcache.cnf:ro
       ports:
         - "3306:3306"
     playwright:
