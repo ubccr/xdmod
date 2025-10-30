@@ -1,6 +1,6 @@
 services:
     xdmod:
-        image: tools-int-01.ccr.xdmod.org/xdmod:arm64-rockylinux8.10.20240528-v11.0.2-3-01
+        image: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.10.20240528-v11.0.2-3-01
         container_name: xdmod
         hostname: xdmod
         networks:
@@ -11,8 +11,6 @@ services:
             - 9006:443
             - 7000:7000
         volumes:
-          - "/Users/ryanrath/scratch/cache/rocky8/xdmod/dnf.conf:/etc/dnf/dnf.conf"
-          - "/Users/ryanrath/scratch/cache/rocky8/xdmod/dnf:/var/cache/dnf"
           - ./xdmod/root/bin/services:/root/bin/services
           - ./xdmod/root/my.cnf:/root/.my.cnf:ro
         environment:
@@ -37,7 +35,6 @@ services:
         image:  mcr.microsoft.com/playwright:v1.56.1-jammy
         hostname: playwright
         container_name: playwright
-        init: true
         networks:
             - xdmod_default
         stdin_open: true
