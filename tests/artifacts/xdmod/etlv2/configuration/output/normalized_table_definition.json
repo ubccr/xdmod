@@ -75,7 +75,7 @@
       "event": "INSERT",
       "table": "normalize_table_test",
       "body": "BEGIN\nSET @resource = CONCAT(@resource, 'X');\nEND",
-      "definer": "xdmod@localhost",
+      "definer": "xdmod@xdmod.docker_xdmod_default",
       "schema": "test",
       "name": "mytrigger"
     }
