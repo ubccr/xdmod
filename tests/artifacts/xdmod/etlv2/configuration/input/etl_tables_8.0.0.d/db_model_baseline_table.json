@@ -4,7 +4,7 @@
     "name": "normalize_table_test",
     "engine": "MyISAM",
     "charset": "utf8",
-    "collation": "utf8_unicode_ci",
+    "collation": "utf8_general_ci",
     "columns": [
       {
         "name": "resource_id",
@@ -17,7 +17,7 @@
         "type": "varchar(40)",
         "nullable": true,
         "charset": "utf8",
-        "collation": "utf8_unicode_ci",
+        "collation": "utf8_general_ci",
         "comment": "This is a comment"
       },
       {

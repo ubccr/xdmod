@@ -3,8 +3,8 @@
   "table_definition": {
     "name": "test_db_model",
     "engine": "InnoDB",
-    "charset": "utf8",
-    "collation": "utf8_unicode_ci",
+    "charset": "utf8mb4",
+    "collation": "utf8mb4_general_ci",
     "comment": "Events on an instance",
     "columns": [
       {
@@ -17,8 +17,8 @@
       {
         "name": "col1",
         "type": "varchar(32)",
-        "charset": "utf8",
-        "collation": "utf8_unicode_ci",
+        "charset": "utf8mb4",
+        "collation": "utf8mb4_general_ci",
         "nullable": false,
         "default": "mydefault"
       },
