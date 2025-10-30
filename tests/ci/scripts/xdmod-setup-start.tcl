@@ -27,7 +27,7 @@ selectMenuOption 2
 answerQuestion {DB Hostname or IP} mariadb
 answerQuestion {DB Port} 3306
 answerQuestion {DB Username} xdmod
-answerQuestion {XDMoD Server name} xdmod.xdmod_default
+answerQuestion {XDMoD Server name} xdmod.docker_xdmod_default
 providePassword {DB Password:} xdmod123
 answerQuestion {DB Admin Username} root
 providePassword {DB Admin Password:} {}
