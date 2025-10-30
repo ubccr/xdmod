@@ -1,13 +1,13 @@
 {
   "comment": "",
   "engine": "myisam",
-  "charset": "utf8",
-  "collation": "utf8_unicode_ci",
+  "charset": "latin1",
+  "collation": "latin1_swedish_ci",
   "columns": [
     {
       "type": "varchar(40)",
-      "charset": "utf8",
-      "collation": "utf8_unicode_ci",
+      "charset": "latin1",
+      "collation": "latin1_swedish_ci",
       "nullable": true,
       "default": null,
       "extra": null,
@@ -17,8 +17,8 @@
     },
     {
       "type": "varchar(40)",
-      "charset": "utf8",
-      "collation": "utf8_unicode_ci",
+      "charset": "latin1",
+      "collation": "latin1_swedish_ci",
       "nullable": true,
       "default": null,
       "extra": null,
