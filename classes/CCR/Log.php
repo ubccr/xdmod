@@ -263,29 +263,7 @@ class Log
         $dbLogLevel = $conf['dbLogLevel'] ?? self::getDefaultLogLevel('db');
 
         $handler = new CCRDBHandler(null, null, null, self::convertToMonologLevel($dbLogLevel));
-
-        // This is one of the important changes to support the new version of Monolog, by setting the `format` to use
-        // the `%formatted%` variable that is populated by the processor we're adding to the handler we can ensure that
-        // we don't change the "normal" format and still get the json formatted information we expect to be logged to
-        // the db.
-        $handler->setFormatter(new LineFormatter('%formatted%'));
-
-        // This processor checks to see if a value has been set in the log records `extra` section called `message`.
-        // This key is populated by `CCR\Logger` and is the unchanged `$message` being logged. This let's us have access
-        // to the "raw" $message that was passed to the logger.
-        $processor = function ($record) {
-            $extraMessage = $record['extra']['message'] ?? null;
-
-            // Make sure that the contents of $record['formatted'] is json formatted for DBHandlers.
-            if (is_array($extraMessage)) {
-                $record['formatted'] = json_encode($extraMessage, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-            } else {
-                $record['formatted'] = json_encode(['message' => $record['message']], JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-            }
-
-            return $record;
-        };
-        $handler->pushProcessor($processor);
+        $handler->setFormatter(new CCRDBFormatter());
 
         return $handler;
     }
