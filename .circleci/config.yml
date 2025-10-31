@@ -142,12 +142,6 @@ jobs:
             docker exec -w /root/xdmod xdmod /root/xdmod/tests/post/bootstrap.sh
             docker exec -w /root/xdmod xdmod /root/xdmod/tests/post/runtests.sh
       - run:
-          name: Update the HTTPD config file
-          command: docker exec xdmod sed -i 's/ServerName localhost/ServerName xdmod/g' /etc/httpd/conf.d/xdmod.conf
-      - run:
-          name: Restart XDMoD's services
-          command: docker exec xdmod /root/bin/services restart
-      - run:
           name: Run Playwright Tests
           command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.string_os >>
       - when:

@@ -87,4 +87,11 @@ then
     exitcode=1
 fi
 
+# Check if webserver responds to https://xdmod
+if !(curl -s -k https://xdmod | grep -q xdmodviewer.init)
+then
+    echo "Webserver did not respond to https://xdmod"
+    exitcode=1
+fi
+
 exit $exitcode
