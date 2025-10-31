@@ -65,7 +65,8 @@
       ([\#2059](https://github.com/ubccr/xdmod/pull/2059)).
 - Documentation
     - Update list of publications and presentations
-      ([\#2080](https://github.com/ubccr/xdmod/pull/2080)).
+      ([\#2080](https://github.com/ubccr/xdmod/pull/2080),
+      [\#2119](https://github.com/ubccr/xdmod/pull/2119)).
 - Maintenance / Code Quality
     - Remove the "Job Size: Normalized" metric
       ([\#1981](https://github.com/ubccr/xdmod/pull/1981)).
