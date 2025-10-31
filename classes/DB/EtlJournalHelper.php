@@ -62,7 +62,7 @@ class EtlJournalHelper
                 $dti = new \DateTimeImmutable('@' . $this->lastModifiedTs);
                 $lastModifiedStr = $dti->format(\DateTimeInterface::RFC3339);
             } else {
-                $lastModifiedStr = lastRunInfo[0]['last_modified'];
+                $lastModifiedStr = $lastRunInfo[0]['last_modified'];
             }
         }
 
