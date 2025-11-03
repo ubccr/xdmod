@@ -289,8 +289,8 @@ class RestIngestor extends aIngestor implements iAction
     {
         // Support a source query, mapping from the source to rest parameters, rest field map
 
+        $requestHeaders = ( isset($this->restRequestConfig->requestHeaders) ? (array) $this->restRequestConfig->requestHeaders : null );
         // Set up properties used to access data in the result set. Some properties may not be provided.
-
         $responseKey = ( isset($this->restResponseConfig->response) ? $this->restResponseConfig->response : null );
         $errorKey = ( isset($this->restResponseConfig->error) ? $this->restResponseConfig->error : null );
         $countKey = ( isset($this->restResponseConfig->count) ? $this->restResponseConfig->count : null );
@@ -327,6 +327,8 @@ class RestIngestor extends aIngestor implements iAction
 
         // Keep the current url for logging
         $this->currentUrl = curl_getinfo($this->sourceHandle, CURLINFO_EFFECTIVE_URL);
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $requestHeaders);
 
         $this->logger->info("REST url: {$this->currentUrl}");
 
@@ -493,7 +495,14 @@ class RestIngestor extends aIngestor implements iAction
                         // We should add a "if_missing" processing directive here -smg
                         $result->$resultKey = null;
                     }
-                    $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$resultKey;
+
+                    if ( is_array($resultKey) ) {
+                        $objectKey = key($resultKey);
+                        $targetKey = current($resultKey);
+                        $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$objectKey->$targetKey;
+                    } else {
+                        $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$resultKey;
+                    }
                 }
 
                 if ( $numColumns != count($recordParameters) ) {
