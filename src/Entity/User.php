@@ -21,11 +21,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @var array
      */
-    protected $roles;
+    protected $xdRoles;
 
     protected $userId;
-
-    protected $samlAttributes;
 
     protected $token;
 
@@ -35,37 +33,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     protected $password;
 
     /**
-     * @var string
-     */
-    protected $salt;
-
-    /**
-     * @var PasswordHasherInterface
-     */
-    protected $hasher;
-
-    /**
      * @param string $username
      * @param array $roles
      * @param int $userId
      * @param string $token
      * @param string|null $password
-     * @param string|null $salt
      */
     public function __construct(
         string  $username,
         array   $roles,
         int     $userId = -1,
         string  $token = '',
-        ?string $password = '',
-        ?string $salt = null)
+        ?string $password = '')
     {
         $this->username = $username;
-        $this->roles = $roles;
+        $this->xdRoles = $roles;
         $this->userId = $userId;
         $this->token = $token;
         $this->password = $password;
-        $this->salt = $salt;
     }
 
 
@@ -74,10 +59,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      **/
     public function getRoles(): array
     {
-        $roles = $this->roles;
+        $roles = $this->xdRoles;
         // guarantee every user at least has ROLE_USER
         $roles[] = 'ROLE_USER';
-        if (in_array('mgr', $this->roles)) {
+        if (in_array('mgr', $this->xdRoles)) {
             $roles[] = 'ROLE_ALLOWED_TO_SWITCH';
             $roles[] = 'ROLE_ADMIN';
         }
@@ -91,14 +76,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getPassword(): ?string
     {
         return $this->password;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getSalt(): ?string
-    {
-        return $this->salt;
     }
 
     /**
@@ -146,15 +123,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function isPublicUser(): bool
     {
-        return in_array('pub', $this->roles);
-    }
-
-    /**
-     * @return User
-     */
-    public static function getPublicUser(): User
-    {
-        return new User('Public User', ['pub']);
+        return in_array('pub', $this->xdRoles);
     }
 
     /**
@@ -170,14 +139,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $xdUser->getToken(),
             $xdUser->getPassword()
         );
-    }
-
-    /**
-     * @param array $attributes
-     * @return void
-     */
-    public function setSamlAttributes(array $attributes): void
-    {
-        $this->samlAttributes = $attributes;
     }
 }
