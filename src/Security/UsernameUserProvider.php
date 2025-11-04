@@ -62,27 +62,27 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
         $this->logger->debug("Loading User By Identifier: $identifier");
         $isSamlUser = $this->classesContains('saml', (new \Exception())->getTrace());
         try {
-            $user = XDUser::getUserByUserName($identifier);
+            $xdUser = XDUser::getUserByUserName($identifier);
 
-            if ($isSamlUser && $user->getUserType() !== SSO_USER_TYPE) {
+            if ($isSamlUser && $xdUser->getUserType() !== SSO_USER_TYPE) {
                 $this->logger->error('SSO User attempted to log in as a local user.');
                 throw new InsufficientAuthenticationException();
             }
         } catch (\Exception $e) {
             $this->logger->debug("Loading User By Id instead");
-            $user = XDUser::getUserByID($identifier);
-            if ($isSamlUser && isset($user) && $user->getUserType() !== SSO_USER_TYPE) {
+            $xdUser = XDUser::getUserByID($identifier);
+            if ($isSamlUser && isset($xdUser) && $xdUser->getUserType() !== SSO_USER_TYPE) {
                 $this->logger->error('SSO User attempted to log in as a local user.');
                 throw new InsufficientAuthenticationException();
             }
-            if (!isset($user)) {
+            if (!isset($xdUser)) {
                 $this->logger->debug(sprintf('User %s not found', $identifier));
                 throw new UserNotFoundException("Unable to find User identified by $identifier");
             }
         }
 
-        $this->logger->debug("XDUser found by username: {$user->getUserID()} {$user->getUsername()}");
-        $foundUser = User::fromXDUser($user);
+        $this->logger->debug("XDUser found by username: {$xdUser->getUserID()} {$xdUser->getUsername()}");
+        $foundUser = User::fromXDUser($xdUser);
         $this->logger->debug(sprintf('Final User Found:  %s %s', $foundUser->getUserIdentifier(), $foundUser->getPassword()));
         return $foundUser;
     }
