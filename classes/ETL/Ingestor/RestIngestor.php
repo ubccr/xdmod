@@ -328,7 +328,7 @@ class RestIngestor extends aIngestor implements iAction
         // Keep the current url for logging
         $this->currentUrl = curl_getinfo($this->sourceHandle, CURLINFO_EFFECTIVE_URL);
 
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $requestHeaders);
+        curl_setopt($this->sourceHandle, CURLOPT_HTTPHEADER, $requestHeaders);
 
         $this->logger->info("REST url: {$this->currentUrl}");
 
@@ -382,10 +382,7 @@ class RestIngestor extends aIngestor implements iAction
             }  // if ( $responseKey !== null )
 
             // If a results key was specified, grab the response under that key.
-
             $results = null;
-            $columnToResultFieldMap = array();
-            $numColumns = 0;
 
             if ( null !== $resultsKey ) {
                 if ( ! isset($response->$resultsKey) ) {
@@ -411,6 +408,10 @@ class RestIngestor extends aIngestor implements iAction
 
             $count = ( null !== $countKey && isset($response->$countKey) ? $response->$countKey : null );
 
+            // If no response/result key is specified then we need to convert to array
+            if ( is_object($results) ) {
+                $results = array($results);
+            }
             // We assume that the response is an array of results, even if it is a single result.
 
             if ( ! is_array($results) ) {
@@ -447,10 +448,11 @@ class RestIngestor extends aIngestor implements iAction
 
                 // Create a mapping of result fields to database columns using the field map if provided or
                 // the result keys otherwise. A field map is recommended.
-
+                $columnToResultFieldMap = array();
                 $columnToResultFieldMap = ( null !== $fieldMap
                                             ? $fieldMap
                                             : array_fill_keys($resultKeyNames, $resultKeyNames) );
+
                 $numColumns = count($columnToResultFieldMap);
 
                 $first = false;
@@ -491,16 +493,20 @@ class RestIngestor extends aIngestor implements iAction
                 // be arbitrary.
 
                 foreach ( $columnToResultFieldMap as $dbCol => $resultKey ) {
-                    if ( ! isset($result->$resultKey) ) {
-                        // We should add a "if_missing" processing directive here -smg
-                        $result->$resultKey = null;
-                    }
-
-                    if ( is_array($resultKey) ) {
+                    if ( is_object($resultKey) ) {
                         $objectKey = key($resultKey);
                         $targetKey = current($resultKey);
-                        $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$objectKey->$targetKey;
+
+                        if (! isset($objectKey) || ! isset($targetKey)) {
+                            $recordParameters[":{$dbCol}_{$recordCounter}"] = null;
+                        } else {
+                            $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$objectKey->$targetKey;
+                        }
                     } else {
+                        if ( ! isset($result->$resultKey) ) {
+                            // We should add a "if_missing" processing directive here -smg
+                            $result->$resultKey = null;
+                        }
                         $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$resultKey;
                     }
                 }
