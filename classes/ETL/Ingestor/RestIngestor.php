@@ -382,6 +382,7 @@ class RestIngestor extends aIngestor implements iAction
             }  // if ( $responseKey !== null )
 
             // If a results key was specified, grab the response under that key.
+
             $results = null;
 
             if ( null !== $resultsKey ) {
@@ -448,10 +449,10 @@ class RestIngestor extends aIngestor implements iAction
 
                 // Create a mapping of result fields to database columns using the field map if provided or
                 // the result keys otherwise. A field map is recommended.
+
                 $columnToResultFieldMap = ( null !== $fieldMap
                                             ? $fieldMap
                                             : array_fill_keys($resultKeyNames, $resultKeyNames) );
-
                 $numColumns = count($columnToResultFieldMap);
 
                 $first = false;
