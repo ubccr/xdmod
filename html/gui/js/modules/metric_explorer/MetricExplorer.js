@@ -439,6 +439,25 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         win.show();
                     }
                 });
+                menu.add({
+                    text: 'View python code',
+                    iconCls: 'custom_chart',
+                    handler: () => {
+                        const win = new Ext.Window({
+                            title: 'API Code',
+                            width: 800,
+                            height: 600,
+                            layout: 'fit',
+                            autoScroll: true,
+                            closeAction: 'destroy',
+                            items: [{
+                                autoScroll: true,
+                                html: '<pre>Python API code \n************************************************\nClick "Open in Jupyter" button to view and run Python Code \n************************************************<br></br>The link to the data analytisc API can be found <a href="https://github.com/ubccr/xdmod-data" target="_blank">here</a><br></br>Infomation about the Plotly Express Libary can be found <a href="https://plotly.com/python/plotly-express/" target="_blank">here</a><br></br>Example XDmod API Notebooks can be found <a href="https://github.com/ubccr/xdmod-notebooks" target="_blank">here</a></pre>'
+                            }]
+                        });
+                        win.show();
+                    }
+                });
                 const chartLayoutJSON = JSON.stringify(instance.plotlyPanel.chartOptions.layout, null, 4);
                 menu.add({
                     text: 'View Plotly JS chart layout',
@@ -2086,10 +2105,10 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         exportMenu: true,
         printButton: true,
         reportCheckbox: true,
-        chartLinkButton: true
+        chartLinkButton: true,
+        openAsNBButton: true
 
     },
-
     show_filters: true,
     show_warnings: true,
     font_size: 3,
@@ -5589,6 +5608,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
             self.getChartLinkButton().setDisabled(noData);
 
+            self.getOpenAsNBButton().setDisabled(noData);
+
             var reportGeneratorMeta = chartStore.getAt(0).get('reportGeneratorMeta');
 
             self.getReportCheckbox().storeChartArguments(reportGeneratorMeta.chart_args,
@@ -6295,6 +6316,388 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 }
             });
         }); // self.on('chart_link_clicked', ...
+
+        // ---------------------------------------------------------
+        self.on('open_in_nb', function () {
+            config = self.getConfig();
+            let retJson = {
+                "metadata": {
+                    "kernel_info": {
+                        "name": "Python 3"
+                    },
+                    "language_info": {
+                        "name": "Python",
+                        "version": "the version of the language",
+                        "codemirror_mode": "The name of the codemirror mode to use [optional]",
+                    },
+                },
+                "nbformat": 4,
+                "nbformat_minor": 0,
+                "cells": []
+            }
+            retJson['cells'][0] = {
+                "cell_type": "markdown",
+                "metadata": {},
+                "source": "The following cell includes all the necessary imports.  Currently, must run XDMOD-Data-First-Example at least once in order for any generated code to work.",
+            }
+            //uncomment out datawarehouse import and dw declaration after api key is no longer required
+            retJson["cells"][1] = {
+                "cell_type": "code",
+                "execution_count": 1,
+                "metadata": {},
+                "source": `import plotly.express as px\nimport plotly.io as pio\nimport pandas as pd\nimport plotly.graph_objects as go\nimport xdmod_data.themes\npio.templates.default = "timeseries"\n#from xdmod_data.warehouse import DataWarehouse\n#dw = DataWarehouse('${document.location.origin}')`,
+                "outputs": [
+                    {
+                        "output_type": "stream",
+                        "name": "stdout",
+                        "text": "",
+                    }
+                ]
+            }
+            //remove this cell once api key no longer needed
+            retJson["cells"][2] = {
+                "cell_type": "code",
+                "execution_count": 1,
+                "metadata": {},
+                "source": "from pathlib import Path\nfrom os.path import expanduser\nxdmod_data_env_path = Path(expanduser('~/xdmod-data.env'))\ntry:\n\twith open(xdmod_data_env_path):\n\t\tpass\nexcept FileNotFoundError:\n\twith open(xdmod_data_env_path, 'w') as xdmod_data_env_file:\n\t\txdmod_data_env_file.write('XDMOD_API_TOKEN=')\n\txdmod_data_env_path.chmod(0o600)\nfrom dotenv import load_dotenv\nload_dotenv(xdmod_data_env_path, override=True)\nfrom xdmod_data.warehouse import DataWarehouse\ndw = DataWarehouse('https://xdmod.access-ci.org/')",
+                "outputs": [
+                    {
+                        "output_type": "stream",
+                        "name": "stdout",
+                        "text": "",
+                    }
+                ]
+            }
+            let duration;
+            if (config.timeframe_label === 'User Defined' && config.start_date && config.end_date) {
+                duration = `${config.start_date}' , '${config.end_date}`;
+            } else if (config.timeframe_label) {
+                duration = config.timeframe_label;
+            } else {
+                duration = 'Previous Month';
+            }
+            //get the distance from start and end date and determines how to display x values
+            let durationDist = Number(config.end_date.slice(0,4)) - Number(config.start_date.slice(0, 4))
+            let xValueLabels
+            if (durationDist < 1 || config.aggregation_unit === 'Day') {
+                xValueLabels = ``
+            } else if (durationDist < 10 || config.aggregation_unit === 'Month') {
+                xValueLabels = `xaxis_tickformat = '%b %Y'`
+            } else if (durationDist >= 10 || config.aggregation_unit === 'Quarter'){
+                xValueLabels = `xaxis_tickformat = 'Q%q %Y'`
+            } else if (config.aggregation_unit === 'Year') {
+                xValueLabels = `xaxis_tickformat = '%Y'`
+            }
+            const dataType = config.timeseries ? 'timeseries' : 'aggregate';
+            const aggregationUnit = config.aggregation_unit || 'Auto';
+            const swapXY = config.swap_xy;
+            let filters = '';
+            const filterDict = {};
+            let subTitle = '';
+            for (let i = 0; i < config.global_filters.total; i += 1) {
+                const { dimension_id: id, value_name: value } = config.global_filters.data[i];
+                if (filterDict[id]) {
+                    filterDict[id].push(value);
+                } else {
+                    filterDict[id] = [value];
+                }
+            }
+            for (const id in filterDict) {
+                if (Object.prototype.hasOwnProperty.call(filterDict, id)) {
+                    const values = filterDict[id].join("', '");
+                    filters += `\n\t\t'${id}': ('${values}'),`;
+                    subTitle += `${id}: ${values.replace(/'/g, '')}`;
+                }
+            }
+            let dataCalls = 
+`# Call to Data Analytics Framework requesting data \n
+with dw:`;
+            let plotChart;
+            (config.data_series.total == 1) ? plotChart = '' : plotChart = 'plot = go.Figure()\n';
+            //variable for code for code at the end of last cell (updates layout of created charts)
+            let updateLayout = '\n\n# Format and label the axes\nplot.update_layout('
+            let isSpline;
+            //check if multiple realms / metrics
+            let multipleRealms = false
+            let multipleMetrics = false
+            let compRealm = config.data_series.data[0]['realm']
+            let compMetric = this.realms[config.data_series.data[0]['realm']]['metrics'][config.data_series.data[0]['metric']]['text']
+            for (let i = 0; i < config.data_series.total; i += 1) {
+                if (config.data_series.data[i]['realm'] != compRealm) {
+                    multipleRealms = true
+                }
+                if (this.realms[config.data_series.data[i]['realm']]['metrics'][config.data_series.data[i]['metric']]['text'] != compMetric) {
+                    multipleMetrics = true
+                }                
+            }
+            // code for renaming columns if multiple metrics or realms
+            let renameColsCode = (i, realm, dimension) => {
+                let retval = '';
+                if (multipleMetrics && multipleRealms) {
+                    retval = 
+   `\n# Rename column names to specify Realm and/or Metric
+    newColNames = {}
+    for col in data_${i}.columns :
+        newColNames[col] = '${(realm === 'ResourceSpecifications') ? 'Resource Specifications' : realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
+    data_${i} = data_${i}.rename(columns=newColNames)`
+                } else if (multipleMetrics) {
+                    retval = 
+    `\n# Rename column names to specify Realm and/or Metric
+    newColNames = {}
+    for col in data_${i}.columns :
+        newColNames[col] = ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
+    data_${i} = data_${i}.rename(columns=newColNames)`
+                } else if (multipleRealms) {
+                    retval = 
+    `\n# Rename column names to specify Realm and/or Metric
+    newColNames = {}
+    for col in data_${i}.columns :
+        newColNames[col] = '${(realm === 'ResourceSpecifications') ? 'Resource Specifications' : realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'}
+    data_${i} = data_${i}.rename(columns=newColNames)`
+                }
+                return retval;
+            };
+            //side of y label switches after each axes plotted
+            let currSide = 'left'
+            //metrics list used to keep track of which metrics are used so that if the same metric is used more than once, we combine the dataset with one previously fetched that has the same metric
+            let metricsList = {}
+            //loop through all datasets and produce the proper code
+            for (let i = 0; i < config.data_series.total; i += 1) {
+                const {
+                    realm = 'Jobs',
+                    metric = 'CPU Hours: Total',
+                    group_by: dimension = 'none',
+                    log_scale: logScale,
+                    display_type: displayType
+                } = config.data_series.data[i];
+                let graphType = displayType || 'line';
+                let lineShape = '';
+                if (graphType === 'column') {
+                    graphType = 'bar';
+                    lineShape = "barmode='group',";
+                } else if (graphType === 'spline') {
+                    isSpline = true
+                    graphType = 'line';
+                    lineShape = "\nline_shape='spline',";
+                } else if (graphType === 'line' && dataType === 'aggregate' && dimension === 'none') {
+                    graphType = 'scatter';
+                } else if (graphType === 'areaspline') {
+                    isSpline = true
+                    graphType = 'area';
+                    lineShape = "\nline_shape='spline',";
+                }
+                // Checks if metric used in previous dataset; if not, get added to array for future reference
+                let metric_text = this.realms[realm]['metrics'][metric]['text']
+                if (!Object.keys(metricsList).includes(metric_text)) {
+                    metricsList[metric_text] = i
+                } else {
+                    // if metric used in previous dataseries, combine it with that dataseries and move on
+                    dataCalls += `
+    \n\n# Fetch data ${i}
+    data_${i} = dw.get_data(
+        duration=('${duration}'),
+        realm='${realm}',
+        metric='${metric}',
+        dimension='${dimension}',
+        filters={${filters}},
+        dataset_type='${dataType}',
+        aggregation_unit='${aggregationUnit}',
+    )
+    \n# Set data ${i}'s metric label
+    label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
+    ${renameColsCode(i,realm,dimension)}
+    \n# Merge data ${i} into data ${metricsList[metric_text]} since they share the same metric
+    data_${metricsList[metric_text]} = (data_${metricsList[metric_text]}.merge(data_${i}, on='Time', how='outer', sort=True))`
+                    continue;
+                }
+                // if metric never used, fetch and plot normally
+                let axis = '';
+                if (swapXY && graphType !== 'pie') {
+                    axis = `\ty= data_${i}.columns[0],\n\tx= data_${i}.columns[1:],`;
+                } else {
+                    axis = `labels={"value": label_${i}},`;
+                }
+                let dataView;
+                if (dataType === 'aggregate') {
+                    let graph;
+                    if (graphType === 'pie') {
+                        graph = `
+if(data_${i}.size > 10):
+    others_sum=data_${i}[~data_${i}.isin(top_ten)].sum()
+    data_${i} = top_ten.combine_first(pd.Series({'Other ' + String(data_${i}.size - 10): others_sum}))\n`;
+                            } else {
+                                graph = `\n\tdata_${i} = top_ten`;
+                            }
+                            dataView = `
+\n# Process the data series, combine the lower values into a single Other category, and change to series to a dataframe
+top_ten=data_${i}.nlargest(10)
+${graph}
+data_${i} = data_${i}.to_frame()
+columns_list = data_${i}.columns.tolist()`;
+                        } else {
+                            dataView = `
+\n\n# Limit the number of data items/source to at most 10 and sort by descending
+columns_list = data_${i}.columns.tolist()
+if (len(columns_list) > 10):
+    column_sums = data_${i}.sum()
+    top_ten_columns = column_sums.nlargest(10).index.tolist()
+    data_${i} = data_${i}[top_ten_columns]`;
+                        }
+    dataCalls += `
+    \n\n# Fetch data ${i}
+    data_${i} = dw.get_data(
+        duration=('${duration}'),
+        realm='${realm}',
+        metric='${metric}',
+        dimension='${dimension}',
+        filters={${filters}},
+        dataset_type='${dataType}',
+        aggregation_unit='${aggregationUnit}',
+    )
+    \n# Set data ${i}'s metric label
+    label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
+    ${renameColsCode(i, realm, dimension)}`
+    plotChart +=
+    `${dataView}
+    ${(swapXY && graphType !== 'pie') ? `\tdata_0 = data_0.reset_index()` : ''}`
+    if (config.data_series.total == 1) {
+        plotChart += `
+\n# Format and draw graph to the screen
+plot = px.${graphType}(
+    data_0, ${(graphType === 'pie') ? `\nvalues= columns_list[0],\n names= data_0.index,` : ''}
+    ${axis}
+    title='${config.title || 'Untitled Query'}',${subTitle ? `\n&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt,` : ''}${logScale ? `log_${swapXY ? 'x' : 'y'}=True,` : ''}${lineShape}
+)\n`;
+    } else {
+        plotChart += `
+\n# Add axis from dataset ${i} to graph
+for col in data_${i}:
+    plot.add_trace(
+    go.${(graphType == 'bar') ? 'Bar' : 'Scatter'}(
+        x=data_${i}.index,
+        y=data_${i}[col].values,
+        name = col,
+        yaxis="y${i+1}",
+        ${(graphType === 'area') ? 'fill = "tozeroy",' : ''}
+        ${(isSpline) ? 'line_shape = "spline"' : ''}
+    ))`
+    updateLayout += `
+    yaxis${i+1}=dict(
+        title=dict(
+            text=label_${i},
+        ),${(i == 0) ? '' : (`
+        anchor="free",
+        overlaying="y",
+        autoshift = True,
+        side="${currSide}"`
+        )}
+    ),`
+    //switch side
+    if (currSide === 'right') {currSide = 'left'} else {currSide = 'right'}
+    }
+}
+        updateLayout += '\n)\n'
+        plotChart += `${updateLayout}\n# Format legend and set index interval\nplot.update_layout(legend_x=0, legend_y=-0.3, ${xValueLabels})${(config.data_series.total > 1) ? `\nplot.update_yaxes(showgrid=False)` : ''}\n\nplot.show()`
+        retJson['cells'].push(
+            {
+                "cell_type": "markdown",
+                "metadata": {},
+                "source": "The following cell fetches all the necessary data from the data analytics framework",
+            }
+        )
+        retJson['cells'].push(
+            {
+                "cell_type": "code",
+                "execution_count": 1,
+                "metadata": {},
+                "source": dataCalls,
+                "outputs": [
+                    {
+                        "output_type": "stream",
+                        "name": "stdout",
+                        "text": "",
+                    }
+                ]
+            }
+        )
+        retJson['cells'].push(
+            {
+                "cell_type": "markdown",
+                "metadata": {},
+                "source": "The following cell uses the data fetched in the previous cell to plot the chart and display it",
+            }
+        )
+        retJson['cells'].push(
+            {
+                "cell_type": "code",
+                "execution_count": 1,
+                "metadata": {},
+                "source": plotChart,
+                "outputs": [
+                    {
+                        "output_type": "stream",
+                        "name": "stdout",
+                        "text": "",
+                    }
+                ]
+            }
+        )
+        const fetchNB = async () => {
+            await fetch(`http://localhost:8000/services/testing/notebooks`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    "content": retJson,
+                    "type": "notebook",
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                console.log(response.status)
+                return response.json();
+              })
+              .then(data => {
+                console.log('Data received:', data);
+              })
+              .catch(error => {
+                console.error('Fetch error:', error);
+              });
+        }
+        const openNB = async () => {
+            await fetch(`http://localhost:8888/api/contents/${config.title}.ipynb`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer 4bfb5c606fb1dc132b463694baf58ceabdea6c9b154aa664`, /* <-- temporary token */
+                },
+                body: JSON.stringify({
+                    "content": retJson,
+                    "type": "notebook"
+                }),
+            })
+            .then(response => {
+                if (!response.ok) {
+                  throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                console.log(response.status)
+                return response.json();
+              })
+              .then(data => {
+                console.log('Data received:', data);
+              })
+              .catch(error => {
+                console.error('Fetch error:', error);
+              });
+        }
+        fetchNB()
+        openNB()
+        window.open(`http://localhost:8888/lab/tree/${config.title}.ipynb`)
+    }); // self.on('open in nb', ...
+      
 
         // ---------------------------------------------------------
 
