@@ -448,7 +448,6 @@ class RestIngestor extends aIngestor implements iAction
 
                 // Create a mapping of result fields to database columns using the field map if provided or
                 // the result keys otherwise. A field map is recommended.
-                $columnToResultFieldMap = array();
                 $columnToResultFieldMap = ( null !== $fieldMap
                                             ? $fieldMap
                                             : array_fill_keys($resultKeyNames, $resultKeyNames) );
@@ -497,7 +496,7 @@ class RestIngestor extends aIngestor implements iAction
                         $objectKey = key($resultKey);
                         $targetKey = current($resultKey);
 
-                        if (! isset($objectKey) || ! isset($targetKey)) {
+                        if (! isset($result->$objectKey) || ! isset($result->$targetKey)) {
                             $recordParameters[":{$dbCol}_{$recordCounter}"] = null;
                         } else {
                             $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$objectKey->$targetKey;
