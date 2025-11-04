@@ -22,6 +22,7 @@ parameters:
             system_username:
                 attribute: 'system_username'
                 default: '$username'
+    log_dir: '%env(XDMOD_LOG_DIR)%'
     google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
     center_related_acls:
         - cd
