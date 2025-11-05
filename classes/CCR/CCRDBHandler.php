@@ -49,9 +49,9 @@ class CCRDBHandler extends AbstractProcessingHandler
      * @throws Exception If the 'database' property of the logger section in portal_settings.ini is not present or if its value is empty.
      * @throws Exception If the 'table' property of the logger section in portal_settings.ini is not present or if its value is empty.
      */
-    public function __construct(iDatabase $db = null, $schema = null, $table = null, $level = Log::DEBUG, $bubble = true)
+    public function __construct(iDatabase $db = null, $schema = null, $table = null, $level = Level::Debug, $bubble = true)
     {
-        parent::__construct(Level::fromValue(Log::convertToMonologLevel($level)), $bubble);
+        parent::__construct(Level::fromValue($level), $bubble);
 
         if (!isset($db)) {
             $db = DB::factory('logger');
@@ -75,19 +75,12 @@ class CCRDBHandler extends AbstractProcessingHandler
      */
     protected function write(LogRecord $record): void
     {
-        $message = array_merge(
-            [
-                'message' => $record->message
-            ],
-            $record->context
-        );
-
         $sql = sprintf("INSERT INTO %s.%s (id, logtime, ident, priority, message) VALUES(:id, NOW(), :ident, :priority, :message)", $this->schema, $this->table);
         $params = [
             ':id' => $this->getNextId(),
             ':ident' => $record['channel'],
-            ':priority' => Log::convertToCCRLevel($record['level']),
-            ':message' => json_encode($message, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            ':priority' => $record['level'],
+            ':message' => $record['formatted']
         ];
         $this->db->execute($sql, $params);
     }

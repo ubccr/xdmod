@@ -10,10 +10,10 @@ class LoggerTest extends BaseTest
     public function provideFileOutput()
     {
         return array(
-            array('debug', 'message field', array('other' => 1.2), '/\[debug\] message field \(other: 1.2\)$/'),
-            array('info', 'single line string', array(), '/\[info\] single line string$/'),
-            array('warning', '', array('other' => 'comp123'), '/\[warning\] \(other: comp123\)$/'),
-            array('error', '', array('exceptiontest' => new \Exception('Test Line Exception')), '/\[error\] \(exceptiontest: .*' . str_replace('/', '\\/', __FILE__) . ':' . __LINE__ . '\)\W\[stacktrace\]/')
+            array('debug', 'message field', array('other' => 1.2), '/\[DEBUG\] message field \(other: 1.2\)$/'),
+            array('info', 'single line string', array(), '/\[INFO\] single line string$/'),
+            array('warning', '', array('other' => 'comp123'), '/\[WARNING\] \(other: comp123\)$/'),
+            array('error', '', array('exceptiontest' => new \Exception('Test Line Exception')), '/\[ERROR\] \(exceptiontest: .*' . str_replace('/', '\\/', __FILE__) . ':' . __LINE__ . '\)\W\[stacktrace\]/')
         );
     }
 
@@ -43,9 +43,9 @@ class LoggerTest extends BaseTest
     public function provideDbOutput()
     {
         return array(
-            array('debug', 'message field', array('other' => 1.2), 7, '{"message":"message field","other":1.2}'),
-            array('info', 'single line string', array(), 6, '{"message":"single line string"}'),
-            array('warning', '', array('other' => 'comp123'), 4, '{"other":"comp123"}')
+            array('debug', 'message field', array('other' => 1.2), 100, '{"message":"message field","other":1.2}'),
+            array('info', 'single line string', array(), 200, '{"message":"single line string"}'),
+            array('warning', '', array('other' => 'comp123'), 300, '{"other":"comp123"}')
         );
     }
 
@@ -99,7 +99,7 @@ class LoggerTest extends BaseTest
 
         $logoutput = $db->query("SELECT priority, message FROM mod_logger.log_table WHERE ident = '" . $ident . "' AND id > :start_id ORDER BY id ASC", $initial_vals[0]);
 
-        $this->assertEquals('3', $logoutput[0]['priority']);
+        $this->assertEquals('400', $logoutput[0]['priority']);
         $exceptionSerialization = json_decode($logoutput[0]['message'], true);
 
         $this->assertArrayNotHasKey('message', $exceptionSerialization);
@@ -131,11 +131,11 @@ class LoggerTest extends BaseTest
         $logger->debug('message portion', array('context' => 'portion'));
 
         $output = file_get_contents($conf['file']);
-        $this->assertStringEndsWith("[debug] message portion (context: portion)\n", $output);
+        $this->assertStringEndsWith("[DEBUG] message portion (context: portion)\n", $output);
 
         $logoutput = $db->query("SELECT priority, message FROM mod_logger.log_table WHERE ident = 'combined-test' AND id > :start_id ORDER BY id ASC", $initial_vals[0]);
 
         $this->assertEquals('{"message":"message portion","context":"portion"}', $logoutput[0]['message']);
-        $this->assertEquals('7', $logoutput[0]['priority']);
+        $this->assertEquals('100', $logoutput[0]['priority']);
     }
 }

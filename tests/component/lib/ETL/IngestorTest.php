@@ -80,7 +80,7 @@ class IngestorTest extends \PHPUnit\Framework\TestCase
         $numWarnings = 0;
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, '[warning]') ) {
+                if ( false !== strpos($line, '[WARNING]') ) {
                     $numWarnings++;
                 }
             }
@@ -103,7 +103,7 @@ class IngestorTest extends \PHPUnit\Framework\TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                $this->assertDoesNotMatchRegularExpression('/\[warning\]/', $line);
+                $this->assertDoesNotMatchRegularExpression('/\[WARNING\]/', $line);
             }
         }
 
@@ -129,7 +129,7 @@ class IngestorTest extends \PHPUnit\Framework\TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, '[warning]') ) {
+                if ( false !== strpos($line, '[WARNING]') ) {
                     $numWarnings++;
                 }
             }
@@ -145,7 +145,7 @@ class IngestorTest extends \PHPUnit\Framework\TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if ( false !== strpos($line, '[warning]') ) {
+                if ( false !== strpos($line, '[WARNING]') ) {
                     $numWarnings++;
                 }
             }
@@ -194,7 +194,7 @@ class IngestorTest extends \PHPUnit\Framework\TestCase
         $recordsLoaded = array();
 
         foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-            if ( false !== strpos($line, '[notice]') ) {
+            if ( false !== strpos($line, '[NOTICE]') ) {
                 $matches = array();
                 if ( preg_match('/xdmod.structured-file.read-people-([0-9])/', $line, $matches) ) {
                     $number = $matches[1];
