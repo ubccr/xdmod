@@ -49,8 +49,10 @@ jobs:
           name: Copy Files for Playwright and XDMoD containers
           command: |
             docker cp ~/project xdmod:/root/xdmod
-            docker exec playwright mkdir -p /root/xdmod/tests/playwright
-            docker cp ~/project/tests/playwright playwright:/root/xdmod/tests/playwright
+            docker exec playwright mkdir -p /root/xdmod/tests/ /root/xdmod/tests/artifacts/xdmod/
+            docker cp ~/project/tests/playwright playwright:/root/xdmod/tests/
+            docker cp ~/project/tests/ci playwright:/root/xdmod/tests/
+            docker cp ~/project/tests/artifacts/xdmod/ui playwright:/root/xdmod/tests/artifacts/xdmod/
       - run:
           name: Create test result directories
           command: |
