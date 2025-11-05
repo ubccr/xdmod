@@ -44,16 +44,16 @@ class RestIngestor extends aIngestor implements iAction
     protected $restParameters = array();
 
     // The current url, useful for debugging
-    private $currentUrl = null;
+    protected $currentUrl = null;
 
     // List of transformation and verificaiton directives to apply to request parameters. Keys are
     // parameter names and values are an object containing the directives.
-    private $parameterDirectives = array();
+    protected $parameterDirectives = array();
 
     // List of transformation and verificaiton directives to apply to request response fields. Keys
     // are response keys (not database column names) and values are an object containing the
     // directives.
-    private $responseDirectives = array();
+    protected $responseDirectives = array();
 
     // This action does not (yet) support multiple destination tables. If multiple destination
     // tables are present, store the first here and use it.
@@ -497,7 +497,7 @@ class RestIngestor extends aIngestor implements iAction
                         $objectKey = key($resultKey);
                         $targetKey = current($resultKey);
 
-                        if (! isset($result->$objectKey) || ! isset($result->$targetKey)) {
+                        if (! isset($objectKey) || ! isset($targetKey)) {
                             $recordParameters[":{$dbCol}_{$recordCounter}"] = null;
                         } else {
                             $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$objectKey->$targetKey;
@@ -510,7 +510,9 @@ class RestIngestor extends aIngestor implements iAction
                         $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$resultKey;
                     }
                 }
-
+                //$this->logger->warning("RESULTS FROM QUERY: " . print_r($result));
+                //$this->logger->warning("FIELD MAP: " . print_r($columnToResultFieldMap));
+                //$this->logger->warning("RECORD PARAMTER: " . print_r($recordParameters));
                 if ( $numColumns != count($recordParameters) ) {
                     $this->logger->warning(
                         "{$this} Record counts do not match (expected $numColumns but receieved "
@@ -713,7 +715,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function setNextUrl(\stdClass $response, $nextKey)
+    protected function setNextUrl(\stdClass $response, $nextKey)
     {
         // If the next key was specified, use the value from the response for the next call. If we are
         // using a source query, do not use the next key returned in the response.
@@ -774,7 +776,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function verifyDirectives()
+    protected function verifyDirectives()
     {
         foreach ( $this->parameterDirectives as $parameter => $directives ) {
 
@@ -841,7 +843,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function verifyTransformDirective($key, \stdClass $directive)
+    protected function verifyTransformDirective($key, \stdClass $directive)
     {
         if ( ! isset($directive->type) || ! isset($directive->format) ) {
             $this->logAndThrowException("Transform directive for '$key' must specify a type and format.");
@@ -878,7 +880,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function verifyVerifyDirective($key, \stdClass $directive)
+    protected function verifyVerifyDirective($key, \stdClass $directive)
     {
         if ( ! isset($directive->type) || ! isset($directive->format) ) {
             $this->logAndThrowException("Transform directive for '$key' must specify a type and format.");
@@ -909,7 +911,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function applyDirectives($value, \stdClass $directives)
+    protected function applyDirectives($value, \stdClass $directives)
     {
         // Apply transform directives first, then verification directives
 
@@ -943,7 +945,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function applyTransformDirective($value, \stdClass $directive)
+    protected function applyTransformDirective($value, \stdClass $directive)
     {
         switch ( $directive->type ) {
             case 'datetime':
@@ -981,7 +983,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function applyVerifyDirective($value, \stdClass $directive)
+    protected function applyVerifyDirective($value, \stdClass $directive)
     {
         switch ( $directive->type ) {
             case 'regex':
