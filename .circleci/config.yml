@@ -35,6 +35,17 @@ jobs:
           name: Generate Cert for XDMoD
           command: docker exec xdmod /usr/bin/openssl req -new -key /etc/pki/tls/private/localhost.key -x509 -sha256 -days 365 -set_serial $RANDOM -extensions v3_req -out /etc/pki/tls/certs/localhost.crt -subj "/C=XX/L=Default City/O=Default Company Ltd"
       - run:
+          name: Update PHP to PHP8.2
+          command: |
+            docker exec xdmod dnf module reset -y php
+            docker exec xdmod dnf module enable -y php:8.2
+            docker exec xdmod dnf install -y php-devel openssl-devel
+            docker exec xdmod dnf update -y php php-common php-opcache php-cli php-gd php-curl php-pear php-zip php-gmp php-pdo php-xml php-mbstring php-mysqlnd php-pecl-apcu php-pecl-json php-pear
+            docker exec xdmod pecl uninstall mongodb-1.18.1
+            docker exec xdmod pecl install mongodb-1.18.1
+            docker exec xdmod pecl install zip
+            docker exec xdmod dnf remove -y php-devel openssl-devel
+      - run:
           name: Copy Files for Playwright and XDMoD containers
           command: |
             docker cp ~/project xdmod:/root/xdmod
