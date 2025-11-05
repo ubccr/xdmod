@@ -510,9 +510,7 @@ class RestIngestor extends aIngestor implements iAction
                         $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$resultKey;
                     }
                 }
-                //$this->logger->warning("RESULTS FROM QUERY: " . print_r($result));
-                //$this->logger->warning("FIELD MAP: " . print_r($columnToResultFieldMap));
-                //$this->logger->warning("RECORD PARAMTER: " . print_r($recordParameters));
+
                 if ( $numColumns != count($recordParameters) ) {
                     $this->logger->warning(
                         "{$this} Record counts do not match (expected $numColumns but receieved "
