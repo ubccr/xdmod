@@ -24,14 +24,14 @@ class Log
     const LINE_FORMAT = "%datetime% [%level_name%] %message%\n";
     const TIME_FORMAT = 'Y-m-d H:i:s';
 
-    const EMERG   = \Monolog\Level::Emergency->value;
-    const ALERT   = \Monolog\Level::Alert->value;
-    const CRIT    = \Monolog\Level::Critical->value;
-    const ERR     = \Monolog\Level::Error->value;
-    const WARNING = \Monolog\Level::Warning->value;
-    const NOTICE  = \Monolog\Level::Notice->value;
-    const INFO    = \Monolog\Level::Info->value;
-    const DEBUG   = \Monolog\Level::Debug->value;
+    const EMERG   = 0;
+    const ALERT   = 1;
+    const CRIT    = 2;
+    const ERR     = 3;
+    const WARNING = 4;
+    const NOTICE  = 5;
+    const INFO    = 6;
+    const DEBUG   = 7;
 
     private static $logLevels = array(
         self::EMERG => \Monolog\Level::Emergency->value,
@@ -211,7 +211,7 @@ class Log
     {
         $consoleLogLevel = $conf['consoleLogLevel'] ?? self::getDefaultLogLevel('console');
 
-        $handler = new StreamHandler('php://stdout', $consoleLogLevel);
+        $handler = new StreamHandler('php://stdout', self::convertToMonologLevel($consoleLogLevel));
         $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
 
         return $handler;
@@ -240,7 +240,7 @@ class Log
         $file = $conf['file'] ?? LOG_DIR . '/' . strtolower(preg_replace('/\W/', '_', $ident)) . '.log';
         $filePermission = $conf['mode'] ?? 0660;
 
-        $handler = new StreamHandler($file, $fileLogLevel, true, $filePermission);
+        $handler = new StreamHandler($file, self::convertToMonologLevel($fileLogLevel), true, $filePermission);
         $handler->setFormatter(new CCRLineFormatter($conf['lineFormat'], $conf['timeFormat'], true));
 
         return $handler;
@@ -264,7 +264,7 @@ class Log
     {
         $dbLogLevel = $conf['dbLogLevel'] ?? self::getDefaultLogLevel('db');
 
-        $handler = new CCRDBHandler(null, null, null, $dbLogLevel);
+        $handler = new CCRDBHandler(null, null, null, self::convertToMonologLevel($dbLogLevel));
         $handler->setFormatter(new CCRDBFormatter());
 
         return $handler;
@@ -295,7 +295,7 @@ class Log
         $subject = $conf['emailSubject'] ?? self::getConfiguration('email_subject');
         $maxColumnWidth = array_key_exists('maxColumnWidth', $conf) ? $conf['maxColumnWidth'] : 70;
 
-        return new NativeMailerHandler($to, $subject, $from, $mailLogLevel, true, $maxColumnWidth);
+        return new NativeMailerHandler($to, $subject, $from, self::convertToMonologLevel($mailLogLevel), true, $maxColumnWidth);
     }
 
     /**
@@ -329,6 +329,36 @@ class Log
         }
 
         return $level;
+    }
+
+    /**
+     * Convert a \Monolog\Logger log level value to a CCR\Log log level.
+     *
+     * @param int $monologLevel the Monolog log level to be converted to a CCR log level.
+     * @return int the CCR log level that corresponds to the provided $monologLevel.
+     * @throws Exception if the provided $monologLevel is not found.
+     */
+    public static function convertToCCRLevel($monologLevel)
+    {
+        if (array_key_exists($monologLevel, self::$flippedLogLevels)) {
+            return self::$flippedLogLevels[$monologLevel];
+        }
+        throw new Exception(sprintf('Unknown Monolog Log Level %s', $monologLevel));
+    }
+
+    /**
+     * Convert a \CCR\Log log level value to a \Monolog\Logger log level.
+     *
+     * @param int $ccrLevel
+     * @return int the Monolog log level that corresponds to the provided $ccrLevel
+     * @throws Exception if the provided $ccrlLevel is not found.
+     */
+    public static function convertToMonologLevel($ccrLevel)
+    {
+        if (array_key_exists($ccrLevel, self::$logLevels)) {
+            return self::$logLevels[$ccrLevel];
+        }
+        throw new Exception(sprintf('Unknown CCR Log Level %s', $ccrLevel));
     }
 
     /**

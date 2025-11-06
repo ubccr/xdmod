@@ -4,7 +4,6 @@ namespace CCR;
 
 use Monolog\Formatter\LineFormatter;
 use Monolog\Formatter\NormalizerFormatter;
-use Monolog\LogRecord;
 use Monolog\Utils;
 
 class CCRLineFormatter extends LineFormatter
@@ -46,7 +45,7 @@ class CCRLineFormatter extends LineFormatter
      * string and context object. If either the context is empty or the message
      * is an empty string they are ommitted.
      */
-    public function format(LogRecord $record): string
+    public function format(array $record)
     {
         $vars = NormalizerFormatter::format($record);
 
