@@ -70,7 +70,7 @@ class WarehouseExportController extends BaseController
         // We need to wrap the token authentication because we want the token authentication to be optional, proceeding
         // to the normal session authentication if a token is not provided.
         try {
-            $user = $this->tokenHelper->authenticateToken($request);
+            $user = $this->tokenHelper->authenticate($request, false);
         } catch (Exception $e) {
             // NOOP
         }

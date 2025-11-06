@@ -4,7 +4,7 @@ namespace IntegrationTests;
 
 use CCR\DB;
 use Exception;
-use Models\Services\Tokens;
+use Access\Security\Helpers\Tokens;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
 /**

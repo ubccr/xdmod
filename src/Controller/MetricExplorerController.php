@@ -439,7 +439,7 @@ class MetricExplorerController extends BaseController
     public function getDimensionValues(Request $request): Response
     {
         try {
-            $user = $this->tokenHelper->authenticateToken($request);
+            $user = $this->tokenHelper->authenticate($request, false);
 
             // If token authentication failed then fallback to the standard session based authentication method.
             if ($user === null) {
@@ -492,7 +492,7 @@ class MetricExplorerController extends BaseController
     public function getDwDescriptors(Request $request): Response
     {
         try {
-            $user = $this->tokenHelper->authenticateToken($request);
+            $user = $this->tokenHelper->authenticate($request, false);
 
             // If token authentication failed then fallback to the standard session based authentication method.
             if ($user === null) {

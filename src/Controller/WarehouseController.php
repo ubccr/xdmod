@@ -36,6 +36,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
+use Twig\Environment;
 use UserStorage;
 use XDUser;
 use function xd_response\buildError;
@@ -2153,13 +2154,12 @@ class WarehouseController extends BaseController
     #[Route('{prefix}/warehouse/raw-data', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getRawData(Request $request): Response
     {
-        $this->logger->debug('Getting Raw Data!');
-        $this->logger->debug('Authenticating User By Token');
-        $user = parent::authenticateToken($request);
+        $user = $this->tokenHelper->authenticate($request, false);
+
         /*TODO: Validate that this is supposed to be here. */
         if ($user === null) {
             $this->logger->error('Unable to authenticate user by token');
-            return $this->json(buildError(new Exception('No Token Provided.')), 401, [
+            return $this->json(buildError(new Exception('No token provided.')), 401, [
                 'WWW-Authenticate' => 'Bearer'
             ]);
         }
@@ -2232,6 +2232,8 @@ class WarehouseController extends BaseController
     }
 
     /**
+     * Specifically for the Data Analytics Framework
+     *
      * @param Request $request
      * @return Response
      */
@@ -2239,7 +2241,7 @@ class WarehouseController extends BaseController
     #[Route('{prefix}/warehouse/resources', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getResources(Request $request): Response
     {
-        Tokens::authenticate($request);
+        $this->tokenHelper->authenticate($request);
 
         $config = \Configuration\XdmodConfiguration::assocArrayFactory('resource_metadata.json', CONFIG_DIR);
 
@@ -2665,7 +2667,7 @@ class WarehouseController extends BaseController
     #[Route('{prefix}/warehouse/raw-data/limit', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getRawDataLimit(Request $request): JsonResponse
     {
-        parent::authenticateToken($request);
+        $this->tokenHelper->authenticate($request);
 
         $limit = $this->getConfiguredRawDataLimit();
 

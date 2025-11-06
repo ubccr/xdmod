@@ -106,7 +106,7 @@ class UserInterfaceController extends BaseController
     {
         $this->logger->debug('Calling Get Charts');
         try {
-            $user = $this->tokenHelper->authenticateToken($request);
+            $user = $this->tokenHelper->authenticate($request, false);
 
             // If token authentication failed then fallback to the standard session based authentication method.
             if ($user === null) {
