@@ -177,7 +177,8 @@ class HomeController extends BaseController
             'sso_show_local_login' => $ssoSettings['show_local_login'],
             'sso_direct_link' => $ssoSettings['direct_link'],
             'is_jupyter_configured' => $jupyterIsEnabled,
-            'jupyter_hub_url' => $jupyterHubURL
+            'jupyter_hub_url' => $jupyterHubURL,
+            'error_codes' => \XDError::getErrorCodes()
         ];
 
         $logoData = $this->getLogoData();

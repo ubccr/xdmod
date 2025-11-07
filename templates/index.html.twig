@@ -44,7 +44,14 @@
     {% endif %}
 
     <!-- Globals -->
-    <script type="text/javascript" src={{ asset('gui/js/Error.js.php') }}></script>
+
+    <!--  -->
+    <script type="text/javascript">
+        Ext.namespace('XDMoD.Error');
+        {% for name, code in error_codes %}
+        XDMoD.Error.{{ name }} = {{ code }};
+        {% endfor %}
+    </script>
     <script type="text/javascript" src={{ asset('gui/js/globals.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/js/StringExtensions.js') }}></script>
     <!-- Plugins -->
