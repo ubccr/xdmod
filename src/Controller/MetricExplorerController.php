@@ -395,6 +395,7 @@ class MetricExplorerController extends BaseController
         $m = new \DataWarehouse\Access\MetricExplorer($_REQUEST);
         try {
             $result = $m->get_data($user);
+            return new Response($result['results'], 200, $result['headers']);
         } catch (Exception $e) {
             return $this->json(
                 [
@@ -404,26 +405,6 @@ class MetricExplorerController extends BaseController
                 400
             );
         }
-
-
-        $format = $this->getStringParam($request, 'format');
-        if ($format === 'png'
-            || $format === 'pdf'
-            || $format === 'svg'
-            || $format === 'png_inline'
-            || $format === 'svg_inline'
-            || $format === '_internal'
-            || $format === 'csv'
-            || $format === 'xml'
-            || $format === 'json') {
-            $response = new Response($result['results']);
-        } else {
-            $response = $this->json(json_decode($result['results']));
-        }
-
-        $response->headers->add($result['headers']);
-
-        return $response;
     }
 
 
