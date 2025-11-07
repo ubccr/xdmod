@@ -143,26 +143,12 @@ class AboutController extends BaseController
     }
 
     /**
-     * @param string $xdmodType
      * @return Response
      */
-    #[Route('/about/release_notes/{xdmodType}', methods: ['GET'])]
-    public function releaseNotes(string $xdmodType): Response
+    #[Route('/about/release_notes/xdmod', methods: ['GET'])]
+    public function releaseNotes(): Response
     {
-        if (str_contains($xdmodType, '.')) {
-            $parts = explode('.', $xdmodType);
-            $xdmodType = $parts[0];
-        }
-        if (!in_array($xdmodType, ['xdmod', 'xsede'])) {
-            throw new BadRequestHttpException('Invalid XDMoD installation type specified.');
-        }
-
-        $xsedeInstall = $this->getConfigValue('features', 'xsede', false);
-        if (!$xsedeInstall && $xdmodType === 'xsede') {
-            throw new BadRequestHttpException('Invalid XDMoD installation type xsede specified.');
-        }
-
-        return $this->render("about/{$xdmodType}_release_notes.html.twig");
+        return $this->render("about/xdmod_release_notes.html.twig");
     }
 
     /**
