@@ -23,12 +23,12 @@ class ArrayIngestor implements Ingestor
 
     function __construct(
         iDatabase $dest_db,
-                  $insert_table,
         array $source_data = array(),
+        $insert_table,
         array $insert_fields = array(),
         array $post_ingest_update_statements = array(),
-                  $delete_statement = null,
-                  $count_statement = null
+        $delete_statement = null,
+        $count_statement = null
     ) {
         $this->_dest_db =  $dest_db;
 
