@@ -248,7 +248,6 @@
             "configuration/constants.php",
             "libraries/response.php",
             "libraries/web_message.php",
-            "libraries/rest.php",
             "libraries/versioning.php",
             "libraries/date.php",
             "libraries/utilities.php",
@@ -263,7 +262,6 @@
             "classes/XDChartPool.php",
             "classes/XDStatistics.php",
             "classes/SessionExpiredException.php",
-            "classes/XDController.php",
             "classes/XDUser.php",
             "classes/UniqueException.php",
             "classes/XDError.php",
@@ -291,7 +289,6 @@
             "Realm\\": "classes/Realm/",
             "ReportTemplates\\": "classes/ReportTemplates/",
             "Reports\\": "classes/Reports/",
-            "Rest\\": "classes/Rest/",
             "User\\": "classes/User/",
             "Xdmod\\": "classes/Xdmod/",
             "Access\\": "src/"
