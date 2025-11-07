@@ -75,19 +75,12 @@ class CCRDBHandler extends AbstractProcessingHandler
      */
     protected function write(LogRecord $record): void
     {
-        $message = array_merge(
-            [
-                'message' => $record->message
-            ],
-            $record->context
-        );
-
         $sql = sprintf("INSERT INTO %s.%s (id, logtime, ident, priority, message) VALUES(:id, NOW(), :ident, :priority, :message)", $this->schema, $this->table);
         $params = [
             ':id' => $this->getNextId(),
             ':ident' => $record['channel'],
             ':priority' => Log::convertToCCRLevel($record['level']),
-            ':message' => json_encode($message, JSON_NUMERIC_CHECK | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            ':message' => $record['formatted']
         ];
         $this->db->execute($sql, $params);
     }

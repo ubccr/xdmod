@@ -264,7 +264,7 @@ class Log
     {
         $dbLogLevel = $conf['dbLogLevel'] ?? self::getDefaultLogLevel('db');
 
-        $handler = new CCRDBHandler(null, null, null, self::convertToMonologLevel($dbLogLevel));
+        $handler = new CCRDBHandler(null, null, null, $dbLogLevel);
         $handler->setFormatter(new CCRDBFormatter());
 
         return $handler;
