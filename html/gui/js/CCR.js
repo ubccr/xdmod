@@ -1623,25 +1623,8 @@ CCR.xdmod.initDashboard = function () {
 
     // Opening the window before the AJAX request is necessary to prevent
     // it being treated as a popup. Solution from: http://stackoverflow.com/a/20822754
-    var dashboardWindow = window.open("", "_blank");
+    var dashboardWindow = window.open("/internal_dashboard", "_blank");
     dashboardWindow.focus();
-
-    Ext.Ajax.request({
-        url: 'controllers/dashboard_launch.php',
-        method: 'POST',
-        callback: function (options, success, response) {
-            if (success && CCR.checkJSONResponseSuccess(response)) {
-                dashboardWindow.location.href = 'internal_dashboard';
-            }
-            else {
-                dashboardWindow.close();
-                window.focus();
-                CCR.xdmod.ui.presentFailureResponse(response, {
-                    title: 'XDMoD Dashboard'
-                });
-            }
-        }
-    });
 }; //CCR.xdmod.initDashboard
 
 // -----------------------------------
