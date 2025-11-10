@@ -291,7 +291,7 @@
     {% endif %}
 
     <script type="text/javascript" src={{ asset('gui/js/PortalModule.js') }}></script>
-    {% if user_logged_in and user_dashboard %}
+    {% if user_logged_in and user_dashboard  and user.getPersonID() != PERSON_ID_UNASSOCIATED %}
         <script type="text/javascript" src={{ asset('gui/js/modules/Dashboard.js') }}></script>
     {% else %}
         <script type="text/javascript" src={{ asset('gui/js/modules/Summary.js') }}></script>
