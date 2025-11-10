@@ -80,7 +80,7 @@ class ReportBuilderController extends BaseController
     public function getReports(Request $request): Response
     {
         try {
-            $user = \xd_security\detectUser([XDUser::PUBLIC_USER]);
+            $user = $this->detectUser($request, [XDUser::PUBLIC_USER]);
         } catch(Exception $e) {
             return $this->json(buildError($e), 401);
         }
@@ -104,7 +104,7 @@ class ReportBuilderController extends BaseController
     public function getAvailableCharts(Request $request): Response
     {
         try {
-            $user = \xd_security\detectUser([XDUser::PUBLIC_USER]);
+            $user = $this->detectUser($request, [XDUser::PUBLIC_USER]);
         } catch(Exception $e) {
             return $this->json(buildError($e), 401);
         }
@@ -474,7 +474,7 @@ class ReportBuilderController extends BaseController
     public function getTemplates(Request $request): Response
     {
         try {
-            $user = \xd_security\getLoggedInUser();
+            $user = $this->getLoggedInUser($request->getSession());
         } catch (Exception $e) {
             return $this->json(buildError($e), 401);
         }

@@ -384,13 +384,12 @@ class MetricExplorerController extends BaseController
      *
      * @param Request $request
      * @return Response
-     * @throws SessionExpiredException if unable to successfully retrieve the currently logged in user.
      * @throws Exception if there is a problem with the processing of the get_data function.
      */
     #[Route('{prefix}/metrics/explorer/data', requirements: ['prefix' => '.*'], methods: ['POST', 'GET'])]
     public function getData(Request $request): Response
     {
-        $user = \xd_security\detectUser([XDUser::INTERNAL_USER, XDUser::PUBLIC_USER]);
+        $user = $this->detectUser($request, [XDUser::INTERNAL_USER, XDUser::PUBLIC_USER]);
 
         $m = new \DataWarehouse\Access\MetricExplorer($_REQUEST);
         try {
@@ -424,7 +423,7 @@ class MetricExplorerController extends BaseController
 
             // If token authentication failed then fallback to the standard session based authentication method.
             if ($user === null) {
-                $user = \xd_security\detectUser(array(\XDUser::PUBLIC_USER));
+                $user = $this->detectUser($request, array(\XDUser::PUBLIC_USER));
             }
         } catch (Exception $e) {
             return $this->json(
@@ -477,7 +476,7 @@ class MetricExplorerController extends BaseController
 
             // If token authentication failed then fallback to the standard session based authentication method.
             if ($user === null) {
-                $user = \xd_security\getLoggedInUser();
+                $user = $this->getLoggedInUser($request->getSession());
             }
         } catch (Exception $e) {
             return $this->json(
@@ -647,7 +646,7 @@ class MetricExplorerController extends BaseController
         $returnData = [];
 
         try {
-            $user = \xd_security\getLoggedInUser();
+            $user = $this->getLoggedInUser($request->getSession());
 
             $userProfile = $user->getProfile();
             $filters = $userProfile->fetchValue('filters');
@@ -687,12 +686,12 @@ class MetricExplorerController extends BaseController
     /**
      * @param Request $request
      * @return Response
-     * @throws SessionExpiredException|AccessDeniedException
+     * @throws Exception if there is a problem retrieving a user for the request.
      */
     #[Route('{prefix}/metrics/explorer/raw_data', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getRawData(Request $request): Response
     {
-        $user = \xd_security\detectUser(array(XDUser::INTERNAL_USER, XDUser::PUBLIC_USER));
+        $user = $this->detectUser($request, array(XDUser::INTERNAL_USER, XDUser::PUBLIC_USER));
 
         try {
             $config = [];
