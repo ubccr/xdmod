@@ -18,6 +18,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 use Twig\Environment;
+use xd_security\SessionSingleton;
 use XDUser;
 
 /**
@@ -151,9 +152,119 @@ class BaseController extends AbstractController
         return $user;
     }
 
-    protected function getDashboardUser(Session $session)
+    /**
+     * @param Request $request
+     * @param string[] $failover_methods
+     * @return XDUser
+     * @throws \SessionExpiredException
+     */
+    protected function detectUser(Request $request, array $failover_methods = []): XDUser
     {
+        $session = $request->getSession();
+        try {
+            $user = $this->getLoggedInUser($session);
+        } catch (Exception $e) {
+            if (count($failover_methods) == 0) {
+                // Previously: Exception with 'Session Expired', No Logged In User code
+                throw new \SessionExpiredException();
+            }
 
+            switch ($failover_methods[0]) {
+                case XDUser::PUBLIC_USER:
+                    if (
+                        (isset($_REQUEST['public_user']) && $_REQUEST['public_user'] === 'true') ||
+                        ($session->has('public_session_token'))
+                    ) {
+                        return XDUser::getPublicUser();
+                    } else {
+                        // Previously: Exception with 'Session Expired', No Public User code
+                        throw new \SessionExpiredException($e->getMessage());
+                    }
+                    break;
+                case XDUser::INTERNAL_USER:
+                    try {
+                        return $this->getInternalUser($request);
+                    } catch (Exception $e) {
+                        if (
+                            isset($failover_methods[1])
+                            && $failover_methods[1] == XDUser::PUBLIC_USER
+                        ) {
+                            if (
+                                (isset($_REQUEST['public_user']) && $_REQUEST['public_user'] === 'true') ||
+                                ($session->has('public_session_token'))
+                            ) {
+                                return XDUser::getPublicUser();
+                            } else {
+                                // Previously: Exception with 'Session Expired', No Public User code
+                                throw new \SessionExpiredException();
+                            }
+                        } else {
+                            // Previously: Exception with 'Session Expired', No Internal User code
+                            throw new \SessionExpiredException();
+                        }
+                    }
+                default:
+                    // Previously: Exception with 'Session Expired', No Logged In User code
+                    throw new \SessionExpiredException();
+            }
+        }
+
+        return $user;
+    }
+
+    /**
+     * Ported from libraries/security.php::getLoggedInUser, modified to use Symfony Session as opposed to the
+     * SessionSingleton.
+     *
+     * @param Session $session
+     *
+     * @return XDUser
+     *
+     * @throws Exception if no 'xdUser' session parameter exists.
+     * @throws Exception if unable to find a record in moddb.Users for the id present in the 'xdUser' session parameter.
+     */
+    protected function getLoggedInUser(Session $session): XDUser
+    {
+        // This is where the
+        $sessionUserId = $session->get('xdUser');
+        if (empty($sessionUserId)) {
+            throw new Exception('Session Expired', 2);
+        }
+        $user = XDUser::getUserByID($sessionUserId);
+
+        if ($user == NULL) {
+            throw new Exception('User does not exist');
+        }
+
+        return $user;
+    }
+
+
+    /**
+     * @param Request $request
+     * @return XDUser
+     * @throws Exception if there is no record in moddb.Users for the value of the user_id request param.
+     * @throws Exception if there is no user_id request param.
+     */
+    protected function getInternalUser(Request $request): XDUser
+    {
+        $userId = $request->get('user_id');
+
+        if (
+            $request->server->has('REMOTE_ADDR')
+            && $request->server->get('REMOTE_ADDR') == '127.0.0.1'
+            && isset($userId)
+        ) {
+            $user = XDUser::getUserByID($userId);
+
+            if ($user == NULL) {
+                throw new Exception('Internal user does not exist');
+            }
+        } else {
+            throw new Exception('Internal user not specified');
+        }
+
+        return $user;
     }
 
 
