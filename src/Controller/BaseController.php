@@ -133,23 +133,26 @@ class BaseController extends AbstractController
      */
     protected function getXDUser(Session $session): XDUser
     {
-        $user = $this->getUser();
-        if (!isset($user)) {
+        $symfonyUser = $this->getUser();
+        if (!isset($symfonyUser)) {
             if ($session->has('xdUser')) {
-                $user = XDUser::getUserByID($session->get('xdUser'));
+                $xdUser = XDUser::getUserByID($session->get('xdUser'));
             } elseif ($session->has('xdmod_token')) {
-                $user = XDUser::getUserByToken($session->get('xdmod_token'));
+                $xdUser = XDUser::getUserByToken($session->get('xdmod_token'));
             } else {
                 if (!$session->has('public_session_token')) {
                     $session->set('public_session_token', 'public-' . microtime(true) . '-' . uniqid());
                 }
-                $user = XDUser::getPublicUser();
+                $xdUser = XDUser::getPublicUser();
             }
-
         } else {
-            $user = XDUser::getUserByUserName($user->getUserIdentifier());
+            $xdUser = XDUser::getUserByUserName($symfonyUser->getUserIdentifier());
         }
-        return $user;
+
+        if (!$xdUser->isPublicUser()) {
+            $session->set('xdUser', $xdUser->getUserID());
+        }
+        return $xdUser;
     }
 
     /**

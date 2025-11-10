@@ -84,9 +84,9 @@ class HomeController extends BaseController
             $response = new RedirectResponse("$returnTo");
             return $response;
         }
-        $user = $this->getXDUser($session);
 
-        $session->set('xdUser', $user->getUserID());
+        $user = $this->getXDUser($session);
+        $userLoggedIn = $session->has('xdUser') && !$user->isPublicUser();
 
         $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
             $carry [] = $item->getName();
@@ -135,8 +135,8 @@ class HomeController extends BaseController
             $jupyterHubURL = '';
         }
 
-
         $params = [
+            'user_logged_in' => $userLoggedIn,
             'user' => $user,
             'person_name' => sprintf('%s, %s', $personInfo[0]['last_name'], $personInfo[0]['first_name']),
             'title' => \xd_utilities\getConfiguration('general', 'title'),

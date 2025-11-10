@@ -33,13 +33,13 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/viewer.css') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/helptour.css') }}">
 
-    {% if user is not null %}
+    {% if user_logged_in %}
         <script type="text/javascript" src="{{ asset('gui/lib/RowExpander.js') }}"></script>
     {% endif %}
 
     <script type="text/javascript" src="{{ asset('js_classes/DateUtilities.js') }}"></script>
 
-    {% if user is not null %}
+    {% if user_logged_in %}
         <script type="text/javascript" src="{{ asset('js_classes/StringUtilities.js') }}"></script>
     {% endif %}
 
@@ -73,15 +73,15 @@
 
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/MultiSelect.css') }}"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/lib/extjs/examples/ux/css/Spinner.css') }}"/>
-    {% if user is not null %}
+    {% if user_logged_in %}
         <link rel="stylesheet" type="text/css" href="{{ asset('gui/lib/extjs/examples/ux/css/LockingGridView.css') }}"/>
     {% endif %}
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/aboutus.css') }}"/>
-    {% if user is not null %}
+    {% if user_logged_in %}
         <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/GroupTab.css') }}"/>
     {% endif %}
 
-    {% if user is not null %}
+    {% if user_logged_in %}
         <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/LockingGridView.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/ProgressBarPager.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/treegrid/TreeGridSorter.js') }}></script>
@@ -108,7 +108,7 @@
     <script type="text/javascript" src={{ asset('gui/lib/printer/Printer-all.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/js/TGUserDropDown.js') }}></script>
 
-    {% if user is not null %}
+    {% if user_logged_in %}
         <script type="text/javascript" src={{ asset('gui/js/LoginPrompt.js') }}></script>
     {% endif %}
 
@@ -121,7 +121,7 @@
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/MetricExplorer.css') }}"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/common.css') }}"/>
 
-    {% if user is null %}
+    {% if not user_logged_in %}
         <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/LoginPrompt.css') }}"/>
     {% endif %}
 
@@ -144,7 +144,7 @@
         CCR.xdmod.short_version = "{{ xdmod_portal_version_short }}";
         CCR.xdmod.ui.username = '{{ user ? user.getUsername : '__public__' }}';
 
-        {% if user is not null %}
+        {% if user_logged_in %}
         CCR.xdmod.ui.fullName = "{{ user.getFormalName }}";
         CCR.xdmod.ui.usertype = "{{ user.getUserType }}";
         CCR.xdmod.ui.userIsSSO = {{ user.isSSOUser ? 'true' : 'false' }};
@@ -187,7 +187,7 @@
     </script>
 
     {# Profile Editor #}
-    {% if user is not null %}
+    {% if user_logged_in %}
         <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/ProfileEditor.css') }}"/>
         <script type="text/javascript" src={{ asset('gui/js/profile_editor/ProfileApiToken.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/js/profile_editor/ProfileGeneralSettings.js') }}></script>
@@ -203,7 +203,7 @@
     <script type="text/javascript" src={{ asset('gui/js/common/data_warehouse/QuickFilterToolbar.js') }}></script>
 
     <!-- Reporting -->
-    {% if user is not null %}
+    {% if user_logged_in %}
         <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/ChartDateEditor.css') }}"/>
         <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/ReportManager.css') }}"/>
         <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/AvailableCharts.css') }}"/>
@@ -229,7 +229,7 @@
     <script type="text/javascript" src="{{ asset('gui/js/libraries/PlotlyUtilities.js') }}"></script>
     <script type="text/javascript" src="{{ asset('gui/js/PlotlyPanel.js') }}"></script>
 
-    {% if user is not null %}
+    {% if user_logged_in %}
         <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/ChartDragDrop.css') }}"/>
     {% endif %}
 
@@ -239,7 +239,7 @@
     <script type="text/javascript" src={{ asset('gui/lib/Portlet.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/js/Portlet.js') }}></script>
 
-    {% if user is not null %}
+    {% if user_logged_in %}
         <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/TreeCheckbox.css') }}"/>
         <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/TriStateNodeUI.css') }}"/>
 
@@ -255,7 +255,7 @@
     <script type="text/javascript" src={{ asset('gui/js/CustomDateField.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/js/CustomSplitButton.js') }}></script>
 
-    {% if user is not null %}
+    {% if user_logged_in %}
         <script type="text/javascript" src={{ asset('gui/js/CustomTwinTriggerField.js') }}></script>
     {% endif %}
 
@@ -272,7 +272,7 @@
     <script type="text/javascript" src={{ asset('gui/js/FilterDimensionPanel.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/Spotlight.js') }}></script>
 
-    {% if user is not null %}
+    {% if user_logged_in %}
         <script type="text/javascript" src={{ asset('gui/js/CustomMenu.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/js/AddDataPanel.js') }}></script>
     {% endif %}
@@ -280,18 +280,18 @@
     <script type="text/javascript" src={{ asset('gui/js/ExportPanel.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/js/CaptchaField.js') }}></script>
 
-    {% if user is null %}
+    {% if not user_logged_in %}
         <script type="text/javascript" src={{ asset('gui/js/SignUpDialog.js') }}></script>
     {% endif %}
 
     <script type="text/javascript" src={{ asset('gui/js/ContactDialog.js') }}></script>
 
-    {% if user is not null %}
+    {% if user_logged_in %}
         <script type="text/javascript" src={{ asset('gui/js/RealTimeValidatingTextField.js') }}></script>
     {% endif %}
 
     <script type="text/javascript" src={{ asset('gui/js/PortalModule.js') }}></script>
-    {% if user is not null and user_dashboard %}
+    {% if user_logged_in and user_dashboard %}
         <script type="text/javascript" src={{ asset('gui/js/modules/Dashboard.js') }}></script>
     {% else %}
         <script type="text/javascript" src={{ asset('gui/js/modules/Summary.js') }}></script>
@@ -299,13 +299,13 @@
 
     <script type="text/javascript" src={{ asset('gui/js/modules/Usage.js') }}></script>
 
-    {% if user is not null %}
+    {% if user_logged_in %}
         <script type="text/javascript" src={{ asset('gui/js/modules/ReportGenerator.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/js/modules/DataExport.js') }}></script>
     {% endif %}
     <script type="text/javascript" src={{ asset('gui/js/modules/About.js') }}></script>
 
-    {% if user is not null %}
+    {% if user_logged_in %}
         <script type="text/javascript" src={{ asset('gui/js/modules/metric_explorer/MetricExplorer.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/js/modules/metric_explorer/StatusButton.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/js/ChangeStack.js') }}></script>
@@ -345,7 +345,7 @@
     {% endif %}
     <script type="text/javascript" src="{{ asset('gui/js/Viewer.js') }}"></script>
 
-    {% if user is not null and not is_public_user %}
+    {% if user_logged_in and not is_public_user %}
         {{ asset_paths | raw }}
     {% endif %}
 
@@ -355,7 +355,7 @@
         var xsedeProfilePrompt = function () {
         };
 
-        {% if user is null %}
+        {% if not user_logged_in %}
         Ext.onReady(xdmodviewer.init, xdmodviewer);
         {% elseif not profile_editor_init_flag is empty %}
         xsedeProfilePrompt = function () {
@@ -371,7 +371,7 @@
         {% endif %}
     </script>
 
-    {% if user is not null %}
+    {% if user_logged_in %}
         <script type="text/javascript">Ext.onReady(xdmodviewer.init, xdmodviewer);</script>
     {% endif %}
     {% if captcha_site_key|length > 0 %}
