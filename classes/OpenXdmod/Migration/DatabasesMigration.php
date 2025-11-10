@@ -131,9 +131,14 @@ abstract class DatabasesMigration extends Migration
     protected function requestMysqlAdminCredentials()
     {
         if (self::$mysqlAdminCredentials === null) {
+            echo <<<"EOF"
+One or more migrations in this upgrade require admin credentials for the
+MySQL database.
+
+EOF;
             $console = Console::factory();
             $proceed = $console->prompt(
-                "One or more migrations in this upgrade require admin credentials for the MySQL database. Would you like to proceed?",
+                "Would you like to proceed?",
                 'yes',
                 array('yes', 'no')
             ) === 'yes';
