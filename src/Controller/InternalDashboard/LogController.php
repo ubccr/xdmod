@@ -91,7 +91,7 @@ class LogController extends BaseController
             $params[] = $ident;
         }
 
-        $logLevels = $this->getStringParam($request, 'logLevels');
+        $logLevels = $request->get( 'logLevels');
         if (isset($logLevels) && is_array($logLevels)) {
             $clauses[] = sprintf(
                 'priority IN (%s)',
