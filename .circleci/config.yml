@@ -208,7 +208,7 @@ jobs:
       - run:
           name: Ensure that no PHP command-line errors were generated
           command: |
-            docker exec xdmod /bin/bash -c "if [ -s /var/log/php_errors.log ]; then cat /var/log/php_errors.log; false; fi"
+            docker exec xdmod /bin/bash -c "if [ -s /var/log/php_errors.log ]; then cat /var/log/php_errors.log | grep -v 'Warning'; false; fi"
       - store_artifacts:
           path: /tmp/screenshots
       - store_artifacts:
