@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Access\Entity;
+namespace CCR\Entity;
 
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;

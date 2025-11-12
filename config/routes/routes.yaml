@@ -1,7 +1,7 @@
 controllers:
     resource:
         path: ../../src/Controller
-        namespace: Access\Controller
+        namespace: CCR\Controller
         prefix: /rest
         name_prefix: legacy_
     type: attribute

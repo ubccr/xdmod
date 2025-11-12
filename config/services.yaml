@@ -41,30 +41,35 @@ services:
         factory: [ 'CCR\DB', 'factory' ]
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
-    Access\:
+    symfony_code:
+        namespace: CCR\
         resource: '../src/'
         exclude:
             - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
+    legacy_code:
+        namespace: CCR\
+        resource: '../classes/CCR/'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-    CCR\:
-        resource: '../classes/CCR/'
+#    CCR\:
+#        resource: '../classes/CCR/'
     CCR\DB\iDatabase:
         factory: [ 'CCR\DB', 'factory' ]
-    Access\Security\Authenticators\FormLoginAuthenticator:
+    CCR\Security\Authenticators\FormLoginAuthenticator:
         arguments:
             $options:
                 username_parameter: 'username'
                 password_parameter: 'password'
-    Access\EventListeners\LogoutListener:
+    CCR\EventListeners\LogoutListener:
         tags:
             -   name: 'kernel.event_listener'
                 event: 'Symfony\Component\Security\Http\Event\LogoutEvent'
                 dispatcher: security.event_dispatcher.main
                 method: onLogout
-    Access\Errors\ErrorController:
+    CCR\Errors\ErrorController:
         tags: [ 'controller.service_arguments' ]
         arguments:
             - '@http_kernel'

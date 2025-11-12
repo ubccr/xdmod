@@ -278,7 +278,7 @@
         ],
         "psr-4": {
             "Authentication\\": "classes/Authentication/",
-            "CCR\\": "classes/CCR/",
+            "CCR\\": ["classes/CCR/", "src/"],
             "Common\\": "classes/Common/",
             "Configuration\\": "classes/Configuration/",
             "DataWarehouse\\": "classes/DataWarehouse/",
@@ -290,8 +290,7 @@
             "ReportTemplates\\": "classes/ReportTemplates/",
             "Reports\\": "classes/Reports/",
             "User\\": "classes/User/",
-            "Xdmod\\": "classes/Xdmod/",
-            "Access\\": "src/"
+            "Xdmod\\": "classes/Xdmod/"
         }
     },
     "replace": {

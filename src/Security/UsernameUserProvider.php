@@ -1,8 +1,8 @@
 <?php
 
-namespace Access\Security;
+namespace CCR\Security;
 
-use Access\Entity\User;
+use CCR\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;

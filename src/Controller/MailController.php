@@ -1,6 +1,6 @@
 <?php
 
-namespace Access\Controller;
+namespace CCR\Controller;
 
 use CCR\DB;
 use CCR\MailWrapper;

@@ -1,9 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace Access\Security;
+namespace CCR\Security;
 
-use Access\Entity\User;
+use CCR\Entity\User;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\UserInterface;

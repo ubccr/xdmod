@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use Access\Kernel;
+use CCR\Kernel;
 
 require_once dirname(__DIR__).'/vendor/autoload_runtime.php';
 

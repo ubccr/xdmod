@@ -1,8 +1,8 @@
 <?php
 
-namespace Access\Controller\InternalDashboard;
+namespace CCR\Controller\InternalDashboard;
 
-use Access\Controller\BaseController;
+use CCR\Controller\BaseController;
 use Exception;
 use Models\Services\Acls;
 use Symfony\Component\HttpFoundation\Request;

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Access\EventListeners;
+namespace CCR\EventListeners;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;

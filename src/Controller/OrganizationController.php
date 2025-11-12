@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Access\Controller;
+namespace CCR\Controller;
 
 use Exception;
 use Models\Services\Centers;

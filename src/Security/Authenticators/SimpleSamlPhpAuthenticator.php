@@ -1,8 +1,8 @@
 <?php
 
-namespace Access\Security\Authenticators;
+namespace CCR\Security\Authenticators;
 
-use Access\Entity\User;
+use CCR\Entity\User;
 use Authentication\SAML\XDSamlAuthentication;
 use Models\Services\Organizations;
 use Psr\Log\LoggerInterface;

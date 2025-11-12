@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Access\Controller;
+namespace CCR\Controller;
 
-use Access\Security\Helpers\Tokens;
+use CCR\Security\Helpers\Tokens;
 use Exception;
 use Models\Services\JsonWebToken;
 use Psr\Log\LoggerInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Access\Security\Helpers;
+namespace CCR\Security\Helpers;
 
 use CCR\DB;
 use CCR\Log;
