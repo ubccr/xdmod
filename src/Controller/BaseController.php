@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Access\Controller;
+namespace CCR\Controller;
 
-use Access\Security\Helpers\Tokens;
+use CCR\Security\Helpers\Tokens;
 use DateTime;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;

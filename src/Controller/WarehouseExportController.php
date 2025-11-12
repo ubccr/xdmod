@@ -1,8 +1,8 @@
 <?php
 
-namespace Access\Controller;
+namespace CCR\Controller;
 
-use Access\Security\Helpers\Tokens;
+use CCR\Security\Helpers\Tokens;
 use CCR\DB;
 use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\FileManager;

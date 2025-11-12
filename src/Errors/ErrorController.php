@@ -1,6 +1,6 @@
 <?php
 
-namespace Access\Errors;
+namespace CCR\Errors;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\ErrorHandler\ErrorRenderer\ErrorRendererInterface;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Access\Controller;
+namespace CCR\Controller;
 
 use Exception;
 use Symfony\Component\HttpFoundation\Request;

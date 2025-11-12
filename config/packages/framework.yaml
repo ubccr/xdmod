@@ -2,7 +2,7 @@
 framework:
     annotations:
         enabled: false
-    error_controller: Access\Errors\ErrorController
+    error_controller: CCR\Errors\ErrorController
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
     http_method_override: false

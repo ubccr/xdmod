@@ -1,6 +1,6 @@
 <?php
 
-namespace Access\Controller;
+namespace CCR\Controller;
 
 use DataWarehouse;
 use DataWarehouse\Access\MetricExplorer;

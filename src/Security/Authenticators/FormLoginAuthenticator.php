@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace Access\Security\Authenticators;
+namespace CCR\Security\Authenticators;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Cookie;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Access\Controller\InternalDashboard;
+namespace CCR\Controller\InternalDashboard;
 
 use CCR\DB;
 use CCR\MailWrapper;
@@ -11,7 +11,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use function xd_response\buildError;
 
-class MailerController extends \Access\Controller\BaseController
+class MailerController extends \CCR\Controller\BaseController
 {
     /**
      * @param Request $request
