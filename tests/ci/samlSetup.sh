@@ -9,13 +9,15 @@ DEFAULT_VENDOR_DIR=$DEFAULT_INSTALL_DIR/vendor
 INSTALL_DIR=${INSTALL_DIR:-$DEFAULT_INSTALL_DIR}
 VENDOR_DIR=${VENDOR_DIR:-$DEFAULT_VENDOR_DIR}
 
-HOSTNAME="localhost:8080"
+HOSTNAME=""
+PORT=""
 # valid values: local, keycloak
 DEFAULT_TYPE=local
-while getopts h:t: flag
+while getopts h:p:t: flag
 do
     case "${flag}" in
         h) HOSTNAME=${OPTARG};;
+        p) PORT=${PORT:-${OPTARG}};;
         t) TYPE=${DEFAULT_TYPE:-${OPTARG}};;
         *) echo "Invalid argument"; exit 1;
     esac
@@ -285,11 +287,21 @@ EOF
     # Configure SimplesamlPHP, stops / starts httpd as appropriate
     configureSimplesamlPHP;
 
-    ACS_URL=https://$HOSTNAME/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp
     AUD_URL=https://$HOSTNAME/xdmod-sp
+
+    # The ACS url is the only one that needs the port specified.
+    if [ -n "$PORT" ]; then
+            HOSTNAME="${HOSTNAME}:${PORT}"
+    fi
+
+    log "setup" "Spinning up for $HOSTNAME"
+    ACS_URL=https://$HOSTNAME/simplesaml/module.php/saml/sp/saml2-acs.php/xdmod-sp
+
 
     log "setup" "Starting local IDP"
     node app.js  --acs "$ACS_URL" --aud "$AUD_URL" --httpsPrivateKey idp-private-key.pem --httpsCert idp-public-cert.pem  --https true > /var/log/xdmod/samlidp.log 2>&1 &
+    EXIT_CODE=$?
+    exit $EXIT_CODE
 }
 
 keycloakSSO() {
@@ -298,6 +310,9 @@ keycloakSSO() {
 
 
 if [[ "$TYPE" == 'local'  ]]; then
+    log "settings" "Type: $TYPE"
+    log "settings" "Host: $HOSTNAME"
+    log "settings" "Port: $PORT"
     localSSO
 elif [ "$TYPE" == "keycloak" ]; then
     keycloakSSO
