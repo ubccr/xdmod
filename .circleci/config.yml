@@ -45,6 +45,7 @@ jobs:
             docker exec xdmod pecl install mongodb-1.18.1
             docker exec xdmod pecl install zip
             docker exec xdmod dnf remove -y php-devel openssl-devel
+            docker exec xdmod bash -c ">/var/log/php_errors.log"
       - run:
           name: Copy Files for Playwright and XDMoD containers
           command: |
