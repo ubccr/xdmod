@@ -102,6 +102,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/%{name}/etl/
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
+%config(noreplace) %{_datadir}/%{name}/config/
 
 %dir %attr(0570,apache,xdmod) %{xdmod_export_dir}
 
