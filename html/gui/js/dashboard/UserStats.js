@@ -472,42 +472,10 @@ XDMoD.UserStatsComponents.ClientActivity = Ext.extend(Ext.Panel, {
        * @param string metricSet An identifier for a set of metrics to load.
        */
       var changePage = function (metricSet) {
-         // Cancel the in-progress request, if any.
-         if (activeChangePageRequest) {
-            Ext.Ajax.abort(activeChangePageRequest);
-            activeChangePageRequest = null;
-         }
-
-         // Check that the user is authenticated. If so, then change the page.
-         activeChangePageRequest = Ext.Ajax.request({
-            url: '../internal_dashboard/controllers/user_auth.php',
-            params: {
-               operation: 'session_check',
-               public_user: false,
-               session_user_id_type: "Dashboard"
-            },
-
-            callback: function (options, success, response) {
-               activeChangePageRequest = null;
-
-               if (success) {
-                  success = CCR.checkJSONResponseSuccess(response);
-               }
-
-               if (!success) {
-                  CCR.xdmod.ui.presentFailureResponse(response, {
-                     title: self.title,
-                     wrapperMessage: "Failed to authenticate user."
-                  });
-                  return;
-               }
-
-               var frameParams = Ext.urlEncode({
-                  disp: metricSet
-               });
-               document.getElementById(frame_ref).src = 'analytics/index.php?' + frameParams;
-            }
-         });
+          var frameParams = Ext.urlEncode({
+              disp: metricSet
+          });
+          document.getElementById(frame_ref).src = 'analytics/index.php?' + frameParams;
       };
 
       // ---------------------------------
