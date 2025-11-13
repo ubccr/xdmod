@@ -96,17 +96,12 @@ class HomeController extends BaseController
         $features = $this->getFeatures();
 
         $isSSOConfigured = false;
-        $ssoLoginLink = [
-            'organization' => [
-                'en' => 'Test Organization',
-                'icon' => ''
-            ]
-        ];
+        $ssoLoginLink = [];
         $ssoSettings = $this->getParameter('sso');
         try {
             $auth = new XDSamlAuthentication();
+            $isSSOConfigured = $auth->isSamlConfigured();
             $ssoLoginLink = $auth->getLoginLink();
-            $isSSOConfigured = true;
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(), [$e]);
         }
