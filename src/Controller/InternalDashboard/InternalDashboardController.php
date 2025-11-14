@@ -63,12 +63,12 @@ class InternalDashboardController extends BaseController
         ];
 
         if ($user->isPublicUser()) {
-            return $this->render('internal_dashboard_login.html.twig', $parameters);
+            return $this->render('twig/internal_dashboard_login.html.twig', $parameters);
         } else {
             if (!$user->hasAcl('mgr')) {
                 return $this->redirect($this->generateUrl('xdmod_home'));
             }
-            return $this->render('internal_dashboard.html.twig', $parameters);
+            return $this->render('twig/internal_dashboard.html.twig', $parameters);
         }
     }
 

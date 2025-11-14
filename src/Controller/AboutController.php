@@ -22,7 +22,7 @@ class AboutController extends BaseController
     #[Route('/about/xdmod.html', methods: ["GET"])]
     public function xdmod(): Response
     {
-        return $this->render('about/xdmod.html.twig', [
+        return $this->render('twig/about/xdmod.html.twig', [
             'xdmod_version' => \xd_versioning\getPortalVersion(true)
         ]);
     }
@@ -34,7 +34,7 @@ class AboutController extends BaseController
     #[Route('/about/openxd.html', methods: ["GET"])]
     public function openXdmod(): Response
     {
-        return $this->render('about/open_xdmod.html.twig');
+        return $this->render('twig/about/open_xdmod.html.twig');
     }
 
     /**
@@ -44,7 +44,7 @@ class AboutController extends BaseController
     #[Route('/about/supremm.html', methods: ['GET'])]
     public function supremm(): Response
     {
-        return $this->render('about/supremm.html.twig');
+        return $this->render('twig/about/supremm.html.twig');
     }
 
     /**
@@ -94,7 +94,7 @@ class AboutController extends BaseController
             $parameters['instances'] = $instances;
         }
 
-        return $this->render('about/federated.html.twig', $parameters);
+        return $this->render('twig/about/federated.html.twig', $parameters);
     }
 
     /**
@@ -106,7 +106,7 @@ class AboutController extends BaseController
     {
         $header = $this->getConfigValue('roadmap', 'header');
         $url = $this->getConfigValue('roadmap', 'url');
-        return $this->render('about/roadmap.html.twig', [
+        return $this->render('twig/about/roadmap.html.twig', [
             'header' => $header,
             'url' => $url
         ]);
@@ -119,7 +119,7 @@ class AboutController extends BaseController
     #[Route('/about/team.html', methods: ['GET'])]
     public function team(): Response
     {
-        return $this->render('about/team.html.twig');
+        return $this->render('twig/about/team.html.twig');
     }
 
     /**
@@ -129,7 +129,7 @@ class AboutController extends BaseController
     #[Route('/about/publications.html', methods: ['GET'])]
     public function publications(): Response
     {
-        return $this->render('about/publications.html.twig');
+        return $this->render('twig/about/publications.html.twig');
     }
 
     /**
@@ -139,7 +139,7 @@ class AboutController extends BaseController
     #[Route('/about/links.html', methods: ['GET'])]
     public function links(): Response
     {
-        return $this->render('about/links.html.twig');
+        return $this->render('twig/about/links.html.twig');
     }
 
     /**
@@ -148,7 +148,7 @@ class AboutController extends BaseController
     #[Route('/about/release_notes/xdmod', methods: ['GET'])]
     public function releaseNotes(): Response
     {
-        return $this->render("about/xdmod_release_notes.html.twig");
+        return $this->render("twig/about/xdmod_release_notes.html.twig");
     }
 
     /**
@@ -159,6 +159,6 @@ class AboutController extends BaseController
     #[Route('/about/presentations.html', methods: ['GET'])]
     public function teamPresentations(Request $request): Response
     {
-        return $this->render('about/presentations.html.twig');
+        return $this->render('twig/about/presentations.html.twig');
     }
 }

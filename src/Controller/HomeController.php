@@ -184,7 +184,7 @@ class HomeController extends BaseController
             $params['img_data'] = $imgData;
         }
 
-        return $this->render('index.html.twig', $params);
+        return $this->render('twig/index.html.twig', $params);
     }
 
 

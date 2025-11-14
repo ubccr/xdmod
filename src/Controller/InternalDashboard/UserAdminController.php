@@ -884,7 +884,7 @@ class UserAdminController extends BaseController
 
         $subject = sprintf('%s: Password Reset', \xd_utilities\getConfiguration('general', 'title'));
         $body = $this->twig->render(
-            'emails/password_reset.html.twig',
+            'twig/emails/password_reset.html.twig',
             [
                 'first_name' => $user->getFirstName(),
                 'username' => $user->getUsername(),
@@ -960,7 +960,7 @@ class UserAdminController extends BaseController
         return [
             sprintf('%s: Account Created', $pageTitle),
             $this->twig->render(
-                'emails/new_user.html.twig',
+                'twig/emails/new_user.html.twig',
                 [
                     'page_title' => $pageTitle,
                     'site_address' => $siteAddress,
