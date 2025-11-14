@@ -67,9 +67,6 @@ done
 # Ensure the var directory is owned by apache so it can be written to.
 chown apache:xdmod %{_datadir}/%{name}/var
 
-# Ensure we have a default APP_SECRET value in the .env file.
-echo "APP_SECRET=$(date | sha512sum | cut -d' ' -f 1)" >> %{_datadir}/%{name}/.env
-
 if [ "$1" -ge 2 ]; then
     echo "Run xdmod-upgrade to complete the Open XDMoD upgrade process."
     echo "Refer to http://open.xdmod.org/upgrade.html for more details."
@@ -88,7 +85,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/
 %{_datadir}/%{name}/
-%{_datadir}/%{name}/.env
 
 %{_docdir}/%{name}-%{version}__PRERELEASE__/
 
