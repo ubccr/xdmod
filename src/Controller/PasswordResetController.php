@@ -41,7 +41,7 @@ class PasswordResetController extends BaseController
 
         if ($validationCheck['status'] === INVALID || !in_array($mode, self::$validModes)) {
             return $this->render(
-                '::password_reset_expired.html.twig',
+                'twig/password_reset_expired.html.twig',
                 [
                     'site_address' => $site_address = \xd_utilities\getConfigurationUrlBase('general', 'site_address')
                 ]
@@ -49,7 +49,7 @@ class PasswordResetController extends BaseController
         }
 
         return $this->render(
-            '::password_reset.html.twig',
+            '/twig/password_reset.html.twig',
             [
                 'rid' => $rid,
                 'mode' => $mode,
