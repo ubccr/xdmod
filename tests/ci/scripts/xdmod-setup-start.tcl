@@ -22,6 +22,8 @@ provideInput {Center Logo Path:} {}
 provideInput {Enable Dashboard Tab*} {off}
 confirmFileWrite yes
 enterToContinue
+confirmFileWrite yes
+enterToContinue
 
 selectMenuOption 2
 answerQuestion {DB Hostname or IP} localhost
