@@ -27,7 +27,7 @@
             "/user_manual_builder"
         ],
         "exclude_patterns": [
-            "#^\\/\\.(?!env).*#",
+            "#/\\.#",
             "#\\.eslintrc\\.json#",
             "#xdmod-.*\\.rpm$#",
             "#xdmod-.*\\.tar\\.gz$#",
@@ -40,8 +40,6 @@
     },
     "file_maps": {
         "data": [
-            {"bin/console": true },
-            {".env":  true},
             "classes",
             "etl",
             "libraries",
