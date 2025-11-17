@@ -8,6 +8,9 @@ BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 REPODIR=`realpath $BASEDIR/../../`
 INSTALL_DIR=/usr/share/xdmod
 
+# This script uses UTF8 encoding
+export LANG=C.UTF-8
+
 # Check that there are no development artifacts installed in the RPM
 if rpm -ql xdmod | fgrep .eslintrc.json; then
     echo "Error eslintrc files found in the RPM"
