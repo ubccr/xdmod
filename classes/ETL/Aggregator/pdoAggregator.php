@@ -1448,18 +1448,18 @@ class pdoAggregator extends aAggregator
         $sql = "DROP TEMPORARY TABLE IF EXISTS $qualifiedTmpTableName";
 
         try {
-            $result = $this->sourceHandle->execute($sql);
+            $this->sourceHandle->execute($sql);
         } catch (PDOException $e ) {
             $this->logAndThrowException(
-                    "Error removing temporary batch stage table",
-                    array('exception' => $e, 'sql' => $sql)
+                "Error removing temporary batch stage table",
+                array('exception' => $e, 'sql' => $sql)
             );
         }
 
         try {
             $whereClause = $this->variableStore->substitute(
-                    implode(" AND ", $this->etlStageBatchQuery->where),
-                    "Undefined macros found in WHERE clause"
+                implode(" AND ", $this->etlStageBatchQuery->where),
+                "Undefined macros found in WHERE clause"
             );
 
             $matches = array();
@@ -1475,7 +1475,7 @@ class pdoAggregator extends aAggregator
             $this->logger->debug(
                 sprintf("[batch aggregation] Batch temp table %s: %s", $this->sourceEndpoint, $sql)
             );
-            $result = $this->sourceHandle->execute($sql, $usedParams);
+            $this->sourceHandle->execute($sql, $usedParams);
         } catch (PDOException $e ) {
             $this->logAndThrowException(
                 "Error creating temporary batch aggregation table",
@@ -1495,7 +1495,7 @@ class pdoAggregator extends aAggregator
             $query = $this->etlStageBatchQuery;
         }
 
-        list($stageSelectSql, $_, $_) = $this->getSqlStatements($query, $aggregationUnit);
+        list($stageSelectSql, $unused, $unused) = $this->getSqlStatements($query, $aggregationUnit);
 
         $stageTableName =  $this->sourceEndpoint->getSchema(true) . "." . $this->sourceEndpoint->quoteSystemIdentifier($this->etlSourceQuery->joins[1]->name);
 
@@ -1506,7 +1506,6 @@ class pdoAggregator extends aAggregator
 
         $stagePrepSQL = "DROP TEMPORARY TABLE IF EXISTS $stageTableName";
         $stageInsertSQL = "CREATE TEMPORARY TABLE $stageTableName $stageSelectSql";
-
 
         $this->logger->debug("DROP stage table");
 
@@ -1522,6 +1521,4 @@ class pdoAggregator extends aAggregator
         $this->logger->debug("STAGE query rowCount " . $stageStmt->rowCount());
 
     }
-
-
 }  // class pdoAggregator
