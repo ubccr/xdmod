@@ -101,10 +101,10 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <?php
 
-    $meta_description = "XSEDE Metrics on Demand (XDMoD) is a comprehensive auditing framework for XSEDE, the follow-on to NSF's TeraGrid program.  " .
-        "XDMoD provides detailed information on resource utilization and performance across all resource providers.";
+    $meta_description = "XDMoD (XD Metrics on Demand) is a comprehensive auditing framework for NSF's ACCESS program, the follow-on to NSF's XSEDE and TeraGrid programs.  " .
+        "XDMoD provides statistics, analytics, visualization, and reporting of cyberinfrastructure/HPC resource utilization and performance across multiple resource providers.";
 
-    $meta_keywords = "xdmod, xsede, analytics, metrics on demand, hpc, visualization, statistics, reporting, auditing, nsf, resources, resource providers";
+    $meta_keywords = "xdmod, access, xsede, analytics, metrics on demand, cyberinfrastructure, hpc, visualization, statistics, reporting, auditing, nsf, resources, resource providers";
 
     ?>
 
@@ -114,7 +114,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
     <title><?php print $page_title; ?></title>
 
     <link rel="shortcut icon" href="gui/icons/favicon_static.ico"/>
-    <script type="text/javascript" src="gui/lib/internet-explorer-polyfills.js"></script>
     <?php if (!$userLoggedIn): ?>
         <script type="text/javascript">
             /**
@@ -122,28 +121,13 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
              **/
             var XDMoD = XDMoD || {};
             XDMoD.referer = document.location.hash || 'main_tab_panel#tg_summary' // <-- TODO: HORRIBLE HORRIBLE HACK, FIX THIS;
-            console.log(XDMoD.referer);
         </script>
     <?php endif; ?>
     <?php
     ExtJS::loadSupportScripts('gui/lib');
     ?>
     <script type="text/javascript" src="gui/lib/ext-oldie-history-patch.js"></script>
-    <script type="text/javascript" src="gui/lib/jquery/jquery-1.12.4.min.js"></script>
-    <?php if ($userLoggedIn): ?>
-        <script type="text/javascript" src="gui/lib/jquery-plugins/base64/jquery.base64.js"></script>
-    <?php endif; ?>
-    <script type="text/javascript">
-        <?php if ($userLoggedIn): ?>
-        if (!window.btoa) {
-            window.btoa = $.base64.encode
-        }
-        if (!window.atob) {
-            window.atob = $.base64.decode
-        }
-        <?php endif; ?>
-        jQuery.noConflict();
-    </script>
+    <script type="text/javascript" src="gui/lib/jquery/jquery-3.7.1.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="gui/css/viewer.css">
     <link rel="stylesheet" type="text/css" href="gui/css/helptour.css">
@@ -232,12 +216,6 @@ $page_title = xd_utilities\getConfiguration('general', 'title');
 
     <link rel="stylesheet" type="text/css" href="gui/css/MetricExplorer.css"/>
     <link rel="stylesheet" type="text/css" href="gui/css/common.css"/>
-    <!--[if lte IE 9]>
-    <link rel="stylesheet" type="text/css" href="gui/css/common_ie9.css"/>
-    <![endif]-->
-    <!--[if lte IE 8]>
-    <link rel="stylesheet" type="text/css" href="gui/css/common_ie8.css"/>
-    <![endif]-->
     <?php if (!$userLoggedIn): ?>
         <link rel="stylesheet" type="text/css" href="gui/css/LoginPrompt.css"/>
     <?php endif; ?>
@@ -381,6 +359,14 @@ JS;
 
         print "CCR.xdmod.features = " . json_encode($features) . ";\n";
         print "CCR.xdmod.timezone = " . json_encode(date_default_timezone_get()) . ";\n";
+
+        try {
+            $jupyterhubURL = xd_utilities\getConfiguration('jupyterhub', 'url');
+            print "CCR.xdmod.isJupyterHubConfigured = true;\n";
+            print "CCR.xdmod.JupyterHubURL = " . json_encode($jupyterhubURL) . ";\n";
+        } catch(\Exception $e) {
+            print "CCR.xdmod.isJupyterHubConfigured = false;\n";
+        }
         ?>
 
     </script>
@@ -491,7 +477,7 @@ JS;
 
     <?php /* Modules used by both XSEDE and Open XDMoD. */ ?>
 
-    <?php if ($userLoggedIn && isset($features['user_dashboard']) && filter_var($features['user_dashboard'], FILTER_VALIDATE_BOOLEAN)): ?>
+    <?php if ($userLoggedIn && isset($features['user_dashboard']) && filter_var($features['user_dashboard'], FILTER_VALIDATE_BOOLEAN) && $user->getPersonID() != PERSON_ID_UNASSOCIATED): ?>
         <script type="text/javascript" src="gui/js/modules/Dashboard.js"></script>
     <?php else: ?>
         <script type="text/javascript" src="gui/js/modules/Summary.js"></script>

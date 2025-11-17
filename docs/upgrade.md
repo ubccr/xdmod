@@ -5,41 +5,76 @@ title: Upgrade Guide
 General Upgrade Notes
 ---------------------
 
-- Open XDMoD only supports upgrading to a new version from the version that
-  directly precedes it unless otherwise noted below.  If you need to upgrade
-  from an older version you must upgrade through all the intermediate versions
-  or perform a clean installation.
-- Make a backup of your Open XDMoD configuration files before running
-  the upgrade script.  The upgrade script may overwrite your current
-  configuration files.
-- If the upgrade includes database schema changes (see notes at the
-  bottom of this page), you should backup all your data.
+- Open XDMoD version numbers are of the form X.Y.Z, where X.Y is the major
+  version number and Z is the minor version number.
+    - Software changes for minor versions include security updates and bug
+      fixes.
+    - Software changes for major versions usually have new features added,
+      database structure changes, and non-backwards compatible changes.
+    - Major version numbers usually (but not always) increment by 0.5, e.g.,
+      9.0, 9.5, 10.0, 10.5, etc.
+- Unless otherwise noted below, Open XDMoD only supports upgrades to:
+    - Minor versions of the same major version (e.g., from 9.5.0 to 9.5.1,
+      from 10.0.0 to 10.0.3, etc.),
+    - The next major version (e.g., from 9.5.0 to 10.0.0, from 10.0.2 to
+      11.0.0, etc.), or
+    - Minor versions of the next major version (e.g., from 9.5.0 to 10.0.1,
+      from 10.5.1 to 11.0.1, etc.).
+- If you need to jump more than one major version, you must incrementally
+  upgrade to each of the intermediate major versions (or a minor version
+  thereof), e.g., if you want to upgrade from 9.5.1 to 11.0.2, then you must
+  upgrade from 9.5.1 to 10.0.\*, then from 10.0.\* to 10.5.\*, then from
+  10.5.\* to 11.0.2.
+- Make backups of your Open XDMoD configuration files and databases before
+  running the upgrade script. The upgrade script may overwrite your current
+  configuration files and data.
 - Do not change the version in `portal_settings.ini` before running the
-  upgrade script.  The version number will be changed by the upgrade
+  upgrade script. The version number will be changed by the upgrade
   script.
-- If you have installed any additional Open XDMoD packages (e.g.
-  `xdmod-appkernels` or `xdmod-supremm`), upgrade those to the latest
-  version before running `xdmod-upgrade`.
+- Make sure to follow the instructions below in the proper order, and note that
+  there may be version-specific upgrade notes. If you have installed any of the
+  optional modules for Open XDMoD, they may have their own version-specific
+  upgrade notes as well, see:
+    - [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-upgrade.html)
+    - [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-upgrade.html)
+    - [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/upgrade.html)
 
 RPM Upgrade Process
 -------------------
 
-### Download Latest Open XDMoD RPM package
+### Install RPM package(s)
 
-Download available at [GitHub][github-latest-release].
+Note that if you have installed any of the optional modules for Open XDMoD, you
+should also include their new RPM file(s) on the same `dnf install` command
+line below that you use to install the new Open XDMoD RPM file. The upgrade
+guides for each of the optional modules are linked below; these each contain a
+link to the GitHub page for the module release, which has the link to their
+RPM file.
 
-### Install the RPM
+- [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-upgrade.html)
+- [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-upgrade.html)
+- [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/upgrade.html)
 
-    # yum install xdmod-{{ page.sw_version }}-1.0.el7.noarch.rpm
+If your web server can reach GitHub via HTTPS, you can install the RPM
+package(s) directly:
 
-Likewise, install the latest `xdmod-appkernels` or `xdmod-supremm` RPM
-files if you have those installed.
+    # dnf install https://github.com/ubccr/xdmod/releases/download/v{{ page.rpm_version }}/xdmod-{{ page.rpm_version }}.el8.noarch.rpm [optional module RPMs]
 
-After upgrading the package you may need to manually merge any files
-that you have manually changed before the upgrade.  You do not need to
-merge `portal_settings.ini`.  This file will be updated by the upgrade
-script.  If you have manually edited this file, you should create a
-backup and merge any changes after running the upgrade script.
+Otherwise, you can download the RPM file from the [GitHub page for the
+release][github-release] and install it (along with any of the optional modules
+you have installed as explained above):
+
+    # dnf install xdmod-{{ page.rpm_version }}.el8.noarch.rpm [optional module RPMs]
+
+After installing the RPM(s), you may need to manually merge changes to any
+files that you had previously manually changed in your Open XDMoD installation.
+Any such files will have extensions of `.rpmnew` or `.rpmsave` and can be
+located with the following command. The exception to this is
+`portal_settings.ini`; this file will be updated by the `xdmod-upgrade` command
+later; any manual changes you want to merge to this file should be merged after
+running the `xdmod-upgrade` command in a later step below.
+
+    # find /etc/xdmod /usr/bin /usr/lib64/xdmod /usr/share/xdmod -regextype sed -regex '.*\.rpm\(new\|save\)$'
 
 ### Verify Server Configuration Settings
 
@@ -50,6 +85,10 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 
     # xdmod-upgrade
 
+### Run the XDMoD ingestor
+
+    # xdmod-ingestor
+
 Source Package Upgrade Process
 ------------------------------
 
@@ -58,18 +97,27 @@ This example assumes that your previous version of Open XDMoD is installed at
 `/opt/xdmod-{{ page.sw_version }}`.  It is recommended to install the new version of Open XDMoD
 in a different directory than your existing version.
 
-### Download Latest Open XDMoD Source Package
+### Download Open XDMoD Source Package
 
-Download available at [GitHub][github-latest-release].
+Download available at [GitHub][github-release]. Make sure to download
+`xdmod-{{ page.sw_version }}.tar.gz`, not the GitHub-generated "Source code"
+files.
 
 ### Extract and Install Source Package
 
-    $ tar zxvf xdmod-{{ page.sw_version }}.tar.gz
-    $ cd xdmod-{{ page.sw_version }}
+    # tar zxvf xdmod-{{ page.sw_version }}.tar.gz
+    # cd xdmod-{{ page.sw_version }}
     # ./install --prefix=/opt/xdmod-{{ page.sw_version }}
 
-Likewise, install the latest `xdmod-appkernels` or `xdmod-supremm`
-tarballs if you have those installed.
+If you have installed any of the optional modules for Open XDMoD, download,
+extract, and install their source packages, too. The upgrade guides for
+each of the optional modules are linked below; these each contain a link to
+the GitHub page for the module release, which has the link to their source
+package.
+
+- [Application Kernels](https://appkernels.xdmod.org/{{ page.version }}/ak-upgrade.html)
+- [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-upgrade.html)
+- [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/upgrade.html)
 
 ### Copy Current Config Files
 
@@ -97,23 +145,42 @@ the recommended values listed in the [Configuration Guide][mysql-config].
 
     # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-upgrade
 
-11.0.0 Upgrade Notes
+### Run the XDMoD ingestor
+
+    # /opt/xdmod-{{ page.sw_version }}/bin/xdmod-ingestor
+
+### Update Apache Configuration
+
+Make sure to update `/etc/httpd/conf.d/xdmod.conf` to change
+`/opt/xdmod-{{ page.prev_sw_version }}` to `/opt/xdmod-{{ page.sw_version }}`.
+
+Additional 11.5.0 Upgrade Notes
 -------------------
 
-Open XDMoD 11.0.0 is a major release that includes new features along with many
-enhancements and bug fixes.
+Open XDMoD 11.5 updates the database tables to use UTF8 character encoding.
+Prior versions of Open XDMoD did not specify the character encoding and used the database
+software default values for the database tables (which was latin1
+for MariaDB 10). The ingestor and shredder pipelines used different character encoding
+(some used UTF8 encoding, some the database connection defaults).  This meant that non
+ASCII characters could be incorrectly displayed in XDMoD.
 
-Open XDMoD is now no longer bundled with any non-commercial licenses. The charting library used in Open XDMoD has changed from [Highcharts](https://www.highcharts.com/) to [Plotly JS](https://plotly.com/javascript/), an open source library. This transition removes the non-commercial license required from the Highcharts library. Please refer to the [license notices](notices.md) for more information about the open source licenses bundled with Open XDMoD. For more information please refer to [release notes](https://github.com/ubccr/xdmod/releases) for Open XDMoD 11.0.
+This upgrade changes Open XDMoD database tables to support UTF8 character encoding and
+updates the shredder and ingestor to process UTF8 encoded files. This ensures
+that information in new logs loaded into Open XDMoD will display correctly. The upgrade
+does not automatically fix the display of previously loaded non-ASCII data. The table
+below shows the steps that can be taken for each data type.
+
+| Field  |    Remedy |
+| -----  | --------- |
+| User / PI names | Ensure the information in names.csv is encoded in UTF8 character set. Run the `xdmod-import-csv` and `xdmod-ingestor` as described in the [Names Guide](user-names.md) |
+| Hierarchy | Ensure the information in hierarchy.csv is encoded in UTF8 character set. Run the `xdmod-import-csv` and `xdmod-ingestor` as described in the [Hierarchy Guide](hierarchy.md) |
+| Job name in the single job viewer | The job name string for jobs that have already been shredded and ingested into XDMoD will not be corrected automatically. It is necessary to truncate the data for all jobs and reingest following the instruction in the [FAQ](faq.md#how-do-i-delete-all-my-job-data-from-open-xdmod). |
 
 ### Configuration File Changes
 
-The `xdmod-upgrade` script will add settings to `portal_settings.ini` to support the new [Data Analytics Framework](data-analytics-framework.md):
-* A new section `[api_token]` will be added with `expiration_interval = "6 months"`.
-* `rest_raw_row_limit = "10000"` will be added to the `[warehouse]` section.
+The "Job Size: Normalized" statistic in the Jobs realm is removed from the
+default list of statistics. See [this
+page](howto-normalized-avg-processors.html) for more information.
 
-### Database Changes
-
-The `xdmod-upgrade` script will create the new `moddb.user_tokens` table to support API tokens for the new [Data Analytics Framework](data-analytics-framework.md).
-
-[github-latest-release]: https://github.com/ubccr/xdmod/releases/latest
-[mysql-config]: configuration.md#mysql-configuration
+[github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
+[mysql-config]: configuration.html#mariadb-configuration

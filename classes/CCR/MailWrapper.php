@@ -9,7 +9,7 @@ class MailWrapper
 
     public static function initPHPMailer($properties)
     {
-        $mail = new \PHPMailer(true);
+        $mail = new \PHPMailer\PHPMailer\PHPMailer(true);
         $mail->isSendMail();
         $address = \xd_utilities\getConfiguration('mailer', 'sender_email');
         $mail->Sender = $address;

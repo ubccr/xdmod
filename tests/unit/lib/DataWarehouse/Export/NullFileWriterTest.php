@@ -4,15 +4,24 @@ namespace UnitTests\DataWarehouse\Export;
 
 use CCR\Log;
 use DataWarehouse\Export\FileWriter\NullFileWriter;
-use PHPUnit_Framework_TestCase;
+use IntegrationTests\TestHarness\XdmodTestHelper;
+use \PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use IntegrationTests\TestHarness\TestFiles;
 
 /**
  * Test data warehouse export null file writer.
  */
-class NullFileWriterTest extends PHPUnit_Framework_TestCase
+class NullFileWriterTest extends TestCase
 {
+
+    /**
+     * A helper class that simplifies interacting with XDMoD's REST interface.
+     *
+     * @var XdmodTestHelper
+     */
+    private $testFiles;
+
     /**
      * Test artifacts path.
      * @var string
@@ -27,7 +36,7 @@ class NullFileWriterTest extends PHPUnit_Framework_TestCase
     /**
      * Create logger.
      */
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         self::$logger = Log::singleton('null');
     }

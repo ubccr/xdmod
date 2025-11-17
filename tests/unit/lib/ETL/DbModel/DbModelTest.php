@@ -20,9 +20,10 @@ use ETL\DbModel\Index;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Trigger;
 use ETL\Configuration\EtlConfiguration;
+use Exception;
 use Psr\Log\LoggerInterface;
 
-class DbModelTest extends \PHPUnit_Framework_TestCase
+class DbModelTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dbmodel/output";
@@ -32,7 +33,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
      */
     private static $logger = null;
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
@@ -107,7 +108,7 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $expected = "CREATE TABLE IF NOT EXISTS `table_no_schema` (
   `column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment',
   `column2` varchar(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'
-);";
+) CHARSET = utf8 COLLATE = utf8_unicode_ci;";
         $this->assertEquals($expected, $generated);
 
         // SQL with schema
@@ -116,18 +117,18 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
         $expected = "CREATE TABLE IF NOT EXISTS `my_schema`.`table_no_schema` (
   `column1` int(11) NULL DEFAULT 0 COMMENT 'This is my comment',
   `column2` varchar(16) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Test Column' COMMENT 'No comment'
-);";
+) CHARSET = utf8 COLLATE = utf8_unicode_ci;";
         $this->assertEquals($expected, $generated);
     }
 
     /**
      * Test index initialization error.
      *
-     * @expectedException Exception
-     * @expectedExceptionMessage "columns" must be an array
      */
     public function testIndexInitializationError()
     {
+        $this->expectExceptionMessage("\"columns\" must be an array");
+        $this->expectException(Exception::class);
         $config = (object) [
             'name' => 'initialize_error',
             'columns' => [
@@ -153,11 +154,11 @@ class DbModelTest extends \PHPUnit_Framework_TestCase
     /**
      * Test table verification error
      *
-     * @expectedException Exception
      */
 
     public function testTableVerificationError()
     {
+        $this->expectException(Exception::class);
         $config = (object) array(
             'name' => "verification_error",
             'columns' => array( (object) array(

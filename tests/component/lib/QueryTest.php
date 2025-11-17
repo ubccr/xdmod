@@ -8,7 +8,7 @@ use CCR\Json;
  * This test is designed for class \DataWarehouse\Query\AggregateQuery
  */
 
-class AggregateTest extends BaseTest
+class QueryTest extends BaseTest
 {
     private $_query;
     /**

@@ -84,6 +84,13 @@ class BatchDataset extends Loggable implements Iterator
     private $offset;
 
     /**
+     * The original setting of MYSQL_ATTR_USE_BUFFERED_QUERY before the query
+     * is run. After the last row is fetched, the setting is set back to this
+     * value.
+     */
+    private $originalBufferedQuerySetting;
+
+    /**
      * @param RawQuery $query
      * @param XDUser $user
      * @param LoggerInterface $logger
@@ -199,13 +206,16 @@ class BatchDataset extends Loggable implements Iterator
      */
     public function rewind()
     {
+        $this->originalBufferedQuerySetting = $this->dbh->handle()->getAttribute(
+            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY
+        );
+        $this->dbh->handle()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, false);
         $this->logger->debug('Executing query');
         $this->sth = $this->query->getRawStatement($this->limit, $this->offset);
         $this->logger->debug(sprintf(
             'Raw query string: %s',
             $this->sth->queryString
         ));
-        $this->logger->debug(sprintf('Row count: %s', $this->sth->rowCount()));
         $this->currentRowIndex = 1;
         $this->currentRow = $this->getNextRow();
     }
@@ -248,6 +258,10 @@ class BatchDataset extends Loggable implements Iterator
         $rawRow = $this->sth->fetch(PDO::FETCH_ASSOC);
 
         if ($rawRow === false) {
+            $this->dbh->handle()->setAttribute(
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY,
+                $this->originalBufferedQuerySetting
+            );
             return false;
         }
 

@@ -3,12 +3,10 @@
 namespace Rest\Controllers;
 
 use DateTime;
-use Models\Services\Tokens;
 use Rest\Utilities\Authentication;
-use Rest\Utilities\Authorization;
 use Silex\Application;
 use Silex\ControllerCollection;
-use Silex\ControllerProviderInterface;
+use Silex\Api\ControllerProviderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -222,9 +220,9 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
         }
 
         $authorized = $user->hasAcls($requirements);
-        if ($authorized === false && !$isPublicUser) {
+        if (!$authorized && !$isPublicUser) {
             throw new AccessDeniedHttpException(self::EXCEPTION_MESSAGE);
-        } elseif ($authorized === false && $isPublicUser) {
+        } elseif (!$authorized && $isPublicUser) {
             throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
 
@@ -506,11 +504,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             FILTER_CALLBACK,
             array(
                 "options" => function ($value) {
-                    $value_dt = DateTime::createFromFormat('U', $value);
-                    if ($value_dt === false) {
-                        return null;
-                    }
-                    return $value_dt;
+                    return self::filterDate($value, 'U');
                 },
             ),
             "Unix timestamp"
@@ -552,11 +546,7 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
             FILTER_CALLBACK,
             [
                 'options' => function ($value) {
-                    $value_dt = \DateTime::createFromFormat('Y-m-d', $value);
-                    if ($value_dt === false) {
-                        return null;
-                    }
-                    return $value_dt;
+                    return self::filterDate($value);
                 },
             ],
             'ISO 8601 Date'
@@ -756,41 +746,45 @@ abstract class BaseControllerProvider implements ControllerProviderInterface
     }
 
     /**
-     * @param Request $request
-     * @return \XDUser
-     * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
-     * @throws \Exception if the user's token from the db does not validate against the provided token.
+     * Attempts to convert the provided $value into an instance of DateTime by using the provided $format. If $value is
+     * unable to be converted into a valid DateTime or if warnings are generated during the process it will be filtered
+     * and null returned.
+     *
+     * @param string $value the date to be validated against the provided $format. Ex: 2027-08-15
+     * @param string $format the format to be used when converting the string $value to an instance of DateTime
+     *
+     * @return DateTime|null If the creation of a DateTime was successful without warning then an instance of DateTime
+     * will be returned, else null;
      */
-    protected function authenticateToken($request)
+    private static function filterDate(string $value, string $format = 'Y-m-d'): ?DateTime
     {
-        // NOTE: While we prefer token's to be pulled from the 'Authorization' header, we also support a fallback lookup
-        // to the request's query params.
-        $authorizationHeader = $request->headers->get('Authorization');
-        if (empty($authorizationHeader) || strpos($authorizationHeader, Tokens::HEADER_KEY) === false) {
-            $rawToken = $request->get(Tokens::HEADER_KEY);
-        } else {
-            $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1);
+        $dateTime = DateTime::createFromFormat($format, $value);
+
+        $lastErrors = DateTime::getLastErrors();
+
+        /* For PHP versions less than 8.2.0 $lastErrors will always be an array w/ the properties:
+         * warning_count, warnings, error_count, and errors. For versions >= 8.2.0, it will return false if
+         * there are no errors else it will return as it did pre-8.2.0.
+         *
+         * The below `if` statement takes this into account by ensuring that we specifically check for when
+         * $value_dt is not false ( i.e. is a DateTime object ) but we do have 1 or more warnings which
+         * indicates that the value of $value_dt is most likely not what it's expected to be.
+         *
+         * Example: parsing the date `2024-01-99` results in a $value_dt of:
+         * DateTime('2024-04-08')
+         * and a $lastError of:
+         * [
+         *     'warning_count' => 1,
+         *     'warnings' => [
+         *         10 => 'The parsed date was invalid'
+         *     ],
+         *     'error_count' => 0,
+         *     'errors' => []
+         * ]
+         */
+        if ($dateTime === false || (is_array($lastErrors) && $lastErrors['warning_count'] > 0)) {
+            return null;
         }
-        if (empty($rawToken)) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                'No Token Provided.'
-            );
-        }
-
-
-        // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
-        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
-        if ($delimPosition === false) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                'Invalid token format.'
-            );
-        }
-
-        $userId = substr($rawToken, 0, $delimPosition);
-        $token = substr($rawToken, $delimPosition + 1);
-
-        return Tokens::authenticate($userId, $token);
+        return $dateTime;
     }
 }

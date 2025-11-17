@@ -9,12 +9,12 @@ namespace ComponentTests\Query;
 use CCR\Log as Logger;
 use DataWarehouse\Query\AggregateQuery;
 
-class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
+class TimeseriesQueryTest extends \PHPUnit\Framework\TestCase
 {
 
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
@@ -71,7 +71,7 @@ class TimeseriesQueryTest extends \PHPUnit_Framework_TestCase
 
         $generated = $query->getQueryString(10, 0, 'person_id = 82');
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   duration.id as 'day_id',
   DATE(duration.day_start) as 'day_short_name',
   DATE(duration.day_start) as 'day_name',
@@ -103,7 +103,7 @@ SQL;
         $generatedAgg = $aggQuery->getQueryString(10, 0);
 
         $expectedAgg =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',

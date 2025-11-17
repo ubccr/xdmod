@@ -240,31 +240,35 @@ class ExecuteSql extends aAction implements iAction
                 $statementPosition = ($numStatementsProcessed + 1);
                 $statementPositionDisplay = "( $statementPosition / $numSqlStatements)";
                 try {
-                    $this->logger->info(array(
-                        "message" => "Executing statement " . $statementPositionDisplay,
-                        "action" => (string) $this . '-sql-' . $statementPosition,
-                        "endpoint" => $this->destinationEndpoint,
-                        "sql" => $sql
-                    ));
+                    $this->logger->info(
+                        "Executing statement " . $statementPositionDisplay,
+                        [
+                            "action" => (string) $this . '-sql-' . $statementPosition,
+                            "endpoint" => $this->destinationEndpoint,
+                            "sql" => $sql
+                        ]
+                    );
                     if ( ! $this->getEtlOverseerOptions()->isDryrun() ) {
                         $numRowsAffected = $this->destinationEndpoint->getHandle()->execute($sql);
                     }
                 } catch ( PDOException $e ) {
                     $this->logAndThrowException(
                         "Error executing SQL",
-                        array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->sourceEndpoint)
+                        array('exception' => $e, 'sql' => $sql, 'endpoint' => $this->destinationEndpoint)
                     );
                 }
 
                 $endTime = microtime(true);
-                $this->logger->info(array(
-                    "message" => "Finished executing statement " . $statementPositionDisplay,
-                    "action" => (string) $this . '-sql-' . $statementPosition,
-                    "rows" =>  $numRowsAffected,
-                    "start_time" => $sqlStartTime,
-                    "end_time" => $endTime,
-                    "elapsed_time" => $endTime - $sqlStartTime
-                ));
+                $this->logger->info(
+                    "Finished executing statement " . $statementPositionDisplay,
+                    [
+                        "action" => (string)$this . '-sql-' . $statementPosition,
+                        "rows" => $numRowsAffected,
+                        "start_time" => $sqlStartTime,
+                        "end_time" => $endTime,
+                        "elapsed_time" => $endTime - $sqlStartTime
+                    ]
+                );
 
                 $numStatementsProcessed++;
 
@@ -277,10 +281,14 @@ class ExecuteSql extends aAction implements iAction
 
         $time_end = microtime(true);
         $time = $time_end - $time_start;
-        $this->logger->notice(array('action'       => (string) $this,
-                                    'start_time'   => $time_start,
-                                    'end_time'     => $time_end,
-                                    'elapsed_time' => round($time, 5)
-                                  ));
+        $this->logger->notice(
+            '',
+            array(
+                'action' => (string)$this,
+                'start_time' => $time_start,
+                'end_time' => $time_end,
+                'elapsed_time' => round($time, 5)
+            )
+        );
     }  // execute()
 }  // class ExecuteSql

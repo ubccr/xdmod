@@ -5,7 +5,7 @@ parameters
 start,end
 2016-12-22,2017-01-07
 ---------
-Month,"[screw] CPU Node Hours: Allocated"
-2016-12,499200.0000
-2017-01,1488000.0000
+Month,"[screw] CPU Node Hours: Allocated","[wrench] CPU Node Hours: Allocated"
+2016-12,393600.0000,105600.0000
+2017-01,1190400.0000,297600.0000
 ---------

@@ -10,6 +10,7 @@ use DataWarehouse\Export\QueryHandler;
 use DataWarehouse\Export\RealmManager;
 use DateTime;
 use Exception;
+use Models\Services\Tokens;
 use Psr\Log\LoggerInterface;
 use Silex\Application;
 use Silex\ControllerCollection;
@@ -96,7 +97,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
         // We need to wrap the token authentication because we want the token authentication to be optional, proceeding
         // to the normal session authentication if a token is not provided.
         try {
-            $user = $this->authenticateToken($request);
+            $user = Tokens::authenticate($request);
         } catch (Exception $e) {
             // NOOP
         }
@@ -268,13 +269,16 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new AccessDeniedHttpException('Exported data is not readable');
         }
 
-        $this->logger->info([
-            'module' => self::LOG_MODULE,
-            'message' => 'Sending data warehouse export file',
-            'event' => 'DOWNLOAD',
-            'id' => $id,
-            'Users.id' => $user->getUserId()
-        ]);
+        $this->logger->info(
+            '',
+            [
+                'module' => self::LOG_MODULE,
+                'message' => 'Sending data warehouse export file',
+                'event' => 'DOWNLOAD',
+                'id' => $id,
+                'Users.id' => $user->getUserId()
+            ]
+        );
 
         if ($request['downloaded_datetime'] === null) {
             $this->queryHandler->updateDownloadedDatetime($request['id']);
@@ -312,7 +316,7 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
             throw new NotFoundHttpException('Export request not found');
         }
 
-        $this->logger->info([
+        $this->logger->info('', [
             'module' => self::LOG_MODULE,
             'message' => 'Deleted data warehouse export request',
             'event' => 'DELETE_BY_USER',
@@ -376,13 +380,16 @@ class WarehouseExportControllerProvider extends BaseControllerProvider
                 if ($count === 0) {
                     throw new NotFoundHttpException('Export request not found');
                 }
-                $this->logger->info([
-                    'module' => self::LOG_MODULE,
-                    'message' => 'Deleted data warehouse export request',
-                    'event' => 'DELETE_BY_USER',
-                    'id' => $id,
-                    'Users.id' => $user->getUserId()
-                ]);
+                $this->logger->info(
+                    '',
+                    [
+                        'module' => self::LOG_MODULE,
+                        'message' => 'Deleted data warehouse export request',
+                        'event' => 'DELETE_BY_USER',
+                        'id' => $id,
+                        'Users.id' => $user->getUserId()
+                    ]
+                );
             }
 
             $dbh->commit();

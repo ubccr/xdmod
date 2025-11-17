@@ -6,6 +6,9 @@ use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
 use IntegrationTests\TokenAuthTest;
+use PHPUnit\Framework\ExpectationFailedException;
+use PHPUnit\Framework\IncompleteTestError;
+use PHPUnit\Framework\SkippedTestError;
 
 /**
  * Everything you need to test for regressions.
@@ -343,9 +346,9 @@ class RegressionTestHelper extends XdmodTestHelper
      * @param string $expectedFile Path to file containing expected output.
      * @param string $userRole User role used during test.
      * @return boolean True if CSV export returned expected data.
-     * @throws PHPUnit_Framework_SkippedTestError If the test is skipped.
-     * @throws PHPUnit_Framework_IncompleteTestError If the test is incomplete.
-     * @throws PHPUnit_Framework_ExpectationFailedException If the test failed.
+     * @throws SkippedTestError If the test is skipped.
+     * @throws IncompleteTestError If the test is incomplete.
+     * @throws ExpectationFailedException If the test failed.
      */
     public function checkCsvExport($testName, $input, $expectedFile, $userRole)
     {
@@ -354,7 +357,7 @@ class RegressionTestHelper extends XdmodTestHelper
         $fullTestName = $testName . $datasetType . '-' . $aggUnit . '-' . $userRole;
 
         if (in_array($testName, self::$skip)) {
-            throw new \PHPUnit_Framework_SkippedTestError($fullTestName . ' intentionally skipped');
+            throw new SkippedTestError($fullTestName . ' intentionally skipped');
         }
 
         list($csvdata, $curldata) = self::post('/controllers/user_interface.php', null, $input);
@@ -368,7 +371,7 @@ class RegressionTestHelper extends XdmodTestHelper
         // more robust way for public user not having access to pass.
         if (gettype($csvdata) === "array") {
             if ($csvdata['message'] == 'Session Expired') {
-                throw new \PHPUnit_Framework_IncompleteTestError($fullTestName . ' user session expired...');
+                throw new IncompleteTestError($fullTestName . ' user session expired...');
             }
             $csvdata = json_encode($csvdata, JSON_PRETTY_PRINT) . "\n";
         }
@@ -412,7 +415,7 @@ class RegressionTestHelper extends XdmodTestHelper
                 return true;
             }
 
-            throw new \PHPUnit_Framework_ExpectationFailedException(
+            throw new ExpectationFailedException(
                 sprintf(
                     "%d assertions failed:\n\t%s",
                     count($failures),
@@ -446,7 +449,7 @@ class RegressionTestHelper extends XdmodTestHelper
      * @param string|null $referenceFileName name of the reference file.
      * @return bool true if the reference file exists and already contains the
      *              specified data.
-     * @throws \PHPUnit_Framework_SkippedTestError if the reference file does
+     * @throws SkippedTestError if the reference file does
      *                                             not exist or does not
      *                                             already contain the
      *                                             specified data.
@@ -475,7 +478,7 @@ class RegressionTestHelper extends XdmodTestHelper
             [$outputDir, $referenceFileName]
         );
 
-        if (file_exists($referenceFile)) {
+        if (!is_null($referenceFileName) && file_exists($referenceFile)) {
             $reference = file_get_contents($referenceFile);
             if ($reference === $data) {
                 return true;
@@ -487,7 +490,7 @@ class RegressionTestHelper extends XdmodTestHelper
             [$outputDir, $outputFileName]
         );
         file_put_contents($outputFile, $data);
-        throw new \PHPUnit_Framework_SkippedTestError(
+        throw new SkippedTestError(
             "Created Expected output for $fullTestName"
         );
     }
@@ -520,35 +523,28 @@ class RegressionTestHelper extends XdmodTestHelper
         ];
         $realms = Utilities::getRealmsToTest();
         $testParams = [];
-        $testMode = getenv('XDMOD_TEST_MODE');
         foreach ($realmParams as $realm => $params) {
             if (in_array($realm, $realms)) {
-                $testFileName = "$realm.json";
-                // In fresh_install mode, the jobs are re-ingested, which
-                // reorders some of them from the Posidriv resource, producing
-                // differently-ordered results than in upgrade mode. To work
-                // around this, each mode has its own artifact file for the
-                // Jobs realm.
-                if ('jobs' === $realm) {
-                    $testFileName = "$realm-$testMode.json";
-                }
-                $testParams[] = [
-                    $testFileName,
-                    array_merge(
-                        $baseInput,
-                        ['params' => $params['base']]
-                    )
-                ];
-                $testParams[] = [
-                    "$realm-fields-and-filters.json",
-                    array_merge(
-                        $baseInput,
-                        ['params' => array_merge(
-                            $params['base'],
-                            $params['fields_and_filters']
-                        )]
-                    )
-                ];
+                array_push(
+                    $testParams,
+                    [
+                        "$realm.txt",
+                        array_merge(
+                            $baseInput,
+                            ['params' => $params['base']]
+                        )
+                    ],
+                    [
+                        "$realm-fields-and-filters.txt",
+                        array_merge(
+                            $baseInput,
+                            ['params' => array_merge(
+                                $params['base'],
+                                $params['fields_and_filters']
+                            )]
+                        )
+                    ]
+                );
             }
         }
         return $testParams;
@@ -560,31 +556,24 @@ class RegressionTestHelper extends XdmodTestHelper
      * otherwise compare the result to an existing test artifact file.
      *
      * @param string $testName name of test artifact file not including the
-     *                         `.json` extension.
+     *                         `.txt` extension.
      * @param array $input describes the HTTP request,
      *                     @see BaseTest::makeHttpRequest().
-     * @param bool $sort whether to sort the result before saving or comparing
-     *                   it.
      * @return bool true if the test artifact file already exists and
      *              contains the response body from the HTTP request.
-     * @throws \PHPUnit_Framework_SkippedTestError if REG_TEST_USER_ROLE is
-     *                                             not set or if
-     *                                             REG_TEST_FORCE_GENERATION is
-     *                                             set and the test artifact
-     *                                             file was successfully
-     *                                             created.
-     * @throws \PHPUnit_Framework_ExpectationFailedException
-     *                                             if REG_TEST_FORCE_GENERATION
-     *                                             is not set and the HTTP
-     *                                             response body does not match
-     *                                             the contents of the test
-     *                                             artifact file.
+     * @throws SkippedTestError if REG_TEST_USER_ROLE is not set or if
+     *                          REG_TEST_FORCE_GENERATION is set and the test
+     *                          artifact file was successfully created.
+     * @throws ExpectationFailedException if REG_TEST_FORCE_GENERATION
+     *                                    is not set and the HTTP response body
+     *                                    does not match the contents of the
+     *                                    test artifact file.
      */
-    public function checkRawData($testName, array $input, $sort = false)
+    public function checkRawData($testName, array $input)
     {
         $role = self::getEnvUserrole();
         if ('public' === $role) {
-            throw new \PHPUnit_Framework_SkippedTestError(
+            throw new SkippedTestError(
                 'Raw data test cannot be performed with public user.'
             );
         }
@@ -593,20 +582,32 @@ class RegressionTestHelper extends XdmodTestHelper
             $input,
             $role
         );
-        if ($sort) {
-            array_multisort(
-                array_column($response[0]['data'], 0),
-                SORT_ASC,
-                $response[0]['data']
-            );
+        $data = $response[0];
+        // Sort the data.
+        $chunks = [];
+        $line = strtok($data, "\r\n");
+        while (false !== $line) {
+            $chunk = ['size' => $line];
+            $line = strtok("\r\n");
+            $chunk['data'] = $line;
+            array_push($chunks, $chunk);
+            $line = strtok("\r\n");
         }
-        $data = json_encode($response[0]) . "\n";
+        usort($chunks, function ($a, $b) {
+            return strcmp($a['data'], $b['data']);
+        });
+        $chunks = array_map(function ($chunk) {
+            return $chunk['size'] . "\r\n" . $chunk['data'];
+        }, $chunks);
+        $data = implode("\r\n", $chunks) . "\n";
+        // Make any replacements in the data.
         $data = preg_replace(self::$replaceRegex, self::$replacements, $data);
         if (getenv('REG_TEST_FORCE_GENERATION') === '1') {
             return $this->generateArtifact(
                 'raw-data',
                 $testName,
                 $data,
+                $testName,
                 $testName
             );
         } else {
@@ -629,100 +630,13 @@ class RegressionTestHelper extends XdmodTestHelper
             if ($expected === $data) {
                 return true;
             }
-            $differences = [];
-            self::compareJsonData(
-                $differences,
-                '/',
-                json_decode($expected, true),
-                json_decode($data, true)
-            );
-            throw new \PHPUnit_Framework_ExpectationFailedException(
+            throw new ExpectationFailedException(
                 sprintf(
-                    (
-                        "%d difference"
-                        . (1 === count($differences) ? '' : 's')
-                        . ":\n\t%s"
-                    ),
-                    count($differences),
-                    implode("\n\t", $differences)
+                    "Response does not match artifact:\nExpected:\n%s\nActual:\n%s\n",
+                    $expected,
+                    $data
                 )
             );
-        }
-    }
-
-    /**
-     * Recursively compare an expected JSON value to an actual JSON value,
-     * updating a list of differences between the two.
-     *
-     * @param array $differences list of differences.
-     * @param string $path used to refer to the JSON value relative to the root
-     *                     JSON object, e.g., if '/' refers to the root,
-     *                     '/->foo' refers to a property within the object
-     *                     called 'foo', '/->foo->bar' refers to a 'bar'
-     *                     property of the 'foo' object, etc.
-     * @param mixed $expected the expected JSON value.
-     * @param mixed $actual the actual JSON value.
-     * @return null
-     */
-    private static function compareJsonData(
-        array &$differences,
-        $path,
-        $expected,
-        $actual
-    ) {
-        if (is_array($expected) && is_array($actual)) {
-            self::compareJsonArrays($differences, $path, $expected, $actual);
-        } elseif (is_array($expected) && !is_array($actual)) {
-            $differences[] = (
-                "Expected array but got value '"
-                . var_export($actual, true) . "' for property: $path"
-            );
-        } elseif (!is_array($expected) && is_array($actual)) {
-            $differences[] = (
-                "Expected value '" . var_export($expected, true)
-                . "' but got array for property: $path"
-            );
-        } elseif ($expected !== $actual) {
-            $differences[] = (
-                "Expected value '" . var_export($expected, true)
-                . "' but got value '" . var_export($actual, true)
-                . "' for property: $path"
-            );
-        }
-    }
-
-    /**
-     * Same as self::compareJsonData() but specifically for the case where both
-     * the expected and actual values are known to be arrays.
-     */
-    private static function compareJsonArrays(
-        array &$differences,
-        $path,
-        array $expected,
-        array $actual
-    ) {
-        foreach ($expected as $key => $value) {
-            if (!array_key_exists($key, $actual)) {
-                $differences[] = (
-                    'Missing ' . (is_numeric($key) ? 'item' : 'key')
-                    . ": $path->$key"
-                );
-            } else {
-                self::compareJsonData(
-                    $differences,
-                    "$path->$key",
-                    $value,
-                    $actual[$key]
-                );
-            }
-        }
-        foreach ($actual as $key => $value) {
-            if (!array_key_exists($key, $expected)) {
-                $differences[] = (
-                    'Extra ' . (is_numeric($key) ? 'item' : 'key')
-                    . ": $path->$key"
-                );
-            }
         }
     }
 

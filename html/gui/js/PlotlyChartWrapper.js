@@ -16,8 +16,13 @@ Ext.namespace('XDMoD.utils');
 
 XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     const baseChartOptions = {};
-    const configs = { displayModeBar: false, doubleClick: 'reset', doubleClickDelay: 500 };
-    jQuery.extend(true, baseChartOptions, chartOptions);
+    const configs = {
+        displayModeBar: false,
+        doubleClick: 'reset',
+        doubleClickDelay: 500,
+        showAxisRangeEntryBoxes: false
+    };
+    XDMoD.utils.deepExtend(baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
 
     // Configure plot for 'No Data' image. We want to wipe the layout object except for a couple things
@@ -48,6 +53,10 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
     } else {
         if (baseChartOptions.metricExplorer) {
             configs.showTips = false;
+            // Check for empty custom titles. If so make sure title is empty string
+            if (!baseChartOptions.layout.annotations[0].text) {
+                baseChartOptions.layout.annotations[0].text = '';
+            }
         }
 
         if (baseChartOptions.data[0].type === 'pie') {
@@ -59,36 +68,40 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         }
 
         // Remove titles and credits from thumbnail plots
-        if (baseChartOptions.layout.thumbnail) {
+        if (baseChartOptions.realmOverview) {
             const endIndex = baseChartOptions.layout.annotations.findIndex((elem) => elem.name === 'data_label');
             if (endIndex === -1) {
                 baseChartOptions.layout.annotations = [];
             }
             baseChartOptions.layout.annotations.splice(0, endIndex);
         }
-        // Set tickmode to auto for thumbnail plots. Large amount of tick labels for thumbnail plots cause them
-        // to lag.
-        if (baseChartOptions.layout.thumbnail && baseChartOptions.layout.xaxis.type !== 'category') {
-            const axesLabels = getMultiAxisObjects(baseChartOptions.layout);
-            if (baseChartOptions.swapXY) {
-                baseChartOptions.layout.yaxis.nticks = 5;
-            } else {
-                baseChartOptions.layout.xaxis.nticks = 5;
-            }
-            for (let i = 0; i < axesLabels.length; i++) {
-                baseChartOptions.layout[axesLabels[i]].nticks = 5;
-            }
-        }
         // Adjust trace ordering
         // Referenced https://stackoverflow.com/questions/45741397/javascript-sort-array-of-objects-by-2-properties
         // for comparison idea
         baseChartOptions.data.sort((trace1, trace2) => {
-            if (baseChartOptions.layout.barmode !== 'group') {
-                return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.traceorder - trace1.traceorder);
+            const containsBarSeries = baseChartOptions.data.some((elem) => elem.type === 'bar');
+            if (containsBarSeries && baseChartOptions.layout.barmode === 'stack') {
+                return Math.sign(trace2.traceorder - trace1.traceorder);
             }
-            const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.traceorder - trace2.traceorder);
-            return res;
+            return Math.sign(trace1.traceorder - trace2.traceorder);
         });
+
+        // Format timezone -- Plotly does not support timezones
+        // Therefore, we need to utilize moment JS.
+        const axis = baseChartOptions.layout.swapXY ? 'yaxis' : 'xaxis';
+        if (baseChartOptions.layout[axis].timeseries) {
+            const axisName = axis.slice(0, 1);
+            baseChartOptions.data.forEach((series) => {
+                series[axisName].forEach((elem, index, seriesArr) => {
+                    seriesArr[index] = moment.tz(elem, CCR.xdmod.timezone).format();
+                });
+            });
+
+            // Format timezone for the tickvals also
+            baseChartOptions.layout[axis].tickvals.forEach((tick, index, tickvals) => {
+                tickvals[index] = moment.tz(tick, CCR.xdmod.timezone).format();
+            });
+        }
     }
 
     const chart = Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, configs);

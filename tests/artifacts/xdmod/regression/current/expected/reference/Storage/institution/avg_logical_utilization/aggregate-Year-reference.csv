@@ -1,0 +1,12 @@
+title
+"Quota Utilization: Logical (%): by User Institution"
+parameters
+
+start,end
+2018-12-27,2019-01-05
+---------
+"User Institution","Quota Utilization: Logical (%)"
+"Unknown - Unknown Organization",101.5058
+"screw - Screwdriver",87.5036
+"wrench - Wrench",55.5452
+---------

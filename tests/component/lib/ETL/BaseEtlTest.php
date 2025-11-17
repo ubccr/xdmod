@@ -16,7 +16,7 @@ use Psr\Log\LoggerInterface;
  * Base class for ETL tests providing common functionality.
  */
 
-abstract class BaseEtlTest extends \PHPUnit_Framework_TestCase
+abstract class BaseEtlTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var LoggerInterface

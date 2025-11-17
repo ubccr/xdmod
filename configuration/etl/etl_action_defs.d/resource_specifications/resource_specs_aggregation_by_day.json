@@ -68,7 +68,7 @@
                 "name": "resource_allocated",
                 "alias": "ra",
                 "schema": "${SOURCE_SCHEMA}",
-                "on": "r.resource_id = ra.resource_id AND r.start_day_id = ra.start_day_id AND r.end_day_id = ra.end_day_id"
+                "on": "r.resource_id = ra.resource_id AND ra.start_day_id <= ${:PERIOD_END_DAY_ID} AND ra.end_day_id >= ${:PERIOD_START_DAY_ID} AND ra.start_day_id <= r.end_day_id AND ra.end_day_id >= r.start_day_id"
             },
             {
                 "name": "resourcefact",

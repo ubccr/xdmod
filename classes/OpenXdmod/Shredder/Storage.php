@@ -47,7 +47,7 @@ EOMSG
         $this->logger->notice("Shredding directory '$dir'");
 
         if (!is_dir($dir)) {
-            $this->logger->err("'$dir' is not a directory");
+            $this->logger->error("'$dir' is not a directory");
             return false;
         }
 

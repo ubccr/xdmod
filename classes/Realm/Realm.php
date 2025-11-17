@@ -238,7 +238,7 @@ class Realm extends \CCR\Loggable implements iRealm
         if ( false === $configObj ) {
             $msg = sprintf("Request for unknown Realm: %s", $shortName);
             if ( null !== $logger ) {
-                $logger->err($msg);
+                $logger->error($msg);
             }
             throw new \Exception($msg);
         }

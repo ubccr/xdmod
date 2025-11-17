@@ -253,7 +253,7 @@ class Pbs extends Shredder
                 } catch (Exception $e) {
                     $msg = "Failed to parse '$key' value '$value': "
                         . $e->getMessage();
-                    $this->logger->err($msg);
+                    $this->logger->error($msg);
                 }
 
                 $job[$key] = $parsedValue;
@@ -337,7 +337,7 @@ class Pbs extends Shredder
         } elseif (preg_match('/^\d+$/', $sequence, $matches)) {
             $jobId = $sequence;
         } else {
-            $this->logger->warning("Unknown id_string format: '$id_string'");
+            $this->logger->warning("Unknown id_string format: '$id'");
             $jobId = $sequence;
         }
 

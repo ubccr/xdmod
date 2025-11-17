@@ -70,6 +70,8 @@ $scriptOptions = array(
     'lock-dir'          => null,
     // Optional ETL lock file prefix
     'lock-file-prefix'  => null,
+    // Whether the logger should write to the database
+    'log-to-database'   => true,
     // Previous number of days to ingest
     'number-of-days'    => null,
     // List of options to add to or override individual action options
@@ -144,7 +146,8 @@ $options = array(
     'x:'  => 'exclude-resource-codes:',
     'y:'  => 'last-modified-end-date:',
     ''    => 'lock-dir',
-    ''    => 'lock-file-prefix'
+    ''    => 'lock-file-prefix',
+    ''    => 'log-to-database:'
     );
 
 $args = getopt(implode('', array_keys($options)), $options);
@@ -349,6 +352,10 @@ foreach ($args as $arg => $value) {
             $scriptOptions['lock-prefix'] = $value;
             break;
 
+        case 'log-to-database':
+            $scriptOptions['log-to-database'] = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+            break;
+
         case 'h':
         case 'help':
             usage_and_exit();
@@ -385,7 +392,8 @@ foreach ( $argv as $index => $arg ) {
 
 $conf = array(
     'emailSubject' => gethostname() . ': XDMOD: Data Warehouse: Federated ETL Log',
-    'mail' => false
+    'mail' => false,
+    'db' => $scriptOptions['log-to-database']
 );
 
 if ( null !== $scriptOptions['verbosity'] ) {
@@ -410,10 +418,7 @@ if ( $scriptOptions['dryrun']) {
 }
 
 if ( ! $showList)  {
-    $logger->notice(array(
-        'message'            => 'dw_extract_transform_load start',
-        'process_start_time' => date('Y-m-d H:i:s'),
-    ));
+    $logger->notice('dw_extract_transform_load start', ['process_start_time' => date('Y-m-d H:i:s')]);
 }
 
 try {
@@ -588,8 +593,7 @@ $overseerOptions->setResourceCodeToIdMapSql(sprintf("SELECT id, code from %s.res
 if ( count($scriptOptions['process-sections']) == 0 &&
      count($scriptOptions['actions']) == 0 ) {
     $logger->notice("No actions or sections requested, exiting.");
-    $logger->notice(array('message'          => 'dw_extract_transform_load end',
-                          'process_end_time' => date('Y-m-d H:i:s') ));
+    $logger->notice('dw_extract_transform_load end', ['process_end_time' => date('Y-m-d H:i:s')]);
     exit(0);
 }
 
@@ -614,8 +618,7 @@ try {
 
 // NOTE: "process_end_time" is needed for log summary."
 
-$logger->notice(array('message'          => 'dw_extract_transform_load end',
-                      'process_end_time' => date('Y-m-d H:i:s') ));
+$logger->notice('dw_extract_transform_load end', ['process_end_time' => date('Y-m-d H:i:s')]);
 
 exit(0);
 
@@ -628,7 +631,7 @@ exit(0);
 function log_error_and_exit($msg)
 {
     global $logger;
-    $logger->err($msg);
+    $logger->error($msg);
     fwrite(STDERR, $msg . PHP_EOL);
     exit(1);
 }  // log_error_and_exit()
@@ -688,6 +691,9 @@ Usage: {$argv[0]}
 
     -m, --last-modified-start-date
     ETL last modified start date, used by some actions. Defaults to the start of the ETL process (e.g., "now").
+
+        --log-to-database {yes, no}
+    Whether to enable writing the ETL process log to the database. Defaults to "yes".
 
     -n, --number-of-days
     Number of days that the action will operate on.

@@ -59,12 +59,7 @@ class FilterListBuilder extends Loggable
     {
         // Get a query for the given realm.
         $startTime = microtime(true);
-        $this->logger->notice(
-            array(
-                'message' => 'start',
-                'action' => $realmName . '.build-filter-list'
-            )
-        );
+        $this->logger->notice('start', ['action' => $realmName . '.build-filter-list']);
 
         $realmQuery = new \DataWarehouse\Query\AggregateQuery(
             $realmName,
@@ -82,12 +77,12 @@ class FilterListBuilder extends Loggable
             $this->buildDimensionLists($realmQuery, $groupByObj, $currentRealm);
         }
         $this->logger->notice(
-            array(
-                'message' => 'end',
+            'end',
+            [
                 'action' => $realmName . '.build-filter-list',
                 'start_time' => $startTime,
                 'end_time' => microtime(true)
-            )
+            ]
         );
     }
 
@@ -114,10 +109,10 @@ class FilterListBuilder extends Loggable
         $dimensionId = $groupBy->getId();
         $startTime = microtime(true);
         $this->logger->notice(
-            array(
-                'message' => 'start',
+            'start',
+            [
                 'action' => $currentRealm->getName() . '.build-filter-list.' . $dimensionId
-            )
+            ]
         );
 
         $mainTableName = FilterListHelper::getTableName($realmQuery, $groupBy);
@@ -137,7 +132,7 @@ class FilterListBuilder extends Loggable
             "CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
                 `{$dimensionId}` {$dimensionColumnType} NOT NULL,
                 PRIMARY KEY (`{$dimensionId}`)
-            );"
+            ) CHARACTER SET utf8 COLLATE utf8_unicode_ci"
         );
         $dimensionQuery = $this->createDimensionQuery($realmQuery, $groupBy);
 
@@ -222,7 +217,7 @@ class FilterListBuilder extends Loggable
                     `{$secondDimensionId}` {$secondDimensionColumnType} NOT NULL,
                     PRIMARY KEY (`{$firstDimensionId}`, `{$secondDimensionId}`),
                     INDEX `idx_second_dimension` (`{$secondDimensionId}` ASC)
-                )"
+                ) CHARACTER SET utf8 COLLATE utf8_unicode_ci"
             );
 
             $firstSelectTables = $firstDimensionQuery->getSelectTables();
@@ -251,13 +246,14 @@ class FilterListBuilder extends Loggable
             $this->builtListTables[$pairTableName] = true;
         }
         $this->logger->notice(
-            array(
-                'message' => 'end',
+            'end',
+            [
                 'action' => $currentRealm->getName() . '.build-filter-list.' . $dimensionId,
                 'start_time' => $startTime,
                 'end_time' => microtime(true)
-            )
+            ]
         );
+
     }
 
     /**

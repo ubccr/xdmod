@@ -1,0 +1,11 @@
+title
+"Job Size: Max (Core Count): by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Institution","Job Size: Max (Core Count)"
+"screw - Screwdriver",336
+"wrench - Wrench",96
+---------

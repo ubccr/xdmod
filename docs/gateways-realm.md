@@ -1,3 +1,7 @@
+---
+title: Gateways realm
+---
+
 # Enabling the Gateways realm
 
 The gateways realm displays jobs information due to science gateways. It does this by incorporating jobs data in a new XDMoD database, `modw_gateways`, created for capturing gateways data. This realm is not enabled by default in the current release. These instructions show you how to enable and populate the gateways realm in your Open XDMoD installation.
@@ -28,7 +32,7 @@ Verify:
 Successful execution results in creation of the modw_gateways database schema with empty enduser, gateway, gatewayfact_by_day_joblist, and job_metadata tables.
 
 ### b. Select and ingest jobs data for the modw_gateways database
-XDMoD needs a mechanism to identify HPC jobs that were run via a gateway. The default mechanism is to use the last name associated with the user account that ran the jobs. Instructions for configuring the names are in the (User/PI Names guide)[user-names.md]. The steps to use this mechanism are:
+XDMoD needs a mechanism to identify HPC jobs that were run via a gateway. The default mechanism is to use the last name associated with the user account that ran the jobs. Instructions for configuring the names are in the [User/PI Names guide](user-names.md). The steps to use this mechanism are:
 1) Choose a suitable identifier to be used for a gateway (such as 'Gateway Proxy User')
 1) Update the last name entries in `names.csv` for each gateway proxy user account.
 1) Import the updated `names.csv`

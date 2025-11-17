@@ -152,7 +152,7 @@
             }
         },
         "category": "Administrative",
-        "description_html": "A person who is on a PIs allocation, hence able run jobs on resources.",
+        "description_html": "A person who is on a PIs allocation, hence able to run jobs on resources.",
         "name": "User"
     },
     "pi": {
@@ -196,7 +196,7 @@
                 }
             ],
             "orderby": [
-                "order_id"
+                "long_name"
             ],
             "records": {
                 "id": "organization_id",
@@ -369,5 +369,61 @@
         "category": "Administrative",
         "description_html": "The specific system username of the users who ran jobs.",
         "name": "System Username"
+    },
+    "institution": {
+        "attribute_table": "organization",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "person_organization_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "organization"
+                }
+            ],
+            "orderby": [
+                "id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "long_name",
+                "order_id": "id",
+                "short_name": "short_name"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "Organizations that have users with allocations.",
+        "name": "User Institution"
+    },
+    "pi_institution": {
+        "attribute_table": "organization",
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "piperson_organization_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "organization"
+                }
+            ],
+            "orderby": [
+                "id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "long_name",
+                "order_id": "id",
+                "short_name": "short_name"
+            }
+        },
+        "category": "Administrative",
+        "description_html": "Organizations that have PIs with allocations.",
+        "name": "PI Institution"
     }
 }

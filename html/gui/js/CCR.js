@@ -141,6 +141,18 @@ XDMoD.GlobalToolbar.Dashboard = {
 }; //XDMoD.GlobalToolbar.Dashboard
 
 // -------------------------------------------------
+XDMoD.GlobalToolbar.JupyterLab = {
+    text: 'JupyterLab',
+    scale: 'small',
+    iconCls: 'btn_jupyterlab',
+    id: 'global-toolbar-jupyterlab',
+    tooltip: 'Launch JupyterLab.',
+    handler() {
+        window.open(CCR.xdmod.JupyterHubURL);
+    }
+
+}; // XDMoD.GlobalToolbar.JupyterLab
+// -------------------------------------------------
 
 XDMoD.GlobalToolbar.SignUp = {
     text: 'Sign Up',
@@ -685,6 +697,13 @@ XDMoD.utils.format = {
 
         return outval;
     }
+};
+
+// Taken from: https://github.com/HubSpot/YouMightNotNeedjQuery, which
+// is available under the MIT license.
+// Recommended by @versable on https://github.com/ubccr/xdmod/pull/1542
+XDMoD.utils.deepExtend = function extend(out, ...arguments_) {
+  return jQuery.extend(true, out, ...arguments_);
 };
 
 // =====================================================================

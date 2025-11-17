@@ -10,7 +10,7 @@ use CCR\Log as Logger;
 use DataWarehouse\Query\AggregateQuery;
 use Psr\Log\LoggerInterface;
 
-class AggregateQueryTest extends \PHPUnit_Framework_TestCase
+class AggregateQueryTest extends \PHPUnit\Framework\TestCase
 {
 
     /**
@@ -18,7 +18,7 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
      */
     protected static $logger = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Set up a logger so we can get warnings and error messages
 
@@ -45,11 +45,12 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
      * Create an aggregate query with no group by or statistic. We will not be able to generate the
      * query string with no fields for the SELECT clause.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testAggregateQueryNoStatisticNoGroupBy()
     {
+        $this->expectException(\Exception::class);
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Jobs',
             'day',
@@ -76,7 +77,7 @@ class AggregateQueryTest extends \PHPUnit_Framework_TestCase
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -112,7 +113,7 @@ SQL;
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   systemaccount.username as 'username_id',
   systemaccount.username as 'username_short_name',
   systemaccount.username as 'username_name',
@@ -153,7 +154,7 @@ SQL;
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -200,7 +201,7 @@ SQL;
         // present.
 
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS running_job_count,
   COALESCE(SUM(agg.ended_job_count), 0) AS job_count
 FROM
@@ -231,7 +232,7 @@ SQL;
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -278,7 +279,7 @@ SQL;
 
         $generated = $query->getQueryString(10, 0); // Also test limit=10 and offset=0
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -304,7 +305,7 @@ SQL;
 SELECT
   COUNT(*) AS row_count
 FROM (
-  SELECT
+  SELECT STRAIGHT_JOIN
   SUM(1) AS total
   FROM
     modw_aggregates.jobfact_by_day agg,
@@ -349,7 +350,7 @@ SQL;
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   queue.id as 'queue_id',
   queue.id as 'queue_short_name',
   queue.id as 'queue_name',
@@ -397,7 +398,7 @@ SQL;
         $query->addOrderByAndSetSortInfo($data_description);
         $generated = $query->getQueryString();
         $expected =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   -9999 as 'none_id',
   'Screwdriver' as 'none_short_name',
   'Screwdriver' as 'none_name',
@@ -449,7 +450,7 @@ SQL;
     public function testAddWhereJoin()
     {
         $expected =<<<SQL
-SELECT
+SELECT STRAIGHT_JOIN
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -522,7 +523,7 @@ SQL;
 SELECT
   COUNT(*) AS row_count
 FROM (
-  SELECT
+  SELECT STRAIGHT_JOIN
   SUM(1) AS total
   FROM
     modw_aggregates.jobfact_by_day agg,

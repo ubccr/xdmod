@@ -1,0 +1,11 @@
+title
+"Node Hours: Total: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[screw] Node Hours: Total","[wrench] Node Hours: Total"
+"2016 Q4",132225.3703,6221.8125
+"2017 Q1",17155.4978,701.0669
+---------

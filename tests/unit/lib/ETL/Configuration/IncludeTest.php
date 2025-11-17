@@ -12,8 +12,9 @@ namespace UnitTests\ETL\Configuration;
 use CCR\Log;
 use Configuration\Configuration;
 use Configuration\IncludeTransformer;
+use Exception;
 
-class IncludeTest extends \PHPUnit_Framework_TestCase
+class IncludeTest extends \PHPUnit\Framework\TestCase
 {
 
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
@@ -22,7 +23,7 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
     protected static $transformer = null;
     protected static $config = null;
 
-    public static function setupBeforeClass()
+    public static function setupBeforeClass(): void
     {
       // Set up a logger so we can get warnings and error messages from the ETL infrastructure
         $conf = array(
@@ -41,29 +42,31 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
     /**
      * Test invalid file
      *
-     * @expectedException Exception
+     *
      */
 
     public function testIncludeInvalidFile()
     {
+        $this->expectException(Exception::class);
         $key = '$include';
         $value = 'file_does_not_exist.txt';
         $obj = (object) array($key => $value);
-        self::$transformer->transform($key, $value, $obj, self::$config);
+        self::$transformer->transform($key, $value, $obj, self::$config, Log::ERR);
     }
 
     /**
      * Badly formed URL
      *
-     * @expectedException Exception
+     *
      */
 
     public function testBadUrl()
     {
+        $this->expectException(Exception::class);
         $key = '$include';
         $value = 'badscheme://string';
         $obj = (object) array($key => $value);
-        self::$transformer->transform($key, $value, $obj, self::$config);
+        self::$transformer->transform($key, $value, $obj, self::$config, Log::ERR);
     }
 
     /**
@@ -76,7 +79,7 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
         $value = 'etl_sql.d/query.sql';
         $obj = (object) array($key => $value);
         $expected = file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/' . $value);
-        self::$transformer->transform($key, $value, $obj, self::$config);
+        self::$transformer->transform($key, $value, $obj, self::$config, Log::ERR);
 
         // A null key means replace the entire value object with the transformed value
         $this->assertNull($key);
@@ -95,7 +98,7 @@ class IncludeTest extends \PHPUnit_Framework_TestCase
         $key = '$include';
         $value = '${SUBDIR}/${FILENAME}.sql';
         $obj = (object) array($key => $value);
-        self::$transformer->transform($key, $value, $obj, self::$config);
+        self::$transformer->transform($key, $value, $obj, self::$config, Log::ERR);
 
         $expected = file_get_contents(self::TEST_ARTIFACT_INPUT_PATH . '/etl_sql.d/query.sql');
         $this->assertNull($key);

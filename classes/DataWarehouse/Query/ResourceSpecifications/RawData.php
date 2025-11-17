@@ -23,7 +23,8 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
         $endDate,
         $groupById = null,
         $statisticId = null,
-        array $parameters = array()
+        array $parameters = array(),
+        LoggerInterface $logger = null
     ) {
         $realmId = 'ResourceSpecifications';
         $schema = 'modw_aggregates';
@@ -36,7 +37,8 @@ class RawData extends \DataWarehouse\Query\Query implements \DataWarehouse\Query
             $endDate,
             $groupById,
             $statisticId,
-            $parameters
+            $parameters,
+            $logger
         );
 
         $this->setDistinct(true);

@@ -29,7 +29,7 @@ class PDODBMultiIngestor implements Ingestor
      * If set to null then the mysql defaults will be used.
      * This is only used in LOAD INFILE mode.
      */
-    protected $_character_set = null;
+    protected $_character_set = 'utf8';
 
     /**
      * Helper instance for destination database.
@@ -41,7 +41,7 @@ class PDODBMultiIngestor implements Ingestor
     function __construct(
         $dest_db,
         $source_db,
-        $pre_ingest_update_statements = array(),
+        $pre_ingest_update_statements,
         $source_query,
         $insert_table,
         $insert_fields = array(),
@@ -89,11 +89,13 @@ class PDODBMultiIngestor implements Ingestor
                 )->execute();
             }
             catch (PDOException $e) {
-                $this->_logger->info(array(
-                    'message'    => $e->getMessage(),
-                    'sql'        => $updateStatement,
-                    'stacktrace' => $e->getTraceAsString()
-                ));
+                $this->_logger->info(
+                    $e->getMessage(),
+                    [
+                        'sql'        => $updateStatement,
+                        'stacktrace' => $e->getTraceAsString()
+                    ]
+                );
             }
         }
 
@@ -283,11 +285,13 @@ class PDODBMultiIngestor implements Ingestor
                     $f = fopen($infile_name, 'w');
                 }
                 catch (Exception $e) {
-                    $this->_logger->err(array(
-                        'message'    => $e->getMessage(),
-                        'stacktrace' => $e->getTraceAsString(),
-                        'statement'  => $load_statement,
-                    ));
+                    $this->_logger->error(
+                        $e->getMessage(),
+                        [
+                            'stacktrace' => $e->getTraceAsString(),
+                            'statement'  => $load_statement
+                        ]
+                    );
                     return;
                 }
             }
@@ -306,11 +310,13 @@ class PDODBMultiIngestor implements Ingestor
                 )->execute();
             }
             catch (PDOException $e) {
-                $this->_logger->err(array(
-                    'message'    => $e->getMessage(),
-                    'sql'        => $updateStatement,
-                    'stacktrace' => $e->getTraceAsString(),
-                ));
+                $this->_logger->error(
+                    $e->getMessage(),
+                    [
+                        'sql'        => $updateStatement,
+                        'stacktrace' => $e->getTraceAsString()
+                    ]
+                );
                 return;
             }
         }
@@ -339,14 +345,16 @@ class PDODBMultiIngestor implements Ingestor
         $this->_logger->info($message);
 
         // NOTE: This is needed for the log summary.
-        $this->_logger->notice(array(
-            'message'          => 'Finished ingestion',
-            'class'            => get_class($this),
-            'start_time'       => $time_start,
-            'end_time'         => $time_end,
-            'records_examined' => $rowsTotal,
-            'records_loaded'   => $sourceRows,
-        ));
+        $this->_logger->notice(
+            'Finished ingestion',
+            [
+                'class'            => get_class($this),
+                'start_time'       => $time_start,
+                'end_time'         => $time_end,
+                'records_examined' => $rowsTotal,
+                'records_loaded'   => $sourceRows
+            ]
+        );
 
     }
 
@@ -400,11 +408,13 @@ class PDODBMultiIngestor implements Ingestor
         $sadness = false;
         while($row = $stmt->fetch(PDO::FETCH_ASSOC) )
         {
-            $this->_logger->crit(array(
-                'message'          => 'Missing row',
-                'rowdata'          => print_r($row, true),
-                'class'            => get_class($this)
-            ));
+            $this->_logger->critical(
+                'Missing row',
+                [
+                    'rowdata' => print_r($row, true),
+                    'class' => get_class($this)
+                ]
+            );
             $sadness = true;
         }
 
@@ -452,7 +462,7 @@ class PDODBMultiIngestor implements Ingestor
     protected function loadProcessingConfig($configFilePath)
     {
         if (! is_file($configFilePath)) {
-            throw new Exception("'$configPath' is missing. If no processing is needed, use an empty array.");
+            throw new Exception("'$configFilePath' is missing. If no processing is needed, use an empty array.");
         }
 
         $configFileContents = @file_get_contents($configFilePath);

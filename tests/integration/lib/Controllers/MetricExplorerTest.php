@@ -7,7 +7,14 @@ use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class MetricExplorerTest extends TokenAuthTest
 {
-    protected function setUp()
+    /**
+     * A helper class that simplifies interacting with XDMoD's REST interface.
+     *
+     * @var XdmodTestHelper
+     */
+    private $helper;
+
+    protected function setup(): void
     {
         $this->helper = new XdmodTestHelper();
     }
@@ -53,19 +60,16 @@ class MetricExplorerTest extends TokenAuthTest
                         $assertMessage
                     );
                     foreach ($realm[$property] as $item) {
-                        $testInstance->assertInternalType(
-                            'string',
+                        $testInstance->assertIsString(
                             $item['text'],
                             $assertMessage
                         );
-                        $testInstance->assertInternalType(
-                            'string',
+                        $testInstance->assertIsString(
                             $item['info'],
                             $assertMessage
                         );
                         if ('metrics' === $property) {
-                            $testInstance->assertInternalType(
-                                'bool',
+                            $testInstance->assertIsBool(
                                 $item['std_err'],
                                 $assertMessage
                             );
@@ -268,14 +272,12 @@ class MetricExplorerTest extends TokenAuthTest
                     );
                     foreach ($body['data'] as $item) {
                         foreach (['id', 'name', 'short_name'] as $property) {
-                            $this->assertInternalType(
-                                'string',
+                            $this->assertIsString(
                                 $item[$property],
                                 $assertMessage
                             );
                         }
-                        $this->assertInternalType(
-                            'bool',
+                        $this->assertIsBool(
                             $item['checked'],
                             $assertMessage
                         );

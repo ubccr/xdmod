@@ -96,7 +96,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
                 $payload['success'] = true;
                 $statusCode = 200;
             } else {
-                $payload['message'] = self::_DEFAULT_ERROR_MESSAGE;
+                $payload['message'] = self::EXCEPTION_MESSAGE;
             }
         } catch (BadRequestHttpException $e) {
             $payload['message'] = $e->getMessage();
@@ -149,7 +149,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
                     $statusCode = 404;
                 }
             } else {
-                $payload['message'] = self::_DEFAULT_ERROR_MESSAGE;
+                $payload['message'] = self::EXCEPTION_MESSAGE;
             }
         } catch (BadRequestHttpException $e) {
             $payload['message'] = $e->getMessage();
@@ -202,7 +202,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
                     $statusCode = 500;
                 }
             } else {
-                $payload['message'] = self::_DEFAULT_ERROR_MESSAGE;
+                $payload['message'] = self::EXCEPTION_MESSAGE;
             }
         } catch (BadRequestHttpException $e) {
             $payload['message'] = $e->getMessage();
@@ -290,7 +290,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
                     $statusCode = 404;
                 }
             } else {
-                $payload['message'] = self::_DEFAULT_ERROR_MESSAGE;
+                $payload['message'] = self::EXCEPTION_MESSAGE;
             }
         } catch (BadRequestHttpException $e) {
             $payload['message'] = $e->getMessage();
@@ -351,7 +351,7 @@ class MetricExplorerControllerProvider extends BaseControllerProvider
                     $statusCode = 404;
                 }
             } else {
-                $payload['message'] = self::_DEFAULT_ERROR_MESSAGE;
+                $payload['message'] = self::EXCEPTION_MESSAGE;
             }
         } catch (BadRequestHttpException $e) {
             $payload['message'] = $e->getMessage();

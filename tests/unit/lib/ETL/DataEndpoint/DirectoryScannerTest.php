@@ -29,7 +29,7 @@ use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use Psr\Log\LoggerInterface;
 
-class DirectoryScanner extends \PHPUnit_Framework_TestCase
+class DirectoryScannerTest extends \PHPUnit\Framework\TestCase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/dataendpoint/output";
@@ -39,7 +39,7 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
      */
     private $logger = null;
 
-    public function __construct()
+    public function __construct(?string $name = null, array $data = [], $dataName = '')
     {
         // Set up a logger so we can get warnings and error messages from the ETL
         // infrastructure
@@ -51,16 +51,18 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
         );
 
         $this->logger = Log::factory('PHPUnit', $conf);
+        parent::__construct($name, $data, $dataName);
     }  // __construct()
 
     /**
      * 1. Test passing options with the wrong types.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testInvalidOptions()
     {
+        $this->expectException(Exception::class);
         $config = array(
             'name' => 'Invalid Options',
             'type' => 'directoryscanner',
@@ -83,11 +85,12 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
     /**
      * 2. Test trying to read a file instead of a directory.
      *
-     * @expectedException Exception
+     *
      */
 
     public function testNotDirectory()
     {
+        $this->expectException(Exception::class);
         $config = array(
             'name' => 'Not a directory',
             'type' => 'directoryscanner',
@@ -220,12 +223,11 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
 
     /**
      * 6. Test catching a bad file regex.
-     *
-     * @expectedException Exception
      */
 
     public function testLastModifiedBadFileRegex()
     {
+        $this->expectException(Exception::class);
         $config = array(
             'name' => 'Files using regex',
             'type' => 'directoryscanner',
@@ -244,12 +246,11 @@ class DirectoryScanner extends \PHPUnit_Framework_TestCase
 
     /**
      * 7. Test catching a bad directory regex.
-     *
-     * @expectedException Exception
      */
 
     public function testLastModifiedBadDirRegex()
     {
+        $this->expectException(Exception::class);
         $config = array(
             'name' => 'Files using regex',
             'type' => 'directoryscanner',

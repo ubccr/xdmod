@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by Resource"
+"Screwdriver CPU Utilization (%): by Resource"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[robertson] Screwdriver Utilization (%)","[frearson] Screwdriver Utilization (%)","[mortorq] Screwdriver Utilization (%)","[pozidriv] Screwdriver Utilization (%)","[phillips] Screwdriver Utilization (%)"
+Day,"[robertson] Screwdriver CPU Utilization (%)","[frearson] Screwdriver CPU Utilization (%)","[mortorq] Screwdriver CPU Utilization (%)","[pozidriv] Screwdriver CPU Utilization (%)","[phillips] Screwdriver CPU Utilization (%)"
 2016-12-22,0,0,0,0.2118,0.2093
 2016-12-23,0,0,0,0.3090,0.3000
 2016-12-24,0,0,0,0.3250,0.3000

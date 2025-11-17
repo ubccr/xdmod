@@ -6,6 +6,7 @@
 
 namespace Configuration;
 
+use CCR\Log;
 use stdClass;
 
 class IncludeTransformer extends aUrlTransformer implements iConfigFileKeyTransformer
@@ -29,17 +30,18 @@ class IncludeTransformer extends aUrlTransformer implements iConfigFileKeyTransf
      * ------------------------------------------------------------------------------------------
      */
 
-    public function transform(&$key, &$value, stdClass $obj, Configuration $config)
+    public function transform(&$key, &$value, stdClass $obj, Configuration $config, $exceptionLogLevel)
     {
 
         if( count(get_object_vars($obj)) != 1 ) {
             $this->logAndThrowException(
-                sprintf('References cannot be mixed with other keys in an object: "%s": "%s"', $key, $value)
+                sprintf('References cannot be mixed with other keys in an object: "%s": "%s"', $key, $value),
+                array('log_level' => $exceptionLogLevel)
             );
         }
 
         $parsedUrl = null;
-        $contents = $this->getContentsFromUrl($value, $config);
+        $contents = $this->getContentsFromUrl($value, $config, $exceptionLogLevel);
         $key = null;
         $value = $contents;
 

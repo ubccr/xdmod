@@ -1,0 +1,11 @@
+title
+"Wall Hours: Total: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"PI Institution","Wall Hours: Total"
+"screw - Screwdriver",122481.5678
+"wrench - Wrench",5495.2386
+---------

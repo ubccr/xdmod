@@ -301,7 +301,7 @@
             }
         },
         "category": "Administrative",
-        "description_html": "A categorization of VM based on their state, ex. Active, Inactve, etc.",
+        "description_html": "A categorization of VM based on their state, ex. Active, Inactive, etc.",
         "name": "VM State"
     },
     "year": {
@@ -309,6 +309,12 @@
     },
     "pi": {
         "$ref": "datawarehouse.d/ref/group-by-common.json#/pi"
+    },
+    "institution": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/institution"
+    },
+    "pi_institution": {
+        "$ref": "datawarehouse.d/ref/group-by-common.json#/pi_institution"
     },
     "fieldofscience": {
         "$ref": "datawarehouse.d/ref/group-by-hierarchy.json#/fieldofscience"

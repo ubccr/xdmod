@@ -2,9 +2,22 @@
 
 namespace UnitTests\DataWarehouse\Visualization;
 
-class ColorGeneratorTest extends \PHPUnit_Framework_TestCase
+class ColorGeneratorTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    /**
+     * An array of tests to conduct.
+     *
+     * @var array[]
+     */
+    private $inputdata;
+
+    /**
+     * An array of the expected output for the tests specified in $inputData.
+     * @var int[]
+     */
+    private $expected;
+
+    public function setup(): void
     {
         // Cut and pasted from the colors1.json file.
         $this->expected = array(
@@ -25,7 +38,7 @@ class ColorGeneratorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
     }
 
     public function testRoundRobinMapping()
@@ -39,7 +52,7 @@ class ColorGeneratorTest extends \PHPUnit_Framework_TestCase
         }
 
         $c = new \DataWarehouse\Visualization\ColorGenerator($dummydata, 10, false);
-        
+
         $expectedColors = array_slice($this->expected, 1);
         $totalCols = count($expectedColors);
         for($i = 0; $i < $totalCols * 2; $i++)

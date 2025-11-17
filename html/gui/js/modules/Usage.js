@@ -959,27 +959,65 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
             updateDisabledMenus.call(this, true);
 
-            var node = tree.getSelectionModel().getSelectedNode();
+            const node = tree.getSelectionModel().getSelectedNode();
 
             if (node != null) return;
 
-            var root = tree.getRootNode();
+            const root = tree.getRootNode();
 
             if (root.hasChildNodes()) {
+                const parts = CCR.tokenize(document.location.hash);
+                const params = new URLSearchParams(parts.params);
+                const realm = params.get('realm');
+                const groupBy = params.get('group_by');
+                const statistic = params.get('statistic');
+                const start = params.get('start_time');
+                const end = params.get('end_time');
+                const duration = params.get('duration');
 
-                var child = root.findChildBy(function (n) {
-                    return !n.disabled;
-                }, this);
+                const startDate = Date.parseDate(start, 'Y-m-d');
+                const endDate = Date.parseDate(end, 'Y-m-d');
+                const startValid = startDate instanceof Date;
+                const endValid = endDate instanceof Date;
+
+                // If both dates are valid and the start is not after the end,
+                // set the date range in the duration selector
+                // Else if no valid dates are provided but a duration is present (e.g. "Last 30 Days"),
+                // fall back to setting that instead
+                if ((startValid && endValid) && (startDate <= endDate)) {
+                    self.getDurationSelector().setValues(start, end);
+                } else if (duration != null) {
+                    self.getDurationSelector().selectCustomDateRange(duration);
+                }
+
+                const searchId = `node=group_by&realm=${realm}&group_by=${groupBy}`;
+                let child = root.findChildBy(function (n) {
+                        return !n.disabled && n.id === searchId;
+                });
+
+                // Check if the URL is pointing at a summary node
+                if (child && !statistic) {
+                    tree.getSelectionModel().select(child);
+                    return;
+                }
+
+                // If we found nothing try loading first available parent node
+                if (!child) {
+                    child = root.findChildBy(function (n) {
+                        return !n.disabled;
+                    });
+                }
 
                 if (child) {
-
-                    tree.expandPath(child.getPath(), null, function (success) {
+                    let nodeId = parts.params;
+                    if (!realm || !groupBy || !statistic) {
+                        nodeId = 'node=statistic&realm=Jobs&group_by=none&statistic=total_cpu_hours';
+                    }
+                    tree.expandPath(child.getPath(), null, (success) => {
                         // If the summary node was successfully expanded...
                         if (success) {
                             // If available, open the default statistic.
-                            //
-                            var defaultStatistic = 'total_cpu_hours';
-                            var jobCountNode = child.findChild("statistic", defaultStatistic);
+                            const jobCountNode = child.findChild("id", nodeId);
                             if (jobCountNode && !jobCountNode.disabled) {
                                 tree.getSelectionModel().select(jobCountNode);
                                 return;
@@ -1205,7 +1243,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
             if (!self.getDurationSelector().validate()) return;
 
             Ext.History.un('change', onHistoryChange);
-            Ext.History.add(layoutId + '?node=' + n.id, true);
+            Ext.History.add(layoutId + '?' + n.id, true);
             Ext.History.on('change', onHistoryChange);
 
             chartStore.loadStartTime = new Date().getTime();
@@ -1510,7 +1548,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                 if (chartRecords.length > 0) {
                                     chartOptions = chartRecords[0].get('hc_jsonstore');
                                 }
-                                jQuery.extend(true, chartOptions, baseChartOptions);
+                                chartOptions = XDMoD.utils.deepExtend({}, chartOptions, baseChartOptions);
 
                                 let axisLabels;
                                 const isEmpty = chartOptions.data && chartOptions.data.length === 0;
@@ -2363,36 +2401,20 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
             if (token) {
 
-                var parts = CCR.tokenize(document.location.hash);
+                const parts = CCR.tokenize(document.location.hash);
 
-                var tab = CCR.exists(parts.tab) ? parts.tab : layoutId;
-                var params = CCR.exists(parts.params) ? parts.params.split('&') : null;
+                const tab = CCR.exists(parts.tab) ? parts.tab : layoutId;
+                const nodeId = CCR.exists(parts.params) ? parts.params : null;
 
-                var retrieveNode = function(params, layout) {
-                    if (params !== null) {
-                        for (var i = 0; i < params.length; i++) {
-                            var param = params[i].split('=');
-                            if (param && param.length > 0) {
-                                var key = param[0];
-                                if (key === layout) {
-                                    return param[1];
-                                }
-                            }
-                        }
-                    }
-                    return null;
-                }; // retrieveNode
-
-                if (params) {
-                    var node = retrieveNode(params, 'node');
-                    var treePanel = Ext.getCmp('tree_' + tab);
-                    var nodeToSelect = treePanel ? treePanel.getNodeById(node) : null;
+                if (nodeId) {
+                    const treePanel = Ext.getCmp('tree_' + tab);
+                    const nodeToSelect = treePanel ? treePanel.getNodeById(nodeId) : null;
 
                     if (nodeToSelect) {
                         Ext.menu.MenuMgr.hideAll();
                         treePanel.getSelectionModel().select(nodeToSelect);
                     } // if (nodeToSelect)
-                } // if (params)
+                } // if (nodeId)
 
             } //if (token)
 
@@ -2707,7 +2729,6 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                                     width: chartWidth * chartScale,
                                     height: chartHeight * chartScale
                                 },
-                                data: [],
                                 exporting: {
                                     enabled: false
                                 },
@@ -2718,7 +2739,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
 
                             var chartOptions = r.get('hc_jsonstore');
 
-                            jQuery.extend(true, chartOptions, baseChartOptions);
+                            chartOptions = XDMoD.utils.deepExtend({}, chartOptions, baseChartOptions);
                             chartOptions.exporting.enabled = false;
                             chartOptions.credits.enabled = true;
 

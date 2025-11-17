@@ -11,7 +11,7 @@ namespace UnitTests;
 
 use CCR\Log;
 
-class LogTest extends \PHPUnit_Framework_TestCase
+class LogTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * Test various log levels including the newly added TRACE.
@@ -41,8 +41,8 @@ class LogTest extends \PHPUnit_Framework_TestCase
 
         $logger->emerg('Emergency');
         $logger->alert('Alert');
-        $logger->crit('Critical');
-        $logger->err('Error');
+        $logger->critical('Critical');
+        $logger->error('Error');
         $logger->warning('Warning');
         $logger->notice('Notice');
         $logger->info('Info');

@@ -133,26 +133,23 @@ function main()
     $logger = Log::factory('xdmod-import-csv', $conf);
 
     // NOTE: "process_start_time" is needed for the log summary.
-    $logger->notice(array(
-        'message'            => 'xdmod-import-csv start',
-        'process_start_time' => date('Y-m-d H:i:s'),
-    ));
+    $logger->notice('xdmod-import-csv start', ['process_start_time' => date('Y-m-d H:i:s')]);
 
     $logger->debug('Checking for required arguments');
 
     if ($input === null) {
-        $logger->crit('No input file specified');
+        $logger->critical('No input file specified');
         exit(1);
     } elseif (!is_file($input)) {
-        $logger->crit("'$input' is not a file");
+        $logger->critical("'$input' is not a file");
         exit(1);
     } elseif (!is_readable($input)) {
-        $logger->crit("'$input' is not readable");
+        $logger->critical("'$input' is not readable");
         exit(1);
     }
 
     if ($type === null) {
-        $logger->crit('No input type specified');
+        $logger->critical('No input type specified');
         exit(1);
     }
 
@@ -162,10 +159,7 @@ function main()
         $shredderDb = DB::factory('shredder');
     } catch (Exception $e) {
         $msg = 'Failed to create database connection: ' . $e->getMessage();
-        $logger->crit(array(
-            'message'   => $msg,
-            'stacktrace' => $e->getTraceAsString(),
-        ));
+        $logger->critical($msg, ['stacktrace' => $e->getTraceAsString()]);
         exit(1);
     }
 
@@ -174,7 +168,7 @@ function main()
     $fh = fopen($input, 'r');
 
     if ($fh === false) {
-        $logger->crit("Failed to open file '$input'");
+        $logger->critical("Failed to open file '$input'");
         exit(1);
     }
 
@@ -194,7 +188,7 @@ function main()
     $logger->debug("Closing file '$input'");
 
     if (!fclose($fh)) {
-        $logger->crit("Failed to close file '$input'");
+        $logger->critical("Failed to close file '$input'");
         exit(1);
     }
 
@@ -218,7 +212,7 @@ function main()
                 updateCloudProjectToPI($data);
                 break;
             default:
-                $logger->crit("Unknown type '$type'");
+                $logger->critical("Unknown type '$type'");
                 exit(1);
                 break;
         }
@@ -226,20 +220,14 @@ function main()
         $logger->info('Committing database transaction');
         $db->commit();
     } catch (Exception $e) {
-        $logger->err(array(
-            'message'    => $e->getMessage(),
-            'stacktrace' => $e->getTraceAsString(),
-        ));
+        $logger->error($e->getMessage(), ['stacktrace' => $e->getTraceAsString()]);
 
         $logger->info('Rolling back database transaction');
         $db->rollBack();
     }
 
     // NOTE: "process_end_time" is needed for the log summary.
-    $logger->notice(array(
-        'message'          => 'xdmod-import-csv end',
-        'process_end_time' => date('Y-m-d H:i:s'),
-    ));
+    $logger->notice('xdmod-import-csv end', ['process_end_time' => date('Y-m-d H:i:s')]);
 
     exit;
 }
@@ -277,12 +265,13 @@ function updatePeople(array $people)
     $logger->debug('Updating people data');
 
     $personIdForUsername = getPersonIdUsernameMappings();
+    $organizations = getOrganizationIDNameMappings();
 
     foreach ($people as $person) {
         $logger->debug('Processing row: ' . json_encode($person));
 
         $fieldCount = count($person);
-        if ($fieldCount != 3) {
+        if ($fieldCount != 3 && $fieldCount != 4 ) {
             $msg = "Unexpected number of fields ($fieldCount) in row: "
                 . implode(',', $person);
             $logger->warning($msg);
@@ -291,13 +280,16 @@ function updatePeople(array $people)
 
         list($username, $firstName, $lastName) = $person;
 
+        $personOrganization = array_key_exists(3, $person) ? $person[3] : null;
+        $personOrganizationId = array_key_exists($personOrganization, $organizations) ? $organizations[$personOrganization] : -1;
+
         $lowerUsername = strtolower($username);
 
         if (isset($personIdForUsername[$lowerUsername])) {
             $personId = $personIdForUsername[$lowerUsername];
-            updatePerson($personId, $firstName, $lastName);
+            updatePerson($personId, $firstName, $lastName, $personOrganizationId);
         } else {
-            createPerson($username, $firstName, $lastName);
+            createPerson($username, $firstName, $lastName, $personOrganizationId);
         }
     }
 }
@@ -315,16 +307,18 @@ function updatePeople(array $people)
  *
  * @return int The person's HPcDB person_id.
  */
-function createPerson($username, $firstName, $lastName)
+function createPerson($username, $firstName, $lastName, $organizationId)
 {
     global $db, $shredderDb, $logger;
 
-    $logger->debug(array(
-        'message'    => 'Creating person',
-        'username'   => $username,
-        'first_name' => $firstName,
-        'last_name'  => $lastName,
-    ));
+    $logger->debug('Creating person',
+        [
+            'username' => $username,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'organization_id' => $organizationId
+        ]
+    );
 
     $sql = "
         REPLACE INTO staging_union_user_pi SET
@@ -335,7 +329,7 @@ function createPerson($username, $firstName, $lastName)
 
     $sql = "
         INSERT INTO hpcdb_people SET
-            organization_id = 1,
+            organization_id = :organization_id,
             person_id = :person_id,
             first_name = :first_name,
             last_name = :last_name
@@ -347,6 +341,7 @@ function createPerson($username, $firstName, $lastName)
             'person_id'  => $personId,
             'first_name' => $firstName,
             'last_name'  => $lastName,
+            'organization_id' => $organizationId
         )
     );
 
@@ -362,21 +357,24 @@ function createPerson($username, $firstName, $lastName)
  * @param string $firstName The person's first name.
  * @param string $lastName The person's last name.
  */
-function updatePerson($personId, $firstName, $lastName)
+function updatePerson($personId, $firstName, $lastName, $organizationId)
 {
     global $db, $logger;
 
-    $logger->debug(array(
-        'message'    => 'Updating person',
-        'person_id'  => $personId,
-        'first_name' => $firstName,
-        'last_name'  => $lastName,
-    ));
+    $logger->debug('Updating person',
+        [
+            'person_id' => $personId,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'organization_id' => $organizationId
+        ]
+    );
 
     $sql = "
         UPDATE hpcdb_people SET
             first_name = :first_name,
-            last_name = :last_name
+            last_name = :last_name,
+            organization_id = :organization_id
         WHERE person_id = :person_id
     ";
 
@@ -386,6 +384,7 @@ function updatePerson($personId, $firstName, $lastName)
             'first_name' => $firstName,
             'last_name'  => $lastName,
             'person_id'  => $personId,
+            'organization_id' => $organizationId
         )
     );
 }
@@ -453,12 +452,13 @@ function createHierarchyItem($abbrev, $desc = null, $parentId = null)
 {
     global $db, $logger;
 
-    $logger->debug(array(
-        'message'   => 'Creating hierarchy item',
-        'abbrev'    => $abbrev,
-        'desc'      => $desc,
-        'parent_id' => $parentId,
-    ));
+    $logger->debug('Creating hierarchy item',
+        [
+            'abbrev' => $abbrev,
+            'desc' => $desc,
+            'parent_id' => $parentId
+        ]
+    );
 
     $params = array('abbrev' => $abbrev);
 
@@ -503,13 +503,14 @@ function updateHierarchyItem(
 ) {
     global $db, $logger;
 
-    $logger->debug(array(
-        'message'      => 'Updating hierarchy item',
-        'hierarchy_id' => $hierarchyId,
-        'abbrev'       => $abbrev,
-        'desc'         => $desc,
-        'parent_id'    => $parentId,
-    ));
+    $logger->debug('Updating hierarchy item',
+        [
+            'hierarchy_id' => $hierarchyId,
+            'abbrev'       => $abbrev,
+            'desc'         => $desc,
+            'parent_id'    => $parentId
+        ]
+    );
 
     $params = array('abbrev' => $abbrev);
 
@@ -601,11 +602,12 @@ function createPi($groupname, $hierarchyId)
 {
     global $db, $shredderDb, $logger;
 
-    $logger->debug(array(
-        'message'      => 'Creating PI',
-        'groupname'    => $groupname,
-        'hierarchy_id' => $hierarchyId,
-    ));
+    $logger->debug('Creating PI',
+        [
+            'groupname' => $groupname,
+            'hierarchy_id' => $hierarchyId
+        ]
+    );
 
     $sql = "REPLACE INTO staging_pi SET pi_name = :pi_name";
     $piId = $shredderDb->insert($sql, array('pi_name' => $groupname));
@@ -666,11 +668,12 @@ function updatePersonHierarchyItem($personId, $hierarchyId)
 {
     global $db, $logger;
 
-    $logger->debug(array(
-        'message'      => 'Updating person to hierarchy map',
-        'person_id'    => $personId,
-        'hierarchy_id' => $hierarchyId,
-    ));
+    $logger->debug('Updating person to hierarchy map',
+        [
+            'person_id'    => $personId,
+            'hierarchy_id' => $hierarchyId
+        ]
+    );
 
     $sql = "
         UPDATE hpcdb_requests r
@@ -708,6 +711,24 @@ function getPersonIdUsernameMappings()
     }
 
     return $personIdForUsername;
+}
+
+function getOrganizationIDNameMappings()
+{
+    global $db, $logger;
+
+    $logger->debug('Querying organization information');
+
+    $sql = "SELECT organization_abbrev, organization_id FROM mod_hpcdb.hpcdb_organizations";
+    $organizations_resultset = $db->query($sql);
+
+    $organizations = array();
+
+    foreach ($organizations_resultset as $org) {
+        $organizations[$org['organization_abbrev']] = $org['organization_id'];
+    }
+
+    return $organizations;
 }
 
 /**

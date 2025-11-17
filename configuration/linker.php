@@ -119,13 +119,13 @@ function handle_uncaught_exception($exception)
 
     $logger = Log::singleton('exception', $logConf);
 
-    $logger->err(array( 'message' => 'Exception Code: '.$exception->getCode()));
-    $logger->err(array( 'message' => 'Message: '.$exception->getMessage()));
-    $logger->err(array( 'message' => 'Origin: '.$exception->getFile().' (line '.$exception->getLine().')'));
+    $logger->error('Exception Code: '.$exception->getCode());
+    $logger->error('Message: '.$exception->getMessage());
+    $logger->error('Origin: '.$exception->getFile().' (line '.$exception->getLine().')');
 
     $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
 
-    $logger->err(array('message' => "Trace:\n".$stringTrace."\n-------------------------------------------------------"));
+    $logger->error("Trace:\n".$stringTrace."\n-------------------------------------------------------");
 
    // If working in a server context, build headers to output.
     $httpCode = 500;
@@ -190,11 +190,16 @@ $org = \Configuration\XdmodConfiguration::assocArrayFactory(
     'organization.json',
     CONFIG_DIR
 );
-define('ORGANIZATION_NAME', $org['name']);
-$org_abbrev = $org['abbrev'];
-if (empty($org_abbrev)) {
-    $org_abbrev = ORGANIZATION_NAME;
-};
+
+$org_name = '';
+$org_abbrev = '';
+
+if (!empty($org)) {
+    $org_name = (array_key_exists('name', $org)) ? $org['name'] : $org[0]['name'];
+    $org_abbrev = (array_key_exists('abbrev', $org)) ? $org['abbrev'] : $org[0]['abbrev'];
+}
+
+define('ORGANIZATION_NAME', $org_name);
 define('ORGANIZATION_NAME_ABBREV', $org_abbrev);
 
 $hierarchy = \Configuration\XdmodConfiguration::assocArrayFactory(

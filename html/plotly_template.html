@@ -6,7 +6,6 @@
         <title>Plotly Template</title>
 
         <style type="text/css">html,body{margin:0px;height:100%;}</style>
-        <script type="text/javascript" src="_html_dir_/gui/lib/jquery/jquery-1.12.4.min.js"></script>
         <script type="text/javascript" src="_html_dir_/gui/js/StringExtensions.js"></script>
         <script type="text/javascript" src="_html_dir_/gui/lib/moment/moment.min.js"></script>
         <script type="text/javascript" src="_html_dir_/gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
@@ -27,7 +26,7 @@
             utils: {}
         };
 
-        $(document).ready(function () {
+        document.addEventListener('DOMContentLoaded', function () {
             // _ chartOptions _ is a macro that is substituted by \xd_charting\exportChart()
             let inputChartOptions = _chartOptions_;
             const args = {
@@ -72,23 +71,12 @@
                         chartOptions.layout.margin.t += 30;
                     }
 
-                    for (let i = 0; i < chartOptions.data.length; i++) {
-                        // Rollback constrain for bar chart text font size
-                        chartOptions.data[i].constraintext = 'none';
-                        // mode = 'lines' affects the xaxis range, therefore, just change opacity
-                        if ((chartOptions.data[i].type === 'line' || chartOptions.data[i].type === 'area') && chartOptions.data[i].y.length > 1) {
-                            if (chartOptions.data[i].marker) {
-                                chartOptions.data[i].marker.opacity = 0;
-                            }
-                        }
-                    }
-
                     chartOptions.data.sort((trace1, trace2) => {
-                        if (chartOptions.layout.barmode !== 'group') {
-                            return Math.sign(trace2.zIndex - trace1.zIndex) || Math.sign(trace2.traceorder - trace1.traceorder);
+                        const containsBarSeries = chartOptions.data.some((elem) => elem.type === 'bar');
+                        if (containsBarSeries && chartOptions.layout.barmode === 'stack') {
+                            return Math.sign(trace2.traceorder - trace1.traceorder);
                         }
-                        const res = Math.sign(trace1.zIndex - trace2.zIndex) || Math.sign(trace1.traceorder - trace2.traceorder);
-                        return res;
+                        return Math.sign(trace1.traceorder - trace2.traceorder);
                     });
 
                 }
@@ -127,7 +115,6 @@
                 }
                 const update = relayoutChart(chartDiv, chartOptions.layout.height, true, true);
                 Plotly.relayout('container', update);
-
             });
         });
 

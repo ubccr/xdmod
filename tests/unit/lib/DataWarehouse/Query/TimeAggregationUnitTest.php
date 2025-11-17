@@ -4,13 +4,11 @@ namespace UnitTests\DataWarehouse\Query;
 
 use UnitTests\TestHelpers\mock;
 
-class TimeAggregationUnitTest extends \PHPUnit_Framework_TestCase
+class TimeAggregationUnitTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @expectedException Exception
-     */
     public function testInvalidTimePeriod()
     {
+        $this->expectException(\Exception::class);
         \DataWarehouse\Query\TimeAggregationUnit::factory('era', 'Palenzoic', 'Mesoproterozoic', 'fossilfact_by');
     }
 
@@ -35,19 +33,15 @@ class TimeAggregationUnitTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('2015-12-31', $end_date);
     }
 
-    /**
-     * @expectedException DomainException
-     */
     public function testGetRawTimePeriodInvalid1()
     {
+        $this->expectException(\DomainException::class);
         \DataWarehouse\Query\TimeAggregationUnit::getRawTimePeriod('seven', 'day');
     }
 
-    /**
-     * @expectedException DomainException
-     */
     public function testGetRawTimePeriodInvalid2()
     {
+        $this->expectException(\DomainException::class);
         \DataWarehouse\Query\TimeAggregationUnit::getRawTimePeriod(142008840, 'millenium');
     }
 

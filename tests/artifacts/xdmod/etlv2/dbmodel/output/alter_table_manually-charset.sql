@@ -1,6 +1,5 @@
 ALTER TABLE `test_db_model`
-CHARSET = utf8mb4,
-COLLATE = utf8mb4_general_ci,
+CONVERT TO CHARACTER SET utf8mb4  COLLATE utf8mb4_general_ci,
 ADD COLUMN `new_column` boolean NOT NULL DEFAULT 0 AFTER `inferred`,
 ADD COLUMN `new_column2` char(64) CHARSET utf8mb4 COLLATE utf8mb4_general_ci NULL AFTER `new_column`,
 ADD INDEX `index_new_column` (`new_column`),

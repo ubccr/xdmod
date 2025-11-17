@@ -2,9 +2,16 @@
 
 namespace UnitTests\DataWarehouse;
 
-class VisualizationTest extends \PHPUnit_Framework_TestCase
+class VisualizationTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    /**
+     * The expected output for the tests in this file.
+     *
+     * @var array|int[]
+     */
+    public array $expected;
+
+    public function setup(): void
     {
         // Cut and pasted from the colors1.json file.
         $this->expected = array(
@@ -18,10 +25,10 @@ class VisualizationTest extends \PHPUnit_Framework_TestCase
             0x999900, 0xCC3300, 0x669999, 0x993333, 0x339966, 0xC42525, 0xA6C96A, 0x111111);
     }
 
-    public function tearDown() {
+    public function tearDown(): void {
     }
 
-    
+
     public function testGetLotsOfColours()
     {
         $count = 65;

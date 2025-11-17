@@ -1,11 +1,11 @@
 title
-"Screwdriver Utilization (%): by PI Group"
+"Screwdriver CPU Utilization (%): by PI Group"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"PI Group","Screwdriver Utilization (%)"
+"PI Group","Screwdriver CPU Utilization (%)"
 "Organic and Macromolecular Chemistry",7.3085
 "Quantum Electronics, Waves, and Beams",6.9780
 "Systems Prototyping and Fabrication",6.3451

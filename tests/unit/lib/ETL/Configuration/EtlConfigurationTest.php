@@ -13,11 +13,11 @@ use Configuration\ModuleConfiguration;
 use Configuration\XdmodConfiguration;
 use ETL\Configuration\EtlConfiguration;
 use CCR\Json;
-use UnitTests\BaseTest;
+use UnitTests\TestBase;
 
 use IntegrationTests\TestHarness\TestFiles;
 
-class EtlConfigurationTest extends BaseTest
+class EtlConfigurationTest extends TestBase
 {
     const TEST_ARTIFACT_INPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/input";
     const TEST_ARTIFACT_OUTPUT_PATH = "./../artifacts/xdmod/etlv2/configuration/output";
@@ -35,7 +35,7 @@ class EtlConfigurationTest extends BaseTest
     }
 
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         // Query the configuration file for the default module name
 

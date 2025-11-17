@@ -4,6 +4,7 @@ namespace IntegrationTests;
 
 use CCR\Json;
 use Exception;
+use SebastianBergmann\Comparator\ComparisonFailure;
 use Swaggest\JsonSchema\Schema;
 use IntegrationTests\TestHarness\TestFiles;
 use IntegrationTests\TestHarness\Utilities;
@@ -89,7 +90,7 @@ use InvalidArgumentException;
  *      );
  *  }
  */
-abstract class BaseTest extends \PHPUnit_Framework_TestCase
+abstract class BaseTest extends \PHPUnit\Framework\TestCase
 {
     const DATE_REGEX = '/[0-9]{4}-[0-9]{2}-[0-9]{2} [0-9]{2}:[0-9]{2}:[0-9]{2}/';
 
@@ -107,7 +108,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         'output' => ['status_code', 'body_validator']
     ];
 
-    public static function setUpBeforeClass()
+    public static function setupBeforeClass(): void
     {
         self::$XDMOD_REALMS = Utilities::getRealmsToTest();
     }
@@ -578,31 +579,37 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
         ];
         $values = [
             'string' => 'foo',
-            'array' => ['foo' => 'bar']
+            'array' => ['foo' => 'bar'],
+            'invalid_date' => '2024-01-99'
         ];
         foreach ($types as $key => $type) {
             if (array_key_exists($key, $options)) {
                 foreach ($options[$key] as $param) {
                     $input = $validInputWithAdditionalParams;
                     foreach ($values as $id => $value) {
-                        // Strings can be strings, so skip that test.
-                        if ('string_params' !== $key || 'string' !== $id) {
-                            $input[$paramSource][$param] = $value;
-                            $testData = ["{$param}_$id", $runAs];
-                            if ($tokenAuth) {
-                                $testData[] = 'valid_token';
-                            }
-                            array_push(
-                                $testData,
-                                $input,
-                                $this->validateInvalidParameterResponse(
-                                    $param,
-                                    $type,
-                                    $errorBodyValidator
-                                )
-                            );
-                            $tests[] = $testData;
+                        // We can skip tests:
+                        //   - Strings can be strings, so skip that test.
+                        //   - Invalid dates should only be tested on date params.
+                        if (('string' === $id && 'string_params' === $key) ||
+                            ('invalid_date' === $id && 'date_params' !== $key) ) {
+                            continue;
                         }
+
+                        $input[$paramSource][$param] = $value;
+                        $testData = ["{$param}_$id", $runAs];
+                        if ($tokenAuth) {
+                            $testData[] = 'valid_token';
+                        }
+                        array_push(
+                            $testData,
+                            $input,
+                            $this->validateInvalidParameterResponse(
+                                $param,
+                                $type,
+                                $errorBodyValidator
+                            )
+                        );
+                        $tests[] = $testData;
                     }
                 }
             }
@@ -798,7 +805,7 @@ abstract class BaseTest extends \PHPUnit_Framework_TestCase
      */
     protected function validateDate($date)
     {
-        parent::assertRegExp(self::DATE_REGEX, $date);
+        parent::assertMatchesRegularExpression(self::DATE_REGEX, $date);
     }
 
     /**

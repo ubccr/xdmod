@@ -156,7 +156,7 @@ class Slurm extends Shredder
      *
      * @var string[]
      */
-    private static $endedJobStates = [
+    protected static $endedJobStates = [
         'BOOT_FAIL',
         'CANCELLED',
         'COMPLETED',
@@ -175,7 +175,7 @@ class Slurm extends Shredder
      *
      * @var string[]
      */
-    private static $nonEndedJobStates = [
+    protected static $nonEndedJobStates = [
         'PENDING',
         'RUNNING',
         'REQUEUED',
@@ -188,7 +188,7 @@ class Slurm extends Shredder
      *
      * @var string[]
      */
-    private static $unknownJobStates = [];
+    protected static $unknownJobStates = [];
 
     /**
      * Time zone used when parsing datetimes.
@@ -294,9 +294,6 @@ class Slurm extends Shredder
             $this->logger->debug('Skipping line due to host filter');
             return;
         }
-
-        // Convert job name encoding.
-        $job['job_name'] = mb_convert_encoding($job['job_name'], 'ISO-8859-1', 'UTF-8');
 
         // Convert datetime strings into unix timestamps.
         $dateKeys = array(

@@ -7,7 +7,7 @@ class PDODBUnbufferedMultiIngestor Extends PDODBMultiIngestor
     public function __construct(
         PDODB $dest_db,
         PDODB $source_db,
-        array $pre_ingest_update_statements = array(),
+        array $pre_ingest_update_statements,
         $source_query,
         $insert_table,
         array $insert_fields = array(),

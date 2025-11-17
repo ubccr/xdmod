@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "name": "playwright_ui_tests",
+  "version": "1.0.0",
+  "description": "UI tests for Open XDMoD Using Playwright",
+  "author": "Lorraine A. Gao",
+  "license": "GPL-3.0",
+  "repository": "https://github.com/ubccr/xdmod",
+  "devDependencies": {
+    "@playwright/test": "^1.56.1"
+  }
+}

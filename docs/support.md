@@ -9,18 +9,19 @@ In general, Open XDMoD has one or two major releases each year, and each major v
  for one year from the time of initial release.  This includes security fixes and other critical updates in
 addition to limited access to our support team.
 
-| Version | Release Date       | End of Support      |
-|---------|--------------------|---------------------|
-| 10.5    | September 03, 2023 | September 03, 2024* |
+Note that the 11.0 release has a longer than typical support window due to a later than typical release date
+for 11.5.
 
-**\* Note: CentOS 7 will officially reach end of life on June 30, 2024, and as such so will our official support for el7 XDMoD.**
+| Version | Release Date       | End of Support    |
+|---------|--------------------|-------------------|
+| 11.0    | October 23, 2024   | April 30, 2026    |
 
 Supported Operating Systems
 ---------------------------
 
-Rocky 8 and CentOS 7 are the officially supported operating systems for Open XDMoD.  If you
+Rocky 8 is the officially supported operating system for Open XDMoD.  If you
 are using a different operating system and encounter an issue, please install Open
-XDMoD on either of these operating systems and reproduce the issue in that environment before requesting
+XDMoD on this operating system and reproduce the issue in that environment before requesting
 support.
 
 Requesting Support

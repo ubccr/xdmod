@@ -52,8 +52,34 @@ then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true
     rm -rf /etc/xdmod
 
-    rm -rf /var/lib/mysql && mkdir -p /var/lib/mysql
-    yum -y install ~/rpmbuild/RPMS/*/*.rpm
+    rm -rf /var/lib/mysql
+    mkdir -p /var/lib/mysql
+    mkdir -p /var/log/mariadb
+    mkdir -p /var/run/mariadb
+    chown -R mysql:mysql /var/lib/mysql
+    chown -R mysql:mysql /var/log/mariadb
+    chown -R mysql:mysql /var/run/mariadb
+
+    dnf install -y ~/rpmbuild/RPMS/*/*.rpm
+    mysql_install_db --user mysql
+
+    if [ -f /etc/my.cnf.d/mariadb-server.cnf ]; then
+        >/etc/my.cnf.d/mariadb-server.cnf
+        echo "# this is read by the standalone daemon and embedded servers
+              [server]
+              sql_mode=
+              # this is only for the mysqld standalone daemon
+              # Settings user and group are ignored when systemd is used.
+              # If you need to run mysqld under a different user or group,
+              # customize your systemd unit file for mysqld/mariadb according to the
+              # instructions in http://fedoraproject.org/wiki/Systemd
+              [mysqld]
+              datadir=/var/lib/mysql
+              socket=/var/lib/mysql/mysql.sock
+              log-error=/var/log/mariadb/mariadb.log
+              pid-file=/run/mariadb/mariadb.pid" > /etc/my.cnf.d/mariadb-server.cnf
+    fi
+
     copy_template_httpd_conf
     ~/bin/services start
     mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
@@ -124,56 +150,38 @@ then
     fi
 
     sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
-    sudo -u xdmod xdmod-ingestor
+    sudo -u xdmod xdmod-ingestor --start-date "2016-12-01" --end-date "2022-01-01" --last-modified-start-date "2017-01-01 00:00:00"
     php $BASEDIR/scripts/create_xdmod_users.php
 
 fi
 
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
-    yum -y install ~/rpmbuild/RPMS/*/*.rpm
-
-    copy_template_httpd_conf
-    sed -i 's#http://localhost:8080#https://localhost#' /etc/xdmod/portal_settings.ini
+    # Install the newly built RPM.
+    dnf -y install ~/rpmbuild/RPMS/*/*.rpm
 
     ~/bin/services start
 
-    # TODO: Replace diff files with hard fixes
-    # Modify integration sso tests to work with cloud realm
-    if [ "$XDMOD_REALMS" = "cloud" ]; then
-        if ! patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff >/dev/null; then
-            # -- Fix users searched in SSO test
-            patch -up1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff
-        fi
-    else
-        if patch --dry-run -Rfsup1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff >/dev/null; then
-            # -- Reverse previous patch
-            patch -R -up1 --directory=$REPODIR < $BASEDIR/diff/SSOLoginTest.php.diff
-        fi
-    fi
-
-    last_modified_start_date=$(date +'%F %T')
-    set_resource_spec_end_times
     expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
 
-    # Addding different resource allocation types.
-    cat /etc/xdmod/resources.json | jq -c '[ .[] | .["resource_allocation_type"] = if .["resource"] == "phillips" then "CPUNode" elif .["resource"] == "mortorq" then "GPU" elif .["resource"] == "robertson" then "GPUNode" else .["resource_allocation_type"] end ]' > /etc/xdmod/resources2.json
+    cat /etc/xdmod/organization.json | jq '.[1] |= .+ {"name": "Wrench", "abbrev": "wrench"}' > /etc/xdmod/organization2.json
+    jq . /etc/xdmod/organization2.json > /etc/xdmod/organization.json
+    rm -f /etc/xdmod/organization2.json
+
+    cat /etc/xdmod/resources.json | jq '[ .[] | if (.["resource"] == "pozidriv") then .["organization"] else empty end = "wrench"]' > /etc/xdmod/resources2.json
     jq . /etc/xdmod/resources2.json > /etc/xdmod/resources.json
     rm -f /etc/xdmod/resources2.json
 
-    # Adding resource values for GPU and GPU Node resources.
-    cat /etc/xdmod/resource_specs.json | jq -c '[ .[] |  if (.["resource"] == "mortorq" or .["resource"] == "robertson") then .["gpu_processor_count"] = 4000 | .["gpu_node_count"] = 400 | .["gpu_ppn"] = 10 else .["gpu_processor_count"] = .["gpu_processor_count"] | .["gpu_node_count"] = .["gpu_node_count"] | .["gpu_ppn"] = .["gpu_ppn"] end ]' > /etc/xdmod/resource_specs2.json
-    jq . /etc/xdmod/resource_specs2.json > /etc/xdmod/resource_specs.json
-    rm -f /etc/xdmod/resource_specs2.json
+    sudo -u xdmod /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-organizations -p ingest-resources
+    sudo -u xdmod xdmod-ingestor --last-modified-start-date "2017-01-01 00:00:00"
 
-    if [[ "$XDMOD_REALMS" == *"storage"* ]];
-    then
-        for storage_dir in $REF_DIR/storage/*; do
-            sudo -u xdmod xdmod-shredder -f storage -r $(basename $storage_dir) -d $storage_dir
-        done
-        sudo -u xdmod xdmod-ingestor --datatype storage
-        sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
-    fi
+    sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
+    sudo -u xdmod xdmod-ingestor --start-date "2016-12-01" --end-date "2022-01-01" --last-modified-start-date "2017-01-01 00:00:00"
 
-    sudo -u xdmod xdmod-ingestor --aggregate=resourcespecs --last-modified-start-date "$last_modified_start_date"
+    # Make sure that we have the new httpd.conf file in place, this can be removed after the next xdmod/docker image
+    # update as it will already be in place.
+    copy_template_httpd_conf
+
+    # Restart so that the above changes take effect.
+    ~/bin/services restart
 fi
