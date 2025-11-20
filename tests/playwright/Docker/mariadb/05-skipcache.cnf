@@ -1,0 +1,4 @@
+[mariadb]
+host-cache-size=0
+sql-mode=
+disable-skip-name-resolve=1
