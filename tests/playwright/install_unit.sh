@@ -1,4 +1,5 @@
 #!/bin/bash
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+REPODIR=`realpath $BASEDIR/../../`
 
-cp -r $BASEDIR/html/unit_tests /usr/share/xdmod/html
+cp -r $REPODIR/html/unit_tests /usr/share/xdmod/html
