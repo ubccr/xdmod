@@ -2,6 +2,60 @@
 
 <p>Below is a list of Open XDMoD releases with major features and bug fixes listed.</p>
 
+<h2 id="XXXX-XX-XX-v11-5-0">XXXX-XX-XX v11.5.0</h2>
+<ul>
+    <li><p>Bug Fixes</p><ul>
+        <li>Fix bugs when updating user organizations.</li>
+        <li>Fix various bugs found when testing strict SQL modes.</li>
+        <li>Show unknown users the Summary tab instead of the Dashboard
+            tab.</li>
+        <li>Fix bug when reingesting cloud logs.</li>
+        <li>Display Summary tab instead of Dashboard tab for unassociated
+            users.</li>
+        <li>Change area plots to only show tooltip on markers.</li>
+        <li>Use UTF-8 character encoding for database tables to fix display of
+            non-ASCII characters.</li>
+    </ul></li>
+    <li><p>Enhancements</p><ul>
+        <li>Add support for PHP 8.2.</li>
+        <li>Add the ability to support multiple organizations and to assign
+            organizations to people and to resources.</li>
+        <li>Add statistics to the Cloud realm for "Number of Users," "Number of
+            PIs," "Number of Resources," and "Number of Projects."</li>
+        <li>Add dimensions to the Jobs, Cloud, and Storage realms for "User
+            Institution" and "PI Institution."</li>
+        <li>Add dimension to the Storage realm for "Service Provider."</li>
+        <li>Update Jobs realm raw data to rename the "Organization" field to
+            "User Institution."</li>
+        <li>Add raw data fields to the Jobs and Cloud realms for "User
+            Institution," "PI Institution," and "Service Provider."</li>
+        <li>Add new resource type for "Program."</li>
+        <li>Add the ability to ingest Storage realm data by a date range.</li>
+        <li>Improve performance of database queries.</li>
+        <li>Add an order to the raw data exported from the Resource
+            Specifications realm.</li>
+        <li>Add support for ingesting Slurm logs in JSON format.</li>
+        <li>Add support for date URL parameters in the Usage tab.</li>
+    </ul></li>
+    <li><p>Documentation</p><ul>
+        <li>Update list of publications and presentations.</li>
+    </ul></li>
+    <li><p>Maintenance / Code Quality</p><ul>
+        <li>Remove the "Job Size: Normalized" metric.</li>
+        <li>Remove code for supporting Internet Explorer.</li>
+        <li>Update user manual builder dependencies.</li>
+        <li>Update the hostname of the version check API.</li>
+        <li>Remove legacy code.</li>
+    </ul></li>
+    <li><p>Optional Modules</p><ul>
+        <li><p>Job Performance (SUPReMM)</p><ul>
+            <li>Bug Fixes<ul>
+                <li>Fix bug in <code>xdmod-supremm-admin</code>.</li>
+            </ul></li>
+        </ul></li>
+    </ul></li>
+</ul>
+
 <h2 id="2025-08-19-v11-0-2">2025-08-19 v11.0.2</h2>
 <ul>
     <li><p>New Features</p><ul>
