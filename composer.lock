@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b1f6a77651cfce3d29c0e5a886429ef7",
+    "content-hash": "fb02d1cf294851948a7788d4c24674b2",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -1645,24 +1645,54 @@
             "time": "2021-10-28T11:13:42+00:00"
         },
         {
-            "name": "plotly/plotly",
-            "version": "2.29.1",
+            "name": "plotly/plotly.js",
+            "version": "v3.2.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/plotly/plotly.js.git",
+                "reference": "b0633d6807616cb08a0546ed22530f4f19da3458"
+            },
             "dist": {
-                "type": "file",
-                "url": "https://cdn.plot.ly/plotly-2.29.1.min.js",
-                "shasum": "62b7c9478e01491b8d774300683cd8aac2d02a45"
+                "type": "zip",
+                "url": "https://api.github.com/repos/plotly/plotly.js/zipball/b0633d6807616cb08a0546ed22530f4f19da3458",
+                "reference": "b0633d6807616cb08a0546ed22530f4f19da3458",
+                "shasum": ""
             },
-            "require": {
-                "composer/installers": "~1.0"
-            },
-            "type": "vanilla-plugin",
-            "extra": {
-                "installer-name": "plotly"
-            },
+            "type": "library",
+            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
-            "homepage": "https://github.com/plotly/plotly.js"
+            "authors": [
+                {
+                    "name": "Plotly, Inc.",
+                    "email": "sales@plotly.com"
+                }
+            ],
+            "description": "The open source javascript graphing library that powers plotly",
+            "homepage": "https://plotly.com/javascript/",
+            "keywords": [
+                "data",
+                "graphing",
+                "plotly",
+                "plotting",
+                "visualization"
+            ],
+            "support": {
+                "issues": "https://github.com/plotly/plotly.js/issues",
+                "source": "https://github.com/plotly/plotly.js/tree/v3.2.0"
+            },
+            "funding": [
+                {
+                    "url": "https://plot.ly/products/consulting-and-oem/",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/plotly",
+                    "type": "github"
+                }
+            ],
+            "time": "2025-10-30T19:51:59+00:00"
         },
         {
             "name": "psr/container",
@@ -6231,12 +6261,12 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
         "php": "^7.4"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }
