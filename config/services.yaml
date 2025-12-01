@@ -75,3 +75,4 @@ services:
             - '@http_kernel'
             - 'error_controller'
             - '@error_renderer'
+    Symfony\Component\Dotenv\Command\DotenvDumpCommand: ~
