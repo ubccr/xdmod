@@ -27,7 +27,7 @@ foreach($files as $potentialFile) {
 }
 
 if ($file === null) {
-    throw new LogicException('Symfony Runtime is missing. Try running "composer require symfony/runtime".');
+    throw new RuntimeException('Symfony Runtime is missing. Try running "composer require symfony/runtime".');
 }
 
 require_once $file;
