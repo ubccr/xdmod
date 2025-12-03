@@ -289,7 +289,7 @@ class RestIngestor extends aIngestor implements iAction
     {
         // Support a source query, mapping from the source to rest parameters, rest field map
 
-        $requestHeaders = ( isset($this->restRequestConfig->requestHeaders) ? (array) $this->restRequestConfig->requestHeaders : null );
+        $requestHeaders = ( isset($this->restRequestConfig->requestHeaders) ? (array) $this->restRequestConfig->requestHeaders : [] );
         // Set up properties used to access data in the result set. Some properties may not be provided.
         $responseKey = ( isset($this->restResponseConfig->response) ? $this->restResponseConfig->response : null );
         $errorKey = ( isset($this->restResponseConfig->error) ? $this->restResponseConfig->error : null );
