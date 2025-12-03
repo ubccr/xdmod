@@ -353,9 +353,22 @@ function adjustSubtitle(layout, subtitleIndex, legendTopCenter, firstRender) {
  * @return {Object} update - Layout object passed to Plotly.relayout
  */
 /* exported relayoutChart */
-function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = false) {
+function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExport = false) {
     let update = {};
     if (chartDiv._fullLayout.annotations.length > 0) {
+        // Wrap long titles based on width
+        const traceNameUpdates = { name: [] };
+        const traceIndices = [];
+        const wordWrapLimit = parseInt((adjWidth / chartDiv.clientWidth) * 60);
+        const regex = new RegExp(`(.{${wordWrapLimit}})`, 'g');
+        chartDiv.data.forEach((trace, index) => {
+            if (trace.oname) {
+                traceNameUpdates.name.push(trace.oname.replace(regex, '$1<br>'));
+                traceIndices.push(index);
+            }
+        });
+        Plotly.restyle(chartDiv, traceNameUpdates, traceIndices);
+
         const topCenter = isTopLegend(chartDiv._fullLayout);
         const marginRight = chartDiv._fullLayout._size.r;
         const marginLeft = chartDiv._fullLayout._size.l;

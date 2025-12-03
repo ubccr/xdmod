@@ -579,6 +579,7 @@ class TimeseriesChart extends AggregateChart
                         }
 
                         $trace = array(
+                            'oname' => $lookupDataSeriesName,
                             'name' => $lookupDataSeriesName,
                             'meta' => array(
                                 'primarySeries' => true
@@ -877,6 +878,7 @@ class TimeseriesChart extends AggregateChart
                                     $visible = $data_description->visibility->{$dsn};
                                 }
                                 $trendline_trace = array(
+                                    'oname' => $lookupDataSeriesName,
                                     'name' => $lookupDataSeriesName,
                                     'meta' => array(
                                         'primarySeries' => false,
