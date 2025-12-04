@@ -359,7 +359,18 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
         // Wrap long titles based on width
         const traceNameUpdates = { name: [] };
         const traceIndices = [];
-        const wordWrapLimit = Number.parseInt((adjWidth / chartDiv.clientWidth) * 60, 10);
+        const chartRatioChange = adjWidth / chartDiv.clientWidth;
+        let characterLimit = 150;
+        if (adjWidth < 400) {
+            characterLimit = 20;
+        } else if (adjWidth < 650) {
+            characterLimit = 40;
+        } else if (adjWidth < 850) {
+            characterLimit = 70;
+        } else if (adjWidth < 1250) {
+            characterLimit = 100;
+        }
+        const wordWrapLimit = Number.parseInt(chartRatioChange * characterLimit, 10);
         const regex = new RegExp(`(.{${wordWrapLimit}})`, 'g');
         chartDiv.data.forEach((trace, index) => {
             if (trace.oname) {
