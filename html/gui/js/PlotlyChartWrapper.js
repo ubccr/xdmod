@@ -102,13 +102,6 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
                 tickvals[index] = moment.tz(tick, CCR.xdmod.timezone).format();
             });
         }
-
-        // Wrap long legends
-        baseChartOptions.data.forEach((trace) => {
-            if (trace.oname) {
-                trace.name = trace.oname.replace(/(.{120})/g, '$1<br>');
-            }
-        });
     }
 
     const chart = Plotly.newPlot(baseChartOptions.renderTo, baseChartOptions.data, baseChartOptions.layout, configs);
