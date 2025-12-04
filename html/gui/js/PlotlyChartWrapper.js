@@ -21,7 +21,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         doubleClick: 'reset',
         doubleClickDelay: 500,
         showAxisRangeEntryBoxes: false,
-        staticPlot: chartOptions.isExport ? true : false
+        staticPlot: chartOptions.isExport
     };
     XDMoD.utils.deepExtend(baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
