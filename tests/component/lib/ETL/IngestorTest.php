@@ -48,9 +48,6 @@ class IngestorTest extends \PHPUnit\Framework\TestCase
 
         if ( ! empty($result['stdout']) ) {
             foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
-                if (empty(trim($line))) {
-                    continue;
-                }
                 $this->assertMatchesRegularExpression('/[Ww][Aa][Rr][Nn][Ii][Nn][Gg]/', $line);
                 $numWarnings++;
             }

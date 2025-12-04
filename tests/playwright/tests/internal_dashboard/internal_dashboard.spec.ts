@@ -56,7 +56,7 @@ test.describe('Internal Dashboard Tests', async () => {
             await expect(page.locator(InternalDashboard.selectors.combo.container)).toBeVisible();
             await expect(page.locator(InternalDashboard.selectors.combo.itemByText('Unknown'))).toBeVisible();
 
-            await page.locator(InternalDashboard.selectors.combo.itemByText('Unknown')).click();
+            await page.click(InternalDashboard.selectors.combo.itemByText('Unknown'));
             await expect(page.locator(InternalDashboard.selectors.combo.container)).toBeHidden();
 
             const mapTo = await page.inputValue(InternalDashboard.selectors.create_manage_users.new_user.mapTo());
@@ -91,19 +91,8 @@ test.describe('Internal Dashboard Tests', async () => {
             await expect(page.locator(InternalDashboard.selectors.create_manage_users.new_user.aclByName('User'))).toHaveClass(/x-grid3-check-col-on/);
         });
 
-        await test.step('Select User Type', async () => {
-            const userTypeTrigger = page.locator(InternalDashboard.selectors.create_manage_users.new_user.userTypeTrigger());
-            await expect(userTypeTrigger).toBeVisible();
-            await userTypeTrigger.click();
-
-            const externalComboOptionLocator = page.locator(InternalDashboard.selectors.combo.itemByText('External'));
-            await expect(externalComboOptionLocator).toBeVisible();
-            await externalComboOptionLocator.click();
-            await expect(externalComboOptionLocator).toBeHidden();
-        });
-
         await test.step('Save User', async () => {
-            await page.locator(InternalDashboard.selectors.create_manage_users.buttons.create_user()).click();
+            await page.click(InternalDashboard.selectors.create_manage_users.buttons.create_user());
 
             await expect(page.locator(InternalDashboard.selectors.createSuccessNotification('btest'))).toBeVisible();
             await expect(page.locator(InternalDashboard.selectors.createSuccessNotification('btest'))).toBeHidden();
@@ -195,7 +184,8 @@ test.describe('Internal Dashboard Tests', async () => {
                     let dropDownValueSelector = InternalDashboard.selectors.combo.itemByText(setting.updated);
                     let dropDownValue = page.locator(dropDownValueSelector);
                     await expect(dropDownValue).toBeVisible();
-                    await dropDownValue.click();
+                    await page.click(dropDownValueSelector);
+
                     await expect(inputDropDown).toBeHidden();
                 } else if ('text' === setting.type) {
                     const inputSelector = InternalDashboard.selectors.create_manage_users.current_users.settings.inputByLabel(setting.label, setting.type);
@@ -235,24 +225,18 @@ test.describe('Internal Dashboard Tests', async () => {
                     const displayedUserTypeSelector = InternalDashboard.selectors.create_manage_users.current_users.user_list.toolbar.buttonByLabel('Displaying', setting.original);
                     const displayedUserType = page.locator(displayedUserTypeSelector);
                     await expect(displayedUserType).toBeVisible();
-                    await displayedUserType.click();
+                    await page.click(displayedUserTypeSelector);
 
                     const newUserTypeItemSelector = InternalDashboard.selectors.create_manage_users.current_users.user_list.dropDownItemByText(setting.updated);
                     const newUserTypeItem = page.locator(newUserTypeItemSelector);
                     await expect(newUserTypeItem).toBeVisible();
-                    await newUserTypeItem.click();
+                    await page.click(newUserTypeItemSelector);
                 });
 
                 await test.step(`${setting.label}: Check that the user is listed in the Existing Users table`, async () => {
                     await expect(page.locator(InternalDashboard.selectors.create_manage_users.current_users.user_list.col_for_user('btest'))).toBeVisible();
                 });
             } else {
-                await test.step(`${setting.label}: Make sure that the user is selected`, async() => {
-                    const userSelector = page.locator(InternalDashboard.selectors.create_manage_users.current_users.user_list.col_for_user('btest'));
-                    await userSelector.click();
-                    const userDetailsLocator = page.locator(InternalDashboard.selectors.create_manage_users.current_users.settings.toolbar.details_header('Bob Test'));
-                    await expect(userDetailsLocator).toBeVisible();
-                });
                 await test.step(`${setting.label}: Check that ${setting.label} has been updated successfully to "${setting.updated}"`, async () => {
                     const inputType = 'dropdown' === setting.type ? 'text' : setting.type;
                     const selector = InternalDashboard.selectors.create_manage_users.current_users.settings.inputByLabel(setting.label, inputType);

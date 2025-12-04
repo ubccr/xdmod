@@ -334,12 +334,6 @@ SQL;
             'count' => count($filtered),
             'response' => $filtered
         ];
-        /*return $this->json([
-            'success'  => true,
-            'count'    => count($filtered),
-            'response' => $filtered
-
-        ]);*/
         return new Response(json_encode($data));
     }
 
@@ -381,10 +375,10 @@ SQL;
         $userTypes = explode(',', $this->getStringParam($request, 'user_types'));
         $logger = $this->logger;
         if (!in_array($timeframe, ['year', 'month'])) {
-            return $this->json([
+            return new Response(json_encode([
                 'success' => false,
                 'message' => 'invalid value specified for the timeframe'
-            ]);
+            ]));
         }
 
         $data = [
