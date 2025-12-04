@@ -20,7 +20,8 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         displayModeBar: false,
         doubleClick: 'reset',
         doubleClickDelay: 500,
-        showAxisRangeEntryBoxes: false
+        showAxisRangeEntryBoxes: false,
+        staticPlot: chartOptions.isExport ? true : false
     };
     XDMoD.utils.deepExtend(baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
@@ -134,7 +135,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             return;
         }
 
-        const update = relayoutChart(chartDiv, baseChartOptions.layout.height, true, baseChartOptions.exporting);
+        const update = relayoutChart(chartDiv, baseChartOptions.layout.height, true, baseChartOptions.isExport);
         Plotly.relayout(baseChartOptions.renderTo, update);
     });
 
