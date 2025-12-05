@@ -113,8 +113,8 @@
                 if (chartOptions.layout.annotations.length === 0){
                     return;
                 }
-                const update = relayoutChart(chartDiv, chartOptions.layout.height, true, true);
-                Plotly.relayout('container', update);
+                const update = relayoutChart(chartDiv, chartOptions.layout.width, chartOptions.layout.height, true, true);
+                Plotly.update('container', update.data, update.layout, update.traces);
             });
         });
 
