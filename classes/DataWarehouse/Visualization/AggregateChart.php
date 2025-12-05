@@ -1134,7 +1134,6 @@ class AggregateChart
 
                 $trace = array_merge($trace, array(
                     'automargin'=> $data_description->display_type == 'pie' ? true : null,
-                    'oname' => $lookupDataSeriesName,
                     'name' => $lookupDataSeriesName,
                     'meta' => array(
                         'primarySeries' => true
@@ -1501,7 +1500,6 @@ class AggregateChart
 
             // create the data series description:
             $error_trace = array_merge($trace, array(
-                'oname' => $lookupDataSeriesName,
                 'name' => $lookupDataSeriesName,
                 'meta' => array(
                     'primarySeries' => false

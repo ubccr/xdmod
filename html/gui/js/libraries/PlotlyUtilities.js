@@ -373,10 +373,8 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
         const wordWrapLimit = Number.parseInt(chartRatioChange * characterLimit, 10);
         const regex = new RegExp(`(.{${wordWrapLimit}})`, 'g');
         chartDiv.data.forEach((trace, index) => {
-            if (trace.oname) {
-                traceNameUpdates.name.push(trace.oname.replaceAll(regex, '$1<br>'));
-                traceIndices.push(index);
-            }
+            traceNameUpdates.name.push(trace.name.replaceAll(regex, '$1<br>'));
+            traceIndices.push(index);
         });
         update.data = traceNameUpdates;
         update.traces = traceIndices;
