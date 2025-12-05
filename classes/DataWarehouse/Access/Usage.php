@@ -847,8 +847,8 @@ class Usage extends Common
                             && $usageGroupBy !== 'none'
                         ) {
                             $rank = $meDataSeries['legendrank'] / 3;
-			    $meDataSeries['name'] = "${rank}. " . $meDataSeries['name'];
-			    $meDataSeries['oname'] = "${rank}. " . $meDataSeries['oname'];
+                            $meDataSeries['name'] = "${rank}. " . $meDataSeries['name'];
+                            $meDataSeries['oname'] = "${rank}. " . $meDataSeries['oname'];
                         }
                     }
 
