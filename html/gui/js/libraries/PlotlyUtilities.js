@@ -378,6 +378,8 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
                 traceIndices.push(index);
             }
         });
+        update.data = traceNameUpdates;
+        update.traces = traceIndices;
 
         const topCenter = isTopLegend(chartDiv._fullLayout);
         const marginRight = chartDiv._fullLayout._size.r;
@@ -416,7 +418,7 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
         const isPie = chartDiv._fullData.length > 0 && chartDiv._fullData[0].type === 'pie';
 
         const subtitleUpdates = adjustSubtitle(chartDiv._fullLayout, subtitleIndex, topCenter, firstRender);
-        update = subtitleUpdates.chartUpdates;
+        update.layout = subtitleUpdates.chartUpdates;
 
         if (isPie && topCenter && subtitleUpdates.subtitleLineCount > 0) {
             extraShift -= 10;
@@ -441,7 +443,7 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
         // Observed inconsistency with margin when subtitle is one line long. Unsure of the cause.
         if (lineBreakCount > 0) {
             if (firstRender) {
-                update['margin.t'] = marginTop + (titleHeight * lineBreakCount);
+                update.layout['margin.t'] = marginTop + (titleHeight * lineBreakCount);
             } else if (subtitleUpdates.subtitleLineCount === 1) {
                 marginTop = subtitleUpdates.chartUpdates['margin.t'] - (titleHeight * lineBreakCount);
             } else {
@@ -450,8 +452,8 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
             if (topCenter) {
                 if (subtitleUpdates.subtitleLineCount > 0) {
                     marginTop += subtitleHeight + 5;
-                    update['legend.y'] -= 0.025;
-                    update['margin.t'] += chartDiv._fullLayout.legend._height + subtitleHeight;
+                    update.layout['legend.y'] -= 0.025;
+                    update.layout['margin.t'] += chartDiv._fullLayout.legend._height + subtitleHeight;
                 } else {
                     marginTop -= chartDiv._fullLayout.legend._height / 2;
                 }
@@ -466,20 +468,20 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
 
         if ((titleIndex === -1 || chartDiv._fullLayout.annotations[titleIndex].text.length === 0) && subtitleUpdates.subtitleLineCount === 0) {
             if (topCenter) {
-                update['legend.y'] = 1.0;
+                update.layout['legend.y'] = 1.0;
             } else {
-                update['margin.t'] = 10;
+                update.layout['margin.t'] = 10;
             }
         }
 
         const titleYShift = (marginTop + legendHeight) - titleHeight;
 
         if (titleIndex !== -1) {
-            update[`annotations[${titleIndex}].yshift`] = subtitleUpdates.subtitleLineCount >= 3 ? titleYShift + 5 : titleYShift;
+            update.layout[`annotations[${titleIndex}].yshift`] = subtitleUpdates.subtitleLineCount >= 3 ? titleYShift + 5 : titleYShift;
         }
 
         if (subtitleIndex !== -1) {
-            update[`annotations[${subtitleIndex}].yshift`] = titleYShift - (subtitleHeight * subtitleUpdates.subtitleLineCount);
+            update.layout[`annotations[${subtitleIndex}].yshift`] = titleYShift - (subtitleHeight * subtitleUpdates.subtitleLineCount);
         }
 
         const marginBottom = chartDiv._fullLayout._size.b;
@@ -491,12 +493,12 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
         const shiftYDown = marginBottom * -1;
         const exportShift = isExport ? 30 : 0;
         if (creditsIndex !== -1) {
-            update[`annotations[${creditsIndex}].yshift`] = shiftYDown;
-            update[`annotations[${creditsIndex}].xshift`] = marginRight - pieChartXShift - exportShift;
+            update.layout[`annotations[${creditsIndex}].yshift`] = shiftYDown;
+            update.layout[`annotations[${creditsIndex}].xshift`] = marginRight - pieChartXShift - exportShift;
         }
         if (restrictedIndex !== -1) {
-            update[`annotations[${restrictedIndex}].yshift`] = shiftYDown;
-            update[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift - exportShift) * -1;
+            update.layout[`annotations[${restrictedIndex}].yshift`] = shiftYDown;
+            update.layout[`annotations[${restrictedIndex}].xshift`] = (marginLeft - pieChartXShift - exportShift) * -1;
         }
     }
     return update;
