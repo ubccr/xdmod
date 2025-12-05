@@ -378,7 +378,6 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
                 traceIndices.push(index);
             }
         });
-        Plotly.restyle(chartDiv, traceNameUpdates, traceIndices);
 
         const topCenter = isTopLegend(chartDiv._fullLayout);
         const marginRight = chartDiv._fullLayout._size.r;
