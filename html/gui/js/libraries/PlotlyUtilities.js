@@ -358,7 +358,6 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
     if (chartDiv._fullLayout.annotations.length > 0) {
         // Wrap long titles based on width
         const traceNameUpdates = { name: [] };
-        const traceIndices = [];
         const chartRatioChange = adjWidth / chartDiv.clientWidth;
         let characterLimit = 150;
         if (adjWidth < 400) {
@@ -372,12 +371,10 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
         }
         const wordWrapLimit = Number.parseInt(chartRatioChange * characterLimit, 10);
         const regex = new RegExp(`(.{${wordWrapLimit}})`, 'g');
-        chartDiv.data.forEach((trace, index) => {
+        chartDiv.data.forEach((trace) => {
             traceNameUpdates.name.push(trace.name.replaceAll(regex, '$1<br>'));
-            traceIndices.push(index);
         });
         update.data = traceNameUpdates;
-        update.traces = traceIndices;
 
         const topCenter = isTopLegend(chartDiv._fullLayout);
         const marginRight = chartDiv._fullLayout._size.r;
