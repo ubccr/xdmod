@@ -135,9 +135,6 @@ class ReportBuilderTest extends BaseTest
             }
         } else {
             // expect text data back
-            if ('text/html; charset=UTF-8' !== $curlinfo['content_type']) {
-                echo var_export($response, true) . "\n";
-            }
             $this->assertEquals('text/html; charset=UTF-8', $curlinfo['content_type']);
             $this->assertEquals($expected, $response[0]);
         }
@@ -246,9 +243,7 @@ class ReportBuilderTest extends BaseTest
         }
 
         $actual = $response[0];
-        if ($actual !== $expected) {
-            echo var_export($response, true) . "\n";
-        }
+
         $this->assertEquals($actual, $expected);
 
         if ($user !== 'pub') {
@@ -758,11 +753,10 @@ class ReportBuilderTest extends BaseTest
     {
         $response = $this->helper->get('reports/builder/image', $params);
 
+        print_r($response);
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
-        if (('image/png' !== $response[1]['content_type']) || (200 !== $response[1]['http_code']) ) {
-            echo var_export($response, true) . "\n";
-        }
+
         $this->assertEquals('image/png', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
     }
