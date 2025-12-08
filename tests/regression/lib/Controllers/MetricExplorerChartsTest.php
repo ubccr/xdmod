@@ -26,7 +26,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
      * use this function to print out the results from the api call. This
      * can be used to generate new expected test results.
      */
-    /*private function output($chartData)
+    private function output($chartData)
     {
         $result = array(
             'total' => $chartData['totalCount'],
@@ -40,7 +40,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
             );
         }
         var_export($result);
-    }*/
+    }
 
     /**
      * See the filterTestsProvider for instructions on how to generate

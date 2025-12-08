@@ -30,7 +30,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         $this->assertEquals($expected, $actual);
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
     }
 
     /**
@@ -159,7 +159,6 @@ class UserAdminTest extends BaseUserAdminTest
     public function testCreateUsersSuccess(array $user)
     {
         $userId = $this->createUser($user);
-        $expectedSuccess = isset($user['expected_success']) ? $user['expected_success'] : true;
 
         // if we received a userId back then let's go ahead and update the
         // users password so that it can be used to login in future tests.
@@ -244,9 +243,10 @@ class UserAdminTest extends BaseUserAdminTest
                 }
             }
         }
+
         $this->helper->authenticateDirect($username, $username);
 
-        $response = $this->helper->get('warehouse/quick_filters');
+        $response = $this->helper->get('rest/v0.1/warehouse/quick_filters');
         $this->validateResponse($response);
 
         $this->assertArrayHasKey('results', $response[0]);
@@ -464,7 +464,7 @@ class UserAdminTest extends BaseUserAdminTest
             [
                 'status_code' => 200,
                 'body_validator' => (
-                MetricExplorerTest::getDwDescriptersBodyValidator($this)
+                    MetricExplorerTest::getDwDescriptersBodyValidator($this)
                 )
             ]
         );
@@ -526,10 +526,7 @@ class UserAdminTest extends BaseUserAdminTest
 
         $this->validateResponse($response, 200, $expectedContentType);
 
-        $actual = $response[0];
-        if (is_string($response[0])) {
-            $actual = json_decode($response[0], true);
-        }
+        $actual = json_decode($response[0], true);
 
         $expected = JSON::loadFile(
             parent::getTestFiles()->getFile('user_admin', $expectedOutput, 'output')
@@ -579,7 +576,7 @@ class UserAdminTest extends BaseUserAdminTest
         }
 
         if (isset($options['last'])) {
-            $helper->logoutDashboard();
+            $helper->logout();
         }
     }
 
@@ -612,7 +609,7 @@ class UserAdminTest extends BaseUserAdminTest
         );
 
         $response = $helper->post("internal_dashboard/controllers/controller.php", null, $data);
-        $expectedContentType = $expectedSuccess ? 'application/xls' : 'application/json';
+        $expectedContentType = $expectedSuccess ? 'application/xls' : 'text/html; charset=UTF-8';
         $this->validateResponse($response, 200, $expectedContentType);
 
 
@@ -638,14 +635,12 @@ class UserAdminTest extends BaseUserAdminTest
             }
         } else {
             // we expect the incoming data to be json formatted.
-            $actualLines = $response[0];
-            if (is_string($response[0])) {
-                $actualLines = json_decode($response[0], true);
-            }
+            $actualLines = json_decode($response[0], true);
             foreach($actualLines as $key => $value) {
                 $actual[] = array($key, $value);
             }
         }
+
         $fileType = $expectedSuccess ? '.csv' : '.json';
         $expectedFileName = parent::getTestFiles()->getFile('user_admin', $expectedOutput, 'output', $fileType);
 
@@ -742,7 +737,7 @@ class UserAdminTest extends BaseUserAdminTest
         }
 
         if (isset($options['last'])) {
-            $helper->logoutDashboard();
+            $helper->logout();
         }
     }
 
@@ -867,7 +862,7 @@ class UserAdminTest extends BaseUserAdminTest
             }
         }
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
 
         return (int)$results;
     }

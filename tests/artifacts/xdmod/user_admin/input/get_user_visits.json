@@ -29,7 +29,7 @@
       },
       "success": false,
       "output": "get_user_visits_quarter_1",
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -62,7 +62,7 @@
       },
       "output": "get_user_visits_quarter_2",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -95,7 +95,7 @@
       },
       "output": "get_user_visits_quarter_2_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -128,7 +128,7 @@
       },
       "output": "get_user_visits_quarter_3",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -161,7 +161,7 @@
       },
       "output": "get_user_visits_quarter_3_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -194,7 +194,7 @@
       },
       "output": "get_user_visits_quarter_3_2",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -227,7 +227,7 @@
       },
       "output": "get_user_visits_quarter_3_2_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -260,7 +260,7 @@
       },
       "output": "get_user_visits_quarter_5",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -293,7 +293,7 @@
       },
       "output": "get_user_visits_quarter_5_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -326,7 +326,7 @@
       },
       "output": "get_user_visits_quarter_5_2",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -359,7 +359,7 @@
       },
       "output": "get_user_visits_quarter_5_2_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -392,7 +392,7 @@
       },
       "output": "get_user_visits_quarter_5_3",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -425,7 +425,7 @@
       },
       "output": "get_user_visits_quarter_5_3_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -458,7 +458,7 @@
       },
       "output": "get_user_visits_quarter_5_3_2",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -491,7 +491,7 @@
       },
       "output": "get_user_visits_quarter_5_3_2_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -524,7 +524,7 @@
       },
       "output": "get_user_visits_quarter_700",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -557,7 +557,7 @@
       },
       "output": "get_user_visits_quarter_700_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -590,7 +590,7 @@
       },
       "output": "get_user_visits_quarter_700_2",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -623,7 +623,7 @@
       },
       "output": "get_user_visits_quarter_700_2_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -656,7 +656,7 @@
       },
       "output": "get_user_visits_quarter_700_3",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -689,7 +689,7 @@
       },
       "output": "get_user_visits_quarter_700_3_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -722,7 +722,7 @@
       },
       "output": "get_user_visits_quarter_700_3_2",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -755,7 +755,7 @@
       },
       "output": "get_user_visits_quarter_700_3_2_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -788,7 +788,7 @@
       },
       "output": "get_user_visits_quarter_700_5",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -821,7 +821,7 @@
       },
       "output": "get_user_visits_quarter_700_5_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -854,7 +854,7 @@
       },
       "output": "get_user_visits_quarter_700_5_2",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -887,7 +887,7 @@
       },
       "output": "get_user_visits_quarter_700_5_2_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -920,7 +920,7 @@
       },
       "output": "get_user_visits_quarter_700_5_3",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -953,7 +953,7 @@
       },
       "output": "get_user_visits_quarter_700_5_3_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -986,7 +986,7 @@
       },
       "output": "get_user_visits_quarter_700_5_3_2",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ],
   [
@@ -1019,7 +1019,7 @@
       },
       "output": "get_user_visits_quarter_700_5_3_2_1",
       "success": false,
-      "content_type": "application/json"
+      "content_type": "text/html; charset=UTF-8"
     }
   ]
 ]

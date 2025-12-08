@@ -158,7 +158,7 @@ abstract class BaseUserAdminTest extends BaseTest
             }
         }
 
-        $helper->logoutDashboard();
+        $helper->logout();
     }
 
     /**
@@ -305,15 +305,16 @@ abstract class BaseUserAdminTest extends BaseTest
             $updateUserData['email_address'] = $emailAddress;
         }
 
-        $this->log("Attempting to Update User");
-        $this->log(var_export($updateUserData, true));
-        $updateUserResponse = $helper->patch('rest/users/current', null, $updateUserData);
+        $updateUserResponse = $helper->patch(
+            'rest/v0.1/users/current',
+            null,
+            $updateUserData
+        );
 
         $expected = JSON::loadFile(
             parent::getTestFiles()->getFile('user_admin', 'test.update_user')
         );
 
-        $this->log("Validating Update User Response");
         $this->validateResponse($updateUserResponse);
 
         $this->assertEquals(
@@ -322,13 +323,12 @@ abstract class BaseUserAdminTest extends BaseTest
             "Unable to validate update user response. Expected: " . json_encode($expected) . " Received: " . json_encode($updateUserResponse[0])
         );
 
-        $this->log("Switching back");
         $switchBackResult = $helper->get('', ['_switch_user' => '_exit']);
-        if ($switchBackResult[1]['http_code'] !== 200) {
-            echo "Switch Back Request unexpectedly failed\n";
-            print_r($switchBackResult);
-        }
-        $this->log("Logging Out!");
+        $this->assertEquals(
+            200,
+            $switchBackResult[1]['http_code'],
+            'Switch Back Request unexpectedly failed'
+        );
         $helper->logout();
     }
 
@@ -377,7 +377,7 @@ abstract class BaseUserAdminTest extends BaseTest
 
         $this->assertTrue($data['success'], "Expected the 'success' property to be: true Received: " . $data['success']);
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
     }
 
     /**
@@ -416,7 +416,7 @@ abstract class BaseUserAdminTest extends BaseTest
 
         $this->assertNotNull($userId, "Unable to find user: $userName in user group: $userGroup");
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
 
         return $userId;
     }
@@ -448,7 +448,7 @@ abstract class BaseUserAdminTest extends BaseTest
         $user = $response[0]['user_information'];
         $keys = array_intersect($properties, array_keys($user));
         $results = array_intersect_key($user, array_flip($keys));
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
 
         return count($results) === 1 && count($properties) === 1 ? array_pop($results) : $results;
     }
@@ -468,10 +468,6 @@ abstract class BaseUserAdminTest extends BaseTest
     {
         $actualContentType = $response[1]['content_type'];
         $actualHttpCode = $response[1]['http_code'];
-        if ($actualHttpCode !== $expectedHttpCode || $actualContentType !== $expectedContentType) {
-            print_r($response);
-        }
-
         $this->assertTrue(
             strpos($actualContentType, $expectedContentType) !== false,
             "Expected content-type: $expectedContentType. Received: $actualContentType"

@@ -159,11 +159,7 @@ Your user account does not have permission to view the requested data.  If you
 believe that you should be able to see this information, then please select
 "Submit Support Request" in the "Contact Us" menu to request access.
 EOF;
-        if (($response[1]['content_type'] !== 'application/json') ||
-            ($response[1]['http_code'] !== 403) ||
-            ($response[0]['message'] !== $expectedErrorMessage)) {
-            echo "\n" . var_export($response, true). "\n";
-        }
+
         $this->assertEquals($response[1]['content_type'], 'application/json');
         $this->assertEquals($response[1]['http_code'], 403);
         $this->assertEquals($response[0]['message'], $expectedErrorMessage);
@@ -388,10 +384,7 @@ EOF
         }
 
         $response = $this->helper->post('controllers/user_interface.php', null, $view);
-        if ((strpos($response[1]['content_type'], 'text/html; charset=UTF-8') === false) ||
-            ($response[1]['http_code'] !== 200)) {
-            echo "\n" . var_export($response, true) . "\n";
-        }
+
         $this->assertNotFalse(strpos($response[1]['content_type'], 'text/html; charset=UTF-8'));
         $this->assertEquals($response[1]['http_code'], 200);
 
@@ -422,10 +415,6 @@ EOF
             $this->markTestSkipped('Needs realm integration.');
         }
         $response = $this->helper->post('controllers/user_interface.php', null, $input);
-        if ((strpos($response[1]['content_type'], 'text/html; charset=UTF-8') === false) ||
-            ($response[1]['http_code'] !== 200)) {
-            echo "\n" . var_export($response, true) . "\n";
-        }
 
         $this->assertNotFalse(strpos($response[1]['content_type'], 'text/html; charset=UTF-8'));
         $this->assertEquals($response[1]['http_code'], 200);
@@ -505,14 +494,9 @@ EOF;
         }
 
         $response = $this->helper->post('controllers/user_interface.php', null, $chartConfig);
-        $actualContentType = $response[1]['content_type'];
-
-        if (($response[1]['http_code'] !== 200) ||
-            ($expectedMimeType !== $actualContentType) ) {
-            echo "\n" . var_export($response, true) . "\n";
-        }
 
         $this->assertEquals($response[1]['http_code'], 200);
+        $actualContentType = $response[1]['content_type'];
         $this->assertEquals($expectedMimeType, $actualContentType);
 
         $actualFinfo = finfo_buffer(finfo_open(FILEINFO_MIME), $response[0]);

@@ -88,7 +88,11 @@ class RealmManagerTest extends BaseTest
             fn($realm) => ['name' => $realm->getName(), 'display' => $realm->getDisplay()],
             self::$realmManager->getRealms()
         );
-        $this->arraysAreSame($realms, $actual);
+        $this->assertEqualsCanonicalizing(
+            $realms,
+            $actual,
+            sprintf('Expected: %s, Received: %s', json_encode($realms), json_encode($actual))
+        );
     }
 
     /**
@@ -103,7 +107,11 @@ class RealmManagerTest extends BaseTest
             fn($realm) => ['name' => $realm->getName(), 'display' => $realm->getDisplay()],
             self::$realmManager->getRealmsForUser(self::$users[$role])
         );
-        $this->arraysAreSame($realms, $actual);
+        $this->assertEqualsCanonicalizing(
+            $realms,
+            $actual,
+            sprintf('Expected: %s, Received: %s', json_encode($realms), json_encode($actual))
+        );
     }
 
     /**

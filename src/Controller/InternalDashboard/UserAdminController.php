@@ -481,7 +481,7 @@ class UserAdminController extends BaseController
                 $userName
             ),
             'username' => $userName,
-            'user_type' => $userToUpdate->getUserType()
+            'user_type' => (string) $userToUpdate->getUserType() # JS code expects a string encoded value
         ]);
     }
 
