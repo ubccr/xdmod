@@ -463,7 +463,7 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
 
         if ((titleIndex === -1 || chartDiv._fullLayout.annotations[titleIndex].text.length === 0) && subtitleUpdates.subtitleLineCount === 0) {
             if (topCenter) {
-                update.layout['legend.y'] = 1.0;
+                update.layout['legend.y'] = 1;
             } else {
                 update.layout['margin.t'] = 10;
             }
