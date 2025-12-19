@@ -58,7 +58,7 @@ class ReportBuilderTest extends BaseTest
         if (!isset($this->verbose)) {
             $this->verbose = false;
         }
-        $this->helper = new XdmodTestHelper(__DIR__ . '/../../../');
+        $this->helper = new XdmodTestHelper();
     }
 
     public function provideDlReportInputValidation()
@@ -72,7 +72,7 @@ class ReportBuilderTest extends BaseTest
         );
         $response =  array(
             'success' => false,
-            'message' => 'Invalid filename'
+            'message' => 'Invalid report_loc'
         );
 
         $tests[] = array($params, $response);
@@ -82,7 +82,10 @@ class ReportBuilderTest extends BaseTest
             'report_loc' => '3-1614908275-PVe1U',
             'format' => 'rar'
         );
-        $response = 'Invalid format specified';
+        $response = [
+            'success' => false,
+            'message' =>  'Invalid format'
+        ];
 
         $tests[] = array($params, $response);
 
@@ -91,7 +94,7 @@ class ReportBuilderTest extends BaseTest
         );
         $response = array(
             'success' => false,
-            'message' => '\'report_loc\' not specified.'
+            'message' => 'report_loc is a required parameter.'
         );
 
         $tests[] = array($params, $response);
@@ -102,7 +105,7 @@ class ReportBuilderTest extends BaseTest
         );
         $response = array(
             'success' => false,
-            'message' => '\'format\' not specified.'
+            'message' => 'format is a required parameter.'
         );
 
         $tests[] = array($params, $response);
@@ -118,9 +121,9 @@ class ReportBuilderTest extends BaseTest
     public function testDownloadReportInputValidation($params, $expected)
     {
         $this->helper->authenticate('usr');
-        $data = $this->helper->get('/controllers/report_builder.php', $params);
+        $data = $this->helper->get('controllers/report_builder.php', $params);
 
-        $response = $this->helper->get('/controllers/report_builder.php', $params);
+        $response = $this->helper->get('controllers/report_builder.php', $params);
         $data = $response[0];
         $curlinfo = $response[1];
 
@@ -166,7 +169,7 @@ class ReportBuilderTest extends BaseTest
             'operation' => $operation
         );
 
-        $response = $this->helper->post("/controllers/report_builder.php", null, $params);
+        $response = $this->helper->post("controllers/report_builder.php", null, $params);
 
         $this->assertEquals($expected['content_type'], $response[1]['content_type']);
         $this->assertEquals($expected['http_code'], $response[1]['http_code']);
@@ -227,7 +230,7 @@ class ReportBuilderTest extends BaseTest
             'operation' => $operation
         );
 
-        $response = $this->helper->post("/controllers/report_builder.php", null, $params);
+        $response = $this->helper->post("controllers/report_builder.php", null, $params);
 
         $this->assertEquals($expected['content_type'], $response[1]['content_type']);
         $this->assertEquals($expected['http_code'], $response[1]['http_code']);
@@ -283,10 +286,10 @@ class ReportBuilderTest extends BaseTest
         $this->log("Logged in as $user");
 
         $chartParams = array();
-
+        $i = 0;
         foreach ($charts as $chart) {
             $chartParams = array();
-            $this->log("Creating Chart...");
+            $this->log("Creating Chart $i...");
 
             // create the chart...
             $success = $this->createChart($chart);
@@ -315,6 +318,7 @@ class ReportBuilderTest extends BaseTest
                 $paramString = substr($thumbnailLink, strpos($thumbnailLink, '?') + 1, strlen($thumbnailLink) - strpos($thumbnailLink, '?'));
 
                 $params = explode('&', $paramString);
+                $this->log(sprintf("Params:\n %s", var_export($params, true)));
                 $results = array();
                 foreach ($params as $param) {
                     list($key, $value) = explode('=', $param);
@@ -333,25 +337,33 @@ class ReportBuilderTest extends BaseTest
                     'start_date' => $startDate,
                     'end_date' => $endDate
                 );
-
+                $this->log('Rendering Report Image');
+                $this->log(sprintf("New Params:\n %s", var_export($results, true)));
                 // render the chart image so that a temp file is created on the backend.
                 $this->reportImageRenderer($results);
             }
-
+            $i += 1;
         }
 
+        $this->log('Rendering Chart Params...');
         // render the charts as volatile
         foreach ($chartParams as $chartData) {
+
             $params = $chartData['params'];
 
             $params['type'] = 'volatile';
+            $this->log(var_export($params, true));
             $this->reportImageRenderer($params);
         }
+        $this->log('Done Rendering Chart Params!');
 
+        $this->log('Get new report Name');
         // Retrieve the next available report name for this user.
         $reportName = $this->getNewReportName();
 
         $data['report_name'] = $reportName;
+        $this->log('Creating Report...');
+        $this->log(var_export($data, true));
 
         // Attempt to create the report.
         $reportId = $this->createReport($data);
@@ -457,7 +469,7 @@ class ReportBuilderTest extends BaseTest
         }
 
         $response = $this->helper->post(
-            '/controllers/report_builder.php',
+            'controllers/report_builder.php',
             null,
             array('operation' => 'enum_templates')
         );
@@ -568,11 +580,17 @@ class ReportBuilderTest extends BaseTest
 
         $this->log("Processing Chart Action: $expectedAction");
 
-        $response = $this->helper->post('/controllers/chart_pool.php', null, $data);
+        $response = $this->helper->post('controllers/chart_pool.php', null, $data);
 
+        $this->log('Expected Content-Type: [' . $expectedContentType . ']');
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
+        $this->log('Expected HTTP-Code   : [' . $expectedHttpCode . ']');
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
 
+        if (($expectedContentType !== $response[1]['content_type']) ||
+            ($expectedHttpCode !== $response[1]['http_code'])) {
+            echo var_export($response, true) . "\n";
+        }
         $this->assertEquals($expectedContentType, $response[1]['content_type']);
         $this->assertEquals($expectedHttpCode, $response[1]['http_code']);
 
@@ -581,7 +599,7 @@ class ReportBuilderTest extends BaseTest
         $this->log("\tResponse: " . json_encode($json));
 
         $this->assertEquals($expectedResponse, $json);
-
+        $this->log(sprintf('Done Processing %s Chart Action!', $expectedAction));
         return $json['success'];
     }
 
@@ -594,7 +612,7 @@ class ReportBuilderTest extends BaseTest
     private function createReport(array $data)
     {
         $this->log("Creating Report");
-        $response = $this->helper->post('/controllers/report_builder.php', null, $data);
+        $response = $this->helper->post('controllers/report_builder.php', null, $data);
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
@@ -633,7 +651,7 @@ class ReportBuilderTest extends BaseTest
             'selected_report' => $reportId
         );
 
-        $response = $this->helper->post('/controllers/report_builder.php', null, $data);
+        $response = $this->helper->post('controllers/report_builder.php', null, $data);
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
@@ -665,7 +683,7 @@ class ReportBuilderTest extends BaseTest
             'operation' => 'get_new_report_name'
         );
 
-        $response = $this->helper->post('/controllers/report_builder.php', null, $data);
+        $response = $this->helper->post('controllers/report_builder.php', null, $data);
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
@@ -707,10 +725,11 @@ class ReportBuilderTest extends BaseTest
      */
     private function enumAvailableCharts()
     {
+        $this->log('Enum Available Charts');
         $data = array(
             'operation' => 'enum_available_charts'
         );
-        $response = $this->helper->post('/controllers/report_builder.php', null, $data);
+        $response = $this->helper->post('controllers/report_builder.php', null, $data);
 
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
@@ -732,19 +751,13 @@ class ReportBuilderTest extends BaseTest
      */
     private function reportImageRenderer(array $params)
     {
-        $response = $this->helper->get('/report_image_renderer.php', $params);
+        $response = $this->helper->get('reports/builder/image', $params);
 
+        print_r($response);
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
 
         $this->assertEquals('image/png', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
-    }
-
-    private function log($msg)
-    {
-        if ($this->verbose) {
-            echo "$msg\n";
-        }
     }
 }

@@ -5,6 +5,8 @@
 
 namespace OpenXdmod\Setup;
 
+use Xdmod\Template;
+
 /**
  * General setup.
  */
@@ -124,5 +126,21 @@ EOT
         );
 
         $this->saveIniConfig($settings, 'portal_settings');
+
+        $envTemplate = new Template('env');
+        $envTemplate->apply([
+            'app_secret' => hash('sha512', time())
+        ]);
+        $this->saveTemplate($envTemplate, BASE_DIR . '/.env');
+
+        $cmdBase = 'APP_ENV=prod APP_DEBUG=0';
+        $console = BIN_DIR .'/console';
+
+        // Make sure to clear the cache before dumping the dotenv so we start clean.
+        $this->executeCommand("$cmdBase $console cache:clear");
+
+        // Dump dotenv data so we don't read .env each time in prod.
+        // Note: this means that if you want to start debugging stuff you'll need to delete the generated .env.
+        $this->executeCommand("$cmdBase $console dotenv:dump");
     }
 }

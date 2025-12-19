@@ -36,7 +36,7 @@ class ExternalProcess extends \php_user_filter
      * @var string The name of the filter, populated by PHP
      */
 
-    public $filtername = null;
+    public string $filtername = '';
 
     /**
      * @var object The parameters passed to this filter by stream_filter_prepend() or
@@ -49,7 +49,7 @@ class ExternalProcess extends \php_user_filter
      * logger: Optional logger for displying error messages
      */
 
-    public $params = null;
+    public mixed $params;
 
     /**
      * @var array An array containing file descriptors connected to the application. The following
@@ -98,7 +98,7 @@ class ExternalProcess extends \php_user_filter
      * @return PSFS_ERR_FATAL On error.
      */
 
-    public function filter($in, $out, &$consumed, $closing)
+    public function filter($in, $out, &$consumed, $closing): int
     {
         $retval = PSFS_FEED_ME;
 
@@ -146,7 +146,7 @@ class ExternalProcess extends \php_user_filter
      * application and opening read and write pipes to the application.
      */
 
-    public function onCreate()
+    public function onCreate(): bool
     {
         // Verify parameters
 
@@ -219,7 +219,7 @@ class ExternalProcess extends \php_user_filter
      * Cleanup after the filter is closed.
      */
 
-    public function onClose()
+    public function onClose(): void
     {
         if ($this->pipes[0]) {
             fclose($this->pipes[0]);

@@ -1,9 +1,0 @@
-{
-  "env": {
-    "browser": true,
-    "node": true,
-    "phantomjs": true,
-    "mocha": true
-  }
-}
-
