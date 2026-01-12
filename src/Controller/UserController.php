@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace CCR\Controller;
 
 use CCR\DB;
-use Exception;
 use Models\Services\Acls;
 use Models\Services\Organizations;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +19,6 @@ use XDWarehouse;
 /**
  *
  */
-#[Route("{prefix}/users", requirements: ['prefix' => '.*'])]
 class UserController extends BaseController
 {
 
@@ -57,135 +55,50 @@ class UserController extends BaseController
         ],
     ];
 
+
+
     /**
-     *
+     * Get details for the current user.
      *
      * @param Request $request
      * @return Response
-     * @throws Exception
+     * @throws \Exception
      */
-    #[Route('', methods: ['POST'])]
-    #[Route('/controllers/sab_user.php', name: 'list_users_legacy', methods: ['GET'])]
-    public function listUsers(Request $request): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        $start = $this->getIntParam($request, 'start', true);
-        $limit = $this->getIntParam($request, 'limit', true);
-        $searchMode = $this->getStringParam($request, 'search_mode', true);
-        $piOnly = $this->getBooleanParam($request, 'pi_only', true);
-        $nameFilter = $this->getStringParam($request, 'query');
-        $userManagement = $this->getBooleanParam($request, 'userManagement');
-
-        $universityId = null;
-        $searchMethod = null;
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
-        if ($user->hasAcl(ROLE_ID_CAMPUS_CHAMPION) && !isset($userManagement)) {
-            $universityId = Acls::getDescriptorParamValue($user, ROLE_ID_CAMPUS_CHAMPION, 'provider');
-        }
-
-        switch ($searchMode) {
-            case 'formal_name':
-                $searchMethod = FORMAL_NAME_SEARCH;
-                break;
-            case 'username':
-                $searchMethod = USERNAME_SEARCH;
-        }
-
-        $dataWarehouse = new XDWarehouse();
-
-        list($userCount, $users) = $dataWarehouse->enumerateGridUsers(
-            $searchMethod,
-            $start,
-            $limit,
-            $nameFilter,
-            $piOnly,
-            $universityId
-        );
-
-        $entryId = 0;
-        $userEntries = [];
-        foreach ($users as $currentUser) {
-            $entryId++;
-
-            $personName = 'Invalid';
-            $personId = -666;
-            switch ($searchMode) {
-                case 'formal_name':
-                    $personName = $currentUser['long_name'];
-                    $personId = $currentUser['id'];
-                    break;
-                case 'username':
-                    $personName = $currentUser['abusername'];
-                    $personId = sprintf('%s;%s', $currentUser['id'], $currentUser['abusername']);
-                    break;
-            }
-            $userEntries[] = [
-                'id' => $entryId,
-                'person_id' => $personId,
-                'person_name' => $personName
-            ];
-        }
-
-        return $this->json([
-            'success' => true,
-            'status' => 'success',
-            'message' => 'success',
-            'total_user_count' => $userCount,
-            'users' => $userEntries
-        ]);
-    }
-
-    /**
-     *
-     * @param Request $request
-     * @return Response
-     * @throws Exception
-     */
-    #[Route("/current", name: "get_current_user", methods: ["GET"])]
+    #[Route("{prefix}/users/current", name: "get_current_user", requirements: ['prefix' => '.*'], methods: ["GET"])]
     public function getCurrentUser(Request $request)
     {
         $this->authorize($request);
 
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
-
-        if ((!$user instanceof XDUser)) {
-            return $this->json([
-                'success' => false,
-                'message' => 'Internal Error validating User'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
         return $this->json([
             'success' => true,
-            'results' => $this->extractUserData($user)
+            'results' => $this->extractUserData(XDUser::getUserByUserName($this->getUser()->getUserIdentifier()))
         ]);
     }
 
     /**
+     * Update details about the current user.
      *
      * @param Request $request
      * @return Response
-     * @throws Exception if unable to look up an XDUser by the currently logged in user's id.
+     * @throws \Exception if unable to look up an XDUser by the currently logged in user's id.
      */
-    #[Route("/current", name: "update_current_user", methods: ["PATCH"])]
+    #[Route("{prefix}/users/current", name: "update_current_user", requirements: ['prefix' => '.*'], methods: ["PATCH"])]
     public function updateCurrentUser(Request $request)
     {
+        // Ensure that the user is logged in.
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $this->authorize($request);
 
-        if ((!$user instanceof XDUser)) {
-            return $this->json([
-                'success' => false,
-                'message' => 'Internal Error validating User'
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
+        // Attempt to update the user's profile with the given information.
         $this->updateUser(
-            $user,
+            XDUser::getUserByUserName($this->getUser()->getUserIdentifier()),
             $this->extractUserSettableProperties($request)
         );
+
+        // If the last step completed successfully, hide the welcome message
+        // for first-time XSEDE users and return a success message.
+        SessionSingleton::getSession()->set('suppress_profile_autoload', true);
 
         return $this->json([
             'success' => true,
@@ -203,9 +116,9 @@ class UserController extends BaseController
      *
      * @param Request $request
      * @return Response
-     * @throws Exception
+     * @throws \Exception
      */
-    #[Route('/current/api/token', methods: ['GET'])]
+    #[Route('{prefix}/users/current/api/token', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getCurrentAPIToken(Request $request): Response
     {
         $user = $this->authorize($request);
@@ -228,12 +141,11 @@ class UserController extends BaseController
      *   - They just have authenticated to XDMoD via one of the supported methods.
      *   - They must not have an existing API Token.
      *
-     *
      * @param Request $request
      * @return Response
-     * @throws Exception if there is a problem retrieving a database connection.
+     * @throws \Exception if there is a problem retrieving a database connection.
      */
-    #[Route('/current/api/token', methods: ['POST'])]
+    #[Route('{prefix}/users/current/api/token', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function createAPIToken(Request $request): Response
     {
         $user = $this->authorize($request);
@@ -258,9 +170,9 @@ class UserController extends BaseController
      *
      * @param Request $request
      * @return Response
-     * @throws Exception
+     * @throws \Exception
      */
-    #[Route('/current/api/token', methods: ['DELETE'])]
+    #[Route('{prefix}/users/current/api/token', requirements: ['prefix' => '.*'], methods: ['DELETE'])]
     public function revokeAPIToken(Request $request): Response
     {
         $user = $this->authorize($request);
@@ -279,7 +191,125 @@ class UserController extends BaseController
         }
 
         // If the `revokeToken` failed for some reason then we let the user know.
-        throw new Exception('Unable to revoke API token.');
+        throw new \Exception('Unable to revoke API token.');
+    }
+
+    /**
+     * This function is just here to allow us to support the original html controller urls.
+     *
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    #[Route('/controllers/sab_user.php', name: 'list_users_legacy', methods: ["GET", "POST"])]
+    public function sabUser(Request $request): Response
+    {
+        $operation = $this->getStringParam($request, 'operation');
+
+        return match ($operation) {
+            'enum_tg_users' => $this->listUsers($request),
+
+            default => $this->json([
+                'status' => 'invalid_operation_specified',
+                'success' => false,
+                'totalCount' => 0,
+                'message' => 'invalid_operation_specified',
+                'data' => []
+            ]),
+        };
+    }
+
+    /**
+     * This function is a port of `html/controllers/sab_users/enum_tg_users.php`.
+     *
+     * It's here as opposed to a SABUserController because the other two `sab_user` operations are not used.
+     *
+     * @param Request $request
+     * @return Response
+     * @throws \Exception
+     */
+    private function listUsers(Request $request): Response
+    {
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        try {
+            $start = $this->getIntParam($request, 'start', true);
+            $limit = $this->getIntParam($request, 'limit', true);
+            $searchMode = $this->getStringParam($request, 'search_mode', true);
+            $piOnly = $this->getBooleanParam($request, 'pi_only');
+        } catch (\Exception $e) {
+            return $this->json([
+                'success' => false,
+                'status'           => 'invalid_params_specified',
+                'message'          => 'invalid_params_specified',
+                'total_user_count' => 0
+            ]);
+        }
+
+        $dataWarehouse = new XDWarehouse();
+
+        $nameFilter = $this->getStringParam($request, 'query');
+
+        $universityId = null;
+        $userManagement = $this->getBooleanParam($request, 'userManagement');
+
+        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+
+        if ($user->hasAcl(ROLE_ID_CAMPUS_CHAMPION) && !isset($userManagement)) {
+            $universityId = Acls::getDescriptorParamValue($user, ROLE_ID_CAMPUS_CHAMPION, 'provider');
+        }
+
+        $searchMethod = null;
+        switch ($searchMode) {
+            case 'formal_name':
+                $searchMethod = FORMAL_NAME_SEARCH;
+                break;
+            case 'username':
+                $searchMethod = USERNAME_SEARCH;
+        }
+
+        list($userCount, $users) = $dataWarehouse->enumerateGridUsers(
+            $searchMethod,
+            $start,
+            $limit,
+            $nameFilter,
+            $piOnly,
+            $universityId
+        );
+
+        $entryId = 0;
+        $userEntries = [];
+        foreach ($users as $currentUser) {
+            $entryId++;
+
+            switch ($searchMode) {
+                case 'formal_name':
+                    $personName = $currentUser['long_name'];
+                    $personId = $currentUser['id'];
+                    break;
+                case 'username':
+                    $personName = $currentUser['abusername'];
+                    $personId = $currentUser['id'] . ';' . $currentUser['absusername'];
+                    break;
+                default:
+                    $personName = 'Invalid';
+                    $personId = -666;
+                    break;
+            }
+            $userEntries[] = [
+                'id' => $entryId,
+                'person_id' => $personId,
+                'person_name' => $personName
+            ];
+        }
+
+        return $this->json([
+            'success' => true,
+            'status' => 'success',
+            'message' => 'success',
+            'total_user_count' => $userCount,
+            'users' => $userEntries
+        ]);
     }
 
 
@@ -290,7 +320,7 @@ class UserController extends BaseController
      *
      * @param XDUser $user The user object to extract data from.
      * @return array        An associative array of data for the user.
-     * @throws Exception
+     * @throws \Exception
      */
     private function extractUserData(XDUser $user)
     {
@@ -337,10 +367,9 @@ class UserController extends BaseController
     private function extractUserSettableProperties(Request $request)
     {
         $requestProperties = array();
-        $this->logger->debug('Getting User Settable Properties');
         foreach (self::$userSettableProperties as $propertyName => $propertyType) {
             $propertyValue = $request->get($propertyName);
-            $this->logger->debug('Checking Property', [$propertyName, $propertyValue, $propertyType]);
+
             if ($propertyValue === null) {
                 continue;
             }
@@ -356,7 +385,6 @@ class UserController extends BaseController
             }
             $requestProperties[$propertyName] = $propertyValue;
         }
-        $this->logger->debug('Returning user settable properties', [var_export($requestProperties, true)]);
         return $requestProperties;
     }
 
@@ -367,7 +395,7 @@ class UserController extends BaseController
      * @param array $updatedProperties A mapping of properties to update
      *                                   to their new values.
      *
-     * @throws Exception The new property values failed to save.
+     * @throws \Exception The new property values failed to save.
      */
     private function updateUser(XDUser $user, array $updatedProperties)
     {
@@ -375,18 +403,16 @@ class UserController extends BaseController
         // given set of properties. If so, invoke that property's setter on the
         // given user with the given property value.
         foreach ($updatedProperties as $propertyName => $propertyValue) {
-            $this->logger->debug('Checking Update Property', [$propertyName, !array_key_exists($propertyName, self::$propertySettingOptions)]);
             if (!array_key_exists($propertyName, self::$propertySettingOptions)) {
                 continue;
             }
             $propertyOptions = self::$propertySettingOptions[$propertyName];
-            $this->logger->debug(sprintf('Calling %s w/ %s', $propertyOptions['setter'], $propertyValue));
+
             $user->{$propertyOptions['setter']}($propertyValue);
         }
-        $this->logger->debug('Saving User!');
+
         // Attempt to save the user's new details. This will throw an exception
         // if an error occurs.
-        $this->logger->debug('Updating User', [$user->getUserId(), $user->getUsername(), var_export($updatedProperties, true)]);
         $user->saveUser();
     }
 
@@ -396,7 +422,7 @@ class UserController extends BaseController
      *
      * @param XDUser $user
      * @return bool true if the user does not already have a valid API token.
-     * @throws Exception if there is a problem retrieving a database connection.
+     * @throws \Exception if there is a problem retrieving a database connection.
      */
     private function canCreateToken(XDUser $user)
     {
@@ -423,8 +449,8 @@ SQL;
      *
      * @param XDUser $user whose token data should be retrieved.
      * @return array in the format array('created_on' => createdOn, 'expiration_date' => expirationDate)
-     * @throws Exception if there is a problem retrieving a db connection.
-     * @throws Exception if there is a problem executing the SELECT statement.
+     * @throws \Exception if there is a problem retrieving a db connection.
+     * @throws \Exception if there is a problem executing the SELECT statement.
      */
     private function getCurrentAPITokenMetaData(XDUser $user)
     {
@@ -438,7 +464,7 @@ SQL;
         $rows = $db->query($query, array(':user_id' => $user->getUserID()));
 
         if (count($rows) !== 1) {
-            throw new Exception('Invalid token data returned.');
+            throw new \Exception('Invalid token data returned.');
         }
 
         return array(
@@ -455,9 +481,9 @@ SQL;
      *
      * @return array in the format ('token' => newToken, 'expiration_date' => tokenExpirationDate)
      *
-     * @throws Exception if unable to retrieve a database connection or if there is a problem generating a random token.
-     * @throws Exception if the api_token.expiration_interval configuration value ( in portal_settings.ini ) is not set.
-     * @throws Exception if inserting the newly generated token is unsuccessful. i.e. the number of rows inserted is < 1.
+     * @throws \Exception if unable to retrieve a database connection or if there is a problem generating a random token.
+     * @throws \Exception if the api_token.expiration_interval configuration value ( in portal_settings.ini ) is not set.
+     * @throws \Exception if inserting the newly generated token is unsuccessful. i.e. the number of rows inserted is < 1.
      */
     private function createToken(XDUser $user)
     {
@@ -477,7 +503,7 @@ SQL;
         $createdOn = date_create()->format('Y-m-d H:m:s');
         $expirationInterval = \xd_utilities\getConfiguration('api_token', 'expiration_interval');
         if (empty($expirationInterval)) {
-            throw new Exception('Expiration Interval not provided.');
+            throw new \Exception('Expiration Interval not provided.');
         }
         $dateInterval = date_interval_create_from_date_string($expirationInterval);
         $expirationDate = date_add(date_create(), $dateInterval)->format('Y-m-d H:m:s');
@@ -493,7 +519,7 @@ SQL;
         );
 
         if ($result !== 1) {
-            throw new Exception('Unable to create a new API token.');
+            throw new \Exception('Unable to create a new API token.');
         }
 
         return array(
@@ -507,8 +533,8 @@ SQL;
      *
      * @param XDUser $user whose active token will be revoked.
      * @return bool true if 1 row was deleted else false.
-     * @throws Exception if there was a problem retrieving a database connection.
-     * @throws Exception if there was an error while executing the DELETE statement.
+     * @throws \Exception if there was a problem retrieving a database connection.
+     * @throws \Exception if there was an error while executing the DELETE statement.
      */
     private function revokeToken(XDUser $user)
     {
@@ -519,5 +545,4 @@ SQL;
 
         return $rows === 1;
     }
-
 }

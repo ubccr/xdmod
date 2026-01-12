@@ -13,6 +13,7 @@ use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -84,14 +85,7 @@ class BaseController extends AbstractController
     {
 
         $user = $this->getXDUser($request->getSession());
-        $this->logger->debug(
-            sprintf(
-                'Attempting to authorize user: %s (%s) with requirements: %s',
-                $user->getUsername(),
-                var_export($user->getAclNames(), true),
-                var_export($requiredAcls, true)
-            )
-        );
+
         // If role requirements were not given, then the only check to perform
         // is that the user is not a public user.
         $isPublicUser = $user->isPublicUser();
@@ -127,11 +121,11 @@ class BaseController extends AbstractController
     }
 
     /**
-     * @param Session $session
+     * @param SessionInterface $session
      * @return XDUser
      * @throws Exception
      */
-    protected function getXDUser(Session $session): XDUser
+    protected function getXDUser(SessionInterface $session): XDUser
     {
         $symfonyUser = $this->getUser();
         if (!isset($symfonyUser)) {
