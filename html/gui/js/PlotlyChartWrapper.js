@@ -20,7 +20,8 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         displayModeBar: false,
         doubleClick: 'reset',
         doubleClickDelay: 500,
-        showAxisRangeEntryBoxes: false
+        showAxisRangeEntryBoxes: false,
+        staticPlot: chartOptions.isExport
     };
     XDMoD.utils.deepExtend(baseChartOptions, chartOptions);
     const isEmpty = (!baseChartOptions.data) || (baseChartOptions.data && baseChartOptions.data.length === 0);
@@ -61,6 +62,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
 
         if (baseChartOptions.data[0].type === 'pie') {
             baseChartOptions.layout.pieChart = true;
+            baseChartOptions.layout.margin.t += 30;
         }
 
         if (!baseChartOptions.credits && baseChartOptions.credits === false) {
@@ -133,8 +135,8 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             return;
         }
 
-        const update = relayoutChart(chartDiv, baseChartOptions.layout.width, baseChartOptions.layout.height, true);
-        Plotly.update(baseChartOptions.renderTo, update.data, update.layout);
+        const update = relayoutChart(chartDiv, baseChartOptions.layout.width, baseChartOptions.layout.height, true, baseChartOptions.isExport);
+        Plotly.relayout(baseChartOptions.renderTo, update);
     });
 
     return chart;
