@@ -63,12 +63,6 @@ services:
             $options:
                 username_parameter: 'username'
                 password_parameter: 'password'
-    CCR\EventListeners\LogoutListener:
-        tags:
-            -   name: 'kernel.event_listener'
-                event: 'Symfony\Component\Security\Http\Event\LogoutEvent'
-                dispatcher: security.event_dispatcher.main
-                method: onLogout
     CCR\Errors\ErrorController:
         tags: [ 'controller.service_arguments' ]
         arguments:
