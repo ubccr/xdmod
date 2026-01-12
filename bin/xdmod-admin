@@ -13,6 +13,7 @@ require_once __DIR__ . '/../configuration/linker.php';
 use CCR\DB;
 use CCR\DB\MySQLHelper;
 use CCR\Log;
+use Models\Services\Acls;
 
 // TODO
 // Tasks:
@@ -35,7 +36,7 @@ try {
  */
 function main()
 {
-    global $argv, $logger;
+    global $argv, $logger, $force;
 
     $opts = array(
         array('h', 'help'),
@@ -49,6 +50,8 @@ function main()
         array('',  'jobs'),
         array('l', 'list'),
         array('t', 'truncate'),
+        array('', 'users'),
+        array('', 'load:'),
      );
 
     $shortOptions = implode(
@@ -68,6 +71,7 @@ function main()
 
     $entity = null;
     $action = null;
+    $params = null;
 
     $logLevel = -1;
 
@@ -131,6 +135,21 @@ function main()
                 }
                 $action = 'truncate';
                 break;
+            case 'users':
+                if ($entity !== null) {
+                    fwrite(STDERR, "Only one entity type may be specified\n");
+                    exit(1);
+                }
+                $entity = 'users';
+                break;
+            case 'load':
+                if ($action !== null) {
+                    fwrite(STDERR, "Only one action may be specified\n");
+                    exit(1);
+                }
+                $action = 'load';
+                $params = $value;
+                break;
             default:
                 fwrite(STDERR, "Unexpected option '$key'\n");
                 exit(1);
@@ -189,6 +208,17 @@ function main()
                     break;
             }
             break;
+        case 'users':
+            switch ($action) {
+                case 'load':
+                    loadUsers($params);
+                    break;
+                default:
+                    $logger->crit("Cannot perform '$action' on '$entity'");
+                    exit(1);
+                    break;
+            }
+            break;
         default:
             $logger->critical("Unknown entity type '$entity'");
             exit(1);
@@ -216,6 +246,131 @@ function listResources()
         echo 'Name: ',     $resourceData['name'],     "\n";
         echo "\n";
     }
+}
+
+/**
+ * Generate mapping between the display string of an ACL with the corresponding
+ * internal identifier.
+ */
+function getAclMap()
+{
+    $acls = Acls::getAcls();
+    $aclMap = array();
+    foreach ($acls as $acl) {
+        $aclMap[$acl->getDisplay()] = $acl->getName();
+    }
+    return $aclMap;
+}
+
+/**
+ * Add SSO user accounts
+ */
+function addSSOUsers(array $data)
+{
+    global $logger;
+
+    $load_count = 0;
+
+    foreach($data as $user) {
+        $xdmodUserId = \XDUser::userExistsWithUsername($user['username']);
+        if ($xdmodUserId !== INVALID) {
+            $logger->warning("Skipping user '${user['username']}' - account already exists");
+            continue;
+        }
+
+        $newUser = new \XDUser(
+            $user['username'],
+            null,
+            $user['email'],
+            $user['first_name'],
+            '',
+            $user['last_name'],
+            $user['acls'],
+            '',
+            1,
+            -1,
+            array()
+        );
+        $newUser->setUserType(SSO_USER_TYPE);
+        $newUser->saveUser();
+        $load_count += 1;
+    }
+
+    return $load_count;
+}
+
+/**
+ * Load XDMoD user information from a file
+ */
+function parseUserList(string $filename)
+{
+    global $logger;
+
+    $aclMap = getAclMap();
+
+    $userdata = array();
+
+    $fh = fopen($filename, 'r');
+    if ($fh === false) {
+        $logger->crit("Failed to open file '$filename'");
+        exit(1);
+    }
+
+    $logger->debug("Reading CSV data from '$filename'");
+
+    $lineno = 0;
+    while ($row = fgetcsv($fh)) {
+        $lineno += 1;
+
+        // Skip blank lines.
+        if (count($row) == 1 && $row[0] === null) {
+            continue;
+        }
+        if (count($row) != 5) {
+            $logger->error("Invalid CSV data on line $lineno in file '$filename'");
+            exit(1);
+        }
+
+        $requestedAcls = explode(';', $row[4]);
+
+        $userAcls = array_map(function ($aclDisplay) use ($aclMap) {
+            return $aclMap[$aclDisplay];
+        }, $requestedAcls);
+
+        $userdata[] = array(
+            'username' => $row[0],
+            'first_name' => $row[1],
+            'last_name' => $row[2],
+            'email' => $row[3],
+            'acls' => $userAcls
+        );
+    }
+
+    if (!fclose($fh)) {
+        $logger->crit("Failed to close file '$filename'");
+        exit(1);
+    }
+
+    return $userdata;
+}
+
+/**
+ * Load users from a file
+ */
+function loadUsers(string $filename)
+{
+    global $logger, $force;
+
+    $users = parseUserList($filename);
+    $ucount = count($users);
+
+    if (!$force && !confirm("Load $ucount users from '$filename'?")) {
+        return;
+    }
+
+    $nloaded = addSSOUsers($users);
+
+    $logger->debug("Loaded $nloaded users from '$filename'.");
 }
 
 /**
@@ -317,8 +472,9 @@ function displayHelpText()
 
 Perform administrative tasks.
 
-This command currently supports truncating all job data or listing the
-currently configured resources.
+This command currently supports truncating all job data, listing the
+currently configured resources and bulk loading XDMoD portal user accounts
+from file.
 
 Usage: xdmod-admin [-v]
 
@@ -344,11 +500,17 @@ Usage: xdmod-admin [-v]
     -j, --job, --jobs
         Perform action on jobs.
 
+    --users
+        Perform action on XDMoD portal user accounts.
+
     -t, --truncate
         Truncate data (only used for jobs).
 
     -l, --list
         List data (only used for resources).
+
+    --load FILENAME
+        Load information from file FILENAME (only used for users).
 
 Examples:
 
@@ -356,6 +518,6 @@ Examples:
 
     xdmod-admin --resources --list
 
+    xdmod-admin --users --load PATH/TO/USERS-CSV-FILE.csv
 EOF;
 }
-
