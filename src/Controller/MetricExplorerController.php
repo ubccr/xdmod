@@ -34,40 +34,10 @@ class MetricExplorerController extends BaseController
 
     private const DEFAULT_ERROR_MESSAGE = 'An error was encountered while attempting to process the requested authorization procedure.';
 
-    /**
-     *
-     * @param Request $request
-     * @return Response
-     * @throws AccessDeniedException
-     * @throws SessionExpiredException
-     * @throws UnknownGroupByException
-     * @throws Exception
-     */
-    #[Route('/controllers/metric_explorer.php', methods: ['POST', 'GET'])]
-    public function index(Request $request): Response
-    {
-        $operation = $this->getStringParam($request, 'operation', true);
 
-        switch ($operation) {
-            case 'get_data':
-                return $this->getData($request);
-            case 'get_dimension':
-                return $this->getDimensionValues($request);
-            case 'get_dw_descripter':
-                return $this->getDwDescriptors($request);
-            case 'get_filters':
-                return $this->getFilters($request);
-            case 'get_rawdata':
-                return $this->getRawData($request);
-        }
-
-        return $this->json([
-            'success' => false,
-            'message' => 'Unknown Operation provided.'
-        ]);
-    }
 
     /**
+     * Retrieve all of the queries that the requesting user has currently saved.
      *
      * @param Request $request
      * @return Response
@@ -76,7 +46,6 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}/metrics/explorer/queries', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getQueries(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $action = 'getQueries';
         $payload = [
             'success' => false,
@@ -85,8 +54,8 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
-            if (isset($user) && $user instanceof XDUser) {
+            $user = $this->authorize($request);
+            if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
                 $data = $queries->get();
 
@@ -101,15 +70,19 @@ class MetricExplorerController extends BaseController
             } else {
                 $payload['message'] = self::DEFAULT_ERROR_MESSAGE;
             }
-        } catch (BadRequestException|HttpException|Exception $exception) {
-            $payload['message'] = $exception->getMessage();
-            $statusCode = (get_class($exception) === 'Exception') ? 500 : $exception->getStatusCode();
+        } catch (BadRequestHttpException|HttpException $e) {
+            $payload['message'] = $e->getMessage();
+            $statusCode = $e->getStatusCode();
+        } catch(Exception $e) {
+            $payload['message'] = $e->getMessage();
+            $statusCode = 500;
         }
 
         return $this->json($payload, $statusCode);
     }
 
     /**
+     * Retrieve a query's information by unique id for the requesting user.
      *
      * @param Request $request
      * @param string $queryId
@@ -118,7 +91,6 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}/metrics/explorer/queries/{queryId}', requirements: ["queryId"=>"\w+", 'prefix' => '.*'], methods: ['GET'])]
     public function getQueryByid(Request $request, string $queryId): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $action = 'getQueryById';
         $payload = array(
             'success' => false,
@@ -127,8 +99,8 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
-            if (isset($user) && $user instanceof XDUser) {
+            $user = $this->authorize($request);
+            if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
 
                 $query = $queries->getById($queryId);
@@ -145,15 +117,19 @@ class MetricExplorerController extends BaseController
             } else {
                 $payload['message'] = self::DEFAULT_ERROR_MESSAGE;
             }
-        } catch (BadRequestException|HttpException|Exception $exception) {
-            $payload['message'] = $exception->getMessage();
-            $statusCode = (get_class($exception) === 'Exception') ? 500 : $exception->getStatusCode();
+        } catch (BadRequestHttpException|HttpException $e) {
+            $payload['message'] = $e->getMessage();
+            $statusCode = $e->getStatusCode();
+        } catch(Exception $e) {
+            $payload['message'] = $e->getMessage();
+            $statusCode = 500;
         }
 
         return $this->json($payload, $statusCode);
     }
 
     /**
+     * Create a new query to be stored in the requesting users User Profile.
      *
      * @param Request $request
      * @return Response
@@ -168,45 +144,47 @@ class MetricExplorerController extends BaseController
         );
         $statusCode = 401;
         try {
-            $data = $request->get('data', null);
-            if ($data === null) {
-                throw new BadRequestHttpException('data is a required parameter.');
-            }
-            if ($this->getUser() !== null) {
-                $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
-                if (isset($user) && $user instanceof XDUser) {
-                    $queries = new \UserStorage($user, self::QUERIES_STORE);
-                    if (!is_string($data)) {
-                        throw new BadRequestHttpException('Invalid value for data. Must be a(n) string.');
-                    }
-                    $data = is_string($data) ? json_decode($data, true) : $data;
-                    $success = $queries->insert($data) != null;
-                    $payload['success'] = $success;
-                    if ($success) {
-                        $payload['success'] = true;
-                        $payload['data'] = $data;
-                        $statusCode = 200;
-                    } else {
-                        $payload['message'] = 'Error creating chart. User is over the chart limit.';
-                        $statusCode = 500;
-                    }
+            $user = $this->authorize($request);
+            if (isset($user)) {
+                $queries = new \UserStorage($user, self::QUERIES_STORE);
+                $data = $request->get('data');
+                if ($data === null) {
+                    throw new BadRequestHttpException('data is a required parameter.');
+                }
+                if (!is_string($data)) {
+                    throw new BadRequestHttpException('Invalid value for data. Must be a(n) string.');
+                }
+                $data = json_decode($data, true);
+                $success = $queries->insert($data) != null;
+                $payload['success'] = $success;
+                if ($success) {
+                    $payload['success'] = true;
+                    $payload['data'] = $data;
+                    $statusCode = 200;
+                } else {
+                    $payload['message'] = 'Error creating chart. User is over the chart limit.';
+                    $statusCode = 500;
                 }
             } else {
                 $payload['message'] = self::DEFAULT_ERROR_MESSAGE;
             }
-        } catch (BadRequestException|HttpException|Exception $exception) {
-            $payload['message'] = $exception->getMessage();
-            if (get_class($exception) === 'Exception') {
-                $statusCode = 500;
-            } elseif (method_exists($exception, 'getStatusCode')) {
-                $statusCode = $exception->getStatusCode();
-            }
+        } catch (BadRequestHttpException|HttpException $e) {
+            $payload['message'] = $e->getMessage();
+            $statusCode = $e->getStatusCode();
+        } catch (\Exception $e) {
+            $payload['message'] = $e->getMessage();
+            $statusCode = 500;
         }
 
         return $this->json($payload, $statusCode);
     }
 
     /**
+     * Update the query identified by the provided 'id' parameter with the
+     * values of the following form params ( if provided ):
+     *    - name
+     *    - config
+     *    - timestamp
      *
      * @param Request $request
      * @param string $queryId
@@ -224,69 +202,60 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            if ($this->getUser() === null) {
-                $payload['message'] = self::DEFAULT_ERROR_MESSAGE;
-            } else {
-                $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
-                if (isset($user) && $user instanceof XDUser) {
-                    $this->logger->error(sprintf("Updating Query for: %s",$user->getUsername()));
-                    $queries = new \UserStorage($user, self::QUERIES_STORE);
+            $user = $this->authorize($request);
+            if (isset($user)) {
+                $queries = new \UserStorage($user, self::QUERIES_STORE);
 
-                    $query = $queries->getById($queryId);
-                    if (isset($query)) {
-
-                        $data = $request->get('data');
-
-                        if (isset($data)) {
-                            if (!is_string($data)) {
-                                throw new BadRequestHttpException('Invalid value for data. Must be a(n) string.');
-                            }
-                            $jsonData = json_decode($data, true);
-                            $name = isset($jsonData['name']) ? $jsonData['name'] : null;
-                            $config = isset($jsonData['config']) ? $jsonData['config'] : null;
-                            $ts = isset($jsonData['ts']) ? $jsonData['ts'] : microtime(true);
-                        } else {
-                            $name = $this->getStringParam($request, 'name');
-                            $config = $this->getStringParam($request, 'config');
-                            $ts = $this->getDateTimeFromUnixParam($request, 'ts');
+                $query = $queries->getById($queryId);
+                if (isset($query)) {
+                    $data = $request->get('data');
+                    if (isset($data)) {
+                        if (!is_string($data)) {
+                            throw new BadRequestHttpException('Invalid value for data. Must be a(n) string.');
                         }
-
-                        if (isset($name)) {
-                            $query['name'] = $name;
-                        }
-
-                        if (isset($config)) {
-                            $query['config'] = $config;
-                        }
-                        if (isset($ts)) {
-                            $query['ts'] = $ts;
-                        }
-
-                        $queries->upsert($queryId, $query);
-
-                        // required for the UI to do it's thing.
-                        $total = count($queries->get());
-
-                        // make sure everything is in place for returning to the
-                        // front end.
-                        $payload['total'] = $total;
-                        $payload['success'] = true;
-                        $statusCode = 200;
+                        $jsonData = json_decode($data, true);
+                        $name = isset($jsonData['name']) ? $jsonData['name'] : null;
+                        $config = isset($jsonData['config']) ? $jsonData['config'] : null;
+                        $ts = isset($jsonData['ts']) ? $jsonData['ts'] : microtime(true);
                     } else {
-                        $payload['message'] = 'There was no query found for the given id';
-                        $statusCode = 404;
+                        $name = $this->getStringParam($request, 'name');
+                        $config = $this->getStringParam($request, 'config');
+                        $ts = $this->getDateTimeFromUnixParam($request, 'ts');
                     }
+
+                    if (isset($name)) {
+                        $query['name'] = $name;
+                    }
+                    if (isset($config)) {
+                        $query['config'] = $config;
+                    }
+                    if (isset($ts)) {
+                        $query['ts'] = $ts;
+                    }
+
+                    $queries->upsert($queryId, $query);
+
+                    // required for the UI to do it's thing.
+                    $total = count($queries->get());
+
+                    // make sure everything is in place for returning to the
+                    // front end.
+                    $payload['total'] = $total;
+                    $payload['success'] = true;
+                    $statusCode = 200;
                 } else {
-                    $payload['message'] = self::DEFAULT_ERROR_MESSAGE;
+                    $payload['message'] = 'There was no query found for the given id';
+                    $statusCode = 404;
                 }
+            } else {
+                $payload['message'] = self::DEFAULT_ERROR_MESSAGE;
             }
-        } catch (BadRequestException|HttpException|Exception $exception) {
-            $payload['message'] = $exception->getMessage();
-            if (get_class($exception) === 'Exception') {
-                $statusCode = 500;
-            } elseif (method_exists($exception, 'getStatusCode')) {
-                $statusCode = $exception->getStatusCode();
-            }
+        } catch (BadRequestHttpException|HttpException $e) {
+            $payload['message'] = $e->getMessage();
+            $statusCode = $e->getStatusCode();
+        } catch(\Exception $e) {
+            $payload['message'] = $e->getMessage();
+            $statusCode = 500;
         }
 
         return $this->json($payload, $statusCode);
@@ -301,8 +270,6 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}/metrics/explorer/queries/{queryId}', requirements: ["queryId"=> "\w+", 'prefix' => '.*'], methods: ['DELETE'])]
     public function deleteQueryById(Request $request, string $queryId): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $action = 'deleteQueryById';
         $payload = array(
             'success' => false,
@@ -312,15 +279,19 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
-            if (isset($user) and $user instanceof XDUser) {
+            $user = $this->authorize($request);
+            if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
                 $query = $queries->getById($queryId);
 
                 if (isset($query)) {
+
                     $before = count($queries->get());
                     $after = $queries->delById($queryId);
                     $success = $before > $after;
+
+                    // make sure everything is in place for returning to the
+                    // front end.
                     $payload['success'] = $success;
                     $payload['message'] = $success ? $payload['message'] : 'There was an error removing the query identified by: ' . $queryId;
 
@@ -332,21 +303,17 @@ class MetricExplorerController extends BaseController
             } else {
                 $payload['message'] = self::DEFAULT_ERROR_MESSAGE;
             }
-        } catch (BadRequestException|HttpException|Exception $exception) {
-            $payload['message'] = $exception->getMessage();
-            $statusCode = (get_class($exception) === 'Exception') ? 500 : $exception->getStatusCode();
+        } catch (BadRequestHttpException|HttpException $e) {
+            $payload['message'] = $e->getMessage();
+            $statusCode = $e->getStatusCode();
+        } catch (Exception $e) {
+            $payload['message'] = $e->getMessage();
+            $statusCode = 500;
         }
 
         return $this->json($payload, $statusCode);
     }
 
-
-    /**
-     * @param XDUser $user
-     * @param array $query
-     * @return void
-     * @throws Exception
-     */
     private function removeRoleFromQuery(XDUser $user, array &$query)
     {
         // If the query doesn't have a config, stop.
@@ -379,6 +346,48 @@ class MetricExplorerController extends BaseController
         // Store the updated config in the query.
         $query['config'] = json_encode($queryConfig);
     }
+
+    /**
+     * This function is just here to allow us to support the original metric explorer html controller urls. Which
+     * functioned by referencing the same url `/controllers/metric_explorer.php` and including an `operation` parameter
+     * to differentiate which file to load. Specifically, this function replicates the following controller operations
+     * ( including the file that this endpoint was ported from ):
+     *   - `get_data`:          `html/controllers/metric_explorer/get_data.php`
+     *   - `get_dimension`:     `html/controllers/metric_explorer/get_dimension.php`
+     *   - `get_dw_descripter`: `html/controllers/metric_explorer/get_dw_descripter.php`
+     *   - `get_filters`:       `html/controllers/metric_explorer/get_filters.php`
+     *
+     * @param Request $request
+     * @return Response
+     * @throws AccessDeniedException
+     * @throws SessionExpiredException
+     * @throws UnknownGroupByException
+     * @throws Exception
+     */
+    #[Route('/controllers/metric_explorer.php', methods: ['POST', 'GET'])]
+    public function index(Request $request): Response
+    {
+        $operation = $this->getStringParam($request, 'operation', true);
+
+        switch ($operation) {
+            case 'get_data':
+                return $this->getData($request);
+            case 'get_dimension':
+                return $this->getDimensionValues($request);
+            case 'get_dw_descripter':
+                return $this->getDwDescriptors($request);
+            case 'get_filters':
+                return $this->getFilters($request);
+            case 'get_rawdata':
+                return $this->getRawData($request);
+        }
+
+        return $this->json([
+            'success' => false,
+            'message' => 'Unknown Operation provided.'
+        ]);
+    }
+
 
     /**
      *
