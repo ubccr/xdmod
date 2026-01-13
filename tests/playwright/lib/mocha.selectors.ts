@@ -1,5 +1,5 @@
 const selectors = {
-    index: `file:///xdmod/html/unit_tests/index.html`,
+    index: `unit_tests/index.html`,
     passes: '//div[@id="mocha"]//ul[@id="mocha-stats"]//li[@class="passes"]//em',
     fails: '//div[@id="mocha"]//ul[@id="mocha-stats"]//li[@class="failures"]//em',
     time: '//div[@id="mocha"]//ul[@id="mocha-stats"]//li[@class="duration"]//em',

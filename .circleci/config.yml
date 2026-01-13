@@ -131,6 +131,15 @@ jobs:
           command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.string_os >>
       - when:
           condition:
+            equal: [ << parameters.install-type >>, 'upgrade' ]
+          steps:
+            - run:
+                name: Setup and run html unit tests
+                command: |
+                  docker exec -w /root/xdmod xdmod /root/xdmod/tests/playwright/install_unit.sh
+                  docker exec -w /root/xdmod/tests/playwright playwright npx playwright test unit_tests
+      - when:
+          condition:
             and:
               - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
               - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
