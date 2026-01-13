@@ -44,16 +44,16 @@ class RestIngestor extends aIngestor implements iAction
     protected $restParameters = array();
 
     // The current url, useful for debugging
-    private $currentUrl = null;
+    protected $currentUrl = null;
 
     // List of transformation and verificaiton directives to apply to request parameters. Keys are
     // parameter names and values are an object containing the directives.
-    private $parameterDirectives = array();
+    protected $parameterDirectives = array();
 
     // List of transformation and verificaiton directives to apply to request response fields. Keys
     // are response keys (not database column names) and values are an object containing the
     // directives.
-    private $responseDirectives = array();
+    protected $responseDirectives = array();
 
     // This action does not (yet) support multiple destination tables. If multiple destination
     // tables are present, store the first here and use it.
@@ -289,8 +289,8 @@ class RestIngestor extends aIngestor implements iAction
     {
         // Support a source query, mapping from the source to rest parameters, rest field map
 
+        $requestHeaders = ( isset($this->restRequestConfig->requestHeaders) ? (array) $this->restRequestConfig->requestHeaders : [] );
         // Set up properties used to access data in the result set. Some properties may not be provided.
-
         $responseKey = ( isset($this->restResponseConfig->response) ? $this->restResponseConfig->response : null );
         $errorKey = ( isset($this->restResponseConfig->error) ? $this->restResponseConfig->error : null );
         $countKey = ( isset($this->restResponseConfig->count) ? $this->restResponseConfig->count : null );
@@ -327,6 +327,8 @@ class RestIngestor extends aIngestor implements iAction
 
         // Keep the current url for logging
         $this->currentUrl = curl_getinfo($this->sourceHandle, CURLINFO_EFFECTIVE_URL);
+
+        curl_setopt($this->sourceHandle, CURLOPT_HTTPHEADER, $requestHeaders);
 
         $this->logger->info("REST url: {$this->currentUrl}");
 
@@ -382,8 +384,6 @@ class RestIngestor extends aIngestor implements iAction
             // If a results key was specified, grab the response under that key.
 
             $results = null;
-            $columnToResultFieldMap = array();
-            $numColumns = 0;
 
             if ( null !== $resultsKey ) {
                 if ( ! isset($response->$resultsKey) ) {
@@ -409,6 +409,10 @@ class RestIngestor extends aIngestor implements iAction
 
             $count = ( null !== $countKey && isset($response->$countKey) ? $response->$countKey : null );
 
+            // If no response/result key is specified then we need to convert to array
+            if ( is_object($results) ) {
+                $results = array($results);
+            }
             // We assume that the response is an array of results, even if it is a single result.
 
             if ( ! is_array($results) ) {
@@ -489,11 +493,22 @@ class RestIngestor extends aIngestor implements iAction
                 // be arbitrary.
 
                 foreach ( $columnToResultFieldMap as $dbCol => $resultKey ) {
-                    if ( ! isset($result->$resultKey) ) {
-                        // We should add a "if_missing" processing directive here -smg
-                        $result->$resultKey = null;
+                    if ( is_object($resultKey) ) {
+                        $objectKey = key($resultKey);
+                        $targetKey = current($resultKey);
+
+                        if (! isset($objectKey) || ! isset($targetKey)) {
+                            $recordParameters[":{$dbCol}_{$recordCounter}"] = null;
+                        } else {
+                            $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$objectKey->$targetKey;
+                        }
+                    } else {
+                        if ( ! isset($result->$resultKey) ) {
+                            // We should add a "if_missing" processing directive here -smg
+                            $result->$resultKey = null;
+                        }
+                        $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$resultKey;
                     }
-                    $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$resultKey;
                 }
 
                 if ( $numColumns != count($recordParameters) ) {
@@ -698,7 +713,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function setNextUrl(\stdClass $response, $nextKey)
+    protected function setNextUrl(\stdClass $response, $nextKey)
     {
         // If the next key was specified, use the value from the response for the next call. If we are
         // using a source query, do not use the next key returned in the response.
@@ -759,7 +774,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function verifyDirectives()
+    protected function verifyDirectives()
     {
         foreach ( $this->parameterDirectives as $parameter => $directives ) {
 
@@ -826,7 +841,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function verifyTransformDirective($key, \stdClass $directive)
+    protected function verifyTransformDirective($key, \stdClass $directive)
     {
         if ( ! isset($directive->type) || ! isset($directive->format) ) {
             $this->logAndThrowException("Transform directive for '$key' must specify a type and format.");
@@ -863,7 +878,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function verifyVerifyDirective($key, \stdClass $directive)
+    protected function verifyVerifyDirective($key, \stdClass $directive)
     {
         if ( ! isset($directive->type) || ! isset($directive->format) ) {
             $this->logAndThrowException("Transform directive for '$key' must specify a type and format.");
@@ -894,7 +909,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function applyDirectives($value, \stdClass $directives)
+    protected function applyDirectives($value, \stdClass $directives)
     {
         // Apply transform directives first, then verification directives
 
@@ -928,7 +943,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function applyTransformDirective($value, \stdClass $directive)
+    protected function applyTransformDirective($value, \stdClass $directive)
     {
         switch ( $directive->type ) {
             case 'datetime':
@@ -966,7 +981,7 @@ class RestIngestor extends aIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    private function applyVerifyDirective($value, \stdClass $directive)
+    protected function applyVerifyDirective($value, \stdClass $directive)
     {
         switch ( $directive->type ) {
             case 'regex':
