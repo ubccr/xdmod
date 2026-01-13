@@ -2613,7 +2613,7 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 if (chartDiv) {
                     Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
                     const update = relayoutChart(chartDiv, adjWidth, adjHeight, false);
-                    Plotly.update(this.chartId, update.data, update.layout);
+                    Plotly.update(this.chartId, update.data, update.layout, update.traces);
                 }
             }
         } //onResize

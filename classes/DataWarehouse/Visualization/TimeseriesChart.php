@@ -580,6 +580,7 @@ class TimeseriesChart extends AggregateChart
 
                         $trace = array(
                             'name' => $lookupDataSeriesName,
+                            'oname' => $lookupDataSeriesName,
                             'meta' => array(
                                 'primarySeries' => true
                             ),
@@ -878,6 +879,7 @@ class TimeseriesChart extends AggregateChart
                                 }
                                 $trendline_trace = array(
                                     'name' => $lookupDataSeriesName,
+                                    'oname' => $lookupDataSeriesName,
                                     'meta' => array(
                                         'primarySeries' => false,
                                         'trendlineSeries' => true
