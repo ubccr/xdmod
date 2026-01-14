@@ -135,8 +135,8 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
             return;
         }
 
-        const update = relayoutChart(chartDiv, baseChartOptions.layout.height, true, baseChartOptions.isExport);
-        Plotly.relayout(baseChartOptions.renderTo, update);
+        const update = relayoutChart(chartDiv, baseChartOptions.layout.width, baseChartOptions.layout.height, true, baseChartOptions.isExport);
+        Plotly.update(baseChartOptions.renderTo, update.data, update.layout, update.traces);
     });
 
     return chart;

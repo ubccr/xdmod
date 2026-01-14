@@ -848,6 +848,7 @@ class Usage extends Common
                         ) {
                             $rank = $meDataSeries['legendrank'] / 3;
                             $meDataSeries['name'] = "${rank}. " . $meDataSeries['name'];
+                            $meDataSeries['oname'] = "${rank}. " . $meDataSeries['oname'];
                         }
                     }
 
