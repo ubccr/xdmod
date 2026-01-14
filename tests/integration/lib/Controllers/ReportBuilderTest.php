@@ -753,7 +753,6 @@ class ReportBuilderTest extends BaseTest
     {
         $response = $this->helper->get('reports/builder/image', $params);
 
-        print_r($response);
         $this->log("Response Content-Type: [" . $response[1]['content_type'] . "]");
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
 
