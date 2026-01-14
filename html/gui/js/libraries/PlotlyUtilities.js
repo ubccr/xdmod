@@ -354,7 +354,7 @@ function adjustSubtitle(layout, subtitleIndex, legendTopCenter, firstRender) {
  */
 /* exported relayoutChart */
 function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExport = false) {
-    let update = {};
+    const update = {};
     if (chartDiv._fullLayout.annotations.length > 0) {
         // Wrap long titles based on width
         const traceNameUpdates = { name: [] };
@@ -371,7 +371,7 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
             characterLimit = 100;
         }
         const wordWrapLimit = Number.parseInt(chartRatioChange * characterLimit, 10);
-        const regex = new RegExp(`(?![^\\n]{1,${wordWrapLimit}}$)(?:([^\\n]{1,${wordWrapLimit}})\\s|([^\\n]{${wordWrapLimit}}))`,'g');
+        const regex = new RegExp(`(?![^\\n]{1,${wordWrapLimit}}$)(?:([^\\n]{1,${wordWrapLimit}})\\s|([^\\n]{${wordWrapLimit}}))`, 'g');
 
         chartDiv.data.forEach((trace, index) => {
             if (trace.oname) {
@@ -380,9 +380,9 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
                     // Otherwise we are soft word wrapping and will break on whitespace.
                     trace.oname.replaceAll(regex, (match, softWrap, hardWrap) => {
                         if (hardWrap) {
-                            return hardWrap + '-<br>';
+                            return `${hardWrap}-<br>`;
                         }
-                        return softWrap + '<br>';
+                        return `${softWrap}<br>`;
                     })
                 );
                 traceIndices.push(index);
