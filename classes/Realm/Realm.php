@@ -366,7 +366,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
             // Skip disabled configs
 
-            if (isset($config->disabled) && $config->disabled) {
+            if ( isset($config->disabled) && $config->disabled ) {
                 continue;
             }
 
