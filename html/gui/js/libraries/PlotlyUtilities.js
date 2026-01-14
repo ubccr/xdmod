@@ -371,10 +371,20 @@ function relayoutChart(chartDiv, adjWidth, adjHeight, firstRender = false, isExp
             characterLimit = 100;
         }
         const wordWrapLimit = Number.parseInt(chartRatioChange * characterLimit, 10);
-        const regex = new RegExp(`(.{${wordWrapLimit}})`, 'g');
+        const regex = new RegExp(`(?![^\\n]{1,${wordWrapLimit}}$)(?:([^\\n]{1,${wordWrapLimit}})\\s|([^\\n]{${wordWrapLimit}}))`,'g');
+
         chartDiv.data.forEach((trace, index) => {
             if (trace.oname) {
-                traceNameUpdates.name.push(trace.oname.replaceAll(regex, '$1<br>'));
+                traceNameUpdates.name.push(
+                    // Hardwrap is when we have to break middle of a word (add hyphen)
+                    // Otherwise we are soft word wrapping and will break on whitespace.
+                    trace.oname.replaceAll(regex, (match, softWrap, hardWrap) => {
+                        if (hardWrap) {
+                            return hardWrap + '-<br>';
+                        }
+                        return softWrap + '<br>';
+                    })
+                );
                 traceIndices.push(index);
             }
         });
