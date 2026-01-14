@@ -388,7 +388,7 @@ class Realm extends \CCR\Loggable implements iRealm
                 $factoryClassName = sprintf('\\%s\\%s', __NAMESPACE__, $factoryClassName);
             }
 
-            // We are using the array format for a callable instead of a string due to the use of `static::` being deprecated w/ the string version.
+            // When using the string form of a callable, the use of `static::` is deprecated, hence switching to using the array format for a callable.
             $factoryCallable = [$factoryClassName, 'factory'];
             if ('Realm' == $className) {
                 // The Realm class already has the configuration and does not need it to be passed
