@@ -27,7 +27,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Docker Compose corresponding OS file
-          command: docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
+          command: pushd ~/project/tests/playwright/Docker && docker compose up -d; popd
       - run:
           name: Generate Key for XDMoD
           command: docker exec xdmod openssl genrsa -out /etc/pki/tls/private/localhost.key -rand /proc/cpuinfo:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048
@@ -35,10 +35,25 @@ jobs:
           name: Generate Cert for XDMoD
           command: docker exec xdmod /usr/bin/openssl req -new -key /etc/pki/tls/private/localhost.key -x509 -sha256 -days 365 -set_serial $RANDOM -extensions v3_req -out /etc/pki/tls/certs/localhost.crt -subj "/C=XX/L=Default City/O=Default Company Ltd"
       - run:
+          name: Update PHP to PHP8.2
+          command: |
+            docker exec xdmod dnf module reset -y php
+            docker exec xdmod dnf module enable -y php:8.2
+            docker exec xdmod dnf install -y php-devel openssl-devel
+            docker exec xdmod dnf update -y php php-common php-opcache php-cli php-gd php-curl php-pear php-zip php-gmp php-pdo php-xml php-mbstring php-mysqlnd php-pecl-apcu php-pecl-json php-pear
+            docker exec xdmod pecl uninstall mongodb-1.18.1
+            docker exec xdmod pecl install mongodb-1.18.1
+            docker exec xdmod pecl install zip
+            docker exec xdmod dnf remove -y php-devel openssl-devel
+            docker exec xdmod bash -c ">/var/log/php_errors.log"
+      - run:
           name: Copy Files for Playwright and XDMoD containers
           command: |
             docker cp ~/project xdmod:/root/xdmod
-            docker cp ~/project playwright:/root/xdmod
+            docker exec playwright mkdir -p /root/xdmod/tests/ /root/xdmod/tests/artifacts/xdmod/
+            docker cp ~/project/tests/playwright playwright:/root/xdmod/tests/
+            docker cp ~/project/tests/ci playwright:/root/xdmod/tests/
+            docker cp ~/project/tests/artifacts/xdmod/ui playwright:/root/xdmod/tests/artifacts/xdmod/
       - run:
           name: Create test result directories
           command: |
@@ -56,6 +71,13 @@ jobs:
       - run:
           name: Install XDMoD Composer Dependencies
           command: docker exec -w /root/xdmod xdmod composer install
+      - run:
+          name: Fixup php.ini for debugging
+          command: |
+            docker exec xdmod bash -c "sed -i 's|error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT|error_reporting = E_ALL|g' /etc/php.ini"
+            docker exec xdmod bash -c "sed -i 's|display_errors = Off|display_errors = On|g' /etc/php.ini"
+            docker exec xdmod bash -c "sed -i 's|display_startup_errors = Off|display_startup_errors = On|g' /etc/php.ini"
+            docker exec xdmod bash -c "sed -i 's|;error_log = php_errors.log|error_log = php_errors.log|g' /etc/php.ini"
       - run:
           name: Build XDMoD RPM
           command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
@@ -78,7 +100,7 @@ jobs:
           command: docker exec -w /root/xdmod xdmod composer install
       - run:
           name: Setup the SimpleSAML server etc. so we can test SSO
-          command: docker exec xdmod /root/xdmod/tests/ci/samlSetup.sh
+          command: docker exec xdmod /root/xdmod/tests/ci/samlSetup.sh -t local -h xdmod
       - run:
           name: Make sure that the Test Dependencies are installed
           command: docker exec -w /root/xdmod xdmod composer install --no-progress
@@ -187,7 +209,7 @@ jobs:
       - run:
           name: Ensure that no PHP command-line errors were generated
           command: |
-            docker exec xdmod /bin/bash -c "if [ -s /var/log/php_errors.log ]; then cat /var/log/php_errors.log; false; fi"
+            docker exec xdmod /bin/bash -c "if [ -s /var/log/php_errors.log ]; then cat /var/log/php_errors.log | grep -v 'Warning'; false; fi"
       - store_artifacts:
           path: /tmp/screenshots
       - store_artifacts:

@@ -596,27 +596,27 @@ class EtlConfiguration extends Configuration
      * ==========================================================================================
      */
 
-    public function current()
+    public function current(): mixed
     {
         return current($this->actionOptions);
     }  // current()
 
-    public function key()
+    public function key(): mixed
     {
         return key($this->actionOptions);
     }  // key()
 
-    public function next()
+    public function next(): void
     {
-        return next($this->actionOptions);
+        next($this->actionOptions);
     }  // next()
 
-    public function rewind()
+    public function rewind(): void
     {
-        return reset($this->actionOptions);
+        reset($this->actionOptions);
     }  // rewind()
 
-    public function valid()
+    public function valid(): bool
     {
         return false !== current($this->actionOptions);
     }  // valid()
