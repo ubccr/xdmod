@@ -1,5 +1,85 @@
 # Open XDMoD Change Log
 
+## XXXX-XX-XX v11.5.0
+
+- Bug Fixes
+    - Fix bugs when updating user organizations
+      ([\#1975](https://github.com/ubccr/xdmod/pull/1975)).
+    - Fix various bugs found when testing strict SQL modes
+      ([\#1947](https://github.com/ubccr/xdmod/pull/1947)).
+    - Show unknown users the Summary tab instead of the Dashboard tab
+      ([\#2065](https://github.com/ubccr/xdmod/pull/2065)).
+    - Fix bug when reingesting cloud logs
+      ([\#2072](https://github.com/ubccr/xdmod/pull/2072)).
+    - Fix out of memory error for batch data export processor
+      ([\#2085](https://github.com/ubccr/xdmod/pull/2085)).
+    - Display Summary tab instead of Dashboard tab for unassociated users
+      ([\#2082](https://github.com/ubccr/xdmod/pull/2082)).
+    - Change area plots to only show tooltip on markers
+      ([\#2077](https://github.com/ubccr/xdmod/pull/2077)).
+    - Use UTF-8 character encoding for database tables to fix display of
+      non-ASCII characters
+      ([\#1948](https://github.com/ubccr/xdmod/pull/1948)).
+- Enhancements
+    - Add support for PHP 8.2
+      ([\#2041](https://github.com/ubccr/xdmod/pull/2041),
+      [\#2040](https://github.com/ubccr/xdmod/pull/2040),
+      [\#2086](https://github.com/ubccr/xdmod/pull/2086),
+      [\#2104](https://github.com/ubccr/xdmod/pull/2104)).
+    - Add the ability to support multiple organizations and to assign
+      organizations to people and to resources
+      ([\#1982](https://github.com/ubccr/xdmod/pull/1982)
+      [\#2026](https://github.com/ubccr/xdmod/pull/2026),
+      [\#2007](https://github.com/ubccr/xdmod/pull/2007)).
+    - Add statistics to the Cloud realm for "Number of Users," "Number of PIs,"
+      "Number of Resources," and "Number of Projects"
+      ([\#1976](https://github.com/ubccr/xdmod/pull/1976)).
+    - Add dimensions to the Jobs, Cloud, and Storage realms for "User
+      Institution" and "PI Institution"
+      ([\#2026](https://github.com/ubccr/xdmod/pull/2026)).
+    - Add dimension to the Storage realm for "Service Provider"
+      ([\#2007](https://github.com/ubccr/xdmod/pull/2007)).
+    - Update Jobs realm raw data to rename the "Organization" field to "User
+      Institution" ([\#2026](https://github.com/ubccr/xdmod/pull/2026)).
+    - Add raw data fields to the Jobs and Cloud realms for "User Institution,"
+      "PI Institution," and "Service Provider"
+      ([\#2026](https://github.com/ubccr/xdmod/pull/2026),
+      [\#2007](https://github.com/ubccr/xdmod/pull/2007)).
+    - Add new resource type for "Program"
+      ([\#1943](https://github.com/ubccr/xdmod/pull/1943)).
+    - Add the ability to ingest Storage realm data by a date range
+      ([\#2018](https://github.com/ubccr/xdmod/pull/2018)).
+    - Improve performance of database queries
+      ([\#2000](https://github.com/ubccr/xdmod/pull/2000),
+      [\#2003](https://github.com/ubccr/xdmod/pull/2003),
+      [\#1965](https://github.com/ubccr/xdmod/pull/1965),
+      [\#1968](https://github.com/ubccr/xdmod/pull/1968),
+      [\#2084](https://github.com/ubccr/xdmod/pull/2084),
+      [\#2088](https://github.com/ubccr/xdmod/pull/2088),
+      [\#2105](https://github.com/ubccr/xdmod/pull/2105)).
+    - Add an order to the raw data exported from the Resource Specifications
+      realm ([\#1979](https://github.com/ubccr/xdmod/pull/1979)).
+    - Add support for ingesting Slurm logs in JSON format
+      ([\#1963](https://github.com/ubccr/xdmod/pull/1963)).
+    - Add support for date URL parameters in the Usage tab
+      ([\#2059](https://github.com/ubccr/xdmod/pull/2059)).
+- Documentation
+    - Update list of publications and presentations
+      ([\#2080](https://github.com/ubccr/xdmod/pull/2080),
+      [\#2119](https://github.com/ubccr/xdmod/pull/2119)).
+- Maintenance / Code Quality
+    - Remove the "Job Size: Normalized" metric
+      ([\#1981](https://github.com/ubccr/xdmod/pull/1981)).
+    - Remove code for supporting Internet Explorer
+      ([\#2013](https://github.com/ubccr/xdmod/pull/2013)).
+    - Fix slow queries in Allocations realm (applies to ACCESS XDMoD)
+      ([\#2073](https://github.com/ubccr/xdmod/pull/2073)).
+    - Update user manual builder dependencies
+      ([\#2033](https://github.com/ubccr/xdmod/pull/2033)).
+    - Update the hostname of the version check API
+      ([\#2023](https://github.com/ubccr/xdmod/pull/2023)).
+    - Remove legacy code ([\#2102](https://github.com/ubccr/xdmod/pull/2102)).
+
 ## 2025-08-19 v11.0.2
 
 - New Features
