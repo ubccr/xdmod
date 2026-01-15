@@ -51,11 +51,6 @@ services:
     legacy_code:
         namespace: CCR\
         resource: '../classes/CCR/'
-
-    # add more service definitions when explicit configuration is needed
-    # please note that last definitions always *replace* previous ones
-#    CCR\:
-#        resource: '../classes/CCR/'
     CCR\DB\iDatabase:
         factory: [ 'CCR\DB', 'factory' ]
     CCR\Security\Authenticators\FormLoginAuthenticator:
