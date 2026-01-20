@@ -274,7 +274,7 @@ function addSSOUsers(array $data)
     foreach($data as $user) {
         $xdmodUserId = \XDUser::userExistsWithUsername($user['username']);
         if ($xdmodUserId !== INVALID) {
-            $logger->warning("Skipping user '${user['username']}' - account already exists");
+            $logger->warning("Skipping user '{$user['username']}' - account already exists");
             continue;
         }
 
