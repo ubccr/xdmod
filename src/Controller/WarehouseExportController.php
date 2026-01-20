@@ -18,6 +18,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Twig\Environment;
 use function xd_response\buildError;
@@ -50,17 +51,26 @@ class WarehouseExportController extends BaseController
     public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper)
     {
         parent::__construct($logger, $twig, $tokenHelper);
-
+        $this->logger = Log::factory(
+            'data-warehouse-export-rest',
+            [
+                'console' => false,
+                'file' => false,
+                'mail' => false
+            ]
+        );
         $this->realmManager = new RealmManager();
         $this->queryHandler = new QueryHandler($this->logger);
     }
 
 
     /**
+     * Get all the realms available for exporting for the current user.
      *
      * @param Request $request
      * @return Response
-     * @throws Exception if user is not authorized to access this route.
+     * @throws UnauthorizedHttpException if there is no authorized user for this request.
+     * @throws Exception if there is a problem authorizing the user making the request.
      */
     #[Route('/realms', methods: ['GET'])]
     public function getRealms(Request $request): Response
@@ -78,6 +88,7 @@ class WarehouseExportController extends BaseController
         if ($user === null) {
             $user = $this->authorize($request);
         }
+
 
         $config = RawStatisticsConfiguration::factory();
 
@@ -103,6 +114,8 @@ class WarehouseExportController extends BaseController
     }
 
     /**
+     * Get all the existing export requests for the current user.
+     *
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -122,6 +135,7 @@ class WarehouseExportController extends BaseController
     }
 
     /**
+     * Create a new export request for the current user.
      *
      * @param Request $request
      * @return Response
@@ -130,11 +144,7 @@ class WarehouseExportController extends BaseController
     #[Route('/request', methods: ['POST'])]
     public function createRequest(Request $request): Response
     {
-        $this->logger->debug('Creating Request');
         $user = $this->authorize($request);
-
-        $this->logger->debug('User is Authenticated');
-
         $realm = $this->getStringParam($request, 'realm', true);
 
         $realms = array_map(
@@ -144,51 +154,38 @@ class WarehouseExportController extends BaseController
             $this->realmManager->getRealmsForUser($user)
         );
         if (!in_array($realm, $realms)) {
-            $this->logger->debug('Invalid Realm');
             throw new BadRequestHttpException('Invalid realm');
         }
-        $this->logger->debug('Realm is valid');
 
         $startDate = $this->getDateFromISO8601Param($request, 'start_date', true);
         $endDate = $this->getDateFromISO8601Param($request, 'end_date', true);
         $now = new DateTime();
 
         if ($startDate > $now) {
-            $this->logger->debug('Start Date is invalid');
             throw new BadRequestHttpException('Start date cannot be in the future');
         }
 
-        $this->logger->debug('Start Date is valid.');
-
         if ($endDate > $now) {
-            $this->logger->debug('End Date is invalid');
             throw new BadRequestHttpException('End date cannot be in the future');
         }
-
-        $this->logger->debug('End Date is valid');
 
         $interval = $startDate->diff($endDate);
 
         if ($interval === false) {
-            $this->logger->debug('Interval is Invalid');
             throw new BadRequestHttpException('Failed to calculate date interval');
         }
-        $this->logger->debug('Interval is valid');
 
         if ($interval->invert === 1) {
-            $this->logger->debug('Interval is invalid');
             throw new BadRequestHttpException('Start date must be before end date');
         }
 
         $format = strtoupper($this->getStringParam($request, 'format', true));
 
         if (!in_array($format, ['CSV', 'JSON'])) {
-            $this->logger->debug('Format is invalid');
             throw new BadRequestHttpException('format must be CSV or JSON');
         }
 
         try {
-            $this->logger->debug('Creating Export Request');
             $id = $this->queryHandler->createRequestRecord(
                 $user->getUserID(),
                 $realm,
@@ -197,11 +194,9 @@ class WarehouseExportController extends BaseController
                 $format
             );
         } catch (Exception $e) {
-            $this->logger->debug('Failed to create export request');
             throw new BadRequestHttpException('Failed to create export request');
         }
 
-        $this->logger->debug('Created Export Request');
         return $this->json([
             'success' => true,
             'message' => 'Created export request',
@@ -211,7 +206,7 @@ class WarehouseExportController extends BaseController
     }
 
     /**
-     *
+     * Get the requested data.
      *
      * @param Request $request
      * @param int $id
@@ -225,8 +220,6 @@ class WarehouseExportController extends BaseController
     #[Route('/download/{id}', requirements: ["id" => "\d+"], methods: ['GET'])]
     public function getExportedDataFile(Request $request, int $id): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $user = $this->authorize($request);
 
         $requests = array_filter(
@@ -259,7 +252,16 @@ class WarehouseExportController extends BaseController
             throw new AccessDeniedHttpException('Exported data is not readable');
         }
 
-        $this->logger->info('Sending data warehouse export file');
+        $this->logger->info(
+            '',
+            [
+                'module' => self::LOG_MODULE,
+                'message' => 'Sending data warehouse export file',
+                'event' => 'DOWNLOAD',
+                'id' => $id,
+                'Users.id' => $user->getUserId()
+            ]
+        );
 
         if ($request['downloaded_datetime'] === null) {
             $this->queryHandler->updateDownloadedDatetime($request['id']);
@@ -278,6 +280,43 @@ class WarehouseExportController extends BaseController
     }
 
     /**
+     * Delete a single request.
+     *
+     * @param Request $request
+     * @param string $id
+     * @return Response
+     * @throws Exception
+     */
+    #[Route('/request/{id}', requirements: ["id" => "\w+"], methods: ['DELETE'])]
+    public function deleteRequest(Request $request, string $id): Response
+    {
+        $user = $this->authorize($request);
+        $count = $this->queryHandler->deleteRequest($id, $user->getUserId());
+
+        if ($count === 0) {
+            throw new NotFoundHttpException('Export request not found');
+        }
+
+        $this->logger->info('', [
+            'module' => self::LOG_MODULE,
+            'message' => 'Deleted data warehouse export request',
+            'event' => 'DELETE_BY_USER',
+            'id' => $id,
+            'Users.id' => $user->getUserId()
+        ]);
+
+        return $this->json([
+            'success' => true,
+            'message' => 'Deleted export request',
+            'data' => [['id' => $id]],
+            'total' => 1
+        ]);
+    }
+
+    /**
+     * Delete multiple requests.
+     *
+     * The request body content must be a JSON encoded array of request IDs.
      *
      * @param Request $request
      * @return Response
@@ -292,16 +331,13 @@ class WarehouseExportController extends BaseController
     #[Route('/requests', methods: ['DELETE'])]
     public function deleteRequests(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $user = $this->authorize($request);
 
         $requestIds = [];
 
         try {
-            $this->logger->debug(var_export($request->request->all(), true));
-            $requestIds = json_decode($request->get('ids'));
-            $this->logger->debug(sprintf('Request ids: %s', var_export($requestIds, true)));
+            $requestIds = @json_decode($request->getContent());
+
             if ($requestIds === null) {
                 throw new Exception('Failed to decode JSON');
             }
@@ -310,19 +346,15 @@ class WarehouseExportController extends BaseController
                 throw new Exception('Export request IDs must be in an array');
             }
 
-            try {
-                $requestIds = array_map(
-                    function ($value) {
-                        return is_int($value) ? $value : intval($value);
-                    },
-                    $requestIds
-                );
-            } catch (Exception $e) {
-                throw new Exception('Export request IDs must integers');
+            foreach ($requestIds as $id) {
+                if (!is_int($id)) {
+                    throw new Exception('Export request IDs must integers');
+                }
             }
-
         } catch (Exception $e) {
-            return $this->json(buildError('Malformed HTTP request content: ' . $e->getMessage()));
+            throw new BadRequestHttpException(
+                'Malformed HTTP request content: ' . $e->getMessage()
+            );
         }
 
         try {
@@ -334,8 +366,16 @@ class WarehouseExportController extends BaseController
                 if ($count === 0) {
                     throw new NotFoundHttpException('Export request not found');
                 }
-
-                $this->logger->info('Deleted data warehouse export request');
+                $this->logger->info(
+                    '',
+                    [
+                        'module' => self::LOG_MODULE,
+                        'message' => 'Deleted data warehouse export request',
+                        'event' => 'DELETE_BY_USER',
+                        'id' => $id,
+                        'Users.id' => $user->getUserId()
+                    ]
+                );
             }
 
             $dbh->commit();
@@ -344,7 +384,7 @@ class WarehouseExportController extends BaseController
             throw $e;
         } catch (Exception $e) {
             $dbh->rollBack();
-            throw new HttpException(500, 'Failed to delete export requests');
+            throw new BadRequestHttpException('Failed to delete export requests');
         }
 
         return $this->json([
@@ -359,33 +399,4 @@ class WarehouseExportController extends BaseController
             'total' => count($requestIds)
         ]);
     }
-
-    /**
-     *
-     * @param Request $request
-     * @param string $id
-     * @return Response
-     * @throws Exception
-     */
-    #[Route('/request/{id}', requirements: ["id" => "\w+"], methods: ['DELETE'])]
-    public function deleteRequest(Request $request, string $id): Response
-    {
-        $user = $this->authorize($request);
-
-        $count = $this->queryHandler->deleteRequest($id, $user->getUserID());
-
-        if ($count === 0) {
-            throw new NotFoundHttpException('Export request not found');
-        }
-
-        $this->logger->info('Deleted data warehouse export request');
-
-        return $this->json([
-            'success' => true,
-            'message' => 'Deleted export request',
-            'data' => [['id' => $id]],
-            'total' => 1
-        ]);
-    }
-
 }
