@@ -9,7 +9,6 @@ use Configuration\XdmodConfiguration;
 use Exception;
 use Models\Services\Acls;
 
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -163,7 +162,7 @@ class DashboardController extends BaseController
         $content = json_decode($this->getStringParam($request, 'data', true), true);
 
         if ($content === null || !isset($content['layout']) || !isset($content['columns'])) {
-            throw new BadRequestException('Invalid data parameter');
+            throw new BadRequestHttpException('Invalid data parameter');
         }
 
         $storage = new \UserStorage($user, 'summary_layout');
