@@ -1050,7 +1050,6 @@ CCR.WebPanel = Ext.extend(Ext.Window, {
 
 CCR.xdmod.sponsor_message = 'This work was sponsored by NSF under grant numbers ACI 1025159, ACI 1445806 and ACI 2137603';
 
-//Used in html/gui/general/login.php
 var toggle_about_footer = function (o) {
     o.innerHTML = (o.innerHTML == CCR.xdmod.version) ? CCR.xdmod.sponsor_message : CCR.xdmod.version;
 }; //toggle_about_footer
@@ -1148,7 +1147,14 @@ CCR.xdmod.ui.stopImpersonation = function() {
 }
 
 
-// Used in html/gui/general/login.php
+/**
+ * Present a message to the user after a login attempt.
+ *
+ * @param message the login response.
+ * @param status if true then the provided message will be rendered green, else it will be rendered in red.
+ * @param target the Ext identifier for the component that will be used to display the login response.
+ * @param cb callback function, if present it will be called after presenting the provided login response.
+ */
 var presentLoginResponse = function (message, status, target, cb) {
     var messageColor = status ? '#080' : '#f00';
     var targetCmp = Ext.getCmp(target);
@@ -1160,32 +1166,6 @@ var presentLoginResponse = function (message, status, target, cb) {
         cb();
     }
 }; //presentLoginResponse
-
-// Used in html/gui/general/login.php
-var clearLoginResponse = function (target) {
-
-    var targetCmp = Ext.getCmp(target);
-    targetCmp.hide();
-}; //clearLoginResponse
-
-// Used in html/gui/general/login.php
-var presentContactFormViaLoginError = function () {
-    XDMoD.TrackEvent('Login Window', 'Clicked on Conact Us');
-    CCR.xdmod.ui.login_prompt.close();
-
-    var contact = new XDMoD.ContactDialog();
-    contact.show();
-}; //presentContactFormViaLoginError
-
-// Used in html/gui/general/login.php
-var presentSignUpViaLoginPrompt = function () {
-
-    XDMoD.TrackEvent('Login Window', 'Clicked on Sign Up button');
-    CCR.xdmod.ui.login_prompt.close();
-    CCR.xdmod.ui.actionSignUp();
-
-}; //presentSignUpViaLoginPrompt
-
 // -----------------------------------
 
 CCR.xdmod.ui.actionSignUp = function () {
