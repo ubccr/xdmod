@@ -9,7 +9,6 @@ use Configuration\XdmodConfiguration;
 use Exception;
 use Models\Services\Acls;
 
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -24,6 +23,45 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('{prefix}/dashboard', requirements: ['prefix' => '.*'])]
 class DashboardController extends BaseController
 {
+
+    /**
+     * Get the column layout manager for the user
+     *
+     * @param XDUser $user
+     * @return ColumnLayout
+     */
+    private function getLayout(XDUser $user): ColumnLayout
+    {
+        $defaultLayout = null;
+        $defaultColumnCount = 2;
+
+        if ($user->isPublicUser() === false) {
+            $layoutStore = new \UserStorage($user, 'summary_layout');
+            $record = $layoutStore->getById(0);
+            if ($record) {
+                $defaultLayout = $record['layout'];
+                $defaultColumnCount = $record['columns'];
+            }
+        }
+
+        return new ColumnLayout($defaultColumnCount, $defaultLayout);
+    }
+
+    /**
+     * @param XDUser $user
+     * @return array
+     */
+    private function getConfigVariables(XDUser $user): array
+    {
+        $person_id = $user->getPersonID(true);
+        $obj_warehouse = new \XDWarehouse();
+
+        return array(
+            'PERSON_ID' => $person_id,
+            'PERSON_NAME' => $obj_warehouse->resolveName($person_id)
+        );
+    }
+
     /**
      * The individual dashboard components have a namespace prefix to simplify
      * the implementation of the algorithm that determines which
@@ -55,7 +93,7 @@ class DashboardController extends BaseController
     {
         $user = $this->getXDUser($request->getSession());
 
-        $dashboardComponents = [];
+        $dashboardComponents = array();
 
         $mostPrivilegedAcl = Acls::getMostPrivilegedAcl($user)->getName();
 
@@ -65,7 +103,7 @@ class DashboardController extends BaseController
             'roles.json',
             CONFIG_DIR,
             null,
-            ['config_variables' => $this->getConfigVariables($user)]
+            array('config_variables' => $this->getConfigVariables($user))
         );
 
         $presets = $roleConfig['roles'][$mostPrivilegedAcl];
@@ -125,30 +163,32 @@ class DashboardController extends BaseController
 
                     list($chartLocation, $column) = $layout->getLocation($name);
 
-                    $dashboardComponents[$chartLocation] = [
+                    $dashboardComponents[$chartLocation] = array(
                         'name' => $name,
                         'type' => 'xdmod-dash-chart-cmp',
-                        'config' => [
+                        'config' => array(
                             'name' => $query['name'],
                             'chart' => $queryConfig
-                        ],
+                        ),
                         'column' => $column
-                    ];
+                    );
                 }
             }
         }
 
         ksort($dashboardComponents);
 
-        return $this->json([
+        return $this->json(array(
             'success' => true,
             'total' => count($dashboardComponents),
-            'portalConfig' => ['columns' => $layout->getColumnCount()],
+            'portalConfig' => array('columns' => $layout->getColumnCount()),
             'data' => array_values($dashboardComponents)
-        ]);
+        ));
     }
 
     /**
+     * Set the layout metadata
+     *
      * @param Request $request
      * @return Response
      * @throws BadRequestHttpException if the data parameter is not present and does not contain a layout and columns
@@ -163,19 +203,21 @@ class DashboardController extends BaseController
         $content = json_decode($this->getStringParam($request, 'data', true), true);
 
         if ($content === null || !isset($content['layout']) || !isset($content['columns'])) {
-            throw new BadRequestException('Invalid data parameter');
+            throw new BadRequestHttpException('Invalid data parameter');
         }
 
         $storage = new \UserStorage($user, 'summary_layout');
 
-        return $this->json([
+        return $this->json(array(
             'success' => true,
             'total' => 1,
             'data' => $storage->upsert(0, $content)
-        ]);
+        ));
     }
 
     /**
+     * clear the layout metadata
+     *
      * @param Request $request
      * @return Response
      * @throws Exception if there is a problem authorizing the current user.
@@ -183,131 +225,25 @@ class DashboardController extends BaseController
     #[Route('/layout', methods: ['DELETE'])]
     public function resetLayout(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = $this->authorize($request);
 
         $storage = new \UserStorage($user, 'summary_layout');
 
         $storage->del();
 
-        return $this->json([
+        return $this->json(array(
             'success' => true,
             'total' => 1
-        ]);
+        ));
     }
 
     /**
+     * Set value for if a user should view the help tour or not
+     *
      * @param Request $request
      * @return Response
-     * @throws Exception if there is a problem authorizing the current user.
-     */
-    #[Route('/rolereport', methods: ['GET'])]
-    public function getRoleReport(Request $request): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = $this->authorize($request);
-
-        $role = $user->getMostPrivilegedRole()->getName();
-        $report_id_suffix = 'autogenerated-' . $role;
-        $report_id = $user->getUserID() . '-' . $report_id_suffix;
-        $userReport = null;
-        $rm = new \XDReportManager($user);
-        $reports = $rm->fetchReportTable();
-        foreach ($reports as &$report) {
-            if ($report['report_id'] === $report_id) {
-                $userReport = $report;
-            }
-        }
-        if (is_null($userReport)){
-            $availTemplates = $rm::enumerateReportTemplates([$role], 'Dashboard Tab Report');
-            if (empty($availTemplates)) {
-                throw new NotFoundHttpException("No dashboard tab report template available for $role");
-            }
-
-            $template = $rm::retrieveReportTemplate($user, $availTemplates[0]['id']);
-            $template->buildReportFromTemplate($_REQUEST, $report_id_suffix);
-            $reports = $rm->fetchReportTable();
-            foreach ($reports as &$report) {
-                if ($report['report_id'] === $report_id) {
-                    $userReport = $report;
-                }
-            }
-        }
-        $data = $rm->loadReportData($userReport['report_id']);
-        $count = 0;
-        foreach($data['queue'] as $queue) {
-            $chart_id = explode('&', $queue['chart_id']);
-            $chart_id_parsed = array();
-            foreach($chart_id as $value) {
-                list($key, $value) = explode('=', $value);
-                $key = urldecode($key);
-                $value = urldecode($value);
-                $json = json_decode($value, true);
-
-                if ($key === 'timeseries') {
-                    $value = $value === 'y' || $value === 'true';
-                } elseif ($json !== null) {
-                    $value = $json;
-                }
-                $chart_id_parsed[$key] = $value;
-            }
-            $data['queue'][$count]['chart_id'] = $chart_id_parsed;
-            $count++;
-        }
-        return $this->json([
-            'success' => true,
-            'total' => count($data),
-            'data' => $data
-        ]);
-    }
-
-    /**
-     * @param Request $request
-     * @return Response
-     * @throws Exception if there is a problem authorizing the current user.
-     */
-    #[Route('/savedchartsreports', methods: ['GET'])]
-    public function getSavedChartReports(Request $request): Response
-    {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = $this->authorize($request);
-        // fetch charts
-        $queries = new \UserStorage($user, 'queries_store');
-        $data = $queries->get();
-        foreach ($data as &$query) {
-            $query['name'] = htmlspecialchars($query['name'], ENT_COMPAT, 'UTF-8', false);
-            $query['type'] = 'Chart';
-        }
-        // fetch reports
-        $rm = new \XDReportManager($user);
-        $reports = $rm->fetchReportTable();
-        foreach ($reports as &$report) {
-            $tmp = [];
-            $tmp['type'] = 'Report';
-            $tmp['name'] = $report['report_name'];
-            $tmp['chart_count'] = $report['chart_count'];
-            $tmp['charts_per_page'] = $report['charts_per_page'];
-            $tmp['creation_method'] = $report['creation_method'];
-            $tmp['report_delivery'] = $report['report_delivery'];
-            $tmp['report_format'] = $report['report_format'];
-            $tmp['report_id'] = $report['report_id'];
-            $tmp['report_name'] = $report['report_name'];
-            $tmp['report_schedule'] = $report['report_schedule'];
-            $tmp['report_title'] = $report['report_title'];
-            $tmp['ts'] = $report['last_modified'];
-            $tmp['config'] = $report['report_id'];
-            $data[] = $tmp;
-        }
-        return $this->json([
-            'success' => true,
-            'total' => count($data),
-            'data' => $data
-        ]);
-    }
-
-    /**
-     * @param Request $request
-     * @return Response
+     * @throws BadRequestHttpException
+     * @throws Exception
      */
     #[Route('/viewedUserTour', methods: ['POST'])]
     public function setViewedUserTour(Request $request): Response
@@ -321,32 +257,149 @@ class DashboardController extends BaseController
 
         $storage = new \UserStorage($user, 'viewed_user_tour');
 
-        return $this->json([
+        return $this->json(array(
             'success' => true,
             'total' => 1,
             'msg' => $storage->upsert(0, ['viewedTour' => $viewedTour])
-        ]);
+        ));
     }
-
     /**
+     * Get charts based on role.
      *
      * @param Request $request
      * @return Response
+     * @throws NotFoundHttpException
+     * @throws Exception if there is a problem authorizing the current user.
+     */
+    #[Route('/rolereport', methods: ['GET'])]
+    public function getRoleReport(Request $request): Response
+    {
+        $user = $this->authorize($request);
+        $role = $user->getMostPrivilegedRole()->getName();
+        $report_id_suffix = 'autogenerated-' . $role;
+        $report_id = $user->getUserID() . '-' . $report_id_suffix;
+        if (isset($user)) {
+            $userReport = null;
+            $rm = new \XDReportManager($user);
+            $reports = $rm->fetchReportTable();
+            foreach ($reports as &$report) {
+                if ($report['report_id'] === $report_id) {
+                    $userReport = $report;
+                }
+            }
+            if (is_null($userReport)) {
+                $availTemplates = $rm::enumerateReportTemplates([$role], 'Dashboard Tab Report');
+                if (empty($availTemplates)) {
+                    throw new NotFoundHttpException("No dashboard tab report template available for $role");
+                }
+
+                $template = $rm::retrieveReportTemplate($user, $availTemplates[0]['id']);
+                $template->buildReportFromTemplate($_REQUEST, $report_id_suffix);
+                $reports = $rm->fetchReportTable();
+                foreach ($reports as &$report) {
+                    if ($report['report_id'] === $report_id) {
+                        $userReport = $report;
+                    }
+                }
+            }
+            $data = $rm->loadReportData($userReport['report_id']);
+            $count = 0;
+            foreach ($data['queue'] as $queue) {
+                $chart_id = explode("&", $queue['chart_id']);
+                $chart_id_parsed = array();
+                foreach ($chart_id as $value) {
+                    list($key, $value) = explode("=", $value);
+                    $key = urldecode($key);
+                    $value = urldecode($value);
+                    $json = json_decode($value, true);
+
+                    if ($key === 'timeseries') {
+                        $value = $value === 'y' || $value === 'true';
+                    } elseif ($json !== null) {
+                        $value = $json;
+                    }
+                    $chart_id_parsed[$key] = $value;
+                }
+                $data['queue'][$count]['chart_id'] = $chart_id_parsed;
+                $count++;
+            }
+            return $this->json(array(
+                'success' => true,
+                'total' => count($data),
+                'data' => $data
+            ));
+        }
+    }
+
+    /**
+     * Get stored value for if a user should view the help tour or not
+     *
+     * @param Request $request
+     * @return Response
+     * @throws Exception
      */
     #[Route('/viewedUserTour', methods: ['GET'])]
     public function getViewedUserTour(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = $this->authorize($request);
         $storage = new \UserStorage($user, 'viewed_user_tour');
-        return $this->json([
+        return $this->json(array(
             'success' => true,
             'total' => 1,
             'data' => $storage->get()
-        ]);
+        ));
     }
 
     /**
+     * Get saved charts and reports.
+     *
+     * @param Request $request
+     * @return Response
+     * @throws Exception if there is a problem authorizing the current user.
+     */
+    #[Route('/savedchartsreports', methods: ['GET'])]
+    public function getSavedChartReports(Request $request): Response
+    {
+        $user = $this->authorize($request);
+        if (isset($user)) {
+            // fetch charts
+            $queries = new \UserStorage($user, 'queries_store');
+            $data = $queries->get();
+            foreach ($data as &$query) {
+                $query['name'] = htmlspecialchars($query['name'], ENT_COMPAT, 'UTF-8', false);
+                $query['type'] = 'Chart';
+            }
+            // fetch reports
+            $rm = new \XDReportManager($user);
+            $reports = $rm->fetchReportTable();
+            foreach ($reports as &$report) {
+                $tmp = array();
+                $tmp['type'] = 'Report';
+                $tmp['name'] = $report['report_name'];
+                $tmp['chart_count'] = $report['chart_count'];
+                $tmp['charts_per_page'] = $report['charts_per_page'];
+                $tmp['creation_method'] = $report['creation_method'];
+                $tmp['report_delivery'] = $report['report_delivery'];
+                $tmp['report_format'] = $report['report_format'];
+                $tmp['report_id'] = $report['report_id'];
+                $tmp['report_name'] = $report['report_name'];
+                $tmp['report_schedule'] = $report['report_schedule'];
+                $tmp['report_title'] = $report['report_title'];
+                $tmp['ts'] = $report['last_modified'];
+                $tmp['config'] = $report['report_id'];
+                $data[] = $tmp;
+            }
+            return $this->json(array(
+                'success' => true,
+                'total' => count($data),
+                'data' => $data
+            ));
+        }
+    }
+
+    /**
+     * Retrieve summary statistics
+     *
      * @param Request $request
      * @return Response
      * @throws Exception
@@ -354,11 +407,7 @@ class DashboardController extends BaseController
     #[Route('/statistics', methods: ['GET'])]
     public function getStatistics(Request $request): Response
     {
-        try {
-            $user = $this->authorize($request);
-        } catch (Exception $e) {
-            $user = XDUser::getPublicUser();
-        }
+        $user = $this->getXDUser($request->getSession());
 
         $aggregationUnit = $request->get('aggregation_unit', 'auto');
 
@@ -367,13 +416,11 @@ class DashboardController extends BaseController
 
         $this->checkDateRange($startDate, $endDate);
 
-        $this->logger->debug('Date Range is Copacetic!');
         // This try/catch block is intended to replace the "Base table or
         // view not found: 1146 Table 'modw_aggregates.jobfact_by_day'
         // doesn't exist" error message with something more informative for
         // Open XDMoD users.
         try {
-            $this->logger->debug('Running Aggregate Query!');
             $query = new \DataWarehouse\Query\AggregateQuery(
                 'Jobs',
                 $aggregationUnit,
@@ -385,7 +432,6 @@ class DashboardController extends BaseController
 
             $result = $query->execute();
         } catch (PDOException $e) {
-            $this->logger->debug('Exception while running query: %s', buildError($e));
             if ($e->getCode() === '42S02' && strpos($e->getMessage(), 'modw_aggregates.jobfact_by_') !== false) {
                 $msg = 'Aggregate table not found, have you ingested your data?';
                 throw new Exception($msg);
@@ -393,53 +439,26 @@ class DashboardController extends BaseController
                 throw $e;
             }
         } catch (Exception $e) {
-            $this->logger->debug('Exception while running query: %s', buildError($e));
             throw new BadRequestHttpException($e->getMessage());
         }
 
-        $this->logger->debug('Successfully ran query!');
         $rawRoles = XdmodConfiguration::assocArrayFactory('roles.json', CONFIG_DIR);
 
         $mostPrivileged = $user->getMostPrivilegedRole()->getName();
         $formats = $rawRoles['roles'][$mostPrivileged]['statistics_formats'];
 
-        $this->logger->debug('Returning Data');
         return $this->json(
-            [
+            array(
                 'totalCount' => 1,
                 'success' => true,
                 'message' => '',
                 'formats' => $formats,
                 'data' => [$result]
-            ]
+            )
         );
     }
 
-    /*
-     * Get the column layout manager for the user
-     *
-     * @return \CCR\ColumnLayout
-     */
-    /**
-     * @param XDUser $user
-     * @return ColumnLayout
-     */
-    private function getLayout(XDUser $user): ColumnLayout
-    {
-        $defaultLayout = null;
-        $defaultColumnCount = 2;
 
-        if ($user->isPublicUser() === false) {
-            $layoutStore = new \UserStorage($user, 'summary_layout');
-            $record = $layoutStore->getById(0);
-            if ($record) {
-                $defaultLayout = $record['layout'];
-                $defaultColumnCount = $record['columns'];
-            }
-        }
-
-        return new ColumnLayout($defaultColumnCount, $defaultLayout);
-    }
 
     /**
      * Checks that the `$[start|end]Date` values are valid ( `Y-m-d` ) dates and that `$startDate`
@@ -452,12 +471,8 @@ class DashboardController extends BaseController
      */
     protected function checkDateRange($startDate, $endDate)
     {
-        $this->logger->debug('Checking Date Rage');
         $startTimestamp = $this->getTimestamp($startDate, 'start_date');
         $endTimestamp = $this->getTimestamp($endDate, 'end_date');
-
-        $this->logger->debug(sprintf('Start Timestamp: %s', $startTimestamp));
-        $this->logger->debug(sprintf('End Timestamp: %s', $endTimestamp));
 
         if ($startTimestamp > $endTimestamp) {
             throw new BadRequestHttpException('Start Date must not be after End Date');
@@ -476,44 +491,23 @@ class DashboardController extends BaseController
      */
     protected function getTimestamp($date, $paramName = 'date', $format = 'Y-m-d')
     {
-        $this->logger->debug(sprintf('Getting Timestamp for %s %s', $date, $format));
-
         $parsed = date_parse_from_format($format, $date);
-        $this->logger->debug(sprintf('Parsed: %s', var_export($parsed, true)));
+
         if ($parsed['year'] === false || $parsed['month'] === false || $parsed['day'] === false) {
-            $this->logger->debug(sprintf('Unable to parse %s', $paramName));
             throw new BadRequestHttpException("Unable to parse $paramName");
         }
         $date = mktime(
             $parsed['hour'] !== false ? $parsed['hour'] : 0,
             $parsed['minute'] !== false ? $parsed['minute'] : 0,
-            $parsed['second'] !== false ? $parsed['second' ] : 0,
+            $parsed['second'] !== false ? $parsed['second'] : 0,
             $parsed['month'],
             $parsed['day'],
             $parsed['year']
         );
-        $this->logger->debug(sprintf('Date: %s', var_export($date, true)));
         if ($date === false || $parsed['error_count'] > 0) {
-            $this->logger->debug('Unable to get timestamp!');
             throw new BadRequestHttpException("Unable to parse $paramName");
         }
 
-        $this->logger->debug('Successfully made timestamp!');
         return $date;
-    }
-
-    /**
-     * @param XDUser $user
-     * @return array
-     */
-    private function getConfigVariables(XDUser $user): array
-    {
-        $person_id = $user->getPersonID(true);
-        $obj_warehouse = new \XDWarehouse();
-
-        return [
-            'PERSON_ID' => $person_id,
-            'PERSON_NAME' => $obj_warehouse->resolveName($person_id)
-        ];
     }
 }
