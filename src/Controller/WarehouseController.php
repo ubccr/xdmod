@@ -64,60 +64,60 @@ class WarehouseController extends BaseController
      *
      * @var array
      */
-    private $supportedTypes = [
+    private $supportedTypes = array(
         \DataWarehouse\Query\RawQueryTypes::ACCOUNTING =>
-            [
-                'infoid' => \DataWarehouse\Query\RawQueryTypes::ACCOUNTING,
-                'dtype' => 'infoid',
-                'text' => 'Accounting data',
-                'url' => '/warehouse/search/jobs/accounting',
-                'documentation' => 'Shows information about the job that was obtained from the resource manager.
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::ACCOUNTING,
+                "dtype" => "infoid",
+                "text" => "Accounting data",
+                "url" => "/rest/v1.0/warehouse/search/jobs/accounting",
+                "documentation" => "Shows information about the job that was obtained from the resource manager.
                                   This includes timing information such as the start and end time of the job as
                                   well as administrative information such as the user that submitted the job and
-                                  the account that was charged.',
-                'type' => 'keyvaluedata',
-                'leaf' => true
-            ],
+                                  the account that was charged.",
+                "type" => "keyvaluedata",
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::BATCH_SCRIPT =>
-            [
-                'infoid' => \DataWarehouse\Query\RawQueryTypes::BATCH_SCRIPT,
-                'dtype' => 'infoid',
-                'text' => 'Job script',
-                'url' => '/warehouse/search/jobs/jobscript',
-                'documentation' => 'Shows the job batch script that was passed to the resource manager when the
-                                    job was submitted. The script is displayed verbatim.',
-                'type' => 'utf8-text',
-                'leaf' => true
-            ],
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::BATCH_SCRIPT,
+                "dtype" => "infoid",
+                "text" => "Job script",
+                "url" => "/rest/v1.0/warehouse/search/jobs/jobscript",
+                "documentation" => "Shows the job batch script that was passed to the resource manager when the
+                                    job was submitted. The script is displayed verbatim.",
+                "type" => "utf8-text",
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::EXECUTABLE =>
-            [
-                'infoid' => \DataWarehouse\Query\RawQueryTypes::EXECUTABLE,
-                'dtype' => 'infoid',
-                'text' => 'Executable information',
-                'url' => '/warehouse/search/jobs/executable',
-                'documentation' => 'Shows information about the processes that were run on the compute nodes during
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::EXECUTABLE,
+                "dtype" => "infoid",
+                "text" => "Executable information",
+                "url" => "/rest/v1.0/warehouse/search/jobs/executable",
+                "documentation" => "Shows information about the processes that were run on the compute nodes during
                                     the job. This information includes the names of the various processes and may
                                     contain information about the linked libraries, loaded modules and process
-                                    environment.',
-                'type' => 'nested',
-                'leaf' => true],
+                                    environment.",
+                "type" => "nested",
+                "leaf" => true),
         \DataWarehouse\Query\RawQueryTypes::PEERS =>
-            [
-                'infoid' => \DataWarehouse\Query\RawQueryTypes::PEERS,
-                'dtype' => 'infoid',
-                'text' => 'Peers',
-                'url' => '/warehouse/search/jobs/peers',
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::PEERS,
+                "dtype" => "infoid",
+                "text" => "Peers",
+                'url' => '/rest/v1.0/warehouse/search/jobs/peers',
                 'documentation' => 'Shows the list of other HPC jobs that ran concurrently using the same shared hardware resources.',
                 'type' => 'ganttchart',
-                'leaf' => true
-            ],
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS =>
-            [
-                'infoid' => \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS,
-                'dtype' => 'infoid',
-                'text' => 'Summary metrics',
-                'url' => '/warehouse/search/jobs/metrics',
-                'documentation' => 'shows a table with the performance metrics collected during
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS,
+                "dtype" => "infoid",
+                "text" => "Summary metrics",
+                "url" => "/rest/v1.0/warehouse/search/jobs/metrics",
+                "documentation" => "shows a table with the performance metrics collected during
                                     the job. These are typically average values over the job. The
                                     label for each row has a tooltip that describes the metric. The
                                     data are grouped into the following categories:
@@ -131,51 +131,51 @@ class WarehouseController extends BaseController
                                         <li>Network I/O Statistics: information about the data transmitted and
                                          received over the network devices.</li>
                                     </ul>
-                ',
-                'type' => 'metrics',
-                'leaf' => true
-            ],
+                ",
+                "type" => "metrics",
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::DETAILED_METRICS =>
-            [
-                'infoid' => \DataWarehouse\Query\RawQueryTypes::DETAILED_METRICS,
-                'dtype' => 'infoid',
-                'text' => 'Detailed metrics',
-                'url' => '/warehouse/search/jobs/detailedmetrics',
-                'documentation' => 'shows the data generated by the job summarization software. Please
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::DETAILED_METRICS,
+                "dtype" => "infoid",
+                "text" => "Detailed metrics",
+                "url" => "/rest/v1.0/warehouse/search/jobs/detailedmetrics",
+                "documentation" => "shows the data generated by the job summarization software. Please
                                     consult the relevant job summarization software documentation for details
-                                    about these metrics.',
-                'type' => 'detailedmetrics',
-                'leaf' => true
-            ],
+                                    about these metrics.",
+                "type" => "detailedmetrics",
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::ANALYTICS =>
-            [
-                'infoid' => \DataWarehouse\Query\RawQueryTypes::ANALYTICS,
-                'dtype' => 'infoid',
-                'text' => 'Job analytics',
-                'url' => '/warehouse/search/jobs/analytics',
-                'documentation' => 'Click the help icon on each plot to show the description of the analytic',
-                'type' => 'analytics',
-                'hidden' => true,
-                'leaf' => true
-            ],
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::ANALYTICS,
+                "dtype" => "infoid",
+                "text" => "Job analytics",
+                "url" => "/rest/v1.0/warehouse/search/jobs/analytics",
+                "documentation" => "Click the help icon on each plot to show the description of the analytic",
+                "type" => "analytics",
+                "hidden" => true,
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS =>
-            [
-                'infoid' => \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS,
-                'dtype' => 'infoid',
-                'text' => 'Timeseries',
-                'leaf' => false
-            ],
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::TIMESERIES_METRICS,
+                "dtype" => "infoid",
+                "text" => "Timeseries",
+                "leaf" => false
+            ),
         \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE =>
-            [
-                'infoid' => \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE,
-                'dtype' => 'infoid',
-                'text' => 'VM State/Events',
-                'documentation' => 'Show the lifecycle of a VM. Green signifies when a VM is active and red signifies when a VM is stopped.',
-                'url' => '/warehouse/search/cloud/vmstate',
-                'type' => 'vmstate',
-                'leaf' => true
-            ]
-    ];
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::VM_INSTANCE,
+                "dtype" => "infoid",
+                "text" => "VM State/Events",
+                "documentation" => "Show the lifecycle of a VM. Green signifies when a VM is active and red signifies when a VM is stopped.",
+                "url" => "/rest/v1.0/warehouse/search/cloud/vmstate",
+                "type" => "vmstate",
+                "leaf" => true
+            )
+    );
 
     /**
      * Retrieves the Search History for the user making the request.
@@ -197,10 +197,11 @@ class WarehouseController extends BaseController
      *   total: ... number of records in 'data' ...
      * }
      *
-     *
      * @param Request $request
      * @return Response
+     * @throws AccessDeniedHttpException
      * @throws BadRequestHttpException
+     * @throws NotFoundHttpException
      */
     #[Route('/warehouse/search/history', methods: ['GET'])]
     #[Route('{prefix}/warehouse/search/history', requirements: ['prefix' => '.*'], methods: ['GET'])]
@@ -306,11 +307,12 @@ class WarehouseController extends BaseController
                     $search['dtype'] = 'recordid';
                 }
                 return $this->json(
-                    [
+                    array(
                         'action' => $action,
                         'success' => true,
                         'data' => $search
-                    ]
+                    ),
+                    200
                 );
             }
         }
@@ -333,7 +335,9 @@ class WarehouseController extends BaseController
         $decoded = json_decode($data, true);
 
         if ($decoded === null || !isset($decoded['text'])) {
-            throw new BadRequestHttpException('Malformed request. Expected \'data.text\' to be present.');
+            throw new BadRequestHttpException(
+                'Malformed request. Expected \'data.text\' to be present.'
+            );
         }
 
         $decoded['text'] = htmlspecialchars($decoded['text'], ENT_COMPAT | ENT_HTML5);
@@ -345,13 +349,11 @@ class WarehouseController extends BaseController
      * Attempt to create a new Search History record with the provided 'data'
      *  form parameter.
      *
-     *
-     *
      * @param Request $request
-     *
      * @return Response
-     *
-     * @throws Exception
+     * @throws AccessDeniedHttpException
+     * @throws BadRequestHttpException
+     * @throws \Exception
      */
     #[Route('/warehouse/search/history', methods: ['POST'])]
     #[Route('{prefix}/warehouse/search/history', requirements: ['prefix' => '.*'], methods: ['POST'])]
@@ -372,8 +374,9 @@ class WarehouseController extends BaseController
 
         if ($created === null) {
             throw new BadRequestHttpException(
-                'Create request will exceed record storage restrictions ' .
-                '(record count limited to ' . self::MAX_RECORDS . ')'
+                "Create request will exceed record storage restrictions " .
+                "(record count limited to " .
+                self::MAX_RECORDS . ")"
             );
         }
 
@@ -383,12 +386,12 @@ class WarehouseController extends BaseController
 
 
         return $this->json(
-            [
+            array(
                 'success' => true,
                 'action' => $action,
                 'total' => count($created),
                 'results' => $created
-            ]
+            )
         );
     }
 
@@ -399,17 +402,20 @@ class WarehouseController extends BaseController
      * @param Request $request that will be used to complete the requested operation
      * @param int $id of the Search History Record to be updated.
      * @return Response
-     * @throws BadRequestHttpException|AccessDeniedHttpException|Exception
+     * @throws BadRequestHttpException
+     * @throws AccessDeniedHttpException
+     * @throws Exception
      */
     #[Route('/warehouse/search/history/{id}', requirements: ["id" => '\d+'], methods: ['POST', 'PUT'])]
     #[Route('{prefix}/warehouse/search/history/{id}', requirements: ["id" => '\d+', 'prefix' => '.*'], methods: ['POST', 'PUT'])]
     public function updateHistory(Request $request, int $id): Response
     {
-
-        $action = 'updateHistory';
         $user = $this->authorize($request);
 
+        $action = 'updateHistory';
+
         $data = $this->getSearchParams($request);
+
         $realm = $this->getStringParam($request, 'realm', true);
 
         $history = $this->getUserStore($user, $realm);
@@ -420,14 +426,16 @@ class WarehouseController extends BaseController
             $result['dtype'] = 'recordid';
         }
 
-        return $this->json(
-            [
+        $results = $this->json(
+            array(
                 'success' => true,
                 'action' => $action,
-                'total' => 1,
                 'results' => $result
-            ]
+            ),
+            200
         );
+
+        return $results;
     }
 
     /**
@@ -452,11 +460,11 @@ class WarehouseController extends BaseController
         $deleted = $history->delById($id);
 
         return $this->json(
-            [
+            array(
                 'success' => true,
                 'action' => $action,
                 'total' => $deleted
-            ]
+            )
         );
     }
 
@@ -466,7 +474,9 @@ class WarehouseController extends BaseController
      *
      * @param Request $request
      * @return Response
-     * @throws BadRequestHttpException|AccessDeniedHttpException|Exception
+     * @throws BadRequestHttpException
+     * @throws AccessDeniedHttpException
+     * @throws Exception
      */
     #[Route('/warehouse/search/history', methods: ['DELETE'])]
     #[Route('{prefix}/warehouse/search/history', requirements: ['prefix' => '.*'], methods: ['DELETE'])]
@@ -482,10 +492,10 @@ class WarehouseController extends BaseController
         $history->del();
 
         return $this->json(
-            [
+            array(
                 'success' => true,
                 'action' => $action
-            ]
+            )
         );
     }
 
@@ -493,9 +503,7 @@ class WarehouseController extends BaseController
      * Attempt to perform a search of the jobs realm with the criteria provided in the
      *
      * @param Request $request
-     *
      * @return Response
-     *
      * @throws BadRequestHttpException
      * @throws AccessDeniedException if the user executing this request does not have access to the provided realm.
      * @throws Exception if a user record is not found in the database that corresponds to the current user's username.
@@ -528,8 +536,9 @@ class WarehouseController extends BaseController
      * @param Request $request
      * @param string $action
      * @return Response
-     * @throws BadRequestHttpException|AccessDeniedHttpException|Exception if a user record is not found in the database
-     * that corresponds to the current user's username.
+     * @throws BadRequestHttpException
+     * @throws AccessDeniedHttpException
+     * @throws Exception if a user record is not found in the database that corresponds to the current user's username.
      */
     #[Route(
         "/warehouse/search/{realms}/{action}",
@@ -544,13 +553,17 @@ class WarehouseController extends BaseController
     public function searchJobsByAction(Request $request, string $action): Response
     {
         $user = $this->authorize($request);
+
         $actionName = 'searchJobsByAction';
 
         /*TODO: verify that `ucfirst` is needed */
         $realm = ucfirst($this->getStringParam($request, 'realms'));
 
         $jobId = $this->getIntParam($request, 'jobid');
-        return $this->processJobSearchByAction($request, $user, $action, $realm, $jobId, $actionName);
+
+        $results = $this->processJobSearchByAction($request, $user, $action, $realm, $jobId, $actionName);
+
+        return $results;
     }
 
     /**
@@ -709,11 +722,11 @@ class WarehouseController extends BaseController
             unset($val[$config->group_by . '_order_id']);
         }
         return $this->json(
-            [
+            array(
                 'results' => $results,
                 'total' => $dataset->getTotalPossibleCount(),
                 'success' => true
-            ]
+            )
         );
     }
 
@@ -736,18 +749,13 @@ class WarehouseController extends BaseController
         $user = $this->authorize($request);
 
         // Get parameters.
-        $realm = $this->getStringParam($request, 'realm');
+        $realmParam = $this->getStringParam($request, 'realm');
 
         // Get the dimensions for the query group, realm, and user's active role.
-        try {
-            $groupBys = Acls::getQueryDescripters($user, $realm);
-        } catch (Exception $e) {
-            return $this->json([
-                'success' => false,
-                'message' => $e->getMessage()
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-
+        $groupBys = Acls::getQueryDescripters(
+            $user,
+            $realmParam
+        );
 
         $dimensionsToReturn = array();
         foreach ($groupBys as $groupByName => $queryDescriptors) {
@@ -765,10 +773,10 @@ class WarehouseController extends BaseController
         }
 
         // Return the dimensions found.
-        return $this->json([
+        return $this->json(array(
             'success' => true,
             'results' => $dimensionsToReturn
-        ]);
+        ));
     }
 
     /**
@@ -778,12 +786,10 @@ class WarehouseController extends BaseController
      *
      * @param Request $request The request used to make this call.
      * @param string $dimension
-     *
      * @return Response A response containing the following info:
      *                  success: A boolean indicating if the call was successful.
      *                  results: An object containing data about
      *                           the dimension values retrieved.
-     *
      * @throws Exception
      */
     #[Route('/warehouse/dimensions/{dimension}', requirements: ["dimension" => "\w+"], methods: ['GET'])]
@@ -821,10 +827,11 @@ class WarehouseController extends BaseController
             $dimensionValue['short_name'] = html_entity_decode($dimensionValue['short_name']);
         }
 
-        return $this->json([
+        // Return the found dimension values.
+        return $this->json(array(
             'success' => true,
             'results' => $dimensionValuesData
-        ]);
+        ));
     }
 
     /**
@@ -925,13 +932,13 @@ class WarehouseController extends BaseController
         }
 
         // Return the quick filters.
-        return $this->json([
+        return $this->json(array(
             'success' => true,
-            'results' => [
+            'results' => array(
                 'dimensionNames' => $dimensionIdsToNames,
                 'filters' => $filters
-            ]
-        ]);
+            )
+        ));
     }
 
     /**
@@ -939,18 +946,13 @@ class WarehouseController extends BaseController
      *
      * @param Request $request
      * @param string $dimensionId
-     *
      * @return Response
-     *
      * @throws Exception if there is no logged in user.
      */
     #[Route('/warehouse/dimensions/{dimensionId}/name', requirements: ["dimensionId" => "(\w|_|-])+"], methods: ['GET'])]
     public function getDimensionName(Request $request, string $dimensionId): Response
     {
-        /*TODO: verify that this endpoint is for authorized users only. */
-        $user = $this->authorize($request);
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
-
+        $user = $this->getUserFromRequest($request);
         $dimensionName = MetricExplorer::getDimensionName($user, $dimensionId);
         $success = !empty($dimensionName);
 
@@ -979,9 +981,7 @@ class WarehouseController extends BaseController
      * @param Request $request
      * @param string $dimensionId
      * @param string $valueId
-     *
      * @return Response
-     *
      * @throws Exception
      */
     #[Route(
@@ -991,9 +991,7 @@ class WarehouseController extends BaseController
     )]
     public function getDimensionValueName(Request $request, string $dimensionId, string $valueId): Response
     {
-        // TODO: verify that this should be accessible by unauthorized users.
-        // $user = $this->authorize($request);
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->getUserFromRequest($request);
         $valueName = MetricExplorer::getDimensionValueName($user, $dimensionId, $valueId);
         $success = !empty($valueName);
 
@@ -1035,10 +1033,10 @@ class WarehouseController extends BaseController
 
         // Return the available aggregation units.
         $aggregation_units = \DataWarehouse\QueryBuilder::getAggregationUnits();
-        return $this->json([
+        return $this->json(array(
             'success' => true,
             'results' => array_keys($aggregation_units),
-        ]);
+        ));
     }
 
     /**
@@ -1060,10 +1058,10 @@ class WarehouseController extends BaseController
 
         // Return the available dataset types.
         $datasetTypes = \DataWarehouse\QueryBuilder::getDatasetTypes();
-        return $this->json([
+        return $this->json(array(
             'success' => true,
             'results' => $datasetTypes,
-        ]);
+        ));
     }
 
     /**
@@ -1080,6 +1078,8 @@ class WarehouseController extends BaseController
     #[Route('/warehouse/dataset/output_formats', methods: ['GET'])]
     public function getDatasetOutputFormats(Request $request): Response
     {
+        $this->authorize($request);
+
         // Return the available dataset output formats.
         return $this->json(array(
             'success' => true,
@@ -1202,6 +1202,7 @@ class WarehouseController extends BaseController
     #[Route('/warehouse/plots', methods: ['GET'])]
     public function getPlots(Request $request): Response
     {
+
         $this->authorize($request);
 
         return $this->getDatasets($request);
@@ -1317,9 +1318,7 @@ class WarehouseController extends BaseController
      * @param string $realm
      * @param ?int $jobId
      * @param string $actionName
-     *
      * @return Response
-     *
      * @throws AccessDeniedException if the provided user does not have access to the specified realm.
      * @throws Exception if executable information unavailable for the provided jobId.
      */
@@ -1376,11 +1375,11 @@ class WarehouseController extends BaseController
                 break;
             default:
                 $results = $this->json(
-                    [
+                    array(
                         'success' => false,
                         'action' => $actionName,
                         'message' => "Unable to process the requested operation. Unsupported action $action."
-                    ],
+                    ),
                     400
                 );
                 break;
@@ -1390,6 +1389,8 @@ class WarehouseController extends BaseController
     }
 
     /**
+     * Return data about a job's peers.
+     *
      * @param XDUser $user the logged in user.
      * @param string $realm data realm.
      * @param int $jobId the unique identifier for the job.
@@ -1555,7 +1556,7 @@ class WarehouseController extends BaseController
      */
     private function arrayToStore(array $values): array
     {
-        return array(array('key' => '.', 'value' => '', 'expanded' => true, 'children' => $this->atosRecurse($values)));
+            return array(array("key" => ".", "value" => "", "expanded" => true, "children" => $this->atosrecurse($values, false) ));
     }
 
     /**
@@ -1585,6 +1586,7 @@ class WarehouseController extends BaseController
      * @param int $nodeId
      * @param int $infoId
      * @return Response
+     * @throws BadRequestHttpException
      * @noinspection PhpTooManyParametersInspection
      */
     private function processJobNodeTimeSeriesRequest(
