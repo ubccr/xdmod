@@ -149,6 +149,16 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 'type' => 'ganttchart',
                 "leaf" => true
             ),
+        \DataWarehouse\Query\RawQueryTypes::ARRAY_PEERS =>
+            array(
+                "infoid" => \DataWarehouse\Query\RawQueryTypes::ARRAY_PEERS,
+                "dtype" => "infoid",
+                "text" => "Job Array Peers",
+                'url' => '/rest/v1.0/warehouse/search/jobs/array',
+                'documentation' => 'Shows the list of other HPC jobs that were part of the same job array.',
+                'type' => 'ganttchart',
+                "leaf" => true
+            ),
         \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS =>
             array(
                 "infoid" => \DataWarehouse\Query\RawQueryTypes::NORMALIZED_METRICS,
@@ -1437,6 +1447,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 $limit = $this->getIntParam($request, 'limit', true);
                 $results = $this->getJobPeers($app, $user, $realm, $jobId, $start, $limit);
                 break;
+            case 'array':
+                $start = $this->getIntParam($request, 'start', true);
+                $limit = $this->getIntParam($request, 'limit', true);
+                $results = $this->getJobArrayPeers($app, $user, $realm, $jobId, $start, $limit);
+                break;
             case 'executable':
                 $results = $this->getJobExecutable($app, $user, $realm, $jobId, $action, $actionName);
                 break;
@@ -1466,6 +1481,83 @@ class WarehouseControllerProvider extends BaseControllerProvider
         }
 
         return $results;
+    }
+
+    /**
+     * Return data about a job's array peers.
+     *
+     * @param Application $app The router application.
+     * @param XDUser $user the logged in user.
+     * @param $realm data realm.
+     * @param $jobId the unique identifier for the job.
+     * @param $start the start offset (for store paging).
+     * @param $limit the number of records to return (for store paging).
+     * @return json in Extjs.store parsable format.
+     */
+    protected function getJobArrayPeers(Application $app, XDUser $user, $realm, $jobId, $start, $limit)
+    {
+        $jobdata = $this->getJobDataSet($user, $realm, $jobId, 'internal');
+        if (!$jobdata->hasResults()) {
+            throw new NotFoundException();
+        }
+        $jobresults = $jobdata->getResults();
+        $thisjob = $jobresults[0];
+
+        $i = 0;
+
+        $result = array(
+            'series' => array(
+                array(
+                    'name' => 'Walltime',
+                    'data' => array(
+                        array(
+                            'x' => $i++,
+                            'low' => $thisjob['start_time_ts'] * 1000.0,
+                            'high' => $thisjob['end_time_ts'] * 1000.0
+                        )
+                    )
+                ),
+                array(
+                    'name' => 'Walltime',
+                    'data' => array()
+                )
+            ),
+            'categories' => array(
+                'Current'
+            ),
+            'schema' => array(
+                'timezone' => $thisjob['timezone'],
+                'ref' => array(
+                    'realm' => $realm,
+                    'jobid' => $jobId,
+                    "text" => $thisjob['resource'] . '-' . $thisjob['local_job_id']
+                )
+            )
+        );
+
+        $dataset = $this->getJobDataSet($user, $realm, $jobId, 'array');
+        foreach ($dataset->getResults() as $index => $jobpeer) {
+            if (($index >= $start) && ($index < ($start + $limit))) {
+                $result['series'][1]['data'][] = array(
+                    'x' => $i++,
+                    'low' => $jobpeer['start_time_ts'] * 1000.0,
+                    'high' => $jobpeer['end_time_ts'] * 1000.0,
+                    'ref' => array(
+                        'realm' => $realm,
+                        'jobid' => $jobpeer['jobid'],
+                        'local_job_id' => $jobpeer['local_job_id'],
+                        'resource' => $jobpeer['resource']
+                    )
+                );
+                $result['categories'][] = $jobpeer['resource'] . '-' . $jobpeer['local_job_id'];
+            }
+        }
+
+        return  $app->json(array(
+            'success' => true,
+            'data' => array($result),
+            'total' => count($dataset->getResults())
+        ));
     }
 
     /**
