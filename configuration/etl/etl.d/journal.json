@@ -1,0 +1,27 @@
+{
+    "defaults": {
+        "global": {
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Logger database",
+                    "config": "logger",
+                    "schema": "modw_etl",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        }
+    },
+    "etl-journal-bootstrap": [
+        {
+            "name": "manage-tables",
+            "description": "Manage mod_logger tables",
+            "namespace": "ETL\\Maintenance",
+            "class": "ManageTables",
+            "options_class": "MaintenanceOptions",
+            "definition_file_list": [
+                "journal/log.json"
+            ]
+        }
+    ]
+}
