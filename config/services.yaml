@@ -45,7 +45,6 @@ services:
         namespace: CCR\
         resource: '../src/'
         exclude:
-            - '../src/DependencyInjection/'
             - '../src/Entity/'
             - '../src/Kernel.php'
     legacy_code:
