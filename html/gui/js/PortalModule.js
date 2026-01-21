@@ -3,17 +3,17 @@
    XDMoD.PortalModule
 
    Author: Ryan Gentner
-   Last Updated: Wednesday, June 12, 2013 
-   
+   Last Updated: Wednesday, June 12, 2013
+
    Each of the tabs / modules in XDMoD extend XDMoD.PortalModule.  This class provides functional UI components
    which are common among most tabs / modules, such as
-   
+
    - Duration selector
    - Filter dialog (?)
    - Display menu (?)
    - Export menu
    - Add to report checkbox
-   
+
 */
 
 Ext.namespace('XDMoD');
@@ -24,7 +24,8 @@ XDMoD.ToolbarItem = {
    EXPORT_MENU: 2,
    PRINT_BUTTON: 3,
    REPORT_CHECKBOX: 4,
-   CHART_LINK_BUTTON: 5
+   CHART_LINK_BUTTON: 5,
+   OPEN_AS_JUPYTER_NB_BUTTON: 6
    
 };//XDMoD.ToolbarItem
 
@@ -59,7 +60,8 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
       exportMenu: false,
       printButton: false,
       reportCheckbox: false,
-      chartLinkButton: false
+      chartLinkButton: false,
+      openAsNBButton: false
       
    },//toolbarItems
    
@@ -72,7 +74,8 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
       XDMoD.ToolbarItem.EXPORT_MENU,
       XDMoD.ToolbarItem.PRINT_BUTTON,
       XDMoD.ToolbarItem.REPORT_CHECKBOX,
-      XDMoD.ToolbarItem.CHART_LINK_BUTTON
+      XDMoD.ToolbarItem.CHART_LINK_BUTTON,
+      XDMoD.ToolbarItem.OPEN_AS_JUPYTER_NB_BUTTON
 
    ],   
 
@@ -212,6 +215,26 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
 
          return chartLinkButton;
      }; // createChartLinkButton
+
+     var createOpenAsNBButton = function (module_id) {
+         var openAsNBButton = new Ext.Button({
+
+            text: 'Open in Jupyter',
+            iconCls: 'chart_bar_link',
+            tooltip: 'Open as a Jupyter Notebook',
+            scope: this,
+            handler: function () {
+               self.fireEvent('open_in_nb');
+            } // handler
+
+      }); // openAsNBButton
+
+      self.getOpenAsNBButton = function () {
+          return openAsNBButton;
+      };
+
+      return openAsNBButton;
+  }; // createOpenAsNBButton
 
      // ----------------------------------------
       var moduleConfig = {
@@ -362,6 +385,17 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
                         }
                         moduleConfig.tbar.addItem(createChartLinkButton(self.module_id));
                   }
+
+                  break;
+
+                  case XDMoD.ToolbarItem.OPEN_AS_JUPYTER_NB_BUTTON:
+
+                     if (self.toolbarItems.openAsNBButton === true) {
+                        if (moduleConfig.tbar.items.getCount() > 1 && employSeparator) {
+                           moduleConfig.tbar.addItem('-');
+                        }
+                        moduleConfig.tbar.addItem(createOpenAsNBButton(self.module_id));
+                     }
 
                   break;
 
