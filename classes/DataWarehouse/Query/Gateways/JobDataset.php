@@ -122,7 +122,8 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
             }
         } else {
             $this->addField(new TableField($factTable, "job_id", "jobid"));
-            $this->addField(new TableField($factTable, "local_jobid", "local_job_id"));
+            $fta = $factTable->getAlias();
+            $this->addField(new FormulaField("CASE WHEN $fta.local_job_array_index = -1 THEN $fta.local_jobid ELSE CONCAT($fta.local_jobid, '[', $fta.local_job_array_index, ']') END", "provider_job_id"));
 
             $rt = new Table(new Schema("modw"), "resourcefact", "rf");
             $this->joinTo($rt, "task_resource_id", "code", "resource");
