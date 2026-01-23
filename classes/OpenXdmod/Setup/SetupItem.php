@@ -6,7 +6,6 @@
 namespace OpenXdmod\Setup;
 
 use CCR\Kernel;
-use http\Exception\RuntimeException;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\BufferedOutput;
@@ -283,12 +282,12 @@ abstract class SetupItem
         if (empty($command)) {
             throw new \LogicException('Command must not be empty.');
         }
-        
+
         try {
             $envPath = BASE_DIR . "/.env";
             (new Dotenv())->bootEnv($envPath);
         } catch(\Exception $e) {
-            throw new RuntimeException('Error booting the Symfony Environment', $e->getCode(), $e);
+            throw new \RuntimeException('Error booting the Symfony Environment', $e->getCode(), $e);
         }
 
         // Setup our Kernel / Application.
