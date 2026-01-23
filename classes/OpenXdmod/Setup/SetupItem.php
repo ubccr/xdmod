@@ -5,6 +5,12 @@
 
 namespace OpenXdmod\Setup;
 
+use CCR\Kernel;
+use http\Exception\RuntimeException;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Dotenv\Dotenv;
 use xd_utilities;
 use CCR\Json;
 use Xdmod\Template;
@@ -263,5 +269,45 @@ abstract class SetupItem
         }
 
         return $output;
+    }
+
+    /**
+     * @param string $command the Symfony command to run.
+     * @param array $options of options to supply to the Symfony command
+     * @return array<int,string> returns an array of [statusCode, output] from the given command.
+     * @throws \LogicException if the command is empty.
+     * @throws \Exception if an error is encountered while running the specified command.
+     */
+    protected function executeSymfonyCommand(string $command, string $env = 'prod', bool $debug = false, array $options = []): array
+    {
+        if (empty($command)) {
+            throw new \LogicException('Command must not be empty.');
+        }
+        
+        try {
+            $envPath = BASE_DIR . "/.env";
+            (new Dotenv())->bootEnv($envPath);
+        } catch(\Exception $e) {
+            throw new RuntimeException('Error booting the Symfony Environment', $e->getCode(), $e);
+        }
+
+        // Setup our Kernel / Application.
+        $kernel = new Kernel($env, $debug);
+        $application = new Application($kernel);
+
+        // we set this so that it doesn't `exit` whatever php script is calling this function.
+        $application->setAutoExit(false);
+
+        // Set the Symfony command that is to be executed.
+        $options['command'] = $command;
+
+        $input = new ArrayInput($options);
+        $output = new BufferedOutput();
+        try {
+            $statusCode = $application->run($input, $output);
+            return [$statusCode, $output->fetch()];
+        } catch(\Exception $e) {
+            throw new \RuntimeException("Error while running Symfony Command", $e->getCode(), $e);
+        }
     }
 }
