@@ -5,6 +5,7 @@
 
 namespace OpenXdmod\Setup;
 
+use CCR\Helper\SymfonyCommandHelper;
 use Xdmod\Template;
 
 /**
@@ -135,11 +136,7 @@ EOT
 
         // Make sure to clear the cache before dumping the dotenv so we start clean.
         try {
-            /** @var int $statusCode */
-            list($statusCode, $output) = $this->executeSymfonyCommand('cache:clear');
-            if ($statusCode !== 0) {
-                throw new \RuntimeException("Error Running cache:clear\n$output");
-            }
+            SymfonyCommandHelper::executeCommand('cache:clear');
         } catch (\Exception $e) {
             throw new \RuntimeException('Error occurred executing cache:clear', $e);
         }
@@ -148,11 +145,7 @@ EOT
         // Dump dotenv data so we don't read .env each time in prod.
         // Note: this means that if you want to start debugging stuff you'll need to delete the generated .env.
         try {
-            /** @var int $statusCode */
-            list($statusCode, $output) = $this->executeSymfonyCommand("dotenv:dump");
-            if ($statusCode !== 0) {
-                throw new \RuntimeException("Error Running dotenv:dump\n$output");
-            }
+            SymfonyCommandHelper::executeCommand("dotenv:dump");
         } catch (\Exception $e) {
             throw new \RuntimeException('Error occurred executing dotenv:dump', $e);
         }
