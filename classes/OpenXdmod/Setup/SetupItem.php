@@ -271,8 +271,10 @@ abstract class SetupItem
     }
 
     /**
+     * Execute the provided Symfony $command.
+     *
      * @param string $command the Symfony command to run.
-     * @param array $options of options to supply to the Symfony command
+     * @param array $options for the Symfony command.
      * @return array<int,string> returns an array of [statusCode, output] from the given command.
      * @throws \LogicException if the command is empty.
      * @throws \Exception if an error is encountered while running the specified command.
