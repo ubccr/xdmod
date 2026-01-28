@@ -48,8 +48,6 @@ class SessionSingleton
             self::$session->start();
         }
     }
-
-
 }
 
 /**
@@ -71,6 +69,7 @@ function start_session()
         case PHP_SESSION_ACTIVE:
         case PHP_SESSION_DISABLED:
         default:
+            // Else don't worry about it as these are the only session status possible.
     }
 
 }
