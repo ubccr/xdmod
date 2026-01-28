@@ -899,6 +899,4 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
             echo "$message\n";
         }
     }
-
-
 }
