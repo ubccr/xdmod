@@ -115,9 +115,9 @@ use CCR\DB;
 			}
 
             // This has been added due to urlencode no longer supporting nulls ( PHP 8.2 )
-            if (is_null($chartTitle)) {
+        if (is_null($chartTitle)) {
                 $chartTitle = '';
-            }
+        }
 
 			$chartIdentifier = str_replace("title=".$chartTitle, "title=".urlencode($chartTitle), $chartIdentifier);
 
