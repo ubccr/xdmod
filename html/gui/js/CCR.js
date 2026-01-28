@@ -1117,10 +1117,6 @@ CCR.BrowserWindow = Ext.extend(Ext.Window, {
 
 // -----------------------------------
 
-var logoutCallback = function () {
-    location.href = 'index.php';
-};
-
 CCR.xdmod.ui.actionLogout = function () {
     if (CCR.xdmod.ui.isImpersonating) {
         CCR.xdmod.ui.stopImpersonation();
@@ -1130,22 +1126,22 @@ CCR.xdmod.ui.actionLogout = function () {
             url: '/logout',
             method: 'POST',
             success: function () {
-                location.href = "/";
+                window.location.href = "/";
             }
         });
     }
 }; //actionLogout
 
-CCR.xdmod.ui.stopImpersonation = function() {
+CCR.xdmod.ui.stopImpersonation = function () {
     XDMoD.TrackEvent('Portal', 'Exiting Impersonation');
     Ext.Ajax.request({
-        url: '/' + '?_switch_user=_exit&token=' + XDMoD.REST.token,
+        url: '/?_switch_user=_exit&token=' + XDMoD.REST.token,
         method: 'GET',
         success: function () {
-            location.reload();
+            window.location.reload();
         }
     });
-}
+};
 
 
 // Used in html/gui/general/login.php
@@ -1234,7 +1230,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
                 returnTo: '/' + document.location.hash
             },
             success: function (response) {
-                document.location = Ext.decode('"' + response.responseText + '"');
+                document.location = Ext.decode(`"${response.responseText}"`);
             },
             failure: function (response, opts) {
                 var message = 'Please contact the XDMoD administrator.';
@@ -1401,7 +1397,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
                         returnTo: '/' + document.location.hash
                     },
                     success: function (response) {
-                        var destination = Ext.decode('"' + response.responseText + '"');
+                        var destination = Ext.decode(`"${response.responseText}"`);
                         document.location = destination;
                     },
                     failure: function (response, opts) {
