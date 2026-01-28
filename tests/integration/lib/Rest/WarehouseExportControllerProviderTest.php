@@ -191,7 +191,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
      * @dataProvider provideTokenAuthTestData
      */
     public function testGetRealmsTokenAuth($role, $tokenType) {
-        $find_index_by_id = function($value, $array) {
+        $find_index_by_id = function ($value, $array) {
             $i = 0;
             foreach ($array as $item) {
                 if (array_key_exists('id', $item) && $item['id'] === $value) {
@@ -212,7 +212,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                 'endpoint_type' => 'rest',
                 'authentication_type' => 'token_optional'
             ],
-            parent::validateSuccessResponse(function ($body, $assertMessage) use($find_index_by_id) {
+            parent::validateSuccessResponse(function ($body, $assertMessage) use ($find_index_by_id) {
                 $this->assertSame(3, $body['total'], $assertMessage);
                 foreach (['Jobs' => 31, 'Cloud' => 19, 'ResourceSpecifications' =>16] as $realmName => $fieldCount) {
                     // We can't assume that the data returned from export/realms will always be in the same order so we
