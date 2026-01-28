@@ -644,9 +644,13 @@ Usage: xdmod-admin [-v]
     --load FILENAME
         Load information from file FILENAME (only used for users).
 
+    --delete RESOURCE_NAME
+        Delete Jobs for a specified resource (only used for jobs)
 Examples:
 
     xdmod-admin --jobs --truncate
+
+    xdmod-admin --jobs --delete RESOURCE_NAME
 
     xdmod-admin --resources --list
 
