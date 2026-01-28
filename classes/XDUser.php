@@ -207,8 +207,7 @@ SQL;
         array $ssoAttrs = array(),
         $sticky = false,
         $hasher = null
-    )
-    {
+    ) {
         $this->hasher = $hasher;
         $this->_pdo = DB::factory('database');
 
@@ -979,7 +978,7 @@ SQL;
         if ($includePassword) {
             if ($this->_password == "" || is_null($this->_password)) {
                 $update_data['password'] = NULL;
-            } else if (!$forUpdate) {
+            } elseif (!$forUpdate) {
                 $this->_password = $this->hash($this->_password);
                 $update_data['password'] = $this->_password;
             } else {
