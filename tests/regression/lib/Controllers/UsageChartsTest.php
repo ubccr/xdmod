@@ -139,7 +139,7 @@ class UsageChartsTest extends \PHPUnit\Framework\TestCase
     public function testChartSettings($testName, $input, $expectedHash)
     {
         $postvars = null;
-        $response = self::$helper->post('/controllers/user_interface.php', $postvars, $input);
+        $response = self::$helper->post('controllers/user_interface.php', $postvars, $input);
 
         $imageData = $response[0];
         $actualHash = $this->phash($input['format'], $imageData);
@@ -174,7 +174,7 @@ class UsageChartsTest extends \PHPUnit\Framework\TestCase
         $testName = '';
         foreach ($settings as $key => $value) {
             $reference[$key] = $value;
-            $testName .= "${key}=${value}/";
+            $testName .= "{$key}={$value}/";
         }
 
         $hash = false;

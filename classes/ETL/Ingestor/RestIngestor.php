@@ -342,7 +342,7 @@ class RestIngestor extends aIngestor implements iAction
         while ( false !== ( $retval = curl_exec($this->sourceHandle) ) ) {
 
             if ( 0 !== curl_errno($this->sourceHandle) ) {
-                $this->logger->error("${this} Error during REST call: " . curl_error($this->sourceHandle));
+                $this->logger->error("{$this} Error during REST call: " . curl_error($this->sourceHandle));
                 break;
             }
 

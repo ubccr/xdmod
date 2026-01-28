@@ -1,0 +1,72 @@
+parameters:
+    sso:
+        login_link: https://xdmod:7000/
+        show_local_login: true
+        direct_link: false
+        parameters:
+            username:
+                attribute:
+                    - 'itname'
+                    - 'system_username'
+            first_name:
+                attribute: 'firstName'
+                default: 'UNKNOWN'
+            middle_name:
+                attribute: 'middleName'
+            last_name:
+                attribute: 'lastName'
+            organization:
+                attribute: 'orgId'
+            email_address:
+                attribute: 'email'
+            system_username:
+                attribute: 'system_username'
+                default: '$username'
+    log_dir: '%env(XDMOD_LOG_DIR)%'
+    google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
+    center_related_acls:
+        - cd
+        - cs
+
+services:
+    # default configuration for services in *this* file
+    _defaults:
+        autowire: true      # Automatically injects dependencies in your services.
+        autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            $sectionName: 'database'
+    db.default:
+        class: CCR\DB\iDatabase
+        autowire: false
+        factory: [ 'CCR\DB', 'factory' ]
+    # makes classes in src/ available to be used as services
+    # this creates a service per class whose id is the fully-qualified class name
+    symfony_code:
+        namespace: CCR\
+        resource: '../src/'
+        exclude:
+            - '../src/DependencyInjection/'
+            - '../src/Entity/'
+            - '../src/Kernel.php'
+    legacy_code:
+        namespace: CCR\
+        resource: '../classes/CCR/'
+
+    # add more service definitions when explicit configuration is needed
+    # please note that last definitions always *replace* previous ones
+#    CCR\:
+#        resource: '../classes/CCR/'
+    CCR\DB\iDatabase:
+        factory: [ 'CCR\DB', 'factory' ]
+    CCR\Security\Authenticators\FormLoginAuthenticator:
+        arguments:
+            $options:
+                username_parameter: 'username'
+                password_parameter: 'password'
+    CCR\Errors\ErrorController:
+        tags: [ 'controller.service_arguments' ]
+        arguments:
+            - '@http_kernel'
+            - 'error_controller'
+            - '@error_renderer'
+    Symfony\Component\Dotenv\Command\DotenvDumpCommand: ~

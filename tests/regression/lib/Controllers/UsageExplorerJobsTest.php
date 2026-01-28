@@ -10,7 +10,7 @@ use RegressionTests\TestHarness\RegressionTestHelper;
 class UsageExplorerJobsTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \RegressionTestHelper
+     * @var RegressionTestHelper
      */
     private static $helper;
 

@@ -19,17 +19,18 @@ class UserAdminTest extends BaseUserAdminTest
      */
     public function testCreateUserFails(array $params, array $expected)
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $response = $this->helper->post('controllers/user_admin.php', null, $params);
+
         $this->assertTrue(strpos($response[1]['content_type'], 'application/json') >= 0);
-        $this->assertEquals(200, $response[1]['http_code']);
+        $this->assertEquals(400, $response[1]['http_code']);
 
         $actual = $response[0];
 
         $this->assertEquals($expected, $actual);
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
     }
 
     /**
@@ -163,7 +164,7 @@ class UserAdminTest extends BaseUserAdminTest
         // users password so that it can be used to login in future tests.
         if ($userId !== null) {
             $username = array_search($userId, self::$newUsers);
-            $this->updateCurrentUser($userId, $username);
+            $this->updateCurrentUser($username, $username);
         }
     }
 
@@ -575,7 +576,7 @@ class UserAdminTest extends BaseUserAdminTest
         }
 
         if (isset($options['last'])) {
-            $helper->logoutDashboard();
+            $helper->logout();
         }
     }
 
@@ -736,7 +737,7 @@ class UserAdminTest extends BaseUserAdminTest
         }
 
         if (isset($options['last'])) {
-            $helper->logoutDashboard();
+            $helper->logout();
         }
     }
 
@@ -751,7 +752,7 @@ class UserAdminTest extends BaseUserAdminTest
         );
 
         $helper = new XdmodTestHelper();
-        $helper->authenticateDashboard('mgr');
+        $helper->authenticate('mgr');
 
         foreach($data as &$datum) {
             $datum[0]['helper'] = $helper;
@@ -831,7 +832,7 @@ class UserAdminTest extends BaseUserAdminTest
         $expectedData = $options['expected'];
         $expectedContentType = $expectedData['content_type'];
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array_merge(
             array(
@@ -861,7 +862,7 @@ class UserAdminTest extends BaseUserAdminTest
             }
         }
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
 
         return (int)$results;
     }

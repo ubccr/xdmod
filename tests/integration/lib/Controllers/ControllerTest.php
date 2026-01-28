@@ -22,7 +22,7 @@ class ControllerTest extends BaseTest
 
     public function testEnumExistingUsers()
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $params = array(
             'operation' => 'enum_existing_users',
@@ -65,7 +65,7 @@ class ControllerTest extends BaseTest
 
         $this->assertTrue($allFound, "There were other differences besides the expected 'last_logged_in' | " . json_encode($actualUsers));
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
     }
 
     public function testEnumUserTypes()
@@ -74,7 +74,7 @@ class ControllerTest extends BaseTest
             parent::getTestFiles()->getFile('controllers', 'enum_user_types-8.0.0')
         );
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array(
             'operation' => 'enum_user_types'
@@ -97,7 +97,7 @@ class ControllerTest extends BaseTest
 
         $this->assertEquals($expected, $actual, "Expected the actual results to match the expected results");
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
     }
 
     public function testEnumRoles()
@@ -106,7 +106,7 @@ class ControllerTest extends BaseTest
             parent::getTestFiles()->getFile('controllers', 'enum_roles-add_default_center')
         );
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array(
             'operation' => 'enum_roles'
@@ -158,7 +158,7 @@ class ControllerTest extends BaseTest
 
         $this->assertTrue($allFound, "There were other differences besides the expected 'last_logged_in'");
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
 
     }
 
@@ -174,7 +174,7 @@ class ControllerTest extends BaseTest
         $group = $options['user_group'];
         $outputFile = $options['output'];
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array(
             'operation' => 'list_users',
@@ -198,7 +198,7 @@ class ControllerTest extends BaseTest
 
         $this->assertTrue($allFound, "There were other differences besides the expected 'last_logged_in'");
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
     }
 
     public function listUsersGroupProvider()
@@ -214,7 +214,7 @@ class ControllerTest extends BaseTest
             parent::getTestFiles()->getFile('controllers', 'enum_user_types_and_roles-update_enum_user_types_and_roles')
         );
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array(
             'operation' => 'enum_user_types_and_roles'
@@ -237,14 +237,14 @@ class ControllerTest extends BaseTest
 
         $this->assertEquals($expected, $actual, "Expected the actual results to equal the expected.");
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
     }
 
     public function testSabUserEnumTgUsers()
     {
 
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array(
             'start' => 0,
@@ -300,12 +300,12 @@ class ControllerTest extends BaseTest
             }
         }
         $this->assertEmpty($notFound, "There were expected users missing in actual (person_id is not actually checked and may be different).\nExpected: " . json_encode($notFound) . "\nActual: " . json_encode($actualUsers));
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
     }
 
     public function testCreateUser()
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $data = array(
             'operation' => 'create_user',
@@ -355,7 +355,7 @@ class ControllerTest extends BaseTest
             $this->assertEquals($expectedMessage, $data['message'], "Expected the 'message' property to be: $expectedMessage Received: " . $data['message']);
         }
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
     }
 
     /**
@@ -363,7 +363,7 @@ class ControllerTest extends BaseTest
      */
     public function testModifyUser()
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $users = $this->listUsers();
 
@@ -413,7 +413,7 @@ class ControllerTest extends BaseTest
         $this->assertEquals($expectedStatus, $data['status'], "Expected the 'status' property to be: $expectedStatus Received: " . $data['status']);
         $this->assertEquals('bsmith', $data['username'], "Expected the 'username' property to be: $expectedUsername Received: " . $data['username']);
         $this->assertEquals($expectedUserType, $data['user_type'], "Expected the 'user_type' property to be $expectedUserType Received: " . $data['user_type']);
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
     }
 
     /**
@@ -421,7 +421,7 @@ class ControllerTest extends BaseTest
      */
     public function testDeleteUser()
     {
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('mgr');
 
         $users = $this->listUsers();
         $user = array_values(
@@ -455,7 +455,7 @@ class ControllerTest extends BaseTest
         $this->assertTrue($data['success'], "Expected the 'success' property to be: true Received: " . $data['success']);
         $this->assertEquals($expectedMessage, $data['message'], "Expected the 'message' property to be: $expectedMessage received: " . $data['message']);
 
-        $this->helper->logoutDashboard();
+        $this->helper->logout();
     }
 
     /**
@@ -471,7 +471,7 @@ class ControllerTest extends BaseTest
 
         $expectedFile = $expected['file'];
         $expectedFileName = parent::getTestFiles()->getFile('controllers', $expectedFile);
-        $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'text/html; charset=UTF-8';
+        $expectedContentType = array_key_exists('content_type', $expected) ? $expected['content_type'] : 'application/json';
         $expectedHttpCode = array_key_exists('http_code', $expected) ? $expected['http_code'] : 200;
 
         $data = array_merge(
@@ -507,7 +507,7 @@ class ControllerTest extends BaseTest
         $this->assertEquals($expected, $actual);
 
         if (isset($options['last'])) {
-            $helper->logoutDashboard();
+            $helper->logout();
         }
     }
 
@@ -520,7 +520,7 @@ class ControllerTest extends BaseTest
         $data = JSON::loadFile(parent::getTestFiles()->getFile('controllers', 'enum_target_addresses-update_enum_user_types_and_roles', 'input'));
 
         $helper = new XdmodTestHelper();
-        $helper->authenticateDashboard('mgr');
+        $helper->authenticate('mgr');
 
         foreach($data as $key => $test) {
             foreach($test[0]['data'] as $dataKey => $value) {

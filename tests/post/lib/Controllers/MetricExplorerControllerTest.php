@@ -25,7 +25,7 @@ class MetricExplorerControllerTest extends TestCase
             'search_text' =>'fa'
         );
 
-        $response = $helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $helper->post('controllers/metric_explorer.php', null, $params);
 
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);
@@ -85,7 +85,7 @@ class MetricExplorerControllerTest extends TestCase
 }
 EOF;
 
-        $response = $helper->post('/controllers/metric_explorer.php', null, json_decode($config));
+        $response = $helper->post('controllers/metric_explorer.php', null, json_decode($config));
 
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(200, $response[1]['http_code']);

@@ -12,7 +12,7 @@ BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}__PRERELEASE__-%{relea
 BuildArch:     noarch
 BuildRequires: php-cli
 Requires:      httpd mod_ssl
-Requires:      php >= 7.4 php-cli php-mysqlnd php-pdo php-gd php-xml php-mbstring php-zip php-posix
+Requires:      php >= 8.2 php-cli php-mysqlnd php-pdo php-gd php-xml php-mbstring php-zip php-posix
 Requires:      php-pecl-apcu php-json
 Requires:      libreoffice-writer
 Requires:      chromium-headless >= 111
@@ -63,6 +63,10 @@ for file in exceptions.log query.log; do
     chown apache:xdmod %{_localstatedir}/log/%{name}/$file
     chmod 0660 %{_localstatedir}/log/%{name}/$file
 done
+
+# Ensure the var directory is owned by apache so it can be written to.
+chown apache:xdmod %{_datadir}/%{name}/var
+
 if [ "$1" -ge 2 ]; then
     echo "Run xdmod-upgrade to complete the Open XDMoD upgrade process."
     echo "Refer to http://open.xdmod.org/upgrade.html for more details."
@@ -76,10 +80,12 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0750,root,xdmod,-)
 %{_bindir}/%{name}-*
 %{_bindir}/acl-*
+%{_bindir}/console
 
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/
 %{_datadir}/%{name}/
+
 %{_docdir}/%{name}-%{version}__PRERELEASE__/
 
 %dir %attr(0770,apache,xdmod) %{_localstatedir}/log/%{name}
@@ -92,7 +98,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %{_sysconfdir}/%{name}/etl/
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %config(noreplace) %{_sysconfdir}/cron.d/%{name}
-%config(noreplace) %{_datadir}/%{name}/html/robots.txt
+%config(noreplace) %{_datadir}/%{name}/config/
 
 %dir %attr(0570,apache,xdmod) %{xdmod_export_dir}
 

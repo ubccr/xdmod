@@ -1,0 +1,21 @@
+when@dev:
+    #    web_profiler_wdt:
+    #        resource: '@WebProfilerBundle/Resources/config/routing/wdt.xml'
+    #        prefix: /_wdt
+    #
+    #    web_profiler_profiler:
+    #        resource: '@WebProfilerBundle/Resources/config/routing/profiler.xml'
+    #        prefix: /_profiler
+    web_profiler:
+        toolbar: true
+        intercept_redirects: false
+    framework:
+        profiler: { only_exceptions: false }
+when@test:
+    web_profiler:
+        toolbar: false
+        intercept_redirects: false
+
+    framework:
+        profiler: { collect: false }
+

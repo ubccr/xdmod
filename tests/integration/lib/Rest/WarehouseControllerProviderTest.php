@@ -561,7 +561,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $output
     ) {
         parent::authenticateRequestAndValidateJson(
-            self::$helper,
+            new XdmodTestHelper(),
             $role,
             $input,
             $output
