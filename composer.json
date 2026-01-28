@@ -19,7 +19,7 @@
         "silex/silex": "v2.3.0",
         "simplesamlphp/simplesamlphp": "^1.16",
         "symfony/polyfill-php56": "~1.11",
-        "symfony/process": "~2.0",
+        "symfony/process": "~5.4",
         "taq/pdooci": "^1.0",
         "tildeio/rsvpjs-min-file": "^3.0.18",
         "ubccr/simplesamlphp-module-authglobus": "^1.3",
