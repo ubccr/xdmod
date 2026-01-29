@@ -72,7 +72,7 @@ command:
 Running this command will truncate all the tables containing job data
 and you can then re-shred and re-ingest your resource manager data.
 
-### How do I delete all my job data for a resource in Open XDMoD?
+### How do I delete all my job data for a specific resource in Open XDMoD?
 
 If you want to delete the job data for a particular resource you can use the following
 command:
