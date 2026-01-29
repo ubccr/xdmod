@@ -37,5 +37,7 @@ jobs:
 
       - name: Run Linter
         run: |
+          echo $GITHUB_BASE_REF
+          echo $GITHUB_SHA
           git fetch --unshallow origin $GITHUB_BASE_REF
           TRAVIS_COMMIT_RANGE=`git rev-parse origin/$GITHUB_BASE_REF`..${GITHUB_SHA} $HOME/.qa/scripts/build.sh -s
