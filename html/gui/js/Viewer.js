@@ -299,7 +299,7 @@ Ext.extend(CCR.xdmod.ui.Viewer, Ext.Viewport, {
         if (CCR.xdmod.publicUser) {
             welcome_message = 'Hello, <b><a id="sign_in_link" href="javascript:CCR.xdmod.ui.actionLogin()">Sign In</a></b> to view personalized information.';
         } else {
-            let logoutMessage = CCR.xdmod.ui.isImpersonating ? 'Stop Impersonating' : 'logout';
+            const logoutMessage = CCR.xdmod.ui.isImpersonating ? 'Stop Impersonating' : 'logout';
             welcome_message = 'Hello, <b id="welcome_message">' + Ext.util.Format.htmlEncode(CCR.xdmod.ui.fullName) + '</b> ' + additionalWelcomeDetails + ' (<a href="javascript:CCR.xdmod.ui.actionLogout()" id="logout_link">' + logoutMessage + ' </a>)';
             if (CCR.xdmod.ui.isManager) {
                 userToolbar.push(XDMoD.GlobalToolbar.Dashboard);
