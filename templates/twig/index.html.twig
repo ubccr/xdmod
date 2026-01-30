@@ -309,7 +309,7 @@
         <script type="text/javascript" src={{ asset('gui/js/modules/metric_explorer/MetricExplorer.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/js/modules/metric_explorer/StatusButton.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/js/ChangeStack.js') }}></script>
-    {% if raw_data_realms|length > 0 %}
+        {% if raw_data_realms|length > 0 %}
         <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/JobViewer.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/ChartPanel.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/js/modules/job_viewer/ChartTab.js') }}></script>
@@ -326,13 +326,14 @@
                 src={{ asset('gui/lib/rsvp/rsvp-1979d5ad89293dadbe7656dd53d152f7426fa35e.min.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/lib/groupdataview.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/lib/groupcombo.js') }}></script>
+        {% endif %}
     {% endif %}
-        {# From gaq/xdmod.php #}
-        <script type="text/javascript">
-            var _gaq = _gaq || [];
-            var ga = function () {};
-        </script>
-    {% endif %}
+
+    {# From gaq/xdmod.php #}
+    <script type="text/javascript">
+        var _gaq = _gaq || [];
+        var ga = function () {};
+    </script>
 
     {% if use_center_logo %}
         <style>
