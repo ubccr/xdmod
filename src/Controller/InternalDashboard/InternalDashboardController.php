@@ -60,6 +60,7 @@ class InternalDashboardController extends BaseController
             'is_logged_in' => !$user->isPublicUser(),
             'is_public_user' => $user->isPublicUser(),
             'asset_paths' => Assets::generateAssetTags('internal_dashboard'),
+            'error_codes' => \XDError::getErrorCodes()
         ];
 
         if ($user->isPublicUser()) {
