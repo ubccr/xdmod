@@ -20,7 +20,7 @@ use Symfony\Component\Routing\Attribute\Route;
 /**
  *
  */
-#[Route('/dashboard')]
+#[Route('{prefix}dashboard', requirements: ['prefix' => '.*'])]
 class DashboardController extends BaseController
 {
 

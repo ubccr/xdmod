@@ -27,7 +27,7 @@ class AdminController extends BaseController
      * @throws BadRequestHttpException if no user is found for the provided uid.
      * @throws BadRequestHttpException if the viewedTour parameter is any integer value other than 0 or 1.
      */
-    #[Route('{prefix}/reset_user_tour_viewed', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}reset_user_tour_viewed', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function resetUserTourViewed(Request $request): Response
     {
         $this->authorize($request, ['mgr']);

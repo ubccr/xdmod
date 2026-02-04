@@ -69,7 +69,7 @@ class AuthenticationController extends BaseController
      *
      * @return NotFoundHttpException
      */
-    #[Route('{prefix}/login', name: 'xdmod_login', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}login', name: 'xdmod_login', requirements: ['prefix' => '.*'], methods: ['POST'])]
     #[Route('/login', name: 'xdmod_new_login', methods: ['POST'])]
     public function login(): NotFoundHttpException
     {
@@ -105,7 +105,7 @@ class AuthenticationController extends BaseController
      *
      * @return Response
      */
-    #[Route('{prefix}/auth/idpredirect', name: 'idp_redirect', requirements: ['prefix' => '.*'], methods: ['GET'])]
+    #[Route('{prefix}auth/idpredirect', name: 'idp_redirect', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function idpRedirect(Request $request): Response
     {
         $returnTo = $this->getStringParam($request, 'returnTo');

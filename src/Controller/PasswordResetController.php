@@ -12,7 +12,7 @@ use Symfony\Component\Routing\Attribute\Route;
 /**
  *
  */
-#[Route('{prefix}/password_reset', requirements: ['prefix' => '.*'])]
+#[Route('{prefix}password_reset', requirements: ['prefix' => '.*'])]
 class PasswordResetController extends BaseController
 {
     private static $validModes = ['new', 'reset'];

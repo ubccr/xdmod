@@ -64,7 +64,7 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception
      */
-    #[Route("{prefix}/users/current", name: "get_current_user", requirements: ['prefix' => '.*'], methods: ["GET"])]
+    #[Route("{prefix}users/current", name: "get_current_user", requirements: ['prefix' => '.*'], methods: ["GET"])]
     public function getCurrentUser(Request $request)
     {
         $this->authorize($request);
@@ -82,7 +82,7 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception if unable to look up an XDUser by the currently logged in user's id.
      */
-    #[Route("{prefix}/users/current", name: "update_current_user", requirements: ['prefix' => '.*'], methods: ["PATCH"])]
+    #[Route("{prefix}users/current", name: "update_current_user", requirements: ['prefix' => '.*'], methods: ["PATCH"])]
     public function updateCurrentUser(Request $request)
     {
         // Ensure that the user is logged in.
@@ -118,7 +118,7 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception
      */
-    #[Route('{prefix}/users/current/api/token', requirements: ['prefix' => '.*'], methods: ['GET'])]
+    #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getCurrentAPIToken(Request $request): Response
     {
         $user = $this->authorize($request);
@@ -145,7 +145,7 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception if there is a problem retrieving a database connection.
      */
-    #[Route('{prefix}/users/current/api/token', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function createAPIToken(Request $request): Response
     {
         $user = $this->authorize($request);
@@ -172,7 +172,7 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception
      */
-    #[Route('{prefix}/users/current/api/token', requirements: ['prefix' => '.*'], methods: ['DELETE'])]
+    #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['DELETE'])]
     public function revokeAPIToken(Request $request): Response
     {
         $user = $this->authorize($request);

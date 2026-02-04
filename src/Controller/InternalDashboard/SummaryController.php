@@ -57,7 +57,7 @@ class SummaryController extends BaseController
     /**
      * @throws Exception
      */
-    #[Route('{prefix}/summary/configs', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}summary/configs', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getConfig(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -111,7 +111,7 @@ class SummaryController extends BaseController
     /**
      * @throws Exception
      */
-    #[Route('{prefix}/summary/portlets', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}summary/portlets', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getPortlets(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -167,7 +167,7 @@ class SummaryController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/summary/charts', requirements: ['prefix' => '.*'], methods: ['GET'])]
+    #[Route('{prefix}summary/charts', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getCharts(Request $request): Response
     {
         $user = $this->getUser();

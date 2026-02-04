@@ -45,7 +45,7 @@ class LogController extends BaseController
      * @param Request $request
      * @return Response
      */
-    #[Route('{prefix}/internal_dashboard/logs/levels', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}internal_dashboard/logs/levels', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getLevels(Request $request): Response
     {
         $levels = [
@@ -71,7 +71,7 @@ class LogController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/internal_dashboard/logs/messages', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}internal_dashboard/logs/messages', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getMessages(Request $request): Response
     {
         $pdo = DB::factory('logger');
@@ -170,7 +170,7 @@ class LogController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/internal_dashboard/logs/summary', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}internal_dashboard/logs/summary', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getSummary(Request $request): Response
     {
         $ident = $this->getStringParam($request, 'ident', true);
