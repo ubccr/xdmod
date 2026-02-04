@@ -5,6 +5,7 @@ on:
   pull_request:
     branches:
       - main
+      - symfony_migration
 
 env:
   XDMOD_IS_CORE: 'true'
