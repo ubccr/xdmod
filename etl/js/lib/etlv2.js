@@ -70,7 +70,7 @@ module.exports = {
     createDynamicTableDefinition: function (table, isErrorTable) {
         var tableDefinition = {
             name: table.name,
-            engine: 'MyISAM',
+            engine: 'InnoDB',
             comment: '',
             columns: []
         };
@@ -153,7 +153,7 @@ module.exports = {
 
         tableDefinition.name = generateAggTableIdentifier(table, hasJobList);
         tableDefinition.table_prefix = table.name + '_by_';
-        tableDefinition.engine = 'MyISAM';
+        tableDefinition.engine = 'InnoDB';
         tableDefinition.comment = table.name + ' aggregated by ${AGGREGATION_UNIT}.';
 
         tableDefinition.columns = [];
