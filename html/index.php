@@ -11,6 +11,11 @@ $org = \Configuration\XdmodConfiguration::assocArrayFactory(
     'organization.json',
     CONFIG_DIR
 );
+
+if (!array_key_exists('name', $org)) {
+    $org = array_shift($org);
+}
+
 define('ORGANIZATION_NAME', $org['name']);
 $org_abbrev = $org['abbrev'];
 if (empty($org_abbrev)) {
