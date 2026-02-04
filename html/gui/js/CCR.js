@@ -16,58 +16,7 @@ XDMoD.Tracking = {
 };
 
 XDMoD.TrackEvent = function (category, action, details, suppress_close_handler) {
-    // Tracking is not implemented outside of the XSEDE XDMoD instance.
-    if (!CCR.xdmod.features) {
-        return;
-    }
-    if (!CCR.xdmod.features.xsede) {
-        return;
-    }
-
-    details = details || '';
-    suppress_close_handler = suppress_close_handler || false;
-
-    XDMoD.Tracking.suppress_close_handler = suppress_close_handler;
-
-    if (typeof details !== 'string') {
-        details = JSON.stringify(details);
-    }
-
-    var dimension_limit = 150; // dimension limit imposed by Google
-    var action_dimension_slots = 3; // how many custom dimensions are dedicated to storing action details
-
-    var action_details = [];
-    var i = 0;
-
-    for (i = 0; i < action_dimension_slots; i++) {
-        action_details.push((details.substr(0, dimension_limit).length > 0) ? details.substr(0, dimension_limit) : '-');
-        details = details.substr(dimension_limit);
-    }
-
-    XDMoD.Tracking.sequence_index++;
-
-    var current_date = new Date();
-    var current_timestamp = current_date.getTime();
-    var timezone_offset = current_date.getTimezoneOffset();
-
-    var time_delta = current_timestamp - XDMoD.Tracking.timestamp;
-
-    ga('send', 'event', category, action, {
-        'dimension1': XDMoD.Tracking.sequence_index,
-        'dimension2': CCR.xdmod.ui.username,
-        'dimension3': current_timestamp.toString(),
-        'dimension4': XDMoD.REST.token,
-        'dimension5': (timezone_offset / 60).toString(),
-        'dimension6': action_details[0],
-        'dimension7': action_details[1],
-        'dimension8': action_details[2],
-        'metric1': time_delta.toString()
-    });
-
-    XDMoD.Tracking.timestamp = current_timestamp;
-
-    _gaq.push(['_trackEvent', CCR.xdmod.ui.username, category, action]);
-
+    /* This function is now a no-op as Google Analytics is no longer used in Open XDMoD.*/
 }; //XDMoD.TrackEvent
 
 // ==============================================================
