@@ -9,8 +9,7 @@
     <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/xtheme-gray.css">
     <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/debug.css">
 
-    <!-- Include custom script to stop Ext from checking for Flash: -->
-    <script type="text/javascript" src="{{ extjs_path }}/ext-stop-flash-check.js"></script>
+
 
     <!-- Include Ext and app-specific scripts: -->
     <script type="text/javascript" src="{{ extjs_path }}/{{ extjs_version }}/adapter/ext/ext-base.js"></script>
@@ -23,7 +22,7 @@
     </script>
 
     <script type="text/javascript" src={{ asset('gui/lib/ext-oldie-history-patch.js') }}></script>
-    <script type="text/javascript" src={{ asset('gui/lib/jquery/jquery-1.12.4.min.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/lib/jquery/jquery-3.7.1.min.js') }}></script>
 
     <script type="text/javascript">
         jQuery.noConflict();
@@ -131,5 +130,7 @@
 
 
 </script>
+<!-- Include custom script to stop Ext from checking for Flash: -->
+<script type="text/javascript" src="{{ extjs_path }}/ext-stop-flash-check.js"></script>
 </body>
 </html>
