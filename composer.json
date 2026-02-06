@@ -26,7 +26,7 @@
         "ubccr/simplesamlphp-module-authoidcoauth2": "^1.1",
         "phpoffice/phpword": "^1.2.0",
         "monolog/monolog": "^1.25",
-        "plotly/plotly": "^2.29.1",
+        "plotly/plotly.js": "^3.2.0",
         "kassner/log-parser": "~1.5",
         "geoip2/geoip2": "~2.0",
         "ua-parser/uap-php": "^3.9",
