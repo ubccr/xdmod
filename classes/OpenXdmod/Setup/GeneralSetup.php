@@ -130,7 +130,8 @@ EOT
 
         $envTemplate = new Template('env');
         $envTemplate->apply([
-            'app_secret' => hash('sha512', time())
+            'app_secret' => hash('sha512', time()),
+            'log_dir' => LOG_DIR
         ]);
         $this->saveTemplate($envTemplate, BASE_DIR . '/.env');
 
