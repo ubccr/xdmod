@@ -82,7 +82,7 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/organizations/members', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}organizations/members', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getMembers(Request $request): Response
     {
         $user = $this->authorize($request, $this->getParameter('center_related_acls'), true);
@@ -102,7 +102,7 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/organizations/members/{memberId}/status', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}organizations/members/{memberId}/status', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getMemberStatus(Request $request, string $memberId): Response
     {
         $user = $this->authorize($request, $this->getParameter('center_related_acls'), true);
@@ -158,7 +158,7 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/organizations/members/{memberId}/upgrade', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}organizations/members/{memberId}/upgrade', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function upgradeMember(Request $request, string $memberId): Response
     {
         $this->logger->error('Upgrading Member Id: ' . var_export($memberId, true));
@@ -229,7 +229,7 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/organizations/members/{memberId}/downgrade', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}organizations/members/{memberId}/downgrade', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function downgradeMember(Request $request, ?string $memberId): Response
     {
         try {

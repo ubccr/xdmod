@@ -43,7 +43,7 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/metrics/explorer/queries', requirements: ['prefix' => '.*'], methods: ['GET'])]
+    #[Route('{prefix}metrics/explorer/queries', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getQueries(Request $request): Response
     {
         $action = 'getQueries';
@@ -88,7 +88,7 @@ class MetricExplorerController extends BaseController
      * @param string $queryId
      * @return Response
      */
-    #[Route('{prefix}/metrics/explorer/queries/{queryId}', requirements: ["queryId"=>"\w+", 'prefix' => '.*'], methods: ['GET'])]
+    #[Route('{prefix}metrics/explorer/queries/{queryId}', requirements: ["queryId"=>"\w+", 'prefix' => '.*'], methods: ['GET'])]
     public function getQueryByid(Request $request, string $queryId): Response
     {
         $action = 'getQueryById';
@@ -134,7 +134,7 @@ class MetricExplorerController extends BaseController
      * @param Request $request
      * @return Response
      */
-    #[Route('{prefix}/metrics/explorer/queries', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}metrics/explorer/queries', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function createQuery(Request $request): Response
     {
         $action = 'creatQuery';
@@ -190,7 +190,7 @@ class MetricExplorerController extends BaseController
      * @param string $queryId
      * @return Response
      */
-    #[Route('{prefix}/metrics/explorer/queries/{queryId}', requirements: ["queryId"=> "\w+", 'prefix' => '.*'], methods: ['PUT', "POST"])]
+    #[Route('{prefix}metrics/explorer/queries/{queryId}', requirements: ["queryId"=> "\w+", 'prefix' => '.*'], methods: ['PUT', "POST"])]
     public function updateQueryById(Request $request, string $queryId): Response
     {
         $action = 'updateQuery';
@@ -267,7 +267,7 @@ class MetricExplorerController extends BaseController
      * @param string $queryId
      * @return Response
      */
-    #[Route('{prefix}/metrics/explorer/queries/{queryId}', requirements: ["queryId"=> "\w+", 'prefix' => '.*'], methods: ['DELETE'])]
+    #[Route('{prefix}metrics/explorer/queries/{queryId}', requirements: ["queryId"=> "\w+", 'prefix' => '.*'], methods: ['DELETE'])]
     public function deleteQueryById(Request $request, string $queryId): Response
     {
         $action = 'deleteQueryById';
@@ -395,7 +395,7 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception if there is a problem with the processing of the get_data function.
      */
-    #[Route('{prefix}/metrics/explorer/data', requirements: ['prefix' => '.*'], methods: ['POST', 'GET'])]
+    #[Route('{prefix}metrics/explorer/data', requirements: ['prefix' => '.*'], methods: ['POST', 'GET'])]
     public function getData(Request $request): Response
     {
         $user = $this->detectUser($request, [XDUser::INTERNAL_USER, XDUser::PUBLIC_USER]);
@@ -424,7 +424,7 @@ class MetricExplorerController extends BaseController
      * @throws AccessDeniedException
      * @throws UnknownGroupByException
      */
-    #[Route('{prefix}/metrics/explorer/dimension/values', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}metrics/explorer/dimension/values', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDimensionValues(Request $request): Response
     {
         try {
@@ -477,7 +477,7 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception if unable to get the currently logged in user.
      */
-    #[Route('{prefix}/metrics/explorer/get_dw_descripter',requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}metrics/explorer/get_dw_descripter',requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDwDescriptors(Request $request): Response
     {
         try {
@@ -648,7 +648,7 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception if unable to retrieve the currently logged in user.
      */
-    #[Route('{prefix}/metrics/explorer/filters', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}metrics/explorer/filters', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getFilters(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
@@ -697,7 +697,7 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception if there is a problem retrieving a user for the request.
      */
-    #[Route('{prefix}/metrics/explorer/raw_data', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}metrics/explorer/raw_data', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getRawData(Request $request): Response
     {
         $user = $this->detectUser($request, array(XDUser::INTERNAL_USER, XDUser::PUBLIC_USER));

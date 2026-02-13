@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 /**
  *
  */
-#[Route("{prefix}/internal_dashboard/accounts", requirements: ['prefix' => '.*'])]
+#[Route("{prefix}internal_dashboard/accounts", requirements: ['prefix' => '.*'])]
 class AccountController extends BaseController
 {
 

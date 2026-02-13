@@ -26,7 +26,7 @@ use function xd_response\buildError;
 /**
  *
  */
-#[Route('{prefix}/warehouse/export', requirements: ['prefix' => '.*'])]
+#[Route('{prefix}warehouse/export', requirements: ['prefix' => '.*'])]
 class WarehouseExportController extends BaseController
 {
     /**

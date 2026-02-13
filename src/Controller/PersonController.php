@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 /**
  *
  */
-#[Route('{prefix}/persons', requirements: ['prefix' => '.*'])]
+#[Route('{prefix}persons', requirements: ['prefix' => '.*'])]
 class PersonController extends BaseController
 {
 

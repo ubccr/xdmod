@@ -56,7 +56,7 @@ class UserInterfaceController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/interfaces/user/tabs', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}interfaces/user/tabs', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getTabs(Request $request): Response
     {
         $user = $this->getXDUser($request->getSession());
@@ -101,7 +101,7 @@ class UserInterfaceController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/interfaces/user/charts', requirements: ['prefix' => '.*'],  methods: ['POST'])]
+    #[Route('{prefix}interfaces/user/charts', requirements: ['prefix' => '.*'],  methods: ['POST'])]
     public function getCharts(Request $request): Response
     {
         $this->logger->debug('Calling Get Charts');
@@ -180,7 +180,7 @@ class UserInterfaceController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/interfaces/user/data', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}interfaces/user/data', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getData(Request $request): Response
     {
         $this->logger->debug('GetData Called');
@@ -193,7 +193,7 @@ class UserInterfaceController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/interfaces/user/menus', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}interfaces/user/menus', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getMenus(Request $request): Response
     {
         $returnData = [];
@@ -432,7 +432,7 @@ class UserInterfaceController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('{prefix}/interfaces/userparameters/descriptions', requirements: ['prefix' => '.*'],  methods: ['POST'])]
+    #[Route('{prefix}interfaces/userparameters/descriptions', requirements: ['prefix' => '.*'],  methods: ['POST'])]
     public function getParamDescriptions(Request $request): Response
     {
         $user = $this->getXDUser($request->getSession());
