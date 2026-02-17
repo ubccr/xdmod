@@ -887,33 +887,7 @@ CCR.invokePostImmediately = function (url, params) {
  *                                   of the main user session. (Default: false)
  */
 CCR.submitHiddenForm = function (url, method, params, options) {
-
-    options = options || {};
-
-    var checkDashboardUser = typeof options.checkDashboardUser === "undefined" ? false : options.checkDashboardUser;
-    var checkUrlPrefix = checkDashboardUser ? "../" : "";
-
-    Ext.Ajax.request({
-        url: checkUrlPrefix + "controllers/user_auth.php",
-        params: {
-            operation: "session_check",
-            public_user: typeof params.public_user === "undefined" ? false : params.public_user,
-            session_user_id_type: checkDashboardUser ? "Dashboard" : ""
-        },
-
-        callback: function (options, success, response) {
-            if (success) {
-                success = CCR.checkJSONResponseSuccess(response);
-            }
-
-            if (success) {
-                CCR.submitHiddenFormImmediately(url, method, params);
-            } else {
-                CCR.xdmod.ui.presentFailureResponse(response);
-            }
-        }
-    });
-
+    CCR.submitHiddenFormImmediately(url, method, params);
 }; //CCR.invokePost
 
 // -----------------------------------
