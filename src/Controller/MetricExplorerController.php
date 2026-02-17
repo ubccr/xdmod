@@ -400,7 +400,8 @@ class MetricExplorerController extends BaseController
     {
         $user = $this->detectUser($request, [XDUser::INTERNAL_USER, XDUser::PUBLIC_USER]);
 
-        $m = new \DataWarehouse\Access\MetricExplorer($_REQUEST);
+        $params = array_merge($request->query->all(), $request->request->all());
+        $m = new \DataWarehouse\Access\MetricExplorer($params);
         try {
             $result = $m->get_data($user);
             return new Response($result['results'], 200, $result['headers']);
