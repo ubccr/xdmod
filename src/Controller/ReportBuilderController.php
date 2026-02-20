@@ -180,11 +180,13 @@ class ReportBuilderController extends BaseController
     /**
      *
      * @param Request $request
+     * @param string $reportName populated if calling the old report_build.php/report_name route.
      * @return Response
      * @throws Exception
      */
     #[Route('/reports/builder/download', methods: ['GET'])]
-    public function downloadReport(Request $request): Response
+    #[Route('/controllers/report_builder.php/{report_name}', methods: ["GET"])]
+    public function downloadReport(Request $request, string $reportName=''): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
