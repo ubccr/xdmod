@@ -170,6 +170,8 @@
         {% if is_jupyter_configured %}
         CCR.xdmod.isJupyterHubConfigured = true;
         CCR.xdmod.JupyterHubURL = "{{ jupyter_hub_url }}"
+        {% else %}
+        CCR.xdmod.isJupyterHubConfigured = false;
         {% endif %}
 
         {% if is_sso_configured %}
