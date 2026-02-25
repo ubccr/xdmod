@@ -129,7 +129,7 @@ class AuthenticationController extends BaseController
      *                           screen.
      * @throws Exception if a JupyterHub is not configured.
      */
-    #[Route('/jwt-redirect', methods: ['GET'])]
+    #[Route('{prefix}jwt-redirect', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function redirectWithJwt(Request $request): Response
     {
         try {
