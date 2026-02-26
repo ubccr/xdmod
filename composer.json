@@ -5,6 +5,7 @@
     "prefer-stable": true,
     "require": {
         "php": "^8.2",
+        "cirrusidentity/simplesamlphp-module-authoauth2": "^5.2",
         "egulias/email-validator": "^4",
         "firebase/php-jwt": "^6.10",
         "geoip2/geoip2": "^2.12",
