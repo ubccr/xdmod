@@ -27,6 +27,7 @@
         "robrichards/xmlseclibs": "~3.0",
         "sencha/extjs-gpl": "3.4.*",
         "simplesamlphp/simplesamlphp": "*",
+        "simplesamlphp/simplesamlphp-module-authorize": "^1.7",
         "swaggest/json-schema": "^0.12.41",
         "symfony/asset": "6.4.*",
         "symfony/console": "6.4.*",

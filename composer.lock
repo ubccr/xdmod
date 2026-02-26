@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4d9aedb2ee923979632a96207d2da56a",
+    "content-hash": "48c3bf3bf15474254556e4e884009ea7",
     "packages": [
         {
             "name": "cirrusidentity/simplesamlphp-module-authoauth2",
@@ -3720,6 +3720,56 @@
                 "source": "https://github.com/simplesamlphp/simplesamlphp-assets-base/tree/v2.3.10"
             },
             "time": "2025-07-20T01:44:13+00:00"
+        },
+        {
+            "name": "simplesamlphp/simplesamlphp-module-authorize",
+            "version": "v1.7.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/simplesamlphp/simplesamlphp-module-authorize.git",
+                "reference": "f436ecc5616de82748f30f7518afcc3da0294798"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/simplesamlphp/simplesamlphp-module-authorize/zipball/f436ecc5616de82748f30f7518afcc3da0294798",
+                "reference": "f436ecc5616de82748f30f7518afcc3da0294798",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.1",
+                "simplesamlphp/saml2": "~5.0.2",
+                "simplesamlphp/simplesamlphp": "^2.4",
+                "symfony/http-foundation": "^6.4"
+            },
+            "require-dev": {
+                "simplesamlphp/simplesamlphp-test-framework": "^1.9.3"
+            },
+            "type": "simplesamlphp-module",
+            "autoload": {
+                "psr-4": {
+                    "SimpleSAML\\Module\\authorize\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "LGPL-2.1-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Ernesto Revilla",
+                    "email": "erny@yaco.es"
+                }
+            ],
+            "description": "This module provides a user authorization filter based on attribute matching",
+            "keywords": [
+                "authorize",
+                "simplesamlphp"
+            ],
+            "support": {
+                "issues": "https://github.com/simplesamlphp/simplesamlphp-module-authorize/issues",
+                "source": "https://github.com/simplesamlphp/simplesamlphp-module-authorize"
+            },
+            "time": "2025-08-26T08:27:30+00:00"
         },
         {
             "name": "simplesamlphp/xml-common",
