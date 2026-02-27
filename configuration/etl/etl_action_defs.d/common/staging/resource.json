@@ -26,6 +26,9 @@
                 "on": "rc.resource = res.resource_name",
                 "alias": "res"
             }
+        ],
+        "orderby": [
+            "rc.resource_id"
         ]
     }
 }

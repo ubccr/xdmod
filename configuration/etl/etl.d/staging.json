@@ -208,11 +208,6 @@
             "definition_file": "jobs/staging/pi.json"
         },
         {
-            "name": "resource",
-            "description": "Ingest job resources",
-            "definition_file": "jobs/staging/resource.json"
-        },
-        {
             "name": "union-user-pi--pi",
             "description": "Ingest job PIs (combined with users)",
             "definition_file": "jobs/staging/union-user-pi--pi.json"
