@@ -155,7 +155,8 @@
                         "timezone",
                         "resource_type",
                         "resource_allocation_type",
-                        "organization"
+                        "organization",
+                        "resource_key"
                     ]
                 }
             }
