@@ -415,20 +415,32 @@ class EtlOverseerOptions extends \CCR\Loggable
      * database. If date is NULL, use the current date to ensure that the date is always set.
      *
      * @param $date A date representation or null to use the current date.
+     * @param $parseDateString If true then try to parse the date string into a mysql-compatible
+     *                         local time string. If false then use the string unmodified. The
+     *                         parseDateString option is ignore if a date of NULL is used.
      *
      * @return This object to support method chaining.
      * ------------------------------------------------------------------------------------------
      */
 
-    public function setLastModifiedStartDate($date)
+    public function setLastModifiedStartDate($date, $parseDateString = true)
     {
         if ( null === $date ) {
             $this->lastModifiedStartDate = null;
-        } elseif ( false === ( $ts = strtotime($date)) ) {
-            $msg = get_class($this) . ": Could not parse last modified start date '$date'";
-            throw new Exception($msg);
+            return $this;
+        }
+
+        if ($parseDateString) {
+            $ts = strtotime($date);
+
+            if ($ts === false) {
+                $msg = get_class($this) . ": Could not parse last modified start date '$date'";
+                throw new Exception($msg);
+            } else {
+                $this->lastModifiedStartDate = date("Y-m-d H:i:s", $ts);
+            }
         } else {
-            $this->lastModifiedStartDate = date("Y-m-d H:i:s", $ts);
+            $this->lastModifiedStartDate = $date;
         }
 
         return $this;
