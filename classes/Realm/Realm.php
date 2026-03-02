@@ -366,7 +366,7 @@ class Realm extends \CCR\Loggable implements iRealm
 
             // Skip disabled configs
 
-            if (isset($config->disabled) && $config->disabled) {
+            if ( isset($config->disabled) && $config->disabled ) {
                 continue;
             }
 
@@ -388,6 +388,7 @@ class Realm extends \CCR\Loggable implements iRealm
                 $factoryClassName = sprintf('\\%s\\%s', __NAMESPACE__, $factoryClassName);
             }
 
+            // When using the string form of a callable, the use of `static::` is deprecated, hence switching to using the array format for a callable.
             $factoryCallable = [$factoryClassName, 'factory'];
             if ('Realm' == $className) {
                 // The Realm class already has the configuration and does not need it to be passed
