@@ -5,6 +5,11 @@
 
 namespace OpenXdmod\Setup;
 
+use CCR\Kernel;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Dotenv\Dotenv;
 use xd_utilities;
 use CCR\Json;
 use Xdmod\Template;
