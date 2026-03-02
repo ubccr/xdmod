@@ -1,11 +1,12 @@
 import {test, expect} from '@playwright/test';
 import fs from 'fs';
+import globalConfig from '../playwright.config';
 import selectors from '../lib/mocha.selectors';
 
 test.describe('Mocha Tests', async() => {
     const fileName = 'stats.md';
     test('All Pass', async({page}) => {
-        await page.goto(selectors.index);
+        await page.goto(globalConfig.use.baseURL + '/' + selectors.index);
         let total = 0;
         let values = '';
         for (let i = 0; i < 20; i++) {
@@ -19,11 +20,6 @@ test.describe('Mocha Tests', async() => {
                 const duration = Number(await page.locator(selectors.time).textContent());
                 const percentage = Number(numOfPasses)/18;
                 const num = i + 1;
-                data.push({
-                    num,
-                    duration,
-                    percentage
-                });
                 total += duration;
                 values += 'Num: ' + num + ' | Time: ' + duration + ' | Percentage: ' + percentage + '\n';
             });
