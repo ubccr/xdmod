@@ -3,10 +3,10 @@
         "mocha": true
     },
     "globals": {
-        "expect": false
+        "expect": false,
+        "chai": false
     },
     "rules": {
         "no-unused-expressions": "off"
     }
 }
-

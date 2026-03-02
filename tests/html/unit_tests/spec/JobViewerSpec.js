@@ -1,9 +1,9 @@
-describe('XDMoD.JobViewer', function () {
-    var jv = new XDMoD.Module.JobViewer();
+describe('XDMoD.JobViewer', () => {
+    const jv = new XDMoD.Module.JobViewer();
 
-    describe('compareNodePath tests', function () {
-        it('matching', function () {
-            var node = {
+    describe('compareNodePath tests', () => {
+        it('matching', () => {
+            const node = {
                 attributes: {
                     dtype: 'b',
                     b: 2
@@ -17,13 +17,13 @@ describe('XDMoD.JobViewer', function () {
                 }
             };
 
-            var path = [{ dtype: 'a', value: '1' }, { dtype: 'b', value: '2' }];
+            const path = [{ dtype: 'a', value: '1' }, { dtype: 'b', value: '2' }];
 
             expect(jv.compareNodePath(node, path)).to.be.true;
         });
 
-        it('diff dtype', function () {
-            var node = {
+        it('diff dtype', () => {
+            const node = {
                 attributes: {
                     dtype: 'b',
                     b: 2
@@ -37,13 +37,13 @@ describe('XDMoD.JobViewer', function () {
                 }
             };
 
-            var path = [{ dtype: 'a', value: '1' }, { dtype: 'b', value: '2' }];
+            const path = [{ dtype: 'a', value: '1' }, { dtype: 'b', value: '2' }];
 
             expect(jv.compareNodePath(node, path)).to.be.false;
         });
 
-        it('diff array longer', function () {
-            var node = {
+        it('diff array longer', () => {
+            const node = {
                 attributes: {
                     dtype: 'b',
                     b: 2
@@ -57,13 +57,13 @@ describe('XDMoD.JobViewer', function () {
                 }
             };
 
-            var path = [{ dtype: 'a', value: '1' }, { dtype: 'b', value: '2' }, { dtype: 'c', value: '3' }];
+            const path = [{ dtype: 'a', value: '1' }, { dtype: 'b', value: '2' }, { dtype: 'c', value: '3' }];
 
             expect(jv.compareNodePath(node, path)).to.be.false;
         });
 
-        it('diff node path longer', function () {
-            var node = {
+        it('diff node path longer', () => {
+            const node = {
                 attributes: {
                     dtype: 'b',
                     b: 2
@@ -77,12 +77,12 @@ describe('XDMoD.JobViewer', function () {
                 }
             };
 
-            var path = [{ dtype: 'b', value: '2' }];
+            const path = [{ dtype: 'b', value: '2' }];
 
             expect(jv.compareNodePath(node, path)).to.be.false;
         });
 
-        it('data format functions', function () {
+        it('data format functions', () => {
             expect(jv.formatData(60, 'seconds')).to.equal('1 minute ');
             expect(jv.formatData(10240, 'B/s')).to.equal('10.00 KiB/s');
             expect(jv.formatData(11100000000, '1')).to.equal('11.1 G');
