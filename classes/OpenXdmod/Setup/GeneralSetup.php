@@ -5,6 +5,7 @@
 
 namespace OpenXdmod\Setup;
 
+use CCR\Helper\SymfonyCommandHelper;
 use Xdmod\Template;
 
 /**
@@ -133,14 +134,21 @@ EOT
         ]);
         $this->saveTemplate($envTemplate, BASE_DIR . '/.env');
 
-        $cmdBase = 'APP_ENV=prod APP_DEBUG=0';
-        $console = BIN_DIR .'/console';
-
         // Make sure to clear the cache before dumping the dotenv so we start clean.
-        $this->executeCommand("$cmdBase $console cache:clear");
+        try {
+            SymfonyCommandHelper::executeCommand('cache:clear');
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Error occurred executing cache:clear', $e);
+        }
+
 
         // Dump dotenv data so we don't read .env each time in prod.
         // Note: this means that if you want to start debugging stuff you'll need to delete the generated .env.
-        $this->executeCommand("$cmdBase $console dotenv:dump");
+        try {
+            SymfonyCommandHelper::executeCommand("dotenv:dump");
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Error occurred executing dotenv:dump', $e);
+        }
+
     }
 }
