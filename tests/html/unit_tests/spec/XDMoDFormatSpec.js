@@ -1,7 +1,7 @@
-describe('XDMoD.Format', function () {
-    describe('Check Format functions', function () {
-        it('SI formatting', function () {
-            var test_cases = [
+describe('XDMoD.Format', () => {
+    describe('Check Format functions', () => {
+        it('SI formatting', () => {
+            const test_cases = [
                 [100001, 'B', 3, '100 kB'],
                 [10100001, 'B', 3, '10.1 MB'],
                 [0.0001, 'B', 2, '0.0001 B'],
@@ -49,28 +49,28 @@ describe('XDMoD.Format', function () {
                 [9999999999, '', 4, '10 G']
             ];
 
-            var i;
+            let i;
             for (i = 0; i < test_cases.length; i++) {
                 expect(XDMoD.utils.format.convertToSiPrefix(test_cases[i][0], test_cases[i][1], test_cases[i][2])).to.equal(test_cases[i][3]);
             }
         });
 
-        it('Binary formatting', function () {
-            var test_cases = [
+        it('Binary formatting', () => {
+            const test_cases = [
                 [1025, 'B', 3, '1.00 KiB'],
                 [10100001, 'B', 3, '9.63 MiB'],
                 [0.0001, 'B', 2, '0.00010 B'],
                 [1.00001, 'B', 1, '1 B']
             ];
 
-            var i;
+            let i;
             for (i = 0; i < test_cases.length; i++) {
                 expect(XDMoD.utils.format.convertToBinaryPrefix(test_cases[i][0], test_cases[i][1], test_cases[i][2])).to.equal(test_cases[i][3]);
             }
         });
 
-        it('Elapsed time', function () {
-            var test_cases = [
+        it('Elapsed time', () => {
+            const test_cases = [
                 [1, '1 second '],
                 [2, '2 seconds '],
                 [3600, '1 hour 0.0 minute '],
@@ -80,7 +80,7 @@ describe('XDMoD.Format', function () {
                 [(3 * 24 * 3600) + 3600, '3 days 1.0 hour ']
             ];
 
-            var i;
+            let i;
             for (i = 0; i < test_cases.length; i++) {
                 expect(XDMoD.utils.format.humanTime(test_cases[i][0])).to.equal(test_cases[i][1]);
             }
