@@ -26,6 +26,42 @@ expect {
     timeout {
         send_user "\nFailed to get prompt\n"; exit 1
     }
+    -re "\nWould you like to proceed.*\\\] "  {
+        send yes\n
+    }
+}
+
+expect {
+    timeout {
+        send_user "\nFailed to get prompt\n"; exit 1
+    }
+    -re "\nMySQL Admin Username: \\\[.*\\\] " {
+        send root\n
+    }
+}
+
+expect {
+    timeout {
+        send_user "\nFailed to get prompt\n"; exit 1
+    }
+    -re "\nMySQL Admin Password: " {
+        send \n
+    }
+}
+
+expect {
+    timeout {
+        send_user "\nFailed to get prompt\n"; exit 1
+    }
+    -re "\n\\(confirm\\) MySQL Admin Password: " {
+        send \n
+    }
+}
+
+expect {
+    timeout {
+        send_user "\nFailed to get prompt\n"; exit 1
+    }
     "Upgrade Complete" {
         lassign [wait] pid spawnid os_error_flag value
     }
