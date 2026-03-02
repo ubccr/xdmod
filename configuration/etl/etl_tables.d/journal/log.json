@@ -1,0 +1,83 @@
+{
+    "table_definition": {
+        "schema": "modw_etl",
+        "name": "log",
+        "engine": "InnoDB",
+        "charset": "utf8",
+        "collation": "utf8_unicode_ci",
+        "columns": [
+            {
+                "name": "id",
+                "type": "int(11)",
+                "extra": "AUTO_INCREMENT",
+                "nullable": false
+            },
+            {
+                "name": "etlProfileName",
+                "type": "varchar(256)",
+                "nullable": true
+            },
+            {
+                "name": "etlProfileVersion",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "dataset",
+                "type": "varchar(256)",
+                "nullable": true
+            },
+            {
+                "name": "start_ts",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "end_ts",
+                "type": "bigint(20)",
+                "nullable": true
+	    },
+            {
+                "name": "min_index",
+                "type": "bigint(20)",
+                "nullable": true
+	    },
+            {
+                "name": "max_index",
+                "type": "bigint(20)",
+                "nullable": true
+            },
+            {
+                "name": "processed",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "good",
+                "type": "int(11)",
+                "nullable": true
+            },
+            {
+                "name": "details",
+                "type": "text",
+                "nullable": true
+            },
+            {
+                "name": "aggregated",
+                "type": "tinyint(1)",
+                "nullable": false,
+		"default": 0
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            }
+        ]
+    }
+}
