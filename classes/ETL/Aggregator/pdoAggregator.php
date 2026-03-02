@@ -83,7 +83,10 @@ class pdoAggregator extends aAggregator
     // A Query object containing the source query for this ingestor
     protected $etlSourceQuery = null;
 
-    // An optional query object with the intermediate staging query
+    // An optional query object with the intermediate staging query. The intermediate staging query
+    // is used to support aggregation where two source tables are joined at aggregation
+    // time. The stage query allows the second source table to also be batched up to improve
+    // performance.
     protected $etlStageQuery = null;
 
     // The optional query object with the intermediate staging query when using batch mode
@@ -1367,7 +1370,9 @@ class pdoAggregator extends aAggregator
      * @param $etlQuery the ETL query object to use to create the SQL.
      * @param $aggregationUnit The current aggregation unit
      *
-     * @return array or statements
+     * @return array of strings containing the SQL statements for  selecting the data from the
+     *               source table, inserting to the dest table, and the optimized single database
+     *               insert into select from, respectively
      * ------------------------------------------------------------------------------------------
      */
     protected function getSqlStatements($etlQuery, $aggregationUnit)
@@ -1437,6 +1442,16 @@ class pdoAggregator extends aAggregator
         return array($selectSql, $insertSql, $optimizedInsertSql);
     }
 
+    /**
+     * Create and populate the temporary table used in batch mode aggregation
+     * as defined by the "stage_query" parameter setting in the ETL action
+     * definition. This table will contain all of the rows between the specified
+     * start and end periods.
+     *
+     * @param $minDayId string the start of the batch aggregation slide
+     * @param $maxDayId string the end of the batch aggregation slide
+     * @param $availableParams array the PDO parameters to substitute in the select statement
+     */
     protected function createStageBatchTempTable($minDayId, $maxDayId, $availableParams)
     {
         $qualifiedTmpTableName = $this->sourceEndpoint->getSchema(true) . "." . $this->sourceEndpoint->quoteSystemIdentifier(self::BATCH_STAGE_TABLE_NAME);
@@ -1484,6 +1499,14 @@ class pdoAggregator extends aAggregator
         }
     }
 
+    /**
+     * Create a temporary table that contains the rows for a given time
+     * period in batch mode aggregation. The table contents will be determined
+     * by the "stage_query" parameter setting in the ETL action definition.
+     *
+     * @param $aggregationUnit string the aggregation unit year, month, day, etc
+     * @param $availableParams array the PDO parameters in the select query
+     */
     protected function stageData($aggregationUnit, $availableParams)
     {
         if ($this->etlStageQuery === null) {

@@ -2,7 +2,6 @@
 
 namespace ComponentTests\DB;
 
-use ComponentTests\BaseTest;
 class EtlJournalTest extends BaseTest
 {
     public function testJournal()
