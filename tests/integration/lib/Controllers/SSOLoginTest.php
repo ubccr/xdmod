@@ -1051,8 +1051,8 @@ class SSOLoginTest extends BaseUserAdminTest
     public function createSystemAccount($personLongName, $resourceId, $username)
     {
         $query = <<<SQL
-INSERT INTO modw.systemaccount(person_id, resource_id, username, ts) 
-SELECT 
+INSERT INTO modw.systemaccount(person_id, resource_id, username, ts)
+SELECT
     p.id ,
     :resource_id as resource_id,
     :username as username,
