@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\AuthenticatorInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\PreAuthenticatedUserBadge;
@@ -72,8 +73,8 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     public function supports(Request $request): ?bool
     {
         $referer = $request->headers->get('referer');
-        $this->logger->info('Checking if Authenticator supports request', [$referer]);
-        return $referer === $this->parameters->get('sso')['login_link'];
+        $idpHost = $this->parameters->get('sso')['idp_host'];
+        return $referer === $idpHost;
     }
 
     public function authenticate(Request $request): Passport
@@ -154,6 +155,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
                 )
             );
         }
+        throw new UserNotFoundException();
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
@@ -165,6 +167,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     public function onAuthenticationFailure(Request $request, AuthenticationException $exception): ?Response
     {
         $this->logger->info('SimpleSAMLPHP Authentication Failed!', [$exception]);
+        return null;
     }
 
     public function start(Request $request, ?AuthenticationException $authException = null): Response

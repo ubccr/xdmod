@@ -36,7 +36,7 @@ class AuthenticationController extends BaseController
     /**
      * If SSO is setup, this is the url that will be used to log into the configured Identity Provider.
      */
-    private string $ssoUrl;
+    private string $idpHost;
 
     /**
      * @param LoggerInterface $logger
@@ -48,7 +48,7 @@ class AuthenticationController extends BaseController
     public function __construct(LoggerInterface $logger, ContainerBagInterface $parameters, Environment $twig, Tokens $tokenHelper)
     {
         $this->logger = $logger;
-        $this->ssoUrl = $parameters->get('sso')['login_link'];
+        $this->idpHost = $parameters->get('sso')['idp_host'];
         parent::__construct($logger, $twig, $tokenHelper);
     }
 
@@ -108,15 +108,17 @@ class AuthenticationController extends BaseController
     #[Route('{prefix}auth/idpredirect', name: 'idp_redirect', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function idpRedirect(Request $request): Response
     {
-        $returnTo = $this->getStringParam($request, 'returnTo');
-        $value = $this->ssoUrl;
-        if (!empty($returnTo)) {
-            $ssoUrl = $this->ssoUrl;
-            $returnTo = urlencode($returnTo);
-            $value = "{$ssoUrl}?ReturnTo=$returnTo";
-            $request->getSession()->set('_security.main.target_path', $returnTo);
+        $returnTo = $this->getStringParam($request, 'returnTo', true);
+
+        $request->getSession()->set('_security.main.target_path', $returnTo);
+
+        $auth = new \Authentication\SAML\XDSamlAuthentication();
+        $redirectUrl = $auth->getLoginURL($returnTo);
+        if ($redirectUrl === false ) {
+            throw new \Exception('SSO not configured.');
         }
-        return new Response($value, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
+
+        return new Response($redirectUrl, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
     }
 
 
