@@ -110,6 +110,24 @@
             ]
         },
         {
+            "name": "update-journal-tables",
+            "description": "Update managed tables in modw_etl",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ManageTables",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Logging Database",
+                    "config": "database",
+                    "schema": "modw_etl"
+                }
+            },
+            "definition_file_list": [
+                "journal/log.json"
+            ]
+        },
+        {
             "name": "update-cloud-tables",
             "description": "Update managed tables in modw_cloud",
             "namespace": "ETL\\Maintenance",
