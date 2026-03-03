@@ -155,7 +155,8 @@
                         "timezone",
                         "resource_type",
                         "resource_allocation_type",
-                        "organization"
+                        "organization",
+                        "resource_key"
                     ]
                 }
             }
@@ -205,11 +206,6 @@
             "name": "pi",
             "description": "Ingest job PIs",
             "definition_file": "jobs/staging/pi.json"
-        },
-        {
-            "name": "resource",
-            "description": "Ingest job resources",
-            "definition_file": "jobs/staging/resource.json"
         },
         {
             "name": "union-user-pi--pi",

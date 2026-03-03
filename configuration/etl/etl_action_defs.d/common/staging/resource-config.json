@@ -11,7 +11,8 @@
             "timezone": "timezone",
             "type_abbrev": "resource_type",
             "resource_allocation_type_abbrev": "resource_allocation_type",
-            "organization": "organization"
+            "organization": "organization",
+            "resource_key": "resource_key"
         }
     }
 }

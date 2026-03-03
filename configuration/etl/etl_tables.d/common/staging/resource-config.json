@@ -57,6 +57,12 @@
                 "type": "varchar(30)",
                 "nullable": true,
                 "comment": "Organization for the resource"
+            },
+            {
+                "name": "resource_key",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "The numerical identifier for the resource in the XDMoD datawarehouse. For a typical XDMoD install this value need not be specified. Typical reasons why you might specify the identifier would be if you had data for the same resource in multiple XDMoD instances and you wanted the internal identifiers to match across all the separate databases."
             }
         ],
         "indexes": [
