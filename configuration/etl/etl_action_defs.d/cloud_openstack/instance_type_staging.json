@@ -18,7 +18,7 @@
             "memory_mb": "staging.memory_mb",
             "disk_gb": "staging.disk_gb",
             "start_time": "staging.start_time",
-            "end_time": "CASE WHEN LEAD(staging.start_time) OVER (PARTITION BY staging.resource_id, staging.instance_type ORDER BY staging.start_time) IS NOT NULL THEN LEAD(staging.start_time) OVER (PARTITION BY staging.resource_id, staging.instance_type ORDER BY staging.start_time) - 0.000001 ELSE UNIX_TIMESTAMP(DATE_ADD(TIMESTAMP(CURDATE()), INTERVAL '23:59:59' HOUR_SECOND)) END"
+            "end_time": "CASE WHEN LEAD(staging.start_time) OVER (PARTITION BY staging.resource_id, staging.instance_type ORDER BY staging.start_time) IS NOT NULL THEN LEAD(staging.start_time) OVER (PARTITION BY staging.resource_id, staging.instance_type ORDER BY staging.start_time) - 0.000001 ELSE (UNIX_TIMESTAMP(DATE_ADD(TIMESTAMP(CURDATE()), INTERVAL '23:59:59' HOUR_SECOND)) + .999999) END"
         },
         "joins": [
             {
