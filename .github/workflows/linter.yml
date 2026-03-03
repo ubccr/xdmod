@@ -1,0 +1,40 @@
+---
+name: Lint Files
+
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  XDMOD_IS_CORE: 'true'
+  XDMOD_TEST_MODE: 'upgrade'
+
+jobs:
+  Linter:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v5
+
+      - name: Setup node env
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+
+      - name: Setup php
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          extensions: xml
+          tools: composer:v2
+
+      - name: Setup QA toolchain
+        run: |
+          git clone --depth=1 https://github.com/ubccr/xdmod-qa.git $HOME/.qa
+          $HOME/.qa/scripts/install.sh
+
+      - name: Run Linter
+        run: |
+          git fetch --unshallow origin $GITHUB_BASE_REF
+          TRAVIS_COMMIT_RANGE=`git rev-parse origin/$GITHUB_BASE_REF`..${GITHUB_SHA} $HOME/.qa/scripts/build.sh -s

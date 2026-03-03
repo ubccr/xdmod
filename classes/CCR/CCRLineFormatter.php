@@ -4,21 +4,14 @@ namespace CCR;
 
 use Monolog\Formatter\LineFormatter;
 use Monolog\Formatter\NormalizerFormatter;
+use Monolog\Utils;
 
 class CCRLineFormatter extends LineFormatter
 {
-
-    private NormalizerFormatter $normalizerFormatter;
-
     public function __construct($format = null, $dateFormat = null, $allowInlineLineBreaks = false, $ignoreEmptyContextAndExtra = false)
     {
-        if (!str_contains($format, '%context%')) {
-            // first strip newlines from the format, then we'll add one at the end.
-            $format = str_replace(["\n", "\r\n", "\r",], '', $format);
-            $format = "$format%context%\n";
-        }
-        $this->normalizerFormatter = new NormalizerFormatter($dateFormat);
         parent::__construct($format, $dateFormat, $allowInlineLineBreaks, $ignoreEmptyContextAndExtra);
+        $this->includeStacktraces();
     }
 
     /**
@@ -45,9 +38,16 @@ class CCRLineFormatter extends LineFormatter
         return implode(' ', $parts);
     }
 
+    /**
+     * Formatter for XDMoD Line based logging. This handles the line format
+     * parameters identically to the parent monolog line formatter except that
+     * the %message% parameter is expanded to the serialization of the message
+     * string and context object. If either the context is empty or the message
+     * is an empty string they are ommitted.
+     */
     public function format(array $record)
     {
-        $vars = $this->normalizerFormatter->format($record);
+        $vars = NormalizerFormatter::format($record);
 
         $output = $this->format;
 
@@ -58,6 +58,17 @@ class CCRLineFormatter extends LineFormatter
             }
         }
 
+        if (false !== strpos($output, '%message%')) {
+            $data = [];
+            if ($vars['message'] !== '') {
+                array_push($data, $vars['message']);
+            }
+            if (!empty($vars['context'])) {
+                array_push($data, $this->stringify($vars['context']));
+            }
+
+            $output = str_replace('%message%', implode(" ", $data), $output);
+        }
 
         foreach ($vars['context'] as $var => $val) {
             if (false !== strpos($output, '%context.'.$var.'%')) {
@@ -82,10 +93,6 @@ class CCRLineFormatter extends LineFormatter
             if (false !== strpos($output, '%'.$var.'%')) {
                 $output = str_replace('%'.$var.'%', $this->stringify($val), $output);
             }
-        }
-
-        if (false !== strpos($output, '%context%')) {
-            $output = str_replace($output, '%context%', $this->toJson($vars['context']));
         }
 
         // remove leftover %extra.xxx% and %context.xxx% if any

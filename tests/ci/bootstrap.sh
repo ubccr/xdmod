@@ -177,4 +177,11 @@ then
 
     sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
     sudo -u xdmod xdmod-ingestor --start-date "2016-12-01" --end-date "2022-01-01" --last-modified-start-date "2017-01-01 00:00:00"
+
+    # Make sure that we have the new httpd.conf file in place, this can be removed after the next xdmod/docker image
+    # update as it will already be in place.
+    copy_template_httpd_conf
+
+    # Restart so that the above changes take effect.
+    ~/bin/services restart
 fi
