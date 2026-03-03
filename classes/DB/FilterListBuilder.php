@@ -39,21 +39,21 @@ class FilterListBuilder extends Loggable
 
     /**
      * The date and time to use to retreive row from aggregate tables to get filter values from
-     * 
+     *
      * @var string|null
      */
     private $lastModifiedStartDate = null;
 
     /**
      * Used to mark if the filter lists should be appended to or deleted and recreated.
-     * 
+     *
      * @var boolean
      */
     private $appendToList = false;
     
     /**
      * Name of temporary table to build filter lists from. Holds rows from a realms aggregate table
-     * 
+     *
      * @var string
      */
     private $filterTemporaryTable = '';
@@ -79,13 +79,13 @@ class FilterListBuilder extends Loggable
 
     /**
      * Check to see if the table being used to retrieve filter values has a last_modified column.
-     * 
+     *
      * @param string $schema Name of the schema the table is in
      * @param string $table Name of the table to check for a last_modified column
      * @param string $column Name of column that is has the time a row was last modified. Defauls to last_modified
      * @return boolean
      */
-    private function doesLastModifiedColumnExist(string $schema, string $table, string $column="last_modified") {
+    private function doesLastModifiedColumnExist(string $schema, string $table, string $column = "last_modified") {
         $db = DB::factory('datawarehouse');
 
         $doesFieldExist = "SELECT * 
@@ -497,7 +497,7 @@ class FilterListBuilder extends Loggable
 
     /**
      * Sets value for lastModifiedStartDate property
-     * 
+     *
      * @param string|null $lastModifiedStartDate
      */
     public function setLastModifiedStartDate(?string $lastModifiedStartDate)
@@ -507,10 +507,10 @@ class FilterListBuilder extends Loggable
 
     /**
      * Sets value for appendToList property
-     * 
+     *
      * @param boolean $appendToList
      */
-    public function setAppendToList(bool $appendToList) 
+    public function setAppendToList(bool $appendToList)
     {
         $this->appendToList = $appendToList;
     }
