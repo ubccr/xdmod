@@ -144,7 +144,7 @@ EOT
         $authHeader = sprintf('%s/simplesaml/module.php/authoauth2/linkback.php', $siteAddress);
 
         try {
-            SymfonyCommandHelper::executeCommand("xdmod:update_sso_referrer $authHeader");
+            SymfonyCommandHelper::executeCommand("xdmod:update_sso_referrer", 'prod', false, ['url' => "$authHeader"]);
         } catch (\Exception $e) {
             throw new \RuntimeException('Error occurred executing xdmod:update_sso_referrer');
         }
