@@ -1,0 +1,31 @@
+{
+    "#": "Calculate config_group by computing running sum of is_change",
+
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/instance_type_config_group.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "resource_id": "cf.resource_id",
+            "instance_type_id": "cf.instance_type_id",
+            "instance_type": "cf.instance_type",
+            "display": "cf.display",
+            "description": "cf.description",
+            "num_cores": "cf.num_cores",
+            "memory_mb": "cf.memory_mb",
+            "disk_gb": "cf.disk_gb",
+            "start_time": "cf.start_time",
+            "config_group": "SUM(cf.is_change) OVER (PARTITION BY cf.resource_id, cf.instance_type ORDER BY cf.start_time)"
+        },
+        "joins": [
+            {
+                "name": "instance_type_change_flag",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "cf"
+            }
+        ]
+    }
+}

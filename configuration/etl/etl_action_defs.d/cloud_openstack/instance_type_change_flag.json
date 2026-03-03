@@ -1,0 +1,31 @@
+{
+    "#": "Calculate is_change flag to detect when instance type configuration changes",
+
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/instance_type_change_flag.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "resource_id": "u.resource_id",
+            "instance_type_id": "u.instance_type_id",
+            "instance_type": "u.instance_type",
+            "display": "u.display",
+            "description": "u.description",
+            "num_cores": "u.num_cores",
+            "memory_mb": "u.memory_mb",
+            "disk_gb": "u.disk_gb",
+            "start_time": "u.start_time",
+            "is_change": "CASE WHEN LAG(u.num_cores) OVER (PARTITION BY u.resource_id, u.instance_type ORDER BY u.start_time) IS NULL THEN 1 WHEN u.num_cores != LAG(u.num_cores) OVER (PARTITION BY u.resource_id, u.instance_type ORDER BY u.start_time) THEN 1 WHEN u.memory_mb != LAG(u.memory_mb) OVER (PARTITION BY u.resource_id, u.instance_type ORDER BY u.start_time) THEN 1 WHEN u.disk_gb != LAG(u.disk_gb) OVER (PARTITION BY u.resource_id, u.instance_type ORDER BY u.start_time) THEN 1 ELSE 0 END"
+        },
+        "joins": [
+            {
+                "name": "instance_type_union",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "u"
+            }
+        ]
+    }
+}

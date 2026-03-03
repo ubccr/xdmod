@@ -15,7 +15,8 @@
             {
                 "name": "instance_type_id",
                 "type": "int(11)",
-                "nullable": false
+                "nullable": true,
+                "default": null
             },
             {
                 "name": "instance_type",
