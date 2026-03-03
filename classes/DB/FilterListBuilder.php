@@ -56,7 +56,12 @@ class FilterListBuilder extends Loggable
      * 
      * @var string
      */
-    private $filterTemporaryTable = 'modw_aggregates.filter_tmp';
+    private $filterTemporaryTable = '';
+
+    public function __construct() {
+        parent::__construct();
+        $this->filterTemporaryTable = uniqid('modw_aggregates.filter_tmp_', true);
+    }
 
     /**
      * Build filter lists for all realms' dimensions.

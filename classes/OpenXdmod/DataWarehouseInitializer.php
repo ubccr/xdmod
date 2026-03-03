@@ -390,10 +390,7 @@ class DataWarehouseInitializer
 
         $filterListBuilder = new FilterListBuilder();
         $filterListBuilder->setLogger($this->logger);
-        if($this->appendFiltersList) {
-            $filterListBuilder->setLastModifiedStartDate($lastModifiedStartDate);
-        }
-        $filterListBuilder->buildRealmLists('Cloud');
+        $filterListBuilder->buildRealmLists('Cloud', $this->appendFiltersList);
     }
 
     /**
@@ -413,10 +410,7 @@ class DataWarehouseInitializer
 
         $filterListBuilder = new FilterListBuilder();
         $filterListBuilder->setLogger($this->logger);
-        if($this->appendFiltersList) {
-            $filterListBuilder->setLastModifiedStartDate($lastModifiedStartDate);
-        }
-        $filterListBuilder->buildRealmLists('ResourceSpecifications');
+        $filterListBuilder->buildRealmLists('ResourceSpecifications', $this->appendFiltersList);
     }
 
     /**
@@ -442,10 +436,7 @@ class DataWarehouseInitializer
         );
         $filterListBuilder = new FilterListBuilder();
         $filterListBuilder->setLogger($this->logger);
-        if($this->appendFiltersList) {
-            $filterListBuilder->setLastModifiedStartDate($lastModifiedStartDate);
-        }
-        $filterListBuilder->buildRealmLists('Storage');
+        $filterListBuilder->buildRealmLists('Storage', $this->appendFiltersList);
     }
 
     /**
@@ -487,10 +478,7 @@ class DataWarehouseInitializer
 
         $filterListBuilder = new FilterListBuilder();
         $filterListBuilder->setLogger($this->logger);
-        if($this->appendFiltersList) {
-            $filterListBuilder->setLastModifiedStartDate($lastModifiedStartDate);
-        }
-        $filterListBuilder->buildRealmLists('Jobs');
+        $filterListBuilder->buildRealmLists('Jobs', $this->appendFiltersList);
     }
 
     /**
@@ -585,6 +573,11 @@ class DataWarehouseInitializer
         return $this->enabledRealms;
     }
 
+    /**
+     * Set the value that determines whether to append to existing filter lists or replace them.
+     *
+     * @param bool $append True if aggregation data should be appended to existing filter lists.
+     */
     public function setAppendFiltersList(bool $appendFiltersList)
     {
         $this->appendFiltersList = $appendFiltersList;
