@@ -50,7 +50,7 @@ class FilterListBuilder extends Loggable
      * @var boolean
      */
     private $appendToList = false;
-    
+
     /**
      * Name of temporary table to build filter lists from. Holds rows from a realms aggregate table
      *
@@ -88,8 +88,8 @@ class FilterListBuilder extends Loggable
     private function doesLastModifiedColumnExist(string $schema, string $table, string $column = "last_modified") {
         $db = DB::factory('datawarehouse');
 
-        $doesFieldExist = "SELECT * 
-            FROM information_schema.COLUMNS 
+        $doesFieldExist = "SELECT *
+            FROM information_schema.COLUMNS
             WHERE TABLE_SCHEMA = :schema
             AND TABLE_NAME = :tableName
             AND COLUMN_NAME = :column";
@@ -247,7 +247,7 @@ class FilterListBuilder extends Loggable
             SELECT DISTINCT
                 $idField
             FROM $selectTablesStr
-            WHERE $wheresStr 
+            WHERE $wheresStr
             $lastModifiedClause
             $onDuplicateClause";
 
@@ -363,7 +363,7 @@ class FilterListBuilder extends Loggable
                 WHERE $wheresStr
                 $lastModifiedClause
                 $onDuplicateClause";
-            
+
 
             $this->logger->debug("Filter List SQL: $filterListSql");
             $db->execute($filterListSql);

@@ -90,7 +90,7 @@ class DataWarehouseInitializer
     /**
      * Determines if when building the filters list the list should be appended
      * or truncated a recreated
-     * 
+     *
      * @var bool
      */
     protected $appendFiltersList = false;
