@@ -68,7 +68,7 @@ class SymfonyCommandHelper
         $application->setAutoExit(false);
 
         // Set the Symfony command that is to be executed.
-        $options['command'] = $command;
+        array_unshift($options,$command);
 
         $input = new ArrayInput($options);
         $output = new BufferedOutput();
