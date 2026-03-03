@@ -1,44 +1,40 @@
 {
-    "#": "Instance types are specific to a resource",
+    "#": "Instance type observations with config group assignment",
 
     "table_definition": {
-        "name": "instance_type_union",
+        "name": "instance_type_config_group",
         "engine": "InnoDB",
-        "comment": "Instance type configurations. Values for the same name may change over time.",
+        "comment": "Instance type observations with config group assignment",
         "columns": [
             {
                 "name": "resource_id",
                 "type": "int(11)",
                 "nullable": false,
-                "default": -1,
                 "comment": "Resource to which this type belongs"
             },
             {
                 "name": "instance_type_id",
                 "type": "int(11)",
-                "default": null,
                 "nullable": true,
-                "comment": "ID from existing modw_cloud.instance_type table, NULL for new raw data"
+                "default": null
             },
             {
                 "name": "instance_type",
                 "type": "varchar(64)",
                 "nullable": false,
-                "default": "Unknown",
                 "comment": "Short version or abbrev"
             },
             {
                 "name": "display",
                 "type": "varchar(256)",
                 "nullable": false,
-                "default": "Unknown",
                 "comment": "What to show the user"
             },
             {
                 "name": "description",
-                "type": "varchar(256)",
+                "type": "varchar(1024)",
                 "nullable": true,
-                "comment": "What to show the user"
+                "default": null
             },
             {
                 "name": "num_cores",
@@ -62,9 +58,14 @@
             {
                 "name": "start_time",
                 "type": "decimal(16,6)",
+                "nullable": false
+            },
+            {
+                "name": "config_group",
+                "type": "int(11)",
                 "nullable": false,
-                "default": "0.000000",
-                "comment": "First time that this configuration was seen as a unix timestamp to the microsecond. defaults to unknown."
+                "default": 0,
+                "comment": "Group number that increments on each config change"
             }
         ],
         "indexes": [
@@ -73,17 +74,16 @@
                 "columns": [
                     "resource_id",
                     "instance_type",
-                    "num_cores",
-                    "memory_mb",
-                    "disk_gb",
                     "start_time"
                 ],
                 "is_unique": true
             },
             {
-                "name": "idx_instance_type_id",
+                "name": "idx_grouping",
                 "columns": [
-                    "instance_type_id"
+                    "resource_id",
+                    "instance_type",
+                    "config_group"
                 ]
             }
         ]
