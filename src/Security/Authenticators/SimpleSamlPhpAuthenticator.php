@@ -70,11 +70,64 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     }
 
 
+    /**
+     * Determine whether or not this authenticator supports the provided $request.
+     *
+     * @param Request $request
+     * @return bool|null
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
     public function supports(Request $request): ?bool
     {
         $referer = $request->headers->get('referer');
-        $idpHost = $this->parameters->get('sso')['idp_host'];
-        return $referer === $idpHost;
+        $authReferrer = $this->parameters->get('sso')['auth_referrer'];
+        $this->logger->debug('Original Referer, IDP Host', [$referer, $authReferrer]);
+        if (!empty($referer)) {
+            $referer = $this->buildReferrer($referer);
+            $this->logger->debug('New Referer', [$referer]);
+            return $referer === $authReferrer;
+        }
+        return false;
+    }
+
+    /**
+     * Build up a modified version of the provided $referer. In this new version of the referrer we only include the
+     * following:
+     *   - scheme
+     *   - host
+     *   - port
+     *   - path
+     *
+     * @param string $referrer the original referrer header value from a request.
+     * @return string the modified version to be compared against the `auth_referrer` in services.yaml.
+     */
+    private function buildReferrer(string $referrer): string
+    {
+        $parts = parse_url($referrer);
+
+        // start building the value to return w/ the scheme and host which should always be present.
+        $result = sprintf('%s://%s', $parts['scheme'], $parts['host']);
+
+        $port = $parts['port'] ?? null;
+        $path = $parts['path'] ?? null;
+
+        // If we have a port, then include it.
+        if (!empty($port)) {
+            $result = sprintf('%s:%s', $result, $port);
+        }
+
+        // if we have a path then include it.
+        if (!empty($path) && $path !== '/') {
+            // Need to make sure that we don't double up on /'s
+            if (str_starts_with($path, '/')) {
+                $result = sprintf('%s%s', $result, $path);
+            } else {
+                $result = sprintf('%s/%s', $result, $path);
+            }
+        }
+
+        return $result;
     }
 
     public function authenticate(Request $request): Passport

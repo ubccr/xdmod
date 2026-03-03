@@ -135,6 +135,20 @@ EOT
         ]);
         $this->saveTemplate($envTemplate, BASE_DIR . '/.env');
 
+        // Save a default value for the SSO auth_header since we have the general site address.
+        // https://symfony-dev.ccr.xdmod.org/simplesaml/module.php/authoauth2/linkback.php
+        $siteAddress = $settings['general_site_address'];
+        if (str_ends_with($siteAddress, '/')) {
+            $siteAddress = substr($siteAddress, 0, strlen($siteAddress) - 1);
+        }
+        $authHeader = sprintf('%s/simplesaml/module.php/authoauth2/linkback.php', $siteAddress);
+
+        try {
+            SymfonyCommandHelper::executeCommand("xdmod:update_sso_referrer $authHeader");
+        } catch (\Exception $e) {
+            throw new \RuntimeException('Error occurred executing xdmod:update_sso_referrer');
+        }
+
         // Make sure to clear the cache before dumping the dotenv so we start clean.
         try {
             SymfonyCommandHelper::executeCommand('cache:clear');

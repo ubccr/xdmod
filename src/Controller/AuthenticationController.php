@@ -36,7 +36,7 @@ class AuthenticationController extends BaseController
     /**
      * If SSO is setup, this is the url that will be used to log into the configured Identity Provider.
      */
-    private string $idpHost;
+    private string $authReferrer;
 
     /**
      * @param LoggerInterface $logger
@@ -48,7 +48,7 @@ class AuthenticationController extends BaseController
     public function __construct(LoggerInterface $logger, ContainerBagInterface $parameters, Environment $twig, Tokens $tokenHelper)
     {
         $this->logger = $logger;
-        $this->idpHost = $parameters->get('sso')['idp_host'];
+        $this->authReferrer = $parameters->get('sso')['auth_referrer'];
         parent::__construct($logger, $twig, $tokenHelper);
     }
 
