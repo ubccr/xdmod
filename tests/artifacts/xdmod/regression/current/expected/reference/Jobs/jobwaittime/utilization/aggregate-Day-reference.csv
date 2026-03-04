@@ -8,7 +8,7 @@ start,end
 "Job Wait Time","Screwdriver CPU Utilization (%)"
 "0 - 1s",2.5915
 "1 - 30s",4.4406
-"30s - 30min",2.9743
+"30s - 30min",2.9749
 "30 - 60min",0.1816
 "1 - 5hr",2.9830
 "5 - 10hr",0.8912

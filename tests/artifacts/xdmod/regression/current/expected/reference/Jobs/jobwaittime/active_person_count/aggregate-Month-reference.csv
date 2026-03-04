@@ -8,7 +8,7 @@ start,end
 "Job Wait Time","Number of Users: Active"
 "0 - 1s",31
 "1 - 30s",45
-"30s - 30min",34
+"30s - 30min",35
 "30 - 60min",14
 "1 - 5hr",24
 "5 - 10hr",22

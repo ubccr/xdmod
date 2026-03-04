@@ -310,8 +310,8 @@ class MetricExplorerTest extends TokenAuthTest
             }
         }
         $expectedCounts = [
-            'cd' => 66,
-            'cs' => 66,
+            'cd' => 67,
+            'cs' => 67,
             'usr' => 1,
             'pi' => 6,
             'mgr' => 0

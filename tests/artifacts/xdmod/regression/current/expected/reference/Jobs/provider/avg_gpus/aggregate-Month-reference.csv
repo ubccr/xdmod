@@ -6,6 +6,6 @@ start,end
 2016-12-22,2017-01-01
 ---------
 "Service Provider","GPU Count: Per Job","Std Dev: GPU Count: Per Job"
-screw,0.0001,0.00004711767852829441
+screw,0.0001,0.0000471168936235112
 wrench,0.0000,0
 ---------

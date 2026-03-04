@@ -351,6 +351,13 @@
                 "type": "decimal(18,0)",
                 "comment": "FACT: this is the sum of (node_count multipled by the [adjusted] duration) for jobs that ran in this days.",
                 "nullable": true
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "default": "CURRENT_TIMESTAMP",
+                "nullable": false,
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
             }
         ],
         "indexes": [
@@ -454,6 +461,12 @@
                 "name": "index_system_account",
                 "columns": [
                     "systemaccount_id"
+                ]
+            },
+            {
+                "name": "index_last_modified",
+                "columns": [
+                    "last_modified"
                 ]
             },
             {

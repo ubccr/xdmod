@@ -8,7 +8,7 @@ start,end
 "Job Wait Time","Number of Jobs Started"
 "0 - 1s",12295
 "1 - 30s",18172
-"30s - 30min",17904
+"30s - 30min",17905
 "30 - 60min",2660
 "1 - 5hr",13138
 "5 - 10hr",3957

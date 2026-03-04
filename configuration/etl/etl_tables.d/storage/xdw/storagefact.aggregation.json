@@ -166,6 +166,13 @@
                 "type": "decimal(30,0) unsigned",
                 "nullable": false,
                 "comment": "Sum of hard threshold."
+            },
+            {
+                "name": "last_modified",
+                "type": "timestamp",
+                "default": "CURRENT_TIMESTAMP",
+                "nullable": false,
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
             }
         ],
         "indexes": [
@@ -221,6 +228,12 @@
                 "name": "idx_fos_id",
                 "columns": [
                     "fos_id"
+                ]
+            },
+            {
+                "name": "index_last_modified",
+                "columns": [
+                    "last_modified"
                 ]
             }
         ]

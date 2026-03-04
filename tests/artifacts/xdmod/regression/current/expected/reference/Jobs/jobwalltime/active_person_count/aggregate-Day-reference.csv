@@ -8,7 +8,7 @@ start,end
 "Job Wall Time","Number of Users: Active"
 "0 - 1s",1
 "1 - 30s",20
-"30s - 30min",32
+"30s - 30min",33
 "30 - 60min",20
 "1 - 5hr",25
 "5 - 10hr",21

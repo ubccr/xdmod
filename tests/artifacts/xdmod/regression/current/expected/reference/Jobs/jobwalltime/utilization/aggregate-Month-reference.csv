@@ -8,7 +8,7 @@ start,end
 "Job Wall Time","Screwdriver CPU Utilization (%)"
 "0 - 1s",0.0000
 "1 - 30s",0.0029
-"30s - 30min",0.2633
+"30s - 30min",0.2634
 "30 - 60min",0.3181
 "1 - 5hr",0.4210
 "5 - 10hr",0.1648
