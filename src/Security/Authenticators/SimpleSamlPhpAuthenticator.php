@@ -4,6 +4,7 @@ namespace CCR\Security\Authenticators;
 
 use CCR\Entity\User;
 use Authentication\SAML\XDSamlAuthentication;
+use Configuration\Configuration;
 use Models\Services\Organizations;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -80,15 +81,23 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
      */
     public function supports(Request $request): ?bool
     {
-        $referer = $request->headers->get('referer');
-        $authReferrer = $this->parameters->get('sso')['auth_referrer'];
-        $this->logger->debug('Original Referer, IDP Host', [$referer, $authReferrer]);
-        if (!empty($referer)) {
-            $referer = $this->buildReferrer($referer);
-            $this->logger->debug('New Referer', [$referer]);
-            return $referer === $authReferrer;
+        // We only allow SSO Auth when the request is a GET for the home page.
+        if (!$request->isMethod('GET') ||
+            !$this->httpUtils->checkRequestPath($request, 'xdmod_new_login')) {
+            return false;
         }
-        return false;
+
+        $referer = $request->headers->get('referer');
+        // And if the referer is not empty.
+        if (empty($referer)) {
+            return false;
+        }
+
+        $configuration = Configuration::factory('portal_settings');
+        $siteAddress = $configuration->getSectionData('general_site_address');
+        $authReferrer = sprintf('%s/simplesaml/module.php/authoauth2/linkback.php', $siteAddress);
+
+        return str_starts_with($referer, $authReferrer);
     }
 
     /**

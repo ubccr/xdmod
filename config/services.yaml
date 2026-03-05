@@ -1,32 +1,5 @@
 parameters:
-    sso:
-        auth_referrer: 'https://xdmod:7000'
-        show_local_login: true
-        direct_link: false
-        parameters:
-            username:
-                attribute:
-                    - itname
-                    - system_username
-            first_name:
-                attribute: firstName
-                default: UNKNOWN
-            middle_name:
-                attribute: middleName
-            last_name:
-                attribute: lastName
-            organization:
-                attribute: orgId
-            email_address:
-                attribute: email
-            system_username:
-                attribute: system_username
-                default: $username
-    log_dir: '%env(XDMOD_LOG_DIR)%'
-    google_recaptcha_site_key: '%env(GOOGLE_RECAPTCHA_SITE_KEY)%'
-    center_related_acls:
-        - cd
-        - cs
+    log_dir: !php/const LOG_DIR
 services:
     _defaults:
         autowire: true

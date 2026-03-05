@@ -7,6 +7,7 @@ namespace CCR\Controller;
 use CCR\Security\Helpers\Tokens;
 use Authentication\SAML\XDSamlAuthentication;
 use CCR\DB;
+use Configuration\Configuration;
 use Exception;
 use Models\Services\Acls;
 use Models\Services\Realms;
@@ -97,7 +98,6 @@ class HomeController extends BaseController
 
         $isSSOConfigured = false;
         $ssoLoginLink = [];
-        $ssoSettings = $this->getParameter('sso');
         try {
             $auth = new XDSamlAuthentication();
             $isSSOConfigured = $auth->isSamlConfigured();
@@ -129,6 +129,26 @@ class HomeController extends BaseController
             $jupyterIsEnabled = false;
             $jupyterHubURL = '';
         }
+
+
+        try {
+            $ssoShowLocalLogin = \xd_utilities\filter_var(
+                \xd_utilities\getConfiguration('sso', 'show_local_login'),
+                FILTER_VALIDATE_BOOLEAN
+            );
+        } catch (Exception $e) {
+            $ssoShowLocalLogin = false;
+        }
+
+        try {
+            $ssoDirectLink = \xd_utilities\filter_var(
+                \xd_utilities\getConfiguration('sso', 'direct_link'),
+                FILTER_VALIDATE_BOOLEAN
+            );
+        } catch(Exception $e) {
+            $ssoDirectLink = false;
+        }
+
 
         $params = [
             'user_logged_in' => $userLoggedIn,
@@ -169,8 +189,8 @@ class HomeController extends BaseController
             'org_name' => ORGANIZATION_NAME,
             'is_sso_configured' => $isSSOConfigured,
             'sso_login_link' => json_encode($ssoLoginLink),
-            'sso_show_local_login' => $ssoSettings['show_local_login'],
-            'sso_direct_link' => $ssoSettings['direct_link'],
+            'sso_show_local_login' => $ssoShowLocalLogin,
+            'sso_direct_link' => $ssoDirectLink,
             'is_jupyter_configured' => $jupyterIsEnabled,
             'jupyter_hub_url' => $jupyterHubURL,
             'error_codes' => \XDError::getErrorCodes()
