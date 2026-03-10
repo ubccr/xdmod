@@ -493,22 +493,7 @@ class RestIngestor extends aIngestor implements iAction
                 // be arbitrary.
 
                 foreach ( $columnToResultFieldMap as $dbCol => $resultKey ) {
-                    if ( is_object($resultKey) ) {
-                        $objectKey = key($resultKey);
-                        $targetKey = current($resultKey);
-
-                        if (! isset($objectKey) || ! isset($targetKey)) {
-                            $recordParameters[":{$dbCol}_{$recordCounter}"] = null;
-                        } else {
-                            $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$objectKey->$targetKey;
-                        }
-                    } else {
-                        if ( ! isset($result->$resultKey) ) {
-                            // We should add a "if_missing" processing directive here -smg
-                            $result->$resultKey = null;
-                        }
-                        $recordParameters[":{$dbCol}_{$recordCounter}"] = $result->$resultKey;
-                    }
+                    $recordParameters[":{$dbCol}_{$recordCounter}"] = $this->extractField($result, $resultKey);
                 }
 
                 if ( $numColumns != count($recordParameters) ) {
@@ -997,4 +982,53 @@ class RestIngestor extends aIngestor implements iAction
         return true;
 
     }  // verifyTransformDirective()
+
+     /* ------------------------------------------------------------------------------------------
+      * Parses PHP obj/array and retrieves desired field. Supports a wildcard, "?", for the last item in an array.
+      * @param string $data          PHP obj representing data.
+      * @param string $keys          Array of keys to parse
+      *
+      * @return mixed
+      * ------------------------------------------------------------------------------------------
+      */
+    protected function extractField($data, $keys)
+    {
+        // Have this for cleaner ETL action defs.
+        // No need to put a single key in an array.
+        if (!is_array($keys)) {
+            $keys = array($keys);
+        }
+
+        foreach ($keys as $key) {
+            // We can only traverse if we currently have an array or object
+            if (!is_object($data) && !is_array($data)) {
+                return null;
+            }
+
+            // Check if we are looking for last element in array. Using '?' for now.
+            if ($key === '?') {
+                if (empty($data)) {
+                    return null;
+                }
+                $key = array_key_last($data);
+            }
+
+            // Parse data object/array
+            if (is_array($data)) {
+                if (isset($data[$key])) {
+                    $data = $data[$key];
+                } else {
+                    return null;
+                }
+            } else {
+                if (isset($data->$key)) {
+                    $data = $data->$key;
+                } else {
+                    return null;
+                }
+            }
+        }
+
+        return $data;
+    } // extractField()
 }  // class RestIngestor
