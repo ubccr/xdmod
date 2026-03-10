@@ -21,13 +21,7 @@ jobs:
         type: string
     executor: << parameters.os >>
     environment:
-      COMPOSER_ALLOW_SUPERUSER: 1
       XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
-      QA_BRANCH: 'v2'
-      TRAVIS_COMMIT_RANGE: << pipeline.git.base_revision >>..<<pipeline.git.revision>>
-      XDMOD_IS_CORE: yes
-      XDMOD_INSTALL_DIR: /root/xdmod
-      XDMOD_TEST_MODE: << parameters.install-type >>
     steps:
       - checkout
       - setup_remote_docker
@@ -65,6 +59,14 @@ jobs:
       - run:
           name: Build XDMoD RPM
           command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
+      - when:
+          condition:
+            equal: [ << parameters.install-type >>, 'upgrade' ]
+          steps:
+            - run:
+                name: Test source code install
+                command: |
+                  docker exec -w /root/xdmod xdmod /root/xdmod/tests/ci/source_install.sh
       - run:
           name: Install / Upgrade XDMoD from the newly created RPM
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> xdmod /root/xdmod/tests/ci/bootstrap.sh
@@ -77,30 +79,6 @@ jobs:
       - run:
           name: Setup the SimpleSAML server etc. so we can test SSO
           command: docker exec xdmod /root/xdmod/tests/ci/samlSetup.sh
-      - when:
-          condition:
-            equal: [ << parameters.install-type >>, 'upgrade' ]
-          steps:
-            - run:
-                name: Checkout QA Repo
-                command: docker exec -w /root xdmod git clone --depth=1 --branch="$QA_BRANCH" https://github.com/ubccr/xdmod-qa.git /root/.qa
-            - run:
-                name: Install QA dependencies
-                command: docker exec -w /root/xdmod xdmod /root/.qa/scripts/install.sh
-            - run:
-                name: Configure xdmod as a safe directory
-                command: docker exec -w /root/xdmod xdmod git config --global --add safe.directory /xdmod
-            - run:
-                name: Setup remote upstream
-                command: |
-                  docker exec -w /root/xdmod xdmod git config --global --add safe.directory /root/xdmod
-                  docker exec -w /root/xdmod xdmod git remote add upstream https://github.com/ubccr/xdmod.git
-            - run:
-                name: Copy portal_settings.ini into place
-                command: docker exec xdmod cp /etc/xdmod/portal_settings.ini /root/xdmod/configuration/portal_settings.ini
-            - run:
-                name: Run QA Tests
-                command: docker exec -w /root/xdmod xdmod /root/.qa/scripts/build.sh
       - run:
           name: Make sure that the Test Dependencies are installed
           command: docker exec -w /root/xdmod xdmod composer install --no-progress
@@ -127,6 +105,13 @@ jobs:
             docker exec xdmod cp /etc/xdmod/portal_settings.ini /root/xdmod/configuration/portal_settings.ini
             docker exec xdmod cp /etc/xdmod/organization.json /root/xdmod/configuration/organization.json
 
+      - when:
+          condition:
+            equal: [ << parameters.install-type >>, 'upgrade' ]
+          steps:
+            - run:
+                name: Run Unit Tests
+                command: docker exec -w /root/xdmod xdmod /root/xdmod/tests/unit/runtests.sh --junit-output-dir /root/phpunit
       - run:
           name: Running Integration Tests
           command: docker exec -w /root/xdmod xdmod /root/xdmod/tests/integration/runtests.sh --junit-output-dir /root/phpunit
@@ -142,14 +127,17 @@ jobs:
             docker exec -w /root/xdmod xdmod /root/xdmod/tests/post/bootstrap.sh
             docker exec -w /root/xdmod xdmod /root/xdmod/tests/post/runtests.sh
       - run:
-          name: Update the HTTPD config file
-          command: docker exec xdmod sed -i 's/ServerName localhost/ServerName xdmod/g' /etc/httpd/conf.d/xdmod.conf
-      - run:
-          name: Restart XDMoD's services
-          command: docker exec xdmod /root/bin/services restart
-      - run:
           name: Run Playwright Tests
           command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.string_os >>
+      - when:
+          condition:
+            equal: [ << parameters.install-type >>, 'upgrade' ]
+          steps:
+            - run:
+                name: Setup and run html unit tests
+                command: |
+                  docker exec -w /root/xdmod xdmod /root/xdmod/tests/playwright/install_unit.sh
+                  docker exec -w /root/xdmod/tests/playwright playwright npx playwright test unit_tests
       - when:
           condition:
             and:
@@ -168,7 +156,7 @@ jobs:
                 command: docker cp xdmod:/root/code_coverage ~/code_coverage
 
       - run:
-          name: Copy Test Results into Unit
+          name: Copy Test Results from Container to Host
           command: |
             docker cp xdmod:/root/phpunit ~/phpunit
             docker cp xdmod:/tmp/screenshots /tmp/screenshots
@@ -176,10 +164,12 @@ jobs:
             docker cp xdmod:/var/log/xdmod/. ~/project/log/xdmod
             docker cp xdmod:/var/log/php-fpm/. ~/project/log/php-fpm
             docker cp playwright:/root/xdmod/tests/playwright/test-results /tmp/screenshots
+          when: always
       - run:
           name: Copy Test results for Operating System
           command: |
             docker cp "playwright:/root/xdmod/tests/playwright/test_results-<< parameters.string_os >>.xml" ~/phpunit
+          when: always
       - run:
           name: Check for webserver errors
           command: |

@@ -21,9 +21,44 @@ details.
 ### xdmod-admin
 
 The `xdmod-admin` command is used to perform various administrative
-tasks.  Currently supported tasks include listing all the resources
-configured in Open XDMoD and truncating all job data from the Open
-XDMoD databases.
+tasks.  Currently supported tasks are listed in the table below:
+
+| Task | Example command line | Description |
+| ---- | -------------------- | ----------- |
+| Delete Jobs Data | `xdmod-admin --truncate --jobs` | This command removes all data from the Jobs realm.  |
+| Delete Jobs Data for Resource | `xdmod-admin --jobs --delete RESOURCE_NAME` | This command removes all data for a specific resource in the Jobs Realm. |
+| List configured resources | `xdmod-admin --list --resources` | This command lists all resources that are configured in the resources.json configuration file. |
+| Preconfigure SSO user accounts | `xdmod-admin --users --load PATH/TO/USERSFILE.csv` | Preconfigure user account settings for SSO users. |
+
+
+#### Preconfigure SSO user accounts
+
+XDMoD can be configured to use [Single Sign On Authentication](simpleSAMLphp.md) (SSO).
+When a user who has previously never used XDMoD logs in with SSO then a user account
+is automatically created for them. This automatically provisioned account is created
+with just the 'User' acl.
+
+If you want a user to be able to login with SSO and have higher permissions (such as
+Center Staff or Center Director), then they have to either (1) login via SSO once
+so the account is created and then an admin has to update their permissions in the
+admin dashboard or (2) use `xdmod-admin` to preconfigure the account _before they login for the first time_.
+
+To preconfigure SSO accounts use the `xdmod-admin --users --load FILENAME.csv` command
+toload the user settings from a csv file.
+The csv file must be a comma separated csv file in utf8 character set with the following five fields:
+
+- XDMoD Portal Username
+- First Name
+- Last Name
+- E-mail Address
+- Semi-colon separated list of ACLs (e.g. `User;Center Director`)
+
+The allowed values for ACLs can be viewed in the "User Management" dialog in the "Admin Dashboard"
+in the portal. The "XDMoD Portal Username" value must match exactly the `username` property from the SSO provider.
+
+The `xdmod-admin` command will not make any changes to existing user accounts, so if an
+account already exists, then the admin dashboard must be used to update the account
+information.
 
 ### xdmod-shredder
 

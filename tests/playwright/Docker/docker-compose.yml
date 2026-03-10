@@ -11,12 +11,11 @@ services:
             - 7000:7000
         environment:
             XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
-            XDMOD_IS_CORE: true
         stdin_open: true
         tty: true
         command: sleep infinity
     playwright:
-        image:  mcr.microsoft.com/playwright:v1.56.1-jammy
+        image:  mcr.microsoft.com/playwright:v1.58.0-jammy
         hostname: playwright
         container_name: playwright
         networks:

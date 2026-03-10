@@ -448,16 +448,26 @@ pecl install Xdebug-"$XDEBUG_VERSION"
 
 ### Ensure PHP knows about xdebug and enables code coverage
 echo "zend_extension=$(find /usr/lib64/php/modules/ -name xdebug.so)" > /etc/php.d/xdebug.ini
-XDEBUG_MODE="xdebug.mode=coverage,profile"
-echo "$XDEBUG_MODE" >> /etc/php.d/xdebug.ini
+echo "xdebug.mode=coverage" >> /etc/php.d/xdebug.ini
 echo "xdebug.output_dir=${arg_l}" >> /etc/php.d/xdebug.ini
 ## For Remote Debug uncomment the following lines...
 echo "xdebug.start_with_request=yes" >> /etc/php.d/xdebug.ini
-echo "xdebug.log=/var/log/xdebug.log" >> /etc/php.d/xdebug.ini
+echo "xdebug.log=/var/log/xdmod/xdebug.log" >> /etc/php.d/xdebug.ini
 echo "xdebug.log_level=7" >> /etc/php.d/xdebug.ini
 #echo "xdebug.client_host=host.docker.internal" >> /etc/php.d/xdebug.ini
 #echo "xdebug.client_port=9001" >> /etc/php.d/xdebug.ini
 
+# Ensure xdebug log file is writable
+touch /var/log/xdmod/xdebug.log
+chown apache:xdmod /var/log/xdmod/xdebug.log
+chmod 660 /var/log/xdmod/xdebug.log
+
+# Ensure the various output directories are present and correct perms
+for out_dir in ${arg_l} ${arg_c}; do
+    mkdir -p ${out_dir}
+    chown apache:xdmod ${out_dir}
+    chmod 770 ${out_dir}
+done
 
 ### Pre-generating the location that the xdebug script will be copied to as we'll
 ### be referencing it a number of times.
@@ -501,12 +511,3 @@ echo
 echo $PROCESS_FILE_INSTALL_PATH
 
 ~/bin/services restart
-
-### Create / Update privs for the directory that will contain the code coverage reports.
-mkdir "${arg_c}"
-chmod 777 "${arg_c}"
-chown root:apache "${arg_c}"
-
-### Make sure to restart the services so that these changes take effect.x
-#~/bin/services stop
-#~/bin/services start

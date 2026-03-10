@@ -1,12 +1,12 @@
 {
-    "#": "Load unique instance types into the dimension table. Do not load unknown types as these are",
-    "#": "loaded by a separate action",
+    "#": "Calculate end_time for each instance type configuration period using LEAD()",
 
     "table_definition": [
         {
             "$ref": "${table_definition_dir}/cloud_common/instance_type_staging.json#/table_definition"
         }
     ],
+
     "source_query": {
         "records": {
             "resource_id": "staging.resource_id",
@@ -18,12 +18,11 @@
             "memory_mb": "staging.memory_mb",
             "disk_gb": "staging.disk_gb",
             "start_time": "staging.start_time",
-            "end_time": -1
+            "end_time": "CASE WHEN LEAD(staging.start_time) OVER (PARTITION BY staging.resource_id, staging.instance_type ORDER BY staging.start_time) IS NOT NULL THEN LEAD(staging.start_time) OVER (PARTITION BY staging.resource_id, staging.instance_type ORDER BY staging.start_time) - 0.000001 ELSE (UNIX_TIMESTAMP(DATE_ADD(TIMESTAMP(CURDATE()), INTERVAL '23:59:59' HOUR_SECOND)) + .999999) END"
         },
-
         "joins": [
             {
-                "name": "instance_type_union",
+                "name": "instance_type_grouped",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "staging"
             }
