@@ -1030,5 +1030,5 @@ class RestIngestor extends aIngestor implements iAction
         }
 
         return $data;
-    } // extractField()
+    }
 }  // class RestIngestor
