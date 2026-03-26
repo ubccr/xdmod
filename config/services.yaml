@@ -30,11 +30,4 @@ services:
             $options:
                 username_parameter: username
                 password_parameter: password
-    CCR\Errors\ErrorController:
-        tags:
-            - controller.service_arguments
-        arguments:
-            - '@http_kernel'
-            - error_controller
-            - '@error_renderer'
     Symfony\Component\Dotenv\Command\DotenvDumpCommand: null
