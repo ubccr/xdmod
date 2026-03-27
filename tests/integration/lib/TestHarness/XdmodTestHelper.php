@@ -197,7 +197,7 @@ class XdmodTestHelper
      */
     public function authenticateSSO($parameters, $includeDefault = true)
     {
-        $result = $this->get('rest/auth/idpredirect', array('returnTo' => '/gui/general/login.php'));
+        $result = $this->get('rest/auth/idpredirect', array('returnTo' => '/'));
         $nextlocation = $result[0];
         $result = $this->get($nextlocation, null, true);
 
