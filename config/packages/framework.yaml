@@ -2,6 +2,7 @@
 framework:
     annotations:
         enabled: false
+    error_controller: CCR\Errors\ErrorController
     handle_all_throwables: true
     secret: '%env(APP_SECRET)%'
     #csrf_protection: true
