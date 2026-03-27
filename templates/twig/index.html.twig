@@ -142,17 +142,17 @@
         CCR.xdmod.tech_support_recipient = CCR.xdmod.support_email = '{{ tech_support_recipient }}';
         CCR.xdmod.version = '{{ xdmod_portal_version }}';
         CCR.xdmod.short_version = "{{ xdmod_portal_version_short }}";
-        CCR.xdmod.ui.username = '{{ user ? user.getUsername : '__public__' }}';
+        CCR.xdmod.ui.username = '{{ user ? user.getUsername() : '__public__' }}';
 
         {% if user_logged_in %}
-        CCR.xdmod.ui.fullName = "{{ user.getFormalName }}";
-        CCR.xdmod.ui.usertype = "{{ user.getUserType }}";
-        CCR.xdmod.ui.userIsSSO = {{ user.isSSOUser ? 'true' : 'false' }};
-        CCR.xdmod.ui.mappedPID = "{{ user.getPersonID }}";
+        CCR.xdmod.ui.fullName = "{{ user.getFormalName() }}";
+        CCR.xdmod.ui.usertype = "{{ user.getUserType() }}";
+        CCR.xdmod.ui.userIsSSO = {{ user.isSSOUser() ? 'true' : 'false' }};
+        CCR.xdmod.ui.mappedPID = "{{ user.getPersonID() }}";
         CCR.xdmod.ui.mappedPName = "{{ person_name }}";
-        CCR.xdmod.ui.isManager = {{ user.isManager ? 'true' : 'false' }};
-        CCR.xdmod.ui.isDeveloper = {{ user.isDeveloper ? 'true' : 'false' }};
-        CCR.xdmod.ui.isCenterDirector = {{ isCenterDirector ? 'true' : 'false' }};
+        CCR.xdmod.ui.isManager = {{ user.hasAcl('mgr') ? 'true' : 'false' }};
+        CCR.xdmod.ui.isDeveloper = {{ user.hasAcl('dev') ? 'true' : 'false' }};
+        CCR.xdmod.ui.isCenterDirector = {{ user.hasAcl('cd') ? 'true' : 'false' }};
         CCR.xdmod.ui.allRoles = {{ all_user_roles | raw }};
         CCR.xdmod.ui.colors = {{ colors | raw }}
             {% endif %}
