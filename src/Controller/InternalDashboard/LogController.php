@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use function xd_response\buildError;
 
 /**
  *
@@ -28,16 +29,23 @@ class LogController extends BaseController
     public function index(Request $request): Response
     {
         $operation = $request->get('operation');
-        switch ($operation) {
-            case 'get_levels':
-                return $this->getLevels($request);
-            case 'get_summary':
-                return $this->getSummary($request);
-            case 'get_messages':
-                return $this->getMessages($request);
-            default:
-                throw new BadRequestHttpException();
+        if (empty($operation)) {
+            return $this->json(buildError('operation_not_defined'));
         }
+        try {
+            switch ($operation) {
+                case 'get_levels':
+                    return $this->getLevels($request);
+                case 'get_summary':
+                    return $this->getSummary($request);
+                case 'get_messages':
+                    return $this->getMessages($request);
+            }
+        } catch(\Exception $e) {
+            return $this->json(buildError($e));
+        }
+
+        return $this->json(buildError('invalid_operation_specified'));
     }
 
     /**

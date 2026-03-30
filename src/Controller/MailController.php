@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use XDUser;
+use function xd_response\buildError;
 
 /**
  */
@@ -24,7 +25,11 @@ class MailController extends BaseController
     public function index(Request $request): Response
     {
         $user = $this->getUserFromRequest($request);
-        $operation = $this->getStringParam($request, 'operation', true);
+        $operation = $this->getStringParam($request, 'operation');
+
+        if (empty($operation)) {
+            return $this->json(buildError('operation_not_specified'));
+        }
 
         switch ($operation) {
             case 'contact':
@@ -32,7 +37,7 @@ class MailController extends BaseController
             case 'sign_up':
                 return $this->signUp($request);
             default:
-                throw new BadRequestHttpException('invalid operation specified');
+                return $this->json(buildError('invalid_operation_specified'));
         }
     }
 

@@ -31,21 +31,28 @@ class UserInterfaceController extends BaseController
     #[Route("/controllers/user_interface.php", name: "legacy_user_interface")]
     public function index(Request $request): Response
     {
-        $operation = $this->getStringParam($request, 'operation', true);
-        switch ($operation) {
-            case 'get_charts':
-                return $this->getCharts($request);
-            case 'get_data':
-                return $this->getData($request);
-            case 'get_menus':
-                return $this->getMenus($request);
-            case 'get_param_descriptions':
-                return $this->getParamDescriptions($request);
-            case 'get_tabs':
-                return $this->getTabs($request);
+        $operation = $this->getStringParam($request, 'operation');
+        if (empty($operation)) {
+            return $this->json(buildError('operation_not_defined'));
         }
 
-        throw new NotFoundHttpException();
+        try {
+            switch ($operation) {
+                case 'get_charts':
+                    return $this->getCharts($request);
+                case 'get_data':
+                    return $this->getData($request);
+                case 'get_menus':
+                    return $this->getMenus($request);
+                case 'get_param_descriptions':
+                    return $this->getParamDescriptions($request);
+                case 'get_tabs':
+                    return $this->getTabs($request);
+            }
+        } catch (\Exception $e) {
+            return $this->json(buildError($e));
+        }
+        return $this->json(buildError('invalid_operation_specified'));
     }
 
     /**
@@ -341,8 +348,8 @@ class UserInterfaceController extends BaseController
                 }
             }
         } elseif (
-            isset($_REQUEST['node'])
-            && substr($_REQUEST['node'], 0, 13) == 'node=group_by'
+            isset($node)
+            && substr($node, 0, 13) == 'node=group_by'
         ) {
             $this->logger->debug('Getting Menus for group_by');
             $category = $this->getStringParam($request, 'category');

@@ -359,9 +359,6 @@ class MetricExplorerController extends BaseController
      *
      * @param Request $request
      * @return Response
-     * @throws AccessDeniedException
-     * @throws SessionExpiredException
-     * @throws UnknownGroupByException
      * @throws Exception
      */
     #[Route('/controllers/metric_explorer.php', methods: ['POST', 'GET'])]
@@ -369,17 +366,21 @@ class MetricExplorerController extends BaseController
     {
         $operation = $this->getStringParam($request, 'operation', true);
 
-        switch ($operation) {
-            case 'get_data':
-                return $this->getData($request);
-            case 'get_dimension':
-                return $this->getDimensionValues($request);
-            case 'get_dw_descripter':
-                return $this->getDwDescriptors($request);
-            case 'get_filters':
-                return $this->getFilters($request);
-            case 'get_rawdata':
-                return $this->getRawData($request);
+        try {
+            switch ($operation) {
+                case 'get_data':
+                    return $this->getData($request);
+                case 'get_dimension':
+                    return $this->getDimensionValues($request);
+                case 'get_dw_descripter':
+                    return $this->getDwDescriptors($request);
+                case 'get_filters':
+                    return $this->getFilters($request);
+                case 'get_rawdata':
+                    return $this->getRawData($request);
+            }
+        } catch (\Exception $e) {
+            return $this->json(buildError($e));
         }
 
         return $this->json([

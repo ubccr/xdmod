@@ -23,16 +23,20 @@ class MailerController extends \CCR\Controller\BaseController
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $this->authorize($request, ['mgr']);
-        $operation = $this->getStringParam($request, 'operation', true);
+
+        $operation = $this->getStringParam($request, 'operation');
+
+        if (empty($operation)) {
+            return $this->json(buildError('operation_not_defined'));
+        }
 
         switch ($operation) {
             case 'enum_target_addresses':
                 return $this->enumTargetAddresses($request);
             case 'send_plain_mail':
                 return $this->sendPlainMail($request);
-            default:
-                throw new BadRequestHttpException('Unknown operation.');
         }
+        return $this->json(buildError('invalid_operation_specified'));
     }
 
     /**

@@ -32,15 +32,23 @@ class ChartPoolController extends BaseController
             return $this->json(buildError(new \SessionExpiredException()), 401);
         }
 
-        $operation = $this->getStringParam($request, 'operation', true);
-        switch ($operation) {
-            case 'add_to_queue':
-                return $this->addToQueue($request, $user);
-            case 'remove_from_queue':
-                return $this->removeFromQueue($request, $user);
-            default:
-                throw new BadRequestHttpException('invalid operation specified');
+        $operation = $this->getStringParam($request, 'operation');
+        if (empty($operation)) {
+            return $this->json(buildError('operation_not_defined'));
         }
+
+        try {
+            switch ($operation) {
+                case 'add_to_queue':
+                    return $this->addToQueue($request, $user);
+                case 'remove_from_queue':
+                    return $this->removeFromQueue($request, $user);
+            }
+        } catch(\Exception $e) {
+            return $this->json(buildError($e));
+        }
+
+        return $this->json(buildError('invalid_operation_specified'));
     }
 
     /**
