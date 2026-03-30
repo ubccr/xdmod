@@ -166,12 +166,10 @@ class BaseController extends AbstractController
                 throw new \SessionExpiredException();
             }
 
+            $isPublicUser = $this->getBooleanParam($request, 'public_user');
             switch ($failover_methods[0]) {
                 case XDUser::PUBLIC_USER:
-                    if (
-                        (isset($_REQUEST['public_user']) && $_REQUEST['public_user'] === 'true') ||
-                        ($session->has('public_session_token'))
-                    ) {
+                    if ($isPublicUser || $session->has('public_session_token')) {
                         return XDUser::getPublicUser();
                     } else {
                         // Previously: Exception with 'Session Expired', No Public User code
@@ -186,10 +184,7 @@ class BaseController extends AbstractController
                             isset($failover_methods[1])
                             && $failover_methods[1] == XDUser::PUBLIC_USER
                         ) {
-                            if (
-                                (isset($_REQUEST['public_user']) && $_REQUEST['public_user'] === 'true') ||
-                                ($session->has('public_session_token'))
-                            ) {
+                            if ($isPublicUser || $session->has('public_session_token')) {
                                 return XDUser::getPublicUser();
                             } else {
                                 // Previously: Exception with 'Session Expired', No Public User code
