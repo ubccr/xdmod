@@ -178,32 +178,34 @@
         "settings": {
             "realm": "Jobs",
             "metric": "total_cpu_hours",
-            "date": "2016-12-31",
+            "date": "2016-12-30",
             "filter_dimension": "username",
             "filter_values": [
                 "allga",
-                "alpsw"
+                "alpsw",
+                "hardu"
             ]
         },
         "expected": {
-            "subtitle": "System Username = ( allga,  alpsw )",
-            "yvalue": 527.7511
+            "subtitle": "System Username = ( allga,  alpsw,  hardu )",
+            "yvalue": 82.3511
         }
     },
     {
         "settings": {
             "realm": "Jobs",
             "metric": "total_cpu_hours",
-            "date": "2016-12-31",
+            "date": "2016-12-30",
             "filter_dimension": "person",
             "filter_values": [
                 "Auk, Little",
-                "Bunting, Black-headed"
+                "Bunting, Black-headed",
+                "Duck, Harlequin"
             ]
         },
         "expected": {
-            "subtitle": "User = ( Auk, Little,  Bunting, Black-headed )",
-            "yvalue": 537.1039
+            "subtitle": "User = ( Auk, Little,  Bunting, Black-headed,  Duck, Harlequin )",
+            "yvalue": 110.1172
         }
     },
     {

@@ -4,6 +4,7 @@ use CCR\DB;
 use CCR\DB\MySQLHelper;
 use CCR\Loggable;
 use DB\Exceptions\TableNotFoundException;
+use DB\EtlJournalHelper;
 use Realm\iGroupBy;
 use Realm\iRealm;
 use DataWarehouse\Query\iQuery;
@@ -37,6 +38,32 @@ class FilterListBuilder extends Loggable
     private static $rolesDimensionNames = null;
 
     /**
+     * The date and time to use to retreive row from aggregate tables to get filter values from
+     *
+     * @var string|null
+     */
+    private $lastModifiedStartDate = null;
+
+    /**
+     * Used to mark if the filter lists should be appended to or deleted and recreated.
+     *
+     * @var boolean
+     */
+    private $appendToList = false;
+
+    /**
+     * Name of temporary table to build filter lists from. Holds rows from a realms aggregate table
+     *
+     * @var string
+     */
+    private $filterTemporaryTable = '';
+
+    public function __construct() {
+        parent::__construct();
+        $this->filterTemporaryTable = uniqid('modw_aggregates.filter_tmp_', true);
+    }
+
+    /**
      * Build filter lists for all realms' dimensions.
      */
     public function buildAllLists()
@@ -51,11 +78,33 @@ class FilterListBuilder extends Loggable
     }
 
     /**
+     * Check to see if the table being used to retrieve filter values has a last_modified column.
+     *
+     * @param string $schema Name of the schema the table is in
+     * @param string $table Name of the table to check for a last_modified column
+     * @param string $column Name of column that is has the time a row was last modified. Defauls to last_modified
+     * @return boolean
+     */
+    private function doesLastModifiedColumnExist(string $schema, string $table, string $column = "last_modified") {
+        $db = DB::factory('datawarehouse');
+
+        $doesFieldExist = "SELECT *
+            FROM information_schema.COLUMNS
+            WHERE TABLE_SCHEMA = :schema
+            AND TABLE_NAME = :tableName
+            AND COLUMN_NAME = :column";
+
+        $result = $db->execute($doesFieldExist, [":schema" => $schema, ":tableName" => $table, ":column" => $column]);
+
+        return ($result > 0);
+    }
+
+    /**
      * Build filter lists for the given realm's dimensions.
      *
      * @param string $realmName The name of a realm to build lists for.
      */
-    public function buildRealmLists($realmName)
+    public function buildRealmLists($realmName, $appendToList = false)
     {
         // Get a query for the given realm.
         $startTime = microtime(true);
@@ -72,16 +121,51 @@ class FilterListBuilder extends Loggable
         // Get the dimensions in the given realm.
         $currentRealm = \Realm\Realm::factory($realmName);
 
+        $tables = $realmQuery->getTables();
+        $tableAliasKey = array_key_first($tables);
+        $schema = $tables[$tableAliasKey]->getSchema()->getName();
+        $tableName = $tables[$tableAliasKey]->getName();
+        $journalHelper = new EtlJournalHelper($schema, $tableName);
+
+        // If the last modified column does not exist on the aggregate table then there is no way
+        // to select the most recently aggregated rows so we cannot append new data.
+        if($appendToList && !$this->doesLastModifiedColumnExist($schema, $tableName)) {
+            $appendToList = false;
+        }
+
+        if($appendToList && $this->doesLastModifiedColumnExist($schema, $tableName) && $journalHelper->getLastModified() === null) {
+            $appendToList = false;
+        }
+
+        $this->setAppendToList($appendToList);
+
+        if($this->appendToList) {
+            $db = DB::factory('datawarehouse');
+            $lastModified = $journalHelper->getLastModified();
+            $this->setLastModifiedStartDate($lastModified);
+            $tempTableSql = "CREATE TEMPORARY TABLE $this->filterTemporaryTable AS SELECT * FROM $schema.$tableName where last_modified >= '$this->lastModifiedStartDate'";
+            $this->logger->debug("Creating temporary table: $tempTableSql");
+            $db->execute($tempTableSql);
+        }
+
         // Generate the lists for each dimension and each pairing of dimensions.
         foreach ($currentRealm->getGroupByObjects() as $groupByObj) {
             $this->buildDimensionLists($realmQuery, $groupByObj, $currentRealm);
         }
+
+        if($this->appendToList) {
+            $db->execute("DROP TEMPORARY TABLE IF EXISTS $this->filterTemporaryTable");
+        }
+
+        $endTime = microtime(true);
+        $journalHelper->markAsDone(date("Y-m-d h:i:s", $startTime), date("Y-m-d h:i:s", $endTime));
+
         $this->logger->notice(
             'end',
             [
                 'action' => $realmName . '.build-filter-list',
                 'start_time' => $startTime,
-                'end_time' => microtime(true)
+                'end_time' => $endTime
             ]
         );
     }
@@ -127,13 +211,17 @@ class FilterListBuilder extends Loggable
             return;
         }
         $dimensionColumnType = $dimensionProperties['type'];
-        $db->execute("DROP TABLE IF EXISTS `{$targetSchema}`.`{$mainTableName}`;");
-        $db->execute(
-            "CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
-                `{$dimensionId}` {$dimensionColumnType} NOT NULL,
-                PRIMARY KEY (`{$dimensionId}`)
-            ) CHARACTER SET utf8 COLLATE utf8_unicode_ci"
-        );
+
+        if(!$this->appendToList) {
+            $db->execute("DROP TABLE IF EXISTS `{$targetSchema}`.`{$mainTableName}`;");
+            $db->execute(
+                "CREATE TABLE `{$targetSchema}`.`{$mainTableName}` (
+                    `{$dimensionId}` {$dimensionColumnType} NOT NULL,
+                    PRIMARY KEY (`{$dimensionId}`)
+                ) CHARACTER SET utf8 COLLATE utf8_unicode_ci"
+            );
+        }
+
         $dimensionQuery = $this->createDimensionQuery($realmQuery, $groupBy);
 
         $selectTables = $dimensionQuery->getSelectTables();
@@ -141,18 +229,31 @@ class FilterListBuilder extends Loggable
         $wheres = $dimensionQuery->getWhereConditions();
 
         $idField = $selectFields[ sprintf('%s_id', $groupBy->getId()) ];
-
-        $selectTablesStr = implode(', ', $selectTables);
         $wheresStr = implode(' AND ', $wheres);
 
-        $db->execute(
-            "INSERT INTO
+        $lastModifiedClause = "";
+        $onDuplicateClause = "";
+        if($this->appendToList) {
+            $tables = $dimensionQuery->getTables();
+            $aggregateTableAlias = $tables[array_key_first($tables)]->getAlias()->getName();
+            $selectTables[0] = implode(" ", [$this->filterTemporaryTable, $aggregateTableAlias]);
+            $onDuplicateClause = "ON DUPLICATE KEY UPDATE $dimensionId = ".$dimensionQuery->getFields()[sprintf('%s_id', $groupBy->getId())]->getDefinition();
+            $lastModifiedClause = "AND last_modified >= '$this->lastModifiedStartDate'";
+        }
+
+        $selectTablesStr = implode(', ', $selectTables);
+        $filterListSql = "INSERT INTO
                 `{$targetSchema}`.`{$mainTableName}`
             SELECT DISTINCT
                 $idField
             FROM $selectTablesStr
-            WHERE $wheresStr"
-        );
+            WHERE $wheresStr
+            $lastModifiedClause
+            $onDuplicateClause";
+
+        $this->logger->debug("Filter List SQL: $filterListSql");
+
+        $db->execute($filterListSql);
 
         $this->builtListTables[$mainTableName] = true;
 
@@ -210,15 +311,17 @@ class FilterListBuilder extends Loggable
                 continue;
             }
 
-            $db->execute("DROP TABLE IF EXISTS `{$targetSchema}`.`{$pairTableName}`");
-            $db->execute(
-                "CREATE TABLE `{$targetSchema}`.`{$pairTableName}` (
-                    `{$firstDimensionId}` {$firstDimensionColumnType} NOT NULL,
-                    `{$secondDimensionId}` {$secondDimensionColumnType} NOT NULL,
-                    PRIMARY KEY (`{$firstDimensionId}`, `{$secondDimensionId}`),
-                    INDEX `idx_second_dimension` (`{$secondDimensionId}` ASC)
-                ) CHARACTER SET utf8 COLLATE utf8_unicode_ci"
-            );
+            if(!$this->appendToList){
+                $db->execute("DROP TABLE IF EXISTS `{$targetSchema}`.`{$pairTableName}`");
+                $db->execute(
+                    "CREATE TABLE `{$targetSchema}`.`{$pairTableName}` (
+                        `{$firstDimensionId}` {$firstDimensionColumnType} NOT NULL,
+                        `{$secondDimensionId}` {$secondDimensionColumnType} NOT NULL,
+                        PRIMARY KEY (`{$firstDimensionId}`, `{$secondDimensionId}`),
+                        INDEX `idx_second_dimension` (`{$secondDimensionId}` ASC)
+                    ) CHARACTER SET utf8 COLLATE utf8_unicode_ci"
+                );
+            }
 
             $firstSelectTables = $firstDimensionQuery->getSelectTables();
             $firstSelectFields = $firstDimensionQuery->getSelectFields();
@@ -226,22 +329,44 @@ class FilterListBuilder extends Loggable
             $secondSelectTables = $secondDimensionQuery->getSelectTables();
             $secondSelectFields = $secondDimensionQuery->getSelectFields();
             $secondWheres = $secondDimensionQuery->getWhereConditions();
+            $wheresStr = implode(' AND ', array_unique(array_merge($firstWheres, $secondWheres)));
 
             $firstIdField = $firstSelectFields[ sprintf('%s_id', $firstDimensionId) ];
             $secondIdField = $secondSelectFields[ sprintf('%s_id', $secondDimensionId) ];
 
-            $selectTablesStr = implode(', ', array_unique(array_merge($firstSelectTables, $secondSelectTables)));
-            $wheresStr = implode(' AND ', array_unique(array_merge($firstWheres, $secondWheres)));
+            $lastModifiedClause = "";
+            $onDuplicateClause = "";
 
-            $db->execute(
-                "INSERT INTO
+            if ($this->appendToList) {
+                $firstTables = $firstDimensionQuery->getTables();
+                $firstAggregateTableAlias = $firstTables[array_key_first($firstTables)]->getAlias()->getName();
+                $firstSelectTables[0] = implode(" ", [$this->filterTemporaryTable, $firstAggregateTableAlias]);
+                $firstOnDuplicate = "$firstDimensionId = ".$firstDimensionQuery->getFields()[sprintf('%s_id', $firstDimensionId)]->getDefinition();
+
+                $secondTables = $secondDimensionQuery->getTables();
+                $secondAggregateTableAlias = $secondTables[array_key_first($secondTables)]->getAlias()->getName();
+                $secondSelectTables[0] = implode(" ", [$this->filterTemporaryTable, $secondAggregateTableAlias]);
+                $secondOnDuplicate = "$secondDimensionId = ".$secondDimensionQuery->getFields()[sprintf('%s_id', $secondDimensionId)]->getDefinition();
+
+                $lastModifiedClause = "AND last_modified >= '$this->lastModifiedStartDate'";
+                $onDuplicateClause = "ON DUPLICATE KEY UPDATE $firstOnDuplicate, $secondOnDuplicate";
+            }
+
+            $selectTablesStr = implode(', ', array_unique(array_merge($firstSelectTables, $secondSelectTables)));
+
+            $filterListSql = "INSERT INTO
                     `{$targetSchema}`.`{$pairTableName}`
                 SELECT DISTINCT
                     $firstIdField,
                     $secondIdField
                 FROM $selectTablesStr
-                WHERE $wheresStr"
-            );
+                WHERE $wheresStr
+                $lastModifiedClause
+                $onDuplicateClause";
+
+
+            $this->logger->debug("Filter List SQL: $filterListSql");
+            $db->execute($filterListSql);
 
             $this->builtListTables[$pairTableName] = true;
         }
@@ -368,5 +493,25 @@ class FilterListBuilder extends Loggable
         return array(
             'type' => $columnDescriptionResult['Type'],
         );
+    }
+
+    /**
+     * Sets value for lastModifiedStartDate property
+     *
+     * @param string|null $lastModifiedStartDate
+     */
+    public function setLastModifiedStartDate(?string $lastModifiedStartDate)
+    {
+        $this->lastModifiedStartDate = $lastModifiedStartDate;
+    }
+
+    /**
+     * Sets value for appendToList property
+     *
+     * @param boolean $appendToList
+     */
+    public function setAppendToList(bool $appendToList)
+    {
+        $this->appendToList = $appendToList;
     }
 }

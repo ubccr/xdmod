@@ -48,7 +48,8 @@
                     "shared_jobs",
                     "timezone",
                     "resource_allocation_type",
-                    "organization"
+                    "organization",
+                    "resource_key"
                 ]
             },
             "destination": {
