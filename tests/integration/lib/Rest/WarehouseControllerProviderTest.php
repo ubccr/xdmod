@@ -686,7 +686,7 @@ class WarehouseControllerProviderTest extends TokenAuthTest
         $this->assertEquals(200, $response[1]['http_code']);
         $this->assertTrue($response[0]['success']);
         $this->assertCount($params['limit'], $response[0]['results']);
-        $this->assertEquals(66, $response[0]['total']);
+        $this->assertEquals(67, $response[0]['total']);
         self::$helper->logout();
     }
 
