@@ -1005,14 +1005,6 @@ class RestIngestor extends aIngestor implements iAction
                 return null;
             }
 
-            // Check if we are looking for last element in array. Using '?' for now.
-            if ($key === '?') {
-                if (empty($data)) {
-                    return null;
-                }
-                $key = array_key_last($data);
-            }
-
             // Parse data object/array
             if (is_array($data)) {
                 if (isset($data[$key])) {
