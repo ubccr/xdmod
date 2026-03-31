@@ -511,7 +511,7 @@ class TimeseriesChart extends AggregateChart
 
                                 // This bit has been added due to `number_format` no longer supporting passing nulls.
                                 if (is_null($v)) {
-                                    $formatted = number_format(0.0, $decimals, '.', ',');
+                                    $formatted = null;
                                 } else {
                                     $formatted = number_format($v, $decimals, '.', ',');
                                 }
