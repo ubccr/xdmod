@@ -1,0 +1,11 @@
+title
+"CPU Hours: Per Job: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Service Provider","CPU Hours: Per Job","Std Dev: CPU Hours: Per Job"
+screw,12.80355102,0.935350319867614
+wrench,6.37875732,0.6324232167493075
+---------
