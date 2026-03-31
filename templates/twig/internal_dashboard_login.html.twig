@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/splash.css') }}"/>
     <title>XDMoD Internal Dashboard</title>
 
     <!-- Include Ext stylesheets here: -->
-    <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/ext-all.css">
-    <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/xtheme-gray.css">
-    <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/debug.css">
+{#    <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/ext-all.css">#}
+{#    <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/xtheme-gray.css">#}
+{#    <link rel="stylesheet" type="text/css" href="{{ extjs_path }}/{{ extjs_version }}/resources/css/debug.css">#}
+
 
 
 
@@ -28,8 +28,9 @@
         jQuery.noConflict();
     </script>
 
-    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/viewer.css') }}">
+    {#<link rel="stylesheet" type="text/css" href="{{ asset('gui/css/viewer.css') }}">#}
     <script type="text/javascript" src="{{ asset('gui/js/CCR.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/dashboard/splash.css') }}"/>
     <!-- REST Variables -->
     <script type="text/javascript">
         Ext.namespace('CCR');
@@ -40,6 +41,8 @@
 <body onload="init()">
 
 <center>
+    <br>
+    <br>
     <img src="{{ asset('gui/images/dashboard/masthead_splash.png') }}" alt="XDMoD Internal Dashboard"><br><br>
 
     <table border=0 width=300 height=100 cellpadding=5>
