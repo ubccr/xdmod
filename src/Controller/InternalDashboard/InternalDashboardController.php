@@ -9,6 +9,7 @@ use CCR\DB;
 use Exception;
 use Models\Services\Users;
 use OpenXdmod\Assets;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\HeaderUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,6 +24,21 @@ use function xd_response\buildError;
  */
 class InternalDashboardController extends BaseController
 {
+
+    /**
+     * This route allows us to simulate the same behavior that we had previously in our two-auth system where logging
+     * out of the internal dashboard landed you back at the internal dashboard login page.
+     *
+     * @param Security $security
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    #[Route('/internal_dashboard/logout', methods: ['GET'])]
+    public function dashboardLogout(Security $security): Response
+    {
+        $security->logout(false);
+        return $this->redirect('/internal_dashboard');
+    }
 
     /**
      *
