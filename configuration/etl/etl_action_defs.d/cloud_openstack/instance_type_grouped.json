@@ -1,0 +1,38 @@
+{
+    "#": "Group consecutive same-config observations, taking MIN(start_time) and MAX(instance_type_id)",
+
+    "table_definition": [
+        {
+            "$ref": "${table_definition_dir}/cloud_common/instance_type_grouped.json#/table_definition"
+        }
+    ],
+
+    "source_query": {
+        "records": {
+            "resource_id": "cg.resource_id",
+            "instance_type_id": "MAX(cg.instance_type_id)",
+            "instance_type": "cg.instance_type",
+            "display": "MAX(cg.display)",
+            "description": "MAX(cg.description)",
+            "num_cores": "cg.num_cores",
+            "memory_mb": "cg.memory_mb",
+            "disk_gb": "cg.disk_gb",
+            "start_time": "MIN(cg.start_time)"
+        },
+        "joins": [
+            {
+                "name": "instance_type_config_group",
+                "schema": "${SOURCE_SCHEMA}",
+                "alias": "cg"
+            }
+        ],
+        "groupby": [
+            "cg.resource_id",
+            "cg.instance_type",
+            "cg.num_cores",
+            "cg.memory_mb",
+            "cg.disk_gb",
+            "cg.config_group"
+        ]
+    }
+}

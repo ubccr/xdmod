@@ -112,17 +112,6 @@
                 "on": "atype.asset_type = CONCAT('vol-', raw.root_volume_type)",
                 "type": "LEFT OUTER"
             }
-        ],
-
-        "groupby": [
-            "raw.resource_id",
-            "i.instance_id",
-            "raw.event_time_utc",
-            "etype.event_type_id",
-            "rtype.record_type_id",
-            "acct.account_id",
-            "sa.person_id",
-            "h.host_id"
         ]
     }
 }

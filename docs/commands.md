@@ -26,6 +26,7 @@ tasks.  Currently supported tasks are listed in the table below:
 | Task | Example command line | Description |
 | ---- | -------------------- | ----------- |
 | Delete Jobs Data | `xdmod-admin --truncate --jobs` | This command removes all data from the Jobs realm.  |
+| Delete Jobs Data for Resource | `xdmod-admin --jobs --delete RESOURCE_NAME` | This command removes all data for a specific resource in the Jobs Realm. |
 | List configured resources | `xdmod-admin --list --resources` | This command lists all resources that are configured in the resources.json configuration file. |
 | Preconfigure SSO user accounts | `xdmod-admin --users --load PATH/TO/USERSFILE.csv` | Preconfigure user account settings for SSO users. |
 
