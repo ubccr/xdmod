@@ -1,5 +1,6 @@
 #!/usr/bin/env php
 <?php
+
 /**
  * Perform Open XDMoD administrative tasks.
  *
@@ -13,6 +14,7 @@ require_once __DIR__ . '/../configuration/linker.php';
 use CCR\DB;
 use CCR\DB\MySQLHelper;
 use CCR\Log;
+use Models\Services\Acls;
 
 // TODO
 // Tasks:
@@ -35,7 +37,7 @@ try {
  */
 function main()
 {
-    global $argv, $logger;
+    global $argv, $logger, $force;
 
     $opts = array(
         array('h', 'help'),
@@ -49,6 +51,9 @@ function main()
         array('',  'jobs'),
         array('l', 'list'),
         array('t', 'truncate'),
+        array('', 'users'),
+        array('', 'load:'),
+        array('', 'delete:'),
      );
 
     $shortOptions = implode(
@@ -68,6 +73,7 @@ function main()
 
     $entity = null;
     $action = null;
+    $params = null;
 
     $logLevel = -1;
 
@@ -131,6 +137,29 @@ function main()
                 }
                 $action = 'truncate';
                 break;
+            case 'delete':
+                if ($action !== null) {
+                    fwrite(STDERR, "Only one action may be specified\n");
+                    exit(1);
+                }
+                $action = 'delete';
+                $params = $value;
+                break;
+            case 'users':
+                if ($entity !== null) {
+                    fwrite(STDERR, "Only one entity type may be specified\n");
+                    exit(1);
+                }
+                $entity = 'users';
+                break;
+            case 'load':
+                if ($action !== null) {
+                    fwrite(STDERR, "Only one action may be specified\n");
+                    exit(1);
+                }
+                $action = 'load';
+                $params = $value;
+                break;
             default:
                 fwrite(STDERR, "Unexpected option '$key'\n");
                 exit(1);
@@ -143,7 +172,9 @@ function main()
         exit;
     }
 
-    if ($logLevel === -1) { $logLevel = Log::NOTICE; }
+    if ($logLevel === -1) {
+        $logLevel = Log::NOTICE;
+    }
 
     $conf = array(
         'file'            => false,
@@ -183,8 +214,22 @@ function main()
                 case 'truncate':
                     truncateJobs();
                     break;
+                case 'delete':
+                    truncateJobsForResource($params);
+                    break;
                 default:
                     $logger->critical("Cannot perform '$action' on '$entity'");
+                    exit(1);
+                    break;
+            }
+            break;
+        case 'users':
+            switch ($action) {
+                case 'load':
+                    loadUsers($params);
+                    break;
+                default:
+                    $logger->crit("Cannot perform '$action' on '$entity'");
                     exit(1);
                     break;
             }
@@ -216,6 +261,131 @@ function listResources()
         echo 'Name: ',     $resourceData['name'],     "\n";
         echo "\n";
     }
+}
+
+/**
+ * Generate mapping between the display string of an ACL with the corresponding
+ * internal identifier.
+ */
+function getAclMap()
+{
+    $acls = Acls::getAcls();
+    $aclMap = array();
+    foreach ($acls as $acl) {
+        $aclMap[$acl->getDisplay()] = $acl->getName();
+    }
+    return $aclMap;
+}
+
+/**
+ * Add SSO user accounts
+ */
+function addSSOUsers(array $data)
+{
+    global $logger;
+
+    $load_count = 0;
+
+    foreach ($data as $user) {
+        $xdmodUserId = \XDUser::userExistsWithUsername($user['username']);
+        if ($xdmodUserId !== INVALID) {
+            $logger->warning("Skipping user '${user['username']}' - account already exists");
+            continue;
+        }
+
+        $newUser = new \XDUser(
+            $user['username'],
+            null,
+            $user['email'],
+            $user['first_name'],
+            '',
+            $user['last_name'],
+            $user['acls'],
+            '',
+            1,
+            -1,
+            array()
+        );
+        $newUser->setUserType(SSO_USER_TYPE);
+        $newUser->saveUser();
+        $load_count += 1;
+    }
+
+    return $load_count;
+}
+
+/**
+ * Load XDMoD user information from a file
+ */
+function parseUserList(string $filename)
+{
+    global $logger;
+
+    $aclMap = getAclMap();
+
+    $userdata = array();
+
+    $fh = fopen($filename, 'r');
+    if ($fh === false) {
+        $logger->crit("Failed to open file '$filename'");
+        exit(1);
+    }
+
+    $logger->debug("Reading CSV data from '$filename'");
+
+    $lineno = 0;
+    while ($row = fgetcsv($fh)) {
+        $lineno += 1;
+
+        // Skip blank lines.
+        if (count($row) == 1 && $row[0] === null) {
+            continue;
+        }
+        if (count($row) != 5) {
+            $logger->error("Invalid CSV data on line $lineno in file '$filename'");
+            exit(1);
+        }
+
+        $requestedAcls = explode(';', $row[4]);
+
+        $userAcls = array_map(function ($aclDisplay) use ($aclMap) {
+            return $aclMap[$aclDisplay];
+        }, $requestedAcls);
+
+        $userdata[] = array(
+            'username' => $row[0],
+            'first_name' => $row[1],
+            'last_name' => $row[2],
+            'email' => $row[3],
+            'acls' => $userAcls
+        );
+    }
+
+    if (!fclose($fh)) {
+        $logger->crit("Failed to close file '$filename'");
+        exit(1);
+    }
+
+    return $userdata;
+}
+
+/**
+ * Load users from a file
+ */
+function loadUsers(string $filename)
+{
+    global $logger, $force;
+
+    $users = parseUserList($filename);
+    $ucount = count($users);
+
+    if (!$force && !confirm("Load $ucount users from '$filename'?")) {
+        return;
+    }
+
+    $nloaded = addSSOUsers($users);
+
+    $logger->debug("Loaded $nloaded users from '$filename'.");
 }
 
 /**
@@ -284,6 +454,123 @@ function truncateJobs()
         }
     }
 }
+/**
+ * This function searches multiple databases (shredder, hpcdb, and datawarehouse) resource tables for a record that
+ * matches the provided $resourceName. If a resource is found then it's added to the array to be returned as
+ * `dbName` => `resourceId`.
+ *
+ * @param string $resourceName the name of the resource to find ids for.
+ *
+ * @return array<string,string> an array of "dbName" => "resourceId"
+ *
+ */
+function resourceFinder(string $resourceName): array
+{
+    $resources = array(
+        array('shredder', 'resource_id', 'staging_resource', 'resource_name'),
+        array('hpcdb', 'resource_id', 'hpcdb_resources', 'resource_code'),
+        array('datawarehouse', 'id', 'resourcefact', 'code')
+    );
+    $data = [];
+    foreach ($resources as $resource) {
+        list($dbName, $idColumn, $table, $whereColumn) = $resource;
+        $db = DB::factory($dbName);
+        $sql = "SELECT $idColumn as id from $table where $whereColumn = '$resourceName'";
+        $id = $db->query($sql)[0]['id'];
+
+        if (!empty($id)) {
+            $data[$dbName] = $id;
+        }
+    };
+    return $data;
+}
+/*
+ * @param string $resourceName
+ * @return void
+ */
+function truncateJobsForResource(string $resourceName)
+{
+    global $logger, $force;
+
+    if (!$force && !confirm("Truncate Job Data For $resourceName")) {
+        return;
+    }
+
+    $shredderDb = DB::factory('shredder');
+    $hpcDb      = DB::factory('hpcdb');
+    $modwDb     = DB::factory('datawarehouse');
+    $rids = resourceFinder($resourceName);
+
+    if (empty($rids)) {
+        echo "$resourceName is not Found\n";
+        return;
+    }
+
+    $dbsAndTables = array(
+        array(
+            'db'     => $shredderDb,
+            'tables' => array(
+                array('shredded_job_pbs', 'host', $resourceName),
+                array('shredded_job_sge', 'clustername', $resourceName),
+                array('shredded_job_slurm', 'cluster_name', $resourceName),
+                array('shredded_job_lsf', 'resource_name', $resourceName),
+                array('shredded_job', 'resource_name', $resourceName),
+                array('staging_job', 'resource_name', $resourceName),
+            ),
+        ),
+        array(
+            'db'     => $hpcDb,
+            'tables' => array(
+                array('hpcdb_jobs', 'resource_id' , $rids["hpcdb"]),
+            ),
+        ),
+        array(
+            'db'     => $modwDb,
+            'tables' => array(
+                array('modw.job_records', 'resource_id', $rids["datawarehouse"]),
+                array('modw.jobhosts', 'host_id', $rids["datawarehouse"]),
+                array('modw.job_tasks', 'resource_id', $rids["datawarehouse"]),
+                array('modw_aggregates.jobfact_by_year','record_resource_id', $rids["datawarehouse"]),
+                array('modw_aggregates.jobfact_by_quarter','record_resource_id', $rids["datawarehouse"]),
+                array('modw_aggregates.jobfact_by_month','record_resource_id', $rids["datawarehouse"]),
+                array('modw_aggregates.jobfact_by_day','record_resource_id', $rids["datawarehouse"]),
+            ),
+        ),
+    );
+    $logger->notice("Deleting job data from $resourceName");
+    foreach ($dbsAndTables as $dbAndTables) {
+        $db     = $dbAndTables['db'];
+        $tables = $dbAndTables['tables'];
+
+        $helper = MySQLHelper::factory($db);
+
+        $dbName = $db->_db_name;
+        $logger->info("Truncating job tables in $dbName");
+        foreach ($tables as $table) {
+            list($tableName, $idColumn, $idValue) = $table;
+            if ($helper->tableExists($tableName)) {
+                $logger->info("Deleting Job Data from $tableName for $resourceName");
+                if ($tableName == "modw.jobhosts") {
+                    $sql = "
+                        DELETE FROM jobhosts
+                        where job_id IN (
+                            SELECT job_id
+                            FROM job_tasks
+                            WHERE resource_id = $idValue
+                        );
+                    ";
+
+                } else {
+                    $sql = "DELETE FROM $tableName WHERE $idColumn = '$idValue'";
+                }
+                $db->execute($sql);
+            }
+        }
+    }
+
+
+
+}
 
 /**
  * Prompt the user for confirmation.
@@ -317,8 +604,9 @@ function displayHelpText()
 
 Perform administrative tasks.
 
-This command currently supports truncating all job data or listing the
-currently configured resources.
+This command currently supports truncating all job data, listing the
+currently configured resources and bulk loading XDMoD portal user accounts
+from file.
 
 Usage: xdmod-admin [-v]
 
@@ -344,18 +632,28 @@ Usage: xdmod-admin [-v]
     -j, --job, --jobs
         Perform action on jobs.
 
+    --users
+        Perform action on XDMoD portal user accounts.
+
     -t, --truncate
         Truncate data (only used for jobs).
 
     -l, --list
         List data (only used for resources).
 
+    --load FILENAME
+        Load information from file FILENAME (only used for users).
+
+    --delete RESOURCE_NAME
+        Delete Jobs for a specified resource (only used for jobs)
 Examples:
 
     xdmod-admin --jobs --truncate
 
+    xdmod-admin --jobs --delete RESOURCE_NAME
+
     xdmod-admin --resources --list
 
+    xdmod-admin --users --load PATH/TO/USERS-CSV-FILE.csv
 EOF;
 }
-

@@ -45,6 +45,10 @@
             "type": "string",
             "description": "The organization the resource belongs to",
             "maxLength": 100
+        },
+        "resource_key": {
+            "type": "number",
+            "description": "Optional: Numerical identifier for the resource in the database. For a typical XDMoD install this value need not be specified. Typical reasons why you might specify the identifier would be if you had data for the same resource in multiple XDMoD instances and you wanted the internal identifiers to match across all the separate databases."
         }
     },
     "required": [

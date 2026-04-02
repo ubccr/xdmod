@@ -99,6 +99,7 @@ EOT
                 'modw_aggregates',
                 'modw_filters',
                 'mod_logger',
+                'modw_etl',
             );
 
             $this->createDatabases(
@@ -150,7 +151,8 @@ EOT
             'staging-bootstrap',
             'hpcdb-bootstrap',
             'acls-xdmod-management',
-            'logger-bootstrap'
+            'logger-bootstrap',
+            'etl-journal-bootstrap'
         ), $logger);
 
 

@@ -72,6 +72,16 @@ command:
 Running this command will truncate all the tables containing job data
 and you can then re-shred and re-ingest your resource manager data.
 
+### How do I delete all my job data for a specific resource in Open XDMoD?
+
+If you want to delete the job data for a particular resource you can use the following
+command:
+
+    $ xdmod-admin --jobs --delete RESOURCE_NAME
+
+Running this command will delete all the jobs for that resource in the tables containing job data
+and you can then re-shred and re-ingest for that resource.
+
 ### Why do I see the error message "It is not safe to rely on the system's timezone settings..."?
 
 You need to set your timezone in your `php.ini` file.  Add the
