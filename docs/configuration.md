@@ -542,6 +542,19 @@ to users.
 ]
 ```
 
+| Property           | Required? | Type    |  Description |
+| ------------------ | --------- | ------- | ------------ |
+| resource                 | Yes | string  | The string identifier for the resource. This is the value that will be used when runing the `xdmod-shredder` command. Typically this should be a short string without spaces |
+| name                     | Yes | string  | The human readable name of the resource. |
+| resource_type            | Yes | string  | The type of the resource from the resource_types.json. Examples include "HPC" for batch computing resources, "Cloud" for infrastructure as a service resources, and "Disk" for data storage resources. |
+| resource_allocation_type | Yes | string  | The base unit of resource allocation, such as by CPU, GPU or Node. There are 4 possible values, CPU, CPUNode, GPU, and GPUNode. CPUNode denotes a resource that allocates nodes of CPUs to users, whereas CPU denotes a resource that allocates individual CPUs to users. |
+| organization             | Yes  | string  | The name of the organization for the resource. It should match the `abbrev` value from the organizations.json file. |
+| description              | No  | string  | Human-readable description of the resource. |
+| pi_column                | No  | string  | The name of the column in the resource specific job table to identify the PI. The column names that may be used with this feature must exist in the corresponding shredded_job_* table (e.g. shredded_job_pbs, shredded_job_slurm) of the mod_shredder database for the resource manager you are using.  For example, to use accounts from PBS/TORQUE you must use "pi_column": "account", but to use accounts from Slurm you must use "pi_column": "account_name". The default is to use the group column |
+| shared_jobs              | No  | boolean | Whether the option indicates that the resource allows multiple to share compute nodes. This information is used by the Job Performance Data (SUPReMM) module to determine which HPC jobs shared compute nodes. The default is that resources are assumed to not allow node sharing. If the SUPReMM module is in use and a resource does allow node sharing then this should be set to true. |
+| timezone                 | No  | string  | The timezone of the resource. This is used in the Job Viewer to display job timestamps in the local timezone of the resource. This value should be a valid timezone identifier such as "America/New_York" and not the three letter abbreviation or hour offset. |
+| resource_key             | No  | integer | Optional specify the internal identifier for the resource in the database. For a typical XDMoD install this value should not be specified. This option exists to support the scenario where there are multiple XDMoD instances (such as production and developement) and you wanted the internal identifiers to match across all the separate databases. |
+
 ### resource_specs.json
 
 Defines resource node and processor counts.  Each object in the array

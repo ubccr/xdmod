@@ -3,19 +3,32 @@
     "#": "cloud resources since a primary key must be assigned to the resource",
     "#": "before the data for that resource is ingested and the cloud data",
     "#": "does not contain the name of the resource.",
+    "#": "If the resource is already in the table the resource_id stays the same. If not then",
+    "#": "the resource_key will used as the resource_id, else the autoincrement",
     "table_definition": {
         "$ref": "${table_definition_dir}/common/staging/resource.json#/table_definition"
     },
     "source_query": {
         "records": {
-            "resource_name": "DISTINCT rc.resource"
+            "resource_id": "COALESCE(res.resource_id, rc.resource_key)",
+            "resource_name": "rc.resource"
         },
         "joins": [
             {
                 "schema": "${SOURCE_SCHEMA}",
                 "name": "staging_resource_config",
                 "alias": "rc"
+            },
+            {
+                "schema": "${SOURCE_SCHEMA}",
+                "name": "staging_resource",
+                "type": "LEFT",
+                "on": "rc.resource = res.resource_name",
+                "alias": "res"
             }
+        ],
+        "orderby": [
+            "rc.resource_id"
         ]
     }
 }

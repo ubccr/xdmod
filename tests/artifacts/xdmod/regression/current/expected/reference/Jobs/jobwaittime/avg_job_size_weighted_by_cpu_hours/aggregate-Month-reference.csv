@@ -8,7 +8,7 @@ start,end
 "Job Wait Time","Job Size: Weighted By CPU Hours (Core Count)"
 "0 - 1s",84.5716
 "1 - 30s",86.2606
-"30s - 30min",16.6203
+"30s - 30min",16.6399
 "30 - 60min",22.0405
 "1 - 5hr",64.1043
 "5 - 10hr",29.9680

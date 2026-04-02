@@ -17,6 +17,7 @@ $opts = array(
     'q' => 'quiet',
 
     'r:' => 'realm:',
+    'a' => 'append'
 );
 $args = getopt(implode('', array_keys($opts)), $opts);
 
@@ -24,6 +25,7 @@ if ($args === false) {
     usageAndExit("Failed to parse arguments\n");
 }
 $realms = array();
+$appendToList = false;
 $logLevel = -1;
 foreach ($args as $key => $value) {
     if (is_array($value) && !in_array($key, array('v', 'r'))) {
@@ -61,6 +63,10 @@ foreach ($args as $key => $value) {
         case 'realm':
             $realms = is_array($value) ? $value : array($value);
             break;
+        case 'a':
+        case 'append':
+            $appendToList = true;
+            break;
         default:
             usageAndExit("Unexpected option '$key'\n");
             break;
@@ -79,16 +85,15 @@ $logger = Log::factory(
         'consoleLogLevel' => $logLevel,
     )
 );
-build($realms, $logger);
+build($realms, $logger, $appendToList);
 
-function build($realms, $logger){
-
+function build($realms, $logger, $appendToList){
     try {
         $filterListBuilder = new FilterListBuilder($logger);
         if (count($realms) > 0){
             foreach($realms as $realm){
                 if(!empty($realm)){
-                    $filterListBuilder->buildRealmLists($realm);
+                    $filterListBuilder->buildRealmLists($realm, $appendToList);
                 }
             }
         }

@@ -256,9 +256,30 @@
             "definition_file": "cloud_openstack/staging_existing_instance_type.json"
         },
         {
+            "name": "OpenStackCloudInstanceTypeChangeFlagIngestor",
+            "description": "Calculate is_change flag for instance type observations",
+            "class": "DatabaseIngestor",
+            "truncate_destination": true,
+            "definition_file": "cloud_openstack/instance_type_change_flag.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeConfigGroupIngestor",
+            "description": "Calculate config_group for instance type observations",
+            "class": "DatabaseIngestor",
+            "truncate_destination": true,
+            "definition_file": "cloud_openstack/instance_type_config_group.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeGroupedIngestor",
+            "description": "Group consecutive same-config instance type observations",
+            "class": "DatabaseIngestor",
+            "truncate_destination": true,
+            "definition_file": "cloud_openstack/instance_type_grouped.json"
+        },
+        {
             "name": "OpenStackCloudInstanceTypeStagingIngestor",
-            "description": "Sets end times for instance type configurations",
-            "class": "CloudInstanceTypeStateIngestor",
+            "description": "Calculate end times for instance type configurations",
+            "class": "DatabaseIngestor",
             "truncate_destination": true,
             "definition_file": "cloud_openstack/instance_type_staging.json"
         },

@@ -8,7 +8,7 @@ start,end
 "Job Wall Time","Number of Jobs Submitted"
 "0 - 1s",1337
 "1 - 30s",15344
-"30s - 30min",31475
+"30s - 30min",31476
 "30 - 60min",8680
 "1 - 5hr",3888
 "5 - 10hr",922
