@@ -2,6 +2,7 @@
 
 namespace CCR\Errors;
 
+use CCR\Helper\HttpCodeMessages;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\ErrorHandler\ErrorRenderer\ErrorRendererInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -9,6 +10,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Throwable;
+use XDException;
 use function xd_response\buildError;
 
 /**
@@ -32,10 +34,34 @@ class ErrorController extends \Symfony\Component\HttpKernel\Controller\ErrorCont
      */
     public function __invoke(Throwable $exception): Response
     {
-        $this->logger->error('Error Controller Erroring!');
-        $headers = [];
-        if (method_exists($exception, 'getHeaders')) {
-            $headers = $exception->getHeaders();
+        $this->logger->error('Exception Code: '.$exception->getCode());
+        $this->logger->error('Message: '.$exception->getMessage());
+        $this->logger->error('Origin: '.$exception->getFile().' (line '.$exception->getLine().')');
+
+        $stringTrace = (get_class($exception) == 'UniqueException') ? $exception->getVerboseTrace() : $exception->getTraceAsString();
+
+        $this->logger->error("Trace:\n".$stringTrace."\n-------------------------------------------------------");
+
+        $httpCode = 500;
+        $headers = array();
+        $isServerContext = isset($_SERVER['SERVER_PROTOCOL']);
+        if ($isServerContext) {
+            $uncheckedExceptionHttpCode = null;
+            if ($exception instanceof XDException) {
+                $uncheckedExceptionHttpCode = $exception->httpCode;
+                $headers = $exception->headers;
+            } elseif ($exception instanceof \Symfony\Component\HttpKernel\Exception\HttpExceptionInterface) {
+                $uncheckedExceptionHttpCode = $exception->getStatusCode();
+                $headers = $exception->getHeaders();
+            }
+
+            if ($uncheckedExceptionHttpCode !== null) {
+                $this->logger->error('Unchecked Http Code', [$uncheckedExceptionHttpCode]);
+                $this->logger->error('Unchecked Http Code exists', [array_key_exists($uncheckedExceptionHttpCode, HttpCodeMessages::$messages)]);
+                if (array_key_exists($uncheckedExceptionHttpCode, HttpCodeMessages::$messages)) {
+                    $httpCode = $uncheckedExceptionHttpCode;
+                }
+            }
         }
 
         $message = $exception->getMessage();
@@ -45,7 +71,7 @@ class ErrorController extends \Symfony\Component\HttpKernel\Controller\ErrorCont
             return new RedirectResponse('/');
         }
 
-        return new JsonResponse(buildError($exception), 200, $headers);
+        return new JsonResponse(buildError($exception), $httpCode, $headers);
     }
 
 }
