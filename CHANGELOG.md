@@ -1,5 +1,19 @@
 # Open XDMoD Change Log
 
+## 2026-XX-XX v11.0.3
+
+- Bug Fixes
+    - Fix bug in which the server runs out of memory when exporting data
+      ([\#2085](https://github.com/ubccr/xdmod/pull/2085)).
+    - Fix tooltip display when hovering over area plots
+      ([\#2077](https://github.com/ubccr/xdmod/pull/2077)).
+- Enhancements
+    - Improve performance of database queries
+      ([\#2182](https://github.com/ubccr/xdmod/pull/2182)).
+- Documentation
+    - Update list of publications and presentations
+      ([\#2081](https://github.com/ubccr/xdmod/pull/2081)).
+
 ## 2025-08-19 v11.0.2
 
 - New Features
