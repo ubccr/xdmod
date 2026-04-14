@@ -222,13 +222,22 @@ class RawStatisticsConfiguration
                 $display .= ' (Deidentified)';
             }
 
-            $fields[] = [
+            $f = [
                 'name' => $field['name'],
                 'alias' => isset($field['alias']) ? $field['alias'] : $field['name'],
                 'display' => $display,
                 'anonymize' => ($export === 'anonymize'),
                 'documentation' => $field['documentation']
             ];
+            if (isset($field['deprecatedNames'])) {
+                if (!is_array($field['deprecatedNames']) ||
+                    count($field['deprecatedNames']) !== count(array_filter($field['deprecatedNames'], 'is_string'))
+                ) {
+                    throw new Exception('"deprecatedNames" must be an array of strings.');
+                }
+                $f['deprecatedNames'] = $field['deprecatedNames'];
+            }
+            $fields[] = $f;
         }
 
         return $fields;

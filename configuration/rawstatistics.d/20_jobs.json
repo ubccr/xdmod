@@ -193,7 +193,8 @@
                 "column": "name",
                 "group": "Administration",
                 "documentation": "The organization of the person who ran the task",
-                "batchExport": true
+                "batchExport": true,
+                "deprecatedNames": ["Organization"]
             },
             {
                 "name": "Principal Investigator",
