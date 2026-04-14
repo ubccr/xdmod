@@ -226,42 +226,7 @@ class ExportBuilder
             header("$k: $v");
         }
     }
-
-    /**
-     * Get the output format from a request.
-     *
-     * @param array $request The HTTP request data.
-     * @param string $default The default output format
-     *     (defaults to "jsonstore").
-     * @param array $format_subset The allowed subset of formats.  If
-     *     the format specified by the request is not in this array,
-     *     the default format will be used.
-     */
-    public static function getFormat(
-        array $request,
-        $default = 'jsonstore',
-        array $formats_subset = array()
-    ) {
-        $format = $default;
-
-        if (isset($request['format'])) {
-            $f = strtolower($request['format']);
-
-            if (
-                isset(static::$supported_formats[$f])
-                && (
-                    count($formats_subset) == 0
-                    ||
-                    (count($formats_subset) > 0 && array_search($f, $formats_subset) !== false)
-                )
-            ) {
-                $format = $f;
-            }
-        }
-
-        return $format;
-    }
-
+    
     /**
      * Export data.
      *
