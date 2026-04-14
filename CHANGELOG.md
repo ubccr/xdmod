@@ -13,6 +13,8 @@
 - Documentation
     - Update list of publications and presentations
       ([\#2081](https://github.com/ubccr/xdmod/pull/2081)).
+- Maintenance / Code Quality
+    - Remove unused code ([\#2188](https://github.com/ubccr/xdmod/pull/2188)).
 
 ## 2025-08-19 v11.0.2
 

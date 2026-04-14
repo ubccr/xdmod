@@ -422,5 +422,8 @@ A new file `resource_metadata.json` will be added during the upgrade; this file
 contains the SQL that is used by a new `/rest/warehouse/resources` REST
 endpoint that is used by the Data Analytics Framework.
 
+Additional 11.0.3 Upgrade Notes
+-------------------
+
 [github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
 [mysql-config]: configuration.html#mariadb-configuration
