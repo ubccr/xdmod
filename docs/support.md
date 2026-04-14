@@ -14,7 +14,7 @@ for 11.5.
 
 | Version | Release Date       | End of Support    |
 |---------|--------------------|-------------------|
-| 11.0    | October 23, 2024   | April 30, 2026    |
+| 11.0    | October 23, 2024   | October 31, 2026  |
 
 Supported Operating Systems
 ---------------------------
