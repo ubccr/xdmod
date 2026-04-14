@@ -14,18 +14,12 @@ $returnData = array();
 
 $start = microtime(true);
 try {
-    if (isset($_REQUEST['config'])) {
-        $config = json_decode($_REQUEST['config'], true);
-        $_REQUEST = array_merge($config, $_REQUEST);
+    $requestedFormat = null;
+    if (isset($request['format'])) {
+        $requestedFormat = strtolower($request['format']);
     }
 
-    $format = \DataWarehouse\ExportBuilder::getFormat(
-        $_REQUEST,
-        'jsonstore',
-        array(
-            'jsonstore'
-        )
-    );
+    $format = \DataWarehouse\ExportBuilder::validateFormat($requestedFormat, 'jsonstore', ['jsonstore']);
 
     $user = \xd_security\detectUser(
         array(XDUser::INTERNAL_USER, XDUser::PUBLIC_USER)

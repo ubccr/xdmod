@@ -22,13 +22,13 @@ class MetricExplorer extends Common
 {
     public function get_data($user)
     {
-        if(isset($this->request['config'])) {
-            $config = json_decode($this->request['config'], true);
-            $this->request = array_merge($config, $this->request);
+        $requestedFormat = 'csv';
+        if (isset($this->request['format'])) {
+            $requestedFormat = strtolower($this->request['format']);
         }
 
-        $format = \DataWarehouse\ExportBuilder::getFormat(
-            $this->request,
+        $format = \DataWarehouse\ExportBuilder::validateFormat(
+            $requestedFormat,
             'png',
             array(
                 'svg',
