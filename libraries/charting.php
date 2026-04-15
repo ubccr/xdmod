@@ -148,7 +148,7 @@ function convertSvg($svgData, $format, $width, $height, $docmeta){
     $author = isset($docmeta['author']) ? escapeshellarg($docmeta['author']) : "'XDMoD'";
     $subject = isset($docmeta['subject']) ? escapeshellarg($docmeta['subject']) : "'XDMoD chart'";
     $title = isset($docmeta['title']) ? escapeshellarg($docmeta['title']) : "'XDMoD PDF chart export'";
-    $creator = escapeshellarg("'XDMoD " . OPEN_XDMOD_VERSION . "'");
+    $creator = escapeshellarg('XDMoD ' . OPEN_XDMOD_VERSION);
 
     switch($format){
         case 'png':
