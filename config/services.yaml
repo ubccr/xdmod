@@ -39,7 +39,10 @@ services:
             - '@http_kernel'
             - error_controller
             - '@error_renderer'
-    CCR\EnvVar\XdmodConfigEnvVarProcessor:
+    CCR\EnvVar\ReCaptchaEnvVarLoader:
         tags:
-            - container.env_var_processor
+            - container.env_var_loader
+    CCR\EnvVar\DefaultXdmodEnvVarLoader:
+        tags:
+            - container.env_var_loader
     Symfony\Component\Dotenv\Command\DotenvDumpCommand: null
