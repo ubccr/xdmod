@@ -68,33 +68,6 @@ class ChartExportTest extends BaseTest
         $this->helper->logout();
     }
 
-    protected function getUserProfile()
-    {
-        // Retrieve the user profile information and make sure that the last_name was updated.
-        $response = $this->helper->get('rest/v1/users/current');
-
-        // make sure that the request was successful
-        $this->assertEquals(200, $response[1]['http_code']);
-
-        $responseData = $response[0];
-
-        // Make sure that the response is as expected.
-        $this->assertArrayHasKey('success', $responseData);
-        $this->assertTrue($responseData['success']);
-        $this->assertArrayHasKey('results', $responseData);
-
-        return $responseData['results'];
-    }
-
-    protected function getPropertyFromUserProfile(string $property)
-    {
-        $userProfile = $this->getUserProfile();
-
-        $this->assertArrayHasKey($property, $userProfile);
-
-        return $userProfile[$property];
-    }
-
     /**
      * @return array
      */
