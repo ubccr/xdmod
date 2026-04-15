@@ -878,7 +878,7 @@ class UserAdminTest extends BaseUserAdminTest
         $this->helper->authenticate('cd');
 
         // Next, snag the original first name so we can revert the changes after the test is done.
-        $originalFirstName = $this->getPropertyFromUserProfile($this->helper,'first_name');
+        $originalFirstName = $this->getPropertyFromUserProfile($this->helper, 'first_name');
         try {
             $adminHelper->authenticateDashboard('mgr');
             $newFirstName = '<script>alert("boo!")</script>';
@@ -915,7 +915,7 @@ class UserAdminTest extends BaseUserAdminTest
             $lines = explode(PHP_EOL, $email);
             $resetUrls = array_reduce(
                 $lines,
-                function($carry, $line) {
+                function ($carry, $line) {
                     if (str_contains($line, 'password_reset.php')) {
                         $carry[] = trim($line);
                     }
