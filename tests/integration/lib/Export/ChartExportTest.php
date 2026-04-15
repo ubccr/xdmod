@@ -29,7 +29,7 @@ class ChartExportTest extends BaseTest
         // login as the center director
         $this->helper->authenticate('cd');
 
-        $originalLastName = $this->getPropertyFromUserProfile('last_name');
+        $originalLastName = $this->getPropertyFromUserProfile($this->helper, 'last_name');
 
         try {
             $updateResponse = $this->helper->patch('rest/v1/users/current', [], ['last_name' => "Changed' ; id > /tmp/this_shouldnt_exist; '"]);
@@ -45,7 +45,7 @@ class ChartExportTest extends BaseTest
             );
 
             // Make sure that the last_name that was returned actually contains the right data.
-            $newLastName = $this->getPropertyFromUserProfile('last_name');
+            $newLastName = $this->getPropertyFromUserProfile($this->helper, 'last_name');
             $this->assertNotFalse(strpos($newLastName, 'Changed'), 'The user last_name updated failed.');
 
             $format = $exportParams['format'];
