@@ -880,13 +880,10 @@ class UserAdminTest extends BaseUserAdminTest
         // Next, snag the original first name so we can revert the changes after the test is done.
         $originalFirstName = $this->getPropertyFromUserProfile($this->helper, 'first_name');
         try {
-            $adminHelper->authenticateDashboard('mgr');
+            // Update cd's first_name
             $newFirstName = '<script>alert("boo!")</script>';
             $updateResponse = $this->helper->patch('rest/v1/users/current', null, ['first_name' => $newFirstName]);
 
-            if ($updateResponse[1]['http_code'] !== 200) {
-                echo var_export($updateResponse, true). "\n";
-            }
             // Make sure that the update was successful.
             $this->assertEquals(200, $updateResponse[1]['http_code'], "Unable to update cd's first_name.");
             $this->assertSame(
@@ -897,7 +894,8 @@ class UserAdminTest extends BaseUserAdminTest
                 $updateResponse[0]
             );
 
-            // Trigger a password reset.
+            // Now we can trigger a password reset.
+            $adminHelper->authenticateDashboard('mgr');
             $passwordResetResponse = $adminHelper->post('controllers/user_admin.php', null, ["operation" => 'pass_reset', 'uid' => '3']);
             $this->assertEquals(200, $passwordResetResponse[1]['http_code'], "Unable to trigger a password reset.");
 
