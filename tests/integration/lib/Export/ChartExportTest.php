@@ -60,7 +60,7 @@ class ChartExportTest extends BaseTest
             // Make sure to revert the update to centerdirector's last name.
             $revertResponse = $this->helper->patch('rest/v1/users/current', [], ['last_name' => $originalLastName]);
             if ($revertResponse[1]['http_code'] !== 200 || $revertResponse[0]['success'] === false) {
-                throw new \Exception('Unable to revert centerdirectors last name. You have been warned!');
+                $this->fail('Unable to revert centerdirectors last name. You have been warned!');
             }
         }
 
