@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use XDUser;
 
 use function xd_response\buildError;
+use function xd_utilities\string_ends_with;
 
 /**
  * This class encapsulates the operations previously provided by /controllers/user_auth.php which at this point is just:
@@ -64,13 +65,15 @@ class UserAuthController extends BaseController
 
         $user_to_email = XDUser::getUserByID($user_to_email);
 
-        $page_title = \xd_utilities\getConfiguration('general', 'title');
+        $page_title = $this->parameters->get('xdmod.portal_settings.general.title');
 
         try {
             $rid = $user_to_email->generateRID();
 
-            $site_address
-                = \xd_utilities\getConfigurationUrlBase('general', 'site_address');
+            $site_address = $this->parameters->get('xdmod.portal_settings.general.site_address');
+            if (!string_ends_with($site_address, '/')) {
+                $site_address = "$site_address/";
+            }
             $resetUrl = "{$site_address}password_reset.php?rid=$rid";
             list($userId, $expiration, $hash) = explode('|', $rid);
             MailWrapper::sendTemplate(

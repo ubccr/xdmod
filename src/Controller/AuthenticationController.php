@@ -20,6 +20,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Twig\Environment;
+use function xd_response\buildError;
 
 
 /**
@@ -32,19 +33,6 @@ use Twig\Environment;
  */
 class AuthenticationController extends BaseController
 {
-
-    /**
-     * @param LoggerInterface $logger
-     * @param ContainerBagInterface $parameters
-     * @param Environment $twig
-     * @param Tokens $tokenHelper
-     * @throws NotFoundExceptionInterface|ContainerExceptionInterface this is thrown if the `sso` section of `services.yaml` is not present.
-     */
-    public function __construct(LoggerInterface $logger, ContainerBagInterface $parameters, Environment $twig, Tokens $tokenHelper)
-    {
-        $this->logger = $logger;
-        parent::__construct($logger, $twig, $tokenHelper);
-    }
 
     /**
      * This route is here just to provide a route, no actual logging in is done here as evidenced by the only code
@@ -109,7 +97,7 @@ class AuthenticationController extends BaseController
         $auth = new \Authentication\SAML\XDSamlAuthentication();
         $redirectUrl = $auth->getLoginURL($returnTo);
         if ($redirectUrl === false ) {
-            throw new \Exception('SSO not configured.');
+            return $this->json(buildError(new \Exception('SSO not configured.')));
         }
 
         return new Response($redirectUrl, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
@@ -129,7 +117,7 @@ class AuthenticationController extends BaseController
     public function redirectWithJwt(Request $request): Response
     {
         try {
-            $jupyterhub_url = \xd_utilities\getConfiguration('jupyterhub', 'url');
+            $jupyterhub_url = $this->parameters->get('xdmod.portal_settings.jupyterhub.url');
         } catch (Exception $e) {
             throw new HttpException(501, 'JupyterHub not configured.');
         }

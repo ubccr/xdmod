@@ -11,6 +11,7 @@ use DataWarehouse\Export\RealmManager;
 use DateTime;
 use Exception;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,9 +49,9 @@ class WarehouseExportController extends BaseController
     /**
      * @throws Exception if unable to instantiate the logger.
      */
-    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper)
+    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters)
     {
-        parent::__construct($logger, $twig, $tokenHelper);
+        parent::__construct($logger, $twig, $tokenHelper, $parameters);
 
         $this->realmManager = new RealmManager();
         $this->queryHandler = new QueryHandler($this->logger);

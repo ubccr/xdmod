@@ -512,7 +512,7 @@ class MetricExplorerController extends BaseController
             }
 
             // If enabled, try to lookup answer in cache first.
-            $cache_enabled = \xd_utilities\getConfiguration('internal', 'dw_desc_cache') === 'on';
+            $cache_enabled = $this->parameters->get('xdmod.portal_settings.internal.dw_desc_cache') === 'on';
             $cache_data_found = false;
             if ($cache_enabled) {
                 $db = \CCR\DB::factory('database');

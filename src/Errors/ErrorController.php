@@ -56,8 +56,6 @@ class ErrorController extends \Symfony\Component\HttpKernel\Controller\ErrorCont
             }
 
             if ($uncheckedExceptionHttpCode !== null) {
-                $this->logger->error('Unchecked Http Code', [$uncheckedExceptionHttpCode]);
-                $this->logger->error('Unchecked Http Code exists', [array_key_exists($uncheckedExceptionHttpCode, HttpCodeMessages::$messages)]);
                 if (array_key_exists($uncheckedExceptionHttpCode, HttpCodeMessages::$messages)) {
                     $httpCode = $uncheckedExceptionHttpCode;
                 }
