@@ -83,7 +83,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     {
         // We only allow SSO Auth when the request is a GET for the home page.
         if (!$request->isMethod('GET') ||
-            !$this->httpUtils->checkRequestPath($request, 'xdmod_new_login')) {
+            !$this->httpUtils->checkRequestPath($request, 'xdmod_home')) {
             return false;
         }
 
@@ -93,10 +93,14 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
             return false;
         }
 
-        $configuration = Configuration::factory('portal_settings');
-        $siteAddress = $configuration->getSectionData('general_site_address');
-        $authReferrer = sprintf('%s/simplesaml/module.php/authoauth2/linkback.php', $siteAddress);
-
+        $authReferrer = $this->parameters->get('xdmod.portal_settings.sso.auth_referer');
+        $generalSiteAddress = $this->parameters->get('xdmod.portal_settings.general.site_address');
+        if (empty($authReferrer) && !empty($generalSiteAddress)) {
+            $authReferrer = sprintf(
+                '%s/simplesaml/module.php/authoauth2/linkback.php',
+                $generalSiteAddress
+            );
+        }
         return str_starts_with($referer, $authReferrer);
     }
 
