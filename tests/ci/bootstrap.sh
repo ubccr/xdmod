@@ -47,6 +47,8 @@ sed -i 's/^error_reporting = .*/error_reporting = E_ALL/' /etc/php.ini
 # ensure php command-line errors are logged to a file
 sed -i 's/^;error_log = php_errors.log/error_log = \/var\/log\/php_errors.log/' /etc/php.ini
 
+
+
 if [ "$XDMOD_TEST_MODE" = "fresh_install" ];
 then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true
@@ -185,3 +187,14 @@ then
     # Restart so that the above changes take effect.
     ~/bin/services restart
 fi
+
+# ensure that we use the correct referer for SSO in the CI Build until we get Keycloak integrated.
+line_no=$(grep -n 'show_local_login = "off"' /etc/xdmod/portal_settings.ini | cut -d':' -f1)
+
+# Add the auth_referer property to portal_settings.ini
+sed -i "${line_no}a\
+auth_referer=https://xdmod:7000
+" /etc/xdmod/portal_settings.ini
+
+# Make sure that the cache is reset so that `auth_referer` shows up in Symfony at runtime.
+console cache:clear

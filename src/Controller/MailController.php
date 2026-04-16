@@ -90,7 +90,7 @@ class MailController extends BaseController
             MailWrapper::sendMail(array(
                     'body' => $message,
                     'subject' => $subject,
-                    'toAddress' => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
+                    'toAddress' => $this->parameters->get('xdmod.portal_settings.general.contact_page_recipient'),
                     'fromAddress' => $_POST['email'],
                     'fromName' => $_POST['name']
                 )
@@ -211,13 +211,25 @@ MSG;
         $response = [];
 
         // Original sender's e-mail must be in the "fromAddress" field for the XDMoD Request Tracker to function
+        $subject = sprintf(
+            '[%s] A visitor has signed up',
+            $this->parameters->get('xdmod.portal_settings.general.title')
+        );
+        $toAddress = $this->parameters->get('xdmod.portal_settings.general.contact_page_recipient');
+        $fromAddress = $this->getEmailParam($request, 'email');
+        $fromName = sprintf(
+            '$%s, %s',
+            $this->getStringParam($request, 'last_name'),
+            $this->getStringParam($request, 'first_name')
+        );
+
         try {
             MailWrapper::sendMail([
                 'body' => $message,
-                'subject' => '[' . \xd_utilities\getConfiguration('general', 'title') . '] A visitor has signed up',
-                'toAddress' => \xd_utilities\getConfiguration('general', 'contact_page_recipient'),
-                'fromAddress' => $_POST['email'],
-                'fromName' => $_POST['last_name'] . ', ' . $_POST['first_name']
+                'subject' => $subject,
+                'toAddress' => $toAddress,
+                'fromAddress' => $fromAddress,
+                'fromName' => $fromName
             ]);
             $response['success'] = true;
         } catch (Exception $e) {

@@ -11,6 +11,7 @@ use Egulias\EmailValidator\Validation\RFCValidation;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
@@ -47,15 +48,21 @@ class BaseController extends AbstractController
     protected $tokenHelper;
 
     /**
+     * @var ContainerBagInterface
+     */
+    protected ContainerBagInterface $parameters;
+
+    /**
      * @param LoggerInterface $logger
      * @param Environment $twig
      * @param Tokens $tokenHelper
      */
-    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper)
+    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters,)
     {
         $this->logger = $logger;
         $this->twig = $twig;
         $this->tokenHelper = $tokenHelper;
+        $this->parameters = $parameters;
     }
 
 
@@ -661,13 +668,8 @@ class BaseController extends AbstractController
      */
     protected function verifyCaptcha(Request $request)
     {
-        $captchaSiteKey = '';
-        $captchaSecret = '';
-        try {
-            $captchaSiteKey = \xd_utilities\getConfiguration('mailer', 'captcha_public_key');
-            $captchaSecret = \xd_utilities\getConfiguration('mailer', 'captcha_private_key');
-        } catch (\Exception $e) {
-        }
+        $captchaSiteKey = $this->getParameter('xdmod.portal_settings.mailer.captcha_public_key');
+        $captchaSecret = $this->getParameter('xdmod.portal_settings.mailer.captcha_private_key');
 
         $user = $this->getUserFromRequest($request);
 

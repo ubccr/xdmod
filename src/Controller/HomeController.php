@@ -50,13 +50,6 @@ class HomeController extends BaseController
             ]
         ]
     ];
-    private $parameters;
-
-    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters)
-    {
-        parent::__construct($logger, $twig, $tokenHelper);
-        $this->parameters = $parameters;
-    }
 
     /**
      * This route serves XDMoD
@@ -122,18 +115,18 @@ class HomeController extends BaseController
         }
 
         // JupyterHub Config
+        $jupyterIsEnabled = false;
+        $jupyterHubURL = '';
         try {
-            $jupyterHubURL = \xd_utilities\getConfiguration('jupyterhub', 'url');
-            $jupyterIsEnabled = !empty($jupyterHubURL);
+            $jupyterHubURL = $this->parameters->get('xdmod.portal_settings.jupyterhub.url');
         } catch (\Exception $e) {
-            $jupyterIsEnabled = false;
-            $jupyterHubURL = '';
+
         }
 
-
         try {
-            $ssoShowLocalLogin = \xd_utilities\filter_var(
-                \xd_utilities\getConfiguration('sso', 'show_local_login'),
+
+            $ssoShowLocalLogin = filter_var(
+                $this->parameters->get('xdmod.portal_settings.sso.show_local_login'),
                 FILTER_VALIDATE_BOOLEAN
             );
         } catch (Exception $e) {
@@ -141,8 +134,8 @@ class HomeController extends BaseController
         }
 
         try {
-            $ssoDirectLink = \xd_utilities\filter_var(
-                \xd_utilities\getConfiguration('sso', 'direct_link'),
+            $ssoDirectLink = filter_var(
+                $this->parameters->get('xdmod.portal_settings.sso.direct_link'),
                 FILTER_VALIDATE_BOOLEAN
             );
         } catch(Exception $e) {
@@ -154,7 +147,7 @@ class HomeController extends BaseController
             'user_logged_in' => $userLoggedIn,
             'user' => $user,
             'person_name' => sprintf('%s, %s', $personInfo[0]['last_name'], $personInfo[0]['first_name']),
-            'title' => \xd_utilities\getConfiguration('general', 'title'),
+            'title' => $this->parameters->get('xdmod.portal_settings.general.title'),
             'keywords' => 'xdmod, xsede, analytics, metrics on demand, hpc, visualization, statistics, reporting, auditing, nsf, resources, resource providers',
             'description' => 'XSEDE Metrics on Demand (XDMoD) is a comprehensive auditing framework for XSEDE, the follow-on to NSF\'s TeraGrid program. XDMoD provides detailed information on resource utilization and performance across all resource providers.',
             'extjs_path' => 'gui/lib',
@@ -163,11 +156,11 @@ class HomeController extends BaseController
             'colors' => json_encode(json_decode(file_get_contents(CONFIG_DIR . '/colors1.json'), true)),
             'rest_url' => sprintf(
                 '%s%s',
-                \xd_utilities\getConfiguration('rest', 'base'),
-                \xd_utilities\getConfiguration('rest', 'version')
+                $this->parameters->get('xdmod.portal_settings.rest.base'),
+                $this->parameters->get('xdmod.portal_settings.rest.version')
             ),
             'realms' => $realms,
-            'tech_support_recipient' => \xd_utilities\getConfiguration('general', 'tech_support_recipient'),
+            'tech_support_recipient' => $this->parameters->get('xdmod.portal_settings.general.tech_support_recipient'),
             'xdmod_portal_version' => \xd_versioning\getPortalVersion(),
             'xdmod_portal_version_short' => \xd_versioning\getPortalVersion(true),
             'disabled_menus' => json_encode(Acls::getDisabledMenus($user, $realms)),
@@ -227,8 +220,8 @@ class HomeController extends BaseController
         $result = '';
 
         if ($user->isPublicUser()) {
-            $captchaSiteKey = \xd_utilities\getConfiguration('mailer', 'captcha_public_key');
-            $captchaSecret = \xd_utilities\getConfiguration('mailer', 'captcha_private_key');
+            $captchaSiteKey = $this->parameters->get('xdmod.portal_settings.mailer.captcha_public_key');
+            $captchaSecret = $this->parameters->get('xdmod.portal_settings.mailer.captcha_private_key');
             if ('' !== $captchaSiteKey && '' !== $captchaSecret) {
                 $result = $captchaSiteKey;
             }
@@ -241,8 +234,8 @@ class HomeController extends BaseController
     public function getLogoData()
     {
         try {
-            $logo = \xd_utilities\getConfiguration('general', 'center_logo');
-            $logo_width = \xd_utilities\getConfiguration('general', 'center_logo_width');
+            $logo = $this->parameters->get('xdmod.portal_settings.general.center_logo');
+            $logo_width = $this->parameters->get('xdmod.portal_settings.general.center_logo_width');
 
             $logo_width = intval($logo_width);
 

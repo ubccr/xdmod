@@ -40,7 +40,6 @@ use Twig\Environment;
 use UserStorage;
 use XDUser;
 use function xd_response\buildError;
-use function xd_utilities\getConfiguration;
 
 /**
  * This controller is ported from the old classes/Rest/Controllers/WarehouseControllerProvider.php
@@ -860,7 +859,7 @@ class WarehouseController extends BaseController
 
         // Check whether multiple service providers are supported or not.
         try {
-            $multipleProvidersSupported = getConfiguration('features', 'multiple_service_providers') === 'on';
+            $multipleProvidersSupported = $this->parameters->get('xdmod.portal_settings.features.multiple_service_providers') === 'on';
         } catch (Exception $e) {
             $multipleProvidersSupported = false;
         }
@@ -2626,9 +2625,6 @@ class WarehouseController extends BaseController
      */
     private function getConfiguredRawDataLimit(): int
     {
-        return intval(getConfiguration(
-            'datawarehouse',
-            'rest_raw_row_limit'
-        ));
+        return intval($this->parameters->get('xdmod.portal_settings.datawarehouse.rest_raw_row_limit'));
     }
 }
