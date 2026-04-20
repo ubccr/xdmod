@@ -8,20 +8,7 @@
 use CCR\DB;
 
 /**
- * Abstracts access to the following schema:
- *
- * CREATE TABLE `SessionManager` (
- *   `session_token` varchar(40) NOT NULL,
- *   `session_id` text NOT NULL,
- *   `user_id` int(11) unsigned NOT NULL,
- *   `ip_address` varchar(40) NOT NULL,
- *   `user_agent` varchar(255) NOT NULL,
- *   `init_time` varchar(100) NOT NULL,
- *   `last_active` varchar(100) NOT NULL,
- *   `used_logout` tinyint(1) unsigned DEFAULT NULL,
- *   PRIMARY KEY (`session_token`),
- *   KEY `user_id` (`user_id`)
- * ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+ * Abstracts access to the moddb.SessionManager table
  */
 class XDSessionManager
 {
