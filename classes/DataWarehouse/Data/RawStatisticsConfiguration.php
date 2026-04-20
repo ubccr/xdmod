@@ -229,6 +229,12 @@ class RawStatisticsConfiguration
                 'anonymize' => ($export === 'anonymize'),
                 'documentation' => $field['documentation']
             ];
+            if (isset($field['deprecated'])) {
+                if (!is_bool($field['deprecated'])) {
+                    throw new Exception('"deprecated" must be a boolean.');
+                }
+                $f['deprecated'] = $field['deprecated'];
+            }
             if (isset($field['deprecatedNames'])) {
                 if (!is_array($field['deprecatedNames']) ||
                     count($field['deprecatedNames']) !== count(array_filter($field['deprecatedNames'], 'is_string'))
