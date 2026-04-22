@@ -87,7 +87,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
             return false;
         }
 
-        $referer = $request->headers->get('referer');
+        $referer = $request->headers->get('Referer');
         // And if the referer is not empty.
         if (empty($referer)) {
             return false;
@@ -103,46 +103,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
         }
         return str_starts_with($referer, $authReferrer);
     }
-
-    /**
-     * Build up a modified version of the provided $referer. In this new version of the referrer we only include the
-     * following:
-     *   - scheme
-     *   - host
-     *   - port
-     *   - path
-     *
-     * @param string $referrer the original referrer header value from a request.
-     * @return string the modified version to be compared against the `auth_referrer` in services.yaml.
-     */
-    private function buildReferrer(string $referrer): string
-    {
-        $parts = parse_url($referrer);
-
-        // start building the value to return w/ the scheme and host which should always be present.
-        $result = sprintf('%s://%s', $parts['scheme'], $parts['host']);
-
-        $port = $parts['port'] ?? null;
-        $path = $parts['path'] ?? null;
-
-        // If we have a port, then include it.
-        if (!empty($port)) {
-            $result = sprintf('%s:%s', $result, $port);
-        }
-
-        // if we have a path then include it.
-        if (!empty($path) && $path !== '/') {
-            // Need to make sure that we don't double up on /'s
-            if (str_starts_with($path, '/')) {
-                $result = sprintf('%s%s', $result, $path);
-            } else {
-                $result = sprintf('%s/%s', $result, $path);
-            }
-        }
-
-        return $result;
-    }
-
+    
     public function authenticate(Request $request): Passport
     {
         if ($this->authSource->isAuthenticated()) {
