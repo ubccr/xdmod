@@ -14,10 +14,8 @@ $returnData = array();
 
 $start = microtime(true);
 try {
-    $requestedFormat = null;
-    if (isset($request['format'])) {
-        $requestedFormat = strtolower($request['format']);
-    }
+
+    $requestedFormat = $_REQUEST['format'] ?? null;
 
     $format = \DataWarehouse\ExportBuilder::validateFormat($requestedFormat, 'jsonstore', ['jsonstore']);
 

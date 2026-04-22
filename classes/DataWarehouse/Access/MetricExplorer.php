@@ -22,10 +22,7 @@ class MetricExplorer extends Common
 {
     public function get_data($user)
     {
-        $requestedFormat = 'csv';
-        if (isset($this->request['format'])) {
-            $requestedFormat = strtolower($this->request['format']);
-        }
+        $requestedFormat = $this->request['format'] ?? null;
 
         $format = \DataWarehouse\ExportBuilder::validateFormat(
             $requestedFormat,

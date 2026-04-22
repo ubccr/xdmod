@@ -226,7 +226,7 @@ class ExportBuilder
             header("$k: $v");
         }
     }
-    
+
     /**
      * Export data.
      *
@@ -591,12 +591,12 @@ class ExportBuilder
      * set of allowed formats. If valid the requested format is returned. If no requested format is provided then the
      * default value will be returned.
      *
-     * @param ?string $requestedFormat
+     * @param string $requestedFormat
      * @param string $default
      * @param array $allowedFormats
      * @return string
      */
-    public static function validateFormat(?string $requestedFormat, string $default = 'jsonstore', array $allowedFormats = []): string
+    public static function validateFormat(string $requestedFormat, string $default, array $allowedFormats): string
     {
         if (!isset($requestedFormat)) {
             return $default;
