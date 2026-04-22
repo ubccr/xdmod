@@ -442,7 +442,6 @@ class MetricExplorerController extends BaseController
                 401
             );
         }
-        $this->logger->warning('User retrieved ', [$user->getUserIdentifier()]);
 
         $dimensionId = $this->getStringParam($request, 'dimension_id', true);
         $offset = $this->getStringParam($request ,'start');
@@ -527,9 +526,6 @@ class MetricExplorerController extends BaseController
             // If the cache was not used or was not useful, get descriptors from code.
             if (!$cache_data_found) {
                 $realms = [];
-                // NOTE: this variable is never utilized after being updated. can probably be removed.
-                $groupByObjects = [];
-
                 $realmObjects = Realms::getRealmObjectsForUser($user);
                 $query_descriptor_realms = Acls::getQueryDescripters($user);
 
@@ -558,10 +554,6 @@ class MetricExplorerController extends BaseController
                             $group_by_object = $query_descriptor->getGroupByInstance();
                             $permittedStatistics = $group_by_object->getRealm()->getStatisticIds();
 
-                            $groupByObjects[$query_descriptor_realm . '_' . $groupByName] = [
-                                'object' => $group_by_object,
-                                'permittedStats' => $permittedStatistics
-                            ];
                             $realms[$query_descriptor_realm]['dimensions'][$groupByName] = [
                                 'text' => $groupByName == 'none' ? 'None' : $group_by_object->getName(),
                                 'info' => $group_by_object->getHtmlDescription()
@@ -653,9 +645,6 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/filters', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getFilters(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $returnData = [];
-
         try {
             $user = $this->getLoggedInUser($request->getSession());
 
@@ -705,23 +694,10 @@ class MetricExplorerController extends BaseController
         $user = $this->detectUser($request, array(XDUser::INTERNAL_USER, XDUser::PUBLIC_USER));
 
         try {
-            $config = [];
-            foreach ($request->request->all() as $key => $value) {
-                $config[$key] = $value;
-            }
-
-            $configParam = $this->getStringParam($request, 'config');
-            if (!empty($configParam)) {
-                $configJson = json_decode($configParam, true);
-                $config = array_merge($config, $configJson);
-            }
-
             $requestedFormat = $this->getStringParam($request, 'format');
             $format = DataWarehouse\ExportBuilder::validateFormat($requestedFormat, 'jsonstore', ['jsonstore']);
-            $inline = $this->getBooleanParam($request, 'inline', false, true);
             $dataSetId = $this->getStringParam($request, 'datasetId', true);
             $datapoint = $this->getStringParam($request, 'datapoint', true);
-            $showContextMenu = $this->getBooleanParam($request, 'showContextMenu', false, false);
             $requestedStartDate = $this->getDateFromISO8601Param($request, 'start_date', true);
             $requestedStartDateTs = date_timestamp_get($requestedStartDate);
 
@@ -747,16 +723,12 @@ class MetricExplorerController extends BaseController
                 list($startDate, $endDate) = TimeAggregationUnit::getRawTimePeriod($time_point, $time_period);
             }
 
-            $title = $this->getStringParam($request, 'title');
-
             $requestedGlobalFilters = $this->getStringParam($request, 'global_filters');
 
             $globalFilters = (object)['data' => [], 'total' => 0];
             if (!empty($requestedGlobalFilters)) {
                 $globalFiltersDecoded = urldecode($requestedGlobalFilters);
                 $globalFiltersJson = json_decode($globalFiltersDecoded, true);
-                $this->logger->warning('Global Filters Decoded', [var_export($globalFiltersDecoded, true)]);
-                $this->logger->warning('Global FIlters Json', [json_encode($globalFiltersJson)]);
 
                 if (!empty($globalFiltersJson) && isset($globalFiltersJson['data']) && is_array($globalFiltersJson['data'])) {
                     foreach ($globalFiltersJson['data'] as $datum) {
@@ -847,8 +819,6 @@ class MetricExplorerController extends BaseController
 
                 $dataset = new $dataset_classname($query);
 
-                $filterOpts = array('options' => array('default' => null, 'min_range' => 0));
-
                 $limit = null;
                 $limitParam = $this->getStringParam($request, 'limit');
                 if (!empty($limitParam)) {
@@ -889,8 +859,6 @@ class MetricExplorerController extends BaseController
                     );
                     $privquery->setRoleParameters($groupedRoleParameters);
                     $privquery->setFilters($data_description->filters);
-
-                    $query = $privquery->getQueryString();
 
                     $privdataset = new $dataset_classname($privquery);
 
