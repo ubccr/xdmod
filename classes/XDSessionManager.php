@@ -6,6 +6,7 @@
  */
 
 use CCR\DB;
+use xd_security\SessionSingleton;
 
 /**
  * Abstracts access to the following schema:
@@ -88,7 +89,7 @@ class XDSessionManager
             ':last_active'   => $init_time,
         ));
 
-        $session = \xd_security\SessionSingleton::getSession();
+        $session = SessionSingleton::getSession();
         $session->set('xdInit', $init_time);
         $session->set('xdUser', $user_agent);
         $session->set('session_token', $session_token);
@@ -107,7 +108,7 @@ class XDSessionManager
             \xd_security\start_session();
         }
 
-        $session = \xd_security\SessionSingleton::getSession();
+        $session = SessionSingleton::getSession();
         // If a session is still active and a token has been specified,
         // attempt to record the logout in the SessionManager table
         // (provided the supplied token is still 'valid' and a
