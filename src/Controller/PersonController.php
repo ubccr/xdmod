@@ -2,7 +2,6 @@
 
 namespace CCR\Controller;
 
-use Exception;
 use Models\Services\Organizations;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,7 +19,7 @@ class PersonController extends BaseController
      * @param Request $request
      * @param int $id
      * @return Response
-     * @throws Exception
+     * @throws \Exception
      */
     #[Route('/{id}/organization', requirements: ["id" => "(-)?\d+"], methods: ['GET'])]
     public function getOrganizationForPerson(Request $request, int $id): Response
