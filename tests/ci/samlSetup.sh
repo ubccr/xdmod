@@ -37,6 +37,28 @@ log () {
     printf "[$prefix] $message\n"
 }
 
+function configurePortalSettings()
+{
+    host=$1;
+    log "xdmod" "Configuring /etc/xdmod/portal_settings.ini"
+
+    grep -ie "auth_referer=.+" /etc/xdmod/portal_settings.ini
+    exit_code=$?
+    if [ $exit_code -eq 1 ]; then
+        log "xdmod" "Updating auth_referer in portal_settings.ini"
+        # Add the auth_referer property to portal_settings.ini
+        sed -i "s|auth_referer=|auth_referer=$host|g" /etc/xdmod/portal_settings.ini
+
+        # Make sure that the cache is reset so that `auth_referer` shows up in Symfony at runtime.
+        log "xdmod" "Clearing Symfony cache"
+        console cache:clear
+    else
+        log "xdmod" "portal_settings already has an auth_referer, skipping"
+    fi
+
+    log "xdmod" "portal_settings.ini configured!"
+}
+
 function configureSimplesamlPHP()
 {
     log "SimpleSamlPHP" "Stopping HTTPD"
@@ -286,6 +308,9 @@ EOF
     log "setup" "Configuring SimpleSamlPHP"
     # Configure SimplesamlPHP, stops / starts httpd as appropriate
     configureSimplesamlPHP;
+
+    log "xdmod" "Configuring XDMoD"
+    configurePortalSettings "https://xdmod:7000"
 
     AUD_URL=https://$HOSTNAME/xdmod-sp
 
