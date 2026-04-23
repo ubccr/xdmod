@@ -103,7 +103,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
         }
         return str_starts_with($referer, $authReferrer);
     }
-    
+
     public function authenticate(Request $request): Passport
     {
         if ($this->authSource->isAuthenticated()) {

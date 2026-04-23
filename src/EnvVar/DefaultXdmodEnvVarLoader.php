@@ -11,8 +11,7 @@ class DefaultXdmodEnvVarLoader implements EnvVarLoaderInterface
     public function __construct(
         protected ContainerBagInterface $parameters,
         protected LoggerInterface $logger
-    )
-    {
+    ) {
     }
 
     public function loadEnvVars(): array

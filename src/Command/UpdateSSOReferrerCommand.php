@@ -21,8 +21,8 @@ class UpdateSSOReferrerCommand extends Command
 
     public function __construct(
         protected ParameterBagInterface $parameters,
-        ?string $name = null)
-    {
+        ?string $name = null
+    ) {
         parent::__construct($name);
     }
 

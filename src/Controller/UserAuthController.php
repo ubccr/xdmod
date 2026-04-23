@@ -51,7 +51,7 @@ class UserAuthController extends BaseController
             return $this->json($returnData);
         };
 
-        $user_to_email = XDUser::userExistsWithEmailAddress($email, TRUE);
+        $user_to_email = XDUser::userExistsWithEmailAddress($email, true);
 
         if ($user_to_email == INVALID) {
             $returnData['status'] = 'no_user_mapping';
