@@ -12,11 +12,9 @@ class DotEnvConfigMigration extends Migration
     {
         $dotEnvPath = BASE_DIR . '/.env';
         if (!file_exists($dotEnvPath)) {
-            $envTemplate = new Template('env');
-            $envTemplate->apply([
-                'app_secret' => hash('sha512', time())
-            ]);
-            file_put_contents(BASE_DIR . '/.env', $envTemplate->getContents());
+
+            // .env doesn't need anything in it, but it does need to exist.
+            file_put_contents(BASE_DIR . '/.env', '');
 
             // Make sure to clear the cache before dumping the dotenv so we start clean.
             try {
