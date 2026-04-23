@@ -60,7 +60,7 @@ class FilterListBuilder extends Loggable
 
     public function __construct() {
         parent::__construct();
-        $this->filterTemporaryTable = uniqid('modw_aggregates.filter_tmp_', true);
+        $this->filterTemporaryTable = sprintf("modw_aggregates.`%s`", uniqid('filter_tmp_', true));
     }
 
     /**
@@ -144,7 +144,7 @@ class FilterListBuilder extends Loggable
             $lastModified = $journalHelper->getLastModified();
             $this->setLastModifiedStartDate($lastModified);
             $tempTableSql = "CREATE TEMPORARY TABLE $this->filterTemporaryTable AS SELECT * FROM $schema.$tableName where last_modified >= '$this->lastModifiedStartDate'";
-            $this->logger->debug("Creating temporary table: $tempTableSql");
+            $this->logger->debug("Creating temporary table: $tempTableSql with sql: $tempTableSql");
             $db->execute($tempTableSql);
         }
 
