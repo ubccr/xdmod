@@ -33,6 +33,11 @@ color () {
 log () {
     header=$1
     message=$2
+
+    # echo out the log entry to saml_setup.log so we have a "durable" place to look for these logs.
+    echo "[$header] $message" >> /var/log/xdmod/saml_setup.log
+
+    # output the pretty colored messages for when we're watching the build / setup process.
     prefix=$(color $header 'green')
     printf "[$prefix] $message\n"
 }
