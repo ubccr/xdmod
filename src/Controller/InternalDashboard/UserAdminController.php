@@ -6,15 +6,20 @@ namespace CCR\Controller\InternalDashboard;
 
 use CCR\Controller\BaseController;
 use CCR\DB;
+use CCR\Helper\PasswordResetService;
 use CCR\MailWrapper;
+use CCR\Security\Helpers\Tokens;
 use Exception;
 use Models\Acl;
 use Models\Services\Acls;
 use Models\Services\Users;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
 use Twig\Error\SyntaxError;
@@ -22,6 +27,7 @@ use XDAdmin;
 use XDUser;
 use XDWarehouse;
 use function xd_response\buildError;
+use function xd_utilities\string_ends_with;
 
 
 /**
@@ -29,6 +35,20 @@ use function xd_response\buildError;
  */
 class UserAdminController extends BaseController
 {
+
+    protected PasswordResetService $passwordResetService;
+
+    public function __construct(
+        LoggerInterface $logger,
+        Environment $twig,
+        Tokens $tokenHelper,
+        ContainerBagInterface $parameters,
+        PasswordResetService $passwordResetService
+    ) {
+        parent::__construct($logger, $twig, $tokenHelper, $parameters);
+        $this->passwordResetService = $passwordResetService;
+    }
+
     /**
      * @param Request $request
      * @return Response
@@ -541,7 +561,7 @@ class UserAdminController extends BaseController
             ]);
         }
 
-        $this->sendPasswordResetEmail($userToContact);
+        $this->passwordResetService->sendPasswordResetEmail($userToContact);
 
         $message = sprintf('Password reset e-mail sent to user %s', $userToContact->getUsername());
         return $this->json([
@@ -902,9 +922,9 @@ class UserAdminController extends BaseController
                 'reset_link' => sprintf(
                     '%spassword_reset.php?rid=%s',
                     \xd_utilities\getConfigurationUrlBase('general', 'site_address'),
-                    $rid
+                      $rid
                 ),
-                'expiration' => strftime('%c %Z', explode('|', $rid)[1]),
+                'expiration' => strftime('%c %Z', (int)explode('|', $rid)[1]),
                 'maintainer_signature' => MailWrapper::getMaintainerSignature(),
             ]
         );

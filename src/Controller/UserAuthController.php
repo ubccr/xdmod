@@ -3,10 +3,16 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
-use CCR\MailWrapper;
+use CCR\Helper\PasswordResetService;
+use CCR\Security\Helpers\Tokens;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Twig\Environment;
 use XDUser;
 
 use function xd_response\buildError;
@@ -18,6 +24,14 @@ use function xd_utilities\string_ends_with;
  */
 class UserAuthController extends BaseController
 {
+
+    protected PasswordResetService $passwordResetService;
+
+    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters, PasswordResetService $passwordResetService)
+    {
+        parent::__construct($logger, $twig, $tokenHelper, $parameters);
+        $this->passwordResetService = $passwordResetService;
+    }
 
     #[Route('/controllers/user_auth.php', methods: ["POST"])]
     public function index(Request $request): Response
@@ -44,6 +58,7 @@ class UserAuthController extends BaseController
      */
     private function requestPasswordReset(Request $request): Response
     {
+        $returnData = [];
         $email = $this->getEmailParam($request, 'email');
 
         if (empty($email)) {
@@ -64,33 +79,11 @@ class UserAuthController extends BaseController
         }
 
         $user_to_email = XDUser::getUserByID($user_to_email);
-
-        $page_title = $this->parameters->get('xdmod.portal_settings.general.title');
-
         try {
-            $rid = $user_to_email->generateRID();
-
-            $site_address = $this->parameters->get('xdmod.portal_settings.general.site_address');
-            if (!string_ends_with($site_address, '/')) {
-                $site_address = "$site_address/";
-            }
-            $resetUrl = "{$site_address}password_reset.php?rid=$rid";
-            list($userId, $expiration, $hash) = explode('|', $rid);
-            MailWrapper::sendTemplate(
-                'password_reset',
-                array(
-                    'first_name' => $user_to_email->getFirstName(),
-                    'username' => $user_to_email->getUsername(),
-                    'reset_url' => $resetUrl,
-                    'expiration' => date("%c %Z", (int)$expiration),
-                    'maintainer_signature' => MailWrapper::getMaintainerSignature(),
-                    'subject' => "$page_title: Password Reset",
-                    'toAddress' => $user_to_email->getEmailAddress()
-                )
-            );
+            $this->passwordResetService->sendPasswordResetEmail($user_to_email);
             $returnData['success'] = true;
             $returnData['status'] = 'success';
-        } catch (\Exception $e) {
+        } catch (\Exception|\Throwable $e) {
             $returnData['success'] = false;
             $returnData['message'] = $e->getMessage();
             $returnData['status'] = 'failure';

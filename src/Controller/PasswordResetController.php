@@ -12,10 +12,9 @@ use Symfony\Component\Routing\Attribute\Route;
 /**
  *
  */
-#[Route('{prefix}password_reset', requirements: ['prefix' => '.*'])]
 class PasswordResetController extends BaseController
 {
-    private static $validModes = ['new', 'reset'];
+    private static $validModes = ['update', 'create'];
 
     /**
      *
@@ -23,7 +22,8 @@ class PasswordResetController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[Route('', methods: ['GET'])]
+    #[Route('{prefix}password_reset', requirements: ['prefix' => '.*'], methods: ['GET'])]
+    #[Route('/controllers/password_reset.php', methods: ['GET'])]
     public function index(Request $request): Response
     {
         $validationCheck = [
@@ -32,7 +32,11 @@ class PasswordResetController extends BaseController
             'user_id' => INVALID
         ];
 
-        $mode = $this->getStringParam($request, 'mode', false, 'reset');
+        $mode = $this->getStringParam($request, 'mode', false, 'update');
+        if (isset($mode) && $mode === 'new') {
+            $mode = 'create';
+        }
+
         $rid = $this->getStringParam($request, 'rid', false, null, RESTRICTION_RID);
         if (isset($rid)) {
             $validationCheck = \XDUser::validateRID($rid);
@@ -43,7 +47,7 @@ class PasswordResetController extends BaseController
             return $this->render(
                 'twig/password_reset_expired.html.twig',
                 [
-                    'site_address' =>$this->parameters->get('xdmod.portal_settings.general.site_address')
+                    'site_address' => $this->parameters->get('xdmod.portal_settings.general.site_address')
                 ]
             );
         }
@@ -55,8 +59,8 @@ class PasswordResetController extends BaseController
                 'mode' => $mode,
                 'first_name' => $validationCheck['user_first_name'],
                 'password_max' => CHARLIM_PASSWORD,
-                'extjs_path' => 'gui/lib',
-                'extjs_version' => 'extjs'
+                'extjs_path' => '/gui/lib',
+                'extjs_version' => '/extjs'
             ]
         );
     }
