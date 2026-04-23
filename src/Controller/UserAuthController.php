@@ -5,8 +5,6 @@ namespace CCR\Controller;
 
 use CCR\Helper\PasswordResetService;
 use CCR\Security\Helpers\Tokens;
-use Psr\Container\ContainerExceptionInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,7 +14,6 @@ use Twig\Environment;
 use XDUser;
 
 use function xd_response\buildError;
-use function xd_utilities\string_ends_with;
 
 /**
  * This class encapsulates the operations previously provided by /controllers/user_auth.php which at this point is just:

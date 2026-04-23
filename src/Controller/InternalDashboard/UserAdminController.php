@@ -26,9 +26,8 @@ use Twig\Error\SyntaxError;
 use XDAdmin;
 use XDUser;
 use XDWarehouse;
-use function xd_response\buildError;
-use function xd_utilities\string_ends_with;
 
+use function xd_response\buildError;
 
 /**
  *
@@ -805,7 +804,7 @@ class UserAdminController extends BaseController
 
         $selected_user = XDUser::getUserByID($userId);
 
-        if ($selected_user === NULL) {
+        if ($selected_user === null) {
             return $this->json(buildError('user_does_not_exist'));
         }
 
@@ -826,9 +825,8 @@ class UserAdminController extends BaseController
             $userDetails['email_address'] = '';
         }
 
-        $userDetails['assigned_user_id'] = $selected_user->getPersonID(TRUE);
+        $userDetails['assigned_user_id'] = $selected_user->getPersonID(true);
 
-        //$userDetails['provider'] = $selected_user->getOrganization();
         $userDetails['institution'] = $selected_user->getOrganizationID();
 
         $userDetails['user_type'] = $selected_user->getUserType();
@@ -900,39 +898,6 @@ class UserAdminController extends BaseController
             'success' => true,
             'count' => count($filtered),
             'response' => $filtered
-        ]);
-    }
-
-    /**
-     * @throws RuntimeError
-     * @throws SyntaxError
-     * @throws LoaderError
-     * @throws Exception
-     */
-    private function sendPasswordResetEmail(XDUser $user): void
-    {
-        $rid = $user->generateRID();
-
-        $subject = sprintf('%s: Password Reset', \xd_utilities\getConfiguration('general', 'title'));
-        $body = $this->twig->render(
-            'twig/emails/password_reset.html.twig',
-            [
-                'first_name' => $user->getFirstName(),
-                'username' => $user->getUsername(),
-                'reset_link' => sprintf(
-                    '%spassword_reset.php?rid=%s',
-                    \xd_utilities\getConfigurationUrlBase('general', 'site_address'),
-                      $rid
-                ),
-                'expiration' => strftime('%c %Z', (int)explode('|', $rid)[1]),
-                'maintainer_signature' => MailWrapper::getMaintainerSignature(),
-            ]
-        );
-
-        MailWrapper::sendMail([
-            'toAddress' => $user->getEmailAddress(),
-            'subject' => $subject,
-            'body' => $body
         ]);
     }
 

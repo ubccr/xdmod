@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
-use Exception;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -20,7 +21,8 @@ class PasswordResetController extends BaseController
      *
      * @param Request $request
      * @return Response
-     * @throws Exception
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     #[Route('{prefix}password_reset', requirements: ['prefix' => '.*'], methods: ['GET'])]
     #[Route('/controllers/password_reset.php', methods: ['GET'])]
