@@ -32,12 +32,6 @@ class UpdateSSOReferrerCommand extends Command
         $this->addArgument('url', InputArgument::REQUIRED, 'The url to use to trigger SSO authentication.');
     }
 
-    protected function interact(InputInterface $input, OutputInterface $output)
-    {
-        parent::interact($input, $output);
-
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $url = $input->getArgument('url');
