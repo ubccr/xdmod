@@ -60,7 +60,7 @@ class FilterListBuilder extends Loggable
 
     public function __construct() {
         parent::__construct();
-        $this->filterTemporaryTable = sprintf("modw_aggregates.`%s`", uniqid('filter_tmp_', true));
+        $this->filterTemporaryTable = sprintf("`modw_aggregates`.`%s`", uniqid('filter_tmp_', true));
     }
 
     /**
