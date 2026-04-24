@@ -878,31 +878,6 @@ SQL;
         return $result;
     }
 
-    /**
-     * Accepts an array and outputs a meaningful string representation of said
-     * array.
-     *
-     * @param array $array the array that is to be converted into a string.
-     *
-     * @return string representation of the array parameter passed in.
-     */
-    public function arrayToString($array = array())
-    {
-        $values = array_reduce(
-            array_values($array),
-            function ($carry, $item) {
-                $carry[] = var_export($item, true);
-                return $carry;
-            },
-            []
-        );
-        $result = 'Keys [ ';
-        $result .= implode(', ', array_keys($array)) . ']';
-        $result .= 'Values [ ';
-        $result .= implode(', ', $values) . ']';
-        return $result;
-    }
-
     // ---------------------------
 
     /**
@@ -1025,7 +1000,16 @@ SQL;
                 $this->_id = $new_user_id;
             }
         } catch (Exception $e) {
-            throw new Exception("Exception occured while inserting / updating. UpdateToken: [{$this->_update_token}] Query: [$query] data: [{$this->arrayToString($update_data)}]", null, $e);
+            $values = array_reduce(
+                array_values($update_data),
+                function ($carry, $item) {
+                    $carry[] = var_export($item, true);
+                    return $carry;
+                }
+            );
+            $formattedOutput = 'Keys [' . implode(', ', array_keys($update_data)) . ']';
+            $formattedOutput .= 'Values [' . implode(', ', $values) . ']';
+            throw new Exception("Exception occured while inserting / updating. UpdateToken: [{$this->_update_token}] Query: [$query] data: [{$formattedOutput}]", null, $e);
         }
         /* END: Execute the query */
 
@@ -1804,16 +1788,14 @@ SQL;
 
     public function getRoles($flag = 'informal'): array
     {
+        $roles = array();
 
         if ($flag == 'informal') {
             $roles = array_reduce($this->_acls, function ($carry, Acl $item) {
                 $carry[] = $item->getName();
                 return $carry;
-            }, array());
-            return $roles;
-        }
-
-        if ($flag == 'formal') {
+            }, $roles);
+        } elseif ($flag == 'formal') {
             $query = <<<SQL
 SELECT
 a.display,
@@ -1828,17 +1810,12 @@ SQL;
                 ':user_id' => $this->_id,
             ));
 
-            $roles = array();
-
             foreach ($results as $roleSet) {
-
                 $roles[$roleSet['display']] = $roleSet['name'];
-
             }
-
-            return $roles;
         }
-        return [];
+
+        return $roles;
     }//getRoles
 
     // ---------------------------
@@ -1933,22 +1910,20 @@ SQL;
 
     public function getPersonID($default = FALSE)
     {
-
-        // NOTE: RESTful services do not operate on the concept of a session, so we need to check for $_SESSION[..] entities using isset
-        $session = \xd_security\SessionSingleton::getSession();
+        $session = SessionSingleton::getSession();
         $xdUserId = $session->get('xdUser');
         if (isset($xdUserId) && ($xdUserId === $this->_id) && ($default == FALSE)) {
 
             // The user object pertains to the user logged in..
             $assumedPersonId = $session->get('assumed_person_id');
             if (isset($assumedPersonId)) {
-                return $assumedPersonId;
+                $personID = $assumedPersonId;
             }
 
+        } else {
+            $personID = (empty($this->_personID)) ? '0' : $this->_personID;
         }
-
-        return (empty($this->_personID)) ? '0' : $this->_personID;
-
+        return $personID;
     }//getPersonID
 
     // ---------------------------
@@ -2761,11 +2736,13 @@ SQL;
 
     private function hash($password)
     {
-        if (!isset($this->hasher)) {
-            return password_hash($password, PASSWORD_DEFAULT);
+        if (isset($this->hasher)) {
+            $hashedPassword = $this->hasher->hash($password);
         } else {
-            return $this->hasher->hash($password);
+            // Fall back to MD5 if Symfony hasher is not set
+            $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
         }
+        return $hashedPassword;
     }
 
     /**
