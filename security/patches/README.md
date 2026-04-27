@@ -19,9 +19,6 @@ To add a new patch file, developers should do the following:
     e.g.,
     ```
     GHSA-29qm-7w4v-43fw-9_5_0-11_0_2.patch
-    ```
-    or
-    ```
     GHSA-3hfh-m242-8rmh-pre_11_0_3.patch
     ```
    Or if a CVE has already been assigned, it can replace the GitHub security
