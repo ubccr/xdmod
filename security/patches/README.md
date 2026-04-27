@@ -26,7 +26,7 @@ To add a new patch file, developers should do the following:
     ```
     CVE-<CVE number>-<Open XDMoD versions affected>.patch
     ```
-1. Open a Pull Request that adds the patch file to this directory.
+1. Submit a Pull Request that adds the patch file to this directory.
 1. Once the Pull Request is approved and merged to the `main` branch, obtain
    the SHA of the merge commit.
 1. Copy the URL of the raw content of the patch file from the merge commit on
