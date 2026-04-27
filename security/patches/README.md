@@ -2,9 +2,9 @@
 
 This directory contains workaround patch files that pertain to known security
 vulnerabilities in Open XDMoD. Each patch file should contain a comment at the
-top that:
+top that includes:
 
-1. Links to the corresponding GitHub security advisory, which should explain
+1. A link to the corresponding GitHub security advisory, which should explain
    how to apply the patch, and
 1. An indication of which versions of Open XDMoD to which the patch applies.
 
