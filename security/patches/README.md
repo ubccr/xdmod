@@ -12,6 +12,23 @@ top that includes:
 
 To add a new patch file, developers should do the following:
 
+1. Name the file using the format:
+    ```
+    <GitHub security advisory ID>-<Open XDMoD versions affected>.patch
+    ```
+    e.g.,
+    ```
+    GHSA-29qm-7w4v-43fw-9_5_0-11_0_2.patch
+    ```
+    or
+    ```
+    GHSA-3hfh-m242-8rmh-pre_11_0_3.patch
+    ```
+   Or if a CVE has already been assigned, it can replace the GitHub security
+   advisory ID, i.e.,:
+    ```
+    CVE-<CVE number>-<Open XDMoD versions affected>.patch
+    ```
 1. Open a Pull Request that adds the patch file to this directory.
 1. Once the Pull Request is approved and merged to the `main` branch, obtain
    the SHA of the merge commit.
