@@ -4,9 +4,9 @@ This directory contains workaround patch files that pertain to known security
 vulnerabilities in Open XDMoD. Each patch file should contain a comment at the
 top that:
 
-1. Links to the corresponding security advisory from
-   https://github.com/ubccr/xdmod/security/advisories, which should explain how
-   to apply the patch, and
+1. Links to the corresponding [GitHub security
+   advisory](https://github.com/ubccr/xdmod/security/advisories), which should
+   explain how to apply the patch, and
 1. An indication of which versions of Open XDMoD to which the patch applies.
 
 ## Adding a new patch file
