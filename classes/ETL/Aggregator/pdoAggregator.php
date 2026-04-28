@@ -1041,14 +1041,26 @@ class pdoAggregator extends aAggregator
 
                     $availableParams = array_combine($availableParamKeys, $availableParamValues);
 
-                    $bindParams = array();
-                    preg_match_all($bindParamRegex, $whereClause, $matches);
-                    $bindParams = $matches[0];
-                    $usedParams = array_intersect_key($availableParams, array_fill_keys($bindParams, 0));
+                    // Build a CROSS JOIN against an inline list of the periods in this slice and
+                    // rewrite the WHERE clause so the per-period overlap is checked against each
+                    // listed period rather than a single min/max range. Without this, a slice
+                    // containing non-contiguous periods would pull every row in the day_id range
+                    // spanning the gap into the temporary table.
+                    list($periodListJoin, $rewrittenWhere, $periodParams) =
+                        self::buildPerPeriodTempTableSql($whereClause, $aggregationPeriodSlice);
+                    unset($availableParams[':period_start_day_id'], $availableParams[':period_end_day_id']);
+                    $availableParams = array_merge($availableParams, $periodParams);
 
                     $sql =
                         "CREATE TEMPORARY TABLE $qualifiedTmpTableName AS "
-                        . "SELECT * FROM $origTableName $tmpTableAlias WHERE " . $whereClause;
+                        . "SELECT DISTINCT $tmpTableAlias.* FROM $origTableName $tmpTableAlias "
+                        . $periodListJoin
+                        . " WHERE " . $rewrittenWhere;
+
+                    preg_match_all($bindParamRegex, $sql, $matches);
+                    $bindParams = $matches[0];
+                    $usedParams = array_intersect_key($availableParams, array_fill_keys($bindParams, 0));
+
                     $this->logger->debug(
                         sprintf("[batch aggregation] Batch temp table %s: %s", $this->sourceEndpoint, $sql)
                     );
@@ -1061,7 +1073,7 @@ class pdoAggregator extends aAggregator
                 }
 
                 if ($this->etlStageQuery) {
-                    $this->createStageBatchTempTable($minDayId, $maxDayId, $availableParams);
+                    $this->createStageBatchTempTable($aggregationPeriodSlice, $availableParams);
                 }
 
                 $this->logger->info("[batch aggregation] Setup for batch $minPeriodId - $maxPeriodId (day_id $minDayId - $maxDayId): "
@@ -1445,20 +1457,20 @@ class pdoAggregator extends aAggregator
     /**
      * Create and populate the temporary table used in batch mode aggregation
      * as defined by the "stage_query" parameter setting in the ETL action
-     * definition. This table will contain all of the rows between the specified
-     * start and end periods.
+     * definition. This table will contain only the rows that overlap one of
+     * the periods in the supplied slice (rather than every row in the day_id
+     * range spanning that slice).
      *
-     * @param $minDayId string the start of the batch aggregation slide
-     * @param $maxDayId string the end of the batch aggregation slide
+     * @param $aggregationPeriodSlice array the periods in the current batch
      * @param $availableParams array the PDO parameters to substitute in the select statement
      */
-    protected function createStageBatchTempTable($minDayId, $maxDayId, $availableParams)
+    protected function createStageBatchTempTable(array $aggregationPeriodSlice, array $availableParams)
     {
         $qualifiedTmpTableName = $this->sourceEndpoint->getSchema(true) . "." . $this->sourceEndpoint->quoteSystemIdentifier(self::BATCH_STAGE_TABLE_NAME);
         $origTableName = $this->sourceEndpoint->getSchema(true) . "." . $this->sourceEndpoint->quoteSystemIdentifier($this->etlStageQuery->joins[0]->name);
         $tmpTableAlias = $this->sourceEndpoint->quoteSystemIdentifier($this->etlStageQuery->joins[0]->alias);
 
-        $this->logger->debug("[batch aggregation] Create temporary table $qualifiedTmpTableName with min period = $minDayId, max period = $maxDayId");
+        $this->logger->debug("[batch aggregation] Create temporary table $qualifiedTmpTableName for " . count($aggregationPeriodSlice) . " period(s)");
 
         $sql = "DROP TEMPORARY TABLE IF EXISTS $qualifiedTmpTableName";
 
@@ -1477,15 +1489,21 @@ class pdoAggregator extends aAggregator
                 "Undefined macros found in WHERE clause"
             );
 
-            $matches = array();
-            $bindParams = array();
-            preg_match_all('/(:[a-zA-Z0-9_-]+)/', $whereClause, $matches);
-            $bindParams = $matches[0];
-            $usedParams = array_intersect_key($availableParams, array_fill_keys($bindParams, 0));
+            list($periodListJoin, $rewrittenWhere, $periodParams) =
+                self::buildPerPeriodTempTableSql($whereClause, $aggregationPeriodSlice);
+            unset($availableParams[':period_start_day_id'], $availableParams[':period_end_day_id']);
+            $availableParams = array_merge($availableParams, $periodParams);
 
             $sql =
                 "CREATE TEMPORARY TABLE $qualifiedTmpTableName AS "
-                . "SELECT * FROM $origTableName $tmpTableAlias WHERE " . $whereClause;
+                . "SELECT DISTINCT $tmpTableAlias.* FROM $origTableName $tmpTableAlias "
+                . $periodListJoin
+                . " WHERE " . $rewrittenWhere;
+
+            $matches = array();
+            preg_match_all('/(:[a-zA-Z0-9_-]+)/', $sql, $matches);
+            $bindParams = $matches[0];
+            $usedParams = array_intersect_key($availableParams, array_fill_keys($bindParams, 0));
 
             $this->logger->debug(
                 sprintf("[batch aggregation] Batch temp table %s: %s", $this->sourceEndpoint, $sql)
@@ -1497,6 +1515,41 @@ class pdoAggregator extends aAggregator
                 array('exception' => $e, 'sql' => $sql)
             );
         }
+    }
+
+    /**
+     * Build the inline period-list CROSS JOIN and the per-period rewrite of
+     * a WHERE clause that uses :period_start_day_id / :period_end_day_id.
+     *
+     * Returns array($periodListJoin, $rewrittenWhere, $periodParams) where:
+     *   - $periodListJoin is "CROSS JOIN ( SELECT ... UNION ALL ... ) `xdmod_period_list`"
+     *   - $rewrittenWhere has :period_start_day_id / :period_end_day_id replaced
+     *     with references to the joined columns
+     *   - $periodParams holds the per-period bind values
+     *     (:p_start_<i>, :p_end_<i>)
+     */
+    private static function buildPerPeriodTempTableSql($whereClause, array $aggregationPeriodSlice)
+    {
+        $unionParts = array();
+        $params = array();
+        foreach (array_values($aggregationPeriodSlice) as $i => $period) {
+            $unionParts[] = (0 === $i)
+                ? "SELECT :p_start_$i AS p_start, :p_end_$i AS p_end"
+                : "SELECT :p_start_$i, :p_end_$i";
+            $params[":p_start_$i"] = $period['period_start_day_id'];
+            $params[":p_end_$i"]   = $period['period_end_day_id'];
+        }
+
+        $periodListJoin =
+            "CROSS JOIN (" . implode(" UNION ALL ", $unionParts) . ") `xdmod_period_list`";
+
+        $rewrittenWhere = preg_replace(
+            array('/:period_end_day_id\b/', '/:period_start_day_id\b/'),
+            array('`xdmod_period_list`.p_end', '`xdmod_period_list`.p_start'),
+            $whereClause
+        );
+
+        return array($periodListJoin, $rewrittenWhere, $params);
     }
 
     /**
