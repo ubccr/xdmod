@@ -2,11 +2,20 @@
 
 ## 2026-XX-XX v11.0.3
 
+- Important Notes
+    - This release fixes a critical security vulnerability and two other
+      moderate-to-high severity security vulnerabilities in Open XDMoD:
+        - https://github.com/ubccr/xdmod/security/advisories/GHSA-29qm-7w4v-43fw
+        - https://github.com/ubccr/xdmod/security/advisories/GHSA-3pv7-qvc3-h527
+        - https://github.com/ubccr/xdmod/security/advisories/GHSA-3hfh-m242-8rmh
 - Bug Fixes
     - Fix bug in which the server runs out of memory when exporting data
       ([\#2085](https://github.com/ubccr/xdmod/pull/2085)).
     - Fix tooltip display when hovering over area plots
       ([\#2077](https://github.com/ubccr/xdmod/pull/2077)).
+    - Fix charting export ([\#2192](https://github.com/ubccr/xdmod/pull/2192)).
+    - Fix username validation
+      ([\#2194](https://github.com/ubccr/xdmod/pull/2194)).
 - Enhancements
     - Improve performance of database queries
       ([\#2182](https://github.com/ubccr/xdmod/pull/2182)).
@@ -230,6 +239,10 @@
         - A new endpoint for retrieving raw data has been added.
 
 ## 2023-08-04 v10.0.3
+
+- Important Notes
+    - This release fixes a critical security vulnerability in Open XDMoD:
+        - https://github.com/ubccr/xdmod/security/advisories/GHSA-r33r-6g3c-r992
 - Bug Fixes
     - General
         - Fix handling of filters where the filter string has a quote character in it (#1749)
