@@ -1,0 +1,9 @@
+# Workaround patch file for https://github.com/ubccr/xdmod/security/advisories/{{ page.ghsa-id }}
+# For patching Open XDMoD {% if 
+    page.min-version == page.max-version 
+%}version {{ page.min-version }}{% 
+    elsif page.min-version == "0.0.0"
+%}versions <= {{ page.max-version }}{%
+    else
+%}versions {{ page.min-version }} through {{ page.max-version }}{% endif %}
+{{ content }}

@@ -26,13 +26,16 @@ url: "https://open.xdmod.org" # the base hostname & protocol for your site
 github_username: ubccr
 github_url: https://github.com/ubccr/xdmod
 latest_version: "11.0"
-latest_sw_version: "11.0.2"
+latest_sw_version: "11.0.3"
 version_list:
   - "11.0"
 unsupported_version_list:
   - "10.5"
   - "10.0"
   - "9.5"
+collections:
+  security-patches:
+    output: true
 
 # For each version the variable `sw_version` should be set to latest release
 # version of Open XDMoD (e.g. "8.1.2") and `prev_sw_version` should be set to
@@ -159,6 +162,13 @@ defaults:
       layout: "page"
       version: "6.6"
       menu_markdown: "6.6/menu.md"
+
+  -
+    scope:
+      type: "security-patches"
+    values:
+      layout: "security-patch"
+      render_with_liquid: false
 
 
 # Build settings

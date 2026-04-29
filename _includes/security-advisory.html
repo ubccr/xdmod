@@ -1,0 +1,105 @@
+{% assign page-version-parts = page.version | split: "." %}
+{% assign page-major = page-version-parts[0] | plus: 0 %}
+{% assign page-minor = page-version-parts[1] | plus: 0 %}
+{% assign security-patch-exists-for-page = false %}
+{% assign min-overlapping-major = 9999 %}
+{% assign min-overlapping-minor = 9999 %}
+{% assign min-overlapping-patch = 9999 %}
+{% assign max-overlapping-major = 0 %}
+{% assign max-overlapping-minor = 0 %}
+{% assign max-overlapping-patch = 0 %}
+{% assign security-patch-filenames-string = "" %}
+{% for security-patch in site.security-patches %}
+    {% assign security-patch-min-version-parts = security-patch.min-version | split: "." %}
+    {% assign security-patch-min-major = security-patch-min-version-parts[0] | plus: 0 %}
+    {% assign security-patch-min-minor = security-patch-min-version-parts[1] | plus: 0 %}
+    {% assign security-patch-min-patch = security-patch-min-version-parts[2] | plus: 0 %}
+    {% assign security-patch-max-version-parts = security-patch.max-version | split: "." %}
+    {% assign security-patch-max-major = security-patch-max-version-parts[0] | plus: 0 %}
+    {% assign security-patch-max-minor = security-patch-max-version-parts[1] | plus: 0 %}
+    {% assign security-patch-max-patch = security-patch-max-version-parts[2] | plus: 0 %}
+    {% if page-major == security-patch-min-major %}
+        {% if page-minor >= security-patch-min-minor %}
+            {% assign security-patch-exists-for-page = true %}
+        {% endif %}
+    {% elsif page-major == security-patch-max-major %}
+        {% if page-minor <= security-patch-max-minor %}
+            {% assign security-patch-exists-for-page = true %}
+        {% endif %}
+    {% elsif
+        page-major > security-patch-min-major
+        and page-major < security-patch-max-major
+    %}
+        {% assign security-patch-exists-for-page = true %}
+    {% endif %}
+    {% if security-patch-exists-for-page %}
+        {% assign security-patch-filenames-string = security-patch-filenames-string | append: ";" | append: security-patch.url %}
+        {% assign ghsa-ids-string = ghsa-ids-string | append: ";" | append: security-patch.ghsa-id %}
+        {% if
+            security-patch-min-major <= min-overlapping-major
+            and security-patch-min-minor <= min-overlapping-minor
+            and security-patch-min-patch <= min-overlapping-patch
+        %}
+            {% assign min-overlapping-major = security-patch-min-major %}
+            {% assign min-overlapping-minor = security-patch-min-minor %}
+            {% assign min-overlapping-patch = security-patch-min-patch %}
+        {% endif %}
+        {% if
+            security-patch-max-major >= max-overlapping-major
+            and security-patch-max-minor >= max-overlapping-minor
+            and security-patch-max-patch >= max-overlapping-patch
+        %}
+            {% assign max-overlapping-major = security-patch-max-major %}
+            {% assign max-overlapping-minor = security-patch-max-minor %}
+            {% assign max-overlapping-patch = security-patch-max-patch %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+{% if security-patch-exists-for-page %}
+{% capture min-overlapping %}{{ min-overlapping-major }}.{{ min-overlapping-minor }}.{{ min-overlapping-patch }}{% endcapture %}
+{% capture max-overlapping %}{{ max-overlapping-major }}.{{ max-overlapping-minor }}.{{ max-overlapping-patch }}{% endcapture %}
+{% if min-overlapping == "0.0.0" %}
+    {% capture versions %}≤{{ max-overlapping }}{% endcapture %}
+{% endif %}
+{% capture content %}
+<p>
+    There are known security vulnerabilities in Open XDMoD versions
+    {{ versions }}. We strongly encourage
+    <a href="{{ site.url }}/{{ site.latest_version }}/upgrade">upgrading</a> to
+    the latest version of Open XDMoD, {{ site.latest_sw_version }}.
+</p>
+<p>
+    If you cannot upgrade immediately, you can manually patch your
+    installation. First, make sure you are on the correct web page for your
+    version of Open XDMoD:
+</p>
+<ul>
+    {% assign versions-list = site.version_list | concat: site.unsupported_version_list %}
+    {% for version-page in versions-list %}
+        <li>
+            {% if version-page == page.version %}{{ version-page }}{% else %}<a href="/{{ version-page }}">{{ version-page }}</a>{% endif %}
+        </li>
+    {% endfor %}
+</ul>
+<h3>Patching version {{ page.version }}</h3>
+<p>
+    Copy the patch files linked below to your Open XDMoD web server.
+</p>
+<ul>
+    {% assign security-patch-filenames = security-patch-filenames-string | remove_first: ";" | split: ";" %}
+    {% for security-patch-filename in security-patch-filenames %}
+        <li><a href="{{ security-patch-filename }}">{{ security-patch-filename | split: "/" | last }}</a></li>
+    {% endfor %}
+</ul>
+<p>
+    Then, run the following command on each patch file, replacing
+    <code>[PATH_TO_XDMOD_SHARE_DIR]</code> with the path to the
+    <code>share</code> directory (<code>/usr/share/xdmod</code> for RPM-based
+    installs, <code>/opt/xdmod/share</code> or another location for source code
+    installs) and <code>[PATH_TO_PATCH_FILE]</code> with the path to the patch
+    file.
+</p>
+<ul><li><code>patch -p1 -d [PATH_TO_XDMOD_SHARE_DIR] &lt; [PATH_TO_PATCH_FILE]</code></li></ul>
+{% endcapture %}
+{% include warning.html content=content %}
+{% endif %}
