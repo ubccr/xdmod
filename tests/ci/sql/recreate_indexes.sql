@@ -41,4 +41,3 @@ ALTER TABLE modw_aggregates.jobfact_by_day
   ADD INDEX index_resource_organization (day_id,resource_organization_id),
   ADD INDEX index_resource_type (day_id,resourcetype_id),
   ADD INDEX index_system_account (day_id,systemaccount_id);
-  
