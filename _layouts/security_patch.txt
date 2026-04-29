@@ -5,7 +5,5 @@
     elsif page.min_version == 0
 %}versions <= {% include get_dotted_version_from_XXYYZZ.txt version=page.max_version %}{%
     else
-%}versions {% include get_dotted_version_from_XXYYZZ.txt version=page.min_version %}
-    through
-    {% include get_dotted_version_from_XXYYZZ.txt version=page.max_version %}{% endif %}
+%}versions {% include get_dotted_version_from_XXYYZZ.txt version=page.min_version %} through {% include get_dotted_version_from_XXYYZZ.txt version=page.max_version %}{% endif %}
 {{ content }}
