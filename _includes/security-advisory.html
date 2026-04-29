@@ -61,7 +61,7 @@
 {% if min-overlapping == "0.0.0" %}
     {% capture versions %}≤{{ max-overlapping }}{% endcapture %}
 {% endif %}
-{% capture content %}
+{% capture warning-content %}
 <p>
     There are known security vulnerabilities in Open XDMoD versions
     {{ versions }}. We strongly encourage
@@ -70,8 +70,8 @@
 </p>
 <p>
     If you cannot upgrade immediately, you can manually patch your
-    installation. First, make sure you are on the correct web page for your
-    version of Open XDMoD:
+    installation as a workaround. First, make sure you are on the correct web
+    page for your version of Open XDMoD:
 </p>
 <ul>
     {% assign versions-list = site.version_list | concat: site.unsupported_version_list %}
@@ -101,5 +101,5 @@
 </p>
 <ul><li><code>patch -p1 -d [PATH_TO_XDMOD_SHARE_DIR] &lt; [PATH_TO_PATCH_FILE]</code></li></ul>
 {% endcapture %}
-{% include warning.html content=content %}
+{% include warning.html content=warning-content %}
 {% endif %}
