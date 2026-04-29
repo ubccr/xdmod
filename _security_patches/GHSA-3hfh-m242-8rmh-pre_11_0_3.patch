@@ -1,7 +1,7 @@
 ---
-ghsa-id: GHSA-3hfh-m242-8rmh
-min-version: 0.0.0
-max-version: 11.0.2
+ghsa_id: GHSA-3hfh-m242-8rmh
+min_version: 0
+max_version: 110002
 ---
 diff --git a/html/controllers/sab_user.php b/html/controllers/sab_user.php
 index 5821a70760..8b6331b996 100644

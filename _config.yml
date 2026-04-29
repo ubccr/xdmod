@@ -34,7 +34,7 @@ unsupported_version_list:
   - "10.0"
   - "9.5"
 collections:
-  security-patches:
+  security_patches:
     output: true
 
 # For each version the variable `sw_version` should be set to latest release
@@ -165,9 +165,9 @@ defaults:
 
   -
     scope:
-      type: "security-patches"
+      type: "security_patches"
     values:
-      layout: "security-patch"
+      layout: "security_patch"
       render_with_liquid: false
 
 
