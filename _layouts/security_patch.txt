@@ -3,7 +3,7 @@
     page.min_version == page.max_version
 %}{% capture min_version_dotted %}{% include get_dotted_version_from_XYYZZ.txt version=page.min_version %}{% endcapture %}version {{ min_version_dotted | rstrip }}{%
     elsif page.min_version == 0
-%}versions ≤ {{ max_version_dotted | rstrip }}{%
+%}versions <= {{ max_version_dotted | rstrip }}{%
     else
 %}versions {{ min_version_dotted | rstrip }} through {{ max_version_dotted | rstrip }}{% endif %}
 {{ content }}
