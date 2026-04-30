@@ -307,7 +307,7 @@ PLATFORMS
   x86_64-linux-musl
 
 DEPENDENCIES
-  github-pages (= 232)
+  github-pages
   jekyll-redirect-from
 
 CHECKSUMS
