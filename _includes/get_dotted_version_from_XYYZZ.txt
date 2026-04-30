@@ -1,1 +1,1 @@
-{{ include.version | divided_by: 10000 }}.{{ include.version | modulo: 10000 | divided_by: 100 }}.{{ include.version | modulo: 100 }}
+../xdmod-jekyll-theme//_includes/get_dotted_version_from_XYYZZ.txt
