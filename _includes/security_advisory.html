@@ -3,7 +3,7 @@
     workaround patch files for addressing security vulnerabilities.
 {% endcomment %}
 {% comment %}
-    Convert the page's X.Y.Z version number into a padded XXYYZZ format that
+    Convert the page's X.Y.Z version number into a padded XYYZZ format that
     can be used for direct arithmetic comparisons.
 {% endcomment %}
 {% assign page_version_parts = page.version | split: "." %}
@@ -26,12 +26,12 @@
 {% assign max_applicable_patch_version = applicable_patches | map: "max_version" | sort | last %}
 {% capture min_applicable_patch_version_dotted %}{%
     include
-        get_dotted_version_from_XXYYZZ.txt
+        get_dotted_version_from_XYYZZ.txt
         version=min_applicable_patch_version
 %}{% endcapture %}
 {% capture max_applicable_patch_version_dotted %}{%
     include
-        get_dotted_version_from_XXYYZZ.txt
+        get_dotted_version_from_XYYZZ.txt
         version=max_applicable_patch_version
 %}{% endcapture %}
 {% comment %}
@@ -80,12 +80,12 @@
         {% assign patch_filename = patch.url | split: "/" | last %}
         {% capture patch_min_version_dotted %}{%
             include
-                get_dotted_version_from_XXYYZZ.txt
+                get_dotted_version_from_XYYZZ.txt
                 version=patch.min_version
         %}{% endcapture %}
         {% capture patch_max_version_dotted %}{%
             include
-                get_dotted_version_from_XXYYZZ.txt
+                get_dotted_version_from_XYYZZ.txt
                 version=patch.max_version
         %}{% endcapture %}
         <li>
