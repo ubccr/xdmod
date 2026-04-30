@@ -89,7 +89,7 @@
                 version=patch.max_version
         %}{% endcapture %}
         <li>
-            <a href="{{ patch_filename }}">{{ patch_filename }}</a>
+            <a href="{{ patch.url }}">{{ patch_filename }}</a>
             {% if patch.min_version > page_min_version and patch.max_version < page_max_version %}
                 (for Open XDMoD {{ patch_min_version_dotted | rstrip }} through {{ patch_max_version_dotted | rstrip }})
             {% elsif patch.min_version > page_min_version %}
