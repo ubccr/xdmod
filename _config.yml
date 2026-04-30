@@ -173,7 +173,7 @@ defaults:
 
 # Build settings
 markdown: kramdown
-theme_subdir: "/xdmod-jekyll-theme"
+theme: "xdmod-jekyll-theme"
 plugins:
   - jekyll-redirect-from
 whitelist:

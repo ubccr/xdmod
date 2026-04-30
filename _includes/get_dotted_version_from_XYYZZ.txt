@@ -1,1 +1,0 @@
-../xdmod-jekyll-theme//_includes/get_dotted_version_from_XYYZZ.txt
