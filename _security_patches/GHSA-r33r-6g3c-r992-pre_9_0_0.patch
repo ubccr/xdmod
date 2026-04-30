@@ -1,7 +1,7 @@
 ---
 ghsa_id: GHSA-r33r-6g3c-r992
 min_version: 0
-max_version:  80600
+max_version: 80600
 ---
 diff --git a/classes/DataWarehouse/Query/GroupBy.php b/classes/DataWarehouse/Query/GroupBy.php
 index 68277c6bf3..b3b72dfca7 100644
