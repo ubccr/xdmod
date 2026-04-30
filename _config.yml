@@ -173,8 +173,9 @@ defaults:
 
 # Build settings
 markdown: kramdown
-theme: "xdmod-jekyll-theme"
+remote_theme: ubccr/xdmod-jekyll-theme@v0.2.0
 plugins:
   - jekyll-redirect-from
+  - jekyll-remote-theme
 whitelist:
   - jekyll-redirect-from
