@@ -89,8 +89,7 @@ build($realms, $logger, $appendToList);
 
 function build($realms, $logger, $appendToList){
     try {
-        $filterListBuilder = new FilterListBuilder();
-        $filterListBuilder->setLogger($logger);
+        $filterListBuilder = new FilterListBuilder($logger);        
         if (count($realms) > 0){
             foreach($realms as $realm){
                 if(!empty($realm)){

@@ -9,6 +9,7 @@ use Realm\iGroupBy;
 use Realm\iRealm;
 use DataWarehouse\Query\iQuery;
 use DataWarehouse\Query\TimeAggregationUnit;
+use Psr\Log\LoggerInterface;
 
 /**
  * Builds lists of filters for every realm's dimensions.
@@ -58,8 +59,8 @@ class FilterListBuilder extends Loggable
      */
     private $filterTemporaryTable = '';
 
-    public function __construct() {
-        parent::__construct();
+    public function __construct(?LoggerInterface $logger = null) {
+        parent::__construct($logger);
         $this->filterTemporaryTable = sprintf("`modw_aggregates`.`%s`", uniqid('filter_tmp_', true));
     }
 
@@ -144,7 +145,7 @@ class FilterListBuilder extends Loggable
             $lastModified = $journalHelper->getLastModified();
             $this->setLastModifiedStartDate($lastModified);
             $tempTableSql = "CREATE TEMPORARY TABLE $this->filterTemporaryTable AS SELECT * FROM $schema.$tableName where last_modified >= '$this->lastModifiedStartDate'";
-            $this->logger->debug("Creating temporary table: $tempTableSql with sql: $tempTableSql");
+            $this->logger->debug("Creating temporary table: $tempTableSql");
             $db->execute($tempTableSql);
         }
 
