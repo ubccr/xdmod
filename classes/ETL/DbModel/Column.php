@@ -124,6 +124,28 @@ class Column extends NamedEntity implements iEntity
 
     }  // filterAndVerifyValue()
 
+
+    /**
+     * MySQL considers the below identifier as equivalent to CURRENT_TIMESTAMP and
+     * will convert them automatically. Map them so that the management code does
+     * not issue redundant alter table commands each time it is called.
+     * @param ?string $src The MySQL column definition string
+     * @return ?string The normalized column definition
+     */
+    private function normalizeTimestamp(?string $src) : ?string
+    {
+        if ( null !== $src) {
+            $search = array(
+                "current_timestamp()",
+                "now()",
+                "localtime",
+                "localtime()"
+            );
+            return str_ireplace($search, "current_timestamp", $src);
+        }
+        return $src;
+    }
+
     /* ------------------------------------------------------------------------------------------
      * @see iEntity::compare()
      * ------------------------------------------------------------------------------------------
@@ -159,23 +181,10 @@ class Column extends NamedEntity implements iEntity
             // In the mode where a config file is compared to an existing database, the source is
             // considered the configuration while the destination is the database.
 
-            $srcDefault = $this->default;
-            $destDefault = $cmp->default;
-            $srcExtra = $this->extra;
-            $destExtra = $cmp->extra;
-
-            // MySQL considers the following equivalent to CURRENT_TIMESTAMP and will convert them
-            // automatically. Map them now so we don't get into an endless ALTER TABLE loop.
-
-            if ( null !== $srcExtra) {
-                $search = array(
-                    "CURRENT_TIMESTAMP()",
-                    "NOW()",
-                    "LOCALTIME",
-                    "LOCALTIME()"
-                );
-                $srcExtra = str_ireplace($search, "CURRENT_TIMESTAMP", $srcExtra);
-            }  // if ( null !== $srcExtra)
+            $srcDefault = $this->normalizeTimestamp($this->default);
+            $destDefault = $this->normalizeTimestamp($cmp->default);
+            $srcExtra = $this->normalizeTimestamp($this->extra);
+            $destExtra = $this->normalizeTimestamp($cmp->extra);
 
             // If no DEFAULT and no EXTRA is provided MySQL will use:
             // DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
