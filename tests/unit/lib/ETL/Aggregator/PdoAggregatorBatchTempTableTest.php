@@ -57,10 +57,10 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
 
         $slice = array();
         for ($i = 0; $i < 9; $i++) {
-            $d = 6210 + $i;
+            $d = 202600007 + $i;
             $slice[] = self::period($d, $d);
         }
-        $slice[] = self::period(4748, 4748);
+        $slice[] = self::period(202200007, 202200007);
 
         list($whereSql, $params) = self::rewrite($where, $slice);
 
@@ -97,8 +97,8 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
         $this->assertDoesNotMatchRegularExpression('/:period_end_day_id(?![_0-9])/', $whereSql);
 
         // Outlier 2022 day is bound to its own slot, not absorbed into a range.
-        $this->assertSame(4748, $params[':period_start_day_id_9']);
-        $this->assertSame(4748, $params[':period_end_day_id_9']);
+        $this->assertSame(202200007, $params[':period_start_day_id_9']);
+        $this->assertSame(202200007, $params[':period_end_day_id_9']);
     }
 
     /**
@@ -114,7 +114,7 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
             . " AND task.is_deleted = 0"
             . " AND task.resource_id IN (1,2,3)";
 
-        $slice = array(self::period(1000, 1000), self::period(1001, 1001));
+        $slice = array(self::period(202600007, 202600007), self::period(202600008, 202600008));
 
         list($whereSql) = self::rewrite($where, $slice);
 
@@ -137,13 +137,13 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
     {
         $where = "task.start_day_id <= :period_end_day_id AND task.end_day_id >= :period_start_day_id";
 
-        $slice = array(self::period(7000, 7000));
+        $slice = array(self::period(202600007, 202600007));
 
         list($whereSql, $params) = self::rewrite($where, $slice);
 
         $this->assertSame(0, substr_count($whereSql, ' OR '));
-        $this->assertSame(7000, $params[':period_start_day_id_0']);
-        $this->assertSame(7000, $params[':period_end_day_id_0']);
+        $this->assertSame(202600007, $params[':period_start_day_id_0']);
+        $this->assertSame(202600007, $params[':period_end_day_id_0']);
     }
 
     /**
@@ -154,14 +154,14 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
     {
         $where = "task.start_day_id <= :period_end_day_id AND task.end_day_id >= :period_start_day_id";
 
-        $slice = array(self::period(6210, 6240), self::period(4748, 4778));
+        $slice = array(self::period(202600001, 202600031), self::period(202600060, 202600090));
 
         list(, $params) = self::rewrite($where, $slice);
 
-        $this->assertSame(6210, $params[':period_start_day_id_0']);
-        $this->assertSame(6240, $params[':period_end_day_id_0']);
-        $this->assertSame(4748, $params[':period_start_day_id_1']);
-        $this->assertSame(4778, $params[':period_end_day_id_1']);
+        $this->assertSame(202600001, $params[':period_start_day_id_0']);
+        $this->assertSame(202600031, $params[':period_end_day_id_0']);
+        $this->assertSame(202600060, $params[':period_start_day_id_1']);
+        $this->assertSame(202600090, $params[':period_end_day_id_1']);
     }
 
     /**
@@ -172,7 +172,7 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
     {
         $where = "gw.start_day_id <= :period_end_day_id AND gw.end_day_id >= :period_start_day_id AND gw.is_deleted = 0";
 
-        $slice = array(self::period(100, 100), self::period(200, 200));
+        $slice = array(self::period(202600007, 202600007), self::period(202600008, 202600008));
 
         list($whereSql) = self::rewrite($where, $slice);
 
@@ -192,15 +192,15 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
     {
         $where = "log_day_id BETWEEN :period_start_day_id AND :period_end_day_id";
 
-        $slice = array(self::period(100, 100), self::period(500, 500), self::period(900, 900));
+        $slice = array(self::period(202600007, 202600007), self::period(202600008, 202600008), self::period(202600011, 202600011));
 
         list($whereSql, $params) = self::rewrite($where, $slice);
 
         $this->assertSame(3, substr_count($whereSql, 'log_day_id BETWEEN :period_start_day_id_'));
         $this->assertSame(2, substr_count($whereSql, ' OR '));
-        $this->assertSame(100, $params[':period_start_day_id_0']);
-        $this->assertSame(500, $params[':period_start_day_id_1']);
-        $this->assertSame(900, $params[':period_start_day_id_2']);
+        $this->assertSame(202600007, $params[':period_start_day_id_0']);
+        $this->assertSame(202600008, $params[':period_start_day_id_1']);
+        $this->assertSame(202600011, $params[':period_start_day_id_2']);
     }
 
     /**
@@ -251,16 +251,16 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
             . " AND log_time BETWEEN :period_start AND :period_end";
 
         $slice = array(
-            self::period(100, 100, '2026-01-01 00:00:00', '2026-01-01 23:59:59'),
+            self::period(202600007, 202600007, '2026-01-07 00:00:00', '2026-01-07 23:59:59'),
         );
 
         list($whereSql, $params) = self::rewrite($where, $slice);
 
         $this->assertStringContainsString('log_day_id BETWEEN :period_start_day_id_0 AND :period_end_day_id_0', $whereSql);
         $this->assertStringContainsString('log_time BETWEEN :period_start_0 AND :period_end_0', $whereSql);
-        $this->assertSame(100, $params[':period_start_day_id_0']);
-        $this->assertSame(100, $params[':period_end_day_id_0']);
-        $this->assertSame('2026-01-01 00:00:00', $params[':period_start_0']);
-        $this->assertSame('2026-01-01 23:59:59', $params[':period_end_0']);
+        $this->assertSame(202600007, $params[':period_start_day_id_0']);
+        $this->assertSame(202600007, $params[':period_end_day_id_0']);
+        $this->assertSame('2026-01-07 00:00:00', $params[':period_start_0']);
+        $this->assertSame('2026-01-07 23:59:59', $params[':period_end_0']);
     }
 }
