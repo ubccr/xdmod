@@ -1,0 +1,49 @@
+<p>
+    Copy the patch files linked below to your Open XDMoD web server.
+</p>
+<ul>
+    {% for patch in include.patches %}
+        {% assign patch_filename = patch.url | split: "/" | last %}
+        {% capture patch_min_version_dotted %}{%
+            include
+                get_dotted_version_from_XYYZZ.txt
+                version=patch.min_version
+        %}{% endcapture %}
+        {% capture patch_max_version_dotted %}{%
+            include
+                get_dotted_version_from_XYYZZ.txt
+                version=patch.max_version
+        %}{% endcapture %}
+        {% capture notes %}
+            {% if patch.min_version > include.page_min_version and patch.max_version < include.page_max_version %}
+                (for Open XDMoD {{ patch_min_version_dotted | rstrip }} through {{ patch_max_version_dotted | rstrip }})
+            {% elsif patch.min_version > include.page_min_version %}
+                (for Open XDMoD {{ include.page_version }} ≥{{ patch_min_version_dotted | rstrip }})
+            {% elsif patch.max_version < include.page_max_version %}
+                (for Open XDMoD {{ include.page_version }} ≤{{ patch_max_version_dotted | rstrip }})
+            {% endif %}
+        {% endcapture %}
+        {% if patch.note or patch.note_file %}
+            {% if patch.note %}
+                {% assign note = patch.note %}
+            {% elsif patch.note_file %}
+                {% capture note %}{% include security_patch_notes/{{ patch.note_file }} %}{% endcapture %}
+            {% endif %}
+            {% capture notes %}
+                {{ notes }}<ul><li>Note: {{ note }}</li></ul>
+            {% endcapture %}
+        {% endif %}
+        <li>
+            <a href="{{ patch.url }}">{{ patch_filename }}</a>{{ notes }}
+        </li>
+    {% endfor %}
+</ul>
+<p>
+    Then, run the following command on each patch file, replacing
+    <code>[PATH_TO_XDMOD_SHARE_DIR]</code> with the path to the
+    <code>share</code> directory (<code>/usr/share/xdmod</code> for RPM-based
+    installs, <code>/opt/xdmod/share</code> or another location for source code
+    installs) and replace <code>[PATH_TO_PATCH_FILE]</code> with the path to
+    the patch file.
+</p>
+<pre class="highlight"># patch -p1 -d [PATH_TO_XDMOD_SHARE_DIR] &lt; [PATH_TO_PATCH_FILE]</pre>

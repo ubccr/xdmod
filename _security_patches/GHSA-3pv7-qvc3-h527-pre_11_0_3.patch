@@ -2,6 +2,7 @@
 ghsa_id: GHSA-3pv7-qvc3-h527
 min_version: 0
 max_version: 110002
+instructions_file: share.html
 ---
 # Workaround patch file for https://github.com/ubccr/xdmod/security/advisories/GHSA-3pv7-qvc3-h527
 # For patching Open XDMoD versions prior to 11.0.3

@@ -2,6 +2,7 @@
 ghsa_id: GHSA-29qm-7w4v-43fw
 min_version:  90500
 max_version: 110002
+instructions_file: share.html
 ---
 diff --git a/libraries/charting.php b/libraries/charting.php
 index 777c3e3b80..b022e5fc01 100644

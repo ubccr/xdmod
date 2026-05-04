@@ -2,6 +2,7 @@
 ghsa_id: GHSA-r33r-6g3c-r992
 min_version: 0
 max_version: 80600
+instructions_file: share.html
 note_file: GHSA-r33r-6g3c-r992.txt
 ---
 diff --git a/classes/DataWarehouse/Query/GroupBy.php b/classes/DataWarehouse/Query/GroupBy.php
