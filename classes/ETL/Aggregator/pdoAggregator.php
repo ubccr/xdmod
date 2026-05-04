@@ -1490,14 +1490,14 @@ class pdoAggregator extends aAggregator
             unset($availableParams[':period_start_day_id'], $availableParams[':period_end_day_id']);
             $availableParams = array_merge($availableParams, $periodParams);
 
+            $matches = array();
+            preg_match_all('/(:[a-zA-Z0-9_-]+)/', $whereClause, $matches);
+            $bindParams = $matches[0];
+            $usedParams = array_intersect_key($availableParams, array_fill_keys($bindParams, 0));
+
             $sql =
                 "CREATE TEMPORARY TABLE $qualifiedTmpTableName AS "
                 . "SELECT * FROM $origTableName $tmpTableAlias WHERE " . $whereClause;
-
-            $matches = array();
-            preg_match_all('/(:[a-zA-Z0-9_-]+)/', $sql, $matches);
-            $bindParams = $matches[0];
-            $usedParams = array_intersect_key($availableParams, array_fill_keys($bindParams, 0));
 
             $this->logger->debug(
                 sprintf("[batch aggregation] Batch temp table %s: %s", $this->sourceEndpoint, $sql)
