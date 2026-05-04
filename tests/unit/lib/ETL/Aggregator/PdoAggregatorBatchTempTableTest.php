@@ -29,9 +29,24 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * A non-contiguous slice (nine days in 2026 plus one day from 2022) 
-     * should produce one OR branch per period, with the per-period bind 
-     * values matching the slice, not the slice's min/max range.
+     * Build a slice element carrying the standard period columns. Tests can
+     * pass any subset of overrides.
+     */
+    private static function period($startDayId, $endDayId, $start = null, $end = null)
+    {
+        return array(
+            'period_start_day_id' => $startDayId,
+            'period_end_day_id'   => $endDayId,
+            'period_start'        => $start,
+            'period_end'          => $end,
+        );
+    }
+
+    /**
+     * A non-contiguous slice (mirrors the real-world bug: nine days in 2026
+     * plus one day from 2022) should produce one OR branch per period, with
+     * the per-period bind values matching the slice — not the slice's
+     * min/max range.
      */
     public function testNonContiguousSliceProducesOneOrBranchPerPeriod()
     {
@@ -40,59 +55,56 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
             . " AND task.end_day_id >= :period_start_day_id"
             . " AND task.is_deleted = 0";
 
-        // Build a 10-period slice: nine consecutive days in 2026 plus an
-        // outlier in 2022. day_id values are arbitrary placeholders.
         $slice = array();
         for ($i = 0; $i < 9; $i++) {
-            $d = 202600003 + $i;
-            $slice[] = array('period_start_day_id' => $d, 'period_end_day_id' => $d);
+            $d = 6210 + $i;
+            $slice[] = self::period($d, $d);
         }
-        $slice[] = array('period_start_day_id' => 202200152, 'period_end_day_id' => 202200152);
+        $slice[] = self::period(4748, 4748);
 
         list($whereSql, $params) = self::rewrite($where, $slice);
 
-        // Every period in the slice contributes exactly one bind value pair.
-        $this->assertCount(20, $params, 'one :p_start_<i> + :p_end_<i> per period');
+        // Each period contributes one renamed pair for each :period_*_day_id
+        // bind var that appears in the WHERE — here, two pairs per period.
+        $this->assertCount(2 * count($slice), $params);
         foreach ($slice as $i => $period) {
             $this->assertSame(
                 $period['period_start_day_id'],
-                $params[":p_start_$i"],
-                "p_start_$i bound to slice period $i start"
+                $params[":period_start_day_id_$i"]
             );
             $this->assertSame(
                 $period['period_end_day_id'],
-                $params[":p_end_$i"],
-                "p_end_$i bound to slice period $i end"
+                $params[":period_end_day_id_$i"]
             );
         }
 
-        // One OR branch per period: count of "task.start_day_id <= :p_end_"
-        // occurrences must equal the slice length.
-        $this->assertSame(
-            count($slice),
-            substr_count($whereSql, 'task.start_day_id <= :p_end_'),
-            'one OR branch per period'
-        );
-        // n periods => n-1 " OR " separators inside the rewritten group.
+        // One OR branch per period.
         $this->assertSame(
             count($slice) - 1,
             substr_count($whereSql, ' OR '),
             'one OR between consecutive period branches'
         );
+        // Each branch keeps the original predicate shape (just with renamed
+        // bind variables).
+        $this->assertSame(
+            count($slice),
+            substr_count($whereSql, 'task.start_day_id <= :period_end_day_id_'),
+            'one branch per period preserves the original overlap shape'
+        );
 
-        // The original period bind variables are gone.
-        $this->assertStringNotContainsString(':period_start_day_id', $whereSql);
-        $this->assertStringNotContainsString(':period_end_day_id', $whereSql);
+        // Original (un-suffixed) period bind vars are gone.
+        $this->assertDoesNotMatchRegularExpression('/:period_start_day_id(?![_0-9])/', $whereSql);
+        $this->assertDoesNotMatchRegularExpression('/:period_end_day_id(?![_0-9])/', $whereSql);
 
-        // The outlier 2022 day did not get absorbed into a 4-year range.
-        $this->assertSame(202200152, $params[':p_start_9']);
-        $this->assertSame(202200152, $params[':p_end_9']);
+        // Outlier 2022 day is bound to its own slot, not absorbed into a range.
+        $this->assertSame(4748, $params[':period_start_day_id_9']);
+        $this->assertSame(4748, $params[':period_end_day_id_9']);
     }
 
     /**
-     * The rewritten WHERE must replace the period overlap predicate with the
-     * OR group while leaving all other predicates intact, and must preserve
-     * the original column alias inside each OR branch.
+     * Non-period predicates get duplicated into every OR branch (semantically
+     * identical by distributive law). Aliases and other predicates must be
+     * preserved verbatim inside each branch.
      */
     public function testWhereClauseRewritePreservesAliasAndOtherPredicates()
     {
@@ -102,120 +114,153 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
             . " AND task.is_deleted = 0"
             . " AND task.resource_id IN (1,2,3)";
 
-        $slice = array(
-            array('period_start_day_id' => 202600003, 'period_end_day_id' => 202600003),
-            array('period_start_day_id' => 202600004, 'period_end_day_id' => 202600004),
-        );
+        $slice = array(self::period(1000, 1000), self::period(1001, 1001));
 
         list($whereSql) = self::rewrite($where, $slice);
 
-        $this->assertStringNotContainsString(
-            ':period_start_day_id',
-            $whereSql,
-            'period_start bind var fully removed from WHERE'
-        );
-        $this->assertStringNotContainsString(
-            ':period_end_day_id',
-            $whereSql,
-            'period_end bind var fully removed from WHERE'
-        );
-        $this->assertStringContainsString(
-            'task.start_day_id <= :p_end_0',
-            $whereSql,
-            'first OR branch references original alias and per-period end bind'
-        );
-        $this->assertStringContainsString(
-            'task.end_day_id >= :p_start_0',
-            $whereSql,
-            'first OR branch references original alias and per-period start bind'
-        );
-        $this->assertStringContainsString(
-            'task.start_day_id <= :p_end_1',
-            $whereSql,
-            'second OR branch present'
-        );
-        $this->assertStringContainsString(
-            'task.is_deleted = 0',
-            $whereSql,
-            'unrelated predicates preserved'
-        );
-        $this->assertStringContainsString(
-            'task.resource_id IN (1,2,3)',
-            $whereSql,
-            'unrelated predicates preserved'
-        );
+        $this->assertDoesNotMatchRegularExpression('/:period_start_day_id(?![_0-9])/', $whereSql);
+        $this->assertDoesNotMatchRegularExpression('/:period_end_day_id(?![_0-9])/', $whereSql);
+
+        $this->assertStringContainsString('task.start_day_id <= :period_end_day_id_0', $whereSql);
+        $this->assertStringContainsString('task.end_day_id >= :period_start_day_id_0', $whereSql);
+        $this->assertStringContainsString('task.start_day_id <= :period_end_day_id_1', $whereSql);
+
+        // Non-period predicates duplicated once per OR branch.
+        $this->assertSame(2, substr_count($whereSql, 'task.is_deleted = 0'));
+        $this->assertSame(2, substr_count($whereSql, 'task.resource_id IN (1,2,3)'));
     }
 
     /**
-     * A slice with one period (i.e. when batching effectively degenerates to
-     * a single period) must produce a single OR branch with no OR operator.
+     * Single-period slice degenerates to one branch with no OR operator.
      */
     public function testSinglePeriodSliceProducesSingleBranch()
     {
-        $where =
-            "task.start_day_id <= :period_end_day_id"
-            . " AND task.end_day_id >= :period_start_day_id";
+        $where = "task.start_day_id <= :period_end_day_id AND task.end_day_id >= :period_start_day_id";
 
-        $slice = array(
-            array('period_start_day_id' => 202600003, 'period_end_day_id' => 202600003),
-        );
+        $slice = array(self::period(7000, 7000));
 
         list($whereSql, $params) = self::rewrite($where, $slice);
 
-        $this->assertSame(
-            0,
-            substr_count($whereSql, ' OR '),
-            'no OR operator when only one period in the slice'
-        );
-        $this->assertSame(
-            1,
-            substr_count($whereSql, 'task.start_day_id <= :p_end_'),
-            'exactly one OR branch'
-        );
-        $this->assertSame(array(':p_start_0' => 202600003, ':p_end_0' => 202600003), $params);
+        $this->assertSame(0, substr_count($whereSql, ' OR '));
+        $this->assertSame(7000, $params[':period_start_day_id_0']);
+        $this->assertSame(7000, $params[':period_end_day_id_0']);
     }
 
     /**
-     * For monthly aggregation, periods cover a range of days
-     * (period_start_day_id != period_end_day_id). The rewrite must preserve
-     * those ranges per period rather than collapsing them.
+     * Monthly aggregation uses periods that span a range of days. The rewrite
+     * must preserve each period's range rather than collapsing them.
      */
     public function testMonthlySliceKeepsEachPeriodRange()
     {
         $where = "task.start_day_id <= :period_end_day_id AND task.end_day_id >= :period_start_day_id";
 
-        $slice = array(
-            array('period_start_day_id' => 202600001, 'period_end_day_id' => 202600031),  // a 31-day month
-            array('period_start_day_id' => 202600060, 'period_end_day_id' => 202600090),  // a non-contiguous month
-        );
+        $slice = array(self::period(6210, 6240), self::period(4748, 4778));
 
         list(, $params) = self::rewrite($where, $slice);
 
-        $this->assertSame(202600001, $params[':p_start_0']);
-        $this->assertSame(202600031, $params[':p_end_0']);
-        $this->assertSame(202600060, $params[':p_start_1']);
-        $this->assertSame(202600090, $params[':p_end_1']);
+        $this->assertSame(6210, $params[':period_start_day_id_0']);
+        $this->assertSame(6240, $params[':period_end_day_id_0']);
+        $this->assertSame(4748, $params[':period_start_day_id_1']);
+        $this->assertSame(4778, $params[':period_end_day_id_1']);
     }
 
     /**
      * Action defs use a variety of source-table aliases (task, sr, ra, crs,
-     * r). The captured alias must be re-used in every OR branch.
+     * gw, r). The rewrite must work with any alias.
      */
     public function testRewritePreservesArbitraryAlias()
     {
-        $where = "sr.start_day_id <= :period_end_day_id AND sr.end_day_id >= :period_start_day_id AND sr.instance_state_id = 1";
+        $where = "gw.start_day_id <= :period_end_day_id AND gw.end_day_id >= :period_start_day_id AND gw.is_deleted = 0";
 
-        $slice = array(
-            array('period_start_day_id' => 202600003, 'period_end_day_id' => 202600003),
-            array('period_start_day_id' => 202600004, 'period_end_day_id' => 202600004),
-        );
+        $slice = array(self::period(100, 100), self::period(200, 200));
 
         list($whereSql) = self::rewrite($where, $slice);
 
-        $this->assertStringContainsString('sr.start_day_id <= :p_end_0', $whereSql);
-        $this->assertStringContainsString('sr.end_day_id >= :p_start_0', $whereSql);
-        $this->assertStringContainsString('sr.start_day_id <= :p_end_1', $whereSql);
-        $this->assertStringContainsString('sr.end_day_id >= :p_start_1', $whereSql);
-        $this->assertStringContainsString('sr.instance_state_id = 1', $whereSql);
+        $this->assertStringContainsString('gw.start_day_id <= :period_end_day_id_0', $whereSql);
+        $this->assertStringContainsString('gw.end_day_id >= :period_start_day_id_0', $whereSql);
+        $this->assertStringContainsString('gw.start_day_id <= :period_end_day_id_1', $whereSql);
+        $this->assertSame(2, substr_count($whereSql, 'gw.is_deleted = 0'));
+    }
+
+    /**
+     * Single-column BETWEEN form on day_id (used by ood/pagefact_by_*.json:
+     * `log_day_id BETWEEN :period_start_day_id AND :period_end_day_id`). The
+     * rewrite must produce one BETWEEN per period rather than a single
+     * min/max BETWEEN spanning the slice.
+     */
+    public function testSingleColumnBetweenOnDayIdIsExpandedPerPeriod()
+    {
+        $where = "log_day_id BETWEEN :period_start_day_id AND :period_end_day_id";
+
+        $slice = array(self::period(100, 100), self::period(500, 500), self::period(900, 900));
+
+        list($whereSql, $params) = self::rewrite($where, $slice);
+
+        $this->assertSame(3, substr_count($whereSql, 'log_day_id BETWEEN :period_start_day_id_'));
+        $this->assertSame(2, substr_count($whereSql, ' OR '));
+        $this->assertSame(100, $params[':period_start_day_id_0']);
+        $this->assertSame(500, $params[':period_start_day_id_1']);
+        $this->assertSame(900, $params[':period_start_day_id_2']);
+    }
+
+    /**
+     * Timestamp BETWEEN form (used by accounts/accountfact_by_*.json:
+     * `af.account_creation_time BETWEEN :period_start AND :period_end`).
+     * These bind variables resolve to the period_start / period_end timestamp
+     * columns in the dirty-period row, not the day_id columns.
+     */
+    public function testTimestampBetweenIsExpandedPerPeriod()
+    {
+        $where = "af.account_creation_time BETWEEN :period_start AND :period_end";
+
+        $slice = array(
+            self::period(0, 0, '2026-01-01 00:00:00', '2026-01-01 23:59:59'),
+            self::period(0, 0, '2026-01-02 00:00:00', '2026-01-02 23:59:59'),
+        );
+
+        list($whereSql, $params) = self::rewrite($where, $slice);
+
+        $this->assertStringContainsString(
+            'af.account_creation_time BETWEEN :period_start_0 AND :period_end_0',
+            $whereSql
+        );
+        $this->assertStringContainsString(
+            'af.account_creation_time BETWEEN :period_start_1 AND :period_end_1',
+            $whereSql
+        );
+        $this->assertSame('2026-01-01 00:00:00', $params[':period_start_0']);
+        $this->assertSame('2026-01-01 23:59:59', $params[':period_end_0']);
+        $this->assertSame('2026-01-02 00:00:00', $params[':period_start_1']);
+        $this->assertSame('2026-01-02 23:59:59', $params[':period_end_1']);
+
+        // The unsuffixed bind vars must not still appear (regression check
+        // for :period_start matching inside :period_start_day_id, etc.).
+        $this->assertDoesNotMatchRegularExpression('/:period_start(?![_0-9])/', $whereSql);
+        $this->assertDoesNotMatchRegularExpression('/:period_end(?![_0-9])/', $whereSql);
+    }
+
+    /**
+     * `:period_start` must not eat into `:period_start_day_id`. A WHERE that
+     * mixes both kinds of bind variable in the same clause must rewrite each
+     * one independently.
+     */
+    public function testMixedDayIdAndTimestampBindVarsAreDisambiguated()
+    {
+        $where =
+            "log_day_id BETWEEN :period_start_day_id AND :period_end_day_id"
+            . " AND log_time BETWEEN :period_start AND :period_end";
+
+        $slice = array(
+            self::period(100, 100, '2026-01-01 00:00:00', '2026-01-01 23:59:59'),
+        );
+
+        list($whereSql, $params) = self::rewrite($where, $slice);
+
+        $this->assertStringContainsString('log_day_id BETWEEN :period_start_day_id_0 AND :period_end_day_id_0', $whereSql);
+        $this->assertStringContainsString('log_time BETWEEN :period_start_0 AND :period_end_0', $whereSql);
+        $this->assertSame(100, $params[':period_start_day_id_0']);
+        $this->assertSame(100, $params[':period_end_day_id_0']);
+        $this->assertSame('2026-01-01 00:00:00', $params[':period_start_0']);
+        $this->assertSame('2026-01-01 23:59:59', $params[':period_end_0']);
     }
 }

@@ -1517,25 +1517,49 @@ class pdoAggregator extends aAggregator
      */
     private function rewriteWhereForPeriodSlice($whereClause, array $aggregationPeriodSlice)
     {
-        $params = array();
+        // Period bind variables that may appear in a WHERE clause and the
+        // period-row key each one resolves to. Add to this list if a new
+        // :period_* bind variable is introduced. Order matters only as
+        // documentation — the regex uses a non-word-character lookahead so
+        // :period_start does not eat into :period_start_day_id.
+        $bindMap = array(
+            ':period_start_day_id' => 'period_start_day_id',
+            ':period_end_day_id'   => 'period_end_day_id',
+            ':period_start'        => 'period_start',
+            ':period_end'          => 'period_end',
+        );
+
+        // Only rewrite bind vars that actually appear in the WHERE — avoids
+        // emitting useless params and avoids tripping on unrelated columns
+        // that happen to share a key name with $bindMap.
+        $bindMap = array_filter(
+            $bindMap,
+            function ($col, $bindVar) use ($whereClause) {
+                return preg_match('/' . preg_quote($bindVar, '/') . '(?![a-zA-Z0-9_])/', $whereClause) === 1;
+            },
+            ARRAY_FILTER_USE_BOTH
+        );
+
+        $branches = array();
+        $params   = array();
         foreach (array_values($aggregationPeriodSlice) as $i => $period) {
-            $params[":p_start_$i"] = $period['period_start_day_id'];
-            $params[":p_end_$i"]   = $period['period_end_day_id'];
+            $branch = $whereClause;
+            foreach ($bindMap as $bindVar => $col) {
+                if (!array_key_exists($col, $period)) {
+                    continue;
+                }
+                $perPeriod = $bindVar . "_$i";
+                $branch = preg_replace(
+                    '/' . preg_quote($bindVar, '/') . '(?![a-zA-Z0-9_])/',
+                    $perPeriod,
+                    $branch
+                );
+                $params[$perPeriod] = $period[$col];
+            }
+            $branches[] = "($branch)";
         }
 
-        $sliceSize = count($aggregationPeriodSlice);
-        $whereSql = preg_replace_callback(
-            '/(\w+)\.start_day_id\s*<=\s*:period_end_day_id\s+AND\s+\1\.end_day_id\s*>=\s*:period_start_day_id/i',
-            function ($m) use ($sliceSize) {
-                $alias = $m[1];
-                $branches = array();
-                for ($i = 0; $i < $sliceSize; $i++) {
-                    $branches[] = "($alias.start_day_id <= :p_end_$i AND $alias.end_day_id >= :p_start_$i)";
-                }
-                return "(" . implode(" OR ", $branches) . ")";
-            },
-            $whereClause
-        );
+        $whereSql = "(" . implode(" OR ", $branches) . ")";
 
         return array($whereSql, $params);
     }
