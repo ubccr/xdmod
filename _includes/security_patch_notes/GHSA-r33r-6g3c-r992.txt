@@ -1,0 +1,1 @@
+A previous version of this page instructed you to manually replace the file <code>classes/Realm/GroupBy.php</code> with one downloaded from GitHub. If you previously followed those instructions, you do not need to apply this patch, and an error will occur if you try to do so.

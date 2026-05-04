@@ -1,0 +1,126 @@
+{% comment %}
+    Display a warning box if the page's version of Open XDMoD has any
+    workaround patch files for addressing security vulnerabilities.
+{% endcomment %}
+{% comment %}
+    Convert the page's X.Y.Z version number into a padded XYYZZ format that
+    can be used for direct arithmetic comparisons.
+{% endcomment %}
+{% assign page_version_parts = page.version | split: "." %}
+{% assign page_min_version_major = page_version_parts[0] | times: 10000 %}
+{% assign page_min_version_minor = page_version_parts[1] | times: 100 %}
+{% assign page_min_version = page_min_version_major | plus: page_min_version_minor %}
+{% assign page_max_version = page_min_version | plus: 99 %}
+{% comment %}
+    Get the list of security patch files that apply to the current page's Open
+    XDMoD version.
+{% endcomment %}
+{% assign applicable_patches = site.security_patches | where_exp: "p", "p.min_version <= page_max_version" %}
+{% assign applicable_patches = applicable_patches | where_exp: "p", "p.max_version >= page_min_version" %}
+{% comment %}
+    The rest of this file only evaluates if at least one security patch
+    applies.
+{% endcomment %}
+{% if applicable_patches.size > 0 %}
+{% assign min_applicable_patch_version = applicable_patches | map: "min_version" | sort | first %}
+{% assign max_applicable_patch_version = applicable_patches | map: "max_version" | sort | last %}
+{% capture min_applicable_patch_version_dotted %}{%
+    include
+        get_dotted_version_from_XYYZZ.txt
+        version=min_applicable_patch_version
+%}{% endcapture %}
+{% capture max_applicable_patch_version_dotted %}{%
+    include
+        get_dotted_version_from_XYYZZ.txt
+        version=max_applicable_patch_version
+%}{% endcapture %}
+{% comment %}
+    Version 0 means the patch applies to all versions less than or equal to the
+    max version.
+{% endcomment %}
+{% if min_applicable_patch_version == 0 %}
+    {% capture versions_with_vulnerabilities %}≤{{ max_applicable_patch_version_dotted | rstrip }}{% endcapture %}
+{% else %}
+    {% capture versions_with_vulnerabilities %}versions
+        {{ min_applicable_patch_version_dotted | rstrip }} through
+        {{ max_applicable_patch_version_dotted | rstrip }}{% endcapture %}
+{% endif %}
+{% comment %}
+    Render the content that will go in the warning box.
+{% endcomment %}
+{% capture warning_content %}
+<p>
+    There are known
+    <a href="https://github.com/ubccr/xdmod/security/advisories" target="_blank" rel="noopener noreferrer">security vulnerabilities</a>
+    in Open XDMoD versions {{ versions_with_vulnerabilities }}. We strongly
+    encourage
+    <a href="/{{ site.latest_version }}/upgrade">upgrading</a>
+    to the latest version of Open XDMoD, {{ site.latest_sw_version }}, which
+    contains fixes for these vulnerabilities.
+</p>
+<p>
+    If you cannot upgrade immediately, you can manually patch your
+    installation as a workaround. First, make sure you are on the correct web
+    page for your version of Open XDMoD:
+</p>
+<ul>
+    {% assign versions_list = site.version_list | concat: site.unsupported_version_list %}
+    {% for version_page in versions_list %}
+        <li>
+            {% if version_page == page.version %}{{ version_page }}{% else %}<a href="/{{ version_page }}">{{ version_page }}</a>{% endif %}
+        </li>
+    {% endfor %}
+</ul>
+<h3>Patching version {{ page.version }}</h3>
+<p>
+    Copy the patch files linked below to your Open XDMoD web server.
+</p>
+<ul>
+    {% for patch in applicable_patches %}
+        {% assign patch_filename = patch.url | split: "/" | last %}
+        {% capture patch_min_version_dotted %}{%
+            include
+                get_dotted_version_from_XYYZZ.txt
+                version=patch.min_version
+        %}{% endcapture %}
+        {% capture patch_max_version_dotted %}{%
+            include
+                get_dotted_version_from_XYYZZ.txt
+                version=patch.max_version
+        %}{% endcapture %}
+        {% capture notes %}
+            {% if patch.min_version > page_min_version and patch.max_version < page_max_version %}
+                (for Open XDMoD {{ patch_min_version_dotted | rstrip }} through {{ patch_max_version_dotted | rstrip }})
+            {% elsif patch.min_version > page_min_version %}
+                (for Open XDMoD {{ page.version }} ≥{{ patch_min_version_dotted | rstrip }})
+            {% elsif patch.max_version < page_max_version %}
+                (for Open XDMoD {{ page.version }} ≤{{ patch_max_version_dotted | rstrip }})
+            {% endif %}
+        {% endcapture %}
+        {% if patch.note or patch.note_file %}
+            {% if patch.note %}
+                {% assign note = patch.note %}
+            {% elsif patch.note_file %}
+                {% capture note %}{% include security_patch_notes/{{ patch.note_file }} %}{% endcapture %}
+            {% endif %}
+            {% capture notes %}
+                {{ notes }}<ul><li>Note: {{ note }}</li></ul>
+            {% endcapture %}
+        {% endif %}
+        <li>
+            <a href="{{ patch.url }}">{{ patch_filename }}</a>{{ notes }}
+        </li>
+    {% endfor %}
+</ul>
+<p>
+    Then, run the following command on each patch file, replacing
+    <code>[PATH_TO_XDMOD_SHARE_DIR]</code> with the path to the
+    <code>share</code> directory (<code>/usr/share/xdmod</code> for RPM-based
+    installs, <code>/opt/xdmod/share</code> or another location for source code
+    installs) and replace <code>[PATH_TO_PATCH_FILE]</code> with the path to
+    the patch file.
+</p>
+<ul><li><code>patch -p1 -d [PATH_TO_XDMOD_SHARE_DIR] &lt; [PATH_TO_PATCH_FILE]</code></li></ul>
+{% endcapture %}
+{% include warning.html content=warning_content %}
+{% endif %}
