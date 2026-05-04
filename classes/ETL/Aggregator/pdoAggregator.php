@@ -1041,22 +1041,17 @@ class pdoAggregator extends aAggregator
 
                     $availableParams = array_combine($availableParamKeys, $availableParamValues);
 
-                    // Rewrite the per-period overlap in the WHERE clause as an OR'd group,
-                    // one branch per period in the slice. Without this, a slice containing
-                    // non-contiguous periods would pull every row in the day_id range spanning
-                    // the gap into the temporary table.
                     list($whereClause, $periodParams) = $this->rewriteWhereForPeriodSlice($whereClause, $aggregationPeriodSlice);
                     unset($availableParams[':period_start_day_id'], $availableParams[':period_end_day_id']);
                     $availableParams = array_merge($availableParams, $periodParams);
 
-                    $sql =
-                        "CREATE TEMPORARY TABLE $qualifiedTmpTableName AS "
-                        . "SELECT $tmpTableAlias.* FROM $origTableName $tmpTableAlias "
-                        . "WHERE " . $whereClause;
-
-                    preg_match_all($bindParamRegex, $sql, $matches);
+                    preg_match_all($bindParamRegex, $whereClause, $matches);
                     $bindParams = $matches[0];
                     $usedParams = array_intersect_key($availableParams, array_fill_keys($bindParams, 0));
+
+                    $sql =
+                        "CREATE TEMPORARY TABLE $qualifiedTmpTableName AS "
+                        . "SELECT * FROM $origTableName $tmpTableAlias WHERE " . $whereClause;
 
                     $this->logger->debug(
                         sprintf("[batch aggregation] Batch temp table %s: %s", $this->sourceEndpoint, $sql)
@@ -1491,6 +1486,7 @@ class pdoAggregator extends aAggregator
             $availableParams = array_merge($availableParams, $periodParams);
 
             $matches = array();
+            $bindParams = array();
             preg_match_all('/(:[a-zA-Z0-9_-]+)/', $whereClause, $matches);
             $bindParams = $matches[0];
             $usedParams = array_intersect_key($availableParams, array_fill_keys($bindParams, 0));
