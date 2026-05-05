@@ -1,6 +1,6 @@
 # Open XDMoD Change Log
 
-## 2026-XX-XX v11.0.3
+## 2026-05-05 v11.0.3
 
 - Important Notes
     - This release fixes a critical security vulnerability and two other
