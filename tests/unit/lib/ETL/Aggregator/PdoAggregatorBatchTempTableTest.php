@@ -100,7 +100,7 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Non-period predicates get duplicated into every OR branch . Aliases 
+     * Non-period predicates get duplicated into every OR branch. Aliases
      * and other predicates must be preserved verbatim inside each branch.
      */
     public function testWhereClauseRewritePreservesAliasAndOtherPredicates()
@@ -180,7 +180,7 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Single-column BETWEEN form on day_id. The rewrite must produce one BETWEEN 
+     * Single-column BETWEEN form on day_id. The rewrite must produce one BETWEEN
      * per period rather than a single min/max BETWEEN spanning the slice.
      */
     public function testSingleColumnBetweenOnDayIdIsExpandedPerPeriod()
