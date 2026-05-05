@@ -1462,7 +1462,9 @@ class pdoAggregator extends aAggregator
         $origTableName = $this->sourceEndpoint->getSchema(true) . "." . $this->sourceEndpoint->quoteSystemIdentifier($this->etlStageQuery->joins[0]->name);
         $tmpTableAlias = $this->sourceEndpoint->quoteSystemIdentifier($this->etlStageQuery->joins[0]->alias);
 
-        $this->logger->debug("[batch aggregation] Create temporary table $qualifiedTmpTableName for " . count($aggregationPeriodSlice) . " period(s)");
+        $firstSlice = current($aggregationPeriodSlice);
+        $lastSlice = end($aggregationPeriodSlice);
+        $this->logger->debug("[batch aggregation] Create temporary table $qualifiedTmpTableName with min period = " . $firstSlice['period_start_day_id'] . " and max period = " . $lastSlice['period_end_day_id'] . " for " . count($aggregationPeriodSlice) . " period(s)");
 
         $sql = "DROP TEMPORARY TABLE IF EXISTS $qualifiedTmpTableName";
 

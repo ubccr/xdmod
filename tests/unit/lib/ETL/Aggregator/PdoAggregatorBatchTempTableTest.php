@@ -15,9 +15,7 @@ use ReflectionClass;
 class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Invoke the private instance helper via reflection. The helper does not
-     * touch $this, so we construct the aggregator without invoking its
-     * (non-trivial) constructor and bind the call to the bare instance.
+     * Invoke the private instance helper via reflection.
      */
     private static function rewrite($whereClause, array $slice)
     {
@@ -84,8 +82,8 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
             substr_count($whereSql, ' OR '),
             'one OR between consecutive period branches'
         );
-        // Each branch keeps the original predicate shape (just with renamed
-        // bind variables).
+
+        // Each branch keeps the original predicate shape.
         $this->assertSame(
             count($slice),
             substr_count($whereSql, 'task.start_day_id <= :period_end_day_id_'),
@@ -102,9 +100,8 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Non-period predicates get duplicated into every OR branch (semantically
-     * identical by distributive law). Aliases and other predicates must be
-     * preserved verbatim inside each branch.
+     * Non-period predicates get duplicated into every OR branch . Aliases 
+     * and other predicates must be preserved verbatim inside each branch.
      */
     public function testWhereClauseRewritePreservesAliasAndOtherPredicates()
     {
@@ -183,10 +180,8 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Single-column BETWEEN form on day_id (used by ood/pagefact_by_*.json:
-     * `log_day_id BETWEEN :period_start_day_id AND :period_end_day_id`). The
-     * rewrite must produce one BETWEEN per period rather than a single
-     * min/max BETWEEN spanning the slice.
+     * Single-column BETWEEN form on day_id. The rewrite must produce one BETWEEN 
+     * per period rather than a single min/max BETWEEN spanning the slice.
      */
     public function testSingleColumnBetweenOnDayIdIsExpandedPerPeriod()
     {
@@ -204,8 +199,7 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Timestamp BETWEEN form (used by accounts/accountfact_by_*.json:
-     * `af.account_creation_time BETWEEN :period_start AND :period_end`).
+     * Timestamp BETWEEN form using :period_start and :period_end.
      * These bind variables resolve to the period_start / period_end timestamp
      * columns in the dirty-period row, not the day_id columns.
      */
@@ -233,8 +227,7 @@ class PdoAggregatorBatchTempTableTest extends \PHPUnit\Framework\TestCase
         $this->assertSame('2026-01-02 00:00:00', $params[':period_start_1']);
         $this->assertSame('2026-01-02 23:59:59', $params[':period_end_1']);
 
-        // The unsuffixed bind vars must not still appear (regression check
-        // for :period_start matching inside :period_start_day_id, etc.).
+        // The unsuffixed bind vars must not still appear.
         $this->assertDoesNotMatchRegularExpression('/:period_start(?![_0-9])/', $whereSql);
         $this->assertDoesNotMatchRegularExpression('/:period_end(?![_0-9])/', $whereSql);
     }
