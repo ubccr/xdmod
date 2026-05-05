@@ -422,5 +422,27 @@ A new file `resource_metadata.json` will be added during the upgrade; this file
 contains the SQL that is used by a new `/rest/warehouse/resources` REST
 endpoint that is used by the Data Analytics Framework.
 
+Additional 11.0.3 Upgrade Notes
+-------------------
+
+### Database Changes
+
+This release contains performance improvements for ingestion of OpenStack cloud
+logs. After upgrading, the next time you run ingestion with the `openstack`
+datatype, the following tables will be created in the `modw_cloud` schema:
+
+- `instance_type_change_flag`
+- `instance_type_config_group`
+- `instance_type_grouped`
+
+In addition:
+
+- The `modw_cloud.instance_type_staging` table will have its `instance_type_id`
+  column changed to be nullable.
+- The `modw_cloud.instance_type_union` table will:
+    - Have its primary index updated to remove the `instance_type_id` column
+      and add the `disk_gb` and `start_time` columns.
+    - Have a new index added with just the `instance_type_id` column.
+
 [github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
 [mysql-config]: configuration.html#mariadb-configuration
