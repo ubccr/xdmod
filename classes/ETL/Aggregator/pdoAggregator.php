@@ -1513,23 +1513,23 @@ class pdoAggregator extends aAggregator
      * Rewrite the aggregation WHERE clause from a single clause that queries the min/max
      * range with a clause for each time period being aggregated and connect them using
      * the OR keyword.
-     * 
+     *
      * For example, if the original WHERE clause is:
-     * 
+     *
      *   task.start_day_id <= :period_end_day_id AND task.end_day_id >= :period_start_day_id AND task.is_deleted = 0
-     * 
+     *
      * and we are aggregating 2 periods with period_start_day_id/period_end_day_id values of
      * 20200101/20200131 and 20200201/20200229, this method will rewrite the WHERE clause to:
-     * 
+     *
      *  (task.start_day_id <= :period_end_day_id_0 AND task.end_day_id >= :period_start_day_id_0 AND task.is_deleted = 0)
      *  OR (task.start_day_id <= :period_end_day_id_1 AND task.end_day_id >= :period_start_day_id_1 AND task.is_deleted = 0)
      *
      * Returns array($whereSql, $periodParams) where $periodParams holds the
      * per-period bind values keyed by :p_start_<i> / :p_end_<i>.
-     * 
+     *
      * @param $whereClause string the original WHERE clause with bind variables for a single period
      * @param $aggregationPeriodSlice array the list of periods being aggregated in this batch
-     * 
+     *
      * @return array of rewritten WHERE clause and the bind parameters to use for that clause
      */
     private function rewriteWhereForPeriodSlice($whereClause, array $aggregationPeriodSlice)
