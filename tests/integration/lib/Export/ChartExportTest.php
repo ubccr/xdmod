@@ -167,7 +167,7 @@ class ChartExportTest extends BaseTest
                 'x_axis' => '%7B%7D',
                 'y_axis' => '%7B%7D',
                 'legend' => '%7B%7D',
-                'defaultDatasetConfig' => urldecode('%257B%257D'),
+                'defaultDatasetConfig' => '%7B%7D',
                 'controller_module' => 'metric_explorer',
                 'inline' => 'n'
             ]
