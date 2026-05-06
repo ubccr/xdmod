@@ -6,12 +6,12 @@
             {
                 "name": "user_id",
                 "type": "int(11)",
-                "nullable": true
+                "nullable": false
             },
             {
                 "name": "chart_id",
                 "type": "text",
-                "nullable": true
+                "nullable": false
             },
             {
                 "name": "insertion_rank",
@@ -58,6 +58,12 @@
                 ],
                 "type": "BTREE",
                 "is_unique": true
+            },
+            {
+                "name": "idx_user",
+                "columns": [
+                    "user_id"
+                ]
             }
         ],
         "triggers": []
