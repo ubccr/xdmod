@@ -42,6 +42,16 @@
     },
     "migration-11_0_2-11_5_0": [
         {
+            "name": "update-reports",
+            "description": "Update report tables to remove duplicate rows",
+            "namespace": "ETL\\Maintenance",
+            "class": "ExecuteSql",
+            "options_class": "MaintenanceOptions",
+            "sql_file_list": [
+                "migrations/11.0.0-11.5.0/moddb/reports.sql"
+            ]
+        },
+        {
             "name": "update-moddb-tables",
             "description": "Update managed tables in moddb",
             "namespace": "ETL\\Maintenance",
