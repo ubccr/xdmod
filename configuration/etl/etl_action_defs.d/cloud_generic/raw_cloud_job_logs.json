@@ -26,7 +26,8 @@
             "provider_account": "account",
             "event_data": "event_data",
             "first_volume": "/block_devices/0/id",
-            "root_volume_type": "root_type"
+            "root_volume_type": "root_type",
+            "disk_gb": "/instance_type/disk"
         },
         "generic_cloud_raw_instance_type": {
             "instance_type": "/instance_type/name",
@@ -34,7 +35,6 @@
             "display": "/instance_type/name",
             "num_cores": "/instance_type/cpu",
             "memory_mb": "/instance_type/memory",
-            "disk_gb": "/instance_type/disk",
             "start_time": "event_time"
         }
     }

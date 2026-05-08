@@ -13,7 +13,6 @@
             "description": "raw.description",
             "num_cores": "raw.num_cores",
             "memory_mb": "raw.memory_mb",
-            "disk_gb": "raw.disk_gb",
             "start_time": "UNIX_TIMESTAMP(CONVERT_TZ(raw.start_time, '+00:00', @@session.time_zone))"
         },
         "joins": [
