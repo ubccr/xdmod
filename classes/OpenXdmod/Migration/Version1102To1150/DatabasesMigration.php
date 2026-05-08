@@ -42,5 +42,13 @@ class DatabasesMigration extends AbstractDatabasesMigration
                 ['last-modified-start-date' => '2017-01-01 00:00:00']
             );
         }
+
+        if ($mysql_helper->tableExists('modw_cloud.event')) {
+            Utilities::runEtlPipeline(
+                ['cloud-migration_11-0-2_11-5-0', 'cloud-state-pipeline'],
+                $this->logger,
+                ['last-modified-start-date' => '2017-01-01 00:00:00']
+            );
+        }
     }
 }

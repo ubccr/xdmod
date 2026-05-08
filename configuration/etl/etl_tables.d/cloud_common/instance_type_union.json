@@ -53,13 +53,6 @@
                 "default": 0
             },
             {
-                "name": "disk_gb",
-                "type": "int(11)",
-                "nullable": false,
-                "default": 0,
-                "comment": "Disk size configured in image"
-            },
-            {
                 "name": "start_time",
                 "type": "decimal(16,6)",
                 "nullable": false,
@@ -75,7 +68,6 @@
                     "instance_type",
                     "num_cores",
                     "memory_mb",
-                    "disk_gb",
                     "start_time"
                 ],
                 "is_unique": true
