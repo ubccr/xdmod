@@ -15,7 +15,12 @@ fi
 for branch in $branches;
 do
     version=${branch:5}
-    filelist=$(git ls-tree --name-only -r upstream/$branch docs | egrep '.*\.md$')
+    if ! filelist=$(git ls-tree --name-only -r upstream/$branch docs | egrep '.*\.md$'); then
+        status=$?
+        if [ $status -gt 1 ]; then
+            exit $status
+        fi
+    fi
     for file in $filelist;
     do
         outfile=$(echo $file | awk 'BEGIN{FS="/"} { for(i=2; i < NF; i++) { printf "%s/", $i } print "'$version'/" $NF}')
@@ -35,7 +40,12 @@ EOF
         git show refs/remotes/upstream/$branch:$file | $SED "$sedscript" > $outfile
     done
 
-    filelist=$(git ls-tree --name-only  upstream/$branch docs/  | egrep '.*\.(json|html)$')
+    if ! filelist=$(git ls-tree --name-only  upstream/$branch docs/  | egrep '.*\.(json|html)$'); then
+        status=$?
+        if [ $status -gt 1 ]; then
+            exit $status
+        fi
+    fi
     for file in $filelist;
     do
         outfile=$(echo $file | awk 'BEGIN{FS="/"} { for(i=2; i < NF; i++) { printf "%s/", $i } print "'$version'/" $NF}')
@@ -56,6 +66,7 @@ done
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $BASEDIR
+python3 ./generate_security_patches_and_advisories.py
 python3 ./get_sitemap.py
 XMLLINT_INDENT='    ' xmllint --format sitemap.xml > tmp.xml && mv tmp.xml sitemap.xml
 cd -

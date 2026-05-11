@@ -1,9 +1,4 @@
 ---
-ghsa_id: GHSA-r33r-6g3c-r992
-min_version:  90000
-max_version: 100002
-instructions_file: share.html
-note_file: GHSA-r33r-6g3c-r992.txt
 ---
 diff --git a/classes/Realm/GroupBy.php b/classes/Realm/GroupBy.php
 index 68d17cc8ea..9bd0989746 100644

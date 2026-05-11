@@ -2,86 +2,96 @@
     Display a warning box if the page's version of Open XDMoD has any
     workaround patch files for addressing security vulnerabilities.
 {% endcomment %}
-{% comment %}
-    Convert the page's X.Y.Z version number into a padded XYYZZ format that
-    can be used for direct arithmetic comparisons.
-{% endcomment %}
-{% assign page_version_parts = page.version | split: "." %}
-{% assign page_min_version_major = page_version_parts[0] | times: 10000 %}
-{% assign page_min_version_minor = page_version_parts[1] | times: 100 %}
-{% assign page_min_version = page_min_version_major | plus: page_min_version_minor %}
-{% assign page_max_version = page_min_version | plus: 99 %}
-{% comment %}
-    Get the list of security patch files that apply to the current page's Open
-    XDMoD version.
-{% endcomment %}
-{% assign applicable_patches = site.security_patches | where_exp: "p", "p.min_version <= page_max_version" %}
-{% assign applicable_patches = applicable_patches | where_exp: "p", "p.max_version >= page_min_version" %}
-{% comment %}
-    The rest of this file only evaluates if at least one security patch
-    applies.
-{% endcomment %}
-{% if applicable_patches.size > 0 %}
-{% assign min_applicable_patch_version = applicable_patches | map: "min_version" | sort | first %}
-{% assign max_applicable_patch_version = applicable_patches | map: "max_version" | sort | last %}
-{% capture min_applicable_patch_version_dotted %}{%
-    include
-        get_dotted_version_from_XYYZZ.txt
-        version=min_applicable_patch_version
-%}{% endcapture %}
-{% capture max_applicable_patch_version_dotted %}{%
-    include
-        get_dotted_version_from_XYYZZ.txt
-        version=max_applicable_patch_version
-%}{% endcapture %}
-{% comment %}
-    Version 0 means the patch applies to all versions less than or equal to the
-    max version.
-{% endcomment %}
-{% if min_applicable_patch_version == 0 %}
-    {% capture versions_with_vulnerabilities %}≤{{ max_applicable_patch_version_dotted | rstrip }}{% endcapture %}
-{% else %}
-    {% capture versions_with_vulnerabilities %}versions
-        {{ min_applicable_patch_version_dotted | rstrip }} through
-        {{ max_applicable_patch_version_dotted | rstrip }}{% endcapture %}
-{% endif %}
-{% comment %}
-    Render the content that will go in the warning box.
-{% endcomment %}
-{% capture warning_content %}
-<p>
-    There are known
-    <a href="https://github.com/ubccr/xdmod/security/advisories" target="_blank" rel="noopener noreferrer">security vulnerabilities</a>
-    in Open XDMoD versions {{ versions_with_vulnerabilities }}. We strongly
-    encourage
-    <a href="/{{ site.latest_version }}/upgrade">upgrading</a>
-    to the latest version of Open XDMoD, {{ site.latest_sw_version }}, which
-    contains fixes for these vulnerabilities.
-</p>
-<p>
-    If you cannot upgrade immediately, you can manually patch your
-    installation as a workaround. First, make sure you are on the correct web
-    page for your version of Open XDMoD:
-</p>
-<ul>
-    {% assign versions_list = site.version_list | concat: site.unsupported_version_list %}
-    {% for version_page in versions_list %}
-        <li>
-            {% if version_page == page.version %}{{ version_page }}{% else %}<a href="/{{ version_page }}">{{ version_page }}</a>{% endif %}
-        </li>
-    {% endfor %}
-</ul>
-<h3>Patching version {{ page.version }}</h3>
-{% assign applicable_patch_groups = applicable_patches | group_by: "instructions_file" %}
-{% for patch_group in applicable_patch_groups %}
-    {% include
-        security_patch_instructions/{{ patch_group.name }}
-        patches=patch_group.items
-        page_version=page.version
-        page_min_version=page_min_version
-        page_max_version=page_max_version
-    %}
-{% endfor %}
-{% endcapture %}
-{% include warning.html content=warning_content %}
+{% assign page_patch_data = site.data.security_patch_data[page.version] %}
+{% if page_patch_data %}
+    <div class="alertbox warning">
+        <h2><img src="/assets/images/exclamation_ak.png" alt="" /> Warning</h2>
+        {% if page_patch_data.upgrade_instructions_text %}
+            {% assign upgrade_text = "upgrading" %}
+            {% capture version_specific_instructions -%}
+                To upgrade version {{ page.version }} to
+                {{ site.latest_sw_version }}, you will first need to
+                {{ page_patch_data.upgrade_instructions_text }}.
+            {% endcapture %}
+        {% else %}
+            {% assign upgrade_text = '<a href="/upgrade">upgrading</a>' %}
+        {% endif %}
+        <p>
+            There are known
+            <a href="https://github.com/ubccr/xdmod/security/advisories" target="_blank" rel="noopener noreferrer">security vulnerabilities</a>
+            in Open XDMoD versions {{ site.data.security_patch_data.versions_with_vulnerabilities }}.
+            We strongly encourage {{ upgrade_text }} immediately to the latest
+            version of Open XDMoD, {{ site.latest_sw_version }}, which contains
+            fixes for these vulnerabilities.
+        </p>
+        {% if version_specific_instructions %}
+            <p>{{ version_specific_instructions }}</p>
+        {% endif %}
+        <p>
+            If you cannot upgrade immediately, you can follow the instructions
+            below to manually patch your installation as a temporary workaround
+            before upgrading later.
+        </p>
+        <details>
+            <summary><b>Click to expand workaround instructions</b></summary>
+            <ol>
+                <li>
+                    First, make sure you are on the correct web page for your
+                    version of Open XDMoD. The web page you are on now is for
+                    version {{ page.version }}. Other versions' pages are
+                    linked below:
+                    <ul>
+                        {% for version_page in site.data.security_patch_data.all_linked_versions %}
+                            <li>
+                                {% if version_page == page.version -%}
+                                    {{ version_page }}
+                                {% else %}
+                                    <a href="/{{ version_page }}/upgrade.html">{{ version_page }}</a>
+                                {% endif %}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li>
+                    Download the patch file for your version:
+                    <ul>
+                        {% for filename in page_patch_data.patch_files %}
+                            <li><a href="/security_patches_by_version/{{ filename }}">{{ filename }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                <li>Copy the patch file to your Open XDMoD web server.</li>
+                <li>
+                    Make sure you have the <code>patch</code> command
+                    installed; it can be installed with <code>dnf install
+                    patch</code>.
+                </li>
+                <li>
+                    Apply the patch by running the command below, replacing
+                    <code>[PATH_TO_XDMOD_SHARE_DIR]</code> with the path to the
+                    share directory (<code>/usr/share/xdmod</code> for
+                    RPM-based installs, <code>/opt/xdmod/share</code> or
+                    another location for source code installs) and replacing
+                    <code>[PATH_TO_PATCH_FILE]</code> with the path to the
+                    patch file.
+                    <pre class="highlight"># patch -p1 -d [PATH_TO_XDMOD_SHARE_DIR] &lt; [PATH_TO_PATCH_FILE]</pre>
+                    {% if site.data.security_patch_data.versions_with_group_by_note contains page.version %}
+                        <b>NOTE:</b> A previous version of this web page
+                        instructed you to manually patch the file
+                        <code>classes/Realm/GroupBy.php</code>. If you did so,
+                        you will see the following prompt:
+                        {% assign prompt_text = "patching file classes/Realm/GroupBy.php<br/>Reversed (or previously applied) patch detected!  Assume -R? [n]"%}
+                        <pre class="highlight">{{ prompt_text }}</pre>
+                        Make sure to choose <code>n</code>, and when it asks
+                        "<code>Apply anyway? [n]</code>", choose <code>n</code>
+                        again.
+                    {% endif %}
+                </li>
+                <li>
+                    <a href="/{{ page.version }}/upgrade.html">Upgrade</a> to
+                    the latest version of Open XDMoD as soon as you can.
+                </li>
+            </ol>
+        </details>
+    </div>
 {% endif %}
