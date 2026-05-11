@@ -32,7 +32,7 @@ max_minor_versions = {}
 with open('_config.yml', 'r') as f:
     site_config = yaml.safe_load(f)
 for page_config in site_config['defaults']:
-    if not page_config['scope']['type'] == 'pages':
+    if page_config['scope']['type'] != 'pages':
         continue
     major_version = page_config['values']['version']
     min_minor_version = major_version + '.0'
