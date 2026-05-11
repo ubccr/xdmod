@@ -14,7 +14,9 @@
                 {{ page_patch_data.upgrade_instructions_text }}.
             {% endcapture %}
         {% else %}
-            {% assign upgrade_text = '<a href="/{{ page.version }}/upgrade">upgrading</a>' %}
+            {% capture upgrade_text -%}
+                <a href="/{{ page.version }}/upgrade">upgrading</a>
+            {%- endcapture %}
         {% endif %}
         <p>
             There are known
