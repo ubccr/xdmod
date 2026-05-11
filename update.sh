@@ -17,7 +17,7 @@ do
     version=${branch:5}
     if ! filelist=$(git ls-tree --name-only -r upstream/$branch docs | egrep '.*\.md$'); then
         status=$?
-        if [ $status -gt 1 ]; then
+        if [[ $status -gt 1 ]]; then
             exit $status
         fi
     fi
@@ -42,7 +42,7 @@ EOF
 
     if ! filelist=$(git ls-tree --name-only  upstream/$branch docs/  | egrep '.*\.(json|html)$'); then
         status=$?
-        if [ $status -gt 1 ]; then
+        if [[ $status -gt 1 ]]; then
             exit $status
         fi
     fi
