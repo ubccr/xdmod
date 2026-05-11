@@ -44,11 +44,9 @@
                     linked below:
                     <ul>
                         {% for version_page in site.data.security_patch_data.all_linked_versions %}
-                            <li>
-                                {% if version_page != page.version -%}
-                                    <a href="/{{ version_page }}/upgrade.html">{{ version_page }}</a>
-                                {% endif %}
-                            </li>
+                            {% if version_page != page.version -%}
+                                <li><a href="/{{ version_page }}/upgrade.html">{{ version_page }}</a></li>
+                            {% endif %}
                         {% endfor %}
                     </ul>
                 </li>
