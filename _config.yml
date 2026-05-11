@@ -175,6 +175,11 @@ defaults:
     values:
       layout: "security_patch"
       render_with_liquid: false
+  -
+    scope:
+      type: "security_patches_by_version"
+    values:
+      render_with_liquid: false
 
 
 # Build settings
