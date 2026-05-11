@@ -45,9 +45,7 @@
                     <ul>
                         {% for version_page in site.data.security_patch_data.all_linked_versions %}
                             <li>
-                                {% if version_page == page.version -%}
-                                    {{ version_page }}
-                                {% else %}
+                                {% if version_page != page.version -%}
                                     <a href="/{{ version_page }}/upgrade.html">{{ version_page }}</a>
                                 {% endif %}
                             </li>
