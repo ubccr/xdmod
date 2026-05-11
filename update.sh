@@ -66,7 +66,7 @@ done
 
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $BASEDIR
-python3 ./generate_security_patches_and_advisories.py
+python3 ./generate_security_patches.py
 python3 ./get_sitemap.py
 XMLLINT_INDENT='    ' xmllint --format sitemap.xml > tmp.xml && mv tmp.xml sitemap.xml
 cd -

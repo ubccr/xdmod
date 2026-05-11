@@ -3,12 +3,8 @@
 # _data/security_patch_data.yml and the files in _security_patches_by_version/
 # using the file _config.yml and the files in _security_patches/.
 
-from enum import Enum
 import glob
-import json
-from packaging.version import Version
 from pathlib import Path
-import subprocess
 import yaml
 
 FILENAME = Path(__file__).name
@@ -78,16 +74,6 @@ events.sort()
 def get_version_from_tuple(version_tuple, separator):
     return separator.join([str(v) for v in version_tuple])
 
-def add_patches_to_major_version(
-    patches_by_major_version,
-    current_major_version,
-    current_minor_versions,
-    current_patches
-):
-    patches_by_major_version[current_major_version][
-        '-'.join(current_minor_versions)
-    ] = list(current_patches)
-
 patches_by_major_version = {}
 current_major_version = None
 current_min_minor_version = None
@@ -105,7 +91,7 @@ for version, start_or_end, version_or_patch, value in events:
                 minor_versions = version_underscored
             else:
                 minor_versions = current_min_minor_version + '-' + version_underscored
-            patches_by_major_version[current_major_version][minor_versions] = list(current_patches)
+            patches_by_major_version[current_major_version][minor_versions] = sorted(list(current_patches))
         current_major_version = None
         current_min_minor_version = None
     elif (START, PATCH) == (start_or_end, version_or_patch):
@@ -113,7 +99,7 @@ for version, start_or_end, version_or_patch, value in events:
     elif (END, PATCH) == (start_or_end, version_or_patch):
         if current_major_version is not None and version != previous_version:
             minor_versions = current_min_minor_version + '-' + get_version_from_tuple(version, '_')
-            patches_by_major_version[current_major_version][minor_versions] = list(current_patches)
+            patches_by_major_version[current_major_version][minor_versions] = sorted(list(current_patches))
             current_min_minor_version = None
         current_patches.remove(value)
     previous_version = version
