@@ -50,13 +50,6 @@
                 "default": 0
             },
             {
-                "name": "disk_gb",
-                "type": "int(11)",
-                "nullable": false,
-                "default": 0,
-                "comment": "Disk size configured in image"
-            },
-            {
                 "name": "start_time",
                 "type": "decimal(16,6)",
                 "nullable": false,
@@ -72,7 +65,7 @@
             }
         ],
 
-        "#": "Note that the primary key is (resource, instance_type, num_cores, memory_mb, disk_gb)",
+        "#": "Note that the primary key is (resource, instance_type, num_cores, memory_mb)",
         "#": "rather than image_id so we can take advantage of ON DUPLICATE KEY UPDATE to update",
         "#": "existing entries and still use auto_increment for new entries.",
 
@@ -84,8 +77,7 @@
                     "instance_type",
                     "start_time",
                     "num_cores",
-                    "memory_mb",
-                    "disk_gb"
+                    "memory_mb"
                 ],
                 "is_unique": true
             },

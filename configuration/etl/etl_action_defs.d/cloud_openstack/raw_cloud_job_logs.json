@@ -45,7 +45,6 @@
             "display": "instance_type",
             "num_cores": "vcpus",
             "memory_mb": "memory_mb",
-            "disk_gb": "disk_gb",
             "start_time": "generated"
         }
     }

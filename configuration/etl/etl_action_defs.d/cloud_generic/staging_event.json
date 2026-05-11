@@ -30,7 +30,8 @@
             "image_id": "COALESCE(img.image_id, 1)",
             "event_data": "raw.event_data",
             "root_volume_type_id": "COALESCE(atype.asset_type_id, -1)",
-            "service_provider": "COALESCE(sp.organization_id, 1)"
+            "service_provider": "COALESCE(sp.organization_id, 1)",
+            "disk_gb": "COALESCE(raw.disk_gb, 0)"
         },
 
         "joins": [

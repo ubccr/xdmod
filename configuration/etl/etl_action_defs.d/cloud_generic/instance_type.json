@@ -22,7 +22,6 @@
             "description": "raw.description",
             "num_cores": "raw.num_cores",
             "memory_mb": "raw.memory_mb",
-            "disk_gb": "raw.disk_gb",
             "start_time": "IF(existing.start_time IS NULL OR UNIX_TIMESTAMP(CONVERT_TZ(raw.start_time,'+00:00', @@session.time_zone)) < existing.start_time, UNIX_TIMESTAMP(CONVERT_TZ(raw.start_time,'+00:00', @@session.time_zone)), existing.start_time)"
         },
 
@@ -35,7 +34,7 @@
                 "name": "instance_type",
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "existing",
-                "on": "raw.resource_id = existing.resource_id AND raw.instance_type = existing.instance_type AND raw.display = existing.display AND raw.num_cores = existing.num_cores AND raw.memory_mb = existing.memory_mb and raw.disk_gb = existing.disk_gb",
+                "on": "raw.resource_id = existing.resource_id AND raw.instance_type = existing.instance_type AND raw.display = existing.display AND raw.num_cores = existing.num_cores AND raw.memory_mb = existing.memory_mb",
                 "type": "left outer"
             }
         ],
@@ -45,7 +44,7 @@
         ],
 
         "groupby": [
-            "resource_id", "instance_type", "display", "num_cores", "memory_mb", "disk_gb"
+            "resource_id", "instance_type", "display", "num_cores", "memory_mb"
         ]
     }
 }
