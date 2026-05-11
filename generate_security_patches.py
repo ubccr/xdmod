@@ -91,7 +91,7 @@ for version, start_or_end, version_or_patch, value in events:
                 minor_versions = version_underscored
             else:
                 minor_versions = current_min_minor_version + '-' + version_underscored
-            patches_by_major_version[current_major_version][minor_versions] = sorted(list(current_patches))
+            patches_by_major_version[current_major_version][minor_versions] = sorted(current_patches)
         current_major_version = None
         current_min_minor_version = None
     elif (START, PATCH) == (start_or_end, version_or_patch):
@@ -99,7 +99,7 @@ for version, start_or_end, version_or_patch, value in events:
     elif (END, PATCH) == (start_or_end, version_or_patch):
         if current_major_version is not None and version != previous_version:
             minor_versions = current_min_minor_version + '-' + get_version_from_tuple(version, '_')
-            patches_by_major_version[current_major_version][minor_versions] = sorted(list(current_patches))
+            patches_by_major_version[current_major_version][minor_versions] = sorted(current_patches)
             current_min_minor_version = None
         current_patches.remove(value)
     previous_version = version
