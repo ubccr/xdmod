@@ -69,4 +69,4 @@ cd $BASEDIR
 python3 ./generate_security_patches.py
 python3 ./get_sitemap.py
 XMLLINT_INDENT='    ' xmllint --format sitemap.xml > tmp.xml && mv tmp.xml sitemap.xml
-cd -
+cd - > /dev/null
