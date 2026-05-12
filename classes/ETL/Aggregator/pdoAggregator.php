@@ -1041,7 +1041,10 @@ class pdoAggregator extends aAggregator
 
                     $availableParams = array_combine($availableParamKeys, $availableParamValues);
 
-                    $bindParams = array();
+                    list($whereClause, $periodParams) = $this->rewriteWhereForPeriodSlice($whereClause, $aggregationPeriodSlice);
+                    unset($availableParams[':period_start_day_id'], $availableParams[':period_end_day_id']);
+                    $availableParams = array_merge($availableParams, $periodParams);
+
                     preg_match_all($bindParamRegex, $whereClause, $matches);
                     $bindParams = $matches[0];
                     $usedParams = array_intersect_key($availableParams, array_fill_keys($bindParams, 0));
@@ -1049,6 +1052,7 @@ class pdoAggregator extends aAggregator
                     $sql =
                         "CREATE TEMPORARY TABLE $qualifiedTmpTableName AS "
                         . "SELECT * FROM $origTableName $tmpTableAlias WHERE " . $whereClause;
+
                     $this->logger->debug(
                         sprintf("[batch aggregation] Batch temp table %s: %s", $this->sourceEndpoint, $sql)
                     );
@@ -1061,7 +1065,7 @@ class pdoAggregator extends aAggregator
                 }
 
                 if ($this->etlStageQuery) {
-                    $this->createStageBatchTempTable($minDayId, $maxDayId, $availableParams);
+                    $this->createStageBatchTempTable($aggregationPeriodSlice, $availableParams);
                 }
 
                 $this->logger->info("[batch aggregation] Setup for batch $minPeriodId - $maxPeriodId (day_id $minDayId - $maxDayId): "
@@ -1445,20 +1449,22 @@ class pdoAggregator extends aAggregator
     /**
      * Create and populate the temporary table used in batch mode aggregation
      * as defined by the "stage_query" parameter setting in the ETL action
-     * definition. This table will contain all of the rows between the specified
-     * start and end periods.
+     * definition. This table will contain only the rows that overlap one of
+     * the periods in the supplied slice (rather than every row in the day_id
+     * range spanning that slice).
      *
-     * @param $minDayId string the start of the batch aggregation slide
-     * @param $maxDayId string the end of the batch aggregation slide
+     * @param $aggregationPeriodSlice array the periods in the current batch
      * @param $availableParams array the PDO parameters to substitute in the select statement
      */
-    protected function createStageBatchTempTable($minDayId, $maxDayId, $availableParams)
+    protected function createStageBatchTempTable(array $aggregationPeriodSlice, array $availableParams)
     {
         $qualifiedTmpTableName = $this->sourceEndpoint->getSchema(true) . "." . $this->sourceEndpoint->quoteSystemIdentifier(self::BATCH_STAGE_TABLE_NAME);
         $origTableName = $this->sourceEndpoint->getSchema(true) . "." . $this->sourceEndpoint->quoteSystemIdentifier($this->etlStageQuery->joins[0]->name);
         $tmpTableAlias = $this->sourceEndpoint->quoteSystemIdentifier($this->etlStageQuery->joins[0]->alias);
 
-        $this->logger->debug("[batch aggregation] Create temporary table $qualifiedTmpTableName with min period = $minDayId, max period = $maxDayId");
+        $firstSlice = current($aggregationPeriodSlice);
+        $lastSlice = end($aggregationPeriodSlice);
+        $this->logger->debug("[batch aggregation] Create temporary table $qualifiedTmpTableName with min period = " . $firstSlice['period_start_day_id'] . " and max period = " . $lastSlice['period_end_day_id'] . " for " . count($aggregationPeriodSlice) . " period(s)");
 
         $sql = "DROP TEMPORARY TABLE IF EXISTS $qualifiedTmpTableName";
 
@@ -1476,6 +1482,10 @@ class pdoAggregator extends aAggregator
                 implode(" AND ", $this->etlStageBatchQuery->where),
                 "Undefined macros found in WHERE clause"
             );
+
+            list($whereClause, $periodParams) = $this->rewriteWhereForPeriodSlice($whereClause, $aggregationPeriodSlice);
+            unset($availableParams[':period_start_day_id'], $availableParams[':period_end_day_id']);
+            $availableParams = array_merge($availableParams, $periodParams);
 
             $matches = array();
             $bindParams = array();
@@ -1497,6 +1507,78 @@ class pdoAggregator extends aAggregator
                 array('exception' => $e, 'sql' => $sql)
             );
         }
+    }
+
+    /**
+     * Rewrite the aggregation WHERE clause from a single clause that queries the min/max
+     * range with a clause for each time period being aggregated and connect them using
+     * the OR keyword.
+     *
+     * For example, if the original WHERE clause is:
+     *
+     *   task.start_day_id <= :period_end_day_id AND task.end_day_id >= :period_start_day_id AND task.is_deleted = 0
+     *
+     * and we are aggregating 2 periods with period_start_day_id/period_end_day_id values of
+     * 20200101/20200131 and 20200201/20200229, this method will rewrite the WHERE clause to:
+     *
+     *  (task.start_day_id <= :period_end_day_id_0 AND task.end_day_id >= :period_start_day_id_0 AND task.is_deleted = 0)
+     *  OR (task.start_day_id <= :period_end_day_id_1 AND task.end_day_id >= :period_start_day_id_1 AND task.is_deleted = 0)
+     *
+     * Returns array($whereSql, $periodParams) where $periodParams holds the
+     * per-period bind values keyed by :p_start_<i> / :p_end_<i>.
+     *
+     * @param $whereClause string the original WHERE clause with bind variables for a single period
+     * @param $aggregationPeriodSlice array the list of periods being aggregated in this batch
+     *
+     * @return array of rewritten WHERE clause and the bind parameters to use for that clause
+     */
+    private function rewriteWhereForPeriodSlice($whereClause, array $aggregationPeriodSlice)
+    {
+        // Period bind variables that may appear in a WHERE clause and the
+        // period-row key each one resolves to. Add to this list if a new
+        // :period_* bind variable is introduced. Order matters only as
+        // documentation — the regex uses a non-word-character lookahead so
+        // :period_start does not eat into :period_start_day_id.
+        $bindMap = array(
+            ':period_start_day_id' => 'period_start_day_id',
+            ':period_end_day_id'   => 'period_end_day_id',
+            ':period_start'        => 'period_start',
+            ':period_end'          => 'period_end',
+        );
+
+        // Only rewrite bind vars that actually appear in the WHERE — avoids
+        // emitting useless params and avoids tripping on unrelated columns
+        // that happen to share a key name with $bindMap.
+        $bindMap = array_filter(
+            $bindMap,
+            function ($col, $bindVar) use ($whereClause) {
+                return preg_match('/' . preg_quote($bindVar, '/') . '(?![a-zA-Z0-9_])/', $whereClause) === 1;
+            },
+            ARRAY_FILTER_USE_BOTH
+        );
+
+        $branches = array();
+        $params   = array();
+        foreach (array_values($aggregationPeriodSlice) as $i => $period) {
+            $branch = $whereClause;
+            foreach ($bindMap as $bindVar => $col) {
+                if (!array_key_exists($col, $period)) {
+                    continue;
+                }
+                $perPeriod = $bindVar . "_$i";
+                $branch = preg_replace(
+                    '/' . preg_quote($bindVar, '/') . '(?![a-zA-Z0-9_])/',
+                    $perPeriod,
+                    $branch
+                );
+                $params[$perPeriod] = $period[$col];
+            }
+            $branches[] = "($branch)";
+        }
+
+        $whereSql = "(" . implode(" OR ", $branches) . ")";
+
+        return array($whereSql, $params);
     }
 
     /**
