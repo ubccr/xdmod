@@ -1,0 +1,24 @@
+{% assign page_slug_parts = page.slug | split: '-' -%}
+{% assign ghsa_id =
+    page_slug_parts[0]
+    | append: '-'
+    | append: page_slug_parts[1]
+    | append: '-'
+    | append: page_slug_parts[2]
+    | append: '-'
+    | append: page_slug_parts[3]
+-%}
+{% assign min_version_dotted = page_slug_parts[4] | replace: "_", "." -%}
+{% assign max_version_dotted = page_slug_parts[5] | replace: "_", "." -%}
+{% capture versions -%}
+    {% if min_version_dotted == max_version_dotted -%}
+        version {{ min_version_dotted -}}
+    {% elsif min_version_dotted == "0.0.0" -%}
+        versions <= {{ max_version_dotted -}}
+    {% else -%}
+        versions {{ min_version_dotted }} through {{ max_version_dotted -}}
+{% endif -%}
+{% endcapture -%}
+# Workaround patch file for https://github.com/ubccr/xdmod/security/advisories/{{ ghsa_id }}
+# For patching Open XDMoD {{ versions }}
+{{ content }}

@@ -1,0 +1,30 @@
+---
+---
+diff --git a/libraries/charting.php b/libraries/charting.php
+index 777c3e3b80..b022e5fc01 100644
+--- a/libraries/charting.php
++++ b/libraries/charting.php
+@@ -145,17 +145,17 @@ function getSvgViaChromiumHelper($html, $width, $height){
+  */
+ 
+ function convertSvg($svgData, $format, $width, $height, $docmeta){
+-    $author = isset($docmeta['author']) ? addcslashes($docmeta['author'], "()\n\\") : 'XDMoD';
+-    $subject = isset($docmeta['subject']) ? addcslashes($docmeta['subject'], "()\n\\") : 'XDMoD chart';
+-    $title = isset($docmeta['title']) ? addcslashes($docmeta['title'], "()\n\\") :'XDMoD PDF chart export';
+-    $creator = addcslashes('XDMoD ' . OPEN_XDMOD_VERSION, "()\n\\");
++    $author = isset($docmeta['author']) ? escapeshellarg($docmeta['author']) : "'XDMoD'";
++    $subject = isset($docmeta['subject']) ? escapeshellarg($docmeta['subject']) : "'XDMoD chart'";
++    $title = isset($docmeta['title']) ? escapeshellarg($docmeta['title']) : "'XDMoD PDF chart export'";
++    $creator = escapeshellarg('XDMoD ' . OPEN_XDMOD_VERSION);
+ 
+     switch($format){
+         case 'png':
+-            $exifArgs = "-Title='$title' -Author='$author' -Description='$subject' -Source='$creator'";
++            $exifArgs = "-Title=$title -Author=$author -Description=$subject -Source=$creator";
+             break;
+         case 'pdf':
+-            $exifArgs = "-Title='$title' -Author='$author' -Subject='$subject' -Creator='$creator'";
++            $exifArgs = "-Title=$title -Author=$author -Subject=$subject -Creator=$creator";
+             break;
+         default:
+             return $svgData;

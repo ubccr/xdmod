@@ -16,7 +16,7 @@ layout: null
             "url": "https://www.gnu.org/licenses/lgpl-3.0.txt"
         },
         "x-logo": {
-            "url": "https://open.xdmod.org/xdmod-jekyll-theme/assets/images/xdmod_logo.png",
+            "url": "https://open.xdmod.org/assets/images/xdmod_logo.png",
             "backgroundColor": "#FFFFFF",
             "altText": ""
         },

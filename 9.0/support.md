@@ -2,8 +2,6 @@
 title: Support
 ---
 
-{% include upgrade_warning.html gbpath="Realm/GroupBy.php" %}
-
 Support Lifecycle
 -----------------
 

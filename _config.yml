@@ -26,13 +26,18 @@ url: "https://open.xdmod.org" # the base hostname & protocol for your site
 github_username: ubccr
 github_url: https://github.com/ubccr/xdmod
 latest_version: "11.0"
-latest_sw_version: "11.0.2"
+latest_sw_version: "11.0.3"
 version_list:
   - "11.0"
 unsupported_version_list:
   - "10.5"
   - "10.0"
   - "9.5"
+collections:
+  security_patches:
+    output: true
+  security_patches_by_version:
+    output: true
 
 # For each version the variable `sw_version` should be set to latest release
 # version of Open XDMoD (e.g. "8.1.2") and `prev_sw_version` should be set to
@@ -46,8 +51,8 @@ defaults:
       layout: "page"
       version: "11.0"
       prev_sw_version: "10.5.1"
-      sw_version: "11.0.2"
-      rpm_version: "11.0.2-3"
+      sw_version: "11.0.3"
+      rpm_version: "11.0.3-1"
       style: "effervescence"
       tocversion: "v11_0toc"
   -
@@ -128,6 +133,7 @@ defaults:
     values:
       layout: "page"
       version: "8.0"
+      sw_version: "8.0.0"
       style: "effervescence"
       menu_markdown: "8.0/menu.md"
 
@@ -138,6 +144,7 @@ defaults:
     values:
       layout: "page"
       version: "7.5"
+      sw_version: "7.5.1"
       style: "effervescence"
       menu_markdown: "7.5/menu.md"
 
@@ -148,6 +155,7 @@ defaults:
     values:
       layout: "page"
       version: "7.0"
+      sw_version: "7.0.1"
       style: "effervescence"
       menu_markdown: "7.0/menu.md"
 
@@ -158,13 +166,27 @@ defaults:
     values:
       layout: "page"
       version: "6.6"
+      sw_version: "6.6.0"
       menu_markdown: "6.6/menu.md"
+
+  -
+    scope:
+      type: "security_patches"
+    values:
+      layout: "security_patch"
+      render_with_liquid: false
+  -
+    scope:
+      type: "security_patches_by_version"
+    values:
+      render_with_liquid: false
 
 
 # Build settings
 markdown: kramdown
-theme_subdir: "/xdmod-jekyll-theme"
-gems:
+remote_theme: ubccr/xdmod-jekyll-theme@v0.2.0
+plugins:
   - jekyll-redirect-from
+  - jekyll-remote-theme
 whitelist:
   - jekyll-redirect-from
