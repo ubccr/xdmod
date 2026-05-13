@@ -199,26 +199,6 @@ require_once 'user_check.php';
     </script>
 
   <script type="text/javascript" src="js/dashboard.js"></script>
-
-  <?php /* App Kernel code. */ ?>
-  <?php if (xd_utilities\getConfiguration('features', 'appkernels') == 'on'): ?>
-  <?php
-    if(isset($_GET['op']))
-    {
-        if($_GET['op']=='ak_instance')
-        {
-          $instance_id=$_GET['instance_id'];
-          echo <<< END
-<script type="text/javascript">
-    Ext.onReady(function () {
-    new XDMoD.AppKernel.InstanceWindow({instanceId:$instance_id}).show();
-}, window, true);
-</script>
-END;
-        }
-    }
-  ?>
-  <?php endif; ?>
 </head>
 <body></body>
 </html>
