@@ -42,7 +42,7 @@ defaults:
     values:
       layout: "page"
       version: "11.5"
-      prev_sw_version: "11.0.2"
+      prev_sw_version: "11.0.3"
       sw_version: "11.5.0"
       rpm_version: "11.5.0-1"
       style: "effervescence"
@@ -50,8 +50,9 @@ defaults:
 
 # Build settings
 markdown: kramdown
-theme_subdir: "/xdmod-jekyll-theme"
-gems:
+remote_theme: ubccr/xdmod-jekyll-theme@v0.2.0
+plugins:
   - jekyll-redirect-from
+  - jekyll-remote-theme
 whitelist:
   - jekyll-redirect-from
