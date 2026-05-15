@@ -892,6 +892,46 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    /**
+     * Retrieve the User information for the user that's authenticated with the provided $helper.
+     *
+     * @param XdmodTestHelper $helper the helper to use when making requests.
+     * @return mixed|void
+     */
+    protected function getUserProfile(XdmodTestHelper $helper)
+    {
+        // Retrieve the user profile information and make sure that the last_name was updated.
+        $response = $helper->get('rest/v1/users/current');
+
+        // make sure that the request was successful
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $responseData = $response[0];
+
+        // Make sure that the response is as expected.
+        $this->assertArrayHasKey('success', $responseData);
+        $this->assertTrue($responseData['success']);
+        $this->assertArrayHasKey('results', $responseData);
+
+        return $responseData['results'];
+    }
+
+    /**
+     * Retrieve a particular User Profile property for the user who is authentiated with the provided $helper.
+     *
+     * @param XdmodTestHelper $helper the helper to use in when making requests.
+     * @param string $property the property to retrieve
+     * @return mixed
+     */
+    protected function getPropertyFromUserProfile(XdmodTestHelper $helper, string $property)
+    {
+        $userProfile = $this->getUserProfile($helper);
+
+        $this->assertArrayHasKey($property, $userProfile);
+
+        return $userProfile[$property];
+    }
+
     protected function log($message)
     {
         if (getenv('TEST_VERBOSE') === '1') {

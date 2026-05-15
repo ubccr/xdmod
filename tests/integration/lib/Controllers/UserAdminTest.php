@@ -867,6 +867,97 @@ class UserAdminTest extends BaseUserAdminTest
         return (int)$results;
     }
 
+    public function testPasswordResetWorks()
+    {
+        // We need an adminHelper to trigger the password reset via the internal dashboard.
+        $adminHelper = new XdmodTestHelper();
+
+        // We need an unauthenticated helper to simulate retrieving of the password reset page.
+        $publicHelper = new XdmodTestHelper();
+
+        // First, login as center director
+        $this->helper->authenticate('cd');
+
+        // Next, snag the original first name so we can revert the changes after the test is done.
+        $originalFirstName = $this->getPropertyFromUserProfile($this->helper, 'first_name');
+        try {
+            // Update cd's first_name
+            $newFirstName = '<script>alert("boo!")</script>';
+            $updateResponse = $this->helper->patch('rest/v1/users/current', null, ['first_name' => $newFirstName]);
+
+            // Make sure that the update was successful.
+            $this->assertEquals(200, $updateResponse[1]['http_code'], "Unable to update cd's first_name.");
+            $this->assertSame(
+                [
+                    'success' => true,
+                    'message' => 'User profile updated successfully'
+                ],
+                $updateResponse[0]
+            );
+
+            // Now we can trigger a password reset.
+            $adminHelper->authenticateDashboard('mgr');
+            $passwordResetResponse = $adminHelper->post('controllers/user_admin.php', null, ["operation" => 'pass_reset', 'uid' => '3']);
+            $this->assertEquals(200, $passwordResetResponse[1]['http_code'], "Unable to trigger a password reset.");
+
+            // Make sure that the default docker location for emails is present.
+            $emailFile = '/var/spool/mail/root';
+            if (!is_file($emailFile)) {
+                throw new \Exception('Unable to locate email file.');
+            }
+            // retrieve the password reset email.
+            $email = file_get_contents($emailFile);
+            $this->assertNotEmpty($email, "Unable to continue, no emails found");
+
+            // Find any / all password reset emails. There should be only one, but this should allow us to deal with
+            // tests being added in the future that generate emails.
+            $lines = explode(PHP_EOL, $email);
+            $resetUrls = array_reduce(
+                $lines,
+                function ($carry, $line) {
+                    if (str_contains($line, 'password_reset.php')) {
+                        $carry[] = trim($line);
+                    }
+                    return $carry;
+                },
+                []
+            );
+            $this->assertNotEmpty($resetUrls, "Unable to continue, no emails retrieved.");
+
+            // The url we're after is the last one ( the most recent ).
+            $resetUrl = array_pop($resetUrls);
+
+            // Now request the password reset page as
+            $response = $publicHelper->get($resetUrl, null, true);
+            $this->assertEquals(200, $response[1]['http_code'], "Unable to retrieve the password reset page.");
+            $resetPage = $response[0];
+
+            // We shouldn't find the new first_name value since it should be escaped now.
+            $this->assertFalse(strpos($resetPage, $newFirstName), "Expected the new first_name to be escaped properly.");
+        } finally {
+            // Make sure we logout our other helpers first on the off chance that the reverting of cd's first_name is unsucessful.
+            $adminHelper->logout();
+            $publicHelper->logout();
+
+            // Revert cd's first_name back to what it was prior to this test.
+            $updateResponse = $this->helper->patch('rest/v1/users/current', [], ['first_name' => $originalFirstName]);
+
+            // Make sure that the update was successful.
+            $updateResponseCode = $updateResponse[1]['http_code'];
+            $this->assertEquals(200, $updateResponseCode, sprintf("Unable to revert cd's first_name. Expected HTTP Code: 200, Received: %s", $updateResponseCode));
+            $this->assertSame(
+                [
+                    'success' => true,
+                    'message' => 'User profile updated successfully'
+                ],
+                $updateResponse[0],
+                "Unable to revert cd's first_name. Response contents is not as expected."
+            );
+        }
+
+        $this->helper->logout();
+    }
+
     /**
      * Attempt to determine if an entry exists in the provided $source based on
      * the return value of $predicate. If $predicate returns false for all

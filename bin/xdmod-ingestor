@@ -60,6 +60,8 @@ function main()
 
         // Specify an ingestor.
         array('', 'ingestor:'),
+
+        array('', 'append-filters-list:')
     );
 
     $shortOptions = implode(
@@ -76,7 +78,7 @@ function main()
     }
 
     $help = $ingest = $aggregate = $noAppend = $ingestAll = $ingestShredded
-        = $ingestStaging = $ingestHpcdb = $datatype = $realmToAggregate = false;
+        = $ingestStaging = $ingestHpcdb = $datatype = $realmToAggregate = $appendFiltersList = false;
 
     $startDate = $endDate = $lastModifiedStartDate = $datatypeValue = null;
 
@@ -135,6 +137,9 @@ function main()
             case 'datatype':
                 $datatype = true;
                 $datatypeValue = $value;
+                break;
+            case 'appendFiltersList':
+                $appendFiltersList = true;
                 break;
             default:
                 fwrite(STDERR, "Unexpected option '$key'\n");
@@ -217,6 +222,7 @@ function main()
     try {
         $logger->debug('Creating data warehouse initilializer');
         $dwi = new DataWarehouseInitializer($hpcdbDb, $dwDb);
+        $dwi->setAppendFiltersList($appendFiltersList);
     } catch (Exception $e) {
         $msg = 'Failed to create data warehouse initializer: '
             . $e->getMessage();

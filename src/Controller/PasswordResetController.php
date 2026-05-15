@@ -59,7 +59,11 @@ class PasswordResetController extends BaseController
             [
                 'rid' => $rid,
                 'mode' => $mode,
-                'first_name' => $validationCheck['user_first_name'],
+                'first_name' => htmlspecialchars(
+                    $validationCheck['user_first_name'],
+                    ENT_QUOTES,
+                    'UTF-8'
+                ),
                 'password_max' => CHARLIM_PASSWORD,
                 'extjs_path' => '/gui/lib',
                 'extjs_version' => '/extjs'
