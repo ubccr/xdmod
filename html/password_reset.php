@@ -75,7 +75,7 @@ if ($rid === false) {
 
 		}//if (INVALID)
 
-      $first_name = $validationCheck['user_first_name'];
+      $first_name = htmlspecialchars($validationCheck['user_first_name'], ENT_QUOTES, 'UTF-8');
       
       $mode = ( isset($_GET['mode']) && ($_GET['mode'] == 'new') ) ? 'create' : 'reset';
       
