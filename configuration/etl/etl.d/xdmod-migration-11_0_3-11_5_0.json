@@ -1,7 +1,7 @@
 {
     "module": "xdmod",
     "defaults": {
-        "migration-11_0_2-11_5_0": {
+        "migration-11_0_3-11_5_0": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
             "class": "DatabaseIngestor",
@@ -20,7 +20,7 @@
                 }
             }
         },
-        "cloud-migration_11-0-2_11-5-0": {
+        "cloud-migration_11-0-3_11-5-0": {
             "namespace": "ETL\\Ingestor",
             "options_class": "IngestorOptions",
             "class": "DatabaseIngestor",
@@ -39,7 +39,7 @@
                 }
             }
         },
-        "storage-migration-11_0_2-11_5_0": {
+        "storage-migration-11_0_3-11_5_0": {
             "namespace": "ETL\\Maintenance",
             "options_class": "MaintenanceOptions",
             "class": "ExecuteSql",
@@ -59,7 +59,7 @@
             }
         }
     },
-    "migration-11_0_2-11_5_0": [
+    "migration-11_0_3-11_5_0": [
         {
             "name": "update-reports",
             "description": "Update report tables to remove duplicate rows",
@@ -442,7 +442,7 @@
             }
         }
     ],
-    "storage-migration-11_0_2-11_5_0": [
+    "storage-migration-11_0_3-11_5_0": [
         {
             "name": "manageStorageTables",
             "description": "Changes to storage tables",
@@ -460,7 +460,7 @@
             ]
         }
     ],
-    "cloud-migration_11-0-2_11-5-0": [
+    "cloud-migration_11-0-3_11-5-0": [
         {
             "name": "cloud-add-disk-gb-to-instance-data",
             "description": "Add disk_gb column to modw_cloud.instance_data",
