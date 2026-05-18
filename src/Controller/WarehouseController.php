@@ -555,8 +555,7 @@ class WarehouseController extends BaseController
 
         $actionName = 'searchJobsByAction';
 
-        /*TODO: verify that `ucfirst` is needed */
-        $realm = ucfirst($this->getStringParam($request, 'realms'));
+        $realm = $this->getStringParam($request, 'realm');
 
         $jobId = $this->getIntParam($request, 'jobid');
 
@@ -1337,8 +1336,6 @@ class WarehouseController extends BaseController
             case 'analysis':
             case 'metrics':
             case 'analytics':
-                /*TODO: verify that this doesn't need to be here*/
-                /*$realm = $this->getStringParam($request, 'realm', true);*/
                 $results = $this->getJobData($user, $realm, $jobId, $action);
                 break;
             case 'peers':
@@ -1348,28 +1345,21 @@ class WarehouseController extends BaseController
                 if ($jobId === null) {
                     throw new BadRequestHttpException('Invalid value for realm. Must be a(n) string.');
                 }
-                /*TODO: verify that this needs to be here.*/
-                $realm = $this->getStringParam($request, 'realm', true);
-
                 $results = $this->getJobPeers($user, $realm, $jobId, $start, $limit);
                 break;
             case 'executable':
-                $realm = $this->getStringParam($request, 'realm', true);
                 $results = $this->getJobExecutable($user, $realm, $jobId, $action, $actionName);
                 break;
             case 'detailedmetrics':
-                $realm = $this->getStringParam($request, 'realm', true);
                 $results = $this->getJobSummary($user, $realm, $jobId, $action, $actionName);
                 break;
             case 'timeseries':
                 $tsId = $this->getStringParam($request, 'tsid', true);
                 $nodeId = $this->getIntParam($request, 'nodeid');
                 $cpuId = $this->getIntParam($request, 'cpuid');
-                $realm = $this->getStringParam($request, 'realm', true);
                 $results = $this->getJobTimeSeriesData($request, $user, $realm, $jobId, $tsId, $nodeId, $cpuId);
                 break;
             case 'vmstate':
-                $realm = $this->getStringParam($request, 'realm', true);
                 $results = $this->getJobTimeSeriesData($request, $user, $realm, $jobId, null, null, null);
                 break;
             default:
