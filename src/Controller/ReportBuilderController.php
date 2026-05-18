@@ -512,7 +512,7 @@ class ReportBuilderController extends BaseController
      * @throws Exception
      */
     #[Route('/reports/builder/image', methods: ['GET'])]
-    #[Route('/report_image_renderer.php', name: 'report_image_renderer_legacy', methods: ['GET'])]
+    #[Route('/controllers/report_image_renderer.php', name: 'report_image_renderer_legacy',requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function generateReportImage(Request $request): Response
     {
         $this->logger->warning('Generating a Report Image');
