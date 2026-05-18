@@ -16,7 +16,7 @@
             "resource_id": "staging.resource_id",
             "asset_type_id": "staging.root_volume_type_id",
             "provider_identifier": "CONCAT('root-vol-', i.provider_identifier)",
-            "size": "itype.disk_gb",
+            "size": "staging.disk_gb",
             "account_id": "staging.account_id",
             "create_time_ts": "staging.event_time_ts"
         },
@@ -32,12 +32,6 @@
                 "schema": "${SOURCE_SCHEMA}",
                 "alias": "i",
                 "on": "i.instance_id = staging.instance_id AND i.resource_id = staging.resource_id"
-            },
-            {
-                "name": "instance_type",
-                "schema": "${SOURCE_SCHEMA}",
-                "alias": "itype",
-                "on": "itype.instance_type_id = staging.instance_type_id AND itype.resource_id = staging.resource_id"
             },
             {
                 "name": "event_type",

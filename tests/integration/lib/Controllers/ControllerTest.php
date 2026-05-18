@@ -240,6 +240,29 @@ class ControllerTest extends BaseTest
         $this->helper->logoutDashboard();
     }
 
+    public function testSabRejectsNonMgr()
+    {
+        $this->helper->authenticate('usr');
+
+        $response = $this->helper->post('controllers/sab_user.php', null, ['operation' => 'enum_tg_users']);
+
+        $this->assertEquals($response[1]['content_type'], 'application/json');
+        $this->assertEquals(200, $response[1]['http_code']);
+
+        $this->assertFalse($response[0]['success']);
+        $this->assertEquals('not_a_manager', $response[0]['message']);
+
+        $this->helper->logout();
+    }
+
+    public function testSabRejectsPublic()
+    {
+        $response = $this->helper->post('controllers/sab_user.php', null, ['operation' => 'enum_tg_users']);
+
+        $this->assertEquals($response[1]['content_type'], 'application/json');
+        $this->assertEquals(401, $response[1]['http_code']);
+    }
+
     public function testSabUserEnumTgUsers()
     {
 

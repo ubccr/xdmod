@@ -16,7 +16,6 @@
             "description": "MAX(cg.description)",
             "num_cores": "cg.num_cores",
             "memory_mb": "cg.memory_mb",
-            "disk_gb": "cg.disk_gb",
             "start_time": "MIN(cg.start_time)"
         },
         "joins": [
@@ -31,7 +30,6 @@
             "cg.instance_type",
             "cg.num_cores",
             "cg.memory_mb",
-            "cg.disk_gb",
             "cg.config_group"
         ]
     }

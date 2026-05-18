@@ -6,7 +6,7 @@
             {
                 "name": "report_id",
                 "type": "varchar(100)",
-                "nullable": true
+                "nullable": false
             },
             {
                 "name": "user_id",
@@ -82,7 +82,33 @@
                 "extra": "ON UPDATE CURRENT_TIMESTAMP"
             }
         ],
-        "indexes": [],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "report_id"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "idx_uniquename",
+                "columns": [
+                    "user_id",
+                    "name"
+                ],
+                "type": "BTREE",
+                "is_unique": true
+            },
+            {
+                "name": "idx_reportlookup",
+                "columns": [
+                    "user_id"
+                ],
+                "type": "BTREE",
+                "is_unique": false
+            }
+        ],
         "triggers": []
     }
 }
