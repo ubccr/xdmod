@@ -196,31 +196,6 @@ class UserController extends BaseController
     }
 
     /**
-     * This function is just here to allow us to support the original html controller urls.
-     *
-     * @param Request $request
-     * @return Response
-     * @throws \Exception
-     */
-    #[Route('/controllers/sab_user.php', name: 'list_users_legacy', methods: ["GET", "POST"])]
-    public function sabUser(Request $request): Response
-    {
-        $operation = $this->getStringParam($request, 'operation');
-
-        return match ($operation) {
-            'enum_tg_users' => $this->listUsers($request),
-
-            default => $this->json([
-                'status' => 'invalid_operation_specified',
-                'success' => false,
-                'totalCount' => 0,
-                'message' => 'invalid_operation_specified',
-                'data' => []
-            ]),
-        };
-    }
-
-    /**
      * This function is a port of `html/controllers/sab_users/enum_tg_users.php`.
      *
      * It's here as opposed to a SABUserController because the other two `sab_user` operations are not used.
