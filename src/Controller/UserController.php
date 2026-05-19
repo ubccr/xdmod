@@ -4,21 +4,21 @@ declare(strict_types=1);
 namespace CCR\Controller;
 
 use CCR\DB;
-use Models\Services\Acls;
 use Models\Services\Organizations;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use XDUser;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use xd_security\SessionSingleton;
-use XDUser;
-use XDWarehouse;
-use function xd_response\buildError;
 
 /**
+ * Class UserControllerProvider
  *
+ * This class is responsible for maintaining routes for the REST stack that
+ * handle user-related functionality.
  */
 class UserController extends BaseController
 {
@@ -168,7 +168,6 @@ class UserController extends BaseController
      *   - They must have authenticated to XDMoD via one of the supported methods.
      *   - They must have an active API Token
      *
-     *
      * @param Request $request
      * @return Response
      * @throws \Exception
@@ -194,103 +193,6 @@ class UserController extends BaseController
         // If the `revokeToken` failed for some reason then we let the user know.
         throw new \Exception('Unable to revoke API token.');
     }
-
-    /**
-     * This function is a port of `html/controllers/sab_users/enum_tg_users.php`.
-     *
-     * It's here as opposed to a SABUserController because the other two `sab_user` operations are not used.
-     *
-     * @param Request $request
-     * @return Response
-     * @throws \Exception
-     */
-    private function listUsers(Request $request): Response
-    {
-        // Users must be authenticated before accessing this endpoint.
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        // Retrieve / handle the required paramters first
-        try {
-            $start = $this->getIntParam($request, 'start', true);
-            $limit = $this->getIntParam($request, 'limit', true);
-            $searchMode = $this->getStringParam($request, 'search_mode', true, null, RESTRICTION_SEARCH_MODE);
-            $piOnly = $this->getStringParam($request, 'pi_only', true, null, RESTRICTION_YES_NO);
-        } catch (\Exception $e) {
-            return $this->json([
-                'success' => false,
-                'status'           => 'invalid_params_specified',
-                'message'          => 'invalid_params_specified',
-                'total_user_count' => 0
-            ]);
-        }
-
-        // Retrieve the optional parameters
-        $nameFilter = $this->getStringParam($request, 'query');
-        $userManagement = $this->getBooleanParam($request, 'userManagement');
-
-        // Retrieve an XDUser for the currently authenticated user.
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
-
-        // Potentially retrieve this users associated provider if the user is a Campus Champion
-        $universityId = null;
-        if ($user->hasAcl(ROLE_ID_CAMPUS_CHAMPION) && !isset($userManagement)) {
-            $universityId = Acls::getDescriptorParamValue($user, ROLE_ID_CAMPUS_CHAMPION, 'provider');
-        }
-
-        $searchMethod = null;
-        switch ($searchMode) {
-            case 'formal_name':
-                $searchMethod = FORMAL_NAME_SEARCH;
-                break;
-            case 'username':
-                $searchMethod = USERNAME_SEARCH;
-                break;
-            default:
-                return $this->json(buildError('Unknown search method'));
-        }
-
-        $dataWarehouse = new XDWarehouse();
-        list($userCount, $users) = $dataWarehouse->enumerateGridUsers(
-            $searchMethod,
-            $start,
-            $limit,
-            $nameFilter,
-            $piOnly,
-            $universityId
-        );
-
-        $entryId = 0;
-        $userEntries = [];
-        foreach ($users as $currentUser) {
-            $entryId++;
-
-            if ($searchMethod === FORMAL_NAME_SEARCH) {
-                $personName = $currentUser['long_name'];
-                $personID = $currentUser['id'];
-            } elseif ($searchMethod === USERNAME_SEARCH) {
-                $personName = $currentUser['absusername'];
-
-                // Append the absusername to the id so that each entry is guaranteed
-                // to have a unique identifier (needed for dependent ExtJS combobox
-                // (TGUserDropDown.js) to work properly regarding selections).
-                $personID = $currentUser['id'] . ';' . $currentUser['absusername'];
-            }
-            $userEntries[] = [
-                'id' => $entryId,
-                'person_id' => $personID,
-                'person_name' => $personName
-            ];
-        }
-
-        return $this->json([
-            'success' => true,
-            'status' => 'success',
-            'message' => 'success',
-            'total_user_count' => $userCount,
-            'users' => $userEntries
-        ]);
-    }
-
 
     /**
      * Extract information from a user object.
