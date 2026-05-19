@@ -11,7 +11,6 @@ use DataWarehouse\Access\Usage;
 use DataWarehouse\Data\BatchDataset;
 use DataWarehouse\Data\RawDataset;
 use DataWarehouse\Export\RealmManager;
-use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use DataWarehouse\Query\Exceptions\UnavailableTimeAggregationUnitException;
 use DataWarehouse\Query\Exceptions\UnknownGroupByException;
 use DataWarehouse\Query\RawQuery;
@@ -504,7 +503,7 @@ class WarehouseController extends BaseController
      * @param Request $request
      * @return Response
      * @throws BadRequestHttpException
-     * @throws AccessDeniedException if the user executing this request does not have access to the provided realm.
+     * @throws AccessDeniedHttpException if the user executing this request does not have access to the provided realm.
      * @throws Exception if a user record is not found in the database that corresponds to the current user's username.
      */
     #[Route('{prefix}warehouse/search/jobs', requirements: ['prefix' => '.*'], methods: ['GET'])]
@@ -650,7 +649,7 @@ class WarehouseController extends BaseController
      *
      * @return Response
      *
-     * @throws AccessDeniedException|UnauthorizedHttpException|Exception
+     * @throws AccessDeniedHttpException|UnauthorizedHttpException|BadRequestHttpException
      */
     #[Route('/warehouse/aggregatedata', methods: ['GET'])]
     #[Route('{prefix}warehouse/aggregatedata', requirements: ['prefix' => '.*'], methods: ['GET'])]
@@ -1318,7 +1317,7 @@ class WarehouseController extends BaseController
      * @param ?int $jobId
      * @param string $actionName
      * @return Response
-     * @throws AccessDeniedException if the provided user does not have access to the specified realm.
+     * @throws AccessDeniedHttpException if the provided user does not have access to the specified realm.
      * @throws Exception if executable information unavailable for the provided jobId.
      */
     private function processJobSearchByAction(
@@ -1396,7 +1395,7 @@ class WarehouseController extends BaseController
      * @param int $start the start offset (for store paging).
      * @param int $limit the number of records to return (for store paging).
      * @return Response
-     * @throws AccessDeniedException if the provided user does not have access to the specified realm.
+     * @throws AccessDeniedHttpException if the provided user does not have access to the specified realm.
      * @throws NotFoundHttpException if the provided jobId has no data in the provided realm.
      */
     protected function getJobPeers(XDUser $user, string $realm, $jobId, int $start, int $limit): Response
@@ -1471,7 +1470,7 @@ class WarehouseController extends BaseController
      * @param int $jobId
      * @param string $action
      * @return Response
-     * @throws AccessDeniedException
+     * @throws AccessDeniedHttpException
      */
     private function getJobData(XDUser $user, string $realm, int $jobId, string $action): Response
     {
@@ -1492,7 +1491,7 @@ class WarehouseController extends BaseController
      * @param int $jobId
      * @param string $action
      * @return RawDataset
-     * @throws AccessDeniedException if the provided user does not have access to the specified realm.
+     * @throws AccessDeniedHttpException if the provided user does not have access to the specified realm.
      */
     private function getJobDataSet(XDUser $user, string $realm, $jobId, string $action): RawDataset
     {
@@ -2023,7 +2022,7 @@ class WarehouseController extends BaseController
      * @param string $realm
      * @param array $searchparams
      * @return Response
-     * @throws AccessDeniedException if the provided user does not have access to the provided realm.
+     * @throws AccessDeniedHttpException if the provided user does not have access to the provided realm.
      */
     private function getJobByPrimaryKey(XDUser $user, string $realm, array $searchparams): Response
     {
@@ -2122,7 +2121,7 @@ class WarehouseController extends BaseController
      *                                 key is provided; if the end date is
      *                                 before the start date; or if the offset
      *                                 is negative.
-     * @throws AccessDeniedException if the user does not have permission to
+     * @throws AccessDeniedHttpException if the user does not have permission to
      * get raw data from the requested realm.
      * @throws Exception
      */
@@ -2238,10 +2237,7 @@ class WarehouseController extends BaseController
         }
         $queryDescripters = Acls::getQueryDescripters($user, $params['realm']);
         if (empty($queryDescripters)) {
-            throw new AccessDeniedException(
-                'Your user account does not have permission to get raw data'
-                . ' from the requested realm.'
-            );
+            throw new AccessDeniedHttpException();
         }
         $params['fields'] = $this->getRawDataFieldsArray($request);
         $params['filters'] = $this->validateRawDataFiltersParams(
