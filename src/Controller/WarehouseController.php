@@ -6,48 +6,57 @@ namespace CCR\Controller;
 
 use CCR\DB;
 use CCR\Log;
-use DataWarehouse\Access\MetricExplorer;
-use DataWarehouse\Access\Usage;
 use DataWarehouse\Data\BatchDataset;
-use DataWarehouse\Data\RawDataset;
 use DataWarehouse\Export\RealmManager;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
-use DataWarehouse\Query\Exceptions\UnavailableTimeAggregationUnitException;
-use DataWarehouse\Query\Exceptions\UnknownGroupByException;
-use DataWarehouse\Query\RawQuery;
 use Exception;
 use Models\Services\Acls;
 use Models\Services\Parameters;
 use Models\Services\Realms;
 use Models\Services\Tokens;
-use PDO;
-use Psr\Log\LoggerInterface;
-use stdClass;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+use XDUser;
+use DataWarehouse\Access\MetricExplorer;
+use DataWarehouse\Access\Usage;
+use stdClass;
+
+use Psr\Log\LoggerInterface;
+use UserStorage;
+use function xd_response\buildError;
+
+use DataWarehouse\Data\RawDataset;
+use DataWarehouse\Query\Exceptions\UnavailableTimeAggregationUnitException;
+use DataWarehouse\Query\Exceptions\UnknownGroupByException;
+use DataWarehouse\Query\RawQuery;
+
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
-use Twig\Environment;
-use UserStorage;
-use XDUser;
-use function xd_response\buildError;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
+
 
 /**
  * This controller is ported from the old classes/Rest/Controllers/WarehouseControllerProvider.php
  *
- *
- */
+ * @SuppressWarnings(PHPMD.StaticAccess)
+ **/
 class WarehouseController extends BaseController
 {
+    /**
+     * The maximum number of search records that are allowed.
+     *
+     * @var int
+     */
     public const MAX_RECORDS = 50;
 
     /**
@@ -556,7 +565,6 @@ class WarehouseController extends BaseController
         $actionName = 'searchJobsByAction';
 
         $realm = $this->getStringParam($request, 'realm');
-
         $jobId = $this->getIntParam($request, 'jobid');
 
         $results = $this->processJobSearchByAction($request, $user, $action, $realm, $jobId, $actionName);
@@ -1597,7 +1605,7 @@ class WarehouseController extends BaseController
 
         $result = array();
         foreach ($info->getJobTimeseriesMetricNodeMeta($user, $jobId, $tsId, $nodeId) as $cpu) {
-            $cpu['url'] = "/warehouse/search/jobs/timeseries";
+            $cpu['url'] = "/rest/v0.1/warehouse/search/jobs/timeseries";
             $cpu['type'] = "timeseries";
             $cpu['dtype'] = "cpuid";
             $result[] = $cpu;
@@ -1633,11 +1641,11 @@ class WarehouseController extends BaseController
 
         $result = array();
         foreach ($info->getJobTimeseriesMetricMeta($user, $jobId, $tsId) as $node) {
-            $node['url'] = "/warehouse/search/jobs/timeseries";
+            $node['url'] = "/rest/v0.1/warehouse/search/jobs/timeseries";
             $node['type'] = "timeseries";
 
             /*TODO: verify that this is node not nodeid*/
-            $node['dtype'] = "node";
+            $node['dtype'] = "nodeid";
             $result[] = $node;
         }
 
@@ -1667,7 +1675,7 @@ class WarehouseController extends BaseController
 
                 $result = [];
                 foreach ($info->getJobTimeseriesMetaData($user, $jobId) as $tsid) {
-                    $tsid['url'] = "/warehouse/search/jobs/vmstate";
+                    $tsid['url'] = "/rest/v0.1/warehouse/search/jobs/vmstate";
                     $tsid['type'] = "timeseries";
                     $tsid['dtype'] = "tsid";
                     $result[] = $tsid;
@@ -1679,7 +1687,7 @@ class WarehouseController extends BaseController
 
                 $result = [];
                 foreach ($info->getJobTimeseriesMetaData($user, $jobId) as $tsid) {
-                    $tsid['url'] = "/warehouse/search/jobs/timeseries";
+                    $tsid['url'] = "/rest/v0.1/warehouse/search/jobs/timeseries";
                     $tsid['type'] = "timeseries";
                     $tsid['dtype'] = "tsid";
                     $result[] = $tsid;
@@ -2430,12 +2438,12 @@ class WarehouseController extends BaseController
 
     /**
      * Get the array of field aliases from the given request to the raw data
-     * endpoint (@param Request $request
-     * @return array|null containing the field aliases parsed from the request,
-     *                    if provided.
-     * @see getRawData()), e.g., the parameter `fields=foo,bar,baz`
+     * endpoint (@see getRawData()), e.g., the parameter `fields=foo,bar,baz`
      * results in `['foo', 'bar', 'baz']`.
      *
+     * @param Request $request
+     * @return array|null containing the field aliases parsed from the request,
+     *                    if provided.
      */
     private function getRawDataFieldsArray(Request $request): ?array
     {
@@ -2461,9 +2469,6 @@ class WarehouseController extends BaseController
      *               values are arrays of the provided string values.
      * @throws BadRequestHttpException if any of the filter keys are invalid
      *                             dimension names.
-     * @see getRawData()), e.g., the parameter
-     * `filters[foo]=bar,baz` results in `['foo' => ['bar', 'baz']]`.
-     *
      */
     private function validateRawDataFiltersParams(Request $request, array $queryDescripters): ?array
     {
@@ -2526,10 +2531,6 @@ class WarehouseController extends BaseController
      * @param string $filterValuesStr a comma-separated string.
      * @return array
      * @throws BadRequestHttpException if the filter key is an invalid dimension name.
-     * @see getRawData()), and return the parsed array
-     * of values for that filter (e.g., `foo,bar,baz` becomes `['foo', 'bar',
-     * 'baz']`).
-     *
      */
     private function validateRawDataFilterParam(
         array  $queryDescripters,
