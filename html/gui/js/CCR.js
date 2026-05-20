@@ -1095,7 +1095,7 @@ const presentSignUpViaLoginPrompt = function () {
     XDMoD.TrackEvent('Login Window', 'Clicked on Sign Up button');
     CCR.xdmod.ui.login_prompt.close();
     CCR.xdmod.ui.actionSignUp();
-}; //presentSignUpViaLoginPrompt
+};
 
 CCR.xdmod.ui.actionSignUp = function () {
 
