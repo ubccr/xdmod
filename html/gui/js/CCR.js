@@ -1089,6 +1089,29 @@ var presentLoginResponse = function (message, status, target, cb) {
         cb();
     }
 }; //presentLoginResponse
+
+var clearLoginResponse = function (target) {
+
+    var targetCmp = Ext.getCmp(target);
+    targetCmp.hide();
+}; //clearLoginResponse
+
+var presentContactFormViaLoginError = function () {
+    XDMoD.TrackEvent('Login Window', 'Clicked on Conact Us');
+    CCR.xdmod.ui.login_prompt.close();
+
+    var contact = new XDMoD.ContactDialog();
+    contact.show();
+}; //presentContactFormViaLoginError
+
+var presentSignUpViaLoginPrompt = function () {
+
+    XDMoD.TrackEvent('Login Window', 'Clicked on Sign Up button');
+    CCR.xdmod.ui.login_prompt.close();
+    CCR.xdmod.ui.actionSignUp();
+
+}; //presentSignUpViaLoginPrompt
+
 // -----------------------------------
 
 CCR.xdmod.ui.actionSignUp = function () {
@@ -1280,7 +1303,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
                 },
                 {
                     xtype: 'tbtext',
-                    html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
+                   html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
                     id: 'sign_up_link'
                 }]
             }]
