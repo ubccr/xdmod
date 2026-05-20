@@ -562,6 +562,12 @@ class WarehouseController extends BaseController
         $actionName = 'searchJobsByAction';
 
         $realm = $this->getStringParam($request, 'realm');
+        $realms = $this->getStringParam($request, 'realms');
+
+        // if we don't have a $realm, then fall back to $realms.
+        if (empty($realm)) {
+            $realm = ucfirst($realms);
+        }
         $jobId = $this->getIntParam($request, 'jobid');
 
         $results = $this->processJobSearchByAction($request, $user, $action, $realm, $jobId, $actionName);
