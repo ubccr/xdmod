@@ -1140,8 +1140,7 @@ class XDReportManager
     public function fetchChartBlob(
         $type,
         $insertion_rank,
-        $chart_id_cache_file = null,
-        $logger = null
+        $chart_id_cache_file = null
     ) {
         $pdo = DB::factory('database');
         $trace = "";
@@ -1433,13 +1432,9 @@ class XDReportManager
         $type,
         $insertion_rank,
         $start_date,
-        $end_date,
-        $logger = null
+        $end_date
     ) {
         $pdo = DB::factory('database');
-        if (!is_null($logger)) {
-            $logger->debug("Generating Chart Blob - Type: $type");
-        }
         switch ($type) {
             case 'volatile':
                 $temp_file = $this->generateCachedFilename(
@@ -1450,10 +1445,6 @@ class XDReportManager
                 $temp_file = str_replace('.png', '.xrc', $temp_file);
 
                 $iq = array();
-                if (!is_null($logger)) {
-                    $logger->debug("Checking if Volatile File Exists; $temp_file");
-                }
-
                 if (file_exists($temp_file) == true) {
                     $chart_id_config = file($temp_file);
                     $iq[] = array('chart_id' => $chart_id_config[0]);

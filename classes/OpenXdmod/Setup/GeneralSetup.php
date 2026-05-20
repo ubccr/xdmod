@@ -128,24 +128,7 @@ EOT
 
         $this->saveIniConfig($settings, 'portal_settings');
 
-        # we don't actually need any of the contents of .env but it does need to exist.
-        file_put_contents(BASE_DIR . '/.env', "");
-
-        // Make sure to clear the cache before dumping the dotenv so we start clean.
-        try {
-            SymfonyCommandHelper::executeCommand('cache:clear');
-        } catch (\Exception $e) {
-            throw new \RuntimeException('Error occurred executing cache:clear', $e);
-        }
-
-
-        // Dump dotenv data so we don't read .env each time in prod.
-        // Note: this means that if you want to start debugging stuff you'll need to delete the generated .env.
-        try {
-            SymfonyCommandHelper::executeCommand("dotenv:dump");
-        } catch (\Exception $e) {
-            throw new \RuntimeException('Error occurred executing dotenv:dump', $e);
-        }
-
+        file_put_contents(BASE_DIR . '/.env', '');
+        SymfonyCommandHelper::dumpDotEnv();
     }
 }

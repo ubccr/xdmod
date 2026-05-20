@@ -376,9 +376,9 @@ class ReportBuilderController extends BaseController
                             'rank' => $rank,
                             'did'  => '',
                         ];
-                        $this->logger->error('Saving Report', ['volatile', $insertion_rank, $start_date, $end_date]);
+                        $this->logger->info('Saving Report', ['volatile', $insertion_rank, $start_date, $end_date]);
                         $cached_blob = $start_date . ',' . $end_date . ';'
-                            . $reportManager->generateChartBlob('volatile', $insertion_rank, $start_date, $end_date, $this->logger);
+                            . $reportManager->generateChartBlob('volatile', $insertion_rank, $start_date, $end_date);
                     } else {
                         $cached_blob = $start_date . ',' . $end_date . ';' . file_get_contents($location);
                     }
@@ -514,14 +514,14 @@ class ReportBuilderController extends BaseController
     #[Route('/reports/builder/image', methods: ['GET'])]
     public function generateReportImage(Request $request): Response
     {
-        $this->logger->warning('Generating a Report Image');
+        $this->logger->debug('Generating report image');
 
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         $userId = null;
         try {
-            $this->logger->warning('Report Image Authenticated');
             $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+            $this->logger->debug('Report image authenticated');
 
             $type = $this->getStringParam($request, 'type', true, null, ReportGenerator::REPORT_CHART_TYPE_REGEX);
             $ref = $this->getStringParam($request, 'ref', true, null, ReportGenerator::REPORT_CHART_REF_REGEX);
@@ -533,7 +533,7 @@ class ReportBuilderController extends BaseController
             switch ($type) {
                 case 'chart_pool':
                 case 'volatile':
-                    $this->logger->warning('Report Image Volatile / chart Pool');
+                    $this->logger->debug('Report image type is', [$type]);
                     $numMatches = preg_match('/^(\d+);(\d+)$/', $ref, $matches);
 
                     if ($numMatches === 0) {
@@ -601,40 +601,31 @@ class ReportBuilderController extends BaseController
                 throw new AccessDeniedHttpException(sprintf('Invalid User Request. Expected %s, Actual: %s', $user->getUserID(), $userId));
             }
 
-            $this->logger->warning('Valid User Request');
-
             $reportManager = null;
             try {
-                $this->logger->warning('Instantiating XDREportManager');
                 $reportManager = new XDReportManager($user);
             } catch (Exception $exception) {
-                $this->logger->error('Error instantiating Report Manager');
+                $this->logger->error('Error instantiating XDReportManager', [$exception->getMessage()]);
             }
 
-            $this->logger->warning('After Report Manager.');
-
             if (!empty($reportManager)) {
-                $this->logger->warning('Fetching Chart Blob', [$type, $insertionRank]);
-                $blob = $reportManager->fetchChartBlob($type, $insertionRank, null, $this->logger);
-                $this->logger->warning('Substringing Blob');
+                $this->logger->debug('Fetching chart blob', [$type, $insertionRank]);
+                $blob = $reportManager->fetchChartBlob($type, $insertionRank, null);
                 $image_data_header = substr($blob, 0, 8);
-                $this->logger->warning('Chart BLob Fetched!');
 
                 if ($image_data_header != "\x89PNG\x0d\x0a\x1a\x0a") {
                     throw new Exception($blob);
                 }
-                $this->logger->warning('Blob is a png');
+
                 // If the blob is empty, than substitute the image below to be returned to the user.
                 if (in_array(md5($blob), self::$emptyBlobs)) {
                     $blob = file_get_contents(dirname(__FILE__) . '/gui/images/report_thumbnail_no_data.png');
                 }
 
                 $headers = ['Content-Type' => 'image/png'];
-                $this->logger->warning('Returning PNG');
-                $this->logger->warning('Headers: ', [$headers]);
                 return new Response($blob, 200,  $headers);
             } else {
-                $this->logger->error('Oops, we shouldnt be here.');
+                $this->logger->error('An error occurred generating the report image.');
             }
 
             return $this->json(['message' => 'Unable to instantiate report manager'], 500);
@@ -662,7 +653,6 @@ class ReportBuilderController extends BaseController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
         $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
 
-        $this->logger->warning('get Report Data Start');
         $reportManager = new \XDReportManager($user);
 
         $flushCache = $this->getBooleanParam($request, 'flush_cache');

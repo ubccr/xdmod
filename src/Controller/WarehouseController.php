@@ -44,6 +44,10 @@ use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 
+use Twig\Environment;
+use UserStorage;
+use XDUser;
+use function xd_response\buildError;
 
 /**
  * This controller is ported from the old classes/Rest/Controllers/WarehouseControllerProvider.php
