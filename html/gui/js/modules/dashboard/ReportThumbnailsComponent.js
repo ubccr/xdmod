@@ -52,7 +52,7 @@ XDMoD.Module.Dashboard.ReportThumbnailsComponent = Ext.extend(Ext.Panel, {
                             var tmpv = v_split[index].split('=')[1];
                             params[tmpk] = tmpv;
                         }
-                        var value;
+                        let value;
                         if (!(self.timeframe.start_date === null && self.timeframe.end_date === null)) {
                             value = '/reports/builder/image?type=cached&ref=' + params.ref;
                             value = value + '&start=' + self.timeframe.start_date + '&end=' + self.timeframe.end_date + '&token=';
