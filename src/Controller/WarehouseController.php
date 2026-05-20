@@ -13,7 +13,6 @@ use Exception;
 use Models\Services\Acls;
 use Models\Services\Parameters;
 use Models\Services\Realms;
-use Models\Services\Tokens;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -42,12 +41,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
-
-
-use Twig\Environment;
-use UserStorage;
-use XDUser;
-use function xd_response\buildError;
 
 /**
  * This controller is ported from the old classes/Rest/Controllers/WarehouseControllerProvider.php
