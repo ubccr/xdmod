@@ -1089,7 +1089,13 @@ var presentLoginResponse = function (message, status, target, cb) {
         cb();
     }
 }; //presentLoginResponse
-// -----------------------------------
+
+// eslint-disable-next-line no-unused-vars
+const presentSignUpViaLoginPrompt = function () {
+    XDMoD.TrackEvent('Login Window', 'Clicked on Sign Up button');
+    CCR.xdmod.ui.login_prompt.close();
+    CCR.xdmod.ui.actionSignUp();
+};
 
 CCR.xdmod.ui.actionSignUp = function () {
 
@@ -1280,7 +1286,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
                 },
                 {
                     xtype: 'tbtext',
-                    html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
+                   html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
                     id: 'sign_up_link'
                 }]
             }]
