@@ -27,10 +27,6 @@ class SABUserController extends BaseController
         switch ($operation) {
             case 'enum_tg_users':
                 return $this->enumTgUsers($request);
-            case 'assign_assumed_person':
-            case 'get_mapping':
-                /* these operations are not currently used. */
-                break;
         }
         return $this->json(['success' => false, 'message' => 'invalid operation specified']);
     }
