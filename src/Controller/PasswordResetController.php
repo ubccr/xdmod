@@ -49,7 +49,8 @@ class PasswordResetController extends BaseController
             return $this->render(
                 'twig/password_reset_expired.html.twig',
                 [
-                    'site_address' => $this->parameters->get('xdmod.portal_settings.general.site_address')
+                    'site_address' => $this->parameters->get('xdmod.portal_settings.general.site_address'),
+                    'title' => $this->parameters->get('xdmod.portal_settings.general.title')
                 ]
             );
         }
@@ -57,6 +58,7 @@ class PasswordResetController extends BaseController
         return $this->render(
             '/twig/password_reset.html.twig',
             [
+                'title' => $this->parameters->get('xdmod.portal_settings.general.title'),
                 'rid' => $rid,
                 'mode' => $mode,
                 'first_name' => htmlspecialchars(
