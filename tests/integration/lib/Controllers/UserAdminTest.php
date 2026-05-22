@@ -896,7 +896,7 @@ class UserAdminTest extends BaseUserAdminTest
             );
 
             // Now we can trigger a password reset.
-            $adminHelper->authenticateDashboard('mgr');
+            $adminHelper->authenticate('mgr');
             $passwordResetResponse = $adminHelper->post('controllers/user_admin.php', null, ["operation" => 'pass_reset', 'uid' => '3']);
             $this->assertEquals(200, $passwordResetResponse[1]['http_code'], "Unable to trigger a password reset.");
 
