@@ -1366,7 +1366,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
             $data = array();
             foreach ($raw as $row) {
                 $resource = $row['resource'];
-                $localJobId = $row['local_job_id'];
+                $localJobId = $row['provider_job_id'];
 
                 $row['text'] = "$resource-$localJobId";
                 $row['dtype'] = 'jobid';
@@ -1516,7 +1516,7 @@ class WarehouseControllerProvider extends BaseControllerProvider
                 'ref' => array(
                     'realm' => $realm,
                     'jobid' => $jobId,
-                    "text" => $thisjob['resource'] . '-' . $thisjob['local_job_id']
+                    "text" => $thisjob['resource'] . '-' . $thisjob['provider_job_id']
                 )
             )
         );
@@ -1531,11 +1531,11 @@ class WarehouseControllerProvider extends BaseControllerProvider
                     'ref' => array(
                         'realm' => $realm,
                         'jobid' => $jobpeer['jobid'],
-                        'local_job_id' => $jobpeer['local_job_id'],
+                        'local_job_id' => $jobpeer['provider_job_id'],
                         'resource' => $jobpeer['resource']
                     )
                 );
-                $result['categories'][] = $jobpeer['resource'] . '-' . $jobpeer['local_job_id'];
+                $result['categories'][] = $jobpeer['resource'] . '-' . $jobpeer['provider_job_id'];
             }
         }
 
@@ -2118,7 +2118,8 @@ class WarehouseControllerProvider extends BaseControllerProvider
 
         $results = array();
         foreach ($dataSet->getResults() as $result) {
-            $result['text'] = $result['resource'] . "-" . $result['local_job_id'];
+            $result['text'] = $result['resource'] . "-" . $result['provider_job_id'];
+            $result['local_job_id'] = $result['provider_job_id'];
             $result['dtype'] = 'jobid';
             array_push($results, $result);
         }

@@ -147,6 +147,13 @@
                 "batchExport": true
             },
             {
+                "name": "Local Job Id Raw",
+                "formula": "local_job_id_raw",
+                "group": "Administration",
+                "documentation": "A unique identifier assigned to the job by the job scheduler. This field will be identical to the Local Job Id field except for array jobs for the Slurm scheduler. In the case of Slurm array jobs this will be the internal identifier for the job.",
+                "batchExport": true
+            },
+            {
                 "name": "Resource",
                 "tableAlias": "rf",
                 "column": "name",
@@ -430,6 +437,7 @@
                 "documentation": "${HIERARCHY_BOTTOM_LEVEL_INFO}",
                 "batchExport": true
             }
-        ]
+        ],
+        "record_identifier_column": "local_job_id_raw"
     }
 }
