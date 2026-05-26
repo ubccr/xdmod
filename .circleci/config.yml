@@ -229,6 +229,7 @@ workflows:
   full-build:
     jobs:
       - build:
+      - test:
           matrix:
             parameters:
               os: [rocky8]
