@@ -218,9 +218,6 @@ jobs:
           condition:
             and:
               - equal: ["xdmod-time-trigger", << parameters.schedule-name >>]
-          #            and:
-          #              - equal: [ scheduled_pipeline, << pipeline.trigger_source >> ]
-          #              - equal: [ "xdmod-time-trigger", << pipeline.schedule.name >> ]
           steps:
             - store_artifacts:
                 path: ~/code_coverage
@@ -228,7 +225,7 @@ jobs:
 workflows:
   full:
     jobs:
-      - build:
+      - build
       - test:
           matrix:
             parameters:
