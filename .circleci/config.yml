@@ -16,6 +16,7 @@ jobs:
           command: |
             dnf module -y enable php:7.4
             dnf install -y rpm-build php wget
+            yes '' | pecl install mongodb-1.18.1
       - run:
           name: Install Composer
           command: |
