@@ -16,6 +16,7 @@ jobs:
           command: |
             dnf module -y enable php:7.4
             dnf install -y rpm-build php
+            composer install xdmod
       - run:
           name: Build XDMoD RPM
           command: ./tests/ci/scripts/build_rpm.sh xdmod
