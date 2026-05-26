@@ -1,7 +1,3 @@
-# PHP CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-php/ for more details
-#
 version: 2.1
 
 executors:
@@ -10,6 +6,22 @@ executors:
       - image: cimg/base:current
 jobs:
   build:
+    docker:
+      - image: rockylinux:8
+    steps:
+      - checkout
+      - run:
+          name: Install build dependencies
+          command: dnf install -y rpm-build
+      - run:
+          name: Build XDMoD RPM
+          command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
+      - persist_to_workspace:
+          root: ~/rpmbuild/RPMS
+          paths:
+            - *.rpm
+
+  test:
     parameters:
       os:
         type: executor
@@ -25,6 +37,8 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
+      - attach_workspace:
+          at: ~/rpmbuild/RPMS
       - run:
           name: Docker Compose corresponding OS file
           command: docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
@@ -56,9 +70,6 @@ jobs:
       - run:
           name: Install XDMoD Composer Dependencies
           command: docker exec -w /root/xdmod xdmod composer install
-      - run:
-          name: Build XDMoD RPM
-          command: docker exec -w /root/xdmod xdmod /root/bin/buildrpm xdmod
       - when:
           condition:
             equal: [ << parameters.install-type >>, 'upgrade' ]

@@ -28,8 +28,7 @@ fi
 
 cp -r $REF_SOURCE /var/tmp/
 
-set -e
-set -o pipefail
+set -eo pipefail
 
 PYTHON_SCIPY=python3-scipy
 if [ `rpm -E %{rhel}` = 7 ]; then
