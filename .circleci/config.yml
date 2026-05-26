@@ -19,7 +19,7 @@ jobs:
       - persist_to_workspace:
           root: ~/rpmbuild/RPMS
           paths:
-            - *.rpm
+            - ./*.rpm
 
   test:
     parameters:
