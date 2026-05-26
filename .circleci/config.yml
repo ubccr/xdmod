@@ -15,7 +15,7 @@ jobs:
           name: Install build dependencies
           command: |
             dnf module -y enable php:7.4
-            dnf install -y rpm-build php
+            dnf install -y rpm-build php wget
       - run:
           name: Install Composer
           command: |
