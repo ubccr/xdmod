@@ -226,7 +226,7 @@ jobs:
                 path: ~/code_coverage
 
 workflows:
-  full-build:
+  full:
     jobs:
       - build:
       - test:
@@ -236,3 +236,5 @@ workflows:
               install-type: ["fresh_install", "upgrade"]
               string_os: [rocky8]
               schedule-name: ["xdmod-time-trigger"]
+          requires:
+            - build
