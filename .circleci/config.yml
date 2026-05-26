@@ -15,7 +15,7 @@ jobs:
           name: Install build dependencies
           command: |
             dnf module -y enable php:7.4
-            dnf install -y rpm-build wget php php-pear
+            dnf install -y rpm-build wget php php-devel php-pear
             yes '' | pecl install mongodb-1.18.1
       - run:
           name: Install Composer
