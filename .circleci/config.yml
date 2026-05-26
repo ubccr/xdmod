@@ -20,8 +20,8 @@ jobs:
       - persist_to_workspace:
           root: .
           paths:
-            - ~/rpmbuild/RPMS/*.rpm
-            - ~/xdmod/*
+            - rpmbuild/RPMS/*.rpm
+            - xdmod/*
   test:
     parameters:
       os:
