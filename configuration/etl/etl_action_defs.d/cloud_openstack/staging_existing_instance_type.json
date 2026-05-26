@@ -14,7 +14,6 @@
             "description": "it.description",
             "num_cores": "it.num_cores",
             "memory_mb": "it.memory_mb",
-            "disk_gb": "it.disk_gb",
             "start_time": "it.start_time"
         },
         "joins": [

@@ -1,9 +1,9 @@
 <?php
 /**
- * Update config files from version 11.0.2 to 11.5.0
+ * Update config files from version 11.0.3 to 11.5.0
  */
 
-namespace OpenXdmod\Migration\Version1102To1150;
+namespace OpenXdmod\Migration\Version1103To1150;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 use CCR\Json;

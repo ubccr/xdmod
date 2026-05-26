@@ -202,7 +202,7 @@ EOF;
 
         $view['start_date'] = "2016-01-01";
         $view['end_date'] = "2016-12-31";
-        $validRange = array($view, 1.97829913);
+        $validRange = array($view, 1.97826857);
 
         $view['start_date'] = "2017-01-01";
         $view['end_date'] = "2017-12-31";

@@ -16,7 +16,7 @@
             "memory_mb": "itt.memory_mb",
             "processorbucket_id": "(SELECT id FROM ${SOURCE_SCHEMA}.processor_buckets pb WHERE itt.num_cores BETWEEN pb.min_processors AND pb.max_processors)",
             "memorybucket_id": "(SELECT id FROM ${SOURCE_SCHEMA}.memory_buckets mb WHERE itt.memory_mb BETWEEN mb.min_memory AND mb.max_memory)",
-            "disk_gb": "itt.disk_gb",
+            "disk_gb": "itd.disk_gb",
             "start_time_ts": "FLOOR(e.start_time_ts)",
             "end_time_ts": "FLOOR(e.end_time_ts)",
             "start_day_id": "YEAR(FROM_UNIXTIME(e.start_time_ts)) * 100000 + DAYOFYEAR(FROM_UNIXTIME(e.start_time_ts))",

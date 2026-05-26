@@ -46,13 +46,6 @@
                 "default": 0
             },
             {
-                "name": "disk_gb",
-                "type": "int(11)",
-                "nullable": true,
-                "default": 0,
-                "comment": "Disk size configured in image"
-            },
-            {
                 "name": "start_time",
                 "type": "char(26)",
                 "nullable": true,

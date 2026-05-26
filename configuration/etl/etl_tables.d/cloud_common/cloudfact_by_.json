@@ -151,6 +151,12 @@
                 "nullable": false,
                 "default": -1,
                 "comment": "DIMENSION: The state (active, inactive, shelved) of the instances"
+            },{
+                "name": "last_modified",
+                "type": "timestamp",
+                "default": "CURRENT_TIMESTAMP",
+                "nullable": false,
+                "extra": "ON UPDATE CURRENT_TIMESTAMP"
             }
         ],
 
@@ -170,6 +176,9 @@
         },{
             "name": "index_period",
             "columns": [ "${AGGREGATION_UNIT}_id" ]
+        },{
+            "name": "index_last_modified",
+            "columns": ["last_modified"]
         }]
     }
 }
