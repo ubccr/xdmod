@@ -38,7 +38,7 @@ jobs:
     steps:
       - setup_remote_docker
       - attach_workspace:
-          at: ~/rpmbuild/RPMS
+          at: ~/project
       - run:
           name: Docker Compose corresponding OS file
           command: docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
