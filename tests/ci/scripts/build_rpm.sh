@@ -4,6 +4,19 @@ SRC_DIR=`pwd`
 BUILD_DIR=$SRC_DIR/open_xdmod/build
 SCRIPT_DIR=$SRC_DIR/open_xdmod/build_scripts
 
+dnf module -y enable php:7.4
+dnf install -y rpm-build make php php-devel php-pear
+yes '' | pecl install mongodb-1.18.1
+
+dnf install -y wget
+php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
+EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)" && \
+ACTUAL_SIGNATURE="$(php -r "echo hash_file('SHA384', 'composer-setup.php');")" && \
+if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]; then echo 'ERROR: Invalid composer signature'; exit 1; fi && \
+php composer-setup.php --install-dir=/bin --filename=composer && \
+php -r "unlink('composer-setup.php');"
+composer install
+
 # Boilerplate RPM build setup
 mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 echo '%_topdir %(echo $HOME)/rpmbuild' > ~/.rpmmacros

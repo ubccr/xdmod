@@ -12,26 +12,6 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install build dependencies
-          command: |
-            dnf module -y enable php:7.4
-            dnf install -y rpm-build make php php-devel php-pear
-            yes '' | pecl install mongodb-1.18.1
-      - run:
-          name: Install Composer
-          command: |
-            dnf install -y wget
-            php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-            EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)" && \
-            ACTUAL_SIGNATURE="$(php -r "echo hash_file('SHA384', 'composer-setup.php');")" && \
-            if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]; then echo 'ERROR: Invalid composer signature'; exit 1; fi && \
-            php composer-setup.php --install-dir=/bin --filename=composer && \
-            php -r "unlink('composer-setup.php');"
-      - run:
-          name: Install Composer dependencies
-          command: |
-            composer install
-      - run:
           name: Build XDMoD RPM
           command: ./tests/ci/scripts/build_rpm.sh xdmod
       - persist_to_workspace:
