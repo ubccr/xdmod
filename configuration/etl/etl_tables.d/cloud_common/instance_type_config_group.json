@@ -1,0 +1,84 @@
+{
+    "#": "Instance type observations with config group assignment",
+
+    "table_definition": {
+        "name": "instance_type_config_group",
+        "engine": "InnoDB",
+        "comment": "Instance type observations with config group assignment",
+        "columns": [
+            {
+                "name": "resource_id",
+                "type": "int(11)",
+                "nullable": false,
+                "comment": "Resource to which this type belongs"
+            },
+            {
+                "name": "instance_type_id",
+                "type": "int(11)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "instance_type",
+                "type": "varchar(64)",
+                "nullable": false,
+                "comment": "Short version or abbrev"
+            },
+            {
+                "name": "display",
+                "type": "varchar(256)",
+                "nullable": false,
+                "comment": "What to show the user"
+            },
+            {
+                "name": "description",
+                "type": "varchar(1024)",
+                "nullable": true,
+                "default": null
+            },
+            {
+                "name": "num_cores",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "memory_mb",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0
+            },
+            {
+                "name": "start_time",
+                "type": "decimal(16,6)",
+                "nullable": false
+            },
+            {
+                "name": "config_group",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0,
+                "comment": "Group number that increments on each config change"
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "resource_id",
+                    "instance_type",
+                    "start_time"
+                ],
+                "is_unique": true
+            },
+            {
+                "name": "idx_grouping",
+                "columns": [
+                    "resource_id",
+                    "instance_type",
+                    "config_group"
+                ]
+            }
+        ]
+    }
+}

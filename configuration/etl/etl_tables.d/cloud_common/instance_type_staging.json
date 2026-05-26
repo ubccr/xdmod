@@ -15,7 +15,8 @@
             {
                 "name": "instance_type_id",
                 "type": "int(11)",
-                "nullable": false
+                "nullable": true,
+                "default": null
             },
             {
                 "name": "instance_type",
@@ -46,13 +47,6 @@
                 "type": "int(11)",
                 "nullable": false,
                 "default": 0
-            },
-            {
-                "name": "disk_gb",
-                "type": "int(11)",
-                "nullable": false,
-                "default": 0,
-                "comment": "Disk size configured in image"
             },
             {
                 "name": "start_time",

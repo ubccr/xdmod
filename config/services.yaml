@@ -24,6 +24,9 @@ services:
     legacy_code:
         namespace: CCR\
         resource: ../classes/CCR/
+    CCR\EventListeners\RouteBasedExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
     CCR\DB\iDatabase:
         factory:
             - CCR\DB

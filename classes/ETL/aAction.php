@@ -504,8 +504,7 @@ abstract class aAction extends aEtlObject
     }
 
     /** -----------------------------------------------------------------------------------------
-     * Perform any pre-execution tasks. For example, disabling table keys on MyISAM
-     * tables, or other setup tasks.
+     * Perform any pre-execution tasks.
      *
      * NOTE: This method must check if we are in DRYRUN mode before executing any tasks.
      *
@@ -516,9 +515,7 @@ abstract class aAction extends aEtlObject
     abstract protected function performPreExecuteTasks();
 
     /** -----------------------------------------------------------------------------------------
-     * Perform any post-execution tasks. For example, enabling table keys on MyISAM
-     * tables, or tracking table history.
-     *
+     * Perform any post-execution tasks.
      * NOTE: This method must check if we are in DRYRUN mode before executing any tasks.
      *
      * @param integer|null $numRecordsProcessed The number of records processed during

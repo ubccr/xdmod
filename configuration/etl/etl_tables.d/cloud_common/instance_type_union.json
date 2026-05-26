@@ -18,7 +18,7 @@
                 "type": "int(11)",
                 "default": null,
                 "nullable": true,
-                "comment": "Resource to which this type belongs"
+                "comment": "ID from existing modw_cloud.instance_type table, NULL for new raw data"
             },
             {
                 "name": "instance_type",
@@ -53,13 +53,6 @@
                 "default": 0
             },
             {
-                "name": "disk_gb",
-                "type": "int(11)",
-                "nullable": false,
-                "default": 0,
-                "comment": "Disk size configured in image"
-            },
-            {
                 "name": "start_time",
                 "type": "decimal(16,6)",
                 "nullable": false,
@@ -72,13 +65,18 @@
                 "name": "PRIMARY",
                 "columns": [
                     "resource_id",
-                    "instance_type_id",
                     "instance_type",
                     "num_cores",
                     "memory_mb",
-                    "disk_gb"
+                    "start_time"
                 ],
                 "is_unique": true
+            },
+            {
+                "name": "idx_instance_type_id",
+                "columns": [
+                    "instance_type_id"
+                ]
             }
         ]
     }

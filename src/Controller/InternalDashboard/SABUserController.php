@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use XDWarehouse;
+use XDUser;
 
 class SABUserController extends BaseController
 {
@@ -20,15 +21,15 @@ class SABUserController extends BaseController
     #[Route('/controllers/sab_user.php')]
     public function index(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
+        $user = $this->authorize($request, ['mgr']);
 
         $operation = $this->getStringParam($request, 'operation', true);
         switch ($operation) {
             case 'enum_tg_users':
-                return $this->enumTgUsers($request);
+                return $this->enumTgUsers($request, $user);
+            default:
+                return $this->json(['success' => false, 'message' => 'invalid operation specified']);
         }
-        return $this->json(['success' => false, 'message' => 'invalid operation specified']);
     }
 
     /**
@@ -37,7 +38,7 @@ class SABUserController extends BaseController
      * @return Response
      * @throws Exception
      */
-    private function enumTgUsers(Request $request): Response
+    private function enumTgUsers(Request $request, XDUser $user): Response
     {
         $start = $this->getIntParam($request, 'start', true);
         $limit = $this->getIntParam($request, 'limit');
@@ -47,8 +48,6 @@ class SABUserController extends BaseController
 
         $query = $this->getStringParam($request, 'query');
         $userManagement = $this->getStringParam($request, 'userManagement');
-
-        $user = $this->getXDUser($request->getSession());
 
         $universityId = null;
         if ($user->hasAcl(ROLE_ID_CAMPUS_CHAMPION) && !isset($userManagement)) {

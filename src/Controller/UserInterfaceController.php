@@ -131,7 +131,8 @@ class UserInterfaceController extends BaseController
 
         // Send the request and user to the Usage-to-Metric Explorer adapter.
         $this->logger->debug('Instantiating Usage Object');
-        $usageAdapter = new Usage($request->request->all());
+        $params = array_merge($request->query->all(), $request->request->all());
+        $usageAdapter = new Usage($params);
 
         $this->logger->debug('Calling Usage->getCharts');
 
