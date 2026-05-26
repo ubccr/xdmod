@@ -4,6 +4,7 @@ executors:
   rocky8: &rocky8-executor
     docker:
       - image: cimg/base:current
+
 jobs:
   build:
     docker:
@@ -20,7 +21,6 @@ jobs:
           root: ~/rpmbuild/RPMS
           paths:
             - ./*.rpm
-
   test:
     parameters:
       os:
