@@ -13,7 +13,9 @@ jobs:
       - checkout
       - run:
           name: Install build dependencies
-          command: dnf install -y rpm-build
+          command: |
+            dnf module -y enable php:7.4
+            dnf install -y rpm-build php
       - run:
           name: Build XDMoD RPM
           command: ./tests/ci/scripts/build_rpm.sh xdmod
