@@ -1208,7 +1208,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
     //reset referer
     XDMoD.referer = document.location.hash;
 
-    const isTutorial = XDMoD.referer == '#tutorial';
+    const isTutorial = XDMoD.referer === '#tutorial';
 
     // If we're using SSO and not using the login modal then start the auth process.
     if (!isTutorial && CCR.xdmod.SSODirectLink) {
@@ -1332,7 +1332,6 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
     if (isTutorial) {
         assistanceItems = [];
     }
-
 
     var localLoginItems = [
         txtLoginUsername,
