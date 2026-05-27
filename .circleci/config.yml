@@ -18,7 +18,7 @@ jobs:
           root: /root/
           paths:
             - rpmbuild/RPMS/*.rpm
-            - project/xdmod/*
+            - project/*
   test:
     parameters:
       os:
