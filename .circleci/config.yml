@@ -15,10 +15,10 @@ jobs:
           name: Build XDMoD RPM
           command: ./tests/ci/scripts/build_rpm.sh xdmod
       - persist_to_workspace:
-          root: .
+          root: /root/
           paths:
             - rpmbuild/RPMS/*.rpm
-            - xdmod/*
+            - project/xdmod/*
   test:
     parameters:
       os:
