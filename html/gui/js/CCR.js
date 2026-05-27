@@ -1208,8 +1208,10 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
     //reset referer
     XDMoD.referer = document.location.hash;
 
+    const isTutorial = XDMoD.referer == '#tutorial';
+
     // If we're using SSO and not using the login modal then start the auth process.
-    if (CCR.xdmod.SSODirectLink) {
+    if (!isTutorial && CCR.xdmod.SSODirectLink) {
         Ext.Ajax.request({
             url: '/rest/auth/idpredirect',
             method: 'GET',
@@ -1314,6 +1316,24 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
         });
     };
 
+    let assistanceItems = [
+        {
+            xtype: 'tbtext',
+            html: '<a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot your password?</a>',
+            id: 'forgot_password_link'
+        },
+        {
+            xtype: 'tbtext',
+            html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
+            id: 'sign_up_link'
+        }
+    ];
+
+    if (isTutorial) {
+        assistanceItems = [];
+    }
+
+
     var localLoginItems = [
         txtLoginUsername,
         txtLoginPassword,
@@ -1353,16 +1373,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
                 flex: 2,
                 height: 38,
                 id: 'assistancePrompt',
-                items: [{
-                    xtype: 'tbtext',
-                    html: '<a href="javascript:CCR.xdmod.ui.forgot_password()">Forgot your password?</a>',
-                    id: 'forgot_password_link'
-                },
-                {
-                    xtype: 'tbtext',
-                    html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
-                    id: 'sign_up_link'
-                }]
+                items: assistanceItems
             }]
         }
     ];
@@ -1422,7 +1433,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
     var title = 'Sign into XDMoD';
 
-    if (CCR.xdmod.isSSOConfigured) {
+    if (!isTutorial && CCR.xdmod.isSSOConfigured) {
         loginItems.push(SSOLoginFrm);
         if (!CCR.xdmod.SSOShowLocalLogin) {
             localLoginFrm.collapsible = true;
