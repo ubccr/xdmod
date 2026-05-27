@@ -17,7 +17,7 @@ jobs:
       - persist_to_workspace:
           root: /root/
           paths:
-            - rpmbuild/RPMS/*.rpm
+            - rpmbuild/RPMS/*/*.rpm
             - project/*
   test:
     parameters:
@@ -48,8 +48,8 @@ jobs:
       - run:
           name: Copy Files for Playwright and XDMoD containers
           command: |
-            docker cp ~/project xdmod:/root/xdmod
             docker cp ~/rpmbuild xdmod:/root/rpmbuild
+            docker cp ~/project xdmod:/root/xdmod
             docker cp ~/project playwright:/root/xdmod
       - run:
           name: Create test result directories
