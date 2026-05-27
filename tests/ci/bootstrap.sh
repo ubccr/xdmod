@@ -59,7 +59,7 @@ then
     chown -R mysql:mysql /var/log/mariadb
     chown -R mysql:mysql /var/run/mariadb
 
-    dnf install -y ~/rpmbuild/RPMS/*/*.rpm
+    dnf install -y ~/rpmbuild/RPMS/*.rpm
     mysql_install_db --user mysql
 
     if [ -f /etc/my.cnf.d/mariadb-server.cnf ]; then
@@ -163,7 +163,7 @@ fi
 if [ "$XDMOD_TEST_MODE" = "upgrade" ];
 then
     # Install the newly built RPM.
-    dnf -y install ~/rpmbuild/RPMS/*/*.rpm
+    dnf -y install ~/rpmbuild/RPMS/*.rpm
 
     ~/bin/services start
 
