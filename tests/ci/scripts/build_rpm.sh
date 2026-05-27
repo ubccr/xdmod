@@ -5,7 +5,7 @@ BUILD_DIR=$SRC_DIR/open_xdmod/build
 SCRIPT_DIR=$SRC_DIR/open_xdmod/build_scripts
 
 dnf module -y enable php:7.4
-dnf install -y rpm-build make php php-devel php-pear
+dnf install -y rpm-build make php php-devel php-pear php-zip
 yes '' | pecl install mongodb-1.18.1
 echo "extension=mongodb.so" > /etc/php.d/40-mongodb.ini
 
