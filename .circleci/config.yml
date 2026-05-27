@@ -35,7 +35,7 @@ jobs:
     steps:
       - setup_remote_docker
       - attach_workspace:
-          at: ~/project
+          at: /home/circleci/
       - run:
           name: Docker Compose corresponding OS file
           command: docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
