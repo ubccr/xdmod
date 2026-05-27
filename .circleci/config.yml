@@ -49,6 +49,7 @@ jobs:
           name: Copy Files for Playwright and XDMoD containers
           command: |
             docker cp ~/project xdmod:/root/xdmod
+            docker cp ~/rpmbuild xdmod:/root/rpmbuild
             docker cp ~/project playwright:/root/xdmod
       - run:
           name: Create test result directories
