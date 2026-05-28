@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
+use Authentication\SAML\XDSamlAuthentication;
 use CCR\DB;
 use CCR\Security\Helpers\Tokens;
 use Exception;
@@ -77,7 +78,8 @@ class AuthenticationController extends BaseController
         // (provided the supplied token is still 'valid' and a
         // corresponding record in SessionManager can be found)
         $session = $request->getSession();
-        if ($session->get('xdInit') !== null && !empty($token)) {
+        $token = $session->get('xdmod_token');
+        if ($session->get('xdInit') !== null && isset($token)) {
             $session_id = $session->getId();
             $ip_address = $request->getClientIP();
 
@@ -96,13 +98,10 @@ class AuthenticationController extends BaseController
                 ':ip_address' => $ip_address,
                 ':init_time' => $session->get('xdInit'),
             ));
-            $request->getSession()->invalidate();
-            $response = $this->redirectToRoute('xdmod_home');
-            $response->headers->removeCookie('xdmod_token');
         }
 
-        try {
-            $auth = new Authentication\SAML\XDSamlAuthentication();
+       try {
+            $auth = new XDSamlAuthentication();
             $auth->logout();
         } catch (InvalidArgumentException $ex) {
             // This will catch when apache or nginx have been set up
@@ -111,6 +110,9 @@ class AuthenticationController extends BaseController
             // up and we dont have to do anything with it
         }
 
+        $session->invalidate();
+        $response = $this->redirectToRoute('xdmod_home');
+        $response->headers->removeCookie('xdmod_token');
         return $response;
     }
 
