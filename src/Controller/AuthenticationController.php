@@ -112,7 +112,7 @@ class AuthenticationController extends BaseController
 
         $session->invalidate();
         $response = $this->redirectToRoute('xdmod_home');
-        $response->headers->removeCookie('xdmod_token');
+        $response->headers->clearCookie('xdmod_token');
         return $response;
     }
 

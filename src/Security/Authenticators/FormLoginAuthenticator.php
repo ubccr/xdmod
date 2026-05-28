@@ -204,7 +204,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
                 'name' => $xdUser->getFormalName()
             ]
         ]);
-        $response->headers->setCookie(new Cookie('xdmod_token', $xdUser->getToken()));
+        $response->headers->setCookie(new Cookie('xdmod_token', $xdUser->getToken(), sameSite: 'strict'));
         return $response;
     }
 
@@ -227,9 +227,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
     }
 
     /**
-     * This is required for the Authenticator to be set as an entrypoint. We need to set an entrypoint because we have
-     * multiple authenticators setup for our main firewall ( FormLoginAuthenticator, TokenAuthenticator, SSOAuthenticator )
-     *
+     * This is required for the Authenticator to be set as an entrypoint.
      * @param Request $request
      * @param AuthenticationException|null $authException
      * @return RedirectResponse
