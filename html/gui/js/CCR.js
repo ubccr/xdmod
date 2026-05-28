@@ -1414,7 +1414,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
     var localLoginFrm = new Ext.form.FormPanel({
         id: 'local_login_form',
-        title: isTutorial ? 'Sign in with your tutorial account' : 'Sign in with a local XDMoD account:',
+        title: isTutorial ? 'Sign in with your tutorial account:' : 'Sign in with a local XDMoD account:',
         items: localLoginItems,
         keys: [{
             key: Ext.EventObject.ENTER,
