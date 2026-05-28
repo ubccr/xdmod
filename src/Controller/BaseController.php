@@ -97,7 +97,7 @@ class BaseController extends AbstractController
         }
 
         $isPublicUser = (
-            $this->getBooleanParam($request, 'public_user'
+            $this->getBooleanParam($request, 'public_user')
             || $xdUser->isPublicUser()
         );
         if ($isPublicUser && !$session->has('public_session_token')) {
