@@ -106,10 +106,6 @@ class BaseController extends AbstractController
             $session->set('xdUser', $xdUser->getUserID());
         }
 
-        if (empty($requiredAcls) && $isPublicUser) {
-            throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
-        }
-
         if ($anyAcl) {
             $authorized = count(array_intersect($xdUser->getAclNames(), $requiredAcls)) > 0;
         } else {
