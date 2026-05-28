@@ -78,12 +78,13 @@ class HomeController extends BaseController
             $response = new RedirectResponse("$returnTo");
             return $response;
         }
+
         try {
             $user = $this->authorize($request);
-        } catch () {
+        } catch (UnauthorizedHttpException) {
             $user = XDUser::getPublicUser();
         }
-            $userLoggedIn = !$user->isPublicUser();
+        $userLoggedIn = !$user->isPublicUser();
 
         $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
             $carry [] = $item->getName();
