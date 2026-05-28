@@ -10,6 +10,7 @@ namespace ComponentTests\GroupBy;
 use CCR\Log as Logger;
 use Psr\Log\LoggerInterface;
 use Realm\Realm;
+use IntegrationTests\TestHarness\Utilities;
 
 class GroupByTest extends \PHPUnit\Framework\TestCase
 {
@@ -89,7 +90,11 @@ class GroupByTest extends \PHPUnit\Framework\TestCase
         $obj = $realm->getGroupByObject('resource');
 
         $values = $obj->getAttributeValues();
-        $this->assertCount(9, $values, 'Number of resource attributes returned with no filter');
+        $this->assertCount(
+            in_array('cloud', Utilities::getRealmsToTest()) ? 9 : 5,
+            $values,
+            'Number of resource attributes returned with no filter'
+        );
 
         $restrictions = array(
             'id' => '1^frearson'

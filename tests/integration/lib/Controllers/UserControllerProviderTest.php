@@ -81,6 +81,10 @@ class UserControllerProviderTest extends BaseUserAdminTest
                 '-1'
             ]
         ];
+        $rawDataAllowedRealms = ['Jobs'];
+        if (in_array('cloud', Utilities::getRealmsToTest())) {
+            $rawDataAllowedRealms[] = 'Cloud';
+        }
         foreach ($expectedResultsByRole as $role => $expectedResults) {
             list(
                 $firstName,
@@ -101,10 +105,7 @@ class UserControllerProviderTest extends BaseUserAdminTest
                 'active_role' => $activeRole,
                 'most_privileged_role' => $mostPrivilegedRole,
                 'person_id' => $personId,
-                'raw_data_allowed_realms' => [
-                    'Jobs',
-                    'Cloud'
-                ]
+                'raw_data_allowed_realms' => $rawDataAllowedRealms
             ];
             $tests[] = [
                 'success_' . $role,

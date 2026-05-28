@@ -8,6 +8,7 @@ namespace ComponentTests\Query;
 
 use CCR\Log as Logger;
 use DataWarehouse\Query\AggregateQuery;
+use IntegrationTests\TestHarness\Utilities;
 use Psr\Log\LoggerInterface;
 
 class AggregateQueryTest extends \PHPUnit\Framework\TestCase
@@ -488,6 +489,9 @@ SQL;
 
     public function testGetFormula()
     {
+        if (!in_array(strtolower('cloud'), Utilities::getRealmsToTest())) {
+            $this->markTestSkipped('Cloud realm is not being tested.');
+        }
         $query = new \DataWarehouse\Query\AggregateQuery(
             'Cloud',
             'day',

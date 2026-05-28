@@ -44,7 +44,13 @@ class MetricExplorerTest extends TokenAuthTest
                 $body['data'],
                 $assertMessage
             );
-            foreach (['Cloud', 'Jobs', 'Storage'] as $realmName) {
+            $realms = [];
+            foreach (['Cloud', 'Jobs', 'Storage'] as $realm) {
+                if (in_array(strtolower($realm), self::$XDMOD_REALMS)) {
+                    $realms[] = $realm;
+                }
+            }
+            foreach ($realms as $realmName) {
                 $realm = $body['data'][0]['realms'][$realmName];
                 foreach (['metrics', 'dimensions'] as $property) {
                     $testInstance->assertNotCount(
