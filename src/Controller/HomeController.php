@@ -79,9 +79,11 @@ class HomeController extends BaseController
             return $response;
         }
 
-        try {
-            $user = $this->authorize($request);
-        } catch (UnauthorizedHttpException) {
+        $symfonyUser = $this->getUser();
+        $session = $request->getSession();
+        if (isset($symfonyUser)) {
+            $user = XDUser::getUserByUserName($symfonyUser->getUserIdentifier());
+        } else {
             $user = XDUser::getPublicUser();
         }
         $userLoggedIn = !$user->isPublicUser();
