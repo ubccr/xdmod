@@ -78,9 +78,12 @@ class HomeController extends BaseController
             $response = new RedirectResponse("$returnTo");
             return $response;
         }
-
-        $user = $this->authorize($request);
-        $userLoggedIn = !$user->isPublicUser();
+        try {
+            $user = $this->authorize($request);
+        } catch () {
+            $user = XDUser::getPublicUser();
+        }
+            $userLoggedIn = !$user->isPublicUser();
 
         $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
             $carry [] = $item->getName();
