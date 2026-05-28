@@ -71,12 +71,8 @@ class AuthenticationController extends BaseController
     #[Route('/rest/auth/logout', name: 'xdmod_rest_auth_logout', methods: ['POST'])]
     public function logout(Request $request): Response
     {
-        $token = $request->getSession()->get('xdmod_token');
-        \XDSessionManager::logoutUser($token);
         $request->getSession()->invalidate();
-
         $response = $this->redirectToRoute('xdmod_home');
-        $response->headers->removeCookie('xdmod_token');
         return $response;
     }
 

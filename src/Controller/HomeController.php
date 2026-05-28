@@ -18,10 +18,11 @@ use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Security;
 use Twig\Environment;
-use xd_security\SessionSingleton;
 use XDUser;
 
 class HomeController extends BaseController
@@ -72,15 +73,14 @@ class HomeController extends BaseController
         $returnTo = $session->get('_security.main.target_path');
         if (!empty($returnTo)) {
             $returnTo = urldecode($returnTo);
-            $url = $this->generateUrl('xdmod_home');
             $this->logger->warning('redirecting to', ["$returnTo"]);
             $session->set('_security.main.target_path', null);
             $response = new RedirectResponse("$returnTo");
             return $response;
         }
 
-        $user = $this->getXDUser($session);
-        $userLoggedIn = $session->has('xdUser') && !$user->isPublicUser();
+        $user = $this->authorize($request);
+        $userLoggedIn = !$user->isPublicUser();
 
         $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
             $carry [] = $item->getName();
@@ -115,13 +115,8 @@ class HomeController extends BaseController
         }
 
         // JupyterHub Config
-        $jupyterIsEnabled = false;
-        $jupyterHubURL = '';
-        try {
-            $jupyterHubURL = $this->parameters->get('xdmod.portal_settings.jupyterhub.url');
-        } catch (\Exception $e) {
-
-        }
+        $jupyterIsEnabled = $this->parameters->has('xdmod.portal_settings.jupyterhub.url');
+        $jupyterHubURL = $jupyterIsEnabled ? $this->parameters->get('xdmod.portal_settings.jupyterhub.url') : '';
 
         try {
 
@@ -177,7 +172,7 @@ class HomeController extends BaseController
             'raw_data_realms' => json_encode($this->getRawDataRealms($user)),
             'use_center_logo' => false,
             'asset_paths' => Assets::generateAssetTags('portal'),
-            'profile_editor_init_flag' => $this->getProfileEditorInitFlag($user),
+            'profile_editor_init_flag' => $this->getProfileEditorInitFlag($session, $user),
             'no_script_message' => $this->getNoScriptMessage('XDMoD requires JavaScript, which is currently disabled in your browser.'),
             'org_name' => ORGANIZATION_NAME,
             'is_sso_configured' => $isSSOConfigured,
@@ -256,7 +251,7 @@ class HomeController extends BaseController
         return null;
     }
 
-    private function getProfileEditorInitFlag(XDUser $user)
+    private function getProfileEditorInitFlag(Session $session, XDUser $user)
     {
         $profile_editor_init_flag = '';
         $usersFirstLogin = ($user->getCreationTimestamp() == $user->getUpdateTimestamp() && !$user->isPublicUser());
@@ -268,8 +263,6 @@ class HomeController extends BaseController
         $userEmailSpecified = ($userEmail != NO_EMAIL_ADDRESS_SET && !empty($userEmail));
         if ($user->isSSOUser() === true || $usersFirstLogin) {
 
-            // NOTE: $_SESSION['suppress_profile_autoload'] will be set only upon update of the user's profile (see respective REST call)
-            $session = SessionSingleton::getSession();
             $suppressProfileAutoload = $session->get('suppress_profile_autoload');
             if ($usersFirstLogin && $userEmailSpecified && (!isset($suppressProfileAutoload) && $user->getUserType() != 50)) {
                 // If the user is logging in for the first time and does have an e-mail address set
@@ -369,4 +362,3 @@ class HomeController extends BaseController
         return true;
     }
 }
-

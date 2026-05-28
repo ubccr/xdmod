@@ -87,7 +87,7 @@ class ReportBuilderController extends BaseController
     public function getReports(Request $request): Response
     {
         try {
-            $user = $this->detectUser($request, [XDUser::PUBLIC_USER]);
+            $user = $this->authorize($request);
         } catch(Exception $e) {
             return $this->json(buildError($e), 401);
         }
@@ -111,7 +111,7 @@ class ReportBuilderController extends BaseController
     public function getAvailableCharts(Request $request): Response
     {
         try {
-            $user = $this->detectUser($request, [XDUser::PUBLIC_USER]);
+            $user = $this->authorize($request);
         } catch(Exception $e) {
             return $this->json(buildError($e), 401);
         }
@@ -134,7 +134,7 @@ class ReportBuilderController extends BaseController
     public function getReportFromTemplate(Request $request, string $templateId): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->authorize($request);
         $template = \XDReportManager::retrieveReportTemplate($user, $templateId);
         $parameters = $request->request->all();
         $template->buildReportFromTemplate($parameters);
@@ -151,7 +151,7 @@ class ReportBuilderController extends BaseController
     public function sendReport(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->authorize($request);
         $reportManager = new \XDReportManager($user);
 
         $buildOnly = $this->getBooleanParam($request, 'build_only');
@@ -220,7 +220,7 @@ class ReportBuilderController extends BaseController
             throw new BadRequestHttpException('Invalid format specified');
         }
 
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->authorize($request);
         $reportManager = new \XDReportManager($user);
 
         $reportId = preg_replace('/(.+)-(.+)-(.+)/', '$1-$2', $reportLoc);
@@ -250,7 +250,7 @@ class ReportBuilderController extends BaseController
     public function getPreviewData(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->authorize($request);
 
         $reportId = $this->getStringParam($request, 'report_id', true);
         $token = $this->getStringParam($request, 'token', true);
@@ -276,7 +276,7 @@ class ReportBuilderController extends BaseController
     public function getNewReportName(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->authorize($request);
         $reportManager = new \XDReportManager($user);
         return $this->json([
             'success'     => true,
@@ -297,7 +297,7 @@ class ReportBuilderController extends BaseController
         $map = [];
 
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->authorize($request);
         $reportManager = new \XDReportManager($user);
         switch ($phase) {
             case 'create':
@@ -424,7 +424,7 @@ class ReportBuilderController extends BaseController
     public function removeReportsById(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->authorize($request);
         $reportManager = new \XDReportManager($user);
 
         $reportIds = explode(';', $this->getStringParam($request, 'selected_report', true));
@@ -483,7 +483,7 @@ class ReportBuilderController extends BaseController
     public function getTemplates(Request $request): Response
     {
         try {
-            $user = $this->getLoggedInUser($request->getSession());
+            $user = $this->authorize($request);
         } catch (Exception $e) {
             return $this->json(buildError($e), 401);
         }
@@ -651,7 +651,7 @@ class ReportBuilderController extends BaseController
     public function getReportData(Request $request, string $reportId): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->authorize($request);
 
         $reportManager = new \XDReportManager($user);
 

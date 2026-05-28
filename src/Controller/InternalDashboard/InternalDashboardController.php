@@ -49,7 +49,7 @@ class InternalDashboardController extends BaseController
     #[Route('/internal_dashboard')]
     public function index(Request $request): Response
     {
-        $user = $this->getXDUser($request->getSession());
+        $user = $this->authorize($request, ['mgr']);
 
         $hasAppKernels = false;
         $instanceId = null;

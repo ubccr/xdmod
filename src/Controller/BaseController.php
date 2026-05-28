@@ -14,13 +14,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 use Twig\Environment;
-use xd_security\SessionSingleton;
 use XDUser;
 
 /**
@@ -90,20 +88,25 @@ class BaseController extends AbstractController
      */
     public function authorize(Request $request, array $requiredAcls = [], bool $anyAcl = false): XDUser
     {
+        $symfonyUser = $this->getUser();
+        $session = $request->getSession();
+        if (isset($symfonyUser)) {
+            $xdUser = XDUser::getUserByUserName($symfonyUser->getUserIdentifier());
+        } else {
+            $xdUser = XDUser::getPublicUser();
+        }
 
-        $user = $this->getXDUser($request->getSession());
-
-        // If role requirements were not given, then the only check to perform
-        // is that the user is not a public user.
-        $isPublicUser = $user->isPublicUser();
-        if (empty($requiredAcls) && $isPublicUser) {
-            throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
+        $isPublicUser = $this->getBooleanParam($request, 'public_user');
+        if ($isPublicUser && !$session->has('public_session_token')) {
+            $session->set('public_session_token', 'public-' . microtime(true) . '-' . uniqid());
+        } elseif (!$isPublicUser) {
+            $session->set('xdUser', $xdUser->getUserID());
         }
 
         if ($anyAcl) {
-            $authorized = count(array_intersect($user->getAclNames(), $requiredAcls)) > 0;
+            $authorized = count(array_intersect($xdUser->getAclNames(), $requiredAcls)) > 0;
         } else {
-            $authorized = $user->hasAcls($requiredAcls);
+            $authorized = $xdUser->hasAcls($requiredAcls);
         }
 
         if (!$authorized && !$isPublicUser) {
@@ -112,8 +115,7 @@ class BaseController extends AbstractController
             throw new UnauthorizedHttpException('xdmod', self::EXCEPTION_MESSAGE);
         }
 
-        // Return the successfully-authorized user.
-        return $user;
+        return $xdUser;
     }
 
     /**
@@ -126,146 +128,6 @@ class BaseController extends AbstractController
     {
         return $request->attributes->get(BaseController::USER_ATTRIBUTE_KEY);
     }
-
-    /**
-     * @param SessionInterface $session
-     * @return XDUser
-     * @throws Exception
-     */
-    protected function getXDUser(SessionInterface $session): XDUser
-    {
-        $symfonyUser = $this->getUser();
-        if (!isset($symfonyUser)) {
-            if ($session->has('xdUser')) {
-                $xdUser = XDUser::getUserByID($session->get('xdUser'));
-            } elseif ($session->has('xdmod_token')) {
-                $xdUser = XDUser::getUserByToken($session->get('xdmod_token'));
-            } else {
-                if (!$session->has('public_session_token')) {
-                    $session->set('public_session_token', 'public-' . microtime(true) . '-' . uniqid());
-                }
-                $xdUser = XDUser::getPublicUser();
-            }
-        } else {
-            $xdUser = XDUser::getUserByUserName($symfonyUser->getUserIdentifier());
-        }
-
-        if (!$xdUser->isPublicUser()) {
-            $session->set('xdUser', $xdUser->getUserID());
-        }
-        return $xdUser;
-    }
-
-    /**
-     * @param Request $request
-     * @param string[] $failover_methods
-     * @return XDUser
-     * @throws \SessionExpiredException
-     */
-    protected function detectUser(Request $request, array $failover_methods = []): XDUser
-    {
-        $session = $request->getSession();
-        try {
-            $user = $this->getLoggedInUser($session);
-        } catch (Exception $e) {
-            if (count($failover_methods) == 0) {
-                // Previously: Exception with 'Session Expired', No Logged In User code
-                throw new \SessionExpiredException();
-            }
-
-            $isPublicUser = $this->getBooleanParam($request, 'public_user');
-            switch ($failover_methods[0]) {
-                case XDUser::PUBLIC_USER:
-                    if ($isPublicUser || $session->has('public_session_token')) {
-                        return XDUser::getPublicUser();
-                    } else {
-                        // Previously: Exception with 'Session Expired', No Public User code
-                        throw new \SessionExpiredException($e->getMessage());
-                    }
-                    break;
-                case XDUser::INTERNAL_USER:
-                    try {
-                        return $this->getInternalUser($request);
-                    } catch (Exception $e) {
-                        if (
-                            isset($failover_methods[1])
-                            && $failover_methods[1] == XDUser::PUBLIC_USER
-                        ) {
-                            if ($isPublicUser || $session->has('public_session_token')) {
-                                return XDUser::getPublicUser();
-                            } else {
-                                // Previously: Exception with 'Session Expired', No Public User code
-                                throw new \SessionExpiredException();
-                            }
-                        } else {
-                            // Previously: Exception with 'Session Expired', No Internal User code
-                            throw new \SessionExpiredException();
-                        }
-                    }
-                default:
-                    // Previously: Exception with 'Session Expired', No Logged In User code
-                    throw new \SessionExpiredException();
-            }
-        }
-
-        return $user;
-    }
-
-    /**
-     * Ported from libraries/security.php::getLoggedInUser, modified to use Symfony Session as opposed to the
-     * SessionSingleton.
-     *
-     * @param Session $session
-     *
-     * @return XDUser
-     *
-     * @throws Exception if no 'xdUser' session parameter exists.
-     * @throws Exception if unable to find a record in moddb.Users for the id present in the 'xdUser' session parameter.
-     */
-    protected function getLoggedInUser(Session $session): XDUser
-    {
-        // This is where the
-        $sessionUserId = $session->get('xdUser');
-        if (empty($sessionUserId)) {
-            throw new Exception('Session Expired', 2);
-        }
-        $user = XDUser::getUserByID($sessionUserId);
-
-        if ($user == NULL) {
-            throw new Exception('User does not exist');
-        }
-
-        return $user;
-    }
-
-
-    /**
-     * @param Request $request
-     * @return XDUser
-     * @throws Exception if there is no record in moddb.Users for the value of the user_id request param.
-     * @throws Exception if there is no user_id request param.
-     */
-    protected function getInternalUser(Request $request): XDUser
-    {
-        $userId = $request->get('user_id');
-
-        if (
-            $request->server->has('REMOTE_ADDR')
-            && $request->server->get('REMOTE_ADDR') == '127.0.0.1'
-            && isset($userId)
-        ) {
-            $user = XDUser::getUserByID($userId);
-
-            if ($user == NULL) {
-                throw new Exception('Internal user does not exist');
-            }
-        } else {
-            throw new Exception('Internal user not specified');
-        }
-
-        return $user;
-    }
-
 
     /**
      * Attempt to get a parameter value from a request and filter it.
@@ -722,37 +584,8 @@ class BaseController extends AbstractController
      */
     protected function authenticateToken($request)
     {
-        // NOTE: While we prefer token's to be pulled from the 'Authorization' header, we also support a fallback lookup
-        // to the request's query params.
-        $authorizationHeader = $request->headers->get('Authorization');
-        if (empty($authorizationHeader) || strpos($authorizationHeader, Tokens::HEADER_KEY) === false) {
-            $rawToken = $request->get(Tokens::HEADER_KEY);
-        } else {
-            $rawToken = substr($authorizationHeader, strpos($authorizationHeader, Tokens::HEADER_KEY) + strlen(Tokens::HEADER_KEY) + 1);
-        }
-        if (empty($rawToken)) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                'No token provided.',
-                null,
-                0
-            );
-        }
 
-
-        // We expect the token to be in the form /^(\d+).(.*)$/ so just make sure it at least has the required delimiter.
-        $delimPosition = strpos($rawToken, Tokens::DELIMITER);
-        if ($delimPosition === false) {
-            throw new UnauthorizedHttpException(
-                Tokens::HEADER_KEY,
-                'Invalid token.'
-            );
-        }
-
-        $userId = substr($rawToken, 0, $delimPosition);
-        $token = substr($rawToken, $delimPosition + 1);
-
-        return $this->tokenHelper->authenticate($userId, $token);
+        return $this->tokenHelper->authenticate($request);
     }
 
     /**

@@ -590,8 +590,6 @@ class WarehouseController extends BaseController
     #[Route('{prefix}warehouse/resources', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getResources(Request $request): Response
     {
-        $this->tokenHelper->authenticate($request);
-
         $config = \Configuration\XdmodConfiguration::assocArrayFactory('resource_metadata.json', CONFIG_DIR);
 
         $query_sql = $config['resource_query'];
@@ -2131,14 +2129,7 @@ class WarehouseController extends BaseController
     #[Route('{prefix}warehouse/raw-data', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getRawData(Request $request): Response
     {
-        $user = $this->tokenHelper->authenticate($request, false);
-
-        /*TODO: Validate that this is supposed to be here. */
-        if ($user === null) {
-            return $this->json(buildError(new Exception('No token provided.')), 401, [
-                'WWW-Authenticate' => 'Bearer'
-            ]);
-        }
+        $user = $this->tokenHelper->authenticate($request);
 
         try {
             $params = $this->validateRawDataParams($request, $user);
@@ -2597,8 +2588,6 @@ class WarehouseController extends BaseController
     #[Route('{prefix}warehouse/raw-data/limit', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getRawDataLimit(Request $request): JsonResponse
     {
-        $this->tokenHelper->authenticate($request);
-
         $limit = $this->getConfiguredRawDataLimit();
 
         return $this->json([

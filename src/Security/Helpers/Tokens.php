@@ -14,25 +14,14 @@ use UnexpectedValueException;
 use XDUser;
 
 /**
- * A static helper function for authenticating using API Tokens. REST endpoints are meant to use the `authenticate`
- * function while controller functions should use `authenticateToken`.
- */
+ * A helper class for authenticating users with API tokens and JSON Web Tokens.
+ * */
 class Tokens
 {
 
     const MISSING_TOKEN_MESSAGE = 'No token provided.';
     const INVALID_TOKEN_MESSAGE = 'Invalid token.';
     const EXPIRED_TOKEN_MESSAGE = 'Token has expired.';
-
-    /**
-     * This is the key that will be used when adding an API Token to a request's headers.
-     */
-    const HEADER_KEY = 'Bearer';
-
-    /**
-     * This is the delimiter that's used when returning a newly created API token to the user.
-     */
-    const DELIMITER = '.';
 
     /**
      * @var LoggerInterface
@@ -45,113 +34,31 @@ class Tokens
     }
 
     /**
-     * Perform token authentication for the provided $userId & $token combo. If the authentication is successful, an
-     * XDUser object will be returned for the provided $userId. If not, an exception will be thrown.
-     *
-     * @param int|string $userId   The id used to look up the the users hashed token.
-     * @param string     $token The value to be checked against the retrieved hashed token.
-     *
-     * @return XDUser for the provided $userId, if the authentication is successful else an exception will be thrown.
-     *
-     * @throws Exception                 if unable to retrieve a database connection.
-     * @throws UnauthorizedHttpException if no token can be found for the provided $userId,
-     *                                   if the stored token for $userId has expired, or
-     *                                   if the provided $token doesn't match the stored hash.
-     */
-    /*public function authenticate($userId, string $token): ?XDUser
-    {
-        $this->logger->info(sprintf('Beginning Authentication for %s', $userId));
-
-        $db = DB::factory('database');
-        $query = <<<SQL
-        SELECT
-            ut.user_id,
-            ut.token,
-            ut.expires_on
-        FROM moddb.user_tokens AS ut
-            JOIN moddb.Users u ON u.id = ut.user_id
-        WHERE u.id = :user_id and u.account_is_active = 1
-SQL;
-
-        $row = $db->query($query, array(':user_id' => $userId));
-
-        if (count($row) === 0) {
-            $this->logger->debug('User (%s) does not have an active token.');
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid API token.');
-        }
-
-        $expectedToken = $row[0]['token'];
-        $expiresOn = $row[0]['expires_on'];
-        $dbUserId = $row[0]['user_id'];
-
-        // Check that expected token isn't expired.
-        $now = new DateTime();
-        $expires = new DateTime($expiresOn);
-        if ($expires < $now) {
-            $this->logger->debug(sprintf('User\'s (%s) token is expired.', $userId));
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Token has expired.', null, 0);
-        }
-
-        // finally check that the provided token matches it's stored hash.
-        if (!password_verify($token, $expectedToken)) {
-            $this->logger->debug(sprintf('User\'s (%s) token is invalid.', $userId));
-            throw new UnauthorizedHttpException(Tokens::HEADER_KEY, 'Invalid token.');
-        }
-
-        // and if we've made it this far we can safely return the requested Users data.
-        return XDUser::getUserByID($dbUserId);
-    }*/
-
-    /**
-     * This function is a stop-gap that is meant to be used to protect controller endpoints until they can be moved to
-     * the new REST stack.
+     * Authenticate a user with either an API token or JSON Web Token from a Symfony request
      *
      * @return XDUser|null if the authentication is successful then an XDUser instance for the authenticated user will
      * be returned, if the authentication is not successful then null will be returned.
      *
-     * @throws \Exception if there is a problem w/ authenticating the token for this request.
-     */
-    public function authenticate(Request $request, $strict = true): ?XDUser
-    {
-        $token = null;
-        // Try to extract the token from the header.
-        if ($request->headers->has('Authorization')) {
-            $token = self::getTokenFromHeader($request->headers->get('Authorization'));
-        }
-        // If the token is not in the header, then fall back to extracting from
-        // the GET/POST params.
-        if (empty($token)) {
-            $token = $request->get('Bearer');
-        }
-
-        // If we still haven't found a token, then authentication fails.
-        if (empty($token)) {
-            // if we're being strict about things, throw an exception
-            if ($strict) {
-                self::throwUnauthorized(self::MISSING_TOKEN_MESSAGE);
-            }
-
-            // else, this is for endpoints that have optional token authentication. By returning null we allow normal
-            // authentication to continue.
-            return null;
-        }
-
-        return self::authenticateToken($token, $request->getPathInfo());
-    }
-
-    /**
-     * Authenticate either an API token or a JSON Web Token.
-     *
-     * @param string $rawToken
-     * @param string | null $endpoint the endpoint being requested, used only for logging.
-     *
-     * @return XDUser the successfully authenticated user.
-     *
-     * @throws \Exception                if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    private static function authenticateToken(string $rawToken, string $endpoint = null): XDUser
+    public function authenticate(Request $request): ?XDUser
     {
+        $rawToken = null;
+
+        // Try to extract the token from the header.
+        $authHeader = $request->headers->get('Authorization', '');
+        $rawToken = str_starts_with($authHeader, 'Bearer ') ? substr($authHeader, strlen('Bearer ')) : $rawToken;
+
+        // If the token is not in the header, then fall back to extracting from
+        // the GET/POST params.
+        if (empty($rawToken)) {
+            $rawToken = $request->get('Bearer');
+        }
+
+        if (empty($rawToken)) {
+            self::throwUnauthorized(self::MISSING_TOKEN_MESSAGE);
+        }
+
         // Determine token type
         $tokenParts = explode('.', $rawToken);
         $tokenPartsSize = sizeof($tokenParts);
@@ -178,6 +85,7 @@ SQL;
             ]
         );
 
+        $endpoint = $request->getPathInfo();
         $logger->info(
             'User ' . $authenticatedUser->getUserName()
             . ' (' . $authenticatedUser->getUserID() . ')'
@@ -200,8 +108,9 @@ SQL;
      *
      * @throws UnauthorizedHttpException if the token is malformed, invalid, or expired
      * @throws \Exception if there is an error encountered constructing the $expires DateTime.
+     * @throws \Exception if unable to retrieve a database connection.
      */
-    private static function authenticateAPIToken($userId, $token): XDUser
+    private static function authenticateAPIToken(string $userId, string $token): XDUser
     {
         $db = DB::factory('database');
         $query = <<<SQL
@@ -251,7 +160,7 @@ SQL;
      * @throws \Exception if there is a problem retrieving a connection to the database.
      * @throws \Exception if a user is not found for the provided $jwt.
      */
-    private static function authenticateJSONWebToken($jwt): XDUser
+    private static function authenticateJSONWebToken(string $jwt): XDUser
     {
         try {
             $claims = JsonWebToken::decode($jwt);
@@ -276,20 +185,6 @@ SQL;
             self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
         return XDUser::getUserByUserName($username);
-    }
-
-    /**
-     * Extract the bearer token from an authorization header string.
-     *
-     * @param string $header
-     * @return string | null the token if the header has the 'Bearer' key, null otherwise.
-     */
-    public static function getTokenFromHeader(string $header): ?string
-    {
-        if (!str_starts_with($header, 'Bearer ')) {
-            return null;
-        }
-        return substr($header, strlen('Bearer') + 1);
     }
 
     /**

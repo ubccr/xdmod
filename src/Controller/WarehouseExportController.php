@@ -67,20 +67,11 @@ class WarehouseExportController extends BaseController
     #[Route('/realms', methods: ['GET'])]
     public function getRealms(Request $request): Response
     {
-        $user = null;
-
-        // We need to wrap the token authentication because we want the token authentication to be optional, proceeding
-        // to the normal session authentication if a token is not provided.
         try {
-            $user = $this->tokenHelper->authenticate($request, false);
-        } catch (Exception $e) {
-            // NOOP
-        }
-
-        if ($user === null) {
+            $user = $this->tokenHelper->authenticate($request);
+        } catch (UnauthorizedHttpException) {
             $user = $this->authorize($request);
         }
-
 
         $config = RawStatisticsConfiguration::factory();
 

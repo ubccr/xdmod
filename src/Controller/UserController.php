@@ -12,7 +12,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use XDUser;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use xd_security\SessionSingleton;
 
 /**
  * Class UserControllerProvider
@@ -72,7 +71,7 @@ class UserController extends BaseController
 
         return $this->json([
             'success' => true,
-            'results' => $this->extractUserData(XDUser::getUserByUserName($this->getUser()->getUserIdentifier()))
+            'results' => $this->extractUserData($request->getSession(), XDUser::getUserByUserName($this->getUser()->getUserIdentifier()))
         ]);
     }
 
@@ -99,7 +98,7 @@ class UserController extends BaseController
 
         // If the last step completed successfully, hide the welcome message
         // for first-time XSEDE users and return a success message.
-        SessionSingleton::getSession()->set('suppress_profile_autoload', true);
+        $request->getSession()->set('suppress_profile_autoload', true);
 
         return $this->json([
             'success' => true,
@@ -177,7 +176,7 @@ class UserController extends BaseController
     {
         $user = $this->authorize($request);
 
-        // If we can create a token then we can't really revoke it can we.
+        // If we can create a token then we can't really revoke it
         if ($this->canCreateToken($user)) {
             throw new NotFoundHttpException('API token not found.');
         }
@@ -203,7 +202,7 @@ class UserController extends BaseController
      * @return array        An associative array of data for the user.
      * @throws \Exception
      */
-    private function extractUserData(XDUser $user)
+    private function extractUserData(Session $session, XDUser $user)
     {
         $emailAddress = $user->getEmailAddress();
         if ($emailAddress == NO_EMAIL_ADDRESS_SET) {
@@ -229,7 +228,7 @@ class UserController extends BaseController
             'email_address' => $emailAddress,
             'is_sso_user' => $user->isSSOUser(),
             'first_time_login' => $user->getCreationTimestamp() == $user->getLastLoginTimestamp(),
-            'autoload_suppression' => SessionSingleton::getSession()->get('suppress_profile_autoload', false),
+            'autoload_suppression' => $session->get('suppress_profile_autoload', false),
             'field_of_science' => $user->getFieldOfScience(),
             'active_role' => $mostPrivilegedFormalName,
             'most_privileged_role' => $mostPrivilegedFormalName,

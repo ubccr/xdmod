@@ -91,7 +91,7 @@ class DashboardController extends BaseController
     #[Route('/components', methods: ['GET'])]
     public function getComponents(Request $request): Response
     {
-        $user = $this->getXDUser($request->getSession());
+        $user = $this->authorize($request);
 
         $dashboardComponents = array();
 
@@ -407,7 +407,7 @@ class DashboardController extends BaseController
     #[Route('/statistics', methods: ['GET'])]
     public function getStatistics(Request $request): Response
     {
-        $user = $this->getXDUser($request->getSession());
+        $user = $this->authorize($request);
 
         $aggregationUnit = $request->get('aggregation_unit', 'auto');
 

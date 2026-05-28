@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use XDUser;
 use function xd_response\buildError;
@@ -399,7 +400,7 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/data', requirements: ['prefix' => '.*'], methods: ['POST', 'GET'])]
     public function getData(Request $request): Response
     {
-        $user = $this->detectUser($request, [XDUser::INTERNAL_USER, XDUser::PUBLIC_USER]);
+        $user = $this->authorize($request);
 
         $params = array_merge($request->query->all(), $request->request->all());
         $m = new \DataWarehouse\Access\MetricExplorer($params);
@@ -430,17 +431,9 @@ class MetricExplorerController extends BaseController
     public function getDimensionValues(Request $request): Response
     {
         try {
-            $user = $this->tokenHelper->authenticate($request, false);
-
-            // If token authentication failed then fallback to the standard session based authentication method.
-            if ($user === null) {
-                $user = $this->detectUser($request, array(\XDUser::PUBLIC_USER));
-            }
-        } catch (Exception $e) {
-            return $this->json(
-                buildError(new Exception('Session Expired', 2)),
-                401
-            );
+            $user = $this->tokenHelper->authenticate($request);
+        } catch (UnauthorizedHttpException) {
+            $user = $this->authorize($request);
         }
 
         $dimensionId = $this->getStringParam($request, 'dimension_id', true);
@@ -482,19 +475,10 @@ class MetricExplorerController extends BaseController
     public function getDwDescriptors(Request $request): Response
     {
         try {
-            $user = $this->tokenHelper->authenticate($request, false);
-
-            // If token authentication failed then fallback to the standard session based authentication method.
-            if ($user === null) {
-                $user = $this->getLoggedInUser($request->getSession());
-            }
-        } catch (Exception $e) {
-            return $this->json(
-                buildError(new Exception('Session Expired', 2)),
-                401
-            );
+            $user = $this->tokenHelper->authenticate($request);
+        } catch (UnauthorizedHttpException) {
+            $user = $this->authorize($request);
         }
-
 
         $roles = $user->getAllRoles(true);
 
@@ -645,8 +629,15 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/filters', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getFilters(Request $request): Response
     {
+        $returnData = [
+            'totalCount' => 0,
+            'message' => 'success',
+            'data' => [],
+            'success' => true
+        ];
+
         try {
-            $user = $this->getLoggedInUser($request->getSession());
+            $user = $this->authorize($request);
 
             $userProfile = $user->getProfile();
             $filters = $userProfile->fetchValue('filters');
@@ -658,15 +649,7 @@ class MetricExplorerController extends BaseController
                     'data' => $filtersArray,
                     'success' => true
                 ];
-            } else {
-                $returnData = [
-                    'totalCount' => 0,
-                    'message' => 'success',
-                    'data' => [],
-                    'success' => true
-                ];
             }
-
         } catch (SessionExpiredException $see) {
             // TODO: Refactor generic catch block below to handle specific exceptions,
             //       which would allow this block to be removed.
@@ -691,7 +674,7 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/raw_data', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getRawData(Request $request): Response
     {
-        $user = $this->detectUser($request, array(XDUser::INTERNAL_USER, XDUser::PUBLIC_USER));
+        $user = $this->authorize($request);
 
         try {
             $requestedFormat = $this->getStringParam($request, 'format');
