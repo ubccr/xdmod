@@ -92,14 +92,13 @@ class AuthenticationController extends BaseController
             ";
             $pdo = DB::factory('database');
             $pdo->execute($logout_query, array(
-                ':session_token' => $token,
                 ':session_id' => $session_id,
                 ':ip_address' => $ip_address,
                 ':init_time' => $session->get('xdInit'),
             ));
         }
 
-       try {
+        try {
             $auth = new XDSamlAuthentication();
             $auth->logout();
         } catch (InvalidArgumentException $ex) {
@@ -175,4 +174,3 @@ class AuthenticationController extends BaseController
         return $response;
     }
 }
-
