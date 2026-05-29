@@ -3,7 +3,6 @@
 namespace CCR\Security\Authenticators;
 
 use CCR\Entity\User;
-use Authentication\SAML\XDSamlAuthentication;
 use Configuration\Configuration;
 use Models\Services\Organizations;
 use Psr\Log\LoggerInterface;
