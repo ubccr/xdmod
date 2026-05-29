@@ -1,5 +1,30 @@
 # Open XDMoD Change Log
 
+## 2026-05-12 v11.0.3
+
+- Important Notes
+    - This release fixes a critical security vulnerability and two other
+      moderate-to-high severity security vulnerabilities in Open XDMoD:
+        - https://github.com/ubccr/xdmod/security/advisories/GHSA-29qm-7w4v-43fw
+        - https://github.com/ubccr/xdmod/security/advisories/GHSA-3pv7-qvc3-h527
+        - https://github.com/ubccr/xdmod/security/advisories/GHSA-3hfh-m242-8rmh
+- Bug Fixes
+    - Fix bug in which the server runs out of memory when exporting data
+      ([\#2085](https://github.com/ubccr/xdmod/pull/2085)).
+    - Fix tooltip display when hovering over area plots
+      ([\#2077](https://github.com/ubccr/xdmod/pull/2077)).
+    - Fix charting export ([\#2192](https://github.com/ubccr/xdmod/pull/2192)).
+    - Fix username validation
+      ([\#2194](https://github.com/ubccr/xdmod/pull/2194)).
+- Enhancements
+    - Improve performance of database queries
+      ([\#2182](https://github.com/ubccr/xdmod/pull/2182)).
+- Documentation
+    - Update list of publications and presentations
+      ([\#2081](https://github.com/ubccr/xdmod/pull/2081)).
+- Maintenance / Code Quality
+    - Remove unused code ([\#2188](https://github.com/ubccr/xdmod/pull/2188)).
+
 ## 2025-08-19 v11.0.2
 
 - New Features
@@ -214,6 +239,10 @@
         - A new endpoint for retrieving raw data has been added.
 
 ## 2023-08-04 v10.0.3
+
+- Important Notes
+    - This release fixes a critical security vulnerability in Open XDMoD:
+        - https://github.com/ubccr/xdmod/security/advisories/GHSA-r33r-6g3c-r992
 - Bug Fixes
     - General
         - Fix handling of filters where the filter string has a quote character in it (#1749)
