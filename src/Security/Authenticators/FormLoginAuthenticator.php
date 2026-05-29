@@ -121,10 +121,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
      */
     public function authenticate(Request $request): Passport
     {
-        $this->logger->debug('Initiating Form Login Authentication', [$request]);
-
         $credentials = $this->getCredentials($request);
-        $this->logger->debug('Attempting to login user ' . $credentials['username'], $credentials);
 
         return new Passport(
             new UserBadge($credentials['username']),
@@ -196,7 +193,6 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
         $user = $token->getUser();
         $xdUser = XDUser::getUserByUserName($user->getUserIdentifier());
         $xdUser->postLogin();
-        $request->getSession()->set('xdUser', $xdUser->getUserID());
         $response = new JsonResponse([
             'success' => true,
             'results' => [
@@ -204,7 +200,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
                 'name' => $xdUser->getFormalName()
             ]
         ]);
-        $response->headers->setCookie(new Cookie('xdmod_token', $xdUser->getToken(), sameSite: 'strict'));
+
         return $response;
     }
 

@@ -78,8 +78,7 @@ class AuthenticationController extends BaseController
         // (provided the supplied token is still 'valid' and a
         // corresponding record in SessionManager can be found)
         $session = $request->getSession();
-        $token = $session->get('xdmod_token');
-        if ($session->get('xdInit') !== null && isset($token)) {
+        if ($session->get('xdInit') !== null) {
             $session_id = $session->getId();
             $ip_address = $request->getClientIP();
 
@@ -112,7 +111,6 @@ class AuthenticationController extends BaseController
 
         $session->invalidate();
         $response = $this->redirectToRoute('xdmod_home');
-        $response->headers->clearCookie('xdmod_token');
         return $response;
     }
 

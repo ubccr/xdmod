@@ -96,16 +96,7 @@ class BaseController extends AbstractController
             $xdUser = XDUser::getPublicUser();
         }
 
-        $isPublicUser = (
-            $this->getBooleanParam($request, 'public_user')
-            || $xdUser->isPublicUser()
-        );
-        if ($isPublicUser && !$session->has('public_session_token')) {
-            $session->set('public_session_token', 'public-' . microtime(true) . '-' . uniqid());
-        } elseif (!$isPublicUser) {
-            $session->set('xdUser', $xdUser->getUserID());
-        }
-
+        $isPublicUser = $xdUser->isPublicUser();
         if ($anyAcl) {
             $authorized = count(array_intersect($xdUser->getAclNames(), $requiredAcls)) > 0;
         } else {

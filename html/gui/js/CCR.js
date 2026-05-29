@@ -1202,7 +1202,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
         };
 
         Ext.Ajax.request({
-            url: '/rest/v0.1/auth/login',
+            url: '/login',
             method: 'POST',
             params: restArgs,
             callback: function (options, success, response) {
