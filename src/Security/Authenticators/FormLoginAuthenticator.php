@@ -187,6 +187,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
+        $request->getSession()->set('session_token', $token);
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
             return new RedirectResponse($targetPath);
         }

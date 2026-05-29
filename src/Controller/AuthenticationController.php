@@ -78,7 +78,7 @@ class AuthenticationController extends BaseController
         // (provided the supplied token is still 'valid' and a
         // corresponding record in SessionManager can be found)
         $session = $request->getSession();
-        if ($session->get('xdInit') !== null) {
+        if ($session->get('xdInit', false)) {
             $session_id = $session->getId();
             $ip_address = $request->getClientIP();
 
