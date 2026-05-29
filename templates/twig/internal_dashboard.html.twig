@@ -95,13 +95,6 @@
     <script type="text/javascript" src={{ asset('gui/js/LoginPrompt.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/js/ContainerBodyMask.js') }}></script>
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/common.css') }}"/>
-    <!--[if lte IE 9]>
-    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/common_ie9.css') }}"/>
-    <![endif]-->
-    <!--[if lte IE 8]>
-    <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/common_ie8.css') }}"/>
-    <![endif]-->
-
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/ChartDragDrop.css') }}"/>
 
     <script type="text/javascript" src={{ asset('gui/js/CustomJsonStore.js') }}></script>
@@ -191,16 +184,6 @@
     </script>
 
     <script type="text/javascript" src="{{ asset('gui/js/dashboard/dashboard.js') }}"></script>
-    {% if has_app_kernels %}
-        <script type="text/javascript">
-            Ext.onReady(function () {
-                new XDMoD.AppKernel.InstanceWindow(
-                    {
-                        instanceId:{{ ak_instance_id }}
-                    }).show();
-            }, window, true);
-        </script>
-    {% endif %}
 </head>
 <body></body>
 </html>
