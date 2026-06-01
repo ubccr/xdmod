@@ -880,46 +880,6 @@ class XDReportManager
         return $results[0]['first_name'] . " " . $results[0]['last_name'];
     }
 
-    public function getReportUserFirstName($report_id)
-    {
-        $results = $this->_pdo->query(
-            "
-                SELECT u.first_name
-                FROM Users AS u,
-                    Reports AS r
-                WHERE r.user_id = :user_id
-                    AND r.report_id = :report_id
-                    AND r.user_id = u.id
-            ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
-        );
-
-        return $results[0]['first_name'];
-    }
-
-    public function getReportUserLastName($report_id)
-    {
-        $results = $this->_pdo->query(
-            "
-                SELECT u.last_name
-                FROM Users AS u,
-                    Reports AS r
-                WHERE r.user_id = :user_id
-                    AND r.report_id = :report_id
-                    AND r.user_id = u.id
-            ",
-            array(
-                'user_id'   => $this->_user_id,
-                'report_id' => $report_id,
-            )
-        );
-
-        return $results[0]['last_name'];
-    }
-
     public function getReportUserEmailAddress($report_id)
     {
         $results = $this->_pdo->query(
