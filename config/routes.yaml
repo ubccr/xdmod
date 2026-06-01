@@ -3,3 +3,7 @@ controllers:
         path: ../src/Controller
         namespace: CCR\Controller
     type: attribute
+
+    xdmod_logout:
+        path: /logout
+        target: xdmod_home
