@@ -61,59 +61,6 @@ class AuthenticationController extends BaseController
     }
 
     /**
-     * This route is responsible for any logic that may need to be executed when a user is logged out. Currently, the
-     * actual heavy lifting of logging out is done by the configuration in `config/packages/security.yaml`. This function
-     * just ensures that we clean up our custom Session.
-     *
-     * @param Request $request
-     * @return Response
-     */
-    #[Route('/rest/logout', name: 'xdmod_logout', methods: ['POST', 'GET'])]
-    #[Route('/logout', name: 'xdmod_new_logout', methods: ['POST'])]
-    #[Route('/rest/auth/logout', name: 'xdmod_rest_auth_logout', methods: ['POST'])]
-    public function logout(Request $request): Response
-    {
-        // If a session is still active and a token has been specified,
-        // attempt to record the logout in the SessionManager table
-        // (provided the supplied token is still 'valid' and a
-        // corresponding record in SessionManager can be found)
-        $session = $request->getSession();
-        if ($session->get('xdInit', false)) {
-            $session_id = $session->getId();
-            $ip_address = $request->getClientIP();
-
-            $logout_query = "
-                UPDATE SessionManager
-                SET used_logout = 1
-                WHERE session_token = :session_token
-                    AND session_id = :session_id
-                    AND ip_address = :ip_address
-                    AND init_time = :init_time
-            ";
-            $pdo = DB::factory('database');
-            $pdo->execute($logout_query, array(
-                ':session_id' => $session_id,
-                ':ip_address' => $ip_address,
-                ':init_time' => $session->get('xdInit'),
-            ));
-        }
-
-        try {
-            $auth = new XDSamlAuthentication();
-            $auth->logout();
-        } catch (InvalidArgumentException $ex) {
-            // This will catch when apache or nginx have been set up
-            // to to have an alternate saml configuration directory
-            // that does not exist, so we ignore it as saml isnt set
-            // up and we dont have to do anything with it
-        }
-
-        $session->invalidate();
-        $response = $this->redirectToRoute('xdmod_home');
-        return $response;
-    }
-
-    /**
      * Return an IDP redirect URL for SSO login
      *
      * @param Request $request
@@ -164,10 +111,11 @@ class AuthenticationController extends BaseController
             'xdmod_jwt',
             $jwt,
             $expiration,
-            '/',  // path
-            null, // domain
-            true, // secure
-            true  // httpOnly
+            samesite: 'strict',
+            path: '/',
+            domain: null,
+            secure: true,
+            httpOnly: true
         );
         $response = new RedirectResponse($jupyterhub_url);
         $response->headers->setCookie($cookie);

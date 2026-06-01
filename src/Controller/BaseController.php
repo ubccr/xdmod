@@ -89,7 +89,6 @@ class BaseController extends AbstractController
     public function authorize(Request $request, array $requiredAcls = [], bool $anyAcl = false): XDUser
     {
         $symfonyUser = $this->getUser();
-        $session = $request->getSession();
         if (isset($symfonyUser)) {
             $xdUser = XDUser::getUserByUserName($symfonyUser->getUserIdentifier());
         } else {
