@@ -178,13 +178,13 @@
             "is_unique": true
         },{
             "name": "index_account",
-            "columns": [ "account_id" ]
+            "columns": [ "${AGGREGATION_UNIT}_id", "account_id" ]
         },{
             "name": "index_person",
-            "columns": [ "person_id" ]
+            "columns": [ "${AGGREGATION_UNIT}_id", "person_id" ]
         },{
             "name": "index_resource",
-            "columns": [ "host_resource_id" ]
+            "columns": [ "${AGGREGATION_UNIT}_id", "host_resource_id" ]
         },{
             "name": "index_period_value",
             "columns": [ "${AGGREGATION_UNIT}" ]

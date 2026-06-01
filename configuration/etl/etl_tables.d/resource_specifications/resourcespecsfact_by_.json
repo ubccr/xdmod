@@ -120,7 +120,7 @@
         "indexes": [
             {
                 "name": "index_resource",
-                "columns": [ "record_resource_id" ]
+                "columns": [ "${AGGREGATION_UNIT}_id", "record_resource_id" ]
             },{
                 "name": "index_period_value",
                 "columns": [ "${AGGREGATION_UNIT}" ]
