@@ -43,13 +43,15 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
 
     private ContainerBagInterface $parameters;
 
-    public function __construct(LoggerInterface $logger, HttpUtils $httpUtils, UrlGeneratorInterface $urlGenerator, ContainerBagInterface $parameters )
+    public function __construct(LoggerInterface $logger, HttpUtils $httpUtils, UrlGeneratorInterface $urlGenerator, ContainerBagInterface $parameters)
     {
         $this->logger = $logger;
         $this->httpUtils = $httpUtils;
         $this->urlGenerator = $urlGenerator;
         $this->parameters = $parameters;
         $this->sources = Source::getSources();
+        $this->authSource = null;
+        $this->authSourceName = null;
         $this->logger->debug('Auth Sources', [$this->sources]);
     }
 
@@ -65,12 +67,15 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     public function supports(Request $request): ?bool
     {
         try {
-            $authSource = \xd_utilities\getConfiguration('authentication', 'source');
+            $this->authSourceName = \xd_utilities\getConfiguration('authentication', 'source');
             $this->logger->debug('Found Auth Source', [$authSource]);
         } catch (\Exception $e) {
             return false;
         }
 
+        if (empty($this->sources)) {
+            return false;
+        }
         // We only allow SSO Auth when the request is a GET for the home page.
         if (!$request->isMethod('GET') ||
             !$this->httpUtils->checkRequestPath($request, 'xdmod_home')) {
@@ -96,14 +101,11 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
 
     public function authenticate(Request $request): Passport
     {
-        if (isset($this->sources)) {
-            if (!is_null($authSource) && array_search($authSource, $this->sources) !== false) {
-                $this->authSourceName = $authSource;
-                $this->authSource = new \SimpleSAML\Auth\Simple($authSource);
-            } else {
-                $this->authSourceName = $this->sources[0];
-                $this->authSource = new \SimpleSAML\Auth\Simple($this->authSourceName);
-            }
+        if (array_search($this->authSourceName, $this->sources)) {
+            $this->authSource = new \SimpleSAML\Auth\Simple($this->authSourceName);
+        } else {
+            $this->authSourceName = $this->sources[0];
+            $this->authSource = new \SimpleSAML\Auth\Simple($this->authSourceName);
         }
 
         if ($this->authSource->isAuthenticated()) {
@@ -113,7 +115,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
             return new SelfValidatingPassport(
                 new UserBadge(
                     $username,
-                    function($userName, $samlAttributes) use ($logger) {
+                    function ($userName, $samlAttributes) use ($logger) {
                         $logger->debug('Loading SimpleSAMLPHP User');
 
                         function getOrganizationId($samlAttrs, $personId)
