@@ -7,7 +7,6 @@ use Models\Acl;
 use Models\Services\Acls;
 use Models\Services\Organizations;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
-use xd_security\SessionSingleton;
 
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
@@ -2430,20 +2429,6 @@ SQL;
         }
 
         return $results;
-    }
-
-    /**
-     * Executes any actions that need to be conducted immediately after a user is logged into XDMoD.
-     *
-     * @throws Exception if there is a problem executing any of the required post logged in steps.
-     */
-    public function postLogin()
-    {
-        if (!$this->isSticky()) {
-            $this->updatePerson();
-            $this->synchronizeOrganization();
-        }
-        $this->currentToken = XDSessionManager::recordLogin($this);
     }
 
     /**
