@@ -49,24 +49,8 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
         $this->httpUtils = $httpUtils;
         $this->urlGenerator = $urlGenerator;
         $this->parameters = $parameters;
-
         $this->sources = Source::getSources();
         $this->logger->debug('Auth Sources', [$this->sources]);
-        if (!empty($this->sources)) {
-            try {
-                $authSource = \xd_utilities\getConfiguration('authentication', 'source');
-                $this->logger->debug('Found Auth Source', [$authSource]);
-            } catch (\Exception $e) {
-                $authSource = null;
-            }
-            if (!is_null($authSource) && array_search($authSource, $this->sources) !== false) {
-                $this->authSourceName = $authSource;
-                $this->authSource = new \SimpleSAML\Auth\Simple($authSource);
-            } else {
-                $this->authSourceName = $this->sources[0];
-                $this->authSource = new \SimpleSAML\Auth\Simple($this->authSourceName);
-            }
-        }
     }
 
 
@@ -80,6 +64,13 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
      */
     public function supports(Request $request): ?bool
     {
+        try {
+            $authSource = \xd_utilities\getConfiguration('authentication', 'source');
+            $this->logger->debug('Found Auth Source', [$authSource]);
+        } catch (\Exception $e) {
+            return false;
+        }
+
         // We only allow SSO Auth when the request is a GET for the home page.
         if (!$request->isMethod('GET') ||
             !$this->httpUtils->checkRequestPath($request, 'xdmod_home')) {
@@ -105,6 +96,16 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
 
     public function authenticate(Request $request): Passport
     {
+        if (isset($this->sources)) {
+            if (!is_null($authSource) && array_search($authSource, $this->sources) !== false) {
+                $this->authSourceName = $authSource;
+                $this->authSource = new \SimpleSAML\Auth\Simple($authSource);
+            } else {
+                $this->authSourceName = $this->sources[0];
+                $this->authSource = new \SimpleSAML\Auth\Simple($this->authSourceName);
+            }
+        }
+
         if ($this->authSource->isAuthenticated()) {
             $attributes = $this->authSource->getAttributes();
             $username = $attributes['username'][0];

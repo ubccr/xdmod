@@ -97,12 +97,14 @@ class HomeController extends BaseController
 
         $isSSOConfigured = false;
         $ssoLoginLink = [];
-        try {
-            $auth = new XDSamlAuthentication();
-            $isSSOConfigured = $auth->isSamlConfigured();
-            $ssoLoginLink = $auth->getLoginLink();
-        } catch (\Exception $e) {
-            $this->logger->error($e->getMessage(), [$e]);
+        if (!$userLoggedIn) {
+            try {
+                $auth = new XDSamlAuthentication();
+                $isSSOConfigured = $auth->isSamlConfigured();
+                $ssoLoginLink = $auth->getLoginLink();
+            } catch (\Exception $e) {
+                $this->logger->error($e->getMessage(), [$e]);
+            }
         }
 
         try {
