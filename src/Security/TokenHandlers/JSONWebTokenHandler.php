@@ -14,7 +14,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use CCR\DB;
 use XDUser;
 
-class JSONWebTokenAuthenticator implements AccessTokenHandlerInterface
+class JSONWebTokenHandler implements AccessTokenHandlerInterface
 {
     /**
      * @var LoggerInterface
