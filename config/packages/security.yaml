@@ -21,7 +21,9 @@ security:
                 - CCR\Security\Authenticators\SimpleSamlPhpAuthenticator
             switch_user: true
             logout:
-                invalidate_session: true
+              path: /logout
+              target: xdmod_home
+              enable_csrf: true
             access_denied_handler: CCR\Security\AccessDeniedHandler
             entry_point: CCR\Security\Authenticators\FormLoginAuthenticator
 

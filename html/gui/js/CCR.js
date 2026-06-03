@@ -1039,10 +1039,6 @@ CCR.BrowserWindow = Ext.extend(Ext.Window, {
 
 // -----------------------------------
 
-var logoutCallback = function () {
-    location.href = 'index.php';
-};
-
 CCR.xdmod.ui.actionLogout = function () {
     if (CCR.xdmod.ui.isImpersonating) {
         CCR.xdmod.ui.stopImpersonation();
@@ -1051,6 +1047,7 @@ CCR.xdmod.ui.actionLogout = function () {
         Ext.Ajax.request({
             url: '/logout',
             method: 'POST',
+            params: {'_csrf_token': CCR.xdmod.ui.csrf_token}
             success: function () {
                 location.href = "/";
             }

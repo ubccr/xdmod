@@ -186,6 +186,7 @@
         {% else %}
         CCR.xdmod.ui.isImpersonating = false;
         {% endif %}
+        CCR.xdmod.ui.csrf_token = '{{ csrf_token('logout') }}';
     </script>
 
     {# Profile Editor #}
@@ -382,6 +383,13 @@
 <form id="history-form" class="x-hidden">
     <input type="hidden" id="x-history-field"/>
     <iframe id="x-history-frame"></iframe>
+</form>
+
+<form id="logout-form" class="x-hidden">
+    <formaction="/logout">
+    <formmethod="post">
+    <input type="hidden" name="token" value="{{ csrf_token('logout') }}">
+    <button type="submit" name="Logout" onClick="CCR.xdmod.ui.actionLogout()">
 </form>
 
 <!-- Tag used to render XDMoD -->

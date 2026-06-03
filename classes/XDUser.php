@@ -1909,20 +1909,7 @@ SQL;
 
     public function getPersonID($default = FALSE)
     {
-        $session = SessionSingleton::getSession();
-        $xdUserId = $session->get('xdUser');
-        if (isset($xdUserId) && ($xdUserId === $this->_id) && ($default == FALSE)) {
-
-            // The user object pertains to the user logged in..
-            $assumedPersonId = $session->get('assumed_person_id');
-            if (isset($assumedPersonId)) {
-                $personID = $assumedPersonId;
-            }
-
-        } else {
-            $personID = (empty($this->_personID)) ? '0' : $this->_personID;
-        }
-        return $personID;
+        return (empty($this->_personID)) ? '0' : $this->_personID;
     }//getPersonID
 
     // ---------------------------

@@ -50,8 +50,6 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
         $this->urlGenerator = $urlGenerator;
         $this->parameters = $parameters;
         $this->sources = Source::getSources();
-        $this->authSource = null;
-        $this->authSourceName = null;
         $this->logger->debug('Auth Sources', [$this->sources]);
     }
 
@@ -68,7 +66,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     {
         try {
             $this->authSourceName = \xd_utilities\getConfiguration('authentication', 'source');
-            $this->logger->debug('Found Auth Source', [$authSource]);
+            $this->logger->debug('Found Auth Source', [$this->authSourceName]);
         } catch (\Exception $e) {
             return false;
         }
