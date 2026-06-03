@@ -62,6 +62,6 @@ SQL;
             self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
 
-        return new UserBadge($username)
+        return new UserBadge($username);
     }
 }
