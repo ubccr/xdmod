@@ -947,7 +947,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                                 method: 'GET'
                             }),
                             baseParams: {
-                                realm: CCR.xdmod.ui.rawDataAllowedRealms[0],
+                                realm: CCR.xdmod.ui.rawDataAllowedRealms[0]
                             },
                             storeId: 'jobviewer-basicsearch-resource',
                             autoLoad: true,

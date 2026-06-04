@@ -1196,7 +1196,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                         function (btn) {
                             if (btn === 'ok' || btn === 'yes') {
                                 Ext.Ajax.request({
-                                    url: self.rest.warehouse + '/search/history?realm=' + realm ,
+                                    url: self.rest.warehouse + '/search/history?realm=' + realm,
                                     method: 'DELETE',
                                     success: function (response) {
                                         var data = JSON.parse(response.responseText);
@@ -1829,7 +1829,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             null,
             {
                 realm: realm,
-                title: searchTitle,
+                title: searchTitle
             }
         );
 

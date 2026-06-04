@@ -63,7 +63,7 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
             return User::fromXDUser($xdUser);
         } else {
             $this->logger->error('No XDUser found.');
-            throw new UserNotFoundException("Unable to find User identified by $identifier");
+            throw new UserNotFoundException("Unable to find User identified by $username");
         }
     }
 

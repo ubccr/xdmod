@@ -135,5 +135,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @inheritDoc
      * Must be implemented as part of the UserInterface
      **/
-    public function eraseCredentials(): void {}
+    public function eraseCredentials(): void
+    {
+    }
 }
