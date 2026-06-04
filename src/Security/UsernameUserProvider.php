@@ -58,7 +58,7 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
     public function loadUserByUsername(string $username): ?UserInterface
     {
         $this->logger->debug("Loading User By Username: $username");
-        $xdUser = XDUser::getUserByUserName($identifier);
+        $xdUser = XDUser::getUserByUserName($username);
         if (isset($xdUser)) {
             return User::fromXDUser($xdUser);
         } else {
@@ -83,4 +83,10 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
     {
         $this->logger->debug('Attempting to upgrade password');
     }
+
+    /**
+     * @inheritDoc
+     **/
+    public function eraseCredentials(): void {}
+
 }

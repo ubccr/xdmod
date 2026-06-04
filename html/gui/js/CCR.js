@@ -314,10 +314,9 @@ XDMoD.createTour = function () {
                 if (CCR.xdmod.publicUser !== true) {
                     var conn = new Ext.data.Connection();
                     conn.request({
-                        url: XDMoD.REST.url + '/dashboard/viewedUserTour',
+                        url: '/dashboard/viewedUserTour',
                         params: {
                             viewedTour: 1,
-                            token: XDMoD.REST.token
                         },
                         method: 'POST'
                     }); // conn.request
@@ -1058,7 +1057,7 @@ CCR.xdmod.ui.actionLogout = function () {
 CCR.xdmod.ui.stopImpersonation = function() {
     XDMoD.TrackEvent('Portal', 'Exiting Impersonation');
     Ext.Ajax.request({
-        url: '/' + '?_switch_user=_exit&token=' + XDMoD.REST.token,
+        url: '/' + '?_switch_user=_exit',
         method: 'GET',
         success: function () {
             location.reload();
@@ -1215,7 +1214,6 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
                 if (decodedResponse) {
                     XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
-                    XDMoD.REST.token = data.results.token;
                     presentLoginResponse('Welcome, ' + Ext.util.Format.htmlEncode(data.results.name) + '.', true, 'login_response');
                     parent.location.href = '../../index.php' + parent.XDMoD.referer;
                     parent.location.hash = parent.XDMoD.referer;
