@@ -67,7 +67,7 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
         }
     }
 
-    public function loadUserByIdentifier(string $identifier): ?UserInterface
+    public function loadUserByIdentifier(string $identifier): UserInterface
     {
         return $this->loadUserByUsername($identifier);
     }
