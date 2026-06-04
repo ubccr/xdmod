@@ -19,9 +19,6 @@
 
 Ext.namespace('XDMoD.REST');
 
-XDMoD.REST.token = 'token_value';                  // The REST token will be cached here
-XDMoD.REST.baseURL = '/rest/';                     // Path to where the REST Front Controller resides
-
 // -----------------------------------------------------
 
 // XDMoD.REST.Call --
@@ -47,7 +44,7 @@ XDMoD.REST.Call = function(config) {
    // If config.action has an absolute url (http://....), then do not use XDMoD.REST.baseURL
    // If config.action is using a relative url (/action/....), then use XDMoD.REST.baseURL
 
-   var fullURL = (config.action.indexOf('http') == 0) ? '' : XDMoD.REST.baseURL;
+   var fullURL = (config.action.indexOf('http') == 0) ? '' : '';
    fullURL = fullURL + config.action + restArgumentString;
 
    // =================================================================
@@ -158,7 +155,7 @@ XDMoD.REST.Call = function(config) {
 
       return Ext.Ajax.request({
 
-         url: XDMoD.REST.baseURL + config.action + '?token=' + XDMoD.REST.token,
+         url: config.action,
 
          method : 'POST',
 
@@ -201,9 +198,6 @@ XDMoD.REST.Call = function(config) {
    // For local requests, Ext.Ajax.request is used.
 
    var request_params = {};
-
-   if (XDMoD.REST.token != 'token_value')
-      request_params.token = XDMoD.REST.token;
 
     return Ext.Ajax.request({
 
