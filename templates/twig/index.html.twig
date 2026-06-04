@@ -70,6 +70,9 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/GroupTab.css') }}"/>
     {% endif %}
 
+    <script type="text/javascript" src={{ asset('gui/js/RESTProxy.js') }}></script>
+    <script type="text/javascript" src={{ asset('gui/js/REST.js') }}></script>
+
     {% if user_logged_in %}
         <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/LockingGridView.js') }}></script>
         <script type="text/javascript" src={{ asset('gui/lib/extjs/examples/ux/ProgressBarPager.js') }}></script>
