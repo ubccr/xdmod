@@ -40,9 +40,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct(
         string  $username,
         array   $roles,
-        int     $userId = -1,
-        string  $token = '',
-        ?string $password = '')
+        int     $userId,
+        string  $token,
+        ?string $password)
     {
         $this->username = $username;
         $this->xdRoles = $roles;

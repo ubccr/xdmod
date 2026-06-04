@@ -111,7 +111,7 @@ class AuthenticationController extends BaseController
             'xdmod_jwt',
             $jwt,
             $expiration,
-            samesite: 'strict',
+            sameSite: 'strict',
             path: '/',
             domain: null,
             secure: true,

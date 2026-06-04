@@ -53,47 +53,17 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
     }
 
     /**
-     * @inheritDoc
-     * @throws \Exception
-     */
-    public function loadUserByIdentifier(string $identifier): UserInterface
-    {
-
-        $this->logger->debug("Loading User By Identifier: $identifier");
-        $isSamlUser = $this->classesContains('saml', (new \Exception())->getTrace());
-        try {
-            $xdUser = XDUser::getUserByUserName($identifier);
-
-            if ($isSamlUser && $xdUser->getUserType() !== SSO_USER_TYPE) {
-                $this->logger->error('SSO User attempted to log in as a local user.');
-                throw new InsufficientAuthenticationException();
-            }
-        } catch (\Exception $e) {
-            $this->logger->debug("Loading User By Id instead");
-            $xdUser = XDUser::getUserByID($identifier);
-            if ($isSamlUser && isset($xdUser) && $xdUser->getUserType() !== SSO_USER_TYPE) {
-                $this->logger->error('SSO User attempted to log in as a local user.');
-                throw new InsufficientAuthenticationException();
-            }
-            if (!isset($xdUser)) {
-                $this->logger->debug(sprintf('User %s not found', $identifier));
-                throw new UserNotFoundException("Unable to find User identified by $identifier");
-            }
-        }
-
-        $this->logger->debug("XDUser found by username: {$xdUser->getUserID()} {$xdUser->getUsername()}");
-        $foundUser = User::fromXDUser($xdUser);
-        $this->logger->debug(sprintf('Final User Found:  %s %s', $foundUser->getUserIdentifier(), $foundUser->getPassword()));
-        return $foundUser;
-    }
-
-    /**
      * @inerhitDoc
      */
     public function loadUserByUsername(string $username): ?UserInterface
     {
         $this->logger->debug("Loading User By Username: $username");
-        return $this->loadUserByIdentifier($username);
+        $xdUser = XDUser::getUserByUserName($identifier);
+        if (empty($xdUser)) {
+            $this->logger->error('No XDUser found.')
+            throw new UserNotFoundException("Unable to find User identified by $identifier");
+        }
+        return User::fromXDUser($xdUser);
     }
 
     /**
@@ -106,41 +76,5 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
     public function upgradePassword(UserInterface|PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         $this->logger->debug('Attempting to upgrade password');
-    }
-
-    /**
-     * @param $classPart
-     * @param $trace
-     * @return bool
-     */
-    private function classesContains($classPart, $trace): bool
-    {
-        if (is_null($classPart)) {
-            return false;
-        }
-        $classes = $this->getCallingClasses($trace);
-        foreach($classes as $class) {
-            if (is_null($class)) {
-                continue;
-            }
-            $pos = strpos(strtolower($class), strtolower($classPart));
-            if ($pos !== false && is_numeric($pos)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private function getCallingClasses($trace): array
-    {
-        return array_reduce(
-            $trace,
-            function ($carry, $item) {
-                $value = array_key_exists('class', $item) ? $item['class'] : null;
-                $carry[] = $value;
-                return $carry;
-            },
-            []
-        );
     }
 }
