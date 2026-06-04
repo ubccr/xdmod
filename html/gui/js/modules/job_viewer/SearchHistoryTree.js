@@ -175,8 +175,7 @@ XDMoD.Module.JobViewer.SearchHistoryTree = Ext.extend(Ext.tree.TreePanel, {
 
     /**
      * Helper method that enables the tree to interact with a normal REST
-     * backend. It also provides our XDMoD.REST.token as an additional query
-     * param.
+     * backend.
      *
      * @param node
      * @param callback
@@ -188,9 +187,9 @@ XDMoD.Module.JobViewer.SearchHistoryTree = Ext.extend(Ext.tree.TreePanel, {
         var self = this;
 
         if (node.attributes.dtype) {
-            var url = node.ownerTree.url + '?' + CCR.encode(self.getParams(node)) + '&token=' + XDMoD.REST.token;
+            var url = node.ownerTree.url + '?' + CCR.encode(self.getParams(node));
         } else {
-            var url = node.ownerTree.url + '?token=' + XDMoD.REST.token;
+            var url = node.ownerTree.url;
         }
 
         return Ext.Ajax.request({

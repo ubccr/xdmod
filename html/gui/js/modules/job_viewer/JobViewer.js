@@ -70,9 +70,6 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         },
         printButton: true
     },
-
-    // PROPERTIES =============================================================
-    token: XDMoD.REST.token, /*NOTE: This is populated via PHP. So will this render only once? */
     timeSeriesURL: '/rest/supremm/explorer/hctimeseries/',
     optionWhiteList: ['host'],
     storePropertyWhiteList: ['jobid'],
@@ -452,8 +449,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
     }, // getParameterByName
 
     /**
-     * Generate a URL based on the provided base path. This URL will include
-     * the required XDMoD REST token.
+     * Generate a URL based on the provided base path.
      *
      * @param {String} base
      * @param {Array} path
@@ -467,7 +463,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
         if (isType(base, CCR.Types.String) && isType(path, CCR.Types.Array)) {
             var params = this._getParams(path);
             var encoded = encode(params);
-            var result = base + '?' + encoded + '&token=' + XDMoD.REST.token;
+            var result = base + '?' + encoded;
             return result;
         }
         return base;
@@ -1021,7 +1017,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
 
                         var params = this._getParams(jobPath);
                         var encoded = CCR.encode(params);
-                        var url = base + '?' + encoded + '&token=' + XDMoD.REST.token;
+                        var url = base + '?' + encoded;
                         Ext.Ajax.request({
                             url: url,
                             method: 'GET',
@@ -1200,8 +1196,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                         function (btn) {
                             if (btn === 'ok' || btn === 'yes') {
                                 Ext.Ajax.request({
-                                    /*'/rest/datawarehouse/search/history?realm=' + realm + '&token=' + XDMoD.REST.token,*/
-                                    url: XDMoD.REST.url + '/' + self.rest.warehouse + '/search/history?realm=' + realm + '&token=' + XDMoD.REST.token,
+                                    url: self.rest.warehouse + '/search/history?realm=' + realm ,
                                     method: 'DELETE',
                                     success: function (response) {
                                         var data = JSON.parse(response.responseText);
@@ -1261,7 +1256,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
                                 var fragment = recordId !== null ? '/search/history/' + recordId : '/search/history';
                                 var path = self._getPath(node);
                                 /*'/rest/datawarehouse/search/history'*/
-                                var url = self._generateURL(XDMoD.REST.url + '/' + self.rest.warehouse + fragment, path);
+                                var url = self._generateURL(self.rest.warehouse + fragment, path);
                                 Ext.Ajax.request({
                                     url: url,
                                     method: 'DELETE',
@@ -1333,10 +1328,9 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
             var self = this;
 
             Ext.Ajax.request({
-                url: XDMoD.REST.url + '/' + this.rest.warehouse + '/search/jobs',
+                url: this.rest.warehouse + '/search/jobs',
                 method: 'GET',
                 params: {
-                    token: XDMoD.REST.token,
                     realm: searchparams.realm,
                     params: JSON.stringify(searchparams)
                 },
@@ -1831,12 +1825,11 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
 
         var searchPromise = this._makeRequest(
             'GET',
-            XDMoD.REST.url + '/' + this.rest.warehouse + '/search/history',
+            this.rest.warehouse + '/search/history',
             null,
             {
                 realm: realm,
                 title: searchTitle,
-                token: XDMoD.REST.token
             }
         );
 
@@ -1918,7 +1911,7 @@ XDMoD.Module.JobViewer = Ext.extend(XDMoD.PortalModule, {
      */
     _upsertSearch: function (realm, title, id, jobs, searchTerms) {
 
-        var url = XDMoD.REST.url + '/' + this.rest.warehouse + '/search/history?realm=' + realm + '&token=' + XDMoD.REST.token;
+        var url = this.rest.warehouse + '/search/history?realm=' + realm;
         searchTerms = searchTerms || {};
         var params = {
             'data': JSON.stringify(
