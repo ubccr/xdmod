@@ -67,6 +67,11 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
         }
     }
 
+    public function loadUserByIdentifier(string $identifier): ?UserInterface
+    {
+        return $this->loadUserByUsername($identifier);
+    }
+
     /**
      * Upgrades the hashed password of a user, typically for using a better hash algorithm.
      *
