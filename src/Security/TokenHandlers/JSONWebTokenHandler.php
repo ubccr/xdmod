@@ -6,6 +6,7 @@ namespace CCR\Security\TokenHandlers;
 use Firebase\JWT\SignatureInvalidException;
 use Firebase\JWT\ExpiredException;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Http\AccessToken\AccessTokenHandlerInterface;
@@ -13,6 +14,7 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 
 use CCR\DB;
 use XDUser;
+use Models\Services\JsonWebToken
 
 class JSONWebTokenHandler implements AccessTokenHandlerInterface
 {
@@ -63,7 +65,7 @@ SQL;
             $row = $db->query($query, array(':user_id' => $userId));
 
             if (count($row) === 0) {
-                self::throwUnauthorized(Tokens::INVALID_TOKEN_MESSAGE);
+                self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
             }
 
             $expectedToken = $row[0]['token'];

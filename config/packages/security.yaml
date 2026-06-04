@@ -27,8 +27,7 @@ security:
             entry_point: CCR\Security\Authenticators\FormLoginAuthenticator
             access_token:
                 token_handler: CCR\Security\TokenHandlers\JSONWebTokenHandler
-                token_extractors: header
+                token_extractors: 'header'
                 provider: username_provider
-
     access_control:
         - { path: ^/, roles: PUBLIC_ACCESS}
