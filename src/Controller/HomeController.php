@@ -155,13 +155,7 @@ class HomeController extends BaseController
             'description' => 'XSEDE Metrics on Demand (XDMoD) is a comprehensive auditing framework for XSEDE, the follow-on to NSF\'s TeraGrid program. XDMoD provides detailed information on resource utilization and performance across all resource providers.',
             'extjs_path' => 'gui/lib',
             'extjs_version' => 'extjs',
-            'rest_token' => $user->getToken(),
             'colors' => json_encode(json_decode(file_get_contents(CONFIG_DIR . '/colors1.json'), true)),
-            'rest_url' => sprintf(
-                '%s%s',
-                $this->parameters->get('xdmod.portal_settings.rest.base'),
-                $this->parameters->get('xdmod.portal_settings.rest.version')
-            ),
             'realms' => $realms,
             'tech_support_recipient' => $this->parameters->get('xdmod.portal_settings.general.tech_support_recipient'),
             'xdmod_portal_version' => \xd_versioning\getPortalVersion(),

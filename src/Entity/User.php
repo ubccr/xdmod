@@ -77,14 +77,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @inheritDoc
-     **/
-    public function eraseCredentials(): void
-    {
-        // TODO: Implement eraseCredentials() method.
-    }
-
-    /**
      * @return string
      */
     public function getUsername(): string
@@ -97,7 +89,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      **/
     public function getUserIdentifier(): string
     {
-        return $this->username;
+        return $this->getUsername();
     }
 
     /**
