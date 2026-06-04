@@ -83,10 +83,4 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
     {
         $this->logger->debug('Attempting to upgrade password');
     }
-
-    /**
-     * @inheritDoc
-     **/
-    public function eraseCredentials(): void {}
-
 }

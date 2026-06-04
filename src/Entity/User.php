@@ -130,4 +130,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $xdUser->getPassword()
         );
     }
+
+    /**
+     * @inheritDoc
+     * Must be implemented as part of the UserInterface
+     **/
+    public function eraseCredentials(): void {}
 }

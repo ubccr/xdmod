@@ -74,12 +74,6 @@
     <!-- RESTProxy -->
     <script type="text/javascript" src={{ asset('gui/js/RESTProxy.js') }}></script>
 
-    <!-- REST Variables -->
-    <script type="text/javascript">
-        Ext.namespace('XDMoD.REST');
-        XDMoD.REST.token = '{{ rest_token }}';
-        XDMoD.REST.url = '{{ rest_url }}';
-    </script>
     <script type="text/javascript" src={{ asset('gui/js/REST.js') }}></script>
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/css/MultiSelect.css') }}"/>
     <link rel="stylesheet" type="text/css" href="{{ asset('gui/lib/extjs/examples/ux/css/Spinner.css') }}"/>
@@ -109,7 +103,6 @@
     <script type="text/javascript" src={{ asset('gui/lib/PortalColumn.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/lib/Portlet.js') }}></script>
 
-    <script type="text/javascript" src={{ asset('gui/js/RESTTree.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/js/BufferView.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/lib/Spinner.js') }}></script>
     <script type="text/javascript" src={{ asset('gui/lib/SpinnerField.js') }}></script>
