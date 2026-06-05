@@ -14,17 +14,6 @@ class RESTAuthenticatorSuccessHandler implements AuthenticationSuccessHandlerInt
 {
     public function onAuthenticationSuccess(Request $request, TokenInterface $token): ?Response
     {
-        $user = $token->getUser();
-        $xdUser = XDUser::getUserByUserName($user->getUserIdentifier());
-        $response = new JsonResponse([
-            'success' => true,
-            'results' => [
-                'token' => $xdUser->getToken(),
-                'name' => $xdUser->getFormalName()
-            ]
-        ]);
-
-        return $response;
     }
 }
 

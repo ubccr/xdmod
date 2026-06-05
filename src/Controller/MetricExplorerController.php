@@ -431,7 +431,8 @@ class MetricExplorerController extends BaseController
     public function getDimensionValues(Request $request): Response
     {
         $firewallName = $this->security->getFirewallConfig($request)?->getName();
-        $this->logger->debug("$firewallName");
+        $routeName = $request->get('_route');
+        $this->logger->debug("$routeName");
         $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
 
         $dimensionId = $this->getStringParam($request, 'dimension_id', true);
@@ -473,7 +474,8 @@ class MetricExplorerController extends BaseController
     public function getDwDescriptors(Request $request): Response
     {
         $firewallName = $this->security->getFirewallConfig($request)?->getName();
-        $this->logger->debug("$firewallName");
+        $routeName = $request->get('_route');
+        $this->logger->debug("$routeName");
         $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
 
         $roles = $user->getAllRoles(true);
