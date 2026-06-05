@@ -93,14 +93,16 @@ class HomeController extends BaseController
         $ssoLoginLink = [];
         if (!$userLoggedIn && $isSSOConfigured) {
             try {
-                $authSource = \xd_utilities\getConfiguration('authentication', 'source');
+                $ssoAuthSource = \xd_utilities\getConfiguration('authentication', 'source');
+                $request->getSession()->set('ssoAuthSource', $ssoAuthSource);
             } catch (Exception $e) {
-                $authSource = null;
             }
+        }
 
+        if ($ssoAuthSource) {
             // XDSamlAuthentication->getLoginLink();
             $idp = MetaDataStorageHandler::getMetadataHandler()->getMetaData(
-                Source::getById($authSource)->getMetadata()->toArray()['idp'],
+                Source::getById($ssoAuthSource)->getMetadata()->toArray()['idp'],
                 'saml20-idp-remote'
             );
 
