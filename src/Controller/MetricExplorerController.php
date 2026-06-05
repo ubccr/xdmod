@@ -430,6 +430,8 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/dimension/values', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDimensionValues(Request $request): Response
     {
+        $firewallName = $this->security->getFirewallConfig($request)?->getName();
+        $this->logger->debug("$firewallName");
         $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
 
         $dimensionId = $this->getStringParam($request, 'dimension_id', true);
@@ -470,6 +472,8 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/get_dw_descripter',requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDwDescriptors(Request $request): Response
     {
+        $firewallName = $this->security->getFirewallConfig($request)?->getName();
+        $this->logger->debug("$firewallName");
         $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
 
         $roles = $user->getAllRoles(true);
