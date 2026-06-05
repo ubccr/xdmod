@@ -14,6 +14,7 @@ use Models\Realm;
 use OpenXdmod\Assets;
 use Psr\Log\LoggerInterface;
 use SimpleSAML\Auth\Source;
+use SimpleSAML\Metadata\MetaDataStorageHandler;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
