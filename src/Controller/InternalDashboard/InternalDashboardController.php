@@ -51,20 +51,8 @@ class InternalDashboardController extends BaseController
     {
         $user = $this->authorize($request, ['mgr']);
 
-        $hasAppKernels = false;
-        $instanceId = null;
-        if (\xd_utilities\getConfiguration('features', 'appkernels') == 'on') {
-            $op = $request->get('op');
-            if ($op === 'ak_instance') {
-                $hasAppKernels = true;
-                $instanceId = $request->get('instance_id');
-            }
-        }
-
         $parameters = [
             'user' => $user,
-            'has_app_kernels' => $hasAppKernels,
-            'ak_instance_id' => $instanceId,
             'extjs_path' => 'gui/lib',
             'extjs_version' => 'extjs',
             'rest_token' => $user->getToken(),
