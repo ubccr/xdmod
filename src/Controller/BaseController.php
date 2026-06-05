@@ -119,9 +119,13 @@ class BaseController extends AbstractController
      */
     protected function getUserFromRequest(Request $request)
     {
-        $username = $request->attributes->get(BaseController::USER_ATTRIBUTE_KEY)->getUserIdentifier();
-        return XDUser::getUserByUsername($username);
-    }
+        $symfonyUser = $request->attributes->get(BaseController::USER_ATTRIBUTE_KEY)
+        if (isset($symfonyUser)) {
+            $xdUser = XDUser::getUserByUsername($symfonyUser->getUserIdentifier());
+        } else {
+            $xdUser = XDUser::getPublicUser();
+        }
+        return $xdUser
 
     /**
      * Attempt to get a parameter value from a request and filter it.
