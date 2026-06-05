@@ -89,7 +89,7 @@ class HomeController extends BaseController
 
         $features = $this->getFeatures();
 
-        $isSSOConfigured = isset(Source::getSources());
+        $isSSOConfigured = (null !== Source::getSources());
         $ssoLoginLink = [];
         if (!$userLoggedIn && $isSSOConfigured) {
             try {
