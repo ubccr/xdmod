@@ -21,7 +21,6 @@ security:
             switch_user: true
             logout:
               path: /logout
-              target: xdmod_home
               enable_csrf: true
             access_denied_handler: CCR\Security\AccessDeniedHandler
             entry_point: CCR\Security\Authenticators\FormLoginAuthenticator

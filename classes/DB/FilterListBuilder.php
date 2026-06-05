@@ -108,7 +108,7 @@ class FilterListBuilder extends Loggable
     public function buildRealmLists($realmName, $appendToList = false)
     {
         // Get a query for the given realm.
-        $startTime = microtime(true);
+        $startTime = time(true);
         $this->logger->notice('start', ['action' => $realmName . '.build-filter-list']);
 
         $realmQuery = new \DataWarehouse\Query\AggregateQuery(
@@ -158,7 +158,7 @@ class FilterListBuilder extends Loggable
             $db->execute("DROP TEMPORARY TABLE IF EXISTS $this->filterTemporaryTable");
         }
 
-        $endTime = microtime(true);
+        $endTime = time(true);
         $journalHelper->markAsDone(date("Y-m-d h:i:s", $startTime), date("Y-m-d h:i:s", $endTime));
 
         $this->logger->notice(
