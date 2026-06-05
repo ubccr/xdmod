@@ -430,7 +430,7 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/dimension/values', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDimensionValues(Request $request): Response
     {
-        $user = XDUser::getUserByUserName($request->getUser()->getUserIdentifier());
+        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
 
         $dimensionId = $this->getStringParam($request, 'dimension_id', true);
         $offset = $this->getStringParam($request ,'start');
@@ -470,7 +470,7 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/get_dw_descripter',requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDwDescriptors(Request $request): Response
     {
-        $user = XDUser::getUserByUserName($request->getUser()->getUserIdentifier());
+        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
 
         $roles = $user->getAllRoles(true);
 

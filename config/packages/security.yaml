@@ -12,6 +12,17 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        rest:
+            provider: username_provider
+            access_token:
+                token_handler: CCR\Security\TokenHandlers\JSONWebTokenHandler
+                token_extractors: 'header'
+                provider: username_provider
+                success_handler: CCR\Security\Authenticators\RESTAuthenticatorSuccessHandler
+            pattern:
+                - ^/rest/
+                - ^/controllers/
+
         main:
             lazy: true
             provider: username_provider
@@ -25,9 +36,5 @@ security:
               enable_csrf: true
             access_denied_handler: CCR\Security\AccessDeniedHandler
             entry_point: CCR\Security\Authenticators\FormLoginAuthenticator
-            access_token:
-                token_handler: CCR\Security\TokenHandlers\JSONWebTokenHandler
-                token_extractors: 'header'
-                provider: username_provider
     access_control:
         - { path: ^/, roles: PUBLIC_ACCESS}
