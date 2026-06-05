@@ -126,6 +126,7 @@ class BaseController extends AbstractController
             $xdUser = XDUser::getPublicUser();
         }
         return $xdUser;
+    }
 
     /**
      * Attempt to get a parameter value from a request and filter it.
