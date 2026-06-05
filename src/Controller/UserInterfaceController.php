@@ -110,7 +110,7 @@ class UserInterfaceController extends BaseController
     #[Route('{prefix}interfaces/user/charts', requirements: ['prefix' => '.*'],  methods: ['POST'])]
     public function getCharts(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $request->getUser();
 
         $allowPublicUser = $request->get('public_user', false);
         if ($user->isPublicUser() && !$allowPublicUser) {
