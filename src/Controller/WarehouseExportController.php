@@ -67,11 +67,7 @@ class WarehouseExportController extends BaseController
     #[Route('/realms', methods: ['GET'])]
     public function getRealms(Request $request): Response
     {
-        try {
-            $user = $this->tokenHelper->authenticate($request);
-        } catch (UnauthorizedHttpException) {
-            $user = $this->authorize($request);
-        }
+        $user = $this->authorize($request);
 
         $config = RawStatisticsConfiguration::factory();
 

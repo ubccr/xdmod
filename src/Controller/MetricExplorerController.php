@@ -430,11 +430,7 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/dimension/values', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDimensionValues(Request $request): Response
     {
-        try {
-            $user = $this->tokenHelper->authenticate($request);
-        } catch (UnauthorizedHttpException) {
-            $user = $this->authorize($request);
-        }
+        $user = $this->authorize($request);
 
         $dimensionId = $this->getStringParam($request, 'dimension_id', true);
         $offset = $this->getStringParam($request ,'start');
@@ -474,11 +470,7 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/get_dw_descripter',requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDwDescriptors(Request $request): Response
     {
-        try {
-            $user = $this->tokenHelper->authenticate($request);
-        } catch (UnauthorizedHttpException) {
-            $user = $this->authorize($request);
-        }
+        $user = $this->authorize($request);
 
         $roles = $user->getAllRoles(true);
 

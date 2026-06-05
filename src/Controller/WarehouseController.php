@@ -2129,8 +2129,7 @@ class WarehouseController extends BaseController
     #[Route('{prefix}warehouse/raw-data', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getRawData(Request $request): Response
     {
-        $user = $this->tokenHelper->authenticate($request);
-
+        $user = $request->getUser();
         try {
             $params = $this->validateRawDataParams($request, $user);
         } catch (HttpException $e) {

@@ -570,18 +570,6 @@ class BaseController extends AbstractController
     }
 
     /**
-     * @param Request $request
-     * @return \XDUser
-     * @throws BadRequestHttpException if the provided token is empty, or there is not a provided token.
-     * @throws \Exception if the user's token from the db does not validate against the provided token.
-     */
-    protected function authenticateToken($request)
-    {
-
-        return $this->tokenHelper->authenticate($request);
-    }
-
-    /**
      * Attempts to convert the provided $value into an instance of DateTime by using the provided $format. If $value is
      * unable to be converted into a valid DateTime or if warnings are generated during the process it will be filtered
      * and null returned.
