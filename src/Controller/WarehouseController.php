@@ -2129,7 +2129,7 @@ class WarehouseController extends BaseController
     #[Route('{prefix}warehouse/raw-data', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getRawData(Request $request): Response
     {
-        $user = $request->getUser();
+        $user = XDUser::getUserByUserName($request->getUser()->getUserIdentifier());
         try {
             $params = $this->validateRawDataParams($request, $user);
         } catch (HttpException $e) {

@@ -16,7 +16,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use function xd_response\buildError;
-
+use XDUser;
 /**
  *
  */
@@ -110,7 +110,8 @@ class UserInterfaceController extends BaseController
     #[Route('{prefix}interfaces/user/charts', requirements: ['prefix' => '.*'],  methods: ['POST'])]
     public function getCharts(Request $request): Response
     {
-        $user = $request->getUser();
+        # NOT the right way to do it, just want to link things up for now
+        $user = XDUser::getUserByUserName($request->getUser()->getUserIdentifier());
 
         $allowPublicUser = $request->get('public_user', false);
         if ($user->isPublicUser() && !$allowPublicUser) {
