@@ -111,7 +111,7 @@ class UserInterfaceController extends BaseController
     public function getCharts(Request $request): Response
     {
         # NOT the right way to do it, just want to link things up for now
-        $user = XDUser::getUserByUserName($request->getUser()->getUserIdentifier());
+        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
 
         $allowPublicUser = $request->get('public_user', false);
         if ($user->isPublicUser() && !$allowPublicUser) {
