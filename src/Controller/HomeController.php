@@ -89,9 +89,10 @@ class HomeController extends BaseController
         $features = $this->getFeatures();
 
         $ssoSources = Source::getSources();
-        $isSSOConfigured = (null !== $ssoSources);
+        $isSSOConfigured = !empty($ssoSources);
         $ssoLoginLink = [];
-        if (!$userLoggedIn && $isSSOConfigured) {
+        $ssoAuthSource = false;
+        if ($isSSOConfigured) {
             try {
                 $ssoAuthSource = \xd_utilities\getConfiguration('authentication', 'source');
                 $request->getSession()->set('ssoAuthSource', $ssoAuthSource);
@@ -116,8 +117,7 @@ class HomeController extends BaseController
 
             if (!empty($idp['icon'])) {
                 $icon = $idp['icon'];
-            }
-            else {
+            } else {
                 $icon = "";
             }
 
@@ -125,6 +125,23 @@ class HomeController extends BaseController
                 'organization' => $orgDisplay,
                 'icon' => $icon
             );
+        }
+        try {
+            $ssoShowLocalLogin = filter_var(
+                $this->parameters->get('xdmod.portal_settings.sso.show_local_login'),
+                FILTER_VALIDATE_BOOLEAN
+            );
+        } catch (Exception $e) {
+            $ssoShowLocalLogin = false;
+        }
+
+        try {
+            $ssoDirectLink = filter_var(
+                $this->parameters->get('xdmod.portal_settings.sso.direct_link'),
+                FILTER_VALIDATE_BOOLEAN
+            );
+        } catch(Exception $e) {
+            $ssoDirectLink = false;
         }
 
         try {
@@ -145,26 +162,6 @@ class HomeController extends BaseController
         // JupyterHub Config
         $jupyterIsEnabled = $this->parameters->has('xdmod.portal_settings.jupyterhub.url');
         $jupyterHubURL = $jupyterIsEnabled ? $this->parameters->get('xdmod.portal_settings.jupyterhub.url') : '';
-
-        try {
-
-            $ssoShowLocalLogin = filter_var(
-                $this->parameters->get('xdmod.portal_settings.sso.show_local_login'),
-                FILTER_VALIDATE_BOOLEAN
-            );
-        } catch (Exception $e) {
-            $ssoShowLocalLogin = false;
-        }
-
-        try {
-            $ssoDirectLink = filter_var(
-                $this->parameters->get('xdmod.portal_settings.sso.direct_link'),
-                FILTER_VALIDATE_BOOLEAN
-            );
-        } catch(Exception $e) {
-            $ssoDirectLink = false;
-        }
-
 
         $params = [
             'user_logged_in' => $userLoggedIn,
