@@ -14,6 +14,7 @@ use Models\Services\Realms;
 use Models\Realm;
 use OpenXdmod\Assets;
 use Psr\Log\LoggerInterface;
+use SimpleSAML\Auth\Source;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -78,14 +79,7 @@ class HomeController extends BaseController
             $response = new RedirectResponse("$returnTo");
             return $response;
         }
-
-        $symfonyUser = $this->getUser();
-        $session = $request->getSession();
-        if (isset($symfonyUser)) {
-            $user = XDUser::getUserByUserName($symfonyUser->getUserIdentifier());
-        } else {
-            $user = XDUser::getPublicUser();
-        }
+        $user = $this->getUserFromRequest();
         $userLoggedIn = !$user->isPublicUser();
 
         $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
@@ -95,12 +89,11 @@ class HomeController extends BaseController
 
         $features = $this->getFeatures();
 
-        $isSSOConfigured = false;
+        $isSSOConfigured = isset(Source::getSources());
         $ssoLoginLink = [];
-        if (!$userLoggedIn) {
+        if (!$userLoggedIn && $isSSOConfigured) {
             try {
                 $auth = new XDSamlAuthentication();
-                $isSSOConfigured = $auth->isSamlConfigured();
                 $ssoLoginLink = $auth->getLoginLink();
             } catch (\Exception $e) {
                 $this->logger->error($e->getMessage(), [$e]);
@@ -310,18 +303,6 @@ class HomeController extends BaseController
         }
 
         return $message;
-    }
-
-    /**
-     * SSO is considered setup
-     * @return bool
-     */
-    private function isSSOSetup(array $ssoSettings): bool
-    {
-        return $this->validate(
-            self::REQUIRED_SAML_SETTINGS,
-            $ssoSettings
-        );
     }
 
     /**

@@ -71,7 +71,7 @@ EML;
         );
 
         $this->_sources = Source::getSources();
-        if ($this->isSamlConfigured()) {
+        if (isset($this->_sources)) {
             try {
                 $authSource = \xd_utilities\getConfiguration('authentication', 'source');
             } catch (Exception $e) {
@@ -85,16 +85,6 @@ EML;
                 $this->_as = new \SimpleSAML\Auth\Simple($this->_sources[0]);
             }
         }
-    }
-
-    /**
-     * Tells us whether or not we have properly set up SAML authentication sources.
-     *
-     * @return boolean true if we have 1 or more auth sources. false otherwise
-     */
-    public function isSamlConfigured()
-    {
-        return !empty($this->_sources);
     }
 
     /**
