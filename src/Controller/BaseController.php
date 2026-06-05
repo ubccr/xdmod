@@ -119,7 +119,8 @@ class BaseController extends AbstractController
      */
     protected function getUserFromRequest(Request $request)
     {
-        return $request->attributes->get(BaseController::USER_ATTRIBUTE_KEY);
+        $username = $request->attributes->get(BaseController::USER_ATTRIBUTE_KEY)->getUserIdentifier();
+        return XDUser::getUserByUsername($username);
     }
 
     /**
