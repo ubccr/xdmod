@@ -88,19 +88,20 @@ class HomeController extends BaseController
 
         $features = $this->getFeatures();
 
+
         $ssoSources = Source::getSources();
         $isSSOConfigured = !empty($ssoSources);
         $ssoLoginLink = [];
         $ssoAuthSource = false;
-        if ($isSSOConfigured) {
-            try {
-                $ssoAuthSource = \xd_utilities\getConfiguration('authentication', 'source');
-                $request->getSession()->set('ssoAuthSource', $ssoAuthSource);
-            } catch (Exception $e) {
-            }
+        try {
+            $portalSettingsSSOAuthSource = \xd_utilities\getConfiguration('authentication', 'source');
+        } catch (Exception $e) {
+            $portalSettingsSSOAuthSource = null;
         }
 
-        if ($ssoAuthSource) {
+        if (empty($portalSettingsSSOAuthSource) && $isSSOConfigured) {
+            // This is the current behavior in XDMoD <= 11.5
+            $ssoAuthSource = $ssoSources[0];
             // XDSamlAuthentication->getLoginLink();
             $idp = MetaDataStorageHandler::getMetadataHandler()->getMetaData(
                 Source::getById($ssoAuthSource)->getMetadata()->toArray()['idp'],
@@ -125,7 +126,9 @@ class HomeController extends BaseController
                 'organization' => $orgDisplay,
                 'icon' => $icon
             );
+            $request->getSession()->set('ssoAuthSource', $ssoAuthSource);
         }
+
         try {
             $ssoShowLocalLogin = filter_var(
                 $this->parameters->get('xdmod.portal_settings.sso.show_local_login'),
