@@ -11,7 +11,6 @@ use Egulias\EmailValidator\Validation\RFCValidation;
 use Exception;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -51,20 +50,17 @@ class BaseController extends AbstractController
      */
     protected ContainerBagInterface $parameters;
 
-    protected Security $security;
-
     /**
      * @param LoggerInterface $logger
      * @param Environment $twig
      * @param Tokens $tokenHelper
      */
-    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters, Security $security)
+    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters)
     {
         $this->logger = $logger;
         $this->twig = $twig;
         $this->tokenHelper = $tokenHelper;
         $this->parameters = $parameters;
-        $this->security = $security;
     }
 
 
