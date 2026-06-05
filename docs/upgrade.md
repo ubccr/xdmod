@@ -58,13 +58,13 @@ RPM file.
 If your web server can reach GitHub via HTTPS, you can install the RPM
 package(s) directly:
 
-    # dnf install https://github.com/ubccr/xdmod/releases/download/v{{ page.rpm_version }}/xdmod-{{ page.rpm_version }}.el8.noarch.rpm [optional module RPMs]
+    # dnf install https://github.com/ubccr/xdmod/releases/download/v{{ page.rpm_version }}/xdmod-{{ page.rpm_version }}.el8.x86_64.rpm [optional module RPMs]
 
 Otherwise, you can download the RPM file from the [GitHub page for the
 release][github-release] and install it (along with any of the optional modules
 you have installed as explained above):
 
-    # dnf install xdmod-{{ page.rpm_version }}.el8.noarch.rpm [optional module RPMs]
+    # dnf install xdmod-{{ page.rpm_version }}.el8.x86_64.rpm [optional module RPMs]
 
 After installing the RPM(s), you may need to manually merge changes to any
 files that you had previously manually changed in your Open XDMoD installation.

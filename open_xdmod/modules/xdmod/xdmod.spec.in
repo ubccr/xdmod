@@ -9,7 +9,6 @@ Group:         Applications/Internet
 License:       LGPLv3+
 Source:        %{name}-%{version}__PRERELEASE__.tar.gz
 BuildRoot:     %(mktemp -ud %{_tmppath}/%{name}-%{version}__PRERELEASE__-%{release}-XXXXXX)
-BuildArch:     noarch
 BuildRequires: php-cli
 Requires:      httpd mod_ssl
 Requires:      php >= 7.4 php-cli php-mysqlnd php-pdo php-gd php-xml php-mbstring php-zip php-posix
@@ -22,6 +21,8 @@ Requires:      logrotate
 Requires:      perl-Image-ExifTool
 Requires:      jq
 Requires:      nodejs(engine) >= 16.18.1
+
+%global debug_package %{nil}
 
 %description
 XDMoD is a data warehouse and web portal for mining statistical data

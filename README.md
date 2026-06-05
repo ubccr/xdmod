@@ -280,7 +280,8 @@ substitute accordingly.
       listed twice. These are likely benign - see the
       [Building FAQ](#building-faq) below.
 
-The resulting RPM will be located in `~/rpmbuild/RPMS/noarch`.
+The resulting RPM will be located in `~/rpmbuild/RPMS/[ARCHITECTURE]` where `[ARCHITECTURE]` is the host
+server CPU architecture (x86_64, aarch64, etc).
 
 ### Building FAQ
 
