@@ -72,9 +72,10 @@ class AuthenticationController extends BaseController
     {
         $returnTo = $this->getStringParam($request, 'returnTo', true);
 
-        $request->getSession()->set('_security.main.target_path', $returnTo);
+        $session = $request->getSession();
+        $session->set('_security.main.target_path', $returnTo);
 
-        $ssoAuthSource = $session->get('ssoAuthSource');
+        $ssoAuthSource = $session->get('ssoAuthSource', false);
         if ($ssoAuthSource) {
             $auth = new \SimpleSAML\Auth\Simple($ssoAuthSource);
         }
