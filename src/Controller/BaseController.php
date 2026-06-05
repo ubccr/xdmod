@@ -119,7 +119,7 @@ class BaseController extends AbstractController
      */
     protected function getUserFromRequest(Request $request)
     {
-        $symfonyUser = $request->attributes->get(BaseController::USER_ATTRIBUTE_KEY)
+        $symfonyUser = $request->attributes->get(BaseController::USER_ATTRIBUTE_KEY);
         if (isset($symfonyUser)) {
             $xdUser = XDUser::getUserByUsername($symfonyUser->getUserIdentifier());
         } else {
