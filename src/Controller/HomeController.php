@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CCR\Controller;
 
 use CCR\Security\Helpers\Tokens;
-use Authentication\SAML\XDSamlAuthentication;
 use CCR\DB;
 use Configuration\Configuration;
 use Exception;
@@ -89,15 +88,41 @@ class HomeController extends BaseController
 
         $features = $this->getFeatures();
 
-        $isSSOConfigured = (null !== Source::getSources());
+        $ssoSources = Source::getSources();
+        $isSSOConfigured = (null !== $ssoSources);
         $ssoLoginLink = [];
         if (!$userLoggedIn && $isSSOConfigured) {
             try {
-                $auth = new XDSamlAuthentication();
-                $ssoLoginLink = $auth->getLoginLink();
-            } catch (\Exception $e) {
-                $this->logger->error($e->getMessage(), [$e]);
+                $authSource = \xd_utilities\getConfiguration('authentication', 'source');
+            } catch (Exception $e) {
+                $authSource = null;
             }
+
+            // XDSamlAuthentication->getLoginLink();
+            $idp = MetaDataStorageHandler::getMetadataHandler()->getMetaData(
+                Source::getById($authSource)->getMetadata()->toArray()['idp'],
+                'saml20-idp-remote'
+            );
+
+            if (!empty($idp['OrganizationDisplayName'])) {
+                $orgDisplay = $idp['OrganizationDisplayName'];
+            } else {
+                $orgDisplay = array(
+                    'en' => 'Single Sign On'
+                );
+            }
+
+            if (!empty($idp['icon'])) {
+                $icon = $idp['icon'];
+            }
+            else {
+                $icon = "";
+            }
+
+            $ssoLoginLink = array(
+                'organization' => $orgDisplay,
+                'icon' => $icon
+            );
         }
 
         try {

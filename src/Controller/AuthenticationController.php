@@ -74,8 +74,12 @@ class AuthenticationController extends BaseController
 
         $request->getSession()->set('_security.main.target_path', $returnTo);
 
-        $auth = new \Authentication\SAML\XDSamlAuthentication();
-        $redirectUrl = $auth->getLoginURL($returnTo);
+        $auth = new \SimpleSAML\Auth\Simple($authSource);
+        $redirectUrl = false;
+        if ($auth) {
+            return $redirectUrl = $returnTo;
+        }
+        return false;
         if ($redirectUrl === false ) {
             return $this->json(buildError(new \Exception('SSO not configured.')));
         }

@@ -36,6 +36,8 @@ class XDSamlAuthentication
      */
     protected $_sources = null;
 
+    protected $isSamlConfigured;
+
     const BASE_ADMIN_EMAIL = <<<EML
 
 Person Details -----------------------------------
@@ -71,7 +73,8 @@ EML;
         );
 
         $this->_sources = Source::getSources();
-        if (isset($this->_sources)) {
+        $this->isSamlConfigured = isset($this->_sources);
+        if ($this->isSamlConfigured)) {
             try {
                 $authSource = \xd_utilities\getConfiguration('authentication', 'source');
             } catch (Exception $e) {
@@ -218,7 +221,7 @@ EML;
      */
     public function getLoginLink()
     {
-        if (!$this->isSamlConfigured()) {
+        if (!$this->isSamlConfigured) {
             return false;
         }
         $idp = MetaDataStorageHandler::getMetadataHandler()->getMetaData(
