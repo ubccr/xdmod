@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace CCR\Controller;
 
 use CCR\DB;
-use CCR\Security\Helpers\Tokens;
 use Exception;
 use Models\Services\JsonWebToken;
 use Psr\Container\ContainerExceptionInterface;

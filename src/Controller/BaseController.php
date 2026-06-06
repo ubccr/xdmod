@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
-use CCR\Security\Helpers\Tokens;
 use DateTime;
 use Egulias\EmailValidator\EmailValidator;
 use Egulias\EmailValidator\Validation\RFCValidation;
@@ -41,11 +40,6 @@ class BaseController extends AbstractController
     protected $twig;
 
     /**
-     * @var Tokens
-     */
-    protected $tokenHelper;
-
-    /**
      * @var ContainerBagInterface
      */
     protected ContainerBagInterface $parameters;
@@ -53,13 +47,11 @@ class BaseController extends AbstractController
     /**
      * @param LoggerInterface $logger
      * @param Environment $twig
-     * @param Tokens $tokenHelper
      */
-    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters)
+    public function __construct(LoggerInterface $logger, Environment $twig, ContainerBagInterface $parameters)
     {
         $this->logger = $logger;
         $this->twig = $twig;
-        $this->tokenHelper = $tokenHelper;
         $this->parameters = $parameters;
     }
 

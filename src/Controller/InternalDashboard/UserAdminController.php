@@ -8,7 +8,6 @@ use CCR\Controller\BaseController;
 use CCR\DB;
 use CCR\Helper\PasswordResetService;
 use CCR\MailWrapper;
-use CCR\Security\Helpers\Tokens;
 use Exception;
 use Models\Acl;
 use Models\Services\Acls;
@@ -40,11 +39,10 @@ class UserAdminController extends BaseController
     public function __construct(
         LoggerInterface $logger,
         Environment $twig,
-        Tokens $tokenHelper,
         ContainerBagInterface $parameters,
         PasswordResetService $passwordResetService
     ) {
-        parent::__construct($logger, $twig, $tokenHelper, $parameters);
+        parent::__construct($logger, $twig, $parameters);
         $this->passwordResetService = $passwordResetService;
     }
 

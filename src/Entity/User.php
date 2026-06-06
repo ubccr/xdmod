@@ -41,13 +41,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         string  $username,
         array   $roles,
         int     $userId,
-        string  $token,
         ?string $password)
     {
         $this->username = $username;
         $this->xdRoles = $roles;
         $this->userId = $userId;
-        $this->token = $token;
         $this->password = $password;
     }
 
@@ -98,14 +96,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserId(): int
     {
         return $this->userId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getToken(): string
-    {
-        return $this->token;
     }
 
     /**

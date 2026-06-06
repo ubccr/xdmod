@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
-use CCR\Security\Helpers\Tokens;
 use CCR\DB;
 use Configuration\Configuration;
 use Exception;
