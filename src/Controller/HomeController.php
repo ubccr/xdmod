@@ -74,12 +74,11 @@ class HomeController extends BaseController
         $returnTo = $session->get('_security.main.target_path');
         if (!empty($returnTo)) {
             $returnTo = urldecode($returnTo);
-            $this->logger->warning('redirecting to', ["$returnTo"]);
             $session->set('_security.main.target_path', null);
             $response = new RedirectResponse("$returnTo");
             return $response;
         }
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
         $userLoggedIn = !$user->isPublicUser();
 
         $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {

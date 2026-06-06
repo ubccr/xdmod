@@ -431,7 +431,7 @@ class MetricExplorerController extends BaseController
     public function getDimensionValues(Request $request): Response
     {
         $routeName = $request->get('_route');
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
 
         $dimensionId = $this->getStringParam($request, 'dimension_id', true);
         $offset = $this->getStringParam($request ,'start');
@@ -472,7 +472,7 @@ class MetricExplorerController extends BaseController
     public function getDwDescriptors(Request $request): Response
     {
         $routeName = $request->get('_route');
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
 
         $roles = $user->getAllRoles(true);
 

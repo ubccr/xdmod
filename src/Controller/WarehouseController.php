@@ -959,7 +959,7 @@ class WarehouseController extends BaseController
     #[Route('/warehouse/dimensions/{dimensionId}/name', requirements: ["dimensionId" => "(\w|_|-])+"], methods: ['GET'])]
     public function getDimensionName(Request $request, string $dimensionId): Response
     {
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
         $dimensionName = MetricExplorer::getDimensionName($user, $dimensionId);
         $success = !empty($dimensionName);
 
@@ -998,7 +998,7 @@ class WarehouseController extends BaseController
     )]
     public function getDimensionValueName(Request $request, string $dimensionId, string $valueId): Response
     {
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
         $valueName = MetricExplorer::getDimensionValueName($user, $dimensionId, $valueId);
         $success = !empty($valueName);
 
@@ -1104,7 +1104,7 @@ class WarehouseController extends BaseController
     #[Route('/datasets', methods: ['GET'])]
     public function getDatasets(Request $request): Response
     {
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
 
         // Get parameters.
         $params = $request->query->all();
@@ -2129,7 +2129,7 @@ class WarehouseController extends BaseController
     #[Route('{prefix}warehouse/raw-data', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getRawData(Request $request): Response
     {
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
         try {
             $params = $this->validateRawDataParams($request, $user);
         } catch (HttpException $e) {

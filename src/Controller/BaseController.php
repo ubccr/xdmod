@@ -63,7 +63,6 @@ class BaseController extends AbstractController
         $this->parameters = $parameters;
     }
 
-
     /**
      * Will attempt to authorize the provided users' roles against the  provided array of role requirements.
      *
@@ -88,12 +87,7 @@ class BaseController extends AbstractController
      */
     public function authorize(Request $request, array $requiredAcls = [], bool $anyAcl = false): XDUser
     {
-        $symfonyUser = $this->getUser();
-        if (isset($symfonyUser)) {
-            $xdUser = XDUser::getUserByUserName($symfonyUser->getUserIdentifier());
-        } else {
-            $xdUser = XDUser::getPublicUser();
-        }
+        $xdUser = $this->getXDUser();
 
         $isPublicUser = $xdUser->isPublicUser();
         if ($anyAcl) {
@@ -112,20 +106,17 @@ class BaseController extends AbstractController
     }
 
     /**
-     * Retrieve the XDMoD user from a request object.
+     *  DELETE ME
+     *  Used in place for now because the controllers act on an XDUser
+     * Retrieve the XDMoD user
      *
      * @param Request $request The request to retrieve a user from.
      * @return XDUser           The user who made the request.
      */
-    protected function getUserFromRequest(Request $request)
+    protected function getXDUser(): XDUser
     {
-        $symfonyUser = $request->attributes->get(BaseController::USER_ATTRIBUTE_KEY);
-        if (isset($symfonyUser)) {
-            $xdUser = XDUser::getUserByUsername($symfonyUser->getUserIdentifier());
-        } else {
-            $xdUser = XDUser::getPublicUser();
-        }
-        return $xdUser;
+        $user = $this->getUser();
+        return $user ? XDUser::getUserByUsername($user->getUsername()) : XDUser::getPublicUser();
     }
 
     /**
@@ -532,7 +523,7 @@ class BaseController extends AbstractController
         $captchaSiteKey = $this->getParameter('xdmod.portal_settings.mailer.captcha_public_key');
         $captchaSecret = $this->getParameter('xdmod.portal_settings.mailer.captcha_private_key');
 
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
 
         if ('' !== $captchaSiteKey && '' !== $captchaSecret && !isset($user)) {
             $gCaptchaResponse = $request->get('g-recaptcha-response');
