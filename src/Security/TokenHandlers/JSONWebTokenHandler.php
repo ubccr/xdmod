@@ -83,7 +83,6 @@ SQL;
             if (!password_verify($token, $expectedToken)) {
                 self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
             }
-
             $username = XDUser::getUserByID($dbUserId)->getUsername();
         } elseif ($tokenPartsSize === 3) {
             // JSON Web Token
@@ -107,8 +106,6 @@ SQL;
 
             $row = $db->query($query, array(':username' => $username));
             if (count($row) !== 1) {
-                self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
-            } else {
                 self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
             }
         }
