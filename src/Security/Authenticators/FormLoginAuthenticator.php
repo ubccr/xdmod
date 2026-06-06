@@ -127,7 +127,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
         $credentials['username'] = trim($credentials['username']);
 
         if (\strlen($credentials['username']) > Security::MAX_USERNAME_LENGTH) {
-            $this->logger->error('Username is to long', $credentials);
+            $this->logger->error('Username is too long', $credentials);
             throw new BadCredentialsException('Invalid username.');
         }
 

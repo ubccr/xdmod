@@ -116,7 +116,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $xdUser->getUsername(),
             $xdUser->getRoles(),
             $xdUser->getUserID(),
-            $xdUser->getToken(),
             $xdUser->getPassword()
         );
     }
