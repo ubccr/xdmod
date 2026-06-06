@@ -18,10 +18,11 @@ class SABUserController extends BaseController
      * @return Response
      * @throws Exception
      */
+    // TODO needs IsGranted('mgr')
     #[Route('/controllers/sab_user.php')]
     public function index(Request $request): Response
     {
-        $user = $this->authorize($request, ['mgr']);
+        $user = $this->getXDUser();
 
         $operation = $this->getStringParam($request, 'operation', true);
         switch ($operation) {

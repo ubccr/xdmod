@@ -21,11 +21,10 @@ class PersonController extends BaseController
      * @return Response
      * @throws \Exception
      */
+    // TODO add something like IsGranted('mgr')
     #[Route('/{id}/organization', requirements: ["id" => "(-)?\d+"], methods: ['GET'])]
     public function getOrganizationForPerson(Request $request, int $id): Response
     {
-        $this->authorize($request, ['mgr']);
-
         return $this->json([
             'success' => true,
             'results' => [

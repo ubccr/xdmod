@@ -55,7 +55,7 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
             if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
                 $data = $queries->get();
@@ -100,7 +100,7 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
             if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
 
@@ -145,7 +145,7 @@ class MetricExplorerController extends BaseController
         );
         $statusCode = 401;
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
             if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
                 $data = $request->get('data');
@@ -203,7 +203,7 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
             if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
 
@@ -280,7 +280,7 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
             if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
                 $query = $queries->getById($queryId);
@@ -400,7 +400,7 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/data', requirements: ['prefix' => '.*'], methods: ['POST', 'GET'])]
     public function getData(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $params = array_merge($request->query->all(), $request->request->all());
         $m = new \DataWarehouse\Access\MetricExplorer($params);
@@ -629,7 +629,7 @@ class MetricExplorerController extends BaseController
         ];
 
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
 
             $userProfile = $user->getProfile();
             $filters = $userProfile->fetchValue('filters');
@@ -666,7 +666,7 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/raw_data', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getRawData(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         try {
             $requestedFormat = $this->getStringParam($request, 'format');

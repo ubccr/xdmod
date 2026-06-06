@@ -68,8 +68,6 @@ class UserController extends BaseController
     #[Route("{prefix}users/current", name: "get_current_user", requirements: ['prefix' => '.*'], methods: ["GET"])]
     public function getCurrentUser(Request $request)
     {
-        $this->authorize($request);
-
         return $this->json([
             'success' => true,
             'results' => $this->extractUserData($request->getSession(), XDUser::getUserByUserName($this->getUser()->getUserIdentifier()))
@@ -88,8 +86,6 @@ class UserController extends BaseController
     {
         // Ensure that the user is logged in.
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        $this->authorize($request);
 
         // Attempt to update the user's profile with the given information.
         $this->updateUser(
@@ -122,7 +118,7 @@ class UserController extends BaseController
     #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getCurrentAPIToken(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         if ($this->canCreateToken($user)) {
             throw new NotFoundHttpException('API token not found.');
@@ -149,7 +145,7 @@ class UserController extends BaseController
     #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function createAPIToken(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         if (!$this->canCreateToken($user)) {
             throw new ConflictHttpException('Token already exists.');
@@ -175,7 +171,7 @@ class UserController extends BaseController
     #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['DELETE'])]
     public function revokeAPIToken(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         // If we can create a token then we can't really revoke it
         if ($this->canCreateToken($user)) {

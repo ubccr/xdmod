@@ -66,7 +66,7 @@ class UserInterfaceController extends BaseController
     #[Route('{prefix}interfaces/user/tabs', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getTabs(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $tabs = Tabs::getTabs($user);
 
@@ -189,7 +189,7 @@ class UserInterfaceController extends BaseController
     {
         $returnData = [];
 
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $node = $this->getStringParam($request, 'node');
 
@@ -425,7 +425,7 @@ class UserInterfaceController extends BaseController
     #[Route('{prefix}interfaces/userparameters/descriptions', requirements: ['prefix' => '.*'],  methods: ['POST'])]
     public function getParamDescriptions(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $queryBuilder = DataWarehouse\QueryBuilder::getInstance();
         $requestParams = $request->request->all();

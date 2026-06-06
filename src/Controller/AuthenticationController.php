@@ -106,7 +106,7 @@ class AuthenticationController extends BaseController
             throw new HttpException(501, 'JupyterHub not configured.');
         }
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
         } catch (UnauthorizedHttpException $e) {
             return new RedirectResponse('/#jwt-redirect');
         }
