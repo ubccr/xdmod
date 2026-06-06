@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -98,8 +97,6 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
             }
         }
 
-        $this->logger->debug('Checking if FormLoginAuthenticator supports request', [$postOnly, $found, $formOnly]);
-
         return $request->isMethod('POST') && $found && $formOnly;
     }
 
@@ -120,12 +117,8 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
     public function authenticate(Request $request): Passport
     {
         $credentials = [];
-        if ($request->hasMethod('POST')) {
-            $credentials['username'] = ParameterBagUtils::getParameterBagValue($request->request, $this->options['username_parameter']);
-            $credentials['password'] = ParameterBagUtils::getParameterBagValue($request->request, $this->options['password_parameter']) ?? '';
-        } else {
-            throw MethodNotAllowedException(['POST']);
-        }
+        $credentials['username'] = ParameterBagUtils::getParameterBagValue($request->request, $this->options['username_parameter']);
+        $credentials['password'] = ParameterBagUtils::getParameterBagValue($request->request, $this->options['password_parameter']) ?? '';
 
         if (!\is_string($credentials['username']) && (!\is_object($credentials['username']) || !method_exists($credentials['username'], '__toString'))) {
             throw new BadRequestHttpException(sprintf('The key "%s" must be a string, "%s" given.', $this->options['username_parameter'], \gettype($credentials['username'])));
