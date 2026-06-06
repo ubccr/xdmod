@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
-use Authentication\SAML\XDSamlAuthentication;
 use CCR\DB;
 use CCR\Security\Helpers\Tokens;
 use Exception;
@@ -12,6 +11,7 @@ use Models\Services\JsonWebToken;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
+use SimpleSAML\Auth\Source;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -41,8 +41,8 @@ class AuthenticationController extends BaseController
      * present is the throwing of an Exception. The actual "login" process is handled by the Symfony Authentication
      * process in conjunction with our custom Authenticators that are responsible for pulling / providing creds from a
      * Request:
-     * - `src/Authenticators/FormLoginAuthenticator`
-     * - `src/Authenticators/SimpleSamlPhpAuthenticator`
+     * - `src/Security/Authenticators/FormLoginAuthenticator`
+     * - `src/Security/Authenticators/SimpleSamlPhpAuthenticator`
      *
      * and our UserProviders that know how to lookup a user in our database:
      * - `src/Security/UsernameUserProvider.php`
@@ -72,13 +72,11 @@ class AuthenticationController extends BaseController
     {
         $returnTo = $this->getStringParam($request, 'returnTo', true);
 
-        $session = $request->getSession();
-        $session->set('_security.main.target_path', $returnTo);
+        $request->getSession()->set('_security.main.target_path', $returnTo);
 
-        $ssoAuthSource = $session->get('ssoAuthSource', false);
-        if ($ssoAuthSource) {
-            $auth = new \SimpleSAML\Auth\Simple($ssoAuthSource);
-        }
+        $ssoAuthSources = Source::getSources();
+        $ssoAuthSource = !empty($ssoAuthSources) ? $ssoAuthSources[0] : false;
+        $auth = ($ssoAuthSource) ? new \SimpleSAML\Auth\Simple($ssoAuthSource) : false;
 
         $redirectURL = false;
         if ($auth) {
@@ -87,7 +85,7 @@ class AuthenticationController extends BaseController
             return $this->json(buildError(new \Exception('SSO not configured.')));
         }
 
-        return new Response($redirectUrl, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
+        return new Response($redirectURL, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
     }
 
 

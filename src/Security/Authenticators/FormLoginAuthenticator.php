@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\Routing\Exception\MethodNotAllowedException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -67,8 +68,6 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
             'password_parameter' => 'password',
             'check_paths' => ['xdmod_login', 'xdmod_new_login'],
             'failure_path' => 'xdmod_home',
-            'post_only' => true,
-            'form_only' => true,
         ], $options);
     }
 
@@ -82,8 +81,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
      */
     public function supports(Request $request): bool
     {
-        $postOnly = (!$this->options['post_only'] || $request->isMethod('POST'));
-        $formOnly = (!$this->options['form_only'] || 'form' === $request->getContentTypeFormat());
+        $formOnly = ('form' === $request->getContentTypeFormat());
         if ($request->attributes->has('_route')) {
             $requestPath = $request->attributes->get('_route');
         } else {
@@ -102,7 +100,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
 
         $this->logger->debug('Checking if FormLoginAuthenticator supports request', [$postOnly, $found, $formOnly]);
 
-        return $postOnly && $found && $formOnly;
+        return $request->isMethod('POST') && $found && $formOnly;
     }
 
     /**
@@ -121,7 +119,26 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
      */
     public function authenticate(Request $request): Passport
     {
-        $credentials = $this->getCredentials($request);
+        $credentials = [];
+        if ($request->hasMethod('POST')) {
+            $credentials['username'] = ParameterBagUtils::getParameterBagValue($request->request, $this->options['username_parameter']);
+            $credentials['password'] = ParameterBagUtils::getParameterBagValue($request->request, $this->options['password_parameter']) ?? '';
+        } else {
+            throw MethodNotAllowedException(['POST']);
+        }
+
+        if (!\is_string($credentials['username']) && (!\is_object($credentials['username']) || !method_exists($credentials['username'], '__toString'))) {
+            throw new BadRequestHttpException(sprintf('The key "%s" must be a string, "%s" given.', $this->options['username_parameter'], \gettype($credentials['username'])));
+        }
+
+        $credentials['username'] = trim($credentials['username']);
+
+        if (\strlen($credentials['username']) > Security::MAX_USERNAME_LENGTH) {
+            $this->logger->error('Username is to long', $credentials);
+            throw new BadCredentialsException('Invalid username.');
+        }
+
+        $request->getSession()->set(Security::LAST_USERNAME, $credentials['username']);
 
         return new Passport(
             new UserBadge($credentials['username']),
@@ -143,30 +160,6 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
      */
     private function getCredentials(Request $request): array
     {
-        $credentials = [];
-
-        if ($this->options['post_only']) {
-            $credentials['username'] = ParameterBagUtils::getParameterBagValue($request->request, $this->options['username_parameter']);
-            $credentials['password'] = ParameterBagUtils::getParameterBagValue($request->request, $this->options['password_parameter']) ?? '';
-        } else {
-            $credentials['username'] = ParameterBagUtils::getRequestParameterValue($request, $this->options['username_parameter']);
-            $credentials['password'] = ParameterBagUtils::getRequestParameterValue($request, $this->options['password_parameter']) ?? '';
-        }
-
-        if (!\is_string($credentials['username']) && (!\is_object($credentials['username']) || !method_exists($credentials['username'], '__toString'))) {
-            throw new BadRequestHttpException(sprintf('The key "%s" must be a string, "%s" given.', $this->options['username_parameter'], \gettype($credentials['username'])));
-        }
-
-        $credentials['username'] = trim($credentials['username']);
-
-        if (\strlen($credentials['username']) > Security::MAX_USERNAME_LENGTH) {
-            $this->logger->error('Username is to long', $credentials);
-            throw new BadCredentialsException('Invalid username.');
-        }
-
-        $request->getSession()->set(Security::LAST_USERNAME, $credentials['username']);
-
-        return $credentials;
     }
 
     /**
@@ -187,10 +180,6 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
      */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
-        $request->getSession()->set('session_token', $token);
-        if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
-            return new RedirectResponse($targetPath);
-        }
         $user = $token->getUser();
         $xdUser = XDUser::getUserByUserName($user->getUserIdentifier());
         $response = new JsonResponse([
