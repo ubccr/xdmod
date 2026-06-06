@@ -22,7 +22,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Twig\Environment;
-use function xd_response\buildError;
+use xd_response\buildError;
 
 
 /**
@@ -80,7 +80,7 @@ class AuthenticationController extends BaseController
 
         $redirectURL = false;
         if ($auth) {
-           $redirectURL = $auth->getLoginURL($returnTo);
+            $redirectURL = $auth->getLoginURL($returnTo);
         } else {
             return $this->json(buildError(new \Exception('SSO not configured.')));
         }

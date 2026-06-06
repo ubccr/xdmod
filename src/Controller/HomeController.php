@@ -102,7 +102,7 @@ class HomeController extends BaseController
         if (empty($portalSettingsSSOAuthSource) && $isSSOConfigured) {
             // This is the current behavior in XDMoD <= 11.5
             $ssoAuthSource = $ssoSources[0];
-            // XDSamlAuthentication->getLoginLink();
+            // From XDSamlAuthentication getLoginLink();
             $idp = MetaDataStorageHandler::getMetadataHandler()->getMetaData(
                 Source::getById($ssoAuthSource)->getMetadata()->toArray()['idp'],
                 'saml20-idp-remote'

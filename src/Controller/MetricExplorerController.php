@@ -430,11 +430,10 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/dimension/values', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDimensionValues(Request $request): Response
     {
-        $routeName = $request->get('_route');
         $user = $this->getXDUser();
 
         $dimensionId = $this->getStringParam($request, 'dimension_id', true);
-        $offset = $this->getStringParam($request ,'start');
+        $offset = $this->getStringParam($request, 'start');
         if (empty($offset)) {
             $offset = 0;
         }
@@ -468,10 +467,9 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception if unable to get the currently logged in user.
      */
-    #[Route('{prefix}metrics/explorer/get_dw_descripter',requirements: ['prefix' => '.*'], methods: ['POST'])]
+    #[Route('{prefix}metrics/explorer/get_dw_descripter', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDwDescriptors(Request $request): Response
     {
-        $routeName = $request->get('_route');
         $user = $this->getXDUser();
 
         $roles = $user->getAllRoles(true);
@@ -845,7 +843,7 @@ class MetricExplorerController extends BaseController
                 if ($offsetParam === null && !empty($limit)) {
                     $offset = null;
                 }
-                $ret['data'] = $dataset->getResults($limit, $offset,false, false, null, null, $this->logger);
+                $ret['data'] = $dataset->getResults($limit, $offset, false, false, null, null, $this->logger);
                 $ret['totalCount'] = $totalCount;
 
                 return $this->json($ret);

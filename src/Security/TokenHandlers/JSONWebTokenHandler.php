@@ -48,9 +48,9 @@ class JSONWebTokenHandler implements AccessTokenHandlerInterface
         $tokenParts = explode('.', $accessToken);
         $tokenPartsSize = sizeof($tokenParts);
         if ($tokenPartsSize === 2) {
+            // API Token
             $userId = $tokenParts[0];
             $token = $tokenParts[1];
-            $tokenType = 'API token';
             $db = DB::factory('database');
             $query = <<<SQL
             SELECT
@@ -86,7 +86,7 @@ SQL;
 
             $username = XDUser::getUserByID($dbUserId)->getUsername();
         } elseif ($tokenPartsSize === 3) {
-            $tokenType = 'JSON Web Token';
+            // JSON Web Token
             try {
                 $claims = JsonWebToken::decode($accessToken);
             } catch (ExpiredException $e) {
