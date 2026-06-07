@@ -27,31 +27,6 @@ use XDUser;
 
 class HomeController extends BaseController
 {
-    const REQUIRED_SAML_SETTINGS = [
-        'idp' => [
-            'entityId',
-            'singleSignOnService' => [
-                'url',
-                'binding'
-            ],
-            'singleLogoutService' => [
-                'url',
-                'binding'
-            ]
-        ],
-        'sp' => [
-            'entityId',
-            'assertionConsumerService' => [
-                'url',
-                'binding'
-            ],
-            'singleLogoutService' => [
-                'url',
-                'binding'
-            ]
-        ]
-    ];
-
     /**
      * This route serves XDMoD
      *
@@ -64,7 +39,7 @@ class HomeController extends BaseController
     public function index(Request $request): Response
     {
 
-        if ($request->getMethod() === 'OPTIONS') {
+        if ($request->isMethod('OPTIONS')) {
             // We don't need to send anything back for a CORS pre-flight
             return new Response();
         }
