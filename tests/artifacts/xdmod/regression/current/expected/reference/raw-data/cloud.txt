@@ -16,6 +16,8 @@
 ["01f668b1-6fd3-4498-9482-3b8bd6796c29","NutSetters","screw - Screwdriver","<username>","mantholz","Screwdriver","Unknown","Unknown","Unknown","mantholz","Unknown","Unknown Organization","m1.small","2","4096","20","Default","r06c4b10","2019-06-26 00:00:42"]
 121
 ["0262293c-c4d8-4069-bb0f-5f00f0b8ab94","NutSetters","screw - Screwdriver","<username>","rdooley","Screwdriver","Unknown","Unknown","Unknown","TG-CDA180007","Unknown","Unknown Organization","m1.medium","6","16384","60","tacc","r07c2b08","2019-06-26 00:00:56"]
+16b
+["03131102-3f88-4ea3-b2fb-062ae4d91757","OpenStack","screw - Screwdriver","<username>","Warbler, Yellow-rumped","Screwdriver","Engineering","Mechanical and Structural Systems","Mechanics and Materials","zealous","Tern, Sandwich","Screwdriver","c1.m4","1","4096","20","Default","srv-p24-36.cbls.ccr.buffalo.edu","2018-04-18 19:28:35"]
 122
 ["0351a743-e3df-4914-9595-6ae2b16e4957","NutSetters","screw - Screwdriver","<username>","tg836876","Screwdriver","Unknown","Unknown","Unknown","TG-CCR160022","Unknown","Unknown Organization","m1.large","10","30720","60","tacc","r01c4b13","2019-06-26 00:00:23"]
 121
@@ -464,6 +466,8 @@
 ["469c0107-798a-479d-82db-d3cdfc959bc4","NutSetters","screw - Screwdriver","<username>","redcar","Screwdriver","Unknown","Unknown","Unknown","redcar","Unknown","Unknown Organization","m1.large","10","30720","60","Default","r06c3b07","2019-06-26 00:00:11"]
 122
 ["46a035f8-f2b0-44ba-8ec5-08559bb68803","NutSetters","screw - Screwdriver","<username>","mniesen","Screwdriver","Unknown","Unknown","Unknown","mniesen","Unknown","Unknown Organization","m1.xxlarge","44","122880","60","Default","r02c3b05","2019-06-26 00:00:08"]
+16b
+["46c0db15-c6d3-42c0-958f-a9a15f867897","OpenStack","screw - Screwdriver","<username>","Warbler, Yellow-rumped","Screwdriver","Engineering","Mechanical and Structural Systems","Mechanics and Materials","zealous","Tern, Sandwich","Screwdriver","c1.m4","1","4096","20","Default","srv-p24-33.cbls.ccr.buffalo.edu","2018-04-20 15:08:39"]
 11f
 ["46cff06b-10c7-4e94-8482-58fc64d1d3e4","NutSetters","screw - Screwdriver","<username>","gonzalo","Screwdriver","Unknown","Unknown","Unknown","TG-IRI180027","Unknown","Unknown Organization","m1.small","2","4096","20","tacc","r01c4b02","2019-06-26 00:00:01"]
 11f
@@ -774,8 +778,6 @@
 ["74b4541e-631d-47c6-b90d-ea4ddc895b8f","NutSetters","screw - Screwdriver","<username>","tg839371","Screwdriver","Unknown","Unknown","Unknown","TG-IRI180027","Unknown","Unknown Organization","m1.quad","4","10240","20","tacc","r07c2b04","2019-06-26 00:00:51"]
 11d
 ["75551e33-21d7-4809-93ae-473f4002acc0","NutSetters","screw - Screwdriver","<username>","ktyle","Screwdriver","Unknown","Unknown","Unknown","TG-CIE160051","Unknown","Unknown Organization","m1.small","2","4096","20","tacc","r07c1b14","2019-06-26 00:00:17"]
-113
-["7600bd16-2447-4a94-88eb-0b7cc225f272","NutSetters","screw - Screwdriver","<username>","red","Screwdriver","Unknown","Unknown","Unknown","hps","Unknown","Unknown Organization","m1.tiny","1","2048","8","adjunct","r02c2b03","2019-06-26 00:00:53"]
 11f
 ["7645fb55-a3e1-443e-adcc-a0ca7b3d2aab","NutSetters","screw - Screwdriver","<username>","gonzalo","Screwdriver","Unknown","Unknown","Unknown","TG-IRI180027","Unknown","Unknown Organization","m1.small","2","4096","20","tacc","r07c1b01","2019-06-26 00:00:02"]
 121
@@ -1284,8 +1286,6 @@
 ["b69d8812-7858-4117-8aa7-fb8c8f4b6edf","NutSetters","screw - Screwdriver","<username>","tswetnam","Screwdriver","Unknown","Unknown","Unknown","tswetnam","Unknown","Unknown Organization","m1.small","2","4096","20","Default","r06c1b11","2019-06-26 00:00:06"]
 121
 ["b7266556-73e1-4b5d-8666-f354fe58fd7d","NutSetters","screw - Screwdriver","<username>","rcampbel","Screwdriver","Unknown","Unknown","Unknown","rcampbel","Unknown","Unknown Organization","m1.medium","6","16384","60","Default","r06c2b08","2019-06-26 00:00:26"]
-113
-["b76f580c-4ff6-46c7-a6a2-f46479a635c7","NutSetters","screw - Screwdriver","<username>","red","Screwdriver","Unknown","Unknown","Unknown","hps","Unknown","Unknown Organization","m1.tiny","1","2048","8","adjunct","r02c2b03","2019-06-26 00:00:53"]
 126
 ["b84a9c69-029f-4493-ad18-7eae58613983","NutSetters","screw - Screwdriver","<username>","ponyisi","Screwdriver","Unknown","Unknown","Unknown","TG-PHY140033","Unknown","Unknown Organization","p1.phy140033","24","61440","600","tacc","r06c1b14","2019-06-26 00:00:29"]
 13e
