@@ -88,6 +88,7 @@ jobs:
 #      - run:
 #          name: Ensure that no XDMoD exceptions were logged
 #          command: test ! -f /root/xdmod/logs/exceptions.log
+      - printenv
       - run: pushd $HOME && rm -f chromedriver_linux64.zip && wget https://chromedriver.storage.googleapis.com/106.0.5249.61/chromedriver_linux64.zip && popd
       - run:
           name: 'Bodge the nodejs version to run an older one for the webdriver tests'
