@@ -191,6 +191,8 @@ then
     # update as it will already be in place.
     copy_template_httpd_conf
 
+    mysql < $BASEDIR/sql/recreate_indexes.sql
+
     # Restart so that the above changes take effect.
     ~/bin/services restart
 fi

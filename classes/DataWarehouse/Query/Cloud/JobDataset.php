@@ -124,6 +124,12 @@ class JobDataset extends \DataWarehouse\Query\RawQuery
             $st = new Table(new Schema('modw'), 'systemaccount', 'sa');
             $this->joinTo($st, "systemaccount_id", "username", "username");
         }
+
+        $this->addOrder(new \DataWarehouse\Query\Model\OrderBy(
+            new TableField($tables['agg'], 'id'),
+            'ASC',
+            'id'
+        ));
     }
 
     /**
