@@ -29,7 +29,5 @@ security:
                 token_extractors:
                     - 'header'
                     - 'query_string'
-                    - 'request_body'
-                provider: username_provider
     access_control:
         - { path: ^/, roles: PUBLIC_ACCESS}
