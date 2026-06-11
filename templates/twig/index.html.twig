@@ -178,6 +178,7 @@
         {% else %}
         CCR.xdmod.ui.isImpersonating = false;
         {% endif %}
+        CCR.xdmod.ui.csrf_token = '{{ csrf_token('logout') }}';
     </script>
 
     {# Profile Editor #}
