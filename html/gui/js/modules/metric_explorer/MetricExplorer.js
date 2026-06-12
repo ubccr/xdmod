@@ -6319,6 +6319,27 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
         self.on('open_in_nb', function () {
+            const createCodeCell = function(source){
+                return {
+                    "cell_type" : "code",
+                    "execution_count" : "1",
+                    "metadata": {},
+                    "source" : source,
+                    "outputs" : [{
+                                "output_type": "stream",
+                                "name": "stdout",
+                                "text": "",
+                            }]
+                }
+            }
+            const createMarkdownCell = function(source){
+                return {
+                    "cell_type" : "markdown",
+                    "metadata" : {},
+                    "source" : source
+                }
+            }
+
             config = self.getConfig();
             let retJson = {
                 "metadata": {
@@ -6333,41 +6354,13 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 },
                 "nbformat": 4,
                 "nbformat_minor": 0,
-                "cells": []
-            }
-            retJson['cells'][0] = {
-                "cell_type": "markdown",
-                "metadata": {},
-                "source": "The following cell includes all the necessary imports.  Currently, must run XDMOD-Data-First-Example at least once in order for any generated code to work.",
-            }
-            //uncomment out datawarehouse import and dw declaration after api key is no longer required
-            retJson["cells"][1] = {
-                "cell_type": "code",
-                "execution_count": 1,
-                "metadata": {},
-                "source": `import plotly.express as px\nimport plotly.io as pio\nimport pandas as pd\nimport plotly.graph_objects as go\nimport xdmod_data.themes\npio.templates.default = "timeseries"\n#from xdmod_data.warehouse import DataWarehouse\n#dw = DataWarehouse('${document.location.origin}')`,
-                "outputs": [
-                    {
-                        "output_type": "stream",
-                        "name": "stdout",
-                        "text": "",
-                    }
+                "cells": [
+                    createMarkdownCell("The following cell includes all the necessary imports.  Currently, must run XDMOD-Data-First-Example at least once in order for any generated code to work."), 
+                    createCodeCell(`import plotly.express as px\nimport plotly.io as pio\nimport pandas as pd\nimport plotly.graph_objects as go\nimport xdmod_data.themes\npio.templates.default = "timeseries"`),
+                    createCodeCell("from xdmod_data.warehouse import DataWarehouse\ndw = DataWarehouse()")
                 ]
             }
-            //remove this cell once api key no longer needed
-            retJson["cells"][2] = {
-                "cell_type": "code",
-                "execution_count": 1,
-                "metadata": {},
-                "source": "from pathlib import Path\nfrom os.path import expanduser\nxdmod_data_env_path = Path(expanduser('~/xdmod-data.env'))\ntry:\n\twith open(xdmod_data_env_path):\n\t\tpass\nexcept FileNotFoundError:\n\twith open(xdmod_data_env_path, 'w') as xdmod_data_env_file:\n\t\txdmod_data_env_file.write('XDMOD_API_TOKEN=')\n\txdmod_data_env_path.chmod(0o600)\nfrom dotenv import load_dotenv\nload_dotenv(xdmod_data_env_path, override=True)\nfrom xdmod_data.warehouse import DataWarehouse\ndw = DataWarehouse('https://xdmod.access-ci.org/')",
-                "outputs": [
-                    {
-                        "output_type": "stream",
-                        "name": "stdout",
-                        "text": "",
-                    }
-                ]
-            }
+
             let duration;
             if (config.timeframe_label === 'User Defined' && config.start_date && config.end_date) {
                 duration = `${config.start_date}' , '${config.end_date}`;
@@ -6599,48 +6592,16 @@ for col in data_${i}:
         updateLayout += '\n)\n'
         plotChart += `${updateLayout}\n# Format legend and set index interval\nplot.update_layout(legend_x=0, legend_y=-0.3, ${xValueLabels})${(config.data_series.total > 1) ? `\nplot.update_yaxes(showgrid=False)` : ''}\n\nplot.show()`
         retJson['cells'].push(
-            {
-                "cell_type": "markdown",
-                "metadata": {},
-                "source": "The following cell fetches all the necessary data from the data analytics framework",
-            }
+            createMarkdownCell("The following cell fetches all the necessary data from the data analytics framework")
         )
         retJson['cells'].push(
-            {
-                "cell_type": "code",
-                "execution_count": 1,
-                "metadata": {},
-                "source": dataCalls,
-                "outputs": [
-                    {
-                        "output_type": "stream",
-                        "name": "stdout",
-                        "text": "",
-                    }
-                ]
-            }
+            createCodeCell(dataCalls)
         )
         retJson['cells'].push(
-            {
-                "cell_type": "markdown",
-                "metadata": {},
-                "source": "The following cell uses the data fetched in the previous cell to plot the chart and display it",
-            }
+            createMarkdownCell("The following cell uses the data fetched in the previous cell to plot the chart and display it")
         )
         retJson['cells'].push(
-            {
-                "cell_type": "code",
-                "execution_count": 1,
-                "metadata": {},
-                "source": plotChart,
-                "outputs": [
-                    {
-                        "output_type": "stream",
-                        "name": "stdout",
-                        "text": "",
-                    }
-                ]
-            }
+            createCodeCell(plotChart)
         )
         const fetchNB = async () => {
             await fetch(`http://localhost:8000/services/testing/notebooks`, {
@@ -6667,12 +6628,13 @@ for col in data_${i}:
                 console.error('Fetch error:', error);
               });
         }
+        const jupyterServerToken = 'secret';
         const openNB = async () => {
             await fetch(`http://localhost:8888/api/contents/${config.title}.ipynb`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Bearer 4bfb5c606fb1dc132b463694baf58ceabdea6c9b154aa664`, /* <-- temporary token */
+                    'Authorization': `Bearer ${jupyterServerToken}`, /* <-- temporary token */
                 },
                 body: JSON.stringify({
                     "content": retJson,
@@ -6695,7 +6657,7 @@ for col in data_${i}:
         }
         fetchNB()
         openNB()
-        window.open(`http://localhost:8888/lab/tree/${config.title}.ipynb`)
+        window.open(`http://localhost:8888/lab/tree/${config.title}.ipynb?token=${jupyterServerToken}`)
     }); // self.on('open in nb', ...
       
 
