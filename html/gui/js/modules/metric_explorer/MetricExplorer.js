@@ -6319,25 +6319,23 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
         // ---------------------------------------------------------
         self.on('open_in_nb', function () {
-            const createCodeCell = function(source){
-                return {
-                    "cell_type" : "code",
-                    "execution_count" : "1",
-                    "metadata": {},
-                    "source" : source,
-                    "outputs" : [{
+            const createCell = function(type, source){
+                let cell = {
+                    "cell_type" : type,
+                    "metadata" : {},
+                    "source" : source
+                };
+                if (type === "code"){
+                    cell.push({
+                        'execution_count' : "1",
+                        "outputs" : [{
                                 "output_type": "stream",
                                 "name": "stdout",
                                 "text": "",
-                            }]
+                    }]
+                    });
                 }
-            }
-            const createMarkdownCell = function(source){
-                return {
-                    "cell_type" : "markdown",
-                    "metadata" : {},
-                    "source" : source
-                }
+                return cell;
             }
 
             config = self.getConfig();
@@ -6355,9 +6353,9 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 "nbformat": 4,
                 "nbformat_minor": 0,
                 "cells": [
-                    createMarkdownCell("The following cell includes all the necessary imports.  Currently, must run XDMOD-Data-First-Example at least once in order for any generated code to work."), 
-                    createCodeCell(`import plotly.express as px\nimport plotly.io as pio\nimport pandas as pd\nimport plotly.graph_objects as go\nimport xdmod_data.themes\npio.templates.default = "timeseries"`),
-                    createCodeCell("from xdmod_data.warehouse import DataWarehouse\ndw = DataWarehouse()")
+                    createCell("markdown", "The following cell includes all the necessary imports.  Currently, must run XDMOD-Data-First-Example at least once in order for any generated code to work."), 
+                    createCell("code", `import plotly.express as px\nimport plotly.io as pio\nimport pandas as pd\nimport plotly.graph_objects as go\nimport xdmod_data.themes\npio.templates.default = "timeseries"`),
+                    createCell("code", "from xdmod_data.warehouse import DataWarehouse\ndw = DataWarehouse()")
                 ]
             }
 
@@ -6592,16 +6590,16 @@ for col in data_${i}:
         updateLayout += '\n)\n'
         plotChart += `${updateLayout}\n# Format legend and set index interval\nplot.update_layout(legend_x=0, legend_y=-0.3, ${xValueLabels})${(config.data_series.total > 1) ? `\nplot.update_yaxes(showgrid=False)` : ''}\n\nplot.show()`
         retJson['cells'].push(
-            createMarkdownCell("The following cell fetches all the necessary data from the data analytics framework")
+            createCell("markdown", "The following cell fetches all the necessary data from the data analytics framework")
         )
         retJson['cells'].push(
-            createCodeCell(dataCalls)
+            createCell("code", dataCalls)
         )
         retJson['cells'].push(
-            createMarkdownCell("The following cell uses the data fetched in the previous cell to plot the chart and display it")
+            createCell("markdown", "The following cell uses the data fetched in the previous cell to plot the chart and display it")
         )
         retJson['cells'].push(
-            createCodeCell(plotChart)
+            createCell("code", plotChart)
         )
         const fetchNB = async () => {
             await fetch(`http://localhost:8000/services/testing/notebooks`, {
