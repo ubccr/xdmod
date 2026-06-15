@@ -42,7 +42,7 @@ XDMoD.Module.JobViewer.SearchHistoryPanel = Ext.extend(XDMoD.Module.JobViewer.Se
      */
     initComponent: function () {
 
-        this.url = XDMoD.REST.url + '/' + this.jobViewer.rest.warehouse + '/search/history';
+        this.url = this.jobViewer.rest.warehouse + '/search/history';
 
         this.loaded = false;
 

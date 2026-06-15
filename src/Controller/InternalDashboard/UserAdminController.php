@@ -8,7 +8,6 @@ use CCR\Controller\BaseController;
 use CCR\DB;
 use CCR\Helper\PasswordResetService;
 use CCR\MailWrapper;
-use CCR\Security\Helpers\Tokens;
 use Exception;
 use Models\Acl;
 use Models\Services\Acls;
@@ -40,11 +39,10 @@ class UserAdminController extends BaseController
     public function __construct(
         LoggerInterface $logger,
         Environment $twig,
-        Tokens $tokenHelper,
         ContainerBagInterface $parameters,
         PasswordResetService $passwordResetService
     ) {
-        parent::__construct($logger, $twig, $tokenHelper, $parameters);
+        parent::__construct($logger, $twig, $parameters);
         $this->passwordResetService = $passwordResetService;
     }
 
@@ -53,12 +51,10 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('/controllers/user_admin.php')]
     public function index(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $operation = $this->getStringParam($request, 'operation');
         if (empty($operation)) {
             return $this->json(buildError('operation_not_defined'));
@@ -109,11 +105,10 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function listUsers(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
         $xda = new XDAdmin();
 
         $group = $this->getIntParam($request, 'group');
@@ -149,12 +144,10 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/metadata', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getUserMetadata(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $pdo = DB::factory('database');
 
         $userTypes = $pdo->query('SELECT id, type, color FROM moddb.UserTypes');
@@ -344,11 +337,11 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/update', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function updateUser(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $currentUser = $this->authorize($request, ['mgr']);
+        $currentUser = $this->getXDUser();
 
         $userId = intval($this->getStringParam($request, 'uid', true, null, RESTRICTION_UID));
         $userToUpdate = \XDUser::getUserByID($userId);
@@ -520,12 +513,10 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/search', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function searchForUsers(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $searchCriteria = json_decode($this->getStringParam($request, 'search_crit', true), true);
 
         $datawarehouse = new \XDWarehouse();
@@ -544,12 +535,10 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/password', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function passwordReset(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $userId = $this->getStringParam($request, 'uid', true, null, RESTRICTION_UID);
 
         $userToContact = XDUser::getUserByID($userId);
@@ -575,12 +564,10 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/institutions', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function enumInstitutions(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $query = $this->getStringParam($request, 'query');
         $xdAdmin = new \XDAdmin();
 
@@ -606,12 +593,10 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/roles', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function enumRoles(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $xdAdmin = new \XDAdmin();
         $roles = $xdAdmin->enumerateAcls();
 
@@ -642,12 +627,10 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/types', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function enumUserTypes(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $xdAdmin = new \XDAdmin();
         $userTypes = $xdAdmin->enumerateUserTypes();
 
@@ -671,12 +654,10 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/providers', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function enumResourceProviders(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $xdAdmin = new \XDAdmin();
         $resourceProviders = $xdAdmin->enumerateResourceProviders();
 
@@ -701,12 +682,10 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/emails/exceptions', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function enumExceptionEmailAddresses(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $xdAdmin = new \XDAdmin();
         $emailAddresses = $xdAdmin->enumerateExceptionEmailAddresses();
 
@@ -722,12 +701,10 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/reports/images/cache', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function emptyReportImageCache(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $userId = $this->getStringParam($request, 'uid', true, null, RESTRICTION_UID);
         $targetUser = XDUser::getUserByID($userId);
         if (!isset($targetUser)) {
@@ -755,11 +732,11 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/delete', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function deleteUser(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $requestingUser = $this->authorize($request, ['mgr']);
+        $requestingUser = $this->getXDUser();
 
         $userId = $this->getStringParam($request, 'uid', true, null, RESTRICTION_UID);
         $targetUser = XDUser::getUserByID($userId);
@@ -796,12 +773,10 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/{userId}', requirements: ['userId' => '\d+', 'prefix' => '.*'], methods: ['POST'])]
     public function getUserDetails(Request $request, $userId): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $selected_user = XDUser::getUserByID($userId);
 
         if ($selected_user === null) {

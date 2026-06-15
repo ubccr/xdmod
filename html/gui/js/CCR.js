@@ -314,10 +314,9 @@ XDMoD.createTour = function () {
                 if (CCR.xdmod.publicUser !== true) {
                     var conn = new Ext.data.Connection();
                     conn.request({
-                        url: XDMoD.REST.url + '/dashboard/viewedUserTour',
+                        url: '/dashboard/viewedUserTour',
                         params: {
-                            viewedTour: 1,
-                            token: XDMoD.REST.token
+                            viewedTour: 1
                         },
                         method: 'POST'
                     }); // conn.request
@@ -1039,10 +1038,6 @@ CCR.BrowserWindow = Ext.extend(Ext.Window, {
 
 // -----------------------------------
 
-var logoutCallback = function () {
-    location.href = 'index.php';
-};
-
 CCR.xdmod.ui.actionLogout = function () {
     if (CCR.xdmod.ui.isImpersonating) {
         CCR.xdmod.ui.stopImpersonation();
@@ -1051,6 +1046,9 @@ CCR.xdmod.ui.actionLogout = function () {
         Ext.Ajax.request({
             url: '/logout',
             method: 'POST',
+            params: {
+                _csrf_token: CCR.xdmod.csrf_token
+            },
             success: function () {
                 location.href = "/";
             }
@@ -1061,7 +1059,7 @@ CCR.xdmod.ui.actionLogout = function () {
 CCR.xdmod.ui.stopImpersonation = function() {
     XDMoD.TrackEvent('Portal', 'Exiting Impersonation');
     Ext.Ajax.request({
-        url: '/' + '?_switch_user=_exit&token=' + XDMoD.REST.token,
+        url: '/' + '?_switch_user=_exit',
         method: 'GET',
         success: function () {
             location.reload();
@@ -1202,7 +1200,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
         };
 
         Ext.Ajax.request({
-            url: '/rest/v0.1/auth/login',
+            url: '/login',
             method: 'POST',
             params: restArgs,
             callback: function (options, success, response) {
@@ -1218,7 +1216,6 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
 
                 if (decodedResponse) {
                     XDMoD.TrackEvent('Login Window', 'Successful login', txtLoginUsername.getValue());
-                    XDMoD.REST.token = data.results.token;
                     presentLoginResponse('Welcome, ' + Ext.util.Format.htmlEncode(data.results.name) + '.', true, 'login_response');
                     parent.location.href = '../../index.php' + parent.XDMoD.referer;
                     parent.location.hash = parent.XDMoD.referer;

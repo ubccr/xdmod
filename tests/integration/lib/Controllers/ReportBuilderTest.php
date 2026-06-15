@@ -587,10 +587,6 @@ class ReportBuilderTest extends BaseTest
         $this->log('Expected HTTP-Code   : [' . $expectedHttpCode . ']');
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
 
-        if (($expectedContentType !== $response[1]['content_type']) ||
-            ($expectedHttpCode !== $response[1]['http_code'])) {
-            echo var_export($response, true) . "\n";
-        }
         $this->assertEquals($expectedContentType, $response[1]['content_type']);
         $this->assertEquals($expectedHttpCode, $response[1]['http_code']);
 

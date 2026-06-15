@@ -2,7 +2,6 @@
 
 namespace CCR\Controller;
 
-use CCR\Security\Helpers\Tokens;
 use CCR\DB;
 use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\FileManager;
@@ -49,9 +48,9 @@ class WarehouseExportController extends BaseController
     /**
      * @throws Exception if unable to instantiate the logger.
      */
-    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters)
+    public function __construct(LoggerInterface $logger, Environment $twig, ContainerBagInterface $parameters)
     {
-        parent::__construct($logger, $twig, $tokenHelper, $parameters);
+        parent::__construct($logger, $twig, $parameters);
 
         $this->realmManager = new RealmManager();
         $this->queryHandler = new QueryHandler($this->logger);
@@ -67,20 +66,7 @@ class WarehouseExportController extends BaseController
     #[Route('/realms', methods: ['GET'])]
     public function getRealms(Request $request): Response
     {
-        $user = null;
-
-        // We need to wrap the token authentication because we want the token authentication to be optional, proceeding
-        // to the normal session authentication if a token is not provided.
-        try {
-            $user = $this->tokenHelper->authenticate($request, false);
-        } catch (Exception $e) {
-            // NOOP
-        }
-
-        if ($user === null) {
-            $user = $this->authorize($request);
-        }
-
+        $user = $this->getXDUser();
 
         $config = RawStatisticsConfiguration::factory();
 
@@ -113,7 +99,7 @@ class WarehouseExportController extends BaseController
     #[Route('/requests', methods: ['GET'])]
     public function getRequests(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
         $results = $this->queryHandler->listUserRequestsByState($user->getUserId());
         return $this->json(
             [
@@ -135,7 +121,7 @@ class WarehouseExportController extends BaseController
     #[Route('/request', methods: ['POST'])]
     public function createRequest(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
         $realm = $this->getStringParam($request, 'realm', true);
 
         $realms = array_map(
@@ -211,7 +197,7 @@ class WarehouseExportController extends BaseController
     #[Route('/download/{id}', requirements: ["id" => "\d+"], methods: ['GET'])]
     public function getExportedDataFile(Request $request, int $id): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $requests = array_filter(
             $this->queryHandler->listUserRequestsByState($user->getUserID()),
@@ -283,9 +269,9 @@ class WarehouseExportController extends BaseController
     #[Route('/request/{id}', requirements: ["id" => "\w+"], methods: ['DELETE'])]
     public function deleteRequest(Request $request, string $id): Response
     {
-        $user = $this->authorize($request);
-        $count = $this->queryHandler->deleteRequest($id, $user->getUserID());
+        $user = $this->getXDUser();
 
+        $count = $this->queryHandler->deleteRequest($id, $user->getUserID());
         if ($count === 0) {
             throw new NotFoundHttpException('Export request not found');
         }
@@ -324,7 +310,7 @@ class WarehouseExportController extends BaseController
     #[Route('/requests', methods: ['DELETE'])]
     public function deleteRequests(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $requestIds = [];
 

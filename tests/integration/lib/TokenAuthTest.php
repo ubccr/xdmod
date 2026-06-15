@@ -3,8 +3,8 @@
 namespace IntegrationTests;
 
 use CCR\DB;
+use CCR\Security\TokenHandlers\JSONWebTokenHandler;
 use Exception;
-use CCR\Security\Helpers\Tokens;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
 /**
@@ -158,11 +158,11 @@ abstract class TokenAuthTest extends BaseTest
             // separate key in the output test artifact for each token type.
             } elseif ('token_required' === $input['authentication_type']) {
                 $messages = [
-                    'empty_token' => Tokens::MISSING_TOKEN_MESSAGE,
-                    'malformed_token' => Tokens::INVALID_TOKEN_MESSAGE,
-                    'invalid_token' => Tokens::INVALID_TOKEN_MESSAGE,
-                    'expired_token' => Tokens::EXPIRED_TOKEN_MESSAGE,
-                    'revoked_token' => Tokens::INVALID_TOKEN_MESSAGE
+                    'empty_token' => JSONWebTokenHandler::MISSING_TOKEN_MESSAGE,
+                    'malformed_token' => JSONWebTokenHandler::INVALID_TOKEN_MESSAGE,
+                    'invalid_token' => JSONWebTokenHandler::INVALID_TOKEN_MESSAGE,
+                    'expired_token' => JSONWebTokenHandler::EXPIRED_TOKEN_MESSAGE,
+                    'revoked_token' => JSONWebTokenHandler::INVALID_TOKEN_MESSAGE
                 ];
                 $output = [
                     'status_code' => 401,

@@ -71,7 +71,7 @@ XDMoD.Module.Dashboard.JobComponent = Ext.extend(CCR.xdmod.ui.Portlet, {
                         forceSelection: true,
                         enableKeyEvents: true,
                         store: new Ext.data.JsonStore({
-                            url: XDMoD.REST.url + '/warehouse/dimensions/person',
+                            url: '/warehouse/dimensions/person',
                             restful: true,
                             autoLoad: true,
                             baseParams: {

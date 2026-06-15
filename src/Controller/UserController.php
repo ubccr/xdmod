@@ -7,12 +7,12 @@ use CCR\DB;
 use Models\Services\Organizations;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use XDUser;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use xd_security\SessionSingleton;
 
 /**
  * Class UserControllerProvider
@@ -68,11 +68,9 @@ class UserController extends BaseController
     #[Route("{prefix}users/current", name: "get_current_user", requirements: ['prefix' => '.*'], methods: ["GET"])]
     public function getCurrentUser(Request $request)
     {
-        $this->authorize($request);
-
         return $this->json([
             'success' => true,
-            'results' => $this->extractUserData(XDUser::getUserByUserName($this->getUser()->getUserIdentifier()))
+            'results' => $this->extractUserData($request->getSession(), XDUser::getUserByUserName($this->getUser()->getUserIdentifier()))
         ]);
     }
 
@@ -89,8 +87,6 @@ class UserController extends BaseController
         // Ensure that the user is logged in.
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
-        $this->authorize($request);
-
         // Attempt to update the user's profile with the given information.
         $this->updateUser(
             XDUser::getUserByUserName($this->getUser()->getUserIdentifier()),
@@ -99,7 +95,7 @@ class UserController extends BaseController
 
         // If the last step completed successfully, hide the welcome message
         // for first-time XSEDE users and return a success message.
-        SessionSingleton::getSession()->set('suppress_profile_autoload', true);
+        $request->getSession()->set('suppress_profile_autoload', true);
 
         return $this->json([
             'success' => true,
@@ -122,7 +118,7 @@ class UserController extends BaseController
     #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getCurrentAPIToken(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         if ($this->canCreateToken($user)) {
             throw new NotFoundHttpException('API token not found.');
@@ -149,7 +145,7 @@ class UserController extends BaseController
     #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function createAPIToken(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         if (!$this->canCreateToken($user)) {
             throw new ConflictHttpException('Token already exists.');
@@ -175,9 +171,9 @@ class UserController extends BaseController
     #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['DELETE'])]
     public function revokeAPIToken(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
-        // If we can create a token then we can't really revoke it can we.
+        // If we can create a token then we can't really revoke it
         if ($this->canCreateToken($user)) {
             throw new NotFoundHttpException('API token not found.');
         }
@@ -203,7 +199,7 @@ class UserController extends BaseController
      * @return array        An associative array of data for the user.
      * @throws \Exception
      */
-    private function extractUserData(XDUser $user)
+    private function extractUserData(Session $session, XDUser $user)
     {
         $emailAddress = $user->getEmailAddress();
         if ($emailAddress == NO_EMAIL_ADDRESS_SET) {
@@ -229,7 +225,7 @@ class UserController extends BaseController
             'email_address' => $emailAddress,
             'is_sso_user' => $user->isSSOUser(),
             'first_time_login' => $user->getCreationTimestamp() == $user->getLastLoginTimestamp(),
-            'autoload_suppression' => SessionSingleton::getSession()->get('suppress_profile_autoload', false),
+            'autoload_suppression' => $session->get('suppress_profile_autoload', false),
             'field_of_science' => $user->getFieldOfScience(),
             'active_role' => $mostPrivilegedFormalName,
             'most_privileged_role' => $mostPrivilegedFormalName,

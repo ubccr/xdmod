@@ -27,7 +27,7 @@ class ChartPoolController extends BaseController
     public function index(Request $request): Response
     {
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
         } catch (Exception $e) {
             return $this->json(buildError(new \SessionExpiredException()), 401);
         }

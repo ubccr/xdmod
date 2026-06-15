@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
-use CCR\Security\Helpers\Tokens;
-use Authentication\SAML\XDSamlAuthentication;
 use CCR\DB;
 use Configuration\Configuration;
 use Exception;
@@ -14,43 +12,21 @@ use Models\Services\Realms;
 use Models\Realm;
 use OpenXdmod\Assets;
 use Psr\Log\LoggerInterface;
+use SimpleSAML\Auth\Source;
+use SimpleSAML\Metadata\MetaDataStorageHandler;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Security;
 use Twig\Environment;
-use xd_security\SessionSingleton;
 use XDUser;
 
 class HomeController extends BaseController
 {
-    const REQUIRED_SAML_SETTINGS = [
-        'idp' => [
-            'entityId',
-            'singleSignOnService' => [
-                'url',
-                'binding'
-            ],
-            'singleLogoutService' => [
-                'url',
-                'binding'
-            ]
-        ],
-        'sp' => [
-            'entityId',
-            'assertionConsumerService' => [
-                'url',
-                'binding'
-            ],
-            'singleLogoutService' => [
-                'url',
-                'binding'
-            ]
-        ]
-    ];
-
     /**
      * This route serves XDMoD
      *
@@ -63,7 +39,7 @@ class HomeController extends BaseController
     public function index(Request $request): Response
     {
 
-        if ($request->getMethod() === 'OPTIONS') {
+        if ($request->isMethod('OPTIONS')) {
             // We don't need to send anything back for a CORS pre-flight
             return new Response();
         }
@@ -72,15 +48,12 @@ class HomeController extends BaseController
         $returnTo = $session->get('_security.main.target_path');
         if (!empty($returnTo)) {
             $returnTo = urldecode($returnTo);
-            $url = $this->generateUrl('xdmod_home');
-            $this->logger->warning('redirecting to', ["$returnTo"]);
             $session->set('_security.main.target_path', null);
             $response = new RedirectResponse("$returnTo");
             return $response;
         }
-
-        $user = $this->getXDUser($session);
-        $userLoggedIn = $session->has('xdUser') && !$user->isPublicUser();
+        $user = $this->getXDUser();
+        $userLoggedIn = !$user->isPublicUser();
 
         $realms = array_reduce(Realms::getRealms(), function ($carry, Realm $item) {
             $carry [] = $item->getName();
@@ -89,14 +62,64 @@ class HomeController extends BaseController
 
         $features = $this->getFeatures();
 
-        $isSSOConfigured = false;
+
+        $ssoSources = Source::getSources();
+        $isSSOConfigured = !empty($ssoSources);
         $ssoLoginLink = [];
+        $ssoAuthSource = false;
         try {
-            $auth = new XDSamlAuthentication();
-            $isSSOConfigured = $auth->isSamlConfigured();
-            $ssoLoginLink = $auth->getLoginLink();
-        } catch (\Exception $e) {
-            $this->logger->error($e->getMessage(), [$e]);
+            $portalSettingsSSOAuthSource = \xd_utilities\getConfiguration('authentication', 'source');
+        } catch (Exception $e) {
+            $portalSettingsSSOAuthSource = null;
+        }
+
+        if (empty($portalSettingsSSOAuthSource) && $isSSOConfigured) {
+            // This is the current behavior in XDMoD <= 11.5
+            // probably need to discuss
+            $ssoAuthSource = $ssoSources[0];
+            // From the old XDSamlAuthentication's getLoginLink()
+            $idp = MetaDataStorageHandler::getMetadataHandler()->getMetaData(
+                Source::getById($ssoAuthSource)->getMetadata()->toArray()['idp'],
+                'saml20-idp-remote'
+            );
+
+            if (!empty($idp['OrganizationDisplayName'])) {
+                $orgDisplay = $idp['OrganizationDisplayName'];
+            } else {
+                $orgDisplay = array(
+                    'en' => 'Single Sign On'
+                );
+            }
+
+            if (!empty($idp['icon'])) {
+                $icon = $idp['icon'];
+            } else {
+                $icon = "";
+            }
+
+            $ssoLoginLink = array(
+                'organization' => $orgDisplay,
+                'icon' => $icon
+            );
+            $request->getSession()->set('ssoAuthSource', $ssoAuthSource);
+        }
+
+        try {
+            $ssoShowLocalLogin = filter_var(
+                $this->parameters->get('xdmod.portal_settings.sso.show_local_login'),
+                FILTER_VALIDATE_BOOLEAN
+            );
+        } catch (Exception $e) {
+            $ssoShowLocalLogin = false;
+        }
+
+        try {
+            $ssoDirectLink = filter_var(
+                $this->parameters->get('xdmod.portal_settings.sso.direct_link'),
+                FILTER_VALIDATE_BOOLEAN
+            );
+        } catch(Exception $e) {
+            $ssoDirectLink = false;
         }
 
         try {
@@ -115,33 +138,8 @@ class HomeController extends BaseController
         }
 
         // JupyterHub Config
-        $jupyterIsEnabled = false;
-        $jupyterHubURL = '';
-        try {
-            $jupyterHubURL = $this->parameters->get('xdmod.portal_settings.jupyterhub.url');
-        } catch (\Exception $e) {
-
-        }
-
-        try {
-
-            $ssoShowLocalLogin = filter_var(
-                $this->parameters->get('xdmod.portal_settings.sso.show_local_login'),
-                FILTER_VALIDATE_BOOLEAN
-            );
-        } catch (Exception $e) {
-            $ssoShowLocalLogin = false;
-        }
-
-        try {
-            $ssoDirectLink = filter_var(
-                $this->parameters->get('xdmod.portal_settings.sso.direct_link'),
-                FILTER_VALIDATE_BOOLEAN
-            );
-        } catch(Exception $e) {
-            $ssoDirectLink = false;
-        }
-
+        $jupyterIsEnabled = $this->parameters->has('xdmod.portal_settings.jupyterhub.url');
+        $jupyterHubURL = $jupyterIsEnabled ? $this->parameters->get('xdmod.portal_settings.jupyterhub.url') : '';
 
         $params = [
             'user_logged_in' => $userLoggedIn,
@@ -152,13 +150,7 @@ class HomeController extends BaseController
             'description' => 'XSEDE Metrics on Demand (XDMoD) is a comprehensive auditing framework for XSEDE, the follow-on to NSF\'s TeraGrid program. XDMoD provides detailed information on resource utilization and performance across all resource providers.',
             'extjs_path' => 'gui/lib',
             'extjs_version' => 'extjs',
-            'rest_token' => $user->getToken(),
             'colors' => json_encode(json_decode(file_get_contents(CONFIG_DIR . '/colors1.json'), true)),
-            'rest_url' => sprintf(
-                '%s%s',
-                $this->parameters->get('xdmod.portal_settings.rest.base'),
-                $this->parameters->get('xdmod.portal_settings.rest.version')
-            ),
             'realms' => $realms,
             'tech_support_recipient' => $this->parameters->get('xdmod.portal_settings.general.tech_support_recipient'),
             'xdmod_portal_version' => \xd_versioning\getPortalVersion(),
@@ -177,7 +169,7 @@ class HomeController extends BaseController
             'raw_data_realms' => json_encode($this->getRawDataRealms($user)),
             'use_center_logo' => false,
             'asset_paths' => Assets::generateAssetTags('portal'),
-            'profile_editor_init_flag' => $this->getProfileEditorInitFlag($user),
+            'profile_editor_init_flag' => $this->getProfileEditorInitFlag($session, $user),
             'no_script_message' => $this->getNoScriptMessage('XDMoD requires JavaScript, which is currently disabled in your browser.'),
             'org_name' => ORGANIZATION_NAME,
             'is_sso_configured' => $isSSOConfigured,
@@ -256,7 +248,7 @@ class HomeController extends BaseController
         return null;
     }
 
-    private function getProfileEditorInitFlag(XDUser $user)
+    private function getProfileEditorInitFlag(Session $session, XDUser $user)
     {
         $profile_editor_init_flag = '';
         $usersFirstLogin = ($user->getCreationTimestamp() == $user->getUpdateTimestamp() && !$user->isPublicUser());
@@ -268,8 +260,6 @@ class HomeController extends BaseController
         $userEmailSpecified = ($userEmail != NO_EMAIL_ADDRESS_SET && !empty($userEmail));
         if ($user->isSSOUser() === true || $usersFirstLogin) {
 
-            // NOTE: $_SESSION['suppress_profile_autoload'] will be set only upon update of the user's profile (see respective REST call)
-            $session = SessionSingleton::getSession();
             $suppressProfileAutoload = $session->get('suppress_profile_autoload');
             if ($usersFirstLogin && $userEmailSpecified && (!isset($suppressProfileAutoload) && $user->getUserType() != 50)) {
                 // If the user is logging in for the first time and does have an e-mail address set
@@ -318,18 +308,6 @@ class HomeController extends BaseController
     }
 
     /**
-     * SSO is considered setup
-     * @return bool
-     */
-    private function isSSOSetup(array $ssoSettings): bool
-    {
-        return $this->validate(
-            self::REQUIRED_SAML_SETTINGS,
-            $ssoSettings
-        );
-    }
-
-    /**
      * Validates the provided $settings against the $required structure. This function only validates that
      * keys are present and have non-empty values.
      *
@@ -369,4 +347,3 @@ class HomeController extends BaseController
         return true;
     }
 }
-

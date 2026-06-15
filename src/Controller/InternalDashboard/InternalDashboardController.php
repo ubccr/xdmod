@@ -46,21 +46,16 @@ class InternalDashboardController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('/internal_dashboard')]
     public function index(Request $request): Response
     {
-        $user = $this->getXDUser($request->getSession());
+        $user = $this->getXDUser();
 
         $parameters = [
             'user' => $user,
             'extjs_path' => 'gui/lib',
             'extjs_version' => 'extjs',
-            'rest_token' => $user->getToken(),
-            'rest_url' => sprintf(
-                '%s%s',
-                \xd_utilities\getConfiguration('rest', 'base'),
-                \xd_utilities\getConfiguration('rest', 'version')
-            ),
             'xdmod_features' => json_encode($this->getFeatures()),
             'is_logged_in' => !$user->isPublicUser(),
             'is_public_user' => $user->isPublicUser(),
@@ -110,12 +105,10 @@ class InternalDashboardController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('/internal_dashboard/menus', methods: ['POST'])]
     public function getMenus(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $config = \Configuration\XdmodConfiguration::assocArrayFactory(
             'internal_dashboard.json',
             CONFIG_DIR
@@ -200,12 +193,10 @@ class InternalDashboardController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route("/internal_dashboard/controllers/controller.php", name: "legacy_internal_dashboard_controllers", methods: ['POST', 'GET'])]
     public function controllers(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $operation = $this->getStringParam($request, 'operation');
         if (empty($operation)) {
             return $this->json(buildError('operation_not_defined'));
@@ -456,28 +447,4 @@ SQL;
 
         return new Response(json_encode($data));
     }
-
-    /**
-     * Code Ported from `html/internal_dashboard/controllers/controller.php`
-     *
-     * TODO: Probable end up removing this function as it doesn't look like it's used.
-     *
-     * @param Request $request
-     * @return Response
-     */
-    private function akrr(Request $request): Response
-    {
-        $data = ['success' => true];
-
-        $startDate = $this->getStringParam($request, 'start_date');
-        $endDate = $this->getStringParam($request, 'end_date');
-
-        $testData = [['x' => [1, 2, 3], 'y' => [5, 2, 1]]];
-
-        $data['response'] = $testData;
-        $data['count'] = count($testData);
-
-        return $this->json($data);
-    }
-
 }

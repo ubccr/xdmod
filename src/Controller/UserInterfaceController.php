@@ -13,8 +13,10 @@ use Models\Services\Tabs;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use function xd_response\buildError;
+use XDUser;
 
 /**
  *
@@ -64,7 +66,7 @@ class UserInterfaceController extends BaseController
     #[Route('{prefix}interfaces/user/tabs', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getTabs(Request $request): Response
     {
-        $user = $this->getXDUser($request->getSession());
+        $user = $this->getXDUser();
 
         $tabs = Tabs::getTabs($user);
 
@@ -109,20 +111,7 @@ class UserInterfaceController extends BaseController
     #[Route('{prefix}interfaces/user/charts', requirements: ['prefix' => '.*'],  methods: ['POST'])]
     public function getCharts(Request $request): Response
     {
-        $this->logger->debug('Calling Get Charts');
-        try {
-            $user = $this->tokenHelper->authenticate($request, false);
-
-            // If token authentication failed then fallback to the standard session based authentication method.
-            if ($user === null) {
-                $user = $this->getXDUser($request->getSession());
-            }
-        } catch (Exception $e) {
-            return $this->json(
-                buildError(new Exception('Session Expired', 2)),
-                401
-            );
-        }
+        $user = $this->getXDUser();
 
         $allowPublicUser = $request->get('public_user', false);
         if ($user->isPublicUser() && !$allowPublicUser) {
@@ -130,11 +119,8 @@ class UserInterfaceController extends BaseController
         }
 
         // Send the request and user to the Usage-to-Metric Explorer adapter.
-        $this->logger->debug('Instantiating Usage Object');
         $params = array_merge($request->query->all(), $request->request->all());
         $usageAdapter = new Usage($params);
-
-        $this->logger->debug('Calling Usage->getCharts');
 
         try {
             $chartResponse = $usageAdapter->getCharts($user);
@@ -189,7 +175,6 @@ class UserInterfaceController extends BaseController
     #[Route('{prefix}interfaces/user/data', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getData(Request $request): Response
     {
-        $this->logger->debug('GetData Called');
         return $this->getCharts($request);
     }
 
@@ -204,10 +189,10 @@ class UserInterfaceController extends BaseController
     {
         $returnData = [];
 
-        $user = $this->getXDUser($request->getSession());
+        $user = $this->getXDUser();
 
         $node = $this->getStringParam($request, 'node');
-        $this->logger->debug('Getting Menus for ', [$node]);
+
         if (isset($node) && $node === 'realms') {
             $this->logger->debug('Getting Menus for realms');
             $queryGroupName = $this->getStringParam($request, 'query_group', false, 'tg_usage');
@@ -352,7 +337,6 @@ class UserInterfaceController extends BaseController
             isset($node)
             && substr($node, 0, 13) == 'node=group_by'
         ) {
-            $this->logger->debug('Getting Menus for group_by');
             $category = $this->getStringParam($request, 'category');
             if ($category) {
                 $categoryName = $category;
@@ -441,7 +425,7 @@ class UserInterfaceController extends BaseController
     #[Route('{prefix}interfaces/userparameters/descriptions', requirements: ['prefix' => '.*'],  methods: ['POST'])]
     public function getParamDescriptions(Request $request): Response
     {
-        $user = $this->getXDUser($request->getSession());
+        $user = $this->getXDUser();
 
         $queryBuilder = DataWarehouse\QueryBuilder::getInstance();
         $requestParams = $request->request->all();
@@ -460,6 +444,4 @@ class UserInterfaceController extends BaseController
             'data' => $keyValueParamDescriptions
         ]);
     }
-
-
 }

@@ -63,12 +63,10 @@ class SummaryController extends BaseController
     /**
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}summary/configs', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getConfig(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $config = XdmodConfiguration::assocArrayFactory(
             'internal_dashboard.json',
             CONFIG_DIR
@@ -117,12 +115,10 @@ class SummaryController extends BaseController
     /**
      * @throws Exception
      */
+    #[IsGranted('mgr')]
     #[Route('{prefix}summary/portlets', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getPortlets(Request $request): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $this->authorize($request, ['mgr']);
-
         $config = XdmodConfiguration::assocArrayFactory(
             'internal_dashboard.json',
             CONFIG_DIR
