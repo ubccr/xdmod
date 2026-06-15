@@ -21,7 +21,7 @@ class PersonController extends BaseController
      * @return Response
      * @throws \Exception
      */
-    // TODO add something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('/{id}/organization', requirements: ["id" => "(-)?\d+"], methods: ['GET'])]
     public function getOrganizationForPerson(Request $request, int $id): Response
     {

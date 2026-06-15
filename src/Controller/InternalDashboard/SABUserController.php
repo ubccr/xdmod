@@ -18,7 +18,7 @@ class SABUserController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('/controllers/sab_user.php')]
     public function index(Request $request): Response
     {

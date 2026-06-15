@@ -26,7 +26,7 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('ROLE_ID_CENTER_DIRECTOR')
+    #[IsGranted('ROLE_ID_CENTER_DIRECTOR')]
     #[Route('/controllers/role_manager.php')]
     public function index(Request $request): Response
     {
@@ -161,7 +161,7 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('ROLE_ID_CENTER_DIRECTOR')
+    #[IsGranted('ROLE_ID_CENTER_DIRECTOR')]
     #[Route('{prefix}organizations/members/{memberId}/upgrade', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function upgradeMember(Request $request, string $memberId): Response
     {
@@ -233,7 +233,7 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('ROLE_ID_CENTER_DIRECTOR')
+    #[IsGranted('ROLE_ID_CENTER_DIRECTOR')]
     #[Route('{prefix}organizations/members/{memberId}/downgrade', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function downgradeMember(Request $request, ?string $memberId): Response
     {

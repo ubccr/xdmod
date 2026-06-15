@@ -1047,7 +1047,7 @@ CCR.xdmod.ui.actionLogout = function () {
             url: '/logout',
             method: 'POST',
             params: {
-                _csrf_token: CCR.xdmod.csrf_token,
+                _csrf_token: CCR.xdmod.csrf_token
             },
             success: function () {
                 location.href = "/";

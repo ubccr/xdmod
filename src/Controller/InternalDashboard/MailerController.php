@@ -18,7 +18,7 @@ class MailerController extends \CCR\Controller\BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('/internal_dashboard/controllers/mailer.php', name: 'legacy_dashboard_mailer_index', methods: ['POST'])]
     public function index(Request $request): Response
     {

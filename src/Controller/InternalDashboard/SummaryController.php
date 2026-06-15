@@ -63,7 +63,7 @@ class SummaryController extends BaseController
     /**
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}summary/configs', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getConfig(Request $request): Response
     {
@@ -115,7 +115,7 @@ class SummaryController extends BaseController
     /**
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}summary/portlets', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getPortlets(Request $request): Response
     {

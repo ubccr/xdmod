@@ -51,7 +51,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('/controllers/user_admin.php')]
     public function index(Request $request): Response
     {
@@ -105,7 +105,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function listUsers(Request $request): Response
     {
@@ -144,7 +144,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/metadata', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getUserMetadata(Request $request): Response
     {
@@ -337,7 +337,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/update', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function updateUser(Request $request): Response
     {
@@ -513,7 +513,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/search', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function searchForUsers(Request $request): Response
     {
@@ -535,7 +535,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/password', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function passwordReset(Request $request): Response
     {
@@ -564,7 +564,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/institutions', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function enumInstitutions(Request $request): Response
     {
@@ -593,7 +593,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/roles', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function enumRoles(Request $request): Response
     {
@@ -627,7 +627,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/types', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function enumUserTypes(Request $request): Response
     {
@@ -654,7 +654,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/providers', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function enumResourceProviders(Request $request): Response
     {
@@ -682,7 +682,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/emails/exceptions', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function enumExceptionEmailAddresses(Request $request): Response
     {
@@ -701,7 +701,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/reports/images/cache', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function emptyReportImageCache(Request $request): Response
     {
@@ -732,7 +732,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/delete', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function deleteUser(Request $request): Response
     {
@@ -773,7 +773,7 @@ class UserAdminController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('mgr')
+    #[IsGranted('mgr')]
     #[Route('{prefix}internal_dashboard/users/{userId}', requirements: ['userId' => '\d+', 'prefix' => '.*'], methods: ['POST'])]
     public function getUserDetails(Request $request, $userId): Response
     {
