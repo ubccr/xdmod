@@ -1046,7 +1046,9 @@ CCR.xdmod.ui.actionLogout = function () {
         Ext.Ajax.request({
             url: '/logout',
             method: 'POST',
-            params: { _csrf_token: CCR.xdmod.ui.csrf_token },
+            params: {
+                _csrf_token: CCR.xdmod.csrf_token,
+            },
             success: function () {
                 location.href = "/";
             }

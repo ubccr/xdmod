@@ -58,13 +58,13 @@ class UsernameUserProvider implements UserProviderInterface, PasswordUpgraderInt
     public function loadUserByUsername(string $username): ?UserInterface
     {
         $this->logger->debug("Loading User By Username: $username");
-        $xdUser = XDUser::getUserByUserName($username);
-        if (isset($xdUser)) {
-            return User::fromXDUser($xdUser);
-        } else {
+        try {
+            $xdUser = XDUser::getUserByUserName($username);
+        } catch (Exception $e) {
             $this->logger->error('No XDUser found.');
             throw new UserNotFoundException("Unable to find User identified by $username");
         }
+        return User::fromXDUser($xdUser);
     }
 
     public function loadUserByIdentifier(string $identifier): UserInterface
