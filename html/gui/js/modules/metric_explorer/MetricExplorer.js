@@ -6326,14 +6326,12 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     "source" : source
                 };
                 if (type === "code"){
-                    cell.push({
-                        'execution_count' : "1",
-                        "outputs" : [{
+                    cell["execution_count"] = "1";
+                    cell["outputs"] =  [{
                                 "output_type": "stream",
                                 "name": "stdout",
                                 "text": "",
-                    }]
-                    });
+                    }];
                 }
                 return cell;
             }
