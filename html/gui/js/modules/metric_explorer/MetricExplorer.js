@@ -6601,7 +6601,7 @@ for col in data_${i}:
         )
         const jupyterServerToken = 'secret';
         const openNB = async () => {
-            await fetch(`http://notebook:8888/api/contents/${config.title}.ipynb`, {
+            await fetch(`http://localhost:8888/api/contents/${config.title}.ipynb`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -6627,7 +6627,7 @@ for col in data_${i}:
               });
         }
         openNB()
-        window.open(`http://notebook:8888/lab/tree/${config.title}.ipynb?token=${jupyterServerToken}`)
+        window.open(`http://localhost:8888/lab/tree/${config.title}.ipynb?token=${jupyterServerToken}`)
     }); // self.on('open in nb', ...
       
 
