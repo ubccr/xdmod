@@ -6326,7 +6326,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     "source" : source
                 };
                 if (type === "code"){
-                    cell["execution_count"] = "1";
+                    cell["execution_count"] = 1;
                     cell["outputs"] =  [{
                                 "output_type": "stream",
                                 "name": "stdout",
@@ -6599,34 +6599,9 @@ for col in data_${i}:
         retJson['cells'].push(
             createCell("code", plotChart)
         )
-        const fetchNB = async () => {
-            await fetch(`http://localhost:8000/services/testing/notebooks`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    "content": retJson,
-                    "type": "notebook",
-                }),
-            })
-            .then(response => {
-                if (!response.ok) {
-                  throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-                console.log(response.status)
-                return response.json();
-              })
-              .then(data => {
-                console.log('Data received:', data);
-              })
-              .catch(error => {
-                console.error('Fetch error:', error);
-              });
-        }
         const jupyterServerToken = 'secret';
         const openNB = async () => {
-            await fetch(`http://localhost:8888/api/contents/${config.title}.ipynb`, {
+            await fetch(`http://notebook:8888/api/contents/${config.title}.ipynb`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -6651,9 +6626,8 @@ for col in data_${i}:
                 console.error('Fetch error:', error);
               });
         }
-        fetchNB()
         openNB()
-        window.open(`http://localhost:8888/lab/tree/${config.title}.ipynb?token=${jupyterServerToken}`)
+        window.open(`http://notebook:8888/lab/tree/${config.title}.ipynb?token=${jupyterServerToken}`)
     }); // self.on('open in nb', ...
       
 
