@@ -246,7 +246,7 @@ module.exports = {
             default: 'CURRENT_TIMESTAMP',
             nullable: false,
             extra: 'ON UPDATE CURRENT_TIMESTAMP'
-        }); 
+        });
 
         return {
             table_definition: tableDefinition
