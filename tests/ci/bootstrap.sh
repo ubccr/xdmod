@@ -191,8 +191,6 @@ then
     jq . /etc/xdmod/resource_specs2.json > /etc/xdmod/resource_specs.json
     rm -f /etc/xdmod/resource_specs2.json
 
-    xdmod-ingestor
-
     if [[ "$XDMOD_REALMS" == *"storage"* ]];
     then
         for storage_dir in $REF_DIR/storage/*; do
@@ -200,6 +198,9 @@ then
         done
         sudo -u xdmod xdmod-ingestor --datatype storage
         sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
+    else
+        # Need to ingest the changes to resources.json
+        sudo -u xdmod xdmod-ingestor
     fi
 
     sudo -u xdmod xdmod-ingestor --aggregate=resourcespecs --last-modified-start-date "$last_modified_start_date"
