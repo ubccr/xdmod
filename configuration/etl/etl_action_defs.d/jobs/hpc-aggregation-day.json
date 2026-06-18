@@ -100,7 +100,7 @@
             "job_record_type_id",
             "job_task_type_id",
             "requesting_person_id",
-            "resource_organization_id",
+            "requested_resource.organization_id",
             "task_resource_id",
             "gpu_count",
             "submission_venue_id",
