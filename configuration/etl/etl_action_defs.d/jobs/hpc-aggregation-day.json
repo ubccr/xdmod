@@ -92,7 +92,7 @@
             "piperson_organization_id",
             "job_time_bucket_id",
             "job_wait_time_bucket_id",
-            "processorbucket_id", 
+            "processorbucket_id",
             "gpubucket_id",
             "node_count",
             "processor_count",
