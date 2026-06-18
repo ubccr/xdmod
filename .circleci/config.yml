@@ -7,12 +7,12 @@ version: 2.1
 executors:
   all-realms:
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.5-v10.5.0-1.0-all_realms-02
+      - image: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.5-v10.5.0-1.0-all_realms-03
     environment:
       XDMOD_REALMS: "jobs,storage,cloud,resourcespecifications"
   jobs-only:
     docker:
-      - image: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.5-v10.5.0-1.0-jobs_only-02
+      - image: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.5-v10.5.0-1.0-jobs_only-03
     environment:
       XDMOD_REALMS: "jobs,resourcespecifications"
 jobs:
