@@ -24,7 +24,7 @@ class DatabasesMigration extends AbstractDatabasesMigration
 
         if ($mysql_helper->tableExists('modw_cloud.event')) {
             Utilities::runEtlPipeline(
-                ['update-cloud-session-records','cloud-state-pipeline'],
+                ['update-cloud-session-records', 'move-disk-gb-property', 'cloud-state-pipeline'],
                 $this->logger,
                 ['last-modified-start-date' => '2016-01-01 00:00:00']
             );

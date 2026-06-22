@@ -19,7 +19,10 @@ class DatabasesMigration extends AbstractDatabasesMigration
         $dbh = DB::factory('datawarehouse');
         $mysql_helper = MySQLHelper::factory($dbh);
 
-        if ($mysql_helper->tableExists('modw_cloud.event')) {
+        if (
+            $mysql_helper->tableExists('modw_cloud.event')
+            && !$mysql_helper->columnExists('modw_cloud.instance_data', 'disk_gb')
+        ) {
             Utilities::runEtlPipeline(
                 ['move-disk-gb-property', 'cloud-state-pipeline'],
                 $this->logger,

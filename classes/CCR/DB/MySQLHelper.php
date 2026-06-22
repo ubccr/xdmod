@@ -212,6 +212,44 @@ class MySQLHelper
     }
 
     /**
+     * Check if a column exists in a table in the database.
+     *
+     * If the table name contains a dot (".") it is assumed that the
+     * part of the string before the dot is the schema name.
+     *
+     * @param string $tableName
+     * @param string $columnName
+     *
+     * @return bool
+     */
+    public function columnExists($tableName, $columnName)
+    {
+        $sql = '
+            SELECT COUNT(*) AS count
+            FROM information_schema.columns
+            WHERE table_schema = :schema_name
+                AND table_name = :table_name
+                AND column_name = :column_name
+        ';
+        $this->logger->debug("Query: $sql");
+
+        $schemaName = $this->db->_db_name;
+
+        // Check if the schema name is prepended to the table name.
+        if (strpos($tableName, '.') !== false) {
+            list($schemaName, $tableName) = explode('.', $tableName, 2);
+        }
+
+        list($row) = $this->db->query($sql, array(
+            'schema_name' => $schemaName,
+            'table_name'  => $tableName,
+            'column_name' => $columnName,
+        ));
+
+        return $row['count'] > 0;
+    }
+
+    /**
      * Execute a SQL statement.
      *
      * @param string $stmt The statement to execute.
