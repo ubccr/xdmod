@@ -1,6 +1,6 @@
 <?php
 /**
- * Update database from version 11.0.2 to 11.5.0
+ * Update database from version 11.0.3 to 11.0.4
  */
 
 namespace OpenXdmod\Migration\Version1102To1150;
@@ -15,21 +15,6 @@ class DatabasesMigration extends AbstractDatabasesMigration
 {
     public function execute()
     {
-        $dataWarehouseAdminCredentials = $this->requestMysqlAdminCredentials();
-
-        // Create the modw_etl schema.
-        DatabaseHelper::createDatabases(
-            $dataWarehouseAdminCredentials['user'],
-            $dataWarehouseAdminCredentials['pass'],
-            array(
-                'db_host' => \xd_utilities\getConfiguration('datawarehouse', 'host'),
-                'db_port' => \xd_utilities\getConfiguration('datawarehouse', 'port'),
-                'db_user' => \xd_utilities\getConfiguration('datawarehouse', 'user'),
-                'db_pass' => \xd_utilities\getConfiguration('datawarehouse', 'pass'),
-            ),
-            array('modw_etl')
-        );
-
         parent::execute();
 
         $dbh = DB::factory('datawarehouse');
