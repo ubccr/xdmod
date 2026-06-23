@@ -220,7 +220,7 @@ XDMoD.PortalModule = Ext.extend(Ext.Panel,  {
          var openAsNBButton = new Ext.Button({
 
             text: 'Open in Jupyter',
-            iconCls: 'chart_bar_link',
+            iconCls: 'btn_jupyterlab',
             tooltip: 'Open as a Jupyter Notebook',
             scope: this,
             handler: function () {
