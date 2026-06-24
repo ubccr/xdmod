@@ -6397,7 +6397,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 }
             }
             let dataCalls = 
-            `# Call to Data Analytics Framework requesting data \nwith dw:`;
+`# Call to Data Analytics Framework requesting data \n
+with dw:`;
             let plotChart;
             plotChart = (config.data_series.total == 1) ? '' : 'plot = go.Figure()\n';
             //variable for code for code at the end of last cell (updates layout of created charts)
@@ -6421,25 +6422,25 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 let retval = '';
                 if (multipleMetrics && multipleRealms) {
                     retval = 
-`\n# Rename column names to specify Realm and/or Metric
-newColNames = {}
-for col in data_${i}.columns :
-    newColNames[col] = '${(realm === 'ResourceSpecifications') ? 'Resource Specifications' : realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
-data_${i} = data_${i}.rename(columns=newColNames)`
+    `\n# Rename column names to specify Realm and/or Metric
+    newColNames = {}
+    for col in data_${i}.columns :
+        newColNames[col] = '${(realm === 'ResourceSpecifications') ? 'Resource Specifications' : realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
+    data_${i} = data_${i}.rename(columns=newColNames)`
                 } else if (multipleMetrics) {
                     retval = 
-`\n# Rename column names to specify Realm and/or Metric
-newColNames = {}
-for col in data_${i}.columns :
-    newColNames[col] = ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
-data_${i} = data_${i}.rename(columns=newColNames)`
+    `\n# Rename column names to specify Realm and/or Metric
+    newColNames = {}
+    for col in data_${i}.columns :
+        newColNames[col] = ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
+    data_${i} = data_${i}.rename(columns=newColNames)`
                 } else if (multipleRealms) {
                     retval = 
-`\n# Rename column names to specify Realm and/or Metric
-newColNames = {}
-for col in data_${i}.columns :
-    newColNames[col] = '${(realm === 'ResourceSpecifications') ? 'Resource Specifications' : realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'}
-data_${i} = data_${i}.rename(columns=newColNames)`
+    `\n# Rename column names to specify Realm and/or Metric
+    newColNames = {}
+    for col in data_${i}.columns :
+        newColNames[col] = '${(realm === 'ResourceSpecifications') ? 'Resource Specifications' : realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'}
+    data_${i} = data_${i}.rename(columns=newColNames)`
                 }
                 return retval;
             };
@@ -6477,21 +6478,21 @@ data_${i} = data_${i}.rename(columns=newColNames)`
                 if (Object.keys(metricsList).includes(metric_text)) {
                     // if metric used in previous dataseries, combine it with that dataseries and move on
                     dataCalls += `
-\n\n# Fetch data ${i}
-data_${i} = dw.get_data(
-    duration=('${duration}'),
-    realm='${realm}',
-    metric='${metric}',
-    dimension='${dimension}',
-    filters={${filters}},
-    dataset_type='${dataType}',
-    aggregation_unit='${aggregationUnit}',
-)
-\n# Set data ${i}'s metric label
-label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
-${renameColsCode(i,realm,dimension)}
-\n# Merge data ${i} into data ${metricsList[metric_text]} since they share the same metric
-data_${metricsList[metric_text]} = (data_${metricsList[metric_text]}.merge(data_${i}, on='Time', how='outer', sort=True))`
+    \n\n# Fetch data ${i}
+        ${i} = dw.get_data(
+        duration=('${duration}'),
+        realm='${realm}',
+        metric='${metric}',
+        dimension='${dimension}',
+        filters={${filters}},
+        dataset_type='${dataType}',
+        aggregation_unit='${aggregationUnit}',
+    )
+    \n# Set data ${i}'s metric label
+    label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
+    ${renameColsCode(i,realm,dimension)}
+    \n# Merge data ${i} into data ${metricsList[metric_text]} since they share the same metric
+    data_${metricsList[metric_text]} = (data_${metricsList[metric_text]}.merge(data_${i}, on='Time', how='outer', sort=True))`
                     continue;      
                 } else {
                     metricsList[metric_text] = i
@@ -6530,22 +6531,22 @@ if (len(columns_list) > 10):
     data_${i} = data_${i}[top_ten_columns]`;
                 }
                 dataCalls += `
-\n\n# Fetch data ${i}
-data_${i} = dw.get_data(
-    duration=('${duration}'),
-    realm='${realm}',
-    metric='${metric}',
-    dimension='${dimension}',
-    filters={${filters}},
-    dataset_type='${dataType}',
-    aggregation_unit='${aggregationUnit}',
-)
-\n# Set data ${i}'s metric label
-label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
-${renameColsCode(i, realm, dimension)}`
-plotChart +=
-`${dataView}
-${(swapXY && graphType !== 'pie') ? '\tdata_0 = data_0.reset_index()' : ''}`
+    \n\n# Fetch data ${i}
+    data_${i} = dw.get_data(
+        duration=('${duration}'),
+        realm='${realm}',
+        metric='${metric}',
+        dimension='${dimension}',
+        filters={${filters}},
+        dataset_type='${dataType}',
+        aggregation_unit='${aggregationUnit}',
+    )
+    \n# Set data ${i}'s metric label
+    label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
+    ${renameColsCode(i, realm, dimension)}`
+    plotChart +=
+    `${dataView}
+    ${(swapXY && graphType !== 'pie') ? '\tdata_0 = data_0.reset_index()' : ''}`
                 if (config.data_series.total == 1) {
                     plotChart += `
 \n# Format and draw graph to the screen
@@ -6568,16 +6569,16 @@ for col in data_${i}:
         ${(isSpline) ? 'line_shape = "spline"' : ''}
     ))`
                     updateLayout += `
-yaxis${i+1}=dict(
-    title=dict(
-        text=label_${i},
-    ),${(i == 0) ? '' : (`
-    anchor="free",
-    overlaying="y",
-    autoshift = True,
-    side="${currSide}"`
-    )}
-),`
+    yaxis${i+1}=dict(
+        title=dict(
+            text=label_${i},
+        ),${(i == 0) ? '' : (`
+        anchor="free",
+        overlaying="y",
+        autoshift = True,
+        side="${currSide}"`
+        )}
+    ),`
                     //switch side
                     if (currSide === 'right') {currSide = 'left'} else {currSide = 'right'}
                 }       
