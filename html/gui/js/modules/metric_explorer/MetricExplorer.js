@@ -6353,6 +6353,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 "cells": [
                     createCell("markdown", "The following cell includes all the necessary imports.  Currently, must run XDMOD-Data-First-Example at least once in order for any generated code to work."), 
                     createCell("code", `import plotly.express as px\nimport plotly.io as pio\nimport pandas as pd\nimport plotly.graph_objects as go\nimport xdmod_data.themes\npio.templates.default = "timeseries"`),
+		    createCell("code", "import os\nos.environ['JUPYTERHUB_API_TOKEN'] = 'placeholder'"),
                     createCell("code", "from xdmod_data.warehouse import DataWarehouse\ndw = DataWarehouse()")
                 ]
             }
