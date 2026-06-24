@@ -6397,8 +6397,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 }
             }
             let dataCalls = 
-            `# Call to Data Analytics Framework requesting data \n
-            with dw:`;
+            `# Call to Data Analytics Framework requesting data \nwith dw:`;
             let plotChart;
             plotChart = (config.data_series.total == 1) ? '' : 'plot = go.Figure()\n';
             //variable for code for code at the end of last cell (updates layout of created charts)
@@ -6422,25 +6421,25 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 let retval = '';
                 if (multipleMetrics && multipleRealms) {
                     retval = 
-                    `\n# Rename column names to specify Realm and/or Metric
-                    newColNames = {}
-                    for col in data_${i}.columns :
-                        newColNames[col] = '${(realm === 'ResourceSpecifications') ? 'Resource Specifications' : realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
-                    data_${i} = data_${i}.rename(columns=newColNames)`
+`\n# Rename column names to specify Realm and/or Metric
+newColNames = {}
+for col in data_${i}.columns :
+    newColNames[col] = '${(realm === 'ResourceSpecifications') ? 'Resource Specifications' : realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
+data_${i} = data_${i}.rename(columns=newColNames)`
                 } else if (multipleMetrics) {
                     retval = 
-                    `\n# Rename column names to specify Realm and/or Metric
-                    newColNames = {}
-                    for col in data_${i}.columns :
-                        newColNames[col] = ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
-                    data_${i} = data_${i}.rename(columns=newColNames)`
+`\n# Rename column names to specify Realm and/or Metric
+newColNames = {}
+for col in data_${i}.columns :
+    newColNames[col] = ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'} + ' [' + label_${i} + ']'
+data_${i} = data_${i}.rename(columns=newColNames)`
                 } else if (multipleRealms) {
                     retval = 
-                    `\n# Rename column names to specify Realm and/or Metric
-                    newColNames = {}
-                    for col in data_${i}.columns :
-                        newColNames[col] = '${(realm === 'ResourceSpecifications') ? 'Resource Specifications' : realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'}
-                    data_${i} = data_${i}.rename(columns=newColNames)`
+`\n# Rename column names to specify Realm and/or Metric
+newColNames = {}
+for col in data_${i}.columns :
+    newColNames[col] = '${(realm === 'ResourceSpecifications') ? 'Resource Specifications' : realm}: ' + ${/*department*/ (dimension==='none') ? `'ACCESS'` : 'col'}
+data_${i} = data_${i}.rename(columns=newColNames)`
                 }
                 return retval;
             };
@@ -6478,22 +6477,22 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 if (Object.keys(metricsList).includes(metric_text)) {
                     // if metric used in previous dataseries, combine it with that dataseries and move on
                     dataCalls += `
-                    \n\n# Fetch data ${i}
-                    data_${i} = dw.get_data(
-                        duration=('${duration}'),
-                        realm='${realm}',
-                        metric='${metric}',
-                        dimension='${dimension}',
-                        filters={${filters}},
-                        dataset_type='${dataType}',
-                        aggregation_unit='${aggregationUnit}',
-                    )
-                    \n# Set data ${i}'s metric label
-                    label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
-                    ${renameColsCode(i,realm,dimension)}
-                    \n# Merge data ${i} into data ${metricsList[metric_text]} since they share the same metric
-                    data_${metricsList[metric_text]} = (data_${metricsList[metric_text]}.merge(data_${i}, on='Time', how='outer', sort=True))`
-                                    continue;      
+\n\n# Fetch data ${i}
+data_${i} = dw.get_data(
+    duration=('${duration}'),
+    realm='${realm}',
+    metric='${metric}',
+    dimension='${dimension}',
+    filters={${filters}},
+    dataset_type='${dataType}',
+    aggregation_unit='${aggregationUnit}',
+)
+\n# Set data ${i}'s metric label
+label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
+${renameColsCode(i,realm,dimension)}
+\n# Merge data ${i} into data ${metricsList[metric_text]} since they share the same metric
+data_${metricsList[metric_text]} = (data_${metricsList[metric_text]}.merge(data_${i}, on='Time', how='outer', sort=True))`
+                    continue;      
                 } else {
                     metricsList[metric_text] = i
                 }
@@ -6509,76 +6508,76 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                     let graph;
                     if (graphType === 'pie') {
                         graph = `
-                        if(data_${i}.size > 10):
-                            others_sum=data_${i}[~data_${i}.isin(top_ten)].sum()
-                            data_${i} = top_ten.combine_first(pd.Series({'Other ' + String(data_${i}.size - 10): others_sum}))\n`;
+if(data_${i}.size > 10):
+    others_sum=data_${i}[~data_${i}.isin(top_ten)].sum()
+    data_${i} = top_ten.combine_first(pd.Series({'Other ' + String(data_${i}.size - 10): others_sum}))\n`;
                     } else {
                         graph = `\n\tdata_${i} = top_ten`;
                     }
                     dataView = `
-                    \n# Process the data series, combine the lower values into a single Other category, and change to series to a dataframe
-                    top_ten=data_${i}.nlargest(10)
-                    ${graph}
-                    data_${i} = data_${i}.to_frame()
-                    columns_list = data_${i}.columns.tolist()`;
+\n# Process the data series, combine the lower values into a single Other category, and change to series to a dataframe
+top_ten=data_${i}.nlargest(10)
+${graph}
+data_${i} = data_${i}.to_frame()
+columns_list = data_${i}.columns.tolist()`;
                 } else {
                     dataView = `
-                    \n\n# Limit the number of data items/source to at most 10 and sort by descending
-                    columns_list = data_${i}.columns.tolist()
-                    if (len(columns_list) > 10):
-                        column_sums = data_${i}.sum()
-                        top_ten_columns = column_sums.nlargest(10).index.tolist()
-                        data_${i} = data_${i}[top_ten_columns]`;
+\n\n# Limit the number of data items/source to at most 10 and sort by descending
+columns_list = data_${i}.columns.tolist()
+if (len(columns_list) > 10):
+    column_sums = data_${i}.sum()
+    top_ten_columns = column_sums.nlargest(10).index.tolist()
+    data_${i} = data_${i}[top_ten_columns]`;
                 }
                 dataCalls += `
-                \n\n# Fetch data ${i}
-                data_${i} = dw.get_data(
-                    duration=('${duration}'),
-                    realm='${realm}',
-                    metric='${metric}',
-                    dimension='${dimension}',
-                    filters={${filters}},
-                    dataset_type='${dataType}',
-                    aggregation_unit='${aggregationUnit}',
-                )
-                \n# Set data ${i}'s metric label
-                label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
-                ${renameColsCode(i, realm, dimension)}`
-                plotChart +=
-                `${dataView}
-                ${(swapXY && graphType !== 'pie') ? '\tdata_0 = data_0.reset_index()' : ''}`
+\n\n# Fetch data ${i}
+data_${i} = dw.get_data(
+    duration=('${duration}'),
+    realm='${realm}',
+    metric='${metric}',
+    dimension='${dimension}',
+    filters={${filters}},
+    dataset_type='${dataType}',
+    aggregation_unit='${aggregationUnit}',
+)
+\n# Set data ${i}'s metric label
+label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
+${renameColsCode(i, realm, dimension)}`
+plotChart +=
+`${dataView}
+${(swapXY && graphType !== 'pie') ? '\tdata_0 = data_0.reset_index()' : ''}`
                 if (config.data_series.total == 1) {
                     plotChart += `
-                    \n# Format and draw graph to the screen
-                    plot = px.${graphType}(
-                        data_0, ${(graphType === 'pie') ? '\nvalues= columns_list[0],\n names= data_0.index,' : ''}
-                        ${axis}
-                        title='${config.title || 'Untitled Query'}',${subTitle ? `\n&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt,` : ''}${logScale ? `log_${swapXY ? 'x' : 'y'}=True,` : ''}${lineShape}
-                    )\n`;
+\n# Format and draw graph to the screen
+plot = px.${graphType}(
+    data_0, ${(graphType === 'pie') ? '\nvalues= columns_list[0],\n names= data_0.index,' : ''}
+    ${axis}
+    title='${config.title || 'Untitled Query'}',${subTitle ? `\n&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt,` : ''}${logScale ? `log_${swapXY ? 'x' : 'y'}=True,` : ''}${lineShape}
+)\n`;
                 } else {
                     plotChart += `
-                    \n# Add axis from dataset ${i} to graph
-                    for col in data_${i}:
-                        plot.add_trace(
-                        go.${(graphType == 'bar') ? 'Bar' : 'Scatter'}(
-                            x=data_${i}.index,
-                            y=data_${i}[col].values,
-                            name = col,
-                            yaxis="y${i+1}",
-                            ${(graphType === 'area') ? 'fill = "tozeroy",' : ''}
-                            ${(isSpline) ? 'line_shape = "spline"' : ''}
-                        ))`
+\n# Add axis from dataset ${i} to graph
+for col in data_${i}:
+    plot.add_trace(
+    go.${(graphType == 'bar') ? 'Bar' : 'Scatter'}(
+        x=data_${i}.index,
+        y=data_${i}[col].values,
+        name = col,
+        yaxis="y${i+1}",
+        ${(graphType === 'area') ? 'fill = "tozeroy",' : ''}
+        ${(isSpline) ? 'line_shape = "spline"' : ''}
+    ))`
                     updateLayout += `
-                    yaxis${i+1}=dict(
-                        title=dict(
-                            text=label_${i},
-                        ),${(i == 0) ? '' : (`
-                        anchor="free",
-                        overlaying="y",
-                        autoshift = True,
-                        side="${currSide}"`
-                        )}
-                    ),`
+yaxis${i+1}=dict(
+    title=dict(
+        text=label_${i},
+    ),${(i == 0) ? '' : (`
+    anchor="free",
+    overlaying="y",
+    autoshift = True,
+    side="${currSide}"`
+    )}
+),`
                     //switch side
                     if (currSide === 'right') {currSide = 'left'} else {currSide = 'right'}
                 }       
