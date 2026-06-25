@@ -12,7 +12,7 @@
             "name": "Number of ${REALM_NAME} PIs: Active"
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/active_pi_count"
-    },
+    },  
     "active_resource_count": {
         "$overwrite": {
             "description_html": "The total number of active ${ORGANIZATION_NAME} resources supporting ${REALM_NAME}.",

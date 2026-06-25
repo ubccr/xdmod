@@ -21,11 +21,11 @@
         "unit": "Number of Resources"
     },
     "avg_cpu_hours": {
-        "aggregate_formula": "COALESCE(SUM(agg.cpu_time) / SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0) / 3600.0",
+        "aggregate_formula": "COALESCE(SUM(agg.cpu_time) / NULLIF(SUM(CASE ${DATE_TABLE_ID_FIELD} WHEN ${MIN_DATE_ID} THEN agg.running_job_count ELSE agg.started_job_count END), 0), 0) / 3600.0",
         "description_html": "The average CPU hours (number of CPU cores x wall time hours) per ${ORGANIZATION_NAME} job.<br/>For each job, the CPU usage is aggregated. For example, if a job used 1000 CPUs for one minute, it would be aggregated as 1000 CPU minutes or 16.67 CPU hours.",
         "name": "CPU Hours: Per Job",
         "precision": 2,
-        "timeseries_formula": "COALESCE(SUM(agg.cpu_time) / SUM(agg.running_job_count), 0) / 3600.0",
+        "timeseries_formula": "COALESCE(SUM(agg.cpu_time) / NULLIF(SUM(agg.running_job_count), 0), 0) / 3600.0",
         "unit": "CPU Hour"
     },
     "avg_gpu_hours": {
@@ -38,7 +38,7 @@
     },
     "avg_job_size_weighted_by_cpu_hours": {
         "description_html": "The average ${ORGANIZATION_NAME} job size weighted by CPU Hours. Defined as <br><i>Average Job Size Weighted By CPU Hours: </i> sum(i = 0 to n){ job i core count * job i cpu hours}/sum(i =  0 to n){job i cpu hours}",
-        "formula": "COALESCE(SUM(agg.processor_count * agg.cpu_time) / SUM(agg.cpu_time),0)",
+        "formula": "COALESCE(SUM(agg.processor_count * agg.cpu_time) / NULLIF(SUM(agg.cpu_time), 0),0)",
         "name": "Job Size: Weighted By CPU Hours",
         "precision": 1,
         "unit": "Core Count"
@@ -76,7 +76,7 @@
     },
     "avg_waitduration_hours": {
         "description_html": "The average time, in hours, a ${ORGANIZATION_NAME} job waits before execution on the designated resource.<br/><i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.",
-        "formula": "COALESCE(SUM(agg.waitduration)/SUM(agg.started_job_count),0)/3600.0",
+        "formula": "COALESCE(SUM(agg.waitduration)/NULLIF(SUM(agg.started_job_count), 0),0)/3600.0",
         "name": "Wait Hours: Per Job",
         "precision": 2,
         "unit": "Hour"
