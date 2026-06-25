@@ -6393,7 +6393,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
                 if (Object.prototype.hasOwn(filterDict, id)) {
                     const values = filterDict[id].join("', '");
                     filters += `\n\t\t'${id}': ('${values}'),`;
-                    subTitle += `${id}: ${values.replaceAll(/'/g, '')}`;
+                    subTitle += `${id}: ${values.replaceAll("'", '')}`;
                 }
             }
             let dataCalls = 
@@ -6548,12 +6548,13 @@ if (len(columns_list) > 10):
     `${dataView}
     ${(swapXY && graphType !== 'pie') ? '\tdata_0 = data_0.reset_index()' : ''}`
                 if (config.data_series.total == 1) {
+                    let logAxis = swapXY ? 'x' : 'y';
                     plotChart += `
 \n# Format and draw graph to the screen
 plot = px.${graphType}(
     data_0, ${(graphType === 'pie') ? '\nvalues= columns_list[0],\n names= data_0.index,' : ''}
     ${axis}
-    title='${config.title || 'Untitled Query'}',${subTitle ? `\n&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt,` : ''}${logScale ? `log_${swapXY ? 'x' : 'y'}=True,` : ''}${lineShape}
+    title='${config.title || 'Untitled Query'}',${subTitle ? `\n&lt;br&gt;&lt;sup&gt;${subTitle}&lt;/sup&gt,` : ''}${logScale ? `log_${logAxis}=True,` : ''}${lineShape}
 )\n`;
                 } else {
                     plotChart += `
