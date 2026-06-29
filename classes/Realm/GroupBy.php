@@ -962,6 +962,14 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             $field = new Field($formula, $alias);
             $query->addField($field);
 
+            $query->addGroup(new Field($formula, $alias . '_groupby'));
+            $formulaNoQuotes = preg_replace('/(\'.*?\'|".*?")/', '', $formula);
+            preg_match_all('/[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+/', $formulaNoQuotes, $matches);
+            if (!empty($matches[0])) {
+                foreach ($matches[0] as $baseCol) {
+                    $query->addGroup(new Field($baseCol, $alias . '_' . str_replace('.', '_', $baseCol) . '_base'));
+                }
+            }
             // Add a GroupBy and Where condition for each field that is part of the key that maps a
             // dimensional attribute to the aggregate table.
 
@@ -1065,9 +1073,21 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                 ? $this->qualifyColumnName($fieldName, true)
                 : sprintf('%s_%s', $query->getAggregationUnit(), $fieldName)
             );
+            $finalFormula = $this->verifyAndReplaceTableAlias($formula, $query);
 
             $field = new Field($this->verifyAndReplaceTableAlias($formula, $query), $alias);
             $query->addField($field);
+            if ($this->id !== 'none') {
+                $query->addGroup(new Field($finalFormula, $alias . '_groupby'));
+                
+                $formulaNoQuotes = preg_replace('/(\'.*?\'|".*?")/', '', $finalFormula);
+                preg_match_all('/[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+/', $formulaNoQuotes, $matches);
+                if (!empty($matches[0])) {
+                    foreach ($matches[0] as $baseCol) {
+                        $query->addGroup(new Field($baseCol, $alias . '_' . str_replace('.', '_', $baseCol) . '_base'));
+                    }
+                }
+            }
         }
 
         // Note that there are a few GroupBys that used $prepend = true such as GroupByJobTime,
