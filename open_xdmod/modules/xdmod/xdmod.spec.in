@@ -80,7 +80,6 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(0750,root,xdmod,-)
 %{_bindir}/%{name}-*
 %{_bindir}/acl-*
-%{_bindir}/console
 
 %defattr(-,root,root,-)
 %{_libdir}/%{name}/

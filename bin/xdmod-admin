@@ -54,6 +54,7 @@ function main()
         array('', 'users'),
         array('', 'load:'),
         array('', 'delete:'),
+        array('', 'console:')
      );
 
     $shortOptions = implode(
@@ -76,7 +77,6 @@ function main()
     $params = null;
 
     $logLevel = -1;
-
     foreach ($args as $key => $value) {
         if (is_array($value)) {
             fwrite(STDERR, "Multiple values not allowed for '$key'\n");
@@ -160,6 +160,12 @@ function main()
                 $action = 'load';
                 $params = $value;
                 break;
+            case 'c':
+            case 'console':
+                $entity = 'console';
+                $action = 'console';
+                $params = $value;
+                break;
             default:
                 fwrite(STDERR, "Unexpected option '$key'\n");
                 exit(1);
@@ -229,15 +235,23 @@ function main()
                     loadUsers($params);
                     break;
                 default:
-                    $logger->crit("Cannot perform '$action' on '$entity'");
+                    $logger->critical("Cannot perform '$action' on '$entity'");
                     exit(1);
                     break;
+            }
+            break;
+        case 'console':
+            try {
+                list($statusCode, $output) = \CCR\Helper\SymfonyCommandHelper::executeCommand($params);
+                echo "$output\n";
+            } catch (\Exception $e) {
+                $logger->critical(sprintf('Error encountered while executing %s', $params));
+                exit(1);
             }
             break;
         default:
             $logger->critical("Unknown entity type '$entity'");
             exit(1);
-            break;
     }
 
     exit;

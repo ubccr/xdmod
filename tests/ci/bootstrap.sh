@@ -197,4 +197,4 @@ then
 fi
 
 # Clearing the Symfony cache so that we start fresh.
-console cache:clear
+xdmod-admin --console cache:clear
