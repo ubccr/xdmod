@@ -6450,6 +6450,9 @@ with dw:`;
             let metricsList = {}
             //loop through all datasets and produce the proper code
             for (let i = 0; i < config.data_series.total; i += 1) {
+                if(config.data_series.data[i].enabled === false){ //disable toggle check
+                    continue
+                }
                 const {
                     realm = 'Jobs',
                     metric = 'CPU Hours: Total',
@@ -6478,16 +6481,16 @@ with dw:`;
                 if (Object.keys(metricsList).includes(metric_text)) {
                     // if metric used in previous dataseries, combine it with that dataseries and move on
                     dataCalls += `
-    \n\n# Fetch data ${i}
-        ${i} = dw.get_data(
-        duration=('${duration}'),
-        realm='${realm}',
-        metric='${metric}',
-        dimension='${dimension}',
-        filters={${filters}},
-        dataset_type='${dataType}',
-        aggregation_unit='${aggregationUnit}',
-    )
+\n# Fetch data ${i}
+    data_${i} = dw.get_data(
+    duration=('${duration}'),
+    realm='${realm}',
+    metric='${metric}',
+    dimension='${dimension}',
+    filters={${filters}},
+    dataset_type='${dataType}',
+    aggregation_unit='${aggregationUnit}',
+)
     \n# Set data ${i}'s metric label
     label_${i} = dw.describe_metrics('${realm}').loc['${metric}', 'label']
     ${renameColsCode(i,realm,dimension)}
@@ -6511,9 +6514,9 @@ with dw:`;
                         graph = `
 if(data_${i}.size > 10):
     others_sum=data_${i}[~data_${i}.isin(top_ten)].sum()
-    data_${i} = top_ten.combine_first(pd.Series({'Other ' + String(data_${i}.size - 10): others_sum}))\n`;
+    data_${i} = top_ten.combine_first(pd.Series({'Other ' + str(data_${i}.size - 10): others_sum}))\n`;
                     } else {
-                        graph = `\n\tdata_${i} = top_ten`;
+                        graph = `\ndata_${i} = top_ten`;
                     }
                     dataView = `
 \n# Process the data series, combine the lower values into a single Other category, and change to series to a dataframe
@@ -6523,7 +6526,7 @@ data_${i} = data_${i}.to_frame()
 columns_list = data_${i}.columns.tolist()`;
                 } else {
                     dataView = `
-\n\n# Limit the number of data items/source to at most 10 and sort by descending
+\n# Limit the number of data items/source to at most 10 and sort by descending
 columns_list = data_${i}.columns.tolist()
 if (len(columns_list) > 10):
     column_sums = data_${i}.sum()
@@ -6531,7 +6534,7 @@ if (len(columns_list) > 10):
     data_${i} = data_${i}[top_ten_columns]`;
                 }
                 dataCalls += `
-    \n\n# Fetch data ${i}
+    \n# Fetch data ${i}
     data_${i} = dw.get_data(
         duration=('${duration}'),
         realm='${realm}',
@@ -6546,7 +6549,7 @@ if (len(columns_list) > 10):
     ${renameColsCode(i, realm, dimension)}`
     plotChart +=
     `${dataView}
-    ${(swapXY && graphType !== 'pie') ? '\tdata_0 = data_0.reset_index()' : ''}`
+    ${(swapXY && graphType !== 'pie') ? 'data_0 = data_0.reset_index()' : ''}`
                 if (config.data_series.total == 1) {
                     let logAxis = swapXY ? 'x' : 'y';
                     plotChart += `
@@ -6559,6 +6562,7 @@ plot = px.${graphType}(
                 } else {
                     plotChart += `
 \n# Add axis from dataset ${i} to graph
+${(graphType === 'bar' && i === 0 ? 'i = 0' : '')} 
 for col in data_${i}:
     plot.add_trace(
     go.${(graphType == 'bar') ? 'Bar' : 'Scatter'}(
@@ -6568,7 +6572,9 @@ for col in data_${i}:
         yaxis="y${i+1}",
         ${(graphType === 'area') ? 'fill = "tozeroy",' : ''}
         ${(isSpline) ? 'line_shape = "spline"' : ''}
-    ))`
+        ${graphType === 'bar' ? 'offsetgroup = i' : ''}
+    ))
+    ${graphType === 'bar' ? 'i += 1' : ''}`
                     updateLayout += `
     yaxis${i+1}=dict(
         title=dict(
@@ -6583,6 +6589,10 @@ for col in data_${i}:
                     //switch side
                     if (currSide === 'right') {currSide = 'left'} else {currSide = 'right'}
                 }       
+            }
+            //when the axes are swapped reverse the ordering of the y axis to match xdmod
+            if(swapXY){
+                updateLayout += 'yaxis=dict(autorange="reversed")'
             }
             updateLayout += '\n)\n'
             plotChart += `${updateLayout}\n# Format legend and set index interval\nplot.update_layout(legend_x=0, legend_y=-0.3, ${xValueLabels})${(config.data_series.total > 1) ? '\nplot.update_yaxes(showgrid=False)' : ''}\n\nplot.show()`
