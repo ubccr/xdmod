@@ -357,102 +357,119 @@
             {
                 "name": "index_account",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "account_id"
                 ]
             },
             {
                 "name": "index_allocation",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "allocation_id"
                 ]
             },
             {
                 "name": "index_fos",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "fos_id"
                 ]
             },
             {
                 "name": "index_job_time_bucket_id",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "job_time_bucket_id"
                 ]
             },
             {
                 "name": "index_job_wait_time_bucket_id",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "job_wait_time_bucket_id"
                 ]
             },
             {
                 "name": "index_node_count",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "node_count"
                 ]
             },
             {
                 "name": "index_resource_organization",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "resource_organization_id"
                 ]
             },
             {
                 "name": "index_person",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "person_id"
                 ]
             },
             {
                 "name": "index_person_nsf_status_code",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "person_nsfstatuscode_id"
                 ]
             },
             {
                 "name": "index_person_organization",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "person_organization_id"
                 ]
             },
             {
                 "name": "index_pi_organization",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "piperson_organization_id"
                 ]
             },
             {
                 "name": "index_pi_person",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "principalinvestigator_person_id"
                 ]
             },
             {
                 "name": "index_processor_count",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "processor_count"
                 ]
             },
             {
                 "name": "index_queue",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "queue"
                 ]
             },
             {
                 "name": "index_resource_type",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "resourcetype_id"
                 ]
             },
             {
                 "name": "index_resource",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "record_resource_id"
                 ]
             },
             {
                 "name": "index_system_account",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "systemaccount_id"
                 ]
             },

@@ -214,7 +214,7 @@ class TimeseriesQuery extends Query implements iQuery
         }
 
         $format = <<<SQL
-SELECT STRAIGHT_JOIN
+SELECT
   %s
 FROM
   %s
