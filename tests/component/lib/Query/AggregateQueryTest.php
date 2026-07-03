@@ -500,7 +500,7 @@ SQL;
         $realm = \Realm\Realm::factory('Jobs', self::$logger);
         $statistic = $realm->getStatisticObject('running_job_count');
         $generated = $statistic->getFormula($query);
-        $expected = 'COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0)';
+        $expected = 'COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS running_job_count';
         $this->assertEquals($expected, $generated, 'getFormula()');
     }
 
