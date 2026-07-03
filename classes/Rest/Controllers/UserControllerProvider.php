@@ -81,13 +81,23 @@ class UserControllerProvider extends BaseControllerProvider
      */
     public function getCurrentUser(Request $request, Application $app)
     {
-        // Ensure that the user is logged in.
-        $this->authorize($request);
+        // We need to wrap the token authentication because we want the token authentication to be optional, proceeding
+        // to the normal session authentication if a token is not provided.
+        try {
+            $user = Tokens::authenticate($request);
+        } catch (Exception $e) {
+            // NOOP
+        }
+
+        if ($user === null) {
+            // Ensure that the user is logged in.
+            $user = $this->authorize($request);
+        }
 
         // Extract and return the information for the user.
         return $app->json(array(
             'success' => true,
-            'results' => $this->extractUserData($this->getUserFromRequest($request)),
+            'results' => $this->extractUserData($user),
         ));
     }
 
