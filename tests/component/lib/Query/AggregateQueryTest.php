@@ -489,18 +489,21 @@ SQL;
 
     public function testGetFormula()
     {
+        if (!in_array(strtolower('cloud'), Utilities::getRealmsToTest())) {
+            $this->markTestSkipped('Cloud realm is not being tested.');
+        }
         $query = new \DataWarehouse\Query\AggregateQuery(
-            'Jobs',
+            'Cloud',
             'day',
-            '2016-01-01',
-            '2016-12-31',
-            'resource'
+            '2017-12-01',
+            '2019-01-31',
+            'configuration'
         );
 
-        $realm = \Realm\Realm::factory('Jobs', self::$logger);
-        $statistic = $realm->getStatisticObject('running_job_count');
+        $realm = \Realm\Realm::factory('Cloud', self::$logger);
+        $statistic = $realm->getStatisticObject('cloud_num_sessions_running');
         $generated = $statistic->getFormula($query);
-        $expected = 'COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS running_job_count';
+        $expected = 'COALESCE(SUM(CASE duration.id WHEN 201800108 THEN agg.num_sessions_running ELSE agg.num_sessions_started END), 0) AS cloud_num_sessions_running';
         $this->assertEquals($expected, $generated, 'getFormula()');
     }
 
