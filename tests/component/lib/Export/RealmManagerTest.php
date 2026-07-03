@@ -80,37 +80,46 @@ class RealmManagerTest extends BaseTest
      * Test which realms may be exported.
      *
      * @covers ::getRealms
-     * @dataProvider getRealmsProvider
      */
-    public function testGetRealms($realms)
+    public function testGetRealms()
     {
-        $actual = array_map(
-            fn($realm) => ['name' => $realm->getName(), 'display' => $realm->getDisplay()],
-            self::$realmManager->getRealms()
-        );
-        $this->assertEquals(
-            $realms,
-            $actual,
-            sprintf('Expected: %s, Received: %s', json_encode($realms), json_encode($actual))
-        );
+        $this->runGetRealmsTest(self::$realmManager->getRealms());
     }
 
     /**
      * Test which realms may be exported for a given user.
      *
      * @covers ::getRealmsForUser
-     * @dataProvider getRealmsForUserProvider
      */
-    public function testGetRealmsForUser($role, $realms)
+    public function testGetRealmsForUser()
     {
+        $this->runGetRealmsTest(self::$realmManager->getRealmsForUser(self::$users['usr']));
+    }
+
+    private function runGetRealmsTest($actualRealms)
+    {
+        $expected = [];
+        $i = 0;
+        foreach (['Jobs', 'Cloud', 'ResourceSpecifications'] as $realm) {
+            if (in_array(strtolower($realm), self::$XDMOD_REALMS)) {
+                $expected[(string)($i++)] = [
+                    'name' => $realm,
+                    'display' => (
+                        $realm == 'ResourceSpecifications'
+                        ? 'Resource Specifications'
+                        : $realm
+                    )
+                ];
+            }
+        }
         $actual = array_map(
             fn($realm) => ['name' => $realm->getName(), 'display' => $realm->getDisplay()],
-            self::$realmManager->getRealmsForUser(self::$users[$role])
+            $actualRealms
         );
         $this->assertEquals(
-            $realms,
+            $expected,
             $actual,
-            sprintf('Expected: %s, Received: %s', json_encode($realms), json_encode($actual))
+            sprintf('Expected: %s, Received: %s', json_encode($expected), json_encode($actual))
         );
     }
 
@@ -127,16 +136,6 @@ class RealmManagerTest extends BaseTest
             self::$realmManager->getRawDataQueryClass($realmName),
             "getRawDataQueryClass returns expected query class for realm $realmName"
         );
-    }
-
-    public function getRealmsProvider()
-    {
-        return $this->getTestFiles()->loadJsonFile(self::TEST_GROUP, 'realms', 'output');
-    }
-
-    public function getRealmsForUserProvider()
-    {
-        return $this->getTestFiles()->loadJsonFile(self::TEST_GROUP, 'realms-for-user', 'output');
     }
 
     public function getRawDataQueryClassProvider()

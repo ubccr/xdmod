@@ -8,6 +8,7 @@ namespace ComponentTests\Query;
 
 use CCR\Log as Logger;
 use DataWarehouse\Query\AggregateQuery;
+use IntegrationTests\TestHarness\Utilities;
 use Psr\Log\LoggerInterface;
 
 class AggregateQueryTest extends \PHPUnit\Framework\TestCase
@@ -489,17 +490,17 @@ SQL;
     public function testGetFormula()
     {
         $query = new \DataWarehouse\Query\AggregateQuery(
-            'Cloud',
+            'Jobs',
             'day',
-            '2017-12-01',
-            '2019-01-31',
-            'configuration'
+            '2016-01-01',
+            '2016-12-31',
+            'resource'
         );
 
-        $realm = \Realm\Realm::factory('Cloud', self::$logger);
-        $statistic = $realm->getStatisticObject('cloud_num_sessions_running');
+        $realm = \Realm\Realm::factory('Jobs', self::$logger);
+        $statistic = $realm->getStatisticObject('running_job_count');
         $generated = $statistic->getFormula($query);
-        $expected = 'COALESCE(SUM(CASE duration.id WHEN 201800108 THEN agg.num_sessions_running ELSE agg.num_sessions_started END), 0) AS cloud_num_sessions_running';
+        $expected = 'COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS running_job_count';
         $this->assertEquals($expected, $generated, 'getFormula()');
     }
 

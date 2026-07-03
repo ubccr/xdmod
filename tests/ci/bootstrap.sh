@@ -198,6 +198,9 @@ then
         done
         sudo -u xdmod xdmod-ingestor --datatype storage
         sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
+    else
+        # Need to ingest the changes to resources.json
+        sudo -u xdmod xdmod-ingestor
     fi
 
     sudo -u xdmod xdmod-ingestor --aggregate=resourcespecs --last-modified-start-date "$last_modified_start_date"
