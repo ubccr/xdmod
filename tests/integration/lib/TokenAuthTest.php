@@ -53,6 +53,28 @@ abstract class TokenAuthTest extends BaseTest
     }
 
     /**
+     * A dataProvider for testing token authentication on a given endpoint with
+     * role-specific data.
+     *
+     * @param array with role keys (e.g., 'usr', 'cd', etc.).
+     * @return array of arrays with role, token type, and data.
+     */
+    public static function provideTokenAuthTestRoleData($roleData)
+    {
+        $tests = [];
+        foreach (self::provideTokenAuthTestData() as $testData) {
+            list($role, $tokenType) = $testData;
+            if ('valid_token' !== $tokenType) {
+                $tests[] = [$role, $tokenType, null];
+            }
+        }
+        foreach ($roleData as $role => $data) {
+            $tests[] = [$role, 'valid_token', $data];
+        }
+        return $tests;
+    }
+
+    /**
      * Same as BaseTest::makeHttpRequest() but with an API token for the
      * given user role added to the request header.
      */

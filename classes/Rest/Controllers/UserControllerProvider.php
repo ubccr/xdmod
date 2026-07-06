@@ -98,7 +98,7 @@ class UserControllerProvider extends BaseControllerProvider
         // Extract and return the information for the user.
         return $app->json(array(
             'success' => true,
-            'results' => $this->extractUserData($user),
+            'results' => $this->extractUserData($user)
         ));
     }
 
