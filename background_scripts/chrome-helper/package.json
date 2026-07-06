@@ -1,7 +1,7 @@
 {
   "type": "module",
   "dependencies": {
-    "puppeteer-core": "^25.1.0",
+    "puppeteer-core": "^25.3.0",
     "yargs": "^17.7.2"
   }
 }
