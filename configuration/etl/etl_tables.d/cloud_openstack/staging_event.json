@@ -113,6 +113,13 @@
                 "nullable": true,
                 "default": null,
                 "comment": "The service provider associated with the event"
+            },
+            {
+                "name": "disk_gb",
+                "type": "int(11)",
+                "nullable": false,
+                "default": 0,
+                "comment": "Disk size in GB for the root volume of this instance"
             }
         ],
 

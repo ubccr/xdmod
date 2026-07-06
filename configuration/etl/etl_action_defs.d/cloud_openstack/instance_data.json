@@ -11,7 +11,8 @@
             "resource_id": "staging.resource_id",
             "instance_type_id": "staging.instance_type_id",
             "host_id": "staging.host_id",
-            "image_id": "staging.image_id"
+            "image_id": "staging.image_id",
+            "disk_gb": "staging.disk_gb"
         },
 
         "joins": [
