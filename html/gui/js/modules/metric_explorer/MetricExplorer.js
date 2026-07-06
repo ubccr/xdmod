@@ -6384,7 +6384,7 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             for (let i = 0; i < config.global_filters.total; i += 1) {
                 const { dimension_id: id, value_name: value } = config.global_filters.data[i];
                 if (filterDict[id]) {
-                    filterDict[id].push(value);
+                     filterDict[id].push(value);
                 } else {
                     filterDict[id] = [value];
                 }
@@ -6604,8 +6604,8 @@ for col in data_${i}:
             )
             const jupyterServerToken = 'secret';
             const openNB = async () => {
-                await fetch(`http://localhost:8888/api/contents/${config.title}.ipynb`, {
-                    method: 'PUT',
+                await fetch(`https://localhost:8443/jupyter/services/chart-service/`, {
+                    method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${jupyterServerToken}`, /* <-- temporary token */
@@ -6630,7 +6630,7 @@ for col in data_${i}:
                 });
             }
             openNB()
-            window.open(`http://localhost:8888/lab/tree/${config.title}.ipynb?token=${jupyterServerToken}`)
+            // window.open(`http://localhost:8888/lab/tree/${config.title}.ipynb?token=${jupyterServerToken}`)
         }); // self.on('open in nb', ...
         // ---------------------------------------------------------
 
