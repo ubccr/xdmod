@@ -86,6 +86,7 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
      */
     public static function setupBeforeClass(): void
     {
+        parent::setupBeforeClass();
         foreach (self::$userRoles as $role => $username) {
             self::$helpers[$role] = new XdmodTestHelper();
 
@@ -203,9 +204,21 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                 'authentication_type' => 'token_optional'
             ],
             parent::validateSuccessResponse(function ($body, $assertMessage) {
-                $this->assertSame(3, $body['total'], $assertMessage);
+                $realms = [];
+                foreach (
+                    [
+                        'Jobs' => 28,
+                        'Cloud' => 16,
+                        'ResourceSpecifications' => 16
+                    ] as $realm => $count
+                ) {
+                    if (in_array(strtolower($realm), self::$XDMOD_REALMS)) {
+                        $realms[$realm] = $count;
+                    }
+                }
+                $this->assertSame(count($realms), $body['total'], $assertMessage);
                 $index = 0;
-                foreach (['Jobs', 'Cloud', 'ResourceSpecifications'] as $realmName) {
+                foreach ($realms as $realmName => $count) {
                     $realm = $body['data'][$index];
                     foreach (['id', 'name'] as $property) {
                         $this->assertSame(
@@ -231,16 +244,12 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                             $assertMessage
                         );
                     }
-                    $index++;
-                }
-
-                $counts = [28, 16, 16];
-                for ($i = 0; $i < count($counts); $i++) {
                     $this->assertCount(
-                        $counts[$i],
-                        $body['data'][$i]['fields'],
+                        $count,
+                        $body['data'][$index]['fields'],
                         $assertMessage
                     );
+                    $index++;
                 }
             })
         );
