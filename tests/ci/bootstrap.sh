@@ -191,6 +191,8 @@ then
     jq . /etc/xdmod/resource_specs2.json > /etc/xdmod/resource_specs.json
     rm -f /etc/xdmod/resource_specs2.json
 
+    mysql < $BASEDIR/sql/recreate_indexes.sql
+
     if [[ "$XDMOD_REALMS" == *"storage"* ]];
     then
         for storage_dir in $REF_DIR/storage/*; do
