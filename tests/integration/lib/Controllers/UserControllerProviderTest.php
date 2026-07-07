@@ -17,17 +17,33 @@ class UserControllerProviderTest extends BaseUserAdminTest
      */
     public function testGetCurrentUser($role, $tokenType, $data)
     {
+        $input = [
+            'path' => 'rest/users/current',
+            'method' => 'get',
+            'params' => [],
+            'data' => null,
+            'endpoint_type' => 'rest',
+            'authentication_type' => 'token_optional'
+        ];
+        if ('valid_token' === $tokenType) {
+            // Make sure username+password auth works.
+            parent::authenticateRequestAndValidateJson(
+                $this->helper,
+                $role,
+                $input,
+                parent::validateSuccessResponse([
+                    'success' => true,
+                    'results' => $data
+                ])
+            );
+            // API token auth on this endpoint does not return email address.
+            unset($data['email_address']);
+        }
+        // Make sure token auth works.
         parent::runTokenAuthTest(
             $role,
             $tokenType,
-            [
-                'path' => 'rest/users/current',
-                'method' => 'get',
-                'params' => [],
-                'data' => null,
-                'endpoint_type' => 'rest',
-                'authentication_type' => 'token_optional'
-            ],
+            $input,
             parent::validateSuccessResponse([
                 'success' => true,
                 'results' => $data
