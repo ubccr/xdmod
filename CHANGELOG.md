@@ -1,5 +1,20 @@
 # Open XDMoD Change Log
 
+## 2026-07-XX v11.0.4
+- Important Notes
+    - This release fixes a low severity security vulnerability in Open XDMoD:
+        - https://github.com/ubccr/xdmod/security/advisories/GHSA-3gcq-4wrp-27g5
+- Enhancements
+    - Improve performance of database queries
+    ([\#2199](https://github.com/ubccr/xdmod/pull/2199))
+- Bug Fixes
+    - Fixes a bug in which recent Cloud realm data do not appear in ACCESS XDMoD.
+      ([\#2251](https://github.com/ubccr/xdmod/pull/2251))
+    - Fix bug in which a Cloud statistic,  was miscalculated
+      ([\#2196](https://github.com/ubccr/xdmod/pull/2196))
+    - Fix bug in which a migration pipeline could run without a required table existing.
+      ([\#2237](https://github.com/ubccr/xdmod/pull/2237))
+
 ## 2026-05-12 v11.0.3
 
 - Important Notes
