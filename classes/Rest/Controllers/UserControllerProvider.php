@@ -84,8 +84,10 @@ class UserControllerProvider extends BaseControllerProvider
     {
         // We need to wrap the token authentication because we want the token authentication to be optional, proceeding
         // to the normal session authentication if a token is not provided.
+        $isTokenAuth = false;
         try {
             $user = Tokens::authenticate($request);
+            $isTokenAuth = true;
         } catch (Exception $e) {
             // NOOP
         }
@@ -95,10 +97,18 @@ class UserControllerProvider extends BaseControllerProvider
             $user = $this->authorize($request);
         }
 
+        $userData = $this->extractUserData($user);
+
+        // No need to expose email address to API token authentication.
+        // It's PII, so better not to return it.
+        if ($isTokenAuth) {
+            unset($userData['email_address']);
+        }
+
         // Extract and return the information for the user.
         return $app->json(array(
             'success' => true,
-            'results' => $this->extractUserData($user)
+            'results' => $userData
         ));
     }
 
