@@ -29,7 +29,8 @@
 
         "groupby": [
             "raw.resource_id",
-            "raw.project_id"
+            "raw.project_id",
+            "raw.project_name"
         ]
     }
 }
