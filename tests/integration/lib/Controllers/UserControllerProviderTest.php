@@ -36,8 +36,15 @@ class UserControllerProviderTest extends BaseUserAdminTest
                     'results' => $data
                 ])
             );
-            // API token auth on this endpoint does not return email address.
-            unset($data['email_address']);
+            // API token auth only returns subset of data.
+            $data = array_intersect_key(
+                $data,
+                array_flip([
+                    'first_name',
+                    'last_name',
+                    'person_id',
+                ])
+            );
         }
         // Make sure token auth works.
         parent::runTokenAuthTest(

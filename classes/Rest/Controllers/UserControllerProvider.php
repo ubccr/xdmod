@@ -91,18 +91,22 @@ class UserControllerProvider extends BaseControllerProvider
         } catch (Exception $e) {
             // NOOP
         }
-
-        if ($user === null) {
-            // Ensure that the user is logged in.
+        if (!$isTokenAuth) {
             $user = $this->authorize($request);
         }
 
         $userData = $this->extractUserData($user);
 
-        // No need to expose email address to API token authentication.
-        // It's PII, so better not to return it.
+        // Only a subset of the data need to be returned for token auth.
         if ($isTokenAuth) {
-            unset($userData['email_address']);
+            $userData = array_intersect_key(
+                $userData,
+                array_flip([
+                    'first_name',
+                    'last_name',
+                    'person_id',
+                ])
+            );
         }
 
         // Extract and return the information for the user.
