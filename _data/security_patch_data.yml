@@ -4,7 +4,7 @@ all_linked_versions:
   - "10.5"
   - "10.0"
   - "9.5"
-versions_with_vulnerabilities: "≤11.0.2"
+versions_with_vulnerabilities: "≤11.0.3"
 versions_with_group_by_note:
   - "9.5"
   - "9.0"
@@ -12,6 +12,7 @@ versions_with_group_by_note:
 "11.0":
   patch_files:
     - "11_0_0-11_0_2.patch"
+    - "11_0_3.patch"
 "10.5":
   patch_files:
     - "10_5_0-10_5_1.patch"
