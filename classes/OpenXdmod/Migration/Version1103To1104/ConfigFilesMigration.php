@@ -3,7 +3,7 @@
  * Update config files from version 11.0.3 to 11.0.4
  */
 
-namespace OpenXdmod\Migration\Version1102To1103;
+namespace OpenXdmod\Migration\Version1103To1104;
 
 use OpenXdmod\Migration\ConfigFilesMigration as AbstractConfigFilesMigration;
 
