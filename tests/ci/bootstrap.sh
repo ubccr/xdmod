@@ -41,6 +41,10 @@ yum install -y python3 python3-six python3-numpy python3-pillow ${PYTHON_SCIPY}
 pip3 install imagehash==4.2.1
 cp $REPODIR/tests/ci/scripts/imagehash /root/bin
 
+# Install nodejs dependency
+dnf module reset -y nodejs
+dnf module enable -y nodejs:22
+
 # ensure php error logging is set to E_ALL (recommended setting for development)
 sed -i 's/^error_reporting = .*/error_reporting = E_ALL/' /etc/php.ini
 
