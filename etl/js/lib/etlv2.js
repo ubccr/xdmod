@@ -209,17 +209,12 @@ module.exports = {
             {
                 name: 'index_' + table.name + '_by_${AGGREGATION_UNIT}_${AGGREGATION_UNIT}',
                 columns: ['${AGGREGATION_UNIT}']
+            },
+            {
+                name: 'last_modified',
+                columns: ['last_modified']
             }
         );
-
-        if (hasJobList) {
-            tableDefinition.indexes.push(
-                {
-                    name: 'last_modified',
-                    columns: ['last_modified']
-                }
-            );
-        }
 
         for (i = 0; i < tableColumns.length; ++i) {
             tableDefinition.columns.push({
@@ -242,14 +237,16 @@ module.exports = {
                 type: 'mediumtext',
                 nullable: false,
                 comment: 'METADATA: the ids in the fact table for the rows that went into this row'
-            }, {
-                name: 'last_modified',
-                type: 'timestamp',
-                default: 'CURRENT_TIMESTAMP',
-                nullable: false,
-                extra: 'ON UPDATE CURRENT_TIMESTAMP'
             });
         }
+
+        tableDefinition.columns.push({
+            name: 'last_modified',
+            type: 'timestamp',
+            default: 'CURRENT_TIMESTAMP',
+            nullable: false,
+            extra: 'ON UPDATE CURRENT_TIMESTAMP'
+        });
 
         return {
             table_definition: tableDefinition
