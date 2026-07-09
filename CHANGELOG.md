@@ -1,5 +1,23 @@
 # Open XDMoD Change Log
 
+## 2026-07-08 v11.0.4
+
+- Important Notes
+    - This release fixes a low severity security vulnerability in Open XDMoD:
+        - https://github.com/ubccr/xdmod/security/advisories/GHSA-3gcq-4wrp-27g5
+- Enhancements
+    - Added composite index on aggregate table to improve performance of database queries
+    ([\#2199](https://github.com/ubccr/xdmod/pull/2199))
+- Bug Fixes
+    - Fixes a bug in which corrects `disk_gb` to be a property of `event` not `instance`.
+      This fixes many extraneous rows present in `modw_cloud.instance_type`.
+      ([\#2251](https://github.com/ubccr/xdmod/pull/2251))
+    - Fix bug in which the Wall Hours: Per Session statistic was miscalcuated.
+      ([\#2196](https://github.com/ubccr/xdmod/pull/2196))
+    - Fix bug in which a migration pipeline could run without checking if
+      `modw_cloud.event` table existing.
+      ([\#2237](https://github.com/ubccr/xdmod/pull/2237))
+
 ## 2026-05-12 v11.0.3
 
 - Important Notes
