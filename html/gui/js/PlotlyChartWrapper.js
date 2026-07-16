@@ -91,7 +91,7 @@ XDMoD.utils.createChart = function (chartOptions, extraHandlers) {
         // Format timezone -- Plotly does not support timezones
         // Therefore, we need to utilize moment JS.
         const axis = baseChartOptions.layout.swapXY ? 'yaxis' : 'xaxis';
-        if (baseChartOptions.layout[axis].timeseries) {
+        if (baseChartOptions.layout[axis] && baseChartOptions.layout[axis].timeseries) {
             const axisName = axis.slice(0, 1);
             baseChartOptions.data.forEach((series) => {
                 series[axisName].forEach((elem, index, seriesArr) => {
