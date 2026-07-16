@@ -2612,8 +2612,8 @@ Ext.extend(XDMoD.Module.Usage, XDMoD.PortalModule, {
                 const chartDiv = document.getElementById(this.chartId);
                 if (chartDiv) {
                     Plotly.relayout(this.chartId, { width: adjWidth, height: adjHeight });
-                    const update = relayoutChart(chartDiv, adjHeight, false);
-                    Plotly.relayout(this.chartId, update);
+                    const update = relayoutChart(chartDiv, adjWidth, adjHeight, false);
+                    Plotly.update(this.chartId, update.data, update.layout, update.traces);
                 }
             }
         } //onResize
