@@ -28,13 +28,13 @@ class SymfonyCommandHelper
      * @throws \Exception if an error is encountered while running the specified command.
      * @throws \RuntimeException if a non-zero exit code is returned by the Symfony Command.
      */
-    public static function executeCommand(string $command, array $options = [], string $env = 'prod', bool $debug = false): array
+    public static function executeCommand(string $command, array $options = [], string $env = 'prod', bool $debug = false): string
     {
         list($statusCode, $output) = self::doExecuteCommand($command, $options, $env, $debug);
         if ($statusCode !== 0) {
             throw new \RuntimeException("Error Running Symfony Command $command\n$output");
         }
-        return [$statusCode, $output];
+        return $output;
     }
 
     /**
