@@ -242,10 +242,10 @@ function main()
             break;
         case 'console':
             try {
-                list($statusCode, $output) = \CCR\Helper\SymfonyCommandHelper::executeCommand($params);
-                echo "$output\n";
+                echo \CCR\Helper\SymfonyCommandHelper::executeCommand($params);
             } catch (\Exception $e) {
                 $logger->critical(sprintf('Error encountered while executing %s', $params));
+                $logger->critical(sprintf("%s: %s\n%s", $e->getCode(), $e->getMessage(), $e->getTraceAsString()));
                 exit(1);
             }
             break;
