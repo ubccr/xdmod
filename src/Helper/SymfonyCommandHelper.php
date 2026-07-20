@@ -23,10 +23,7 @@ use Symfony\Component\Dotenv\Exception\PathException;
 readonly class SymfonyCommandHelper
 {
 
-    public function __construct(
-        private ?LoggerInterface $logger = null
-    )
-    {
+    public function __construct(private ?LoggerInterface $logger = null) {
     }
 
     /**
