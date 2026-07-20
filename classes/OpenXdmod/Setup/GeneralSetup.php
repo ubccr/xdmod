@@ -129,6 +129,8 @@ EOT
         $this->saveIniConfig($settings, 'portal_settings');
 
         file_put_contents(BASE_DIR . '/.env', '');
-        SymfonyCommandHelper::dumpDotEnv();
+
+        // Make sure that we
+        (new SymfonyCommandHelper())->dumpDotEnv();
     }
 }

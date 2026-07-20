@@ -39,6 +39,14 @@ function main()
 {
     global $argv, $logger, $force;
 
+    # Check if we should run in xdmod-admin or symfony mode
+    if ($argv[1] === '--console') {
+        $command = implode(' ', array_slice($argv, 2));
+        $commandOutput = (new \CCR\Helper\SymfonyCommandHelper())->executeCommand($command);
+        echo "$commandOutput\n";
+        exit(0);
+    }
+    echo "We shouldn't get here!\n";
     $opts = array(
         array('h', 'help'),
         array('v', 'verbose'),
@@ -53,8 +61,7 @@ function main()
         array('t', 'truncate'),
         array('', 'users'),
         array('', 'load:'),
-        array('', 'delete:'),
-        array('', 'console:')
+        array('', 'delete:')
      );
 
     $shortOptions = implode(
@@ -160,12 +167,6 @@ function main()
                 $action = 'load';
                 $params = $value;
                 break;
-            case 'c':
-            case 'console':
-                $entity = 'console';
-                $action = 'console';
-                $params = $value;
-                break;
             default:
                 fwrite(STDERR, "Unexpected option '$key'\n");
                 exit(1);
@@ -242,9 +243,10 @@ function main()
             break;
         case 'console':
             try {
-                echo \CCR\Helper\SymfonyCommandHelper::executeCommand($params);
+                $helper = new \CCR\Helper\SymfonyCommandHelper();
+                echo $helper->executeCommand($params);
             } catch (\Exception $e) {
-                $logger->critical(sprintf('Error encountered while executing %s', $params));
+                $logger->critical(sprintf(  'Error encountered while executing %s', $params));
                 $logger->critical(sprintf("%s: %s\n%s", $e->getCode(), $e->getMessage(), $e->getTraceAsString()));
                 exit(1);
             }
