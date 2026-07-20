@@ -922,7 +922,6 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         // JOIN with the attribute table in the query
 
         $this->logger->debug(sprintf('Apply GroupBy %s to %s', $this, $query));
-        $addedGroupByFormulas = array();
         // When applying an aggregation unit GroupBy the aggregation tables will already have been
         // added by Query::setDuration()
 
@@ -962,18 +961,15 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             $field = new Field($formula, $alias);
             $query->addField($field);
 
-            if (!in_array($formula, $addedGroupByFormulas)) {
-                $query->addGroup(new Field($formula, $alias . '_groupby'));
-                $addedGroupByFormulas[] = $formula;
-            }
-            
-            $query->addGroup(new Field($formula, 'gb_' . md5($formula)));
-            
+            $cleanAlias = 'gb_' . preg_replace('/[^a-zA-Z0-9_]/', '_', $formula);
+            $query->addGroup(new Field($formula, $cleanAlias));
+
             $formulaNoQuotes = preg_replace('/(\'.*?\'|".*?")/', '', $formula);
             preg_match_all('/[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+/', $formulaNoQuotes, $matches);
             if (!empty($matches[0])) {
                 foreach ($matches[0] as $baseCol) {
-                    $query->addGroup(new Field($baseCol, 'gb_' . md5($baseCol)));
+                    $cleanBaseAlias = 'gb_' . str_replace('.', '_', $baseCol);
+                    $query->addGroup(new Field($baseCol, $cleanBaseAlias));
                 }
             }
             // Add a GroupBy and Where condition for each field that is part of the key that maps a
@@ -986,17 +982,11 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                 $alias = $this->qualifyColumnName($attributeKey, true);
                 // Aggregation unit group bys use the date table rather than the attribute table
                 $tableObj = ( $this->isAggregationUnit ? $query->getDateTable() : $this->attributeTableObj );
-                $groupByField = new TableField(
-                    $tableObj,
-                    ($useAlternateGroupBy ? $this->alternateGroupByColumns[$mapIndex++] : $attributeKey),
-                    $alias
-                );
+                $colName = ($useAlternateGroupBy ? $this->alternateGroupByColumns[$mapIndex++] : $attributeKey);
 
                 $tableColFormula = $tableObj->getAlias()->getName() . '.' . $colName;
-                if (!in_array($tableColFormula, $addedGroupByFormulas)) {
-                    $query->addGroup($groupByField);
-                    $addedGroupByFormulas[] = $tableColFormula;
-                }
+                $cleanMapAlias = 'gb_' . str_replace('.', '_', $tableColFormula);
+                $query->addGroup(new Field($tableColFormula, $cleanMapAlias));
 
                 // The aggregation unit where condition is already added by Query::setDuration()
 
@@ -1089,13 +1079,12 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             $field = new Field($this->verifyAndReplaceTableAlias($formula, $query), $alias);
             $query->addField($field);
             if ($this->id !== 'none') {
-                $query->addGroup(new Field($finalFormula, 'gb_' . md5($finalFormula)));
-                
                 $formulaNoQuotes = preg_replace('/(\'.*?\'|".*?")/', '', $finalFormula);
                 preg_match_all('/[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+/', $formulaNoQuotes, $matches);
                 if (!empty($matches[0])) {
                     foreach ($matches[0] as $baseCol) {
-                        $query->addGroup(new Field($baseCol, 'gb_' . md5($baseCol)));
+                        $cleanBaseTextAlias = 'gb_' . str_replace('.', '_', $baseCol);
+                        $query->addGroup(new Field($baseCol, $cleanBaseTextAlias));
                     }
                 }
             }
