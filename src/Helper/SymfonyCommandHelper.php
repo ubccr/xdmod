@@ -6,9 +6,12 @@ use CCR\Kernel;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
 use Symfony\Component\Console\Exception\ExceptionInterface;
+use Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Console\Input\ArrayInput;
+use Symfony\Component\Console\Input\Input;
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\BufferedOutput;
+use Symfony\Component\Console\Output\Output;
 use Symfony\Component\Dotenv\Dotenv;
 use Symfony\Component\Dotenv\Exception\FormatException;
 use Symfony\Component\Dotenv\Exception\PathException;
@@ -23,30 +26,30 @@ use Symfony\Component\Dotenv\Exception\PathException;
 readonly class SymfonyCommandHelper
 {
 
-    public function __construct(private ?LoggerInterface $logger = null) {
+    public function __construct(private ?LoggerInterface $logger = null)
+    {
     }
 
     /**
      * Execute the provided Symfony $command.
      *
-     * @param string $command the Symfony command to run.
+     * @param string|array $command the Symfony command to run.
      * @throws \LogicException if the command is empty.
      * @throws \Exception if an error is encountered while running the specified command.
      * @throws \RuntimeException if a non-zero exit code is returned by the Symfony Command.
      */
-    public function executeCommand(string $command, string $env = 'prod', bool $debug = false): string
+    public function executeCommand(string|array $command, string $env = 'prod', bool $debug = false): string
     {
-        $this->logger?->debug('Executing Symfony Command', ['command' => $command]);
+        $this->logger?->debug('Executing Symfony String Command', ['command' => var_export($command, true)]);
 
         if (empty($command)) {
             throw new \LogicException('Command must not be empty.');
         }
 
-        // Make sure that whatever command is being executed correctly utilizes any .env variables.
         try {
             $envPath = BASE_DIR . '/.env';
             (new Dotenv())->bootEnv($envPath);
-        } catch(FormatException | PathException $e) {
+        } catch (FormatException|PathException $e) {
             throw new \RuntimeException('Unable to load environment file', $e->getCode(), $e);
         }
 
@@ -57,14 +60,18 @@ readonly class SymfonyCommandHelper
         // we set this so that it doesn't `exit` whatever php script is calling this function.
         $application->setAutoExit(false);
 
-        $input = new StringInput($command);
+        if (is_array($command)) {
+            $input = new ArgvInput($command);
+        } else {
+            $input = new StringInput($command);
+        }
         $output = new BufferedOutput();
 
         $statusCode = $application->run($input, $output);
         $this->logger?->debug('Symfony Command Executed', ['status_code' => $statusCode]);
 
         if ($statusCode !== 0) {
-            throw new \RuntimeException("Error Running Symfony Command $command");
+            throw new \RuntimeException("Error Running Symfony Command");
         }
 
         return $output->fetch();

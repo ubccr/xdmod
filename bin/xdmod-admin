@@ -41,8 +41,7 @@ function main()
 
     # Check if we should run in xdmod-admin or symfony mode
     if ($argv[1] === '--console') {
-        $command = implode(' ', array_slice($argv, 2));
-        echo (new \CCR\Helper\SymfonyCommandHelper())->executeCommand($command);
+        echo (new \CCR\Helper\SymfonyCommandHelper())->executeCommand(array_slice($argv, 2));
         exit(0);
     }
     $opts = array(
