@@ -89,7 +89,10 @@ function generateChartOptions(record, params = null) {
 
         for (var i = 0; i < record.data.series[sid].data.length; i++) {
             x.push(moment.tz(record.data.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS'));
-            const y_val = record.data.series[sid].data[i].y ?? 0;
+            let y_val = record.data.series[sid].data[i].y;
+            if (!y_val) {
+                y_val = 0;
+            }
             y.push(y_val);
             qtip.push(record.data.series[sid].data[i].qtip);
         }
