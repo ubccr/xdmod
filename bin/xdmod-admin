@@ -42,11 +42,9 @@ function main()
     # Check if we should run in xdmod-admin or symfony mode
     if ($argv[1] === '--console') {
         $command = implode(' ', array_slice($argv, 2));
-        $commandOutput = (new \CCR\Helper\SymfonyCommandHelper())->executeCommand($command);
-        echo "$commandOutput\n";
+        echo (new \CCR\Helper\SymfonyCommandHelper())->executeCommand($command);
         exit(0);
     }
-    echo "We shouldn't get here!\n";
     $opts = array(
         array('h', 'help'),
         array('v', 'verbose'),
@@ -239,16 +237,6 @@ function main()
                     $logger->critical("Cannot perform '$action' on '$entity'");
                     exit(1);
                     break;
-            }
-            break;
-        case 'console':
-            try {
-                $helper = new \CCR\Helper\SymfonyCommandHelper();
-                echo $helper->executeCommand($params);
-            } catch (\Exception $e) {
-                $logger->critical(sprintf(  'Error encountered while executing %s', $params));
-                $logger->critical(sprintf("%s: %s\n%s", $e->getCode(), $e->getMessage(), $e->getTraceAsString()));
-                exit(1);
             }
             break;
         default:
