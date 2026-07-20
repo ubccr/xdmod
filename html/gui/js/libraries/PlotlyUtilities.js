@@ -89,7 +89,8 @@ function generateChartOptions(record, params = null) {
 
         for (var i = 0; i < record.data.series[sid].data.length; i++) {
             x.push(moment.tz(record.data.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS'));
-            y.push(record.data.series[sid].data[i].y);
+            const y_val = record.data.series[sid].data[i].y ?? 0;
+            y.push(y_val);
             qtip.push(record.data.series[sid].data[i].qtip);
         }
 
@@ -126,24 +127,6 @@ function generateChartOptions(record, params = null) {
             trace.marker.size = 20;
             trace.mode = 'markers';
             delete trace.line;
-        }
-
-        if (y.includes(null)) {
-            data.push({
-                name: 'null connector',
-                line: {
-                    color: color,
-                    dash: 'dash',
-                    width: lineWidth
-                },
-                mode: 'lines',
-                type: 'scatter',
-                connectgaps: true,
-                hoverinfo: 'skip',
-                showlegend: false,
-                x: x,
-                y: y
-            });
         }
 
         data.push(trace);
