@@ -54,5 +54,4 @@ class SymfonyCommandHelperTest extends TestCase
             ['router:match /warehouse/dimensions', ['ccr_warehouse_getdimensions', ' CCR\Controller\WarehouseController::getDimensions()']]
         ];
     }
-
 }
