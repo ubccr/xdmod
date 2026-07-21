@@ -26,6 +26,10 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
+          name: Build images
+          command: |
+            pushd ~/project/tests/playwright/Docker && docker compose build mariadb xdmod
+      - run:
           name: Spin Up the docker containers
           command: |
             docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
