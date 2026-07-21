@@ -33,8 +33,6 @@ services:
       - xdmod_default
     environment:
       MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
-    volumes:
-      - ./mariadb/data:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
   playwright:
