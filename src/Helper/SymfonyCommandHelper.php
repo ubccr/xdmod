@@ -2,6 +2,7 @@
 
 namespace CCR\Helper;
 
+use CCR\Helper\Exception\NonZeroStatusCodeException;
 use CCR\Kernel;
 use Psr\Log\LoggerInterface;
 use Symfony\Bundle\FrameworkBundle\Console\Application;
@@ -46,12 +47,10 @@ readonly class SymfonyCommandHelper
             throw new \LogicException('Command must not be empty.');
         }
 
-        try {
-            $envPath = BASE_DIR . '/.env';
-            (new Dotenv())->bootEnv($envPath);
-        } catch (FormatException|PathException $e) {
-            throw new \RuntimeException('Unable to load environment file', $e->getCode(), $e);
-        }
+        // Boot up the environment for Symfony to use when executing the provided command.
+        $envPath = BASE_DIR . '/.env';
+        (new Dotenv())->bootEnv($envPath);
+
 
         // Setup our Kernel / Application
         $kernel = new Kernel($env, $debug);
@@ -60,6 +59,7 @@ readonly class SymfonyCommandHelper
         // we set this so that it doesn't `exit` whatever php script is calling this function.
         $application->setAutoExit(false);
 
+        // Determine what type of Input to use based on the type of $command.
         if (is_array($command)) {
             $input = new ArgvInput($command);
         } else {
@@ -67,14 +67,19 @@ readonly class SymfonyCommandHelper
         }
         $output = new BufferedOutput();
 
+        // Attempt to execute the Symfony command.
         $statusCode = $application->run($input, $output);
+
         $this->logger?->debug('Symfony Command Executed', ['status_code' => $statusCode]);
 
+        // Make sure to snag the output now just in case the application returned a non-zero statusCode so we can
+        // include it with the exception.
+        $commandOutput = $output->fetch();
         if ($statusCode !== 0) {
-            throw new \RuntimeException("Error Running Symfony Command");
+            throw new NonZeroStatusCodeException($commandOutput, "Error Running Symfony Command");
         }
 
-        return $output->fetch();
+        return $commandOutput;
     }
 
     /**
