@@ -81,6 +81,7 @@ function main()
     $params = null;
 
     $logLevel = -1;
+
     foreach ($args as $key => $value) {
         if (is_array($value)) {
             fwrite(STDERR, "Multiple values not allowed for '$key'\n");
