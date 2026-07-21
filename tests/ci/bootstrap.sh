@@ -146,6 +146,9 @@ then
 
     expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
 
+    # Update the db host in portal_settings.ini from localhost to mariadb
+    sed -i 's|host = "localhost"|host = "mariadb"|g' /etc/xdmod/portal_settings.ini
+
     cat /etc/xdmod/organization.json | jq '.[1] |= .+ {"name": "Wrench", "abbrev": "wrench"}' > /etc/xdmod/organization2.json
     jq . /etc/xdmod/organization2.json > /etc/xdmod/organization.json
     rm -f /etc/xdmod/organization2.json
