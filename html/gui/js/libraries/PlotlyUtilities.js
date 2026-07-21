@@ -134,7 +134,7 @@ function generateChartOptions(record, params = null) {
                 line: {
                     color: color,
                     dash: 'dash',
-                    width: lineWidth
+                    width: lineWidth / 1.5
                 },
                 mode: 'lines',
                 type: 'scatter',
@@ -162,6 +162,7 @@ function generateChartOptions(record, params = null) {
             bgcolor: '#ffffff'
         },
         xaxis: {
+            layer: 'below traces',
             title: {
                 text: `<b> Time (${record.data.schema.timezone}) </b>`,
                 font: {
@@ -185,6 +186,7 @@ function generateChartOptions(record, params = null) {
             spikecolor: '#C0C0C0'
         },
         yaxis: {
+            layer: 'below traces',
             title: {
                 text: `<b> ${record.data.schema.units} </b>`,
                 font: {
