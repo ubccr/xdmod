@@ -56,9 +56,11 @@ then
 
     copy_template_httpd_conf
     ~/bin/services start
-    mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
-    GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
-    FLUSH PRIVILEGES;"
+
+    # We need to ensure that the we're starting from zero for a fresh install. To accomplish this we'll DROP all
+    # databases that are not a mysql specific db.
+    # This command will use the /root/.my.cnf file for which server / user to use.
+     mysql -e "SHOW DATABASES" | grep -vE '^(information_schema|mysql|performance_schema|sys)$' | grep -v Database | xargs -I {} mysql -e "DROP DATABASE \`{}\`"
 
     # TODO: Replace diff files with hard fixes
     # Modify integration sso tests to work with cloud realm

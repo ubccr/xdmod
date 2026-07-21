@@ -25,22 +25,19 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - when:
-          condition:
-            equal: [ << parameters.install-type >>, 'upgrade' ]
-          steps:
-            - run:
-                name: Test source code install
-                command: |
-                  docker compose -f ~/project/tests/playwright/Docker/docker-compose-upgrade.yml up -d
-      - when:
-          condition:
-            equal: [ << parameters.install-type >>, 'fresh_install' ]
-          steps:
-            - run:
-                name: Test source code install
-                command: |
-                  docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
+      - run:
+          name: Spin Up the docker containers
+          command: |
+            docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
+      - run:
+          name: Setup .my.cnf to be to mariadb.
+          command: docker exec -w /root xdmod bash -c 'cp /root/.my.mariadb.cnf /root/.my.cnf;'
+      - run:
+          name: Remove the local db
+          command: docker exec -w /root xdmod bash -c 'rm -rf /var/lib/mysql'
+      - run:
+          name: Update services so that it doesn't try and start the non-existent db
+          command: docker exec -w /root xdmod bash -c '\cp /root/bin/no_db_services /root/bin/services'
       - run:
           name: Generate Key for XDMoD
           command: docker exec xdmod openssl genrsa -out /etc/pki/tls/private/localhost.key -rand /proc/cpuinfo:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048

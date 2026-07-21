@@ -1,48 +1,58 @@
 services:
-    xdmod:
-        build:
-          context: xdmod
-        container_name: xdmod
-        hostname: xdmod
-        networks:
-            - xdmod_default
-        shm_size: 2g
-        init: true
-        ports:
-            - 9006:443
-            - 7000:7000
-        environment:
-            XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
-        stdin_open: true
-        tty: true
-        command: sleep infinity
-    mariadb:
-      build:
-        context: mariadb
-      container_name: mariadb
-      hostname: mariadb
-      networks:
-        - xdmod_default
-      environment:
-        MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
-      ports:
-        - "3306:3306"
-    playwright:
-        image:  mcr.microsoft.com/playwright:v1.60.0-jammy
-        hostname: playwright
-        container_name: playwright
-        networks:
-            - xdmod_default
-        stdin_open: true
-        tty: true
-        ipc: host
-        links:
-            - xdmod
-        depends_on:
-            - xdmod
-        environment:
-            BASE_URL: https://xdmod
-            XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
-        command: sleep infinity
+  xdmod:
+    build:
+      context: xdmod
+    container_name: xdmod
+    hostname: xdmod
+    networks:
+      - xdmod_default
+    shm_size: 2g
+    init: true
+    ports:
+      - 9006:443
+      - 7000:7000
+    environment:
+      XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
+    stdin_open: true
+    tty: true
+    depends_on:
+      - mariadb
+    command: sleep infinity
+  mariadb:
+    build:
+      context: mariadb
+    container_name: mariadb
+    hostname: mariadb
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    networks:
+      - xdmod_default
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: true
+    volumes:
+      - ./mariadb/data:/docker-entrypoint-initdb.d
+    ports:
+      - "3306:3306"
+  playwright:
+    image: mcr.microsoft.com/playwright:v1.60.0-jammy
+    hostname: playwright
+    container_name: playwright
+    networks:
+      - xdmod_default
+    stdin_open: true
+    tty: true
+    ipc: host
+    links:
+      - xdmod
+    depends_on:
+      - xdmod
+    environment:
+      BASE_URL: https://xdmod
+      XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
+    command: sleep infinity
 networks:
   xdmod_default:
