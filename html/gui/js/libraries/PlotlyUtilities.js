@@ -143,7 +143,8 @@ function generateChartOptions(record, params = null) {
     const layout = {
         hoverlabel: {
             bgcolor: '#ffffff'
-        }, xaxis: {
+        },
+        xaxis: {
             layer: 'below traces',
             title: {
                 text: `<b> Time (${record.data.schema.timezone}) </b>`,
