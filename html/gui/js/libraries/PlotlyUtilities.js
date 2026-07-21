@@ -89,11 +89,7 @@ function generateChartOptions(record, params = null) {
 
         for (var i = 0; i < record.data.series[sid].data.length; i++) {
             x.push(moment.tz(record.data.series[sid].data[i].x, record.data.schema.timezone).format('Y-MM-DD HH:mm:ss.SSS'));
-            let y_val = record.data.series[sid].data[i].y;
-            if (!y_val) {
-                y_val = 0;
-            }
-            y.push(y_val);
+            y.push(record.data.series[sid].data[i].y);
             qtip.push(record.data.series[sid].data[i].qtip);
         }
 
@@ -132,6 +128,24 @@ function generateChartOptions(record, params = null) {
             delete trace.line;
         }
 
+        if (y.includes(null)) {
+            data.push({
+                name: 'null connector',
+                line: {
+                    color: color,
+                    dash: 'dash',
+                    width: lineWidth
+                },
+                mode: 'lines',
+                type: 'scatter',
+                connectgaps: true,
+                hoverinfo: 'skip',
+                showlegend: false,
+                x: x,
+                y: y
+            });
+        }
+
         data.push(trace);
         var tempMin = Math.min.apply(null, y);
         var tempMax = Math.max.apply(null, y);
@@ -156,6 +170,7 @@ function generateChartOptions(record, params = null) {
                     color: '#5078a0'
                 }
             },
+            type: 'date',
             color: '#606060',
             ticks: 'outside',
             tickcolor: '#c0cfe0',
@@ -164,7 +179,10 @@ function generateChartOptions(record, params = null) {
             },
             linecolor: '#c0cfe0',
             automargin: true,
-            showgrid: false
+            showgrid: false,
+            spikedash: 'solid',
+            spikethickness: 1,
+            spikecolor: '#C0C0C0'
         },
         yaxis: {
             title: {
