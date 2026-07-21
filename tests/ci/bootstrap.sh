@@ -52,39 +52,15 @@ then
     rpm -qa | grep ^xdmod | xargs yum -y remove || true
     rm -rf /etc/xdmod
 
-    rm -rf /var/lib/mysql
-    mkdir -p /var/lib/mysql
-    mkdir -p /var/log/mariadb
-    mkdir -p /var/run/mariadb
-    chown -R mysql:mysql /var/lib/mysql
-    chown -R mysql:mysql /var/log/mariadb
-    chown -R mysql:mysql /var/run/mariadb
-
     dnf install -y ~/rpmbuild/RPMS/*/*.rpm
-    mysql_install_db --user mysql
-
-    if [ -f /etc/my.cnf.d/mariadb-server.cnf ]; then
-        >/etc/my.cnf.d/mariadb-server.cnf
-        echo "# this is read by the standalone daemon and embedded servers
-              [server]
-              sql_mode=
-              # this is only for the mysqld standalone daemon
-              # Settings user and group are ignored when systemd is used.
-              # If you need to run mysqld under a different user or group,
-              # customize your systemd unit file for mysqld/mariadb according to the
-              # instructions in http://fedoraproject.org/wiki/Systemd
-              [mysqld]
-              datadir=/var/lib/mysql
-              socket=/var/lib/mysql/mysql.sock
-              log-error=/var/log/mariadb/mariadb.log
-              pid-file=/run/mariadb/mariadb.pid" > /etc/my.cnf.d/mariadb-server.cnf
-    fi
 
     copy_template_httpd_conf
     ~/bin/services start
-    mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
-    GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
-    FLUSH PRIVILEGES;"
+
+    # We need to ensure that the we're starting from zero for a fresh install. To accomplish this we'll DROP all
+    # databases that are not a mysql specific db.
+    # This command will use the /root/.my.cnf file for which server / user to use.
+     mysql -e "SHOW DATABASES" | grep -vE '^(information_schema|mysql|performance_schema|sys)$' | grep -v Database | xargs -I {} mysql -e "DROP DATABASE \`{}\`"
 
     # TODO: Replace diff files with hard fixes
     # Modify integration sso tests to work with cloud realm
@@ -169,6 +145,9 @@ then
     ~/bin/services start
 
     expect $BASEDIR/scripts/xdmod-upgrade.tcl | col -b
+
+    # Update the db host in portal_settings.ini from localhost to mariadb
+    sed -i 's|host = "localhost"|host = "mariadb"|g' /etc/xdmod/portal_settings.ini
 
     cat /etc/xdmod/organization.json | jq '.[1] |= .+ {"name": "Wrench", "abbrev": "wrench"}' > /etc/xdmod/organization2.json
     jq . /etc/xdmod/organization2.json > /etc/xdmod/organization.json

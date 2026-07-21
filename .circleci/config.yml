@@ -26,8 +26,22 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-          name: Docker Compose corresponding OS file
-          command: docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
+          name: Build images
+          command: |
+            pushd ~/project/tests/playwright/Docker && docker compose build mariadb xdmod
+      - run:
+          name: Spin Up the docker containers
+          command: |
+            docker compose -f ~/project/tests/playwright/Docker/docker-compose.yml up -d
+      - run:
+          name: Setup .my.cnf to be to mariadb.
+          command: docker exec -w /root xdmod bash -c 'cp /root/.my.mariadb.cnf /root/.my.cnf;'
+      - run:
+          name: Remove the local db
+          command: docker exec -w /root xdmod bash -c 'rm -rf /var/lib/mysql'
+      - run:
+          name: Update services so that it doesn't try and start the non-existent db
+          command: docker exec -w /root xdmod bash -c '\cp /root/bin/no_db_services /root/bin/services'
       - run:
           name: Generate Key for XDMoD
           command: docker exec xdmod openssl genrsa -out /etc/pki/tls/private/localhost.key -rand /proc/cpuinfo:/proc/filesystems:/proc/interrupts:/proc/ioports:/proc/uptime 2048
@@ -67,6 +81,10 @@ jobs:
                 name: Test source code install
                 command: |
                   docker exec -w /root/xdmod xdmod /root/xdmod/tests/ci/source_install.sh
+            - run:
+                name: Copy base portal_settings.ini into place
+                command: |
+                  docker exec -w /root/xdmod xdmod bash -c '\cp /root/xdmod/tests/playwright/Docker/xdmod/portal_settings.ini /etc/xdmod/portal_settings.ini'
       - run:
           name: Install / Upgrade XDMoD from the newly created RPM
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> xdmod /root/xdmod/tests/ci/bootstrap.sh
