@@ -110,7 +110,8 @@ function generateChartOptions(record, params = null) {
             name: record.data.series[sid].name,
             chartSeries: record.data.series[sid],
             type: 'scatter',
-            mode: 'markers+lines'
+            mode: 'markers+lines',
+            connectgaps: true
         };
 
         if (record.data.series[sid].name === 'Median' || record.data.series[sid].name === 'Minimum') {
@@ -128,24 +129,6 @@ function generateChartOptions(record, params = null) {
             delete trace.line;
         }
 
-        if (y.includes(null)) {
-            data.push({
-                name: 'null connector',
-                line: {
-                    color: color,
-                    dash: 'dash',
-                    width: lineWidth / 1.5
-                },
-                mode: 'lines',
-                type: 'scatter',
-                connectgaps: true,
-                hoverinfo: 'skip',
-                showlegend: false,
-                x: x,
-                y: y
-            });
-        }
-
         data.push(trace);
         var tempMin = Math.min.apply(null, y);
         var tempMax = Math.max.apply(null, y);
@@ -160,8 +143,7 @@ function generateChartOptions(record, params = null) {
     const layout = {
         hoverlabel: {
             bgcolor: '#ffffff'
-        },
-        xaxis: {
+        }, xaxis: {
             layer: 'below traces',
             title: {
                 text: `<b> Time (${record.data.schema.timezone}) </b>`,
