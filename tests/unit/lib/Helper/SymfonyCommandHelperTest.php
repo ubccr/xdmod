@@ -52,6 +52,7 @@ class SymfonyCommandHelperTest extends TestCase
             ['cache:clear', ['was successfully cleared']],
             ['dotenv:dump', ['Successfully dumped .env files in .env.local.php']],
             ['router:match /warehouse/dimensions', ['ccr_warehouse_getdimensions', ' CCR\Controller\WarehouseController::getDimensions()']],
+            # --console is added here due to the differences in how Symfony's StringInput handles parsing vs. the ArgvInput.
             [
                 ['--console', 'router:match', '/warehouse/quick_filters', '--env', 'prod'],
                 ['ccr_warehouse_getquickfilters', 'CCR\Controller\WarehouseController::getQuickFilters()']],
