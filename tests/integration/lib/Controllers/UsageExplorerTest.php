@@ -67,7 +67,7 @@ class UsageExplorerTest extends TokenAuthTest
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, $input);
+        $response = $this->helper->post('controllers/user_interface.php', null, $input);
 
         $this->assertEquals('application/json', $response[1]['content_type']);
         $this->assertEquals(400, $response[1]['http_code']);
@@ -119,7 +119,7 @@ class UsageExplorerTest extends TokenAuthTest
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, array('operation' => 'get_tabs', 'public_user' => 'true'));
+        $response = $this->helper->post('controllers/user_interface.php', null, array('operation' => 'get_tabs', 'public_user' => 'true'));
 
         $this->assertEquals($response[1]['content_type'], 'application/json');
         $this->assertEquals($response[1]['http_code'], 200);
@@ -152,7 +152,7 @@ class UsageExplorerTest extends TokenAuthTest
             $this->markTestSkipped('Needs realm integration.');
         }
         self::$publicView['group_by'] = "username";
-        $response = $this->helper->post('/controllers/user_interface.php', null, self::$publicView);
+        $response = $this->helper->post('controllers/user_interface.php', null, self::$publicView);
 
         $expectedErrorMessage = <<<EOF
 Your user account does not have permission to view the requested data.  If you
@@ -316,7 +316,7 @@ EOF
      */
     public function testJsonExport($input, $expected, $fieldCount, $recordCount)
     {
-        $response = $this->helper->post('/controllers/user_interface.php', null, $input);
+        $response = $this->helper->post('controllers/user_interface.php', null, $input);
 
         $got = json_decode($response[0], true);
 
@@ -383,9 +383,9 @@ EOF
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, $view);
+        $response = $this->helper->post('controllers/user_interface.php', null, $view);
 
-        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/html; charset=UTF-8'));
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode($response[0], true);
@@ -414,9 +414,9 @@ EOF
         if (!in_array("jobs", self::$XDMOD_REALMS)) {
             $this->markTestSkipped('Needs realm integration.');
         }
-        $response = $this->helper->post('/controllers/user_interface.php', null, $input);
+        $response = $this->helper->post('controllers/user_interface.php', null, $input);
 
-        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/html; charset=UTF-8'));
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode(UsageExplorerHelper::demanglePlotData($response[0]), true);
@@ -493,10 +493,9 @@ EOF;
             $this->markTestSkipped('Needs realm integration.');
         }
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, $chartConfig);
+        $response = $this->helper->post('controllers/user_interface.php', null, $chartConfig);
 
         $this->assertEquals($response[1]['http_code'], 200);
-
         $actualContentType = $response[1]['content_type'];
         $this->assertEquals($expectedMimeType, $actualContentType);
 
@@ -626,7 +625,7 @@ EOF;
 }
 EOF;
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, json_decode($data, true));
+        $response = $this->helper->post('controllers/user_interface.php', null, json_decode($data, true));
 
         $this->assertEquals($response[1]['content_type'], 'application/json');
         $this->assertEquals($response[1]['http_code'], 200);
@@ -670,7 +669,7 @@ EOF;
 
         $this->helper->authenticate($user);
 
-        $response = $this->helper->post('/controllers/user_interface.php', null, $chartSettings);
+        $response = $this->helper->post('controllers/user_interface.php', null, $chartSettings);
 
         $this->assertEquals($response[1]['http_code'], 200);
 
@@ -1144,7 +1143,7 @@ EOF;
             $expectedParameterLine = '';
         }
         $response = $this->helper->post(
-            '/controllers/user_interface.php',
+            'controllers/user_interface.php',
             null,
             $data
         );

@@ -101,7 +101,7 @@ class SlurmShredderTest extends JobShredderBaseTestCase
 
 
         $logger = $this
-            ->getMockBuilder('\CCR\Logger')
+            ->getMockBuilder('\Monolog\Logger')
             ->setConstructorArgs(array('slurm-shredder-test'))
             ->onlyMethods(['debug', 'warning'])
             ->getMock();
@@ -140,7 +140,7 @@ class SlurmShredderTest extends JobShredderBaseTestCase
             ->method('insertRow');
 
         $logger = $this
-            ->getMockBuilder('\CCR\Logger')
+            ->getMockBuilder('\Monolog\Logger')
             ->setConstructorArgs(array('slurm-shredder-test'))
             ->onlyMethods(['debug', 'warning'])
             ->getMock();

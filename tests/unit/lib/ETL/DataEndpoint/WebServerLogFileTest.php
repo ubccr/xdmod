@@ -53,7 +53,7 @@ class WebServerLogFileTest extends TestCase
         $endpoint->connect();
         $numIterations = 0;
         foreach ($endpoint as $record) {
-            $this->assertSame($expected[$numIterations], $record);
+            $this->assertEqualsCanonicalizing($expected[$numIterations], $record);
             $numIterations++;
         }
         $this->assertSame(

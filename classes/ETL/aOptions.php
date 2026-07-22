@@ -268,7 +268,7 @@ abstract class aOptions extends \stdClass implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function current()
+    public function current(): mixed
     {
         if ( ! $this->valid() ) {
             return false;
@@ -281,7 +281,7 @@ abstract class aOptions extends \stdClass implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function key()
+    public function key(): mixed
     {
         return key($this->options);
     }  // key()
@@ -291,7 +291,7 @@ abstract class aOptions extends \stdClass implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function next()
+    public function next(): void
     {
         next($this->options);
     }  // next()
@@ -301,7 +301,7 @@ abstract class aOptions extends \stdClass implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->options);
     }  // rewind()
@@ -311,7 +311,7 @@ abstract class aOptions extends \stdClass implements \Iterator
      * ------------------------------------------------------------------------------------------
      */
 
-    public function valid()
+    public function valid(): bool
     {
         // Note that we can't check for values that are FALSE because that is a valid
         // data value.

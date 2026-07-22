@@ -892,7 +892,6 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-
     /**
      * Retrieve the User information for the user that's authenticated with the provided $helper.
      *
@@ -932,4 +931,14 @@ abstract class BaseTest extends \PHPUnit\Framework\TestCase
 
         return $userProfile[$property];
     }
+
+    protected function log($message)
+    {
+        if (getenv('TEST_VERBOSE') === '1') {
+            echo "\n*****************************\n";
+            echo "$message\n";
+        }
+    }
+
+
 }

@@ -9,6 +9,8 @@ class JobViewerTest extends BaseTest
 {
     const ENDPOINT = 'rest/v0.1/warehouse/';
 
+    private $xdmodhelper;
+
     public function setup(): void
     {
         $xdmodConfig = array( 'decodetextasjson' => true );

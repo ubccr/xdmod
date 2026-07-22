@@ -18,7 +18,7 @@ class JobViewerTest extends BaseTest
 
     public function setup(): void
     {
-        $xdmodConfig = array( 'decodetextasjson' => true );
+        $xdmodConfig = array( 'decodetextasjson' => true);
         $this->xdmodhelper = new XdmodTestHelper($xdmodConfig);
     }
 

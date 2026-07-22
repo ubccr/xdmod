@@ -3,6 +3,7 @@
 namespace CCR;
 
 use Monolog\Formatter\NormalizerFormatter;
+use Monolog\LogRecord;
 
 class CCRDBFormatter extends NormalizerFormatter
 {
@@ -12,7 +13,7 @@ class CCRDBFormatter extends NormalizerFormatter
      * all of the properties from the context. If the message is an empty
      * string the message property is not added.
      */
-    public function format(array $record)
+    public function format(LogRecord $record)
     {
         $vars = parent::format($record);
 
