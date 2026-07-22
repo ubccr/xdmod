@@ -37,11 +37,11 @@ try {
  */
 function main()
 {
-    global $argv, $logger, $force;
+    global $argc, $argv, $logger, $force;
 
     # Check if we should run in xdmod-admin or symfony mode
-    if ($argv[1] === '--console') {
-        echo (new \CCR\Helper\SymfonyCommandHelper())->executeCommand(array_slice($argv, 2));
+    if ($argc > 1 && $argv[1] === '--console') {
+        echo (new \CCR\Helper\SymfonyCommandHelper())->executeCommand(array_slice($argv, 1));
         exit(0);
     }
     $opts = array(
