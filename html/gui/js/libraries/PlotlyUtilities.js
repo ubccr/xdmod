@@ -110,7 +110,8 @@ function generateChartOptions(record, params = null) {
             name: record.data.series[sid].name,
             chartSeries: record.data.series[sid],
             type: 'scatter',
-            mode: 'markers+lines'
+            mode: 'markers+lines',
+            connectgaps: true
         };
 
         if (record.data.series[sid].name === 'Median' || record.data.series[sid].name === 'Minimum') {
@@ -126,24 +127,6 @@ function generateChartOptions(record, params = null) {
             trace.marker.size = 20;
             trace.mode = 'markers';
             delete trace.line;
-        }
-
-        if (y.includes(null)) {
-            data.push({
-                name: 'null connector',
-                line: {
-                    color: color,
-                    dash: 'dash',
-                    width: lineWidth
-                },
-                mode: 'lines',
-                type: 'scatter',
-                connectgaps: true,
-                hoverinfo: 'skip',
-                showlegend: false,
-                x: x,
-                y: y
-            });
         }
 
         data.push(trace);
@@ -162,6 +145,7 @@ function generateChartOptions(record, params = null) {
             bgcolor: '#ffffff'
         },
         xaxis: {
+            layer: 'below traces',
             title: {
                 text: `<b> Time (${record.data.schema.timezone}) </b>`,
                 font: {
@@ -170,6 +154,7 @@ function generateChartOptions(record, params = null) {
                     color: '#5078a0'
                 }
             },
+            type: 'date',
             color: '#606060',
             ticks: 'outside',
             tickcolor: '#c0cfe0',
@@ -178,9 +163,13 @@ function generateChartOptions(record, params = null) {
             },
             linecolor: '#c0cfe0',
             automargin: true,
-            showgrid: false
+            showgrid: false,
+            spikedash: 'solid',
+            spikethickness: 1,
+            spikecolor: '#C0C0C0'
         },
         yaxis: {
+            layer: 'below traces',
             title: {
                 text: `<b> ${record.data.schema.units} </b>`,
                 font: {

@@ -7,23 +7,22 @@
 
         <style type="text/css">html,body{margin:0px;height:100%;}</style>
         <script type="text/javascript" src="_html_dir_/gui/js/StringExtensions.js"></script>
-        <script type="text/javascript" src="_html_dir_/gui/lib/moment/moment.min.js"></script>
-        <script type="text/javascript" src="_html_dir_/gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
-        <script type="text/javascript" src="_html_dir_/gui/lib/plotly/plotly-2.29.1.min.js"></script>
-        <script type="text/javascript" src="_html_dir_/gui/js/PlotlyChartWrapper.js"></script>
-        <script type="text/javascript" src="_html_dir_/gui/js/libraries/PlotlyUtilities.js"></script>
-
-    </head>
-
-    <body>
+        <script type="text/javascript" src="_html_dir_/gui/lib/jquery/jquery-3.7.1.min.js"></script>
 
         <div id="container" class="plotly"></div>
         <script type="text/javascript">
+        // Declare various namespaces
         let Ext = {
             namespace: function () {}
         };
         let XDMoD = {
-            utils: {}
+            constants: {},
+            utils: {},
+            regex: {},
+            validator: {}
+        };
+        let CCR = {
+            xdmod: {}
         };
 
         document.addEventListener('DOMContentLoaded', function () {
@@ -35,90 +34,31 @@
                 axisLabelFontSize: inputChartOptions.axisTickSize,
                 lineWidth: inputChartOptions.lineWidth
             };
-            let chartOptions = {};
+
             // Chart will be fully configured if export call came from non-supremm module tab
             if (inputChartOptions.layout) {
-                chartOptions = inputChartOptions;
-                const isEmpty = (!chartOptions.data) || (chartOptions.data && chartOptions.data.length === 0);
-                // Configure plot for 'No Data' image. We want to wipe the layout object except for a couple things
-                if (isEmpty) {
-                    const errorConfig = getNoDataErrorConfig();
-                    const { width } = chartOptions.layout;
-                    const { height } = chartOptions.layout;
-                    // Save the title and subtitle except for thumbnail plots
-                    let margin;
-                    let titleAndSubtitle;
-                    if (chartOptions.layout.annotations) {
-                        margin = chartOptions.layout.margin;
-                        titleAndSubtitle = chartOptions.layout.annotations.slice(0, 2);
-                    }
-                    chartOptions.layout = errorConfig;
-                    chartOptions.layout.width = width;
-                    chartOptions.layout.height = height;
-                    chartOptions.layout.annotations = [];
-                    // Category chart summary view needs adjustments
-                    if (chartOptions.realmOverview) {
-                        chartOptions.layout.images[0].sizex = 4;
-                        chartOptions.layout.images[0].sizey = 4;
-                        chartOptions.layout.images[0].y = 2.5;
-                    }
-                    if (margin && titleAndSubtitle) {
-                        chartOptions.layout.margin = margin;
-                        chartOptions.layout.annotations = titleAndSubtitle;
-                    }
-                } else {
-                    if (chartOptions.data[0].type === 'pie') {
-                        chartOptions.layout.margin.t += 30;
-                    }
-
-                    chartOptions.data.sort((trace1, trace2) => {
-                        const containsBarSeries = chartOptions.data.some((elem) => elem.type === 'bar');
-                        if (containsBarSeries && chartOptions.layout.barmode === 'stack') {
-                            return Math.sign(trace2.traceorder - trace1.traceorder);
-                        }
-                        return Math.sign(trace1.traceorder - trace2.traceorder);
-                    });
-
-                }
+                inputChartOptions.layout['width'] = _width_;
+                inputChartOptions.layout['height'] = _height_;
+                inputChartOptions['renderTo'] = 'container';
+                inputChartOptions['isExport'] = true;
+                XDMoD.utils.createChart(inputChartOptions);
             }
             else {
                 chartOptions = generateChartOptions(inputChartOptions, args);
+                chartOptions.layout['width'] = _width_;
+                chartOptions.layout['height'] = _height_;
+                Plotly.newPlot('container', chartOptions.data, chartOptions.layout, { staticPlot: true } );
             }
-
-            chartOptions.layout['width'] = _width_;
-            chartOptions.layout['height'] = _height_;
-
-            Plotly.newPlot('container', chartOptions.data, chartOptions.layout, { staticPlot: true } );
-
-            const chartDiv = document.getElementById('container');
-
-            if (chartDiv) {
-                Plotly.relayout('container', {});
-            }
-
-            chartDiv.once('plotly_relayout', (evt) => {
-                if (chartOptions.layout.appkernels) {
-                    const appKernelsDiv = document.getElementById('app_kernels');
-                    const legendEntries = appKernelsDiv.getElementsByClassName('groups');
-                    for (let i = 0; i < legendEntries.length; i++) {
-                        for (let j = 0; j < legendEntries[i].children.length; j++) {
-                            if (legendEntries[i].children[j].textContent === 'Change Indicator') {
-                                const changeIndicatorIcon = legendEntries[i].children[j].children[1];
-                                changeIndicatorIcon.innerHTML = '<image href="/gui/images/exclamation_ak.png" x="15" y="-12" width="20" height="20">';
-                            }
-                        }
-                    }
-                }
-
-                if (chartOptions.layout.annotations.length === 0){
-                    return;
-                }
-                const update = relayoutChart(chartDiv, chartOptions.layout.height, true, true);
-                Plotly.relayout('container', update);
-            });
         });
 
         </script>
-
+    </head>
+    <body>
+        <script type="text/javascript" src="_html_dir_/gui/js/CCR.js"></script>
+        <script type="text/javascript" src="_html_dir_/gui/lib/moment/moment.min.js"></script>
+        <script type="text/javascript" src="_html_dir_/gui/lib/moment-timezone/moment-timezone-with-data.min.js"></script>
+        <script type="text/javascript" src="_html_dir_/gui/lib/plotly/plotly-2.29.1.min.js"></script>
+        <script type="text/javascript" src="_html_dir_/gui/js/PlotlyChartWrapper.js"></script>
+        <script type="text/javascript" src="_html_dir_/gui/js/libraries/PlotlyUtilities.js"></script>
     </body>
 </html>
