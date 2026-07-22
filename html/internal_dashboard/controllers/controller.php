@@ -27,6 +27,7 @@ if ($operation == 'logout') {
 
 
 xd_security\enforceUserRequirements(array(STATUS_LOGGED_IN, STATUS_MANAGER_ROLE), 'xdDashboardUser');
+session_write_close();
 
 // =====================================================
 
