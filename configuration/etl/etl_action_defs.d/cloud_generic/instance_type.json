@@ -22,7 +22,7 @@
             "description": "raw.description",
             "num_cores": "raw.num_cores",
             "memory_mb": "raw.memory_mb",
-            "start_time": "IF(existing.start_time IS NULL OR UNIX_TIMESTAMP(CONVERT_TZ(raw.start_time,'+00:00', @@session.time_zone)) < existing.start_time, UNIX_TIMESTAMP(CONVERT_TZ(raw.start_time,'+00:00', @@session.time_zone)), existing.start_time)"
+            "start_time": "IF(MIN(existing.start_time) IS NULL OR MIN(UNIX_TIMESTAMP(CONVERT_TZ(raw.start_time,'+00:00', @@session.time_zone))) < MIN(existing.start_time), MIN(UNIX_TIMESTAMP(CONVERT_TZ(raw.start_time,'+00:00', @@session.time_zone))), MIN(existing.start_time))"
         },
 
         "joins": [
@@ -44,7 +44,7 @@
         ],
 
         "groupby": [
-            "resource_id", "instance_type", "display", "num_cores", "memory_mb"
+            "resource_id", "instance_type", "display", "num_cores", "memory_mb","description"
         ]
     }
 }

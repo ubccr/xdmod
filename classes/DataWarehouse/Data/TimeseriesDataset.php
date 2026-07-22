@@ -63,7 +63,6 @@ class TimeseriesDataset
     protected function getSeriesIds($limit, $offset)
     {
         $statement = $this->agg_query->getRawStatement($limit, $offset);
-        $statement->execute();
 
         $groupBys = $this->agg_query->getGroupBys();
         $groupInstance = reset($groupBys);
@@ -138,7 +137,6 @@ class TimeseriesDataset
         }
 
         $statement = $this->query->getRawStatement();
-        $statement->execute();
 
         $columnTypes = array();
         for ($end = $statement->columnCount(), $i = 0; $i < $end; $i++) {
@@ -280,7 +278,6 @@ class TimeseriesDataset
                         . " GROUP BY t.$start_ts_column_name";
 
         $statement = DB::factory($query->_db_profile)->query($query_string, array(), true);
-        $statement->execute();
 
         $columnTypes = array();
         for ($end = $statement->columnCount(), $i = 0; $i < $end; $i++) {
@@ -407,7 +404,6 @@ class TimeseriesDataset
         );
 
         $statement = $this->query->getRawStatement();
-        $statement->execute();
         $records = array();
         while ($row = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
             $records[] = array(
@@ -493,7 +489,6 @@ class TimeseriesDataset
         $timestamps = array();
 
         $statement = $this->query->getRawStatement();
-        $statement->execute();
         while($row = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
 
             $dimension = $row[$spaceGroup->getId() . '_id'];
