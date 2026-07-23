@@ -1,6 +1,6 @@
 # Open XDMoD Change Log
 
-## 2026-07-08 v11.0.4
+## 2026-07-23 v11.0.4
 
 - Important Notes
     - This release fixes a low severity security vulnerability in Open XDMoD:
@@ -17,6 +17,13 @@
     - Fix bug in which a migration pipeline could run without checking if
       `modw_cloud.event` table existing.
       ([\#2237](https://github.com/ubccr/xdmod/pull/2237))
+    - Fix bug with job efficiency dashboard componenet chart not rendering.
+      ([\#2270](https://github.com/ubccr/xdmod/pull/2270))
+    - Fix bug with job viewer plots using incorrect line style with null values.
+      ([\#2269](https://github.com/ubccr/xdmod/pull/2269))
+- Maintenance / Code Quality
+    - Refactored chart generation during export
+      ([\#2272](https://github.com/ubccr/xdmod/pull/2272))
 
 ## 2026-05-12 v11.0.3
 
