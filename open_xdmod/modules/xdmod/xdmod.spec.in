@@ -97,7 +97,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(0570,apache,xdmod) %{xdmod_export_dir}
 
 %changelog
-* Tue Jul 23 2026 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 11.0.4-1
+* Thu Jul 23 2026 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 11.0.4-1
 - Release 11.0.4
 * Tue May 12 2026 XDMoD <ccr-xdmod-list@listserv.buffalo.edu> 11.0.3-2
 - Release 11.0.3
