@@ -444,5 +444,15 @@ In addition:
       and add the `disk_gb` and `start_time` columns.
     - Have a new index added with just the `instance_type_id` column.
 
+Additional 11.0.4 Upgrade Notes
+-------------------
+
+This release contains an important bugfix for upgrading from 10.5.1 to 11.0.0
+or 11.0.0 to 11.0.1 if the Cloud realm was not enabled.
+
+In addition:
+- The `modw_cloud.instance_type` will have its `disk_gb` column removed and
+  added to the `modw_cloud.instance_data` table.
+
 [github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
 [mysql-config]: configuration.html#mariadb-configuration

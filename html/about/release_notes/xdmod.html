@@ -2,7 +2,7 @@
 
 <p>Below is a list of Open XDMoD releases with major features and bug fixes listed.</p>
 
-<h2 id="2026-07-08-v11-0-4">2026-07-08 v11.0.4</h2>
+<h2 id="2026-07-23-v11-0-4">2026-07-23 v11.0.4</h2>
 <ul>
     <li><p>Important Notes</p><ul>
         <li>This release fixes a low severity security vulnerability
@@ -14,9 +14,14 @@
         <li>Fixes a bug in which recent Cloud realm data do not appear in ACCESS XDMoD.</li>
         <li>Fix bug in which a Cloud statistic was miscalculated</li>
         <li>Fix bug in which a migration pipeline could run without a required table existing.</li>
+        <li>Fix bug in which job efficiency dashboard charts would not render.</li>
+        <li>Fix bug in which Job Viewer charts used wrong line type with null values.</li>
     </ul></li>
     <li><p>Enhancements</p><ul>
         <li>Improve performance of database queries.</li>
+    </ul></li>
+    <li><p>Maintenance / Code Quality</p><ul>
+        <li>Refactor chart generation during export.</li>
     </ul></li>
 </ul>
 
