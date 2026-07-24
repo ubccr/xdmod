@@ -15,36 +15,56 @@ class UserControllerProviderTest extends BaseUserAdminTest
     /**
      * @dataProvider provideGetCurrentUser
      */
-    public function testGetCurrentUser($id, $role, $input, $output)
+    public function testGetCurrentUser($role, $tokenType, $data)
     {
-        parent::authenticateRequestAndValidateJson(
-            $this->helper,
+        $input = [
+            'path' => 'rest/users/current',
+            'method' => 'get',
+            'params' => [],
+            'data' => null,
+            'endpoint_type' => 'rest',
+            'authentication_type' => 'token_optional'
+        ];
+        if ('valid_token' === $tokenType) {
+            // Make sure username+password auth works.
+            parent::authenticateRequestAndValidateJson(
+                $this->helper,
+                $role,
+                $input,
+                parent::validateSuccessResponse([
+                    'success' => true,
+                    'results' => $data
+                ])
+            );
+            // API token auth only returns subset of data.
+            $data = array_intersect_key(
+                $data,
+                array_flip([
+                    'first_name',
+                    'last_name',
+                    'person_id',
+                ])
+            );
+        }
+        // Make sure token auth works.
+        parent::runTokenAuthTest(
             $role,
+            $tokenType,
             $input,
-            $output
+            parent::validateSuccessResponse([
+                'success' => true,
+                'results' => $data
+            ])
         );
     }
 
     public function provideGetCurrentUser()
     {
-        $validInput = [
-            'path' => 'rest/users/current',
-            'method' => 'get',
-            'params' => [],
-            'data' => null
-        ];
-        // Test authentication.
-        $tests = parent::provideRestEndpointTests(
-            $validInput,
-            ['authentication' => true]
-        );
-        // Test successful requests.
-        $expectedResultsByRole = [
+        $roleUniqueData = [
             'cd' => [
                 'Reed',
                 'Bunting',
                 'centerdirector@example.com',
-                'Center Director - screw',
                 'Center Director - screw',
                 '97'
             ],
@@ -53,14 +73,12 @@ class UserControllerProviderTest extends BaseUserAdminTest
                 'Dove',
                 'centerstaff@example.com',
                 'Center Staff - screw',
-                'Center Staff - screw',
                 '111'
             ],
             'pi' => [
                 'Caspian',
                 'Tern',
                 'principal@example.com',
-                'Principal Investigator',
                 'Principal Investigator',
                 '9'
             ],
@@ -69,14 +87,12 @@ class UserControllerProviderTest extends BaseUserAdminTest
                 'Whimbrel',
                 'normaluser@example.com',
                 'User',
-                'User',
                 '114'
             ],
             'mgr' => [
                 'Admin',
                 'User',
                 'admin@localhost',
-                'User',
                 'User',
                 '-1'
             ]
@@ -85,16 +101,16 @@ class UserControllerProviderTest extends BaseUserAdminTest
         if (in_array('cloud', Utilities::getRealmsToTest())) {
             $rawDataAllowedRealms[] = 'Cloud';
         }
-        foreach ($expectedResultsByRole as $role => $expectedResults) {
+        $roleData = [];
+        foreach ($roleUniqueData as $role => $data) {
             list(
                 $firstName,
                 $lastName,
                 $emailAddress,
                 $activeRole,
-                $mostPrivilegedRole,
                 $personId
-            ) = $expectedResults;
-            $expectedResults = [
+            ) = $data;
+            $roleData[$role] = [
                 'first_name' => $firstName,
                 'last_name' => $lastName,
                 'email_address' => $emailAddress,
@@ -103,21 +119,12 @@ class UserControllerProviderTest extends BaseUserAdminTest
                 'autoload_suppression' => false,
                 'field_of_science' => '0',
                 'active_role' => $activeRole,
-                'most_privileged_role' => $mostPrivilegedRole,
+                'most_privileged_role' => $activeRole,
                 'person_id' => $personId,
                 'raw_data_allowed_realms' => $rawDataAllowedRealms
             ];
-            $tests[] = [
-                'success_' . $role,
-                $role,
-                $validInput,
-                parent::validateSuccessResponse([
-                    'success' => true,
-                    'results' => $expectedResults
-                ])
-            ];
         }
-        return $tests;
+        return parent::provideTokenAuthTestRoleData($roleData);
     }
 
     /**
