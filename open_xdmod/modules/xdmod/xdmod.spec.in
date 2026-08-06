@@ -2,9 +2,9 @@ Name:          xdmod
 Version:       __VERSION__
 Release:       __RELEASE__%{?dist}
 Summary:       Data warehouse and web portal for mining statistical data from resource managers
-URL:           http://open.xdmod.org/
+URL:           https://open.xdmod.org/
 Vendor:        Center for Computational Research, University at Buffalo
-Packager:      Jeffrey T. Palmer <jtpalmer@buffalo.edu>
+Packager:      The XDMoD Team <ccr-xdmod-help@buffalo.edu>
 Group:         Applications/Internet
 License:       LGPLv3+
 Source:        %{name}-%{version}__PRERELEASE__.tar.gz
