@@ -73,6 +73,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      */
 
     protected $attributeTableObj = null;
+    protected $attributeTableAlias = null;
 
     /**
      * @var array Two dimensional array describing the mapping between attribute table keys and the
@@ -484,13 +485,16 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             $this->logAndThrowException('The attribute_description_query does not work with more than one ');
         }
 
-        // Note that we are using the table name itself as an alias. If needed, we can add an
-        // alias to the group by configuration specification.
+        // Use the group by id as the table alias so that two group bys sharing the same
+        // attribute table (institution and pi_institution both use modw.organization)
+        // each get an independent reference to it.
+
+        $this->attributeTableAlias = $this->id . '__' . $this->attributeTableName;
 
         $this->attributeTableObj = new Table(
             new Schema($this->attributeTableSchema),
             $this->attributeTableName,
-            $this->attributeTableName
+            $this->attributeTableAlias
         );
 
         // If alternate groupby columns have been proivided, ensure that there are the same number
@@ -933,7 +937,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                 $query->addTable(new Table(
                     new Schema($join->schema),
                     $join->name,
-                    $join->name
+                    $this->id . '__' . $join->name
                 ));
                 if ($this->additionalJoinConstraints === null) {
                     break;
@@ -984,7 +988,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                 if ( ! $this->isAggregationUnit ) {
                     $pieces = explode('.', $attributeKey);
                     if ( count($pieces) === 2 ) {
-                        $alternateAttributeTableObj = new Table($this->attributeTableObj->getSchema(), $pieces[0], $pieces[0]);
+                        $alternateAttributeTableObj = new Table($this->attributeTableObj->getSchema(), $pieces[0], $this->id . '__' . $pieces[0]);
                         $attributeKey = $pieces[1];
                     } else {
                         $alternateAttributeTableObj = null;
@@ -1005,9 +1009,9 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         if ( null !== $this->additionalJoinConstraints ) {
             foreach ( $this->additionalJoinConstraints as $constraint ) {
                 $where = new WhereCondition(
-                    new TableField(!empty($constraint->attribute_table) ? new Table($this->attributeTableObj->getSchema(), $constraint->attribute_table, $constraint->attribute_table) : $this->attributeTableObj, $constraint->attribute_expr),
+                    new TableField(!empty($constraint->attribute_table) ? new Table($this->attributeTableObj->getSchema(), $constraint->attribute_table, $this->id . '__' . $constraint->attribute_table) : $this->attributeTableObj, $constraint->attribute_expr),
                     $constraint->operation,
-                    new TableField(!empty($constraint->aggregate_table) ? new Table($query->getDataTable()->getSchema(), $constraint->aggregate_table, $constraint->aggregate_table) : $query->getDataTable(), $constraint->aggregate_expr)
+                    new TableField(!empty($constraint->aggregate_table) ? new Table($query->getDataTable()->getSchema(), $constraint->aggregate_table, $this->id . '__' . $constraint->aggregate_table) : $query->getDataTable(), $constraint->aggregate_expr)
                 );
                 $query->addWhereCondition($where);
             }
@@ -1111,7 +1115,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             // name and add our table alias.
             return sprintf(
                 "%s.%s",
-                ( $this->isAggregationUnit ? $query->getDateTable()->getAlias() : $this->attributeTableName ),
+                ( $this->isAggregationUnit ? $query->getDateTable()->getAlias() : $this->attributeTableAlias ),
                 $formula
             );
         }
@@ -1144,7 +1148,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                 $match[2],
                 sprintf(
                     "%s.%s",
-                    ( $this->isAggregationUnit ? $query->getDateTable()->getAlias() : $this->attributeTableName ),
+                    ( $this->isAggregationUnit ? $query->getDateTable()->getAlias() : $this->attributeTableAlias ),
                     $column
                 ),
                 $formula
