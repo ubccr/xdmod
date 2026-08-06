@@ -444,5 +444,47 @@ In addition:
       and add the `disk_gb` and `start_time` columns.
     - Have a new index added with just the `instance_type_id` column.
 
+Additional 11.0.4 Upgrade Notes
+-------------------
+
+This release contains a fix for a bug in the upgrade process from 10.5.1 to
+11.0.0 and from 11.0.0 to 11.0.1 for installations in which the Cloud realm is
+not enabled.
+
+### Database Changes
+
+For installations in which the Cloud realm is enabled, the following changes
+will be made automatically to the `modw_cloud` schema during the upgrade to fix
+a bug in which extraneous rows appear in the `instance_type` table:
+
+1. Add the `disk_gb` column to `instance_data`.
+1. Copy the `disk_gb` column from `instance_type` to `instance_data`.
+1. Ingest through the following tables, dropping the `disk_gb` column along
+   the way:
+    1. `instance_type_union`
+    1. `instance_type_change_flag`
+    1. `instance_type_config_group.json`
+    1. `instance_type_grouped`
+    1. `instance_type_staging`
+    1. `instance_type`
+1. Reaggregate all of the Cloud realm data.
+
+The next time you shred and ingest Cloud realm data, some of the following tables will
+also have the `disk_gb` column added or dropped (depending on whether you are
+using `genericcloud` or `openstack`):
+
+- Add `disk_db`:
+    - `generic_cloud_raw_event`
+    - `generic_cloud_staging_event`
+    - `openstack_staging_event`
+- Drop `disk_db`:
+    - `openstack_raw_instance_type`
+    - `generic_cloud_raw_instance_type`
+
+In addition, the next time aggregation is run for each of the Jobs, Cloud,
+Storage, and Resource Specifications realms, the corresponding aggregate tables
+will have the aggregation unit (day, month, quarter, or year) ID added to their
+indexes; this is to improve query performance.
+
 [github-release]: https://github.com/ubccr/xdmod/releases/tag/v{{ page.rpm_version }}
 [mysql-config]: configuration.html#mariadb-configuration
