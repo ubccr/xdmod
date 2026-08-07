@@ -12,7 +12,7 @@ versions_with_group_by_note:
 "11.0":
   patch_files:
     - "11_0_0-11_0_2.patch"
-    - "11_0_0-11_0_3.patch"
+    - "11_0_3.patch"
 "10.5":
   patch_files:
     - "10_5_0-10_5_1.patch"
@@ -20,7 +20,7 @@ versions_with_group_by_note:
 "10.0":
   patch_files:
     - "10_0_0-10_0_2.patch"
-    - "10_0_0-10_0_3.patch"
+    - "10_0_3.patch"
   upgrade_instructions_text: "<a href=\"/10.0/upgrade.html\">upgrade to version 10.0.3</a>, then <a href=\"/10.5/upgrade.html\">upgrade to version 10.5.1</a>, then <a href=\"/11.0/upgrade.html\">upgrade to version 11.0.4</a>"
 "9.5":
   patch_files:
