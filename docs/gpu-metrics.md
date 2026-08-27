@@ -3,11 +3,12 @@ title: GPU Metrics
 ---
 
 Open XDMoD includes support for GPU metrics in the jobs realm starting with
-version 9.0.0.  Specifically, the number of GPUs allocated to each job is
-tracked and used to calculate the number of GPU hours and to allow grouping by
-the number of GPUs allocated.
+version 9.0.0.  Specifically, the number of GPUs used by each job is tracked and
+used to calculate the number of GPU hours and to allow grouping by the number of
+GPUs.  Depending on the resource manager, this is either the number of GPUs
+allocated to the job or the number of GPUs the job requested.
 
-Only Slurm, PBS and Grid Engine are supported at this time.
+Only Slurm, PBS, Grid Engine and LSF are supported at this time.
 
 **Please note that if your resource manager is not supported or GPU data is not
 available/parsable, that Open XDMoD will report zero GPU hours and a GPU count
@@ -102,6 +103,30 @@ This would indicate that the job used 1 GPU.
 Grid Engine accounting logs contain one line per node.  If conflicting GPU
 counts are found in the data for a job then the greatest value will be used for
 the GPU count.
+
+## LSF
+
+The GPU count source for LSF data is the effective resource requirement recorded
+in `lsb.acct`.  This is the resource requirement string the user supplied
+expanded with the queue and application defaults, including any options given to
+`bsub -gpu`.  The specific resource that is used to determine the GPU count is
+`ngpus_physical` in the `rusage` section.
+
+For example:
+
+```
+select[((ngpus>0)) && (type == local)] order[r15s:pg] rusage[mem=6000.00,ngpus_physical=2.00] span[hosts=1]
+```
+
+This would indicate that the job requested 2 GPUs.
+
+This is a requested value rather than an allocated one, and it is used as the
+total for the job.  It is not multiplied by the number of nodes.  The
+`select[((ngpus>0))]` clause is a host selection filter, not a count, and is
+ignored.
+
+The GPU resource names used by older versions of LSF (`ngpus_shared`,
+`ngpus_excl_p` and `ngpus_excl_t`) are not supported.
 
 [slurm-sacct-alloctres]: https://slurm.schedmd.com/sacct.html#OPT_AllocTres
 [slurm-tres]: https://slurm.schedmd.com/tres.html

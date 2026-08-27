@@ -12,6 +12,7 @@ use DateTime;
 use DateTimeZone;
 use CCR\DB\iDatabase;
 use OpenXdmod\Shredder;
+use Xdmod\LsfResourceParser;
 
 class Lsf extends Shredder
 {
@@ -47,6 +48,7 @@ class Lsf extends Shredder
         'exit_status',
         'exit_info',
         'node_list',
+        'gpu_count',
     );
 
     /**
@@ -62,11 +64,14 @@ class Lsf extends Shredder
     protected static $columnNamesAsKeys;
 
     /**
-     * Fields in accounting file (lsb.acct) for JOB_FINISH events.
+     * Fields at the start of a JOB_FINISH event in lsb.acct.
+     *
+     * The last field is the number of "asked hosts", which is followed
+     * by that many host names.
      *
      * @var array
      */
-    protected static $fieldNames = array(
+    protected static $headerFieldNames = array(
         'event_type',
         'version_number',
         'event_time',
@@ -90,17 +95,18 @@ class Lsf extends Shredder
         'out_file',
         'err_file',
         'job_file',
-
-        // Number of "asked_hosts" fields is the value from the
-        // "num_asked_hosts" field.
         'num_asked_hosts',
-        'asked_hosts',
+    );
 
-        // Number of "exec_hosts" fields is the value from the
-        // "num_ex_hosts" field.
-        'num_ex_hosts',
-        'exec_hosts',
-
+    /**
+     * Fields between the "exec hosts" list and the submit extensions.
+     *
+     * The last field is the number of submit extensions, each of which
+     * is a (key, value) pair.
+     *
+     * @var array
+     */
+    protected static $jobFieldNames = array(
         'j_status',
         'host_factor',
         'job_name',
@@ -157,25 +163,44 @@ class Lsf extends Shredder
         'last_resize_time',
         'rsv_id_2',
         'job_description',
-
-        // Assuming this field will be zero.
         'submit_ext_num',
+    );
 
-        'options3',
-        'bsub_w',
-
-        // Assuming this field will be zero.
-        'num_host_rusage',
-
+    /**
+     * Fields after the host rusage section.
+     *
+     * Fields that are not used by Open XDMoD are listed as null.  They
+     * are skipped without being stored so that no meaning is implied for
+     * values that have not been verified.
+     *
+     * @var array
+     */
+    protected static $tailFieldNames = array(
+        'run_limit',
+        null,
+        null,
         'effective_res_req',
-        'total_provisional_time',
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
         'run_time',
     );
 
     /**
-     * @var integer
+     * True after warning about an unrecognized record layout.
+     *
+     * Used so that a single warning is logged for a file rather than one
+     * warning per record.
+     *
+     * @var bool
      */
-    protected static $fieldCount;
+    protected static $warnedAboutLayout = false;
 
     /**
      * @inheritdoc
@@ -199,6 +224,7 @@ class Lsf extends Shredder
         'node_count'      => 'num_ex_hosts',
         'cpu_count'       => 'num_processors',
         'node_list'       => 'node_list',
+        'gpu_count'       => 'gpu_count',
 
         // Both the exit code and exit state are integers in LSF
         // accounting logs.  These values are converted to strings
@@ -224,6 +250,11 @@ class Lsf extends Shredder
     );
 
     /**
+     * @var \Xdmod\LsfResourceParser
+     */
+    protected $resourceParser;
+
+    /**
      * @inheritdoc
      */
     public function __construct(iDatabase $db)
@@ -231,7 +262,7 @@ class Lsf extends Shredder
         parent::__construct($db);
 
         static::$columnNamesAsKeys = array_flip(static::$columnNames);
-        static::$fieldCount = count(static::$fieldNames);
+        $this->resourceParser = new LsfResourceParser();
     }
 
     /**
@@ -305,6 +336,14 @@ class Lsf extends Shredder
 
         $job['resource_name'] = $this->getResource();
 
+        // The effective resource requirement is the resource requirement
+        // string the user supplied expanded with the queue and
+        // application defaults, including any "-gpu" options.
+        $rusage = $this->resourceParser->parseResourceRequirement(
+            isset($job['effective_res_req']) ? $job['effective_res_req'] : ''
+        );
+        $job['gpu_count'] = $this->resourceParser->getGpuCountFromRusage($rusage);
+
         $this->checkJobData($line, $job);
 
         $this->insertRow($job);
@@ -312,6 +351,11 @@ class Lsf extends Shredder
 
     /**
      * Parse a line from lsb.acct
+     *
+     * A JOB_FINISH event contains four variable length sections, each of
+     * which is preceded by the number of entries it contains.  Every
+     * field that follows a section is misaligned if that section is not
+     * skipped correctly.
      *
      * @param string $line A single line from lsb.acct.
      *
@@ -324,57 +368,25 @@ class Lsf extends Shredder
         // character may be used for a different purpose.
         $fields = str_getcsv($line, ' ', '"', "\0");
 
-        $fieldCount = count($fields);
-
         $job = array();
 
-        $fieldIdx = 0;
-        $fieldNameIdx = 0;
+        // Index of the next field to read.  Passed by reference to all
+        // the helper functions below.
+        $idx = 0;
 
-        // Map numeric $fields array into a associative array.
-        while ($fieldIdx < $fieldCount) {
-            $fieldName       = static::$fieldNames[$fieldNameIdx];
-            $job[$fieldName] = $fields[$fieldIdx];
+        $this->readFields($fields, $idx, static::$headerFieldNames, $job);
 
-            if ($fieldNameIdx == static::$fieldCount - 1) {
-                if ($fieldIdx + 1 < $fieldCount) {
-                    $extraFields = array_slice($fields, $fieldIdx + 1);
-                    $msg = 'Extra fields: ' .  json_encode($extraFields);
-                    $this->logger->debug($msg);
+        // Both of the host count fields are followed by that many host
+        // names.
+        $job['asked_hosts'] = $this->readList(
+            $fields,
+            $idx,
+            isset($job['num_asked_hosts']) ? $job['num_asked_hosts'] : 0
+        );
 
-                    foreach ($extraFields as $key => $value) {
-                        $job['unknown' . ($key + 1)] = $value;
-                    }
-                }
+        $numExHosts = $this->readField($fields, $idx);
 
-                break;
-            }
-
-            // These entries indicate that the next "num" fields are
-            // all part of the next field
-            if (
-                   $fieldName == 'num_asked_hosts'
-                || $fieldName == 'num_ex_hosts'
-            ) {
-
-                // Determine the last index to include in the array.
-                $maxIdx = $fieldIdx + $fields[$fieldIdx];
-
-                $fieldArray = array();
-
-                while ($fieldIdx < $maxIdx) {
-                    $fieldIdx++;
-                    $fieldArray[] = $fields[$fieldIdx];
-                }
-
-                $fieldNameIdx++;
-                $fieldName       = static::$fieldNames[$fieldNameIdx];
-                $job[$fieldName] = $fieldArray;
-            }
-
-            $fieldIdx++;
-            $fieldNameIdx++;
-        }
+        $job['exec_hosts'] = $this->readList($fields, $idx, $numExHosts);
 
         // Remove slots from formatted host name.
         // e.g. "16*exampleHost" is replaced with "exampleHost".
@@ -392,10 +404,194 @@ class Lsf extends Shredder
         // Remove any duplicates from the host list and re-index keys.
         $job['exec_hosts'] = array_values(array_unique($job['exec_hosts']));
 
-        // Override "num_ex_hosts" with the number of distinct hosts.
+        // Store "num_ex_hosts" as the number of distinct hosts.
         $job['num_ex_hosts'] = count($job['exec_hosts']);
 
+        $this->readFields($fields, $idx, static::$jobFieldNames, $job);
+
+        // Every submit extension is a (key, value) pair and every host
+        // rusage entry is six values.  Neither is used by Open XDMoD,
+        // but both must be skipped or every field that follows them is
+        // misaligned.
+        if (!$this->skipSection($fields, $idx, $job, 'submit_ext_num', 2)) {
+            return $job;
+        }
+
+        $numHostRusage = $this->readField($fields, $idx);
+
+        if ($numHostRusage !== null) {
+            $job['num_host_rusage'] = $numHostRusage;
+        }
+
+        if (!$this->skipSection($fields, $idx, $job, 'num_host_rusage', 6)) {
+            return $job;
+        }
+
+        $this->readFields($fields, $idx, static::$tailFieldNames, $job);
+
+        $this->checkRecordLayout($job);
+
+        if ($idx < count($fields)) {
+            $this->logger->debug(
+                'Unused fields: ' . json_encode(array_slice($fields, $idx))
+            );
+        }
+
         return $job;
+    }
+
+    /**
+     * Read a run of consecutive fields into the parsed job data.
+     *
+     * Names may be null for fields that are present in the record but
+     * are not used by Open XDMoD.  Those fields are skipped without
+     * being stored.
+     *
+     * @param array $fields All the fields in the record.
+     * @param int &$idx Index of the next field to read.
+     * @param array $names Field names in the order they appear in the
+     *   record.
+     * @param array &$job Parsed job data.
+     */
+    protected function readFields(array $fields, &$idx, array $names, array &$job)
+    {
+        foreach ($names as $name) {
+            $value = $this->readField($fields, $idx);
+
+            if ($value === null) {
+                break;
+            }
+
+            if ($name !== null) {
+                $job[$name] = $value;
+            }
+        }
+    }
+
+    /**
+     * Read a single field.
+     *
+     * @param array $fields All the fields in the record.
+     * @param int &$idx Index of the next field to read.
+     *
+     * @return string|null The field value or null if the record does not
+     *   contain any more fields.
+     */
+    protected function readField(array $fields, &$idx)
+    {
+        if ($idx >= count($fields)) {
+            return null;
+        }
+
+        return $fields[$idx++];
+    }
+
+    /**
+     * Read a list of values that is preceded by a count.
+     *
+     * @param array $fields All the fields in the record.
+     * @param int &$idx Index of the next field to read.
+     * @param string|null $count Number of values in the list.
+     *
+     * @return array
+     */
+    protected function readList(array $fields, &$idx, $count)
+    {
+        $list = array();
+
+        for ($i = 0; $i < (int)$count; $i++) {
+            $value = $this->readField($fields, $idx);
+
+            if ($value === null) {
+                break;
+            }
+
+            $list[] = $value;
+        }
+
+        return $list;
+    }
+
+    /**
+     * Skip over a variable length section of a record.
+     *
+     * @param array $fields All the fields in the record.
+     * @param int &$idx Index of the next field to read.
+     * @param array $job Parsed job data.
+     * @param string $countName Name of the field containing the number
+     *   of entries in the section.
+     * @param int $width Number of fields in each entry.
+     *
+     * @return bool True if the section was skipped, false if the rest of
+     *   the record can't be parsed.
+     */
+    protected function skipSection(array $fields, &$idx, array $job, $countName, $width)
+    {
+        if (!isset($job[$countName])) {
+            $this->logger->debug("Record ended before '$countName'");
+            return false;
+        }
+
+        $count = $job[$countName];
+
+        if (!ctype_digit((string)$count)) {
+            $this->logger->warning(
+                'Unexpected lsb.acct format',
+                array('field' => $countName, 'value' => $count)
+            );
+            return false;
+        }
+
+        $idx += $count * $width;
+
+        if ($idx > count($fields)) {
+            $this->logger->warning(
+                'Truncated lsb.acct record',
+                array('field' => $countName, 'value' => $count)
+            );
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Check that the record layout appears to be correct.
+     *
+     * The effective resource requirement is the first field after the
+     * variable length sections that has a recognizable format and is the
+     * field the GPU count is taken from, so it is used to detect a
+     * record that hasn't been parsed correctly.  Only a single warning
+     * is logged because an accounting file may contain millions of
+     * records.
+     *
+     * @param array $job Parsed job data.
+     */
+    protected function checkRecordLayout(array $job)
+    {
+        if (static::$warnedAboutLayout) {
+            return;
+        }
+
+        if (!isset($job['effective_res_req'])) {
+            return;
+        }
+
+        $resReq = $job['effective_res_req'];
+
+        if ($resReq === '' || strpos($resReq, '[') !== false) {
+            return;
+        }
+
+        static::$warnedAboutLayout = true;
+
+        $this->logger->warning(
+            'Unexpected lsb.acct format, the effective resource requirement'
+            . ' is not a resource requirement string.  GPU counts will not be'
+            . ' available.  The version of LSF that produced this file may not'
+            . ' be supported.',
+            array('effective_res_req' => $resReq)
+        );
     }
 
     /**
@@ -419,4 +615,3 @@ class Lsf extends Shredder
         $this->db->insert($sql, array_values($columnValues));
     }
 }
-

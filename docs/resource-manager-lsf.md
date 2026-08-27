@@ -12,6 +12,19 @@ The LSF shredder included with Open XDMoD is designed to use the
 match those expected by Open XDMoD then the shredding process will fail
 or incorrect data will be imported.
 
+The record layout is sensitive to the version of LSF that produced the
+file.  The shredder has been verified against LSF 9.11 and LSF 10.1.  A
+warning is logged if a record does not appear to match the expected
+layout.
+
+GPU Data
+--------
+
+GPU counts are taken from the effective resource requirement recorded in
+`lsb.acct` and require a version of LSF that reports `ngpus_physical`,
+which was introduced in LSF 9.1.3.  See the [GPU metrics
+documentation](gpu-metrics.md) for details.
+
 PI Data Source
 --------------
 
