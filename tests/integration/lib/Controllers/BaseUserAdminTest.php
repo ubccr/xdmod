@@ -6,9 +6,9 @@ use CCR\Json;
 use Exception;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 use IntegrationTests\TestHarness\PeopleHelper;
-use IntegrationTests\BaseTest;
+use IntegrationTests\TokenAuthTest;
 
-abstract class BaseUserAdminTest extends BaseTest
+abstract class BaseUserAdminTest extends TokenAuthTest
 {
 
     const MIN_USERS = 1;

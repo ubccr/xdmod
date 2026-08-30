@@ -4,8 +4,9 @@ namespace Rest\Controllers;
 
 use CCR\DB;
 use Configuration\Configuration;
+use Exception;
 use Models\Services\Organizations;
-use PhpOffice\PhpWord\Exception\Exception;
+use Models\Services\Tokens;
 use Silex\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -81,13 +82,37 @@ class UserControllerProvider extends BaseControllerProvider
      */
     public function getCurrentUser(Request $request, Application $app)
     {
-        // Ensure that the user is logged in.
-        $this->authorize($request);
+        // We need to wrap the token authentication because we want the token authentication to be optional, proceeding
+        // to the normal session authentication if a token is not provided.
+        $isTokenAuth = false;
+        try {
+            $user = Tokens::authenticate($request);
+            $isTokenAuth = true;
+        } catch (Exception $e) {
+            // NOOP
+        }
+        if (!$isTokenAuth) {
+            $user = $this->authorize($request);
+        }
+
+        $userData = $this->extractUserData($user);
+
+        // Only a subset of the data need to be returned for token auth.
+        if ($isTokenAuth) {
+            $userData = array_intersect_key(
+                $userData,
+                array_flip([
+                    'first_name',
+                    'last_name',
+                    'person_id',
+                ])
+            );
+        }
 
         // Extract and return the information for the user.
         return $app->json(array(
             'success' => true,
-            'results' => $this->extractUserData($this->getUserFromRequest($request)),
+            'results' => $userData
         ));
     }
 
@@ -131,7 +156,7 @@ class UserControllerProvider extends BaseControllerProvider
      * @param Request $request
      * @param Application $app
      * @return mixed
-     * @throws \Exception
+     * @throws Exception
      */
     public function getCurrentAPIToken(Request $request, Application $app)
     {
@@ -159,7 +184,7 @@ class UserControllerProvider extends BaseControllerProvider
      * @param Request $request
      * @param Application $app
      * @return Response
-     * @throws \Exception if there is a problem retrieving a database connection.
+     * @throws Exception if there is a problem retrieving a database connection.
      */
     public function createAPIToken(Request $request, Application $app)
     {
@@ -185,7 +210,7 @@ class UserControllerProvider extends BaseControllerProvider
      * @param Request $request
      * @param Application $app
      * @return Response
-     * @throws \Exception
+     * @throws Exception
      */
     public function revokeAPIToken(Request $request, Application $app)
     {
@@ -307,7 +332,7 @@ class UserControllerProvider extends BaseControllerProvider
      *
      * @param XDUser $user
      * @return bool true if the user does not already have a valid API token.
-     * @throws \Exception if there is a problem retrieving a database connection.
+     * @throws Exception if there is a problem retrieving a database connection.
      */
     private function canCreateToken(XDUser $user)
     {
@@ -334,8 +359,8 @@ SQL;
      *
      * @param XDUser $user whose token data should be retrieved.
      * @return array in the format array('created_on' => createdOn, 'expiration_date' => expirationDate)
-     * @throws \Exception if there is a problem retrieving a db connection.
-     * @throws \Exception if there is a problem executing the SELECT statement.
+     * @throws Exception if there is a problem retrieving a db connection.
+     * @throws Exception if there is a problem executing the SELECT statement.
      */
     private function getCurrentAPITokenMetaData(XDUser $user)
     {
@@ -349,7 +374,7 @@ SQL;
         $rows = $db->query($query, array(':user_id' => $user->getUserID()));
 
         if (count($rows) !== 1) {
-            throw new \Exception('Invalid token data returned.');
+            throw new Exception('Invalid token data returned.');
         }
 
         return array(
@@ -366,9 +391,9 @@ SQL;
      *
      * @return array in the format ('token' => newToken, 'expiration_date' => tokenExpirationDate)
      *
-     * @throws \Exception if unable to retrieve a database connection or if there is a problem generating a random token.
-     * @throws \Exception if the api_token.expiration_interval configuration value ( in portal_settings.ini ) is not set.
-     * @throws \Exception if inserting the newly generated token is unsuccessful. i.e. the number of rows inserted is < 1.
+     * @throws Exception if unable to retrieve a database connection or if there is a problem generating a random token.
+     * @throws Exception if the api_token.expiration_interval configuration value ( in portal_settings.ini ) is not set.
+     * @throws Exception if inserting the newly generated token is unsuccessful. i.e. the number of rows inserted is < 1.
      */
     private function createToken(XDUser $user)
     {
@@ -388,7 +413,7 @@ SQL;
         $createdOn = date_create()->format('Y-m-d H:m:s');
         $expirationInterval = \xd_utilities\getConfiguration('api_token', 'expiration_interval');
         if (empty($expirationInterval)) {
-            throw new \Exception('Expiration Interval not provided.');
+            throw new Exception('Expiration Interval not provided.');
         }
         $dateInterval = date_interval_create_from_date_string($expirationInterval);
         $expirationDate = date_add(date_create(), $dateInterval)->format('Y-m-d H:m:s');
@@ -404,7 +429,7 @@ SQL;
         );
 
         if ($result != 1) {
-            throw new \Exception('Unable to create a new API token.');
+            throw new Exception('Unable to create a new API token.');
         }
 
         return array(
@@ -418,8 +443,8 @@ SQL;
      *
      * @param XDUser $user whose active token will be revoked.
      * @return bool true if 1 row was deleted else false.
-     * @throws \Exception if there was a problem retrieving a database connection.
-     * @throws \Exception if there was an error while executing the DELETE statement.
+     * @throws Exception if there was a problem retrieving a database connection.
+     * @throws Exception if there was an error while executing the DELETE statement.
      */
     private function revokeToken(XDUser $user)
     {

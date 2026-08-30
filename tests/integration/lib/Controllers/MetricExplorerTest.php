@@ -301,24 +301,13 @@ class MetricExplorerTest extends TokenAuthTest
      */
     public function getDimensionFiltersProvider()
     {
-        $tests = [];
-        foreach (parent::provideTokenAuthTestData() as $testData) {
-            list($role, $tokenType) = $testData;
-            if ('valid_token' !== $tokenType) {
-                $tests[] = [$role, $tokenType, null];
-            }
-        }
-        $expectedCounts = [
+        return parent::provideTokenAuthTestRoleData([
             'cd' => 66,
             'cs' => 66,
             'usr' => 1,
             'pi' => 6,
             'mgr' => 0
-        ];
-        foreach ($expectedCounts as $role => $count) {
-            $tests[] = [$role, 'valid_token', $count];
-        }
-        return $tests;
+        ]);
     }
 
     public function rawDataProvider()
