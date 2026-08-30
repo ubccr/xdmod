@@ -26,6 +26,7 @@ class DatabasesMigration extends AbstractDatabasesMigration
                 'db_port' => \xd_utilities\getConfiguration('datawarehouse', 'port'),
                 'db_user' => \xd_utilities\getConfiguration('datawarehouse', 'user'),
                 'db_pass' => \xd_utilities\getConfiguration('datawarehouse', 'pass'),
+                'xdmod_host' => parse_url(\xd_utilities\getConfiguration('general', 'site_address'), PHP_URL_HOST)
             ),
             array('modw_etl')
         );
