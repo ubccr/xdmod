@@ -120,10 +120,17 @@ select[((ngpus>0)) && (type == local)] order[r15s:pg] rusage[mem=6000.00,ngpus_p
 
 This would indicate that the job requested 2 GPUs.
 
-This is a requested value rather than an allocated one, and it is used as the
-total for the job.  It is not multiplied by the number of nodes.  The
-`select[((ngpus>0))]` clause is a host selection filter, not a count, and is
-ignored.
+The number may be followed by a reservation method.  `/host` means the number of
+GPUs on each host, so it is multiplied by the number of hosts the job ran on.
+For example, `rusage[ngpus_physical=2/host]` on a job that ran on 3 hosts would
+indicate 6 GPUs.  `/job` means the total for the job.
+
+`/task` means the number of GPUs for each task, but LSF accounting logs do not
+record how many tasks a job ran, so the number is used as the total for the job.
+
+When no reservation method is given, the number is used as the total for the
+job.  LSF documents the `bsub -gpu num=` option as per host by default, so a job
+that spans more than one host without `/host` may be undercounted.
 
 The GPU resource names used by older versions of LSF (`ngpus_shared`,
 `ngpus_excl_p` and `ngpus_excl_t`) are not supported.

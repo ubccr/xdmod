@@ -29,12 +29,12 @@ class LsfResourceParserTest extends \PHPUnit\Framework\TestCase
      * @covers ::parseResourceRequirement
      * @covers ::getGpuCountFromRusage
      */
-    public function testEffectiveResReqGpuCountParsing($resReq, $gpuCount)
+    public function testEffectiveResReqGpuCountParsing($resReq, $hostCount, $gpuCount)
     {
         $rusage = $this->parser->parseResourceRequirement($resReq);
         $this->assertEquals(
             $gpuCount,
-            $this->parser->getGpuCountFromRusage($rusage),
+            $this->parser->getGpuCountFromRusage($rusage, $hostCount),
             'GPU count'
         );
     }

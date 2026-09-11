@@ -57,30 +57,46 @@ class LsfResourceParser
      * Determine the GPU count from parsed "rusage" data.
      *
      * "ngpus_physical" is the number of physical GPUs requested.  The
-     * value may be an integer or a decimal and may be followed by a
-     * duration or decay ("ngpus_physical=2:duration=1h") or by a "/task",
-     * "/host" or "/job" qualifier ("ngpus_physical=2/task"), all of which
-     * are ignored.
+     * number may be followed by a reservation method.  "/host" means
+     * the number is per host, so it is multiplied by the number of hosts
+     * the job ran on.  "/job" means the number is the total for the job.
+     * "/task" means the number is per task, but lsb.acct does not record
+     * how many tasks a job ran, so it is treated as the total for the
+     * job.  When there is no reservation method the number is also used
+     * as the total for the job.  LSF documents "bsub -gpu num=" as per
+     * host by default, so jobs that span hosts without specifying
+     * "/host" may be undercounted.
+     *
+     * A duration or decay ("ngpus_physical=2/host:duration=1h") is
+     * ignored.
      *
      * The GPU resource names used by older versions of LSF
      * ("ngpus_shared", "ngpus_excl_p" and "ngpus_excl_t") are not
      * supported.
      *
      * @see \Xdmod\LsfResourceParser::parseResourceRequirement
+     * @see https://www.ibm.com/docs/SSWRJV_10.1.0/lsf_admin/usage_string.html
      *
      * @param array $rusage Parsed "rusage" data.
+     * @param int $hostCount Number of distinct hosts the job ran on.
      * @return int The GPU count.
      */
-    public function getGpuCountFromRusage(array $rusage)
+    public function getGpuCountFromRusage(array $rusage, $hostCount)
     {
         if (!isset($rusage['ngpus_physical'])) {
             return 0;
         }
 
-        if (preg_match('/^(\d+(?:\.\d+)?)/', $rusage['ngpus_physical'], $matches) !== 1) {
-            return 0;
+        // Remove any duration or decay, then split the number from the
+        // reservation method.
+        list($value) = explode(':', $rusage['ngpus_physical'], 2);
+        $parts = explode('/', $value, 2);
+        $gpuCount = (int)$parts[0];
+
+        if (count($parts) > 1 && strtolower($parts[1]) === 'host') {
+            return $gpuCount * $hostCount;
         }
 
-        return (int)$matches[1];
+        return $gpuCount;
     }
 }

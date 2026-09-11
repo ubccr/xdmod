@@ -342,7 +342,10 @@ class Lsf extends Shredder
         $rusage = $this->resourceParser->parseResourceRequirement(
             isset($job['effective_res_req']) ? $job['effective_res_req'] : ''
         );
-        $job['gpu_count'] = $this->resourceParser->getGpuCountFromRusage($rusage);
+        $job['gpu_count'] = $this->resourceParser->getGpuCountFromRusage(
+            $rusage,
+            $job['num_ex_hosts']
+        );
 
         $this->checkJobData($line, $job);
 
