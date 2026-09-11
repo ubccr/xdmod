@@ -23,7 +23,7 @@ GPU Data
 GPU counts are taken from the effective resource requirement recorded in
 `lsb.acct` and require a version of LSF that reports `ngpus_physical`,
 which was introduced in LSF 9.1.3.  See the [GPU metrics
-documentation](gpu-metrics.md) for details.
+documentation](gpu-metrics.html) for details.
 
 PI Data Source
 --------------
