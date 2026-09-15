@@ -924,6 +924,14 @@ ETLProfile.prototype.integrateWithXDMoD = function () {
                     fieldDef.withError = col.withError;
                 }
 
+                if (col.deprecated) {
+                    fieldDef.deprecated = col.deprecated;
+                }
+
+                if (col.deprecatedNames) {
+                    fieldDef.deprecatedNames = col.deprecatedNames;
+                }
+
                 rawStatsInteg.addField(fieldDef);
             }
         }
