@@ -439,6 +439,25 @@ Ext.apply(XDMoD.Module.MetricExplorer, {
                         win.show();
                     }
                 });
+                menu.add({
+                    text: 'View python code',
+                    iconCls: 'custom_chart',
+                    handler: () => {
+                        const win = new Ext.Window({
+                            title: 'API Code',
+                            width: 800,
+                            height: 600,
+                            layout: 'fit',
+                            autoScroll: true,
+                            closeAction: 'destroy',
+                            items: [{
+                                autoScroll: true,
+                                html: '<pre>Python API code \n************************************************\nClick "Open in Jupyter" button to view and run Python Code \n************************************************<br></br>The link to the data analytisc API can be found <a href="https://github.com/ubccr/xdmod-data" target="_blank">here</a><br></br>Infomation about the Plotly Express Libary can be found <a href="https://plotly.com/python/plotly-express/" target="_blank">here</a><br></br>Example XDmod API Notebooks can be found <a href="https://github.com/ubccr/xdmod-notebooks" target="_blank">here</a></pre>'
+                            }]
+                        });
+                        win.show();
+                    }
+                });
                 const chartLayoutJSON = JSON.stringify(instance.plotlyPanel.chartOptions.layout, null, 4);
                 menu.add({
                     text: 'View Plotly JS chart layout',
@@ -2086,10 +2105,10 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
         exportMenu: true,
         printButton: true,
         reportCheckbox: true,
-        chartLinkButton: true
+        chartLinkButton: true,
+        openAsNBButton: true
 
     },
-
     show_filters: true,
     show_warnings: true,
     font_size: 3,
@@ -5589,6 +5608,8 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
 
             self.getChartLinkButton().setDisabled(noData);
 
+            self.getOpenAsNBButton().setDisabled(noData);
+
             var reportGeneratorMeta = chartStore.getAt(0).get('reportGeneratorMeta');
 
             self.getReportCheckbox().storeChartArguments(reportGeneratorMeta.chart_args,
@@ -6296,6 +6317,25 @@ Ext.extend(XDMoD.Module.MetricExplorer, XDMoD.PortalModule, {
             });
         }); // self.on('chart_link_clicked', ...
 
+        // ---------------------------------------------------------
+        self.on('open_in_nb', function () {
+            config = self.getConfig();
+            let query_config = {
+                'title': config.title,
+                'timeframe_label': config.timeframe_label,
+                'start_date': config.start_date,
+                'end_date': config.end_date,
+                'aggregation_unit': config.aggregation_unit,
+                'timeseries': config.timeseries,
+                'swap_xy': config.swap_xy,
+                'global_filters': config.global_filters,
+                'data_series': config.data_series
+            }
+            for(let i = 0; i < query_config['data_series'].data.length; i++){
+                query_config['data_series'].data[i]['metric_text'] = this.realms[config.data_series.data[i]['realm']]['metrics'][config.data_series.data[i]['metric']]['text']
+            }
+            window.open(`https://localhost:8443/jupyter/services/chart-service?config=${JSON.stringify(query_config)}`)
+        }); // self.on('open in nb', ...
         // ---------------------------------------------------------
 
         this.loadAll = function() {
