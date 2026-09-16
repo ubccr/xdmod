@@ -67,8 +67,6 @@ class TimeseriesChart extends AggregateChart
             $min_aggregation_unit,
             $showWarnings
         );
-
-        $this->_queryType = 'timeseries';
     }
 
     // ---------------------------------------------------------
