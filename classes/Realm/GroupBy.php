@@ -1033,8 +1033,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
         //         }
         //     ]
 
-        // Note that start_ts is used by SimpleTimeseriesDataset and must be present for aggregation
-        // unit group bys such as GroupByDay, GroupByMonth, etc.
+        // Note that start_ts must be present for aggregation unit group bys
 
         $fieldList = array('short_name', 'name', 'order_id', 'start_ts');
 

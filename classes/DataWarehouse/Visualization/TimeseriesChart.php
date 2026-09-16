@@ -16,11 +16,6 @@ use DataWarehouse\Data\TimeseriesDataset;
 * somebody else’s fault, but I would appreciate knowing about them so as to determine
 * who is to blame.
 *
-* TODO: It would be great to factor ComplexDataset-handling code out of configure()
-* and instead extend ComplexDataset class for timeseries.
-* Or static-ize some of the general functions that are part of ComplexDataset and
-* use them here in configure()
-*
 */
 class TimeseriesChart extends AggregateChart
 {
@@ -62,15 +57,13 @@ class TimeseriesChart extends AggregateChart
             $min_aggregation_unit,
             $showWarnings
         );
-
-        $this->_queryType = 'timeseries';
     }
 
     // ---------------------------------------------------------
     // configure()
     //
     // Given chart data series and parameters, build
-    // SimpleTimeseriesDataset, set all needed chart parameters.
+    // TimeseriesDataset, set all needed chart parameters.
     //
     // ---------------------------------------------------------
     public function configure(

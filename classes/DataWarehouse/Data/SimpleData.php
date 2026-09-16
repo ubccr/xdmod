@@ -31,13 +31,6 @@ class SimpleData extends \Common\Identity
     protected $_order_ids = array();
     protected $_ids = array();
 
-    // JMS: knowledge of statistic and group by belongs with query
-    // in the SimpleDataset class.
-    //protected $statisticObject; 
-    //protected $groupByObject;
-    // TODO: consider that groupby should live in SimpleTimeseriesDataset
-    // instead of SimpleTimeseriesData class?
-
     // Labels and label ids for (nontimeseries) y data series
     // JMS TODO: consider replacing this or renaming to 'label'
     // and why do we have an array of x_ids??

@@ -38,7 +38,6 @@ class ComplexDataset
     //  @param $aggregationUnit -- (string) e.g. day, month, quarter, year
     //  @param $data_series -- array of stdClass Objects for the ComplexDataset
     //  @param $global_filters -- stdClass Object of arrays ??
-    //  @param $query_type -- string containing 'aggregate' or 'timeseries'
     //
     //  @return array $globalFilterDescriptions -- Descriptions of the global filters
     //  @return array $yAxisArray  --  elided due to lack of interest, JMS
@@ -52,16 +51,8 @@ class ComplexDataset
         $aggregationUnit,
         $data_series,
         $global_filters,
-        $query_type,
         $user
     ) {
-        // JMS: please improve this when possible.
-        if ( !in_array($query_type, array('aggregate','timeseries') ) ) {
-            throw new \Exception(
-                get_class($this)." unsupported query_type found: ".$query_type
-            );
-        }
-
         $globalFilterDescriptions = array();
         //$yAxisArray  = array();
         $metrics     = array();
@@ -86,10 +77,7 @@ class ComplexDataset
                 );
             }
 
-            $query_classname = '\\DataWarehouse\\Query\\' .
-                ( $query_type == 'aggregate' ? 'AggregateQuery' : 'TimeseriesQuery');
-
-            $query = new $query_classname(
+            $query = new \DataWarehouse\Query\AggregateQuery(
                 $data_description->realm,
                 $aggregationUnit,
                 $startDate,
@@ -157,24 +145,14 @@ class ComplexDataset
 
     // --------------------------------------------------------------
     // addDataset()
-    // Instantiate Simple*Dataset object and add it to $this->_dataDescripters.
-    // Now general for Simple or SimpleTimeseries Dataset types.
+    // Instantiate SimpleDataset object and add it to $this->_dataDescripters.
     //
     // @param data_description
     // @param query object
     // --------------------------------------------------------------
     protected function addDataset($data_description, $query)
     {
-        // what type is this query?
-        $query_type = $query->getQueryType();
-
-        $datasetClassname
-            = $query_type == "aggregate"
-            ? '\DataWarehouse\Data\SimpleDataset'
-            : '\DataWarehouse\Data\SimpleTimeseriesDataset';
-
-        // Create the resulting Simple*Dataset; add to $this->_dataDescripters[]
-        $dataset = new $datasetClassname($query);
+        $dataset = new \DataWarehouse\Data\SimpleDataset($query);
 
         $this->_dataDescripters[] = (object) array(
             'data_description' => $data_description,
