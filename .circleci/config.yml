@@ -137,7 +137,7 @@ jobs:
             docker exec -w /root/xdmod xdmod /root/xdmod/tests/post/runtests.sh
       - run:
           name: Run Playwright Tests
-          command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.executor >>-<< parameters.install_type >>
+          command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.executor >>-<< parameters.install-type >>
       - when:
           condition:
             equal: [ << parameters.install-type >>, 'upgrade' ]
