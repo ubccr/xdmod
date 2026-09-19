@@ -2442,7 +2442,16 @@ SQL;
     public function postLogin() {
         if (!$this->isSticky()) {
             $this->updatePerson();
-            $this->synchronizeOrganization();
+            $orgHasChanged = $this->synchronizeOrganization();
+            // If the user hasn't changed organizations, check if they should
+            // be given the Campus Champion ACL (CampusChampionAclUpdater is
+            // defined in the xdmod-xsede module).
+            if (
+                !$orgHasChanged
+                && class_exists('\User\CampusChampionAclUpdater')
+            ) {
+                \User\CampusChampionAclUpdater::update($this);
+            }
         }
         $this->currentToken = XDSessionManager::recordLogin($this);
     }
@@ -2456,10 +2465,14 @@ SQL;
      * to the admin / user notifying them that additional steps will need to be taken before their
      * former level of access is restored.
      *
+     * @return bool whether the user's organization had been updated.
      * @throws Exception
      */
     public function synchronizeOrganization()
     {
+        // Temporarily assume the user's organization has not been updated.
+        $orgHasChanged = false;
+
         // This is pulled from the moddb.Users.organization_id column for this user record.
         $actualOrganization = $this->getOrganizationID();
 
@@ -2475,6 +2488,7 @@ SQL;
 
         // If these don't match then the user's organization has been updated. Steps need to be taken.
         if ($actualOrganization !== $expectedOrganization) {
+            $orgHasChanged = true;
             $originalAcls = $this->getAcls(true);
 
             // if the user is currently assigned an acl that interacts with XDMoD's centers ( i.e.
@@ -2546,6 +2560,8 @@ SQL;
             $this->setOrganizationId($expectedOrganization);
             $this->saveUser();
         }
+
+        return $orgHasChanged;
     }
 
     /**
