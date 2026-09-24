@@ -48,10 +48,17 @@
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/avg_processors"
     },
+    "avg_eligible_waitduration_hours": {
+        "$overwrite": {
+            "description_html": "The average time, in hours, a ${ORGANIZATION_NAME} ${REALM_NAME} job waits, from the time it became eligible to run, before execution on the designated resource. Jobs for which an eligible time is not reported are excluded.<br/><i>Wait Time by Eligible Time: </i>The linear time between a job becoming eligible to run and when it begins to execute.",
+            "name": "Wait Hours by Eligible Time: Per ${REALM_NAME} Job"
+        },
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/avg_eligible_waitduration_hours"
+    },
     "avg_waitduration_hours": {
         "$overwrite": {
             "description_html": "The average time, in hours, a ${ORGANIZATION_NAME} ${REALM_NAME} job waits before execution on the designated resource.<br/><i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.",
-            "name": "Wait Hours: Per ${REALM_NAME} Job"
+            "name": "Wait Hours by Submit Time: Per ${REALM_NAME} Job"
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/avg_waitduration_hours"
     },
@@ -108,6 +115,10 @@
         "$overwrite": {},
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/sem_avg_processors"
     },
+    "sem_avg_eligible_waitduration_hours": {
+        "$overwrite": {},
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/sem_avg_eligible_waitduration_hours"
+    },
     "sem_avg_waitduration_hours": {
         "$overwrite": {},
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/sem_avg_waitduration_hours"
@@ -144,10 +155,17 @@
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/total_node_hours"
     },
+    "total_eligible_waitduration_hours": {
+        "$overwrite": {
+            "description_html": "The total time, in hours, ${ORGANIZATION_NAME} ${REALM_NAME} jobs waited, from the time they became eligible to run, before execution on their designated resource. Jobs for which an eligible time is not reported are excluded.<br/><i>Wait Time by Eligible Time: </i>The linear time between a job becoming eligible to run and when it begins to execute.",
+            "name": "Wait Hours by Eligible Time: ${REALM_NAME} Total"
+        },
+        "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/total_eligible_waitduration_hours"
+    },
     "total_waitduration_hours": {
         "$overwrite": {
             "description_html": "The total time, in hours, ${ORGANIZATION_NAME} ${REALM_NAME} jobs waited before execution on their designated resource.<br/><i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.",
-            "name": "Wait Hours: ${REALM_NAME} Total"
+            "name": "Wait Hours by Submit Time: ${REALM_NAME} Total"
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/total_waitduration_hours"
     },

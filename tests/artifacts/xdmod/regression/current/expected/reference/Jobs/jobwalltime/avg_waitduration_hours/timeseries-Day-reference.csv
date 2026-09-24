@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by Job Wall Time"
+"Wait Hours by Submit Time: Per Job: by Job Wall Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[0 - 1s] Wait Hours: Per Job","[1 - 30s] Wait Hours: Per Job","[30s - 30min] Wait Hours: Per Job","[30 - 60min] Wait Hours: Per Job","[1 - 5hr] Wait Hours: Per Job","[5 - 10hr] Wait Hours: Per Job","[10 - 18hr] Wait Hours: Per Job","[18+hr] Wait Hours: Per Job"
+Day,"[0 - 1s] Wait Hours by Submit Time: Per Job","[1 - 30s] Wait Hours by Submit Time: Per Job","[30s - 30min] Wait Hours by Submit Time: Per Job","[30 - 60min] Wait Hours by Submit Time: Per Job","[1 - 5hr] Wait Hours by Submit Time: Per Job","[5 - 10hr] Wait Hours by Submit Time: Per Job","[10 - 18hr] Wait Hours by Submit Time: Per Job","[18+hr] Wait Hours by Submit Time: Per Job"
 2016-12-22,0,0,0,0,0,0,0,4.66625000
 2016-12-23,0,0,0,0,0,0,0,9.59638889
 2016-12-24,0,0,0,0,0,0,0,0.00000000

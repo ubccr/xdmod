@@ -1,0 +1,17 @@
+title
+"Job Size: Weighted By CPU Hours (Core Count): by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time: Eligible Time","Job Size: Weighted By CPU Hours (Core Count)"
+"0 - 1s",84.5552
+"1 - 30s",85.8621
+"30s - 30min",16.5701
+"30 - 60min",22.0405
+"1 - 5hr",64.1043
+"5 - 10hr",29.7037
+"10 - 18hr",36.1523
+18+hr,76.2139
+---------

@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by Resource"
+"Wait Hours by Submit Time: Per Job: by Resource"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[robertson] Wait Hours: Per Job","[phillips] Wait Hours: Per Job","[pozidriv] Wait Hours: Per Job","[mortorq] Wait Hours: Per Job","[frearson] Wait Hours: Per Job"
+Day,"[robertson] Wait Hours by Submit Time: Per Job","[phillips] Wait Hours by Submit Time: Per Job","[pozidriv] Wait Hours by Submit Time: Per Job","[mortorq] Wait Hours by Submit Time: Per Job","[frearson] Wait Hours by Submit Time: Per Job"
 2016-12-22,0,0.00027778,9.33222222,0,0
 2016-12-23,0,0.00000000,9.59638889,0,0
 2016-12-24,0,0.00000000,0.00000000,0,0

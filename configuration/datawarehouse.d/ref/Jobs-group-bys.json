@@ -11,6 +11,40 @@
     "gpucount": {
         "$ref": "datawarehouse.d/ref/group-by-common.json#/gpucount"
     },
+    "jobeligiblewaittime": {
+        "attribute_table_schema": "modw",
+        "attribute_to_aggregate_table_key_map": [
+            {
+                "id": "job_eligible_wait_time_bucket_id"
+            }
+        ],
+        "attribute_values_query": {
+            "joins": [
+                {
+                    "name": "job_wait_times"
+                }
+            ],
+            "orderby": [
+                "id"
+            ],
+            "records": {
+                "id": "id",
+                "name": "description",
+                "order_id": "id",
+                "short_name": "description"
+            }
+        },
+        "category": "Administrative",
+        "chart_options": {
+            "dataset_display_type": {
+                "aggregate": "bar",
+                "timeseries": "area"
+            }
+        },
+        "data_sort_order": null,
+        "description_html": "A categorization of jobs into discrete groups based on the total linear time each job waited, measured from the time each job became eligible to run. Jobs for which an eligible time is not reported are excluded.",
+        "name": "Job Wait Time: Eligible Time"
+    },
     "jobwaittime": {
         "attribute_table_schema": "modw",
         "attribute_to_aggregate_table_key_map": [
@@ -43,7 +77,7 @@
         },
         "data_sort_order": null,
         "description_html": "A categorization of jobs into discrete groups based on the total linear time each job waited.",
-        "name": "Job Wait Time"
+        "name": "Job Wait Time: Submit Time"
     },
     "jobwalltime": {
         "$ref": "datawarehouse.d/ref/group-by-common.json#/jobwalltime"

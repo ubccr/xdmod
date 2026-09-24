@@ -74,10 +74,17 @@
         "timeseries_formula": "COALESCE(SUM(agg.gpu_count * agg.running_job_count) / NULLIF(SUM(agg.running_job_count), 0), 0)",
         "unit": "GPU Count"
     },
+    "avg_eligible_waitduration_hours": {
+        "description_html": "The average time, in hours, a ${ORGANIZATION_NAME} job waits, from the time it became eligible to run, before execution on the designated resource. Jobs for which an eligible time is not reported are excluded.<br/><i>Wait Time by Eligible Time: </i>The linear time between a job becoming eligible to run and when it begins to execute.",
+        "formula": "COALESCE(SUM(agg.eligible_waitduration) / NULLIF(SUM(agg.eligible_started_job_count), 0),0)/3600.0",
+        "name": "Wait Hours by Eligible Time: Per Job",
+        "precision": 2,
+        "unit": "Hour"
+    },
     "avg_waitduration_hours": {
         "description_html": "The average time, in hours, a ${ORGANIZATION_NAME} job waits before execution on the designated resource.<br/><i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.",
         "formula": "COALESCE(SUM(agg.waitduration) / NULLIF(SUM(agg.started_job_count), 0),0)/3600.0",
-        "name": "Wait Hours: Per Job",
+        "name": "Wait Hours by Submit Time: Per Job",
         "precision": 2,
         "unit": "Hour"
     },
@@ -178,12 +185,22 @@
         },
         "unit": "GPU Count"
     },
+    "sem_avg_eligible_waitduration_hours": {
+        "description_html": "The standard error of the average time, in hours, an ${ORGANIZATION_NAME} job had to wait, from the time it became eligible to run, until it began to execute.<br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).",
+        "formula": {
+            "$include": "datawarehouse.d/include/Jobs-sem-avg-eligible-wait-hours.sql"
+        },
+        "name": "Std Dev: Wait Hours by Eligible Time: Per Job",
+        "precision": 2,
+        "show_in_catalog": false,
+        "unit": "Hour"
+    },
     "sem_avg_waitduration_hours": {
         "description_html": "The standard error of the average time, in hours, an ${ORGANIZATION_NAME} job had to wait until it began to execute.<br/><i>Std Err of the Avg: </i> The standard deviation of the sample mean, estimated by the sample estimate of the population standard deviation (sample standard deviation) divided by the square root of the sample size (assuming statistical independence of the values in the sample).",
         "formula": {
             "$include": "datawarehouse.d/include/Jobs-sem-avg-wait-hours.sql"
         },
-        "name": "Std Dev: Wait Hours: Per Job",
+        "name": "Std Dev: Wait Hours by Submit Time: Per Job",
         "precision": 2,
         "show_in_catalog": false,
         "unit": "Hour"
@@ -236,10 +253,17 @@
         "precision": 1,
         "unit": "Node Hour"
     },
+    "total_eligible_waitduration_hours": {
+        "description_html": "The total time, in hours, ${ORGANIZATION_NAME} jobs waited, from the time they became eligible to run, before execution on their designated resource. Jobs for which an eligible time is not reported are excluded.<br/><i>Wait Time by Eligible Time: </i>The linear time between a job becoming eligible to run and when it begins to execute.",
+        "formula": "COALESCE(SUM(agg.eligible_waitduration),0)/3600.0",
+        "name": "Wait Hours by Eligible Time: Total",
+        "precision": 1,
+        "unit": "Hour"
+    },
     "total_waitduration_hours": {
         "description_html": "The total time, in hours, ${ORGANIZATION_NAME} jobs waited before execution on their designated resource.<br/><i>Wait Time: </i>Wait time is defined as the linear time between submission of a job by a user until it begins to execute.",
         "formula": "COALESCE(SUM(agg.waitduration),0)/3600.0",
-        "name": "Wait Hours: Total",
+        "name": "Wait Hours by Submit Time: Total",
         "precision": 1,
         "unit": "Hour"
     },

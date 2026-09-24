@@ -1,11 +1,11 @@
 title
-"User Expansion Factor: by Job Wait Time"
+"User Expansion Factor: by Job Wait Time: Submit Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Wait Time","User Expansion Factor"
+"Job Wait Time: Submit Time","User Expansion Factor"
 "0 - 1s",1.0000
 "1 - 30s",1.0005
 "30s - 30min",1.0322

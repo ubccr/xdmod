@@ -1,11 +1,11 @@
 title
-"Node Hours: Total: by Job Wait Time"
+"Node Hours: Total: by Job Wait Time: Submit Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Wait Time","Node Hours: Total"
+"Job Wait Time: Submit Time","Node Hours: Total"
 "0 - 1s",9447.1700
 "1 - 30s",22041.2992
 "30s - 30min",79595.0753

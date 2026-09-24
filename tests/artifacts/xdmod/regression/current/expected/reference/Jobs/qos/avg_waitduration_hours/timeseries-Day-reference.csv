@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by QOS"
+"Wait Hours by Submit Time: Per Job: by QOS"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[curry] Wait Hours: Per Job","[derby] Wait Hours: Per Job","[bumbleberry] Wait Hours: Per Job","[bavarian-cream] Wait Hours: Per Job","[fish] Wait Hours: Per Job","[blackberry] Wait Hours: Per Job","[banana-cream] Wait Hours: Per Job","[cashew] Wait Hours: Per Job","[apple] Wait Hours: Per Job","[chestnut] Wait Hours: Per Job","[blueberry] Wait Hours: Per Job","[cheese] Wait Hours: Per Job","[butter] Wait Hours: Per Job","[green-grape] Wait Hours: Per Job","[boysenberry] Wait Hours: Per Job","[buttermilk] Wait Hours: Per Job","[coconut-cream] Wait Hours: Per Job","[flapper] Wait Hours: Per Job","[cherry] Wait Hours: Per Job"
+Day,"[curry] Wait Hours by Submit Time: Per Job","[derby] Wait Hours by Submit Time: Per Job","[bumbleberry] Wait Hours by Submit Time: Per Job","[bavarian-cream] Wait Hours by Submit Time: Per Job","[fish] Wait Hours by Submit Time: Per Job","[blackberry] Wait Hours by Submit Time: Per Job","[banana-cream] Wait Hours by Submit Time: Per Job","[cashew] Wait Hours by Submit Time: Per Job","[apple] Wait Hours by Submit Time: Per Job","[chestnut] Wait Hours by Submit Time: Per Job","[blueberry] Wait Hours by Submit Time: Per Job","[cheese] Wait Hours by Submit Time: Per Job","[butter] Wait Hours by Submit Time: Per Job","[green-grape] Wait Hours by Submit Time: Per Job","[boysenberry] Wait Hours by Submit Time: Per Job","[buttermilk] Wait Hours by Submit Time: Per Job","[coconut-cream] Wait Hours by Submit Time: Per Job","[flapper] Wait Hours by Submit Time: Per Job","[cherry] Wait Hours by Submit Time: Per Job"
 2016-12-22,0,0,0,0,0,0,0,0,9.33222222,0.00027778,0,0,0,0,0,0,0,0,0
 2016-12-23,0,0,0,9.59638889,0,0,0,0,0.00000000,0.00000000,0,0,0,0,0,0,0,0,0
 2016-12-24,0,0,0,0.00000000,0,0,0,0,0.00000000,0.00000000,0,0,0,0,0,0,0,0,0

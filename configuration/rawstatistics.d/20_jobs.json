@@ -315,6 +315,15 @@
                 "batchExport": true
             },
             {
+                "name": "Eligible Wait Time",
+                "tableAlias": "jt",
+                "column": "eligible_waitduration",
+                "group": "Timing",
+                "units": "seconds",
+                "documentation": "Time the job waited in the queue, measured from the time it became eligible to run. Not available for jobs with no known eligible time.",
+                "batchExport": true
+            },
+            {
                 "name": "Core Time",
                 "tableAlias": "jt",
                 "column": "cpu_time",
