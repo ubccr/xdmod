@@ -1,27 +1,41 @@
-# PHP CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-php/ for more details
-#
 version: 2.1
 
+parameters:
+  primary_image:
+    type: string
+    default: cimg/base:current
+  playwright_image:
+    type: string
+    default: mcr.microsoft.com/playwright:v1.60.0-jammy
+
 executors:
-  rocky8: &rocky8-executor
+  all-realms:
     docker:
-      - image: cimg/base:current
+      - image: << pipeline.parameters.primary_image >>
+    environment:
+      EXECUTOR_NAME: all-realms
+      XDMOD_IMAGE: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.10-v11.0.4-2-all_realms-01
+      XDMOD_REALMS: "jobs,storage,cloud,resourcespecifications"
+      PLAYWRIGHT_IMAGE: << pipeline.parameters.playwright_image >>
+  jobs-only:
+    docker:
+      - image: << pipeline.parameters.primary_image >>
+    environment:
+      EXECUTOR_NAME: jobs-only
+      XDMOD_IMAGE: tools-ext-01.ccr.xdmod.org/xdmod:x86_64-rockylinux8.10-v11.0.4-2-jobs_only-01
+      XDMOD_REALMS: "jobs,resourcespecifications"
+      PLAYWRIGHT_IMAGE: << pipeline.parameters.playwright_image >>
+
 jobs:
   build:
     parameters:
-      os:
+      executor:
         type: executor
       install-type:
         type: string
-      string_os:
-        type: string
       schedule-name:
         type: string
-    executor: << parameters.os >>
-    environment:
-      XDMOD_REALMS: 'jobs,storage,cloud,resourcespecifications'
+    executor: << parameters.executor >>
     steps:
       - checkout
       - setup_remote_docker
@@ -128,7 +142,7 @@ jobs:
             docker exec -w /root/xdmod xdmod /root/xdmod/tests/post/runtests.sh
       - run:
           name: Run Playwright Tests
-          command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j << parameters.string_os >>
+          command: docker exec -w /root/xdmod/tests/playwright playwright /root/xdmod/tests/playwright/runtests.sh -j ${EXECUTOR_NAME}-<< parameters.install-type >>
       - when:
           condition:
             equal: [ << parameters.install-type >>, 'upgrade' ]
@@ -168,7 +182,7 @@ jobs:
       - run:
           name: Copy Test results for Operating System
           command: |
-            docker cp "playwright:/root/xdmod/tests/playwright/test_results-<< parameters.string_os >>.xml" ~/phpunit
+            docker cp "playwright:/root/xdmod/tests/playwright/test_results-${EXECUTOR_NAME}-<< parameters.install-type >>.xml" ~/phpunit
           when: always
       - run:
           name: Check for webserver errors
@@ -220,7 +234,6 @@ workflows:
       - build:
           matrix:
             parameters:
-              os: [rocky8]
+              executor: ["all-realms", "jobs-only"]
               install-type: ["fresh_install", "upgrade"]
-              string_os: [rocky8]
               schedule-name: ["xdmod-time-trigger"]

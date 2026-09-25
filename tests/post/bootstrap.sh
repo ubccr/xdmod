@@ -8,7 +8,7 @@ if [ ! -e $REF_DIR ];
 then
    mkdir -p $REF_DIR
    cp $BASEDIR/../artifacts/xdmod/post/*.log $REF_DIR
-   cat $BASEDIR/../artifacts/xdmod/referencedata/names.csv $BASEDIR/../artifacts/xdmod/post/names-utf8.csv > $REF_DIR/names.csv
+   cat $BASEDIR/../artifacts/xdmod/referencedata/names-jobs.csv $BASEDIR/../artifacts/xdmod/post/names-utf8.csv > $REF_DIR/names-jobs.csv
 fi
 
 if [[ "$XDMOD_REALMS" == *"jobs"* ]];
@@ -18,5 +18,5 @@ then
     done
 fi
 
-sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
+sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names-jobs.csv
 sudo -u xdmod xdmod-ingestor

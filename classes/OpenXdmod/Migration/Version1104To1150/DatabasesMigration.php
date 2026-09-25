@@ -1,9 +1,9 @@
 <?php
 /**
- * Update database from version 11.0.3 to 11.5.0
+ * Update database from version 11.0.4 to 11.5.0
  */
 
-namespace OpenXdmod\Migration\Version1103To1150;
+namespace OpenXdmod\Migration\Version1104To1150;
 
 use OpenXdmod\Migration\DatabasesMigration as AbstractDatabasesMigration;
 use OpenXdmod\Shared\DatabaseHelper;
@@ -35,17 +35,13 @@ class DatabasesMigration extends AbstractDatabasesMigration
         $dbh = DB::factory('datawarehouse');
         $mysql_helper = MySQLHelper::factory($dbh);
 
-        if ($mysql_helper->tableExists('modw.storagefact')) {
-            Utilities::runEtlPipeline(
-                ['storage-migration-11_0_3-11_5_0', 'xdw-aggregate-storage'],
-                $this->logger,
-                ['last-modified-start-date' => '2017-01-01 00:00:00']
-            );
+        if ($mysql_helper->tableExists('modw_cloud.domains')) {
+            Utilities::runEtlPipeline(['update-cloud-tables'], $this->logger);
         }
 
-        if ($mysql_helper->tableExists('modw_cloud.event')) {
+        if ($mysql_helper->tableExists('modw.storagefact')) {
             Utilities::runEtlPipeline(
-                ['cloud-migration_11-0-3_11-5-0', 'cloud-state-pipeline'],
+                ['set-storage-resource-organization', 'xdw-aggregate-storage'],
                 $this->logger,
                 ['last-modified-start-date' => '2017-01-01 00:00:00']
             );
