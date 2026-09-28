@@ -12,20 +12,15 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
-        api:
+        main:
             lazy: true
-            stateless: true
-            pattern: ^/(warehouse|user_interface|metric_explorer|get_dw_descripter)/
+            provider: username_provider
             access_token:
                 token_handler: CCR\Security\TokenHandlers\TokenHandler
                 token_extractors:
                     - 'header'
                     - 'query_string'
                     - 'request_body'
-            provider: username_provider
-        main:
-            lazy: true
-            provider: username_provider
             custom_authenticators:
                 - CCR\Security\Authenticators\FormLoginAuthenticator
                 - CCR\Security\Authenticators\SimpleSamlPhpAuthenticator
