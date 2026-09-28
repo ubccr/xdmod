@@ -31,11 +31,9 @@ class RouteBasedExceptionListener
     {
         $request = $event->getRequest();
         $route = $request->attributes->get('_route');
-
         $exception = $event->getThrowable();
         $event->allowCustomResponseCode();
-
-        $defaultContent = [
+        $content = [
             'success' => false,
             'count' => 0,
             'total' => 0,
@@ -79,44 +77,33 @@ class RouteBasedExceptionListener
                     if (!$this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
                         $statusCode = Response::HTTP_UNAUTHORIZED;
                     }
-                    $response = new JsonResponse($content, $statusCode);
             } elseif (
                 $route == 'ccr_organization_upgrademember'
                 || $route == 'ccr_organization_downgrademember'
                 || $route == 'ccr_organization_index'
             ) {
-                $response = new JsonResponse([
+                $content = [
                     "status" => "not_a_center_director",
                     "success" => false,
                     "totalCount" => 0,
                     "message" => "not_a_center_director",
                     "data" => []
-                ], Response::HTTP_OK);
-            } elseif ($route == 'legacy_user_interface') {
-                $response = new JsonResponse($defaultContent);
-                $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+                ];
+
+                $statusCode = Response::HTTP_OK;
             }
         } elseif ($exception instanceof UnauthorizedHttpException) {
-            if (
-                $route == 'legacy_user_interface'
-                || str_starts_with($route, 'ccr_userinterface_')
-                || str_starts_with($route, 'ccr_reportbuilder_')
-                || str_starts_with($route, 'ccr_warehouse_')
-            ) {
-                $response = new JsonResponse($defaultContent);
-                $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
-            } elseif ($route == 'ccr_metricexplorer_index') {
-                $response = new JsonResponse($defaultContent);
+            } if ($route == 'ccr_metricexplorer_index') {
+                $statusCode = Response::HTTP_UNAUTHORIZED;
             } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
-                $defaultContent['message'] = $error_during_authorization_message;
-                $defaultContent['code'] = 0;
-                $response = new JsonResponse($defaultContent);
-                $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $statusCode = Response::HTTP_UNAUTHORIZED;
             }
         } elseif ($exception instanceof AuthenticationException) {
-            $reponse = new JsonResponse($defaultContent);
-            $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
+            $statusCode = Response::HTTP_UNAUTHORIZED;
         }
+        $response = new JsonResponse($content, $statusCode);
         $event->setResponse($response);
         return;
     }
