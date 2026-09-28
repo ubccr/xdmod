@@ -47,7 +47,10 @@ class RouteBasedExceptionListener
         $error_during_authorization_message = 'An error was encountered while attempting to process the requested authorization procedure.';
 
         // Support Legacy format for the Internal Dashboard controller endpoints
-        if ($exception instanceof AccessDeniedHttpException || $exception instanceof AccessDeniedException) {
+        if (
+            $exception instanceof AccessDeniedHttpException
+            || $exception instanceof AccessDeniedException
+        ) {
             if (str_starts_with($route, 'ccr_internaldashboard_')) {
                     $statusCode = Response::HTTP_OK;
                     $content = [
@@ -89,11 +92,10 @@ class RouteBasedExceptionListener
                     "message" => "not_a_center_director",
                     "data" => []
                 ];
-
                 $statusCode = Response::HTTP_OK;
             }
         } elseif ($exception instanceof UnauthorizedHttpException) {
-            } if ($route == 'ccr_metricexplorer_index') {
+            if ($route == 'ccr_metricexplorer_index') {
                 $statusCode = Response::HTTP_UNAUTHORIZED;
             } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
                 $content['message'] = $error_during_authorization_message;
