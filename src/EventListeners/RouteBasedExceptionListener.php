@@ -10,6 +10,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Exception\AuthenticationException;
 
 /**
  * This event listener is intended to be used to format excpetion
@@ -78,26 +79,23 @@ class RouteBasedExceptionListener
                     if (!$this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
                         $statusCode = Response::HTTP_UNAUTHORIZED;
                     }
-
-                    $event->setResponse(new JsonResponse($content, $statusCode));
+                    $response = new JsonResponse($content, $statusCode)
 
             } elseif (
                 $route == 'ccr_organization_upgrademember'
                 || $route == 'ccr_organization_downgrademember'
                 || $route == 'ccr_organization_index'
             ) {
-                $not_cd_response = new JsonResponse([
+                $response = new JsonResponse([
                     "status" => "not_a_center_director",
                     "success" => false,
                     "totalCount" => 0,
                     "message" => "not_a_center_director",
                     "data" => []
                 ], Response::HTTP_OK);
-                $event->setResponse($not_cd_response);
             } elseif ($route == 'legacy_user_interface') {
                 $response = new JsonResponse($defaultContent);
                 $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
-                $event->setResponse($response);
             }
         } elseif ($exception instanceof UnauthorizedHttpException) {
             if (
@@ -108,18 +106,19 @@ class RouteBasedExceptionListener
             ) {
                 $response = new JsonResponse($defaultContent);
                 $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
-                $event->setResponse($response);
             } elseif ($route == 'ccr_metricexplorer_index') {
                 $response = new JsonResponse($defaultContent);
-                $event->setResponse($response);
             } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
                 $defaultContent['message'] = $error_during_authorization_message;
                 $defaultContent['code'] = 0;
                 $response = new JsonResponse($defaultContent);
                 $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
-                $event->setResponse($response);
             }
+        } elseif ($exception instanceof AuthenticationException) {
+            $reponse = new JsonResponse($defaultContent);
+            $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
         }
+        $event->setResponse($response);
         return;
     }
 }
