@@ -10,9 +10,10 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
-use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\BadCredentialsException;
 use Symfony\Component\Security\Core\Security;
 use Symfony\Component\Security\Http\Authenticator\AbstractLoginFormAuthenticator;
@@ -197,7 +198,6 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
      */
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
-        #return new RedirectResponse($this->urlGenerator->generate('xdmod_home'));
-        return new JsonResponse([], 401);
+        throw new UnauthorizedHttpException('');
     }
 }

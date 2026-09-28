@@ -117,18 +117,7 @@ class RouteBasedExceptionListener
                 $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
                 $event->setResponse($response);
             }
-        } elseif ($exception instanceof HttpException) {
-            if (
-                str_starts_with($route, 'ccr_reportbuilder_')
-            ) {
-                $defaultContent['message'] = $error_during_authorization_message;
-                $defaultContent['code'] = 0;
-                $response = new JsonResponse($defaultContent);
-                $response->setStatusCode(Response::HTTP_UNAUTHORIZED);
-                $event->setResponse($response);
-            }
         }
         return;
-
     }
 }
