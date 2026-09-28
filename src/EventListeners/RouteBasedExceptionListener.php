@@ -111,6 +111,7 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             } elseif ($route == 'ccr_metricexplorer_index') {
                 $response = new JsonResponse($defaultContent);
+                $event->setResponse($response);
             } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
                 $defaultContent['message'] = $error_during_authorization_message;
                 $defaultContent['code'] = 0;
