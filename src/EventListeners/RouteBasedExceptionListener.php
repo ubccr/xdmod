@@ -103,6 +103,12 @@ class RouteBasedExceptionListener
                 $statusCode = Response::HTTP_UNAUTHORIZED;
             }
         } elseif ($exception instanceof AuthenticationException) {
+            if ($route == 'ccr_metricexplorer_createquery') {
+                $content['action'] = 'createQuery';
+            } elseif ($route == 'ccr_metricexplorer_updatequerybyid') {
+                $content['action'] = 'updateQuery';
+            }
+            $content['message'] = $error_during_authorization_message;
             $statusCode = Response::HTTP_UNAUTHORIZED;
         }
         $response = new JsonResponse($content, $statusCode);
