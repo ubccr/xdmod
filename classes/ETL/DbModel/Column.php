@@ -114,6 +114,12 @@ class Column extends NamedEntity implements iEntity
                 } else {
                     $value = strtolower($value);
                 }
+                // Fold the utf8mb3 character set family back to the legacy "utf8" spelling
+                // so that servers reporting either name compare as equal. See
+                // Entity::normalizeCharsetName().
+                if ( 'charset' == $property || 'collation' == $property ) {
+                    $value = $this->normalizeCharsetName($value);
+                }
                 break;
 
             default:
