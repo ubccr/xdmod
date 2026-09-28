@@ -79,8 +79,7 @@ class RouteBasedExceptionListener
                     if (!$this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
                         $statusCode = Response::HTTP_UNAUTHORIZED;
                     }
-                    $response = new JsonResponse($content, $statusCode)
-
+                    $response = new JsonResponse($content, $statusCode);
             } elseif (
                 $route == 'ccr_organization_upgrademember'
                 || $route == 'ccr_organization_downgrademember'
