@@ -30,16 +30,13 @@ class RouteBasedExceptionListener
 
     public function onKernelException(ExceptionEvent $event): void
     {
-        $this->logger->debug('Running RoutebasedExceptionListener');
+        $this->logger->debug('Running RouteBasedExceptionListener');
         $request = $event->getRequest();
         $route = $request->attributes->get('_route');
         $exception = $event->getThrowable();
         $event->allowCustomResponseCode();
-        $response = $event->getResponse();
-        $statusCode = $response->getStatusCode();
 
-        $this->logger->debug("Received response:", [$response]);
-        $this->logger->debug("Received status code:", [$statusCode]);
+        $this->logger->debug("Exception occurred:", [$exception]);
 
         $content = [
             'success' => false,
