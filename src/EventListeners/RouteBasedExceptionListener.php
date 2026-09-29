@@ -43,7 +43,7 @@ class RouteBasedExceptionListener
             'message' => 'Session Expired',
             'code' => 2
         ];
-
+        $statusCode = Response::HTTP_OK;
         $error_during_authorization_message = 'An error was encountered while attempting to process the requested authorization procedure.';
 
         // Support Legacy format for the Internal Dashboard controller endpoints
@@ -105,11 +105,36 @@ class RouteBasedExceptionListener
         } elseif ($exception instanceof AuthenticationException) {
             if ($route == 'ccr_metricexplorer_createquery') {
                 $content['action'] = 'createQuery';
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                unset($content['code']);
+                unset($content['total']);
+                unset($content['totalCount']);
+                unset($content['results']);
+                unset($content['data']);
             } elseif ($route == 'ccr_metricexplorer_updatequerybyid') {
                 $content['action'] = 'updateQuery';
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                unset($content['code']);
+                unset($content['total']);
+                unset($content['totalCount']);
+                unset($content['results']);
+                unset($content['data']);
+            } elseif (
+                $route == 'ccr_warehouseexport_createrequest'
+                || $route == 'ccr_warehouseexport_getrequests'
+                || str_starts_with($route, 'ccr_warehouse_getdimensions')
+                || str_starts_with($route, 'ccr_warehouse_getaggregatedata')
+                || str_starts_with($route, 'ccr_warehouse_searchhistory')
+                || $route == 'ccr_dashboard_setlayout'
+                || $route == 'ccr_user_getcurrentapitoken'
+                || $route == 'get_current_user'
+            ) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $statusCode = Response::HTTP_UNAUTHORIZED;
             }
-            $content['message'] = $error_during_authorization_message;
-            $content['code'] = 0;
             $statusCode = Response::HTTP_UNAUTHORIZED;
         }
         $response = new JsonResponse($content, $statusCode);
