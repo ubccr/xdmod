@@ -369,7 +369,6 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
     #[Route('/controllers/metric_explorer.php', methods: ['POST', 'GET'])]
     public function index(Request $request): Response
     {

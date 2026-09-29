@@ -13,6 +13,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationException;
 
 /**
  * This event listener is intended to be used to format excpetion
@@ -162,6 +163,10 @@ class RouteBasedExceptionListener
                     'message' => 'API token not found.'
                 ];
                 $statusCode = Response::HTTP_NOT_FOUND;
+            }
+        } elseif ($exception instanceof InsufficientAuthenticationException) {
+            if ($route == 'ccr_metricexplorer_index') {
+                $this->logger->debug('InsufficientAuthenticationException')
             }
         }
         $response = new JsonResponse($content, $statusCode);
