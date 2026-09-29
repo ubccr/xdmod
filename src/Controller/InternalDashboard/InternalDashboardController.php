@@ -196,7 +196,7 @@ class InternalDashboardController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[MgrRequired]
+    #[IsGranted('mgr')]
     #[Route("/internal_dashboard/controllers/controller.php", name: "legacy_internal_dashboard_controllers", methods: ['POST', 'GET'])]
     public function controllers(Request $request): Response
     {

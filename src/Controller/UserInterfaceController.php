@@ -48,7 +48,7 @@ class UserInterfaceController extends BaseController
                     $user = $this->getXDUser();
                     $methodMatcher = new MethodRequestMatcher('POST');
                     if ($user->isPublicUser()) {
-                        throw new \SessionExpiredException();
+                        throw new UnauthorizedHttpException();
                     }
                     return $this->getData($request);
                 case 'get_menus':

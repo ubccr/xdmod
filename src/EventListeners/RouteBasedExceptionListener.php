@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
@@ -130,6 +131,7 @@ class RouteBasedExceptionListener
                 || $route == 'ccr_dashboard_setlayout'
                 || $route == 'ccr_user_getcurrentapitoken'
                 || $route == 'get_current_user'
+                || $route == 'ccr_user_createapitoken'
             ) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
@@ -148,6 +150,13 @@ class RouteBasedExceptionListener
                 $statusCode = Response::HTTP_OK;
             } elseif ($route == 'ccr_chartpool_index') {
                 $statusCode = Response::HTTP_OK;
+            }
+        } elseif ($exception instanceof NotFoundException) {
+            if ($route == 'ccr_user_createapitoken') {
+                $content = [
+                    'message' => 'API token not found.'
+                ]
+                $statusCode = Response::HTTP_NOT_FOUND;
             }
         }
         $response = new JsonResponse($content, $statusCode);
