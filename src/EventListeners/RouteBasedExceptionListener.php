@@ -156,7 +156,7 @@ class RouteBasedExceptionListener
             } elseif ($route == 'ccr_chartpool_index') {
                 $statusCode = Response::HTTP_OK;
             }
-        } elseif ($exception instanceof NotFoundException) {
+        } elseif ($exception instanceof NotFoundHttpException) {
             if ($route == 'ccr_user_createapitoken') {
                 $content = [
                     'message' => 'API token not found.'
