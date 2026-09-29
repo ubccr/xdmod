@@ -209,7 +209,6 @@ class WarehouseController extends BaseController
      * @throws BadRequestHttpException
      * @throws NotFoundHttpException
      */
-    #[IsGranted('ROLE_USER')]
     #[Route('/warehouse/search/history', methods: ['GET'])]
     #[Route('{prefix}warehouse/search/history', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function searchHistory(Request $request): Response

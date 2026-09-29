@@ -132,6 +132,7 @@ class RouteBasedExceptionListener
                 || $route == 'ccr_user_getcurrentapitoken'
                 || $route == 'get_current_user'
                 || $route == 'ccr_user_createapitoken'
+                || $route == 'ccr_internaldashboard_admin_resetusertourviewed'
             ) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
