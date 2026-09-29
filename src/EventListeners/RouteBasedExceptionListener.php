@@ -94,33 +94,35 @@ class RouteBasedExceptionListener
                 ];
                 $statusCode = Response::HTTP_OK;
             }
+            $statusCode = Response::HTTP_UNAUTHORIZED;
         } elseif ($exception instanceof UnauthorizedHttpException) {
-            if ($route == 'ccr_metricexplorer_index') {
-                $statusCode = Response::HTTP_UNAUTHORIZED;
-            } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
+            if (str_starts_with($route, 'ccr_warehouseexport_')) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-                $statusCode = Response::HTTP_UNAUTHORIZED;
             }
+            $statusCode = Response::HTTP_UNAUTHORIZED;
         } elseif ($exception instanceof AuthenticationException) {
             if ($route == 'ccr_metricexplorer_createquery') {
-                $content['action'] = 'createQuery';
+                # Yes, this is supposed to be 'creatQuery' without an 'e'
+                $content['action'] = 'creatQuery';
                 $content['message'] = $error_during_authorization_message;
-                $content['code'] = 0;
                 unset($content['code']);
                 unset($content['total']);
                 unset($content['totalCount']);
                 unset($content['results']);
                 unset($content['data']);
+                unset($content['count']);
+                $statusCode = Response::HTTP_UNAUTHORIZED;
             } elseif ($route == 'ccr_metricexplorer_updatequerybyid') {
                 $content['action'] = 'updateQuery';
                 $content['message'] = $error_during_authorization_message;
-                $content['code'] = 0;
                 unset($content['code']);
                 unset($content['total']);
                 unset($content['totalCount']);
                 unset($content['results']);
                 unset($content['data']);
+                unset($content['count']);
+                $statusCode = Response::HTTP_UNAUTHORIZED;
             } elseif (
                 $route == 'ccr_warehouseexport_createrequest'
                 || $route == 'ccr_warehouseexport_getrequests'
@@ -135,7 +137,6 @@ class RouteBasedExceptionListener
                 $content['code'] = 0;
                 $statusCode = Response::HTTP_UNAUTHORIZED;
             }
-            $statusCode = Response::HTTP_UNAUTHORIZED;
         }
         $response = new JsonResponse($content, $statusCode);
         $event->setResponse($response);
