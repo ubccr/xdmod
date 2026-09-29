@@ -45,11 +45,6 @@ class UserInterfaceController extends BaseController
                 case 'get_charts':
                     return $this->getCharts($request);
                 case 'get_data':
-                    $user = $this->getXDUser();
-                    $methodMatcher = new MethodRequestMatcher('POST');
-                    if ($user->isPublicUser()) {
-                        throw new UnauthorizedHttpException('');
-                    }
                     return $this->getData($request);
                 case 'get_menus':
                     return $this->getMenus($request);
