@@ -109,6 +109,7 @@ class RouteBasedExceptionListener
                 $content['action'] = 'updateQuery';
             }
             $content['message'] = $error_during_authorization_message;
+            $content['code'] = 0;
             $statusCode = Response::HTTP_UNAUTHORIZED;
         }
         $response = new JsonResponse($content, $statusCode);
