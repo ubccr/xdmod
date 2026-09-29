@@ -155,7 +155,7 @@ class RouteBasedExceptionListener
             if ($route == 'ccr_user_createapitoken') {
                 $content = [
                     'message' => 'API token not found.'
-                ]
+                ];
                 $statusCode = Response::HTTP_NOT_FOUND;
             }
         }
