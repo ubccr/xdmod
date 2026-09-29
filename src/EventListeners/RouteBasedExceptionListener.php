@@ -43,7 +43,7 @@ class RouteBasedExceptionListener
             'message' => 'Session Expired',
             'code' => 2
         ];
-        $statusCode = Response::HTTP_OK;
+        $statusCode = Response::HTTP_UNAUTHORIZED;
         $error_during_authorization_message = 'An error was encountered while attempting to process the requested authorization procedure.';
 
         // Support Legacy format for the Internal Dashboard controller endpoints
@@ -92,15 +92,13 @@ class RouteBasedExceptionListener
                     "message" => "not_a_center_director",
                     "data" => []
                 ];
-                $statusCode = Response::HTTP_UNAUTHORIZED;
+                $statusCode = Response::HTTP_OK;
             }
-            $statusCode = Response::HTTP_UNAUTHORIZED;
         } elseif ($exception instanceof UnauthorizedHttpException) {
             if (str_starts_with($route, 'ccr_warehouseexport_')) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
             }
-            $statusCode = Response::HTTP_UNAUTHORIZED;
         } elseif ($exception instanceof AuthenticationException) {
             if ($route == 'ccr_metricexplorer_createquery') {
                 # Yes, this is supposed to be 'creatQuery' without an 'e'
@@ -133,8 +131,20 @@ class RouteBasedExceptionListener
             ) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
+            } elseif (
+                $route == 'ccr_organization_upgrademember'
+                || $route == 'ccr_organization_downgrademember'
+                || $route == 'ccr_organization_index'
+            ) {
+                $content = [
+                    "status" => "not_a_center_director",
+                    "success" => false,
+                    "totalCount" => 0,
+                    "message" => "not_a_center_director",
+                    "data" => []
+                ];
+                $statusCode = Response::HTTP_OK;
             }
-            $statusCode = Response::HTTP_UNAUTHORIZED;
         }
         $response = new JsonResponse($content, $statusCode);
         $event->setResponse($response);
