@@ -38,8 +38,8 @@ class RouteBasedExceptionListener
         $response = $event->getResponse();
         $statusCode = $response->getStatusCode();
 
-        $this->logger->debug("Received response:", $response);
-        $this->logger->debug("Received status code:", $statusCode);
+        $this->logger->debug("Received response:", [$response]);
+        $this->logger->debug("Received status code:", [$statusCode]);
 
         $content = [
             'success' => false,
