@@ -2,6 +2,7 @@
 
 namespace CCR\EventListeners;
 
+use Psr\Log\LoggerInterface;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -23,17 +24,23 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
  */
 class RouteBasedExceptionListener
 {
-    public function __construct(
-        private Security $security
-    ) {
+    public function __construct(private LoggerInterface $logger) {
+        $this->logger = $logger;
     }
 
     public function onKernelException(ExceptionEvent $event): void
     {
+        $this->logger->debug('Running RoutebasedExceptionListener')
         $request = $event->getRequest();
         $route = $request->attributes->get('_route');
         $exception = $event->getThrowable();
         $event->allowCustomResponseCode();
+        $response = $event->getResponse();
+        $statusCode = $response->getStatusCode();
+
+        $this->logger->debug("Received response:", $response)
+        $this->logger->debug("Received status code:", $statusCode)
+
         $content = [
             'success' => false,
             'count' => 0,
@@ -44,9 +51,7 @@ class RouteBasedExceptionListener
             'message' => 'Session Expired',
             'code' => 2
         ];
-        $statusCode = Response::HTTP_UNAUTHORIZED;
         $error_during_authorization_message = 'An error was encountered while attempting to process the requested authorization procedure.';
-
         // Support Legacy format for the Internal Dashboard controller endpoints
         if (
             $exception instanceof AccessDeniedHttpException
