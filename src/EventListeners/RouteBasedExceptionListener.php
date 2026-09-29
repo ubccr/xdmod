@@ -30,7 +30,7 @@ class RouteBasedExceptionListener
 
     public function onKernelException(ExceptionEvent $event): void
     {
-        $this->logger->debug('Running RoutebasedExceptionListener')
+        $this->logger->debug('Running RoutebasedExceptionListener');
         $request = $event->getRequest();
         $route = $request->attributes->get('_route');
         $exception = $event->getThrowable();
