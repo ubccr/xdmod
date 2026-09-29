@@ -166,7 +166,7 @@ class RouteBasedExceptionListener
             }
         } elseif ($exception instanceof InsufficientAuthenticationException) {
             if ($route == 'ccr_metricexplorer_index') {
-                $this->logger->debug('InsufficientAuthenticationException')
+                $this->logger->debug('InsufficientAuthenticationException');
             }
         }
         $response = new JsonResponse($content, $statusCode);
