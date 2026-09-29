@@ -92,7 +92,7 @@ class RouteBasedExceptionListener
                     "message" => "not_a_center_director",
                     "data" => []
                 ];
-                $statusCode = Response::HTTP_OK;
+                $statusCode = Response::HTTP_UNAUTHORIZED;
             }
             $statusCode = Response::HTTP_UNAUTHORIZED;
         } elseif ($exception instanceof UnauthorizedHttpException) {
