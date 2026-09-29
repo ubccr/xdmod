@@ -54,6 +54,7 @@ class RouteBasedExceptionListener
         if (
             $exception instanceof AccessDeniedHttpException
             || $exception instanceof AccessDeniedException
+            || $exception instanceof \DataWarehouse\Query\Exception\AccessDeniedException
         ) {
             if (str_starts_with($route, 'ccr_internaldashboard_')) {
                     $statusCode = Response::HTTP_OK;
@@ -97,6 +98,11 @@ class RouteBasedExceptionListener
                     "data" => []
                 ];
                 $statusCode = Response::HTTP_OK;
+            } elseif ($route == 'ccr_metricexplorer_index') {
+                $accessDenied = new DataWarehouse\Query\Exception\AccessDeniedException();
+                $statusCode = Response::HTTP_UNAUTHORIZED;
+                $content['message'] = $accessDenied->getMessage();
+                $content['code'] = 103;
             }
         } elseif ($exception instanceof UnauthorizedHttpException) {
             if (str_starts_with($route, 'ccr_warehouseexport_')) {
