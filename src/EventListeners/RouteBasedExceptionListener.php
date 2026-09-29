@@ -98,6 +98,8 @@ class RouteBasedExceptionListener
             if (str_starts_with($route, 'ccr_warehouseexport_')) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
+            } elseif ($route == 'legacy_user_interface') {
+                $statusCode = Response::HTTP_UNAUTHORIZED;
             }
         } elseif ($exception instanceof AuthenticationException) {
             if ($route == 'ccr_metricexplorer_createquery') {
