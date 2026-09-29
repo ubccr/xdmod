@@ -552,7 +552,6 @@ class WarehouseController extends BaseController
      * @throws AccessDeniedHttpException
      * @throws Exception if a user record is not found in the database that corresponds to the current user's username.
      */
-    #[IsGranted('ROLE_USER')]
     #[Route(
         "/warehouse/search/{realms}/{action}",
         requirements: ["action" => "([\w|_|-])+", "realms" => "cloud|jobs"],
