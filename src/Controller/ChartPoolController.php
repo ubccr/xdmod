@@ -27,11 +27,7 @@ class ChartPoolController extends BaseController
     #[Route('/chart_pool')]
     public function index(Request $request): Response
     {
-        try {
-            $user = $this->getXDUser();
-        } catch (Exception $e) {
-            return $this->json(buildError(new \SessionExpiredException()), 401);
-        }
+        $user = $this->getXDUser();
 
         $operation = $this->getStringParam($request, 'operation');
         if (empty($operation)) {

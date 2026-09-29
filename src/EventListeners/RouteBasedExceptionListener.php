@@ -144,6 +144,8 @@ class RouteBasedExceptionListener
                     "data" => []
                 ];
                 $statusCode = Response::HTTP_OK;
+            } elseif ($route == 'ccr_chartpool_index') {
+                $statusCode = Response::HTTP_OK;
             }
         }
         $response = new JsonResponse($content, $statusCode);
