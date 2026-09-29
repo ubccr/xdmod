@@ -47,7 +47,7 @@ class UserInterfaceController extends BaseController
                 case 'get_data':
                     $user = $this->getXDUser();
                     $methodMatcher = new MethodRequestMatcher('POST');
-                    if ($user->isPublic() && $methodMatcher->matches($request)) {
+                    if ($user->isPublicUser() && $methodMatcher->matches($request)) {
                         throw new \SessionExpiredException();
                     }
                     return $this->getData($request);
