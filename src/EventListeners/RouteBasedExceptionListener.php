@@ -112,7 +112,6 @@ class RouteBasedExceptionListener
                 unset($content['results']);
                 unset($content['data']);
                 unset($content['count']);
-                $statusCode = Response::HTTP_UNAUTHORIZED;
             } elseif ($route == 'ccr_metricexplorer_updatequerybyid') {
                 $content['action'] = 'updateQuery';
                 $content['message'] = $error_during_authorization_message;
@@ -122,7 +121,6 @@ class RouteBasedExceptionListener
                 unset($content['results']);
                 unset($content['data']);
                 unset($content['count']);
-                $statusCode = Response::HTTP_UNAUTHORIZED;
             } elseif (
                 $route == 'ccr_warehouseexport_createrequest'
                 || $route == 'ccr_warehouseexport_getrequests'
@@ -135,8 +133,8 @@ class RouteBasedExceptionListener
             ) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-                $statusCode = Response::HTTP_UNAUTHORIZED;
             }
+            $statusCode = Response::HTTP_UNAUTHORIZED;
         }
         $response = new JsonResponse($content, $statusCode);
         $event->setResponse($response);
