@@ -125,6 +125,7 @@ class RouteBasedExceptionListener
             } elseif (
                 $route == 'ccr_warehouseexport_createrequest'
                 || $route == 'ccr_warehouseexport_getrequests'
+                || $route == 'ccr_warehouseexport_getrealms'
                 || str_starts_with($route, 'ccr_warehouse_getdimensions')
                 || str_starts_with($route, 'ccr_warehouse_getaggregatedata')
                 || str_starts_with($route, 'ccr_warehouse_searchhistory')
@@ -133,6 +134,7 @@ class RouteBasedExceptionListener
                 || $route == 'get_current_user'
                 || $route == 'ccr_user_createapitoken'
                 || $route == 'ccr_internaldashboard_admin_resetusertourviewed'
+                || str_starts_with($route,'ccr_warehouse_searchjobs')
             ) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
