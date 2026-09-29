@@ -518,7 +518,6 @@ class WarehouseController extends BaseController
      * @throws AccessDeniedHttpException if the user executing this request does not have access to the provided realm.
      * @throws Exception if a user record is not found in the database that corresponds to the current user's username.
      */
-    #[IsGranted('ROLE_USER')]
     #[Route('{prefix}warehouse/search/jobs', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function searchJobs(Request $request): Response
     {
@@ -592,7 +591,6 @@ class WarehouseController extends BaseController
      *                           the dimensions retrieved.
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
     #[Route('/warehouse/resources', methods: ['GET'])]
     #[Route('{prefix}warehouse/resources', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getResources(Request $request): Response
@@ -666,7 +664,6 @@ class WarehouseController extends BaseController
      *
      * @throws AccessDeniedHttpException|UnauthorizedHttpException|BadRequestHttpException
      */
-    #[IsGranted('ROLE_USER')]
     #[Route('/warehouse/aggregatedata', methods: ['GET'])]
     #[Route('{prefix}warehouse/aggregatedata', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getAggregateData(Request $request): Response
@@ -756,7 +753,6 @@ class WarehouseController extends BaseController
      *                  the dimensions retrieved.
      * @throws Exception if a XDMoD user cannot be found for the currently logged in users username.
      */
-    #[IsGranted('ROLE_USER')]
     #[Route('{prefix}warehouse/dimensions', requirements: ['prefix' => '.*'],  methods: ['GET'])]
     #[Route('/warehouse/dimensions',  methods: ['GET'])]
     public function getDimensions(Request $request): Response
@@ -807,7 +803,6 @@ class WarehouseController extends BaseController
      *                           the dimension values retrieved.
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
     #[Route('/warehouse/dimensions/{dimension}', requirements: ["dimension" => "\w+"], methods: ['GET'])]
     #[Route('{prefix}warehouse/dimensions/{dimension}', requirements: ["dimension" => "\w+", 'prefix' => '.*'], methods: ['GET'])]
     public function getDimensionValues(Request $request, string $dimension): Response
