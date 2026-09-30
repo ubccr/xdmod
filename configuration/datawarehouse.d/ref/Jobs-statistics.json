@@ -75,7 +75,7 @@
         "unit": "GPU Count"
     },
     "avg_eligible_waitduration_hours": {
-        "description_html": "The average time, in hours, a ${ORGANIZATION_NAME} job waits, from the time it became eligible to run, before execution on the designated resource. Jobs for which an eligible time is not reported are excluded.<br/><i>Wait Time by Eligible Time: </i>The linear time between a job becoming eligible to run and when it begins to execute.",
+        "description_html": "The average time, in hours, a ${ORGANIZATION_NAME} job waits, from the time it became eligible to run, before execution on the designated resource. Jobs for which an eligible time is not reported are excluded.<br/><i>Wait Time by Eligible Time: </i>The time between a job becoming eligible to run and when it begins to execute.",
         "formula": "COALESCE(SUM(agg.eligible_waitduration) / NULLIF(SUM(agg.eligible_started_job_count), 0),0)/3600.0",
         "name": "Wait Hours by Eligible Time: Per Job",
         "precision": 2,
@@ -254,7 +254,7 @@
         "unit": "Node Hour"
     },
     "total_eligible_waitduration_hours": {
-        "description_html": "The total time, in hours, ${ORGANIZATION_NAME} jobs waited, from the time they became eligible to run, before execution on their designated resource. Jobs for which an eligible time is not reported are excluded.<br/><i>Wait Time by Eligible Time: </i>The linear time between a job becoming eligible to run and when it begins to execute.",
+        "description_html": "The total time, in hours, ${ORGANIZATION_NAME} jobs waited, from the time they became eligible to run, before execution on their designated resource. Jobs for which an eligible time is not reported are excluded.<br/><i>Wait Time by Eligible Time: </i>The time between a job becoming eligible to run and when it begins to execute.",
         "formula": "COALESCE(SUM(agg.eligible_waitduration),0)/3600.0",
         "name": "Wait Hours by Eligible Time: Total",
         "precision": 1,

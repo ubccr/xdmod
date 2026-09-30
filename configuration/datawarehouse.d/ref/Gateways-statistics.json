@@ -50,7 +50,7 @@
     },
     "avg_eligible_waitduration_hours": {
         "$overwrite": {
-            "description_html": "The average time, in hours, a ${ORGANIZATION_NAME} ${REALM_NAME} job waits, from the time it became eligible to run, before execution on the designated resource. Jobs for which an eligible time is not reported are excluded.<br/><i>Wait Time by Eligible Time: </i>The linear time between a job becoming eligible to run and when it begins to execute.",
+            "description_html": "The average time, in hours, a ${ORGANIZATION_NAME} ${REALM_NAME} job waits, from the time it became eligible to run, before execution on the designated resource. Jobs for which an eligible time is not reported are excluded.<br/><i>Wait Time by Eligible Time: </i>The time between a job becoming eligible to run and when it begins to execute.",
             "name": "Wait Hours by Eligible Time: Per ${REALM_NAME} Job"
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/avg_eligible_waitduration_hours"
@@ -157,7 +157,7 @@
     },
     "total_eligible_waitduration_hours": {
         "$overwrite": {
-            "description_html": "The total time, in hours, ${ORGANIZATION_NAME} ${REALM_NAME} jobs waited, from the time they became eligible to run, before execution on their designated resource. Jobs for which an eligible time is not reported are excluded.<br/><i>Wait Time by Eligible Time: </i>The linear time between a job becoming eligible to run and when it begins to execute.",
+            "description_html": "The total time, in hours, ${ORGANIZATION_NAME} ${REALM_NAME} jobs waited, from the time they became eligible to run, before execution on their designated resource. Jobs for which an eligible time is not reported are excluded.<br/><i>Wait Time by Eligible Time: </i>The time between a job becoming eligible to run and when it begins to execute.",
             "name": "Wait Hours by Eligible Time: ${REALM_NAME} Total"
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/Jobs-statistics.json#/total_eligible_waitduration_hours"
