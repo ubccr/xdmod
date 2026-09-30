@@ -53,7 +53,7 @@ class RouteBasedExceptionListener
         // Support Legacy format for the Internal Dashboard controller endpoints
         if (
             str_starts_with($route, 'ccr_internaldashboard_')
-            && !str_ends_with($route, '_resetusertourviewed'
+            && !str_ends_with($route, '_resetusertourviewed')
         ) {
             if (
                 $exception instanceof AccessDeniedHttpException
