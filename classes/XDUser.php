@@ -2424,7 +2424,7 @@ SQL;
      *
      * @throws Exception if there is a problem executing any of the required post logged in steps.
      */
-    public function postLogin(Session $session) {
+    public function postLogin(Request $request) {
         if (!$this->isSticky()) {
             $this->updatePerson();
             $this->synchronizeOrganization();
@@ -2436,13 +2436,13 @@ SQL;
         list($usec, $sec) = explode(' ', microtime());
         $init_time = $usec + $sec;
 
-        $session_id = $session->getId();
+        $session_id = $request->getSession()->getId();
         $user_id = $this->getUserID();
 
         $session_token = md5($user_id . $session_id . $init_time);
 
-        $ip_address = $session->get('REMOTE_ADDR');
-        $user_agent = $session->get('HTTP_USER_AGENT');
+        $ip_address = $request->getClientIp();
+        $user_agent = $request->get('HTTP_USER_AGENT');
 
         $record_query = "
             INSERT INTO SessionManager (
