@@ -139,11 +139,18 @@ abstract class TokenAuthTest extends BaseTest
             // which case it will be 'authentication error').
             if ('token_optional' === $input['authentication_type']) {
                 if ('controller' === $input['endpoint_type']) {
+                    $messages = [
+                        'empty_token' => TokenHandler::MISSING_TOKEN_MESSAGE,
+                        'malformed_token' => TokenHandler::INVALID_TOKEN_MESSAGE,
+                        'invalid_token' => TokenHandler::INVALID_TOKEN_MESSAGE,
+                        'expired_token' => TokenHandler::EXPIRED_TOKEN_MESSAGE,
+                        'revoked_token' => TokenHandler::INVALID_TOKEN_MESSAGE
+                    ];
                     $output = [
                         'status_code' => 401,
                         'body_validator' => $this->validateErrorResponseBody(
-                            'Session Expired',
-                            2
+                            $messages[$tokenType],
+                            0
                         )
                     ];
                 } elseif ('rest' === $input['endpoint_type']) {
