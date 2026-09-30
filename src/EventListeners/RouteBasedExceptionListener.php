@@ -51,13 +51,15 @@ class RouteBasedExceptionListener
         ];
         $error_during_authorization_message = 'An error was encountered while attempting to process the requested authorization procedure.';
         // Support Legacy format for the Internal Dashboard controller endpoints
-        if ($route == 'ccr_internaldashboard_admin_resetusertourviewed') {
+        if (
+            $route == 'ccr_internaldashboard_admin_resetusertourviewed'
+            || $route == 'ccr_dashboard_setviewedusertour'
+        ) {
             if (
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof AccessDeniedException
                 || $exception instanceof InsufficientAuthenticationException
             ) {
-                $statusCode = Response::HTTP_FORBIDDEN;
                 $content = [
                     'success' => false,
                     'count' => 0,
@@ -134,7 +136,10 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
-            if ($exception instanceof UnauthorizedHttpException) {
+            if (
+                $exception instanceof UnauthorizedHttpException
+                || $exception instanceof InsufficientAuthorizationException
+            ) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
@@ -152,6 +157,7 @@ class RouteBasedExceptionListener
         } elseif ($route == 'ccr_user_getcurrentapitoken') {
             if ($exception instanceof InsufficientAuthenticationException) {
                 $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
