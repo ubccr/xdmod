@@ -52,42 +52,54 @@ class RouteBasedExceptionListener
         $error_during_authorization_message = 'An error was encountered while attempting to process the requested authorization procedure.';
         // Support Legacy format for the Internal Dashboard controller endpoints
         if (
-            $exception instanceof AccessDeniedHttpException
-            || $exception instanceof AccessDeniedException
+            str_starts_with($route, 'ccr_internaldashboard_')
+            && !str_ends_with($route, '_resetusertourviewed'
         ) {
-            if (str_starts_with($route, 'ccr_internaldashboard_')) {
+            if (
+                $exception instanceof AccessDeniedHttpException
+                || $exception instanceof AccessDeniedException
+            ) {
+                // This is specifically for ControllerTest::testSabRejectsPublic, it expects a 401.
+                if (!$this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
+                    $statusCode = Response::HTTP_UNAUTHORIZED;
+                } else {
                     $statusCode = Response::HTTP_OK;
-                    $content = [
-                        'status' => 'not_a_manager',
-                        'success' => false,
-                        'totalCount' => 0,
-                        'message' => 'not_a_manager',
-                        'data' => array()
-                    ];
+                }
+                $content = [
+                    'status' => 'not_a_manager',
+                    'success' => false,
+                    'totalCount' => 0,
+                    'message' => 'not_a_manager',
+                    'data' => array()
+                ];
+            }
+        // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
+        } elseif ($route == 'ccr_internaldashboard_admin_resetusertourviewed')) {
+            if (
+                $exception instanceof AccessDeniedHttpException
+                || $exception instanceof AccessDeniedException
+            ) {
+                $statusCode = Response::HTTP_FORBIDDEN;
+                $content = [
+                    'success' => false,
+                    'count' => 0,
+                    'total' => 0,
+                    'totalCount' => 0,
+                    'results' => [],
+                    'data' => [],
+                    'message' => $error_during_authorization_message,
+                    'code' => 0
+                ];
+        }
 
-                    // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
-                    if (str_ends_with($route, '_resetusertourviewed')) {
-                        $statusCode = Response::HTTP_FORBIDDEN;
-                        $content = [
-                            'success' => false,
-                            'count' => 0,
-                            'total' => 0,
-                            'totalCount' => 0,
-                            'results' => [],
-                            'data' => [],
-                            'message' => $error_during_authorization_message,
-                            'code' => 0
-                        ];
-                    }
-
-                    // This is specifically for ControllerTest::testSabRejectsPublic, it expects a 401.
-                    if (!$this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
-                        $statusCode = Response::HTTP_UNAUTHORIZED;
-                    }
-            } elseif (
-                $route == 'ccr_organization_upgrademember'
-                || $route == 'ccr_organization_downgrademember'
-                || $route == 'ccr_organization_index'
+        } elseif (
+            $route == 'ccr_organization_upgrademember'
+            || $route == 'ccr_organization_downgrademember'
+            || $route == 'ccr_organization_index'
+        ) {
+            if (
+                $exception instanceof AccessDeniedHttpException
+                || $exception instanceof AccessDeniedException
             ) {
                 $content = [
                     "status" => "not_a_center_director",
@@ -97,83 +109,35 @@ class RouteBasedExceptionListener
                     "data" => []
                 ];
                 $statusCode = Response::HTTP_OK;
-            } elseif ($route == 'ccr_metricexplorer_index') {
+            }
+        } elseif ($route == 'ccr_metricexplorer_index') {
+            if (
+                $exception instanceof AccessDeniedHttpException
+                || $exception instanceof AccessDeniedException
+            ) {
                 $statusCode = Response::HTTP_UNAUTHORIZED;
                 $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
                 $content['code'] = 103;
             }
-        } elseif ($exception instanceof UnauthorizedHttpException) {
-            if (str_starts_with($route, 'ccr_warehouseexport_')) {
+        } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
+            if ($exception instanceof UnauthorizedHttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-            } elseif ($route == 'legacy_user_interface') {
+            }
+        } elseif ($route == 'legacy_user_interface') {
+            if ($exception instanceof UnauthorizedHttpException) {
                 $statusCode = Response::HTTP_UNAUTHORIZED;
             }
-        } elseif ($exception instanceof AuthenticationException) {
-            if ($route == 'ccr_metricexplorer_createquery') {
-                # Yes, this is supposed to be 'creatQuery' without an 'e'
-                $content['action'] = 'creatQuery';
-                $content['message'] = $error_during_authorization_message;
-                unset($content['code']);
-                unset($content['total']);
-                unset($content['totalCount']);
-                unset($content['results']);
-                unset($content['data']);
-                unset($content['count']);
-            } elseif ($route == 'ccr_metricexplorer_updatequerybyid') {
-                $content['action'] = 'updateQuery';
-                $content['message'] = $error_during_authorization_message;
-                unset($content['code']);
-                unset($content['total']);
-                unset($content['totalCount']);
-                unset($content['results']);
-                unset($content['data']);
-                unset($content['count']);
-            } elseif (
-                $route == 'ccr_warehouseexport_createrequest'
-                || $route == 'ccr_warehouseexport_getrequests'
-                || $route == 'ccr_warehouseexport_getrealms'
-                || str_starts_with($route, 'ccr_warehouse_getdimensions')
-                || str_starts_with($route, 'ccr_warehouse_getaggregatedata')
-                || str_starts_with($route, 'ccr_warehouse_searchhistory')
-                || $route == 'ccr_dashboard_setlayout'
-                || $route == 'ccr_user_getcurrentapitoken'
-                || $route == 'get_current_user'
-                || $route == 'ccr_user_createapitoken'
-                || $route == 'ccr_internaldashboard_admin_resetusertourviewed'
-                || str_starts_with($route,'ccr_warehouse_searchjobs')
-            ) {
-                $content['message'] = $error_during_authorization_message;
-                $content['code'] = 0;
-            } elseif (
-                $route == 'ccr_organization_upgrademember'
-                || $route == 'ccr_organization_downgrademember'
-                || $route == 'ccr_organization_index'
-            ) {
-                $content = [
-                    "status" => "not_a_center_director",
-                    "success" => false,
-                    "totalCount" => 0,
-                    "message" => "not_a_center_director",
-                    "data" => []
-                ];
-                $statusCode = Response::HTTP_OK;
-            } elseif ($route == 'ccr_chartpool_index') {
-                $statusCode = Response::HTTP_OK;
-            }
-        } elseif ($exception instanceof NotFoundHttpException) {
-            if ($route == 'ccr_user_createapitoken') {
+        }
+        if ($route == 'ccr_user_createapitoken') {
+            if ($exception instanceof NotFoundHttpException) {
                 $content = [
                     'message' => 'API token not found.'
                 ];
                 $statusCode = Response::HTTP_NOT_FOUND;
             }
-        } elseif ($exception instanceof InsufficientAuthenticationException) {
-            if ($route == 'ccr_metricexplorer_index') {
-                $this->logger->debug('InsufficientAuthenticationException');
-            }
-        } elseif ($exception instanceof \DataWarehouse\Query\Exceptions\AccessDeniedException) {
-            if ($route == 'ccr_metricexplorer_index') {
+        } elseif ($route == 'ccr_metricexplorer_index') {
+            if ($exception instanceof \DataWarehouse\Query\Exceptions\AccessDeniedException) {
                 $statusCode = Response::HTTP_UNAUTHORIZED;
             }
         } else {
