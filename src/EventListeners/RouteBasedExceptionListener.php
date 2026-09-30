@@ -181,6 +181,9 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
+        } elseif ($route == 'ccr_reportbuilder_index') {
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
         } elseif ($route == 'get_current_user') {
             if (
                 $exception instanceof UnauthorizedHttpException
@@ -203,6 +206,9 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
+        } elseif ($route == 'legacy_user_interface') {
+            $response = new JsonResponse($content, $statusCode);
+            $event->setResponse($response);
         }
     }
 
