@@ -126,7 +126,6 @@ class RouteBasedExceptionListener
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof AccessDeniedException
             ) {
-                $statusCode = Response::HTTP_FORBIDDEN;
                 $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
                 $content['code'] = 103;
                 $response = new JsonResponse($content, $statusCode);
@@ -190,8 +189,10 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_reportbuilder_index') {
+            if ($exception instanceof InsufficientAuthenticationException) {
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
+            }
         } elseif ($route == 'get_current_user') {
             if (
                 $exception instanceof UnauthorizedHttpException
