@@ -85,11 +85,7 @@ class ReportBuilderController extends BaseController
     #[Route('/reports/builder/list', methods: ['GET'])]
     public function getReports(Request $request): Response
     {
-        try {
-            $user = $this->getXDUser();
-        } catch(Exception $e) {
-            return $this->json(buildError($e), 401);
-        }
+        $user = $this->getXDUser();
 
         $reportManager = new \XDReportManager($user);
 
@@ -109,11 +105,7 @@ class ReportBuilderController extends BaseController
     #[Route('/reports/builder/charts', methods: ['POST'])]
     public function getAvailableCharts(Request $request): Response
     {
-        try {
-            $user = $this->getXDUser();
-        } catch(Exception $e) {
-            return $this->json(buildError($e), 401);
-        }
+        $user = $this->getXDUser();
 
         $reportManager = new \XDReportManager($user);
         return $this->json([
@@ -480,12 +472,7 @@ class ReportBuilderController extends BaseController
     #[Route('/reports/builder/templates', methods: ['GET'])]
     public function getTemplates(Request $request): Response
     {
-        try {
-            $user = $this->getXDUser();
-        } catch (Exception $e) {
-            return $this->json(buildError($e), 401);
-        }
-
+        $user = $this->getXDUser();
 
         $templates = \XDReportManager::enumerateReportTemplates($user->getRoles());
         // We do not want to show the "Dashboard Tab Reports"

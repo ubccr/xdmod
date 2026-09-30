@@ -55,6 +55,7 @@ class RouteBasedExceptionListener
             if (
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof AccessDeniedException
+                || $exception instanceof InsufficientAuthenticationException
             ) {
                 $statusCode = Response::HTTP_FORBIDDEN;
                 $content = [
@@ -108,6 +109,11 @@ class RouteBasedExceptionListener
                 ];
                 $statusCode = Response::HTTP_OK;
             }
+        } elseif ($route == 'ccr_dashboard_setlayout') {
+            if ($exception instanceof InsufficientAuthenticationException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+            }
         } elseif ($route == 'ccr_metricexplorer_index') {
             if (
                 $exception instanceof AccessDeniedHttpException
@@ -131,6 +137,12 @@ class RouteBasedExceptionListener
                 $content = [
                     'message' => 'API token not found.'
                 ];
+                $statusCode = Response::HTTP_NOT_FOUND;
+            } elseif ($exception instanceof InsufficientAuthenticationException) {
+            }
+        } elseif ($route == 'ccr_user_getcurrentapitoken') {
+            if ($exception instanceof InsufficientAuthenticationException) {
+                $content['message'] = $error_during_authorization_message;
                 $statusCode = Response::HTTP_NOT_FOUND;
             }
         } elseif ($route == 'ccr_metricexplorer_index') {
@@ -166,7 +178,6 @@ class RouteBasedExceptionListener
                 $exception instanceof UnauthorizedHttpException
                 || $exception instanceof InsufficientAuthenticationException
             ) {
-                $content['message'] = '';
             }
         } elseif ($route == 'get_current_user') {
             if (
@@ -174,6 +185,17 @@ class RouteBasedExceptionListener
                 || $exception instanceof InsufficientAuthenticationException
             ) {
                 $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+            }
+        } elseif (
+            str_starts_with($route, 'ccr_warehouse_createhistory')
+            || str_starts_with($route, 'ccr_warehouse_updatehistory')
+            || str_starts_with($route, 'ccr_warehouse_deletehistory')
+            || str_starts_with($route, 'ccr_warehouse_deleteallhistory')
+        ) {
+            if ($exception instanceof InsufficientAuthenticationException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
             }
         } else {
             return;
