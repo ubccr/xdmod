@@ -128,8 +128,7 @@ class RouteBasedExceptionListener
             if ($exception instanceof UnauthorizedHttpException) {
                 $statusCode = Response::HTTP_UNAUTHORIZED;
             }
-        }
-        if ($route == 'ccr_user_createapitoken') {
+        } elseif ($route == 'ccr_user_createapitoken') {
             if ($exception instanceof NotFoundHttpException) {
                 $content = [
                     'message' => 'API token not found.'
