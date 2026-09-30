@@ -68,6 +68,8 @@ class RouteBasedExceptionListener
                     'message' => $error_during_authorization_message,
                     'code' => 0
                 ];
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
         } elseif (
@@ -90,6 +92,8 @@ class RouteBasedExceptionListener
                     'message' => 'not_a_manager',
                     'data' => array()
                 ];
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         } elseif (
             $route == 'ccr_organization_upgrademember'
@@ -108,11 +112,15 @@ class RouteBasedExceptionListener
                     "data" => []
                 ];
                 $statusCode = Response::HTTP_OK;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         } elseif ($route == 'ccr_dashboard_setlayout') {
             if ($exception instanceof InsufficientAuthenticationException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         } elseif ($route == 'ccr_metricexplorer_index') {
             if (
@@ -122,15 +130,15 @@ class RouteBasedExceptionListener
                 $statusCode = Response::HTTP_UNAUTHORIZED;
                 $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
                 $content['code'] = 103;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
             if ($exception instanceof UnauthorizedHttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-            }
-        } elseif ($route == 'legacy_user_interface') {
-            if ($exception instanceof UnauthorizedHttpException) {
-                $statusCode = Response::HTTP_UNAUTHORIZED;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         } elseif ($route == 'ccr_user_createapitoken') {
             if ($exception instanceof NotFoundHttpException) {
@@ -138,46 +146,40 @@ class RouteBasedExceptionListener
                     'message' => 'API token not found.'
                 ];
                 $statusCode = Response::HTTP_NOT_FOUND;
-            } elseif ($exception instanceof InsufficientAuthenticationException) {
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         } elseif ($route == 'ccr_user_getcurrentapitoken') {
             if ($exception instanceof InsufficientAuthenticationException) {
                 $content['message'] = $error_during_authorization_message;
-                $statusCode = Response::HTTP_NOT_FOUND;
-            }
-        } elseif ($route == 'ccr_metricexplorer_index') {
-            if ($exception instanceof \DataWarehouse\Query\Exceptions\AccessDeniedException) {
-                $statusCode = Response::HTTP_UNAUTHORIZED;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         } elseif ($route == 'ccr_metricexplorer_createquery') {
             if (
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof InsufficientAuthenticationException
             ) {
-                $statusCode = Response::HTTP_UNAUTHORIZED;
                 $content = [
                     'success' => false,
                     'message' => $error_during_authorization_message,
                     'action' => 'creatQuery'
                 ];
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         } elseif ($route == 'ccr_metricexplorer_updatequerybyid') {
             if (
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof InsufficientAuthenticationException
             ) {
-                $statusCode = Response::HTTP_UNAUTHORIZED;
                 $content = [
                     'success' => false,
                     'message' => $error_during_authorization_message,
                     'action' => 'updateQuery'
                 ];
-            }
-        } elseif ($route == 'ccr_reportbuilder_index') {
-            if (
-                $exception instanceof UnauthorizedHttpException
-                || $exception instanceof InsufficientAuthenticationException
-            ) {
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         } elseif ($route == 'get_current_user') {
             if (
@@ -186,6 +188,8 @@ class RouteBasedExceptionListener
             ) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         } elseif (
             str_starts_with($route, 'ccr_warehouse_createhistory')
@@ -196,12 +200,10 @@ class RouteBasedExceptionListener
             if ($exception instanceof InsufficientAuthenticationException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
-        } else {
-            return;
         }
-        $response = new JsonResponse($content, $statusCode);
-        $event->setResponse($response);
     }
 
     private function generateMetricExplorerQueryResponse(string $action = '') : string
