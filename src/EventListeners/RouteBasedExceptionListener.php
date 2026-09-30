@@ -25,7 +25,7 @@ use Symfony\Component\Security\Core\Exception\InsufficientAuthenticationExceptio
  */
 class RouteBasedExceptionListener
 {
-    public function __construct(private LoggerInterface $logger) {
+    public function __construct(private Security $security, private LoggerInterface $logger) {
         $this->logger = $logger;
     }
 
