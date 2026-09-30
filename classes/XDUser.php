@@ -2437,7 +2437,7 @@ SQL;
         $init_time = $usec + $sec;
 
         $session_id = $session->getId();
-        $user_id = $user->getUserID();
+        $user_id = $this->getUserID();
 
         $session_token = md5($user_id . $session_id . $init_time);
 
