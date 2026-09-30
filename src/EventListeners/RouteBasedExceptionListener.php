@@ -51,9 +51,26 @@ class RouteBasedExceptionListener
         ];
         $error_during_authorization_message = 'An error was encountered while attempting to process the requested authorization procedure.';
         // Support Legacy format for the Internal Dashboard controller endpoints
-        if (
+        if ($route == 'ccr_internaldashboard_admin_resetusertourviewed') {
+            if (
+                $exception instanceof AccessDeniedHttpException
+                || $exception instanceof AccessDeniedException
+            ) {
+                $statusCode = Response::HTTP_FORBIDDEN;
+                $content = [
+                    'success' => false,
+                    'count' => 0,
+                    'total' => 0,
+                    'totalCount' => 0,
+                    'results' => [],
+                    'data' => [],
+                    'message' => $error_during_authorization_message,
+                    'code' => 0
+                ];
+            }
+        // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
+        } elseif (
             str_starts_with($route, 'ccr_internaldashboard_')
-            && !str_ends_with($route, '_resetusertourviewed')
         ) {
             if (
                 $exception instanceof AccessDeniedHttpException
@@ -71,24 +88,6 @@ class RouteBasedExceptionListener
                     'totalCount' => 0,
                     'message' => 'not_a_manager',
                     'data' => array()
-                ];
-            }
-        // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
-        } elseif ($route == 'ccr_internaldashboard_admin_resetusertourviewed') {
-            if (
-                $exception instanceof AccessDeniedHttpException
-                || $exception instanceof AccessDeniedException
-            ) {
-                $statusCode = Response::HTTP_FORBIDDEN;
-                $content = [
-                    'success' => false,
-                    'count' => 0,
-                    'total' => 0,
-                    'totalCount' => 0,
-                    'results' => [],
-                    'data' => [],
-                    'message' => $error_during_authorization_message,
-                    'code' => 0
                 ];
             }
         } elseif (
@@ -138,11 +137,42 @@ class RouteBasedExceptionListener
             if ($exception instanceof \DataWarehouse\Query\Exceptions\AccessDeniedException) {
                 $statusCode = Response::HTTP_UNAUTHORIZED;
             }
+        } elseif ($route == 'ccr_metricexplorer_createquery') {
+            if ($exception instanceof AccessDeniedHttpException) {
+                $statusCode = Response::HTTP_UNAUTHORIZED;
+                $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
+                // Yes this is supposed to be 'creatQuery'
+                $content['action'] = 'creatQuery';
+                unset($content['count']);
+                unset($content['total']);
+                unset($content['totalCount']);
+                unset($content['results']);
+                unset($content['data']);
+            }
+        } elseif ($route == 'ccr_metricexplorer_updatequerybyid') {
+            if ($exception instanceof AccessDeniedHttpException) {
+                $statusCode = Response::HTTP_UNAUTHORIZED;
+                $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
+                $content['action'] = 'updateQuery';
+                unset($content['count']);
+                unset($content['total']);
+                unset($content['totalCount']);
+                unset($content['results']);
+                unset($content['data']);
+            }
+        } elseif ($route == 'ccr_reportbuilder_index') {
+            if ($exception instanceof UnauthorizedHttpException) {
+
+            }
         } else {
             return;
         }
         $response = new JsonResponse($content, $statusCode);
         $event->setResponse($response);
-        return;
+    }
+
+    private function generateMetricExplorerQueryResponse(string $action = '') : void
+    {
+        return $action;
     }
 }

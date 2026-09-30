@@ -42,37 +42,33 @@ class ReportBuilderController extends BaseController
             return $this->json(buildError('operation_not_defined'));
         }
 
-        try {
-            switch ($operation) {
-                case 'build_from_template':
-                    $templateId = $this->getStringParam($request, 'template_id');
-                    return $this->getReportFromTemplate($request, $templateId);
-                case 'download_report':
-                    return $this->downloadReport($request);
-                case 'enum_available_charts':
-                    return $this->getAvailableCharts($request);
-                case 'enum_reports':
-                    return $this->getReports($request);
-                case 'enum_templates':
-                    return $this->getTemplates($request);
-                case 'fetch_report_data':
-                    $reportId = $this->getStringParam($request, 'selected_report', true);
-                    return $this->getReportData($request, $reportId);
-                case 'get_new_report_name':
-                    return $this->getNewReportName($request);
-                case 'get_preview_data':
-                    return $this->getPreviewData($request);
-                case 'remove_chart_from_pool':
-                    return $this->removeChartFromPool($request);
-                case 'remove_report_by_id':
-                    return $this->removeReportsById($request);
-                case 'save_report':
-                    return $this->saveReport($request);
-                case 'send_report':
-                    return $this->sendReport($request);
-            }
-        } catch(\Exception $e) {
-            return $this->json(buildError($e));
+        switch ($operation) {
+            case 'build_from_template':
+                $templateId = $this->getStringParam($request, 'template_id');
+                return $this->getReportFromTemplate($request, $templateId);
+            case 'download_report':
+                return $this->downloadReport($request);
+            case 'enum_available_charts':
+                return $this->getAvailableCharts($request);
+            case 'enum_reports':
+                return $this->getReports($request);
+            case 'enum_templates':
+                return $this->getTemplates($request);
+            case 'fetch_report_data':
+                $reportId = $this->getStringParam($request, 'selected_report', true);
+                return $this->getReportData($request, $reportId);
+            case 'get_new_report_name':
+                return $this->getNewReportName($request);
+            case 'get_preview_data':
+                return $this->getPreviewData($request);
+            case 'remove_chart_from_pool':
+                return $this->removeChartFromPool($request);
+            case 'remove_report_by_id':
+                return $this->removeReportsById($request);
+            case 'save_report':
+                return $this->saveReport($request);
+            case 'send_report':
+                return $this->sendReport($request);
         }
 
         return $this->json(buildError('invalid_operation_specified'));
@@ -85,6 +81,7 @@ class ReportBuilderController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('ROLE_USER')]
     #[Route('/reports/builder/list', methods: ['GET'])]
     public function getReports(Request $request): Response
     {
@@ -292,6 +289,7 @@ class ReportBuilderController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('ROLE_USER')]
     #[Route('/reports/builder/save', methods: ['POST'])]
     public function saveReport(Request $request): Response
     {
