@@ -162,6 +162,7 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
     {
         $user = $token->getUser();
         $xdUser = XDUser::getUserByUserName($user->getUserIdentifier());
+        $xdUser->postLogin($request->getSession());
         $response = new JsonResponse([
             'success' => true,
             'results' => [

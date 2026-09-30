@@ -8,6 +8,7 @@ use Models\Services\Acls;
 use Models\Services\Organizations;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
 
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -2416,6 +2417,66 @@ SQL;
         }
 
         return $results;
+    }
+
+    /**
+     * Executes any actions that need to be conducted immediately after a user is logged into XDMoD.
+     *
+     * @throws Exception if there is a problem executing any of the required post logged in steps.
+     */
+    public function postLogin(Session $session) {
+        if (!$this->isSticky()) {
+            $this->updatePerson();
+            $this->synchronizeOrganization();
+        }
+
+        // XDSessionManager::recordLogin($user)
+        $pdo = DB::factory('database');
+
+        list($usec, $sec) = explode(' ', microtime());
+        $init_time = $usec + $sec;
+
+        $session_id = $session->getId();
+        $user_id = $user->getUserID();
+
+        $session_token = md5($user_id . $session_id . $init_time);
+
+        $ip_address = $session->get('REMOTE_ADDR');
+        $user_agent = $session->get('HTTP_USER_AGENT');
+
+        $record_query = "
+            INSERT INTO SessionManager (
+                session_token,
+                session_id,
+                user_id,
+                ip_address,
+                user_agent,
+                init_time,
+                last_active,
+                used_logout
+            ) VALUES (
+                :session_token,
+                :session_id,
+                :user_id,
+                :ip_address,
+                :user_agent,
+                :init_time,
+                :last_active,
+                0
+            )
+        ";
+
+        $pdo->execute($record_query, array(
+            ':session_token' => $session_token,
+            ':session_id'    => $session_id,
+            ':user_id'       => $user_id,
+            ':ip_address'    => $ip_address,
+            ':user_agent'    => $user_agent,
+            ':init_time'     => $init_time,
+            ':last_active'   => $init_time,
+        ));
+
+        $this->currentToken = $session_token;
     }
 
     /**
