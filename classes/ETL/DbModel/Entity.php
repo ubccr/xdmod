@@ -233,6 +233,42 @@ class Entity extends Loggable
         return $value;
     }  // filterAndVerifyValue()
 
+    /**
+     * MariaDB 10.6 renamed the canonical form of the 3 byte UTF-8 character set from
+     * "utf8" to "utf8mb3" and reports the new name via information_schema. The character
+     * set itself did not change, so a table declared as "utf8" but discovered as
+     * "utf8mb3" is not actually different and should not generate an ALTER TABLE.
+     *
+     * Normalize to the legacy "utf8" spelling rather than to "utf8mb3" because "utf8" is
+     * accepted as a character set name by every supported server (10.3 through 12.x)
+     * while "utf8mb3" is unknown to MariaDB 10.5 and earlier. Generated DDL therefore
+     * remains valid across the whole supported range.
+     *
+     * Only the utf8mb3 family is folded. utf8mb4 is a different character set and is
+     * returned untouched.
+     *
+     * @param ?string $name A character set or collation name
+     * @return ?string The normalized name
+     */
+    protected function normalizeCharsetName(?string $name) : ?string
+    {
+        if ( null === $name ) {
+            return $name;
+        }
+
+        if ( 0 === strcasecmp($name, 'utf8mb3') ) {
+            return 'utf8';
+        }
+
+        // e.g. utf8mb3_unicode_ci -> utf8_unicode_ci, utf8mb3_uca1400_ai_ci -> utf8_uca1400_ai_ci
+
+        if ( 0 === stripos($name, 'utf8mb3_') ) {
+            return 'utf8' . substr($name, strlen('utf8mb3'));
+        }
+
+        return $name;
+    }
+
     /* ------------------------------------------------------------------------------------------
      * @return The character used to quote system identifiers
      * ------------------------------------------------------------------------------------------

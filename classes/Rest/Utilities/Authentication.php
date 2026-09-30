@@ -202,6 +202,7 @@ class Authentication
         }
 
         $session_id = session_id();
+        session_write_close();
 
         // Without IP restriction ... relaxed, especially for
         // very mobile users (in which network hopping is

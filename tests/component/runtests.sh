@@ -2,6 +2,10 @@
 BASEDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $BASEDIR/../ci/runtest-include.sh
 echo "Component tests beginning:" `date +"%a %b %d %H:%M:%S.%3N %Y"`
+
+# Make sure that we exit if we encounter a non-zero exit code.
+set -e
+
 # Implode an array using the specified separator
 
 function implode_array {

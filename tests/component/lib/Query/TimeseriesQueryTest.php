@@ -71,7 +71,7 @@ class TimeseriesQueryTest extends \PHPUnit\Framework\TestCase
 
         $generated = $query->getQueryString(10, 0, 'person_id = 82');
         $expected  =<<<SQL
-SELECT STRAIGHT_JOIN
+SELECT
   duration.id as 'day_id',
   DATE(duration.day_start) as 'day_short_name',
   DATE(duration.day_start) as 'day_name',
@@ -90,7 +90,12 @@ WHERE
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
 GROUP BY duration.id,
-  person.id
+  duration.day_start,
+  duration.day_start_ts,
+  person.id,
+  person.short_name,
+  person.long_name,
+  person.order_id
 HAVING person_id = 82
 ORDER BY duration.id ASC,
   person.order_id ASC
@@ -103,7 +108,7 @@ SQL;
         $generatedAgg = $aggQuery->getQueryString(10, 0);
 
         $expectedAgg =<<<SQL
-SELECT STRAIGHT_JOIN
+SELECT
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -117,7 +122,10 @@ WHERE
   duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
-GROUP BY person.id
+GROUP BY person.id,
+  person.short_name,
+  person.long_name,
+  person.order_id
 ORDER BY job_count desc,
   person.order_id ASC
 LIMIT 10 OFFSET 0
