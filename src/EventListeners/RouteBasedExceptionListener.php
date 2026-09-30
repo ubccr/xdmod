@@ -54,7 +54,6 @@ class RouteBasedExceptionListener
         if (
             $exception instanceof AccessDeniedHttpException
             || $exception instanceof AccessDeniedException
-            || $exception instanceof \DataWarehouse\Query\Exceptions\AccessDeniedException
         ) {
             if (str_starts_with($route, 'ccr_internaldashboard_')) {
                     $statusCode = Response::HTTP_OK;
@@ -172,6 +171,10 @@ class RouteBasedExceptionListener
         } elseif ($exception instanceof InsufficientAuthenticationException) {
             if ($route == 'ccr_metricexplorer_index') {
                 $this->logger->debug('InsufficientAuthenticationException');
+            }
+        } elseif ($exception instanceof \DataWarehouse\Query\Exceptions\AccessDeniedException) {
+            if ($route == 'ccr_metricexplorer_index') {
+                $statusCode = Response::HTTP_UNAUTHORIZED;
             }
         } else {
             return;
