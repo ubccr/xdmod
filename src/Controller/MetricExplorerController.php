@@ -374,21 +374,17 @@ class MetricExplorerController extends BaseController
     {
         $operation = $this->getStringParam($request, 'operation', true);
 
-        try {
-            switch ($operation) {
-                case 'get_data':
-                    return $this->getData($request);
-                case 'get_dimension':
-                    return $this->getDimensionValues($request);
-                case 'get_dw_descripter':
-                    return $this->getDwDescriptors($request);
-                case 'get_filters':
-                    return $this->getFilters($request);
-                case 'get_rawdata':
-                    return $this->getRawData($request);
-            }
-        } catch (\Exception $e) {
-            return $this->json(buildError($e));
+        switch ($operation) {
+            case 'get_data':
+                return $this->getData($request);
+            case 'get_dimension':
+                return $this->getDimensionValues($request);
+            case 'get_dw_descripter':
+                return $this->getDwDescriptors($request);
+            case 'get_filters':
+                return $this->getFilters($request);
+            case 'get_rawdata':
+                return $this->getRawData($request);
         }
 
         return $this->json([
