@@ -42,7 +42,7 @@
             }
         },
         "data_sort_order": null,
-        "description_html": "A categorization of jobs into discrete groups based on the total linear time each job waited, measured from the time each job became eligible to run. Jobs for which an eligible time is not reported are excluded.",
+        "description_html": "A categorization of jobs into discrete groups based on the total time each job waited, measured from the time each job became eligible to run. Jobs for which an eligible time is not reported are excluded.",
         "name": "Job Wait Time: Eligible Time"
     },
     "jobwaittime": {
