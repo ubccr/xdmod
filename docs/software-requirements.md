@@ -18,7 +18,7 @@ Open XDMoD requires the following software:
     - [XMLWriter][php-xmlwriter]
     - [mbstring][php-mbstring]
     - [APCu][php-pecl-apcu]
-- [nodejs][] 22
+- [nodejs][] 24
 - [libreoffice][]
     - Only the libreoffice-writer component of libreoffice is used.
 - [Chromium][]
@@ -87,12 +87,12 @@ dnf install -y php make libzip-devel php-pear php-devel \
 ```
 
 **NOTE**: The nodejs version that is enabled by default in Rocky 8 is nodejs 10. Open
-XDMoD requires nodejs 22 which can be installed on Rocky 8 using the  nodejs 22 module
+XDMoD requires nodejs 24 which can be installed on Rocky 8 using the  nodejs 24 module
 stream as follows:
 
 ```shell
 dnf module -y reset nodejs
-dnf module -y enable nodejs:22
+dnf module -y enable nodejs:24
 dnf install -y nodejs
 ```
 

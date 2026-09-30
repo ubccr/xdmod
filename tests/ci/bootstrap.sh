@@ -43,7 +43,7 @@ cp $REPODIR/tests/ci/scripts/imagehash /root/bin
 
 # Install nodejs dependency
 dnf module reset -y nodejs
-dnf module enable -y nodejs:22
+dnf module enable -y nodejs:24
 
 # ensure php error logging is set to E_ALL (recommended setting for development)
 sed -i 's/^error_reporting = .*/error_reporting = E_ALL/' /etc/php.ini

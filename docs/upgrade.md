@@ -55,11 +55,11 @@ RPM file.
 - [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-upgrade.html)
 - [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/upgrade.html)
 
-The nodejs dependency changed from version 16 to 22. If you installed nodejs
+The nodejs dependency changed from version 16 to 24. If you installed nodejs
 using dnf modules then update the module as follows:
 
     # dnf module reset nodejs
-    # dnf module enable nodejs:22
+    # dnf module enable nodejs:24
 
 If your web server can reach GitHub via HTTPS, you can install the RPM
 package(s) directly:
@@ -111,7 +111,7 @@ files.
 
 ### Ensure software dependencies are updated
 
-The nodejs dependency is updated from 16 to 22. Update the nodejs
+The nodejs dependency is updated from 16 to 24. Update the nodejs
 version before installing the new XDMoD source package.
 
 ### Extract and Install Source Package
