@@ -37,26 +37,29 @@ class UserInterfaceController extends BaseController
     {
         $operation = $this->getStringParam($request, 'operation');
         if (empty($operation)) {
-            return $this->json(buildError('operation_not_defined'));
+            return $this->json(
+                buildError('operation_not_defined'),
+                Response::HTTP_BAD_REQUEST
+            );
         }
 
-        try {
-            switch ($operation) {
-                case 'get_charts':
-                    return $this->getCharts($request);
-                case 'get_data':
-                    return $this->getData($request);
-                case 'get_menus':
-                    return $this->getMenus($request);
-                case 'get_param_descriptions':
-                    return $this->getParamDescriptions($request);
-                case 'get_tabs':
-                    return $this->getTabs($request);
-            }
-        } catch (\Exception $e) {
-            return $this->json(buildError($e));
+        switch ($operation) {
+            case 'get_charts':
+                return $this->getCharts($request);
+            case 'get_data':
+                return $this->getData($request);
+            case 'get_menus':
+                return $this->getMenus($request);
+            case 'get_param_descriptions':
+                return $this->getParamDescriptions($request);
+            case 'get_tabs':
+                return $this->getTabs($request);
         }
-        return $this->json(buildError('invalid_operation_specified'));
+
+        return $this->json(
+            buildError('invalid_operation_specified'),
+            Response::HTTP_BAD_REQUEST
+        );
     }
 
     /**

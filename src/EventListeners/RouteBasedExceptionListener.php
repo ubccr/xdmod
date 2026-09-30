@@ -99,9 +99,8 @@ class RouteBasedExceptionListener
                 ];
                 $statusCode = Response::HTTP_OK;
             } elseif ($route == 'ccr_metricexplorer_index') {
-                $accessDenied = new DataWarehouse\Query\Exceptions\AccessDeniedException();
                 $statusCode = Response::HTTP_UNAUTHORIZED;
-                $content['message'] = $accessDenied->getMessage();
+                $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
                 $content['code'] = 103;
             }
         } elseif ($exception instanceof UnauthorizedHttpException) {
@@ -174,6 +173,8 @@ class RouteBasedExceptionListener
             if ($route == 'ccr_metricexplorer_index') {
                 $this->logger->debug('InsufficientAuthenticationException');
             }
+        } else {
+            return;
         }
         $response = new JsonResponse($content, $statusCode);
         $event->setResponse($response);

@@ -390,7 +390,8 @@ class MetricExplorerController extends BaseController
         return $this->json([
             'success' => false,
             'message' => 'Unknown Operation provided.'
-        ]);
+        ],
+        Response::HTTP_BAD_REQUEST);
     }
 
 
