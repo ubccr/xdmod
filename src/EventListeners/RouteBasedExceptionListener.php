@@ -74,7 +74,7 @@ class RouteBasedExceptionListener
                 ];
             }
         // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
-        } elseif ($route == 'ccr_internaldashboard_admin_resetusertourviewed')) {
+        } elseif ($route == 'ccr_internaldashboard_admin_resetusertourviewed') {
             if (
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof AccessDeniedException
@@ -90,8 +90,7 @@ class RouteBasedExceptionListener
                     'message' => $error_during_authorization_message,
                     'code' => 0
                 ];
-        }
-
+            }
         } elseif (
             $route == 'ccr_organization_upgrademember'
             || $route == 'ccr_organization_downgrademember'
