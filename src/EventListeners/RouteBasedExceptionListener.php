@@ -162,7 +162,7 @@ class RouteBasedExceptionListener
             }
         } elseif ($route == 'ccr_reportbuilder_index') {
             if ($exception instanceof UnauthorizedHttpException) {
-
+                $content['message'] = '';
             }
         } else {
             return;
@@ -171,7 +171,7 @@ class RouteBasedExceptionListener
         $event->setResponse($response);
     }
 
-    private function generateMetricExplorerQueryResponse(string $action = '') : void
+    private function generateMetricExplorerQueryResponse(string $action = '') : string
     {
         return $action;
     }
