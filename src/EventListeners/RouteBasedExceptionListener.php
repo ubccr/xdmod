@@ -135,6 +135,7 @@ class RouteBasedExceptionListener
             if (
                 $exception instanceof UnauthorizedHttpException
                 || $exception instanceof AccessDeniedException
+                || $exception instanceof InsufficientAuthenticationException
             ) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
@@ -156,6 +157,13 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_user_getcurrentapitoken') {
+            if ($exception instanceof InsufficientAuthenticationException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
+        } elseif ($route == 'ccr_user_revokeapitoken') {
             if ($exception instanceof InsufficientAuthenticationException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
