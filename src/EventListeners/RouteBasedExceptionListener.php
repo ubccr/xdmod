@@ -58,18 +58,15 @@ class RouteBasedExceptionListener
             if (
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof AccessDeniedException
-                || $exception instanceof InsufficientAuthenticationException
             ) {
-                $content = [
-                    'success' => false,
-                    'count' => 0,
-                    'total' => 0,
-                    'totalCount' => 0,
-                    'results' => [],
-                    'data' => [],
-                    'message' => $error_during_authorization_message,
-                    'code' => 0
-                ];
+                $statusCode = Response::HTTP_FORBIDDEN;
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            } elseif ($exception instanceof InsufficientAuthenticationException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
@@ -129,7 +126,7 @@ class RouteBasedExceptionListener
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof AccessDeniedException
             ) {
-                $statusCode = Response::HTTP_UNAUTHORIZED;
+                $statusCode = Response::HTTP_FORBIDDEN;
                 $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
                 $content['code'] = 103;
                 $response = new JsonResponse($content, $statusCode);
@@ -138,7 +135,7 @@ class RouteBasedExceptionListener
         } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
             if (
                 $exception instanceof UnauthorizedHttpException
-                || $exception instanceof InsufficientAuthorizationException
+                || $exception instanceof AccessDeniedException
             ) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
@@ -146,7 +143,12 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_user_createapitoken') {
-            if ($exception instanceof NotFoundHttpException) {
+            if ($exception instanceof InsufficientAuthenticationException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            } elseif ($exception instanceof NotFoundHttpException) {
                 $content = [
                     'message' => 'API token not found.'
                 ];
