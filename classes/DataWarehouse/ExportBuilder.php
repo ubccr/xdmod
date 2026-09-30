@@ -228,41 +228,6 @@ class ExportBuilder
     }
 
     /**
-     * Get the output format from a request.
-     *
-     * @param array $request The HTTP request data.
-     * @param string $default The default output format
-     *     (defaults to "jsonstore").
-     * @param array $format_subset The allowed subset of formats.  If
-     *     the format specified by the request is not in this array,
-     *     the default format will be used.
-     */
-    public static function getFormat(
-        array $request,
-        $default = 'jsonstore',
-        array $formats_subset = array()
-    ) {
-        $format = $default;
-
-        if (isset($request['format'])) {
-            $f = strtolower($request['format']);
-
-            if (
-                isset(static::$supported_formats[$f])
-                && (
-                    count($formats_subset) == 0
-                    ||
-                    (count($formats_subset) > 0 && array_search($f, $formats_subset) !== false)
-                )
-            ) {
-                $format = $f;
-            }
-        }
-
-        return $format;
-    }
-
-    /**
      * Export data.
      *
      * @param array $exportedDatas The data to export.
@@ -619,5 +584,29 @@ class ExportBuilder
         $name = str_replace('.', '', $name);
 
         return $name;
+    }
+
+    /** Validates that the format requested by the user is located in the set of formats that are supported and either
+     * all formats are allowed ( signified by there being no $allowedFormats ) or the requested format was found in the
+     * set of allowed formats. If valid the requested format is returned. If no requested format is provided then the
+     * default value will be returned.
+     *
+     * @param string $requestedFormat
+     * @param string $default
+     * @param array $allowedFormats
+     * @return string
+     */
+    public static function validateFormat(string $requestedFormat, string $default, array $allowedFormats): string
+    {
+        if (!isset($requestedFormat)) {
+            return $default;
+        }
+        $requestedFormat = strtolower($requestedFormat);
+        $formatSupported = isset(self::$supported_formats[$requestedFormat]);
+        $noFormatSubset = count($allowedFormats) === 0;
+        $requestedFormatInSubset = in_array($requestedFormat, $allowedFormats);
+
+
+        return $formatSupported && ($noFormatSubset || $requestedFormatInSubset) ? $requestedFormat : $default;
     }
 }
