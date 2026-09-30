@@ -194,8 +194,6 @@ class ReportBuilderController extends BaseController
     #[Route('/controllers/report_builder.php/{report_name}', methods: ["GET"])]
     public function downloadReport(Request $request, string $reportName = ''): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $reportLoc = $this->getStringParam($request, 'report_loc');
         if (empty($reportLoc)) {
             return $this->json([

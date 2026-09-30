@@ -138,7 +138,10 @@ class RouteBasedExceptionListener
                 $statusCode = Response::HTTP_UNAUTHORIZED;
             }
         } elseif ($route == 'ccr_metricexplorer_createquery') {
-            if ($exception instanceof AccessDeniedHttpException) {
+            if (
+                $exception instanceof AccessDeniedHttpException
+                || $exception instanceof InsufficientAuthenticationException
+            ) {
                 $statusCode = Response::HTTP_UNAUTHORIZED;
                 $content = [
                     'success' => false,
@@ -147,7 +150,10 @@ class RouteBasedExceptionListener
                 ];
             }
         } elseif ($route == 'ccr_metricexplorer_updatequerybyid') {
-            if ($exception instanceof AccessDeniedHttpException) {
+            if (
+                $exception instanceof AccessDeniedHttpException
+                || $exception instanceof InsufficientAuthenticationException
+            ) {
                 $statusCode = Response::HTTP_UNAUTHORIZED;
                 $content = [
                     'success' => false,
@@ -156,8 +162,18 @@ class RouteBasedExceptionListener
                 ];
             }
         } elseif ($route == 'ccr_reportbuilder_index') {
-            if ($exception instanceof UnauthorizedHttpException) {
+            if (
+                $exception instanceof UnauthorizedHttpException
+                || $exception instanceof InsufficientAuthenticationException
+            ) {
                 $content['message'] = '';
+            }
+        } elseif ($route == 'get_current_user') {
+            if (
+                $exception instanceof UnauthorizedHttpException
+                || $exception instanceof InsufficientAuthenticationException
+            ) {
+                $content['message'] = $error_during_authorization_message;
             }
         } else {
             return;

@@ -134,7 +134,7 @@ class ReportBuilderTest extends BaseTest
         } else {
             // expect text data back
             $this->assertEquals('text/html; charset=UTF-8', $curlinfo['content_type']);
-            $this->assertEquals($expected, $response[0]);
+            $this->assertEquals($expected, $data);
         }
     }
 
