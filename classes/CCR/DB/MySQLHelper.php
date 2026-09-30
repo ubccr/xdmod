@@ -587,7 +587,7 @@ class MySQLHelper
     {
         $args = array_map('escapeshellarg', $args);
 
-        $command = 'mysql ' . implode(' ', $args);
+        $command = static::clientCommandName() . ' ' . implode(' ', $args);
 
         if ($input !== null) {
             $command .= ' <' . escapeshellarg($input);
@@ -596,22 +596,64 @@ class MySQLHelper
         $output    = array();
         $returnVar = 0;
         $tmpHome = xd_utilities\createTemporaryDirectory('mysql-helper-');
+        $stderrFile = tempnam(sys_get_temp_dir(), 'mysql-helper-stderr-');
 
+        // Capture stderr separately rather than folding it into stdout.
+        // Callers such as databaseExists() parse stdout as query results, and
+        // the client writes advisory notices to stderr -- for example the
+        // "Deprecated program name" warning MariaDB 11.0+ emits, and the
+        // "--ssl-verify-server-cert is disabled" notice on passwordless
+        // logins.  Either would otherwise be read as a result row.
         exec(
-            sprintf('%s %s 2>&1', 'HOME=' . escapeshellarg($tmpHome), $command),
+            sprintf(
+                '%s %s 2>%s',
+                'HOME=' . escapeshellarg($tmpHome),
+                $command,
+                escapeshellarg($stderrFile)
+            ),
             $output,
             $returnVar
         );
 
+        $stderr = (string)@file_get_contents($stderrFile);
+        @unlink($stderrFile);
         rmdir($tmpHome);
 
         if ($returnVar != 0) {
             $msg = "Command returned non-zero value '$returnVar': "
                 . implode("\n", $output);
+            if (trim($stderr) !== '') {
+                $msg .= "\n" . trim($stderr);
+            }
             throw new Exception($msg);
         }
 
         return $output;
+    }
+
+    /**
+     * Name of the MariaDB/MySQL command line client to execute.
+     *
+     * MariaDB 11.0 deprecated the "mysql" name in favour of "mariadb" and
+     * prints a notice to stderr whenever the old name is used.  Prefer the
+     * new name where it is available so the notice is never emitted, and so
+     * that the code keeps working once the compatibility symlinks are
+     * removed altogether.
+     *
+     * @return string The client executable name.
+     */
+    private static function clientCommandName()
+    {
+        static $name = null;
+
+        if ($name === null) {
+            $output    = array();
+            $returnVar = 0;
+            exec('command -v mariadb 2>/dev/null', $output, $returnVar);
+            $name = ($returnVar === 0 && count($output) > 0) ? 'mariadb' : 'mysql';
+        }
+
+        return $name;
     }
 
     /**

@@ -48,8 +48,7 @@
                 "name": "start_date",
                 "type": "datetime",
                 "comment": "The date the resource was put into commission.",
-                "nullable": false,
-                "default": "0000-00-00 00:00:00"
+                "nullable": false
             },
             {
                 "name": "start_date_ts",
