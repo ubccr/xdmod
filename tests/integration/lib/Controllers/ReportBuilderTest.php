@@ -121,8 +121,6 @@ class ReportBuilderTest extends BaseTest
     public function testDownloadReportInputValidation($params, $expected)
     {
         $this->helper->authenticate('usr');
-        $data = $this->helper->get('controllers/report_builder.php', $params);
-
         $response = $this->helper->get('controllers/report_builder.php', $params);
         $data = $response[0];
         $curlinfo = $response[1];

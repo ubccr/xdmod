@@ -140,25 +140,20 @@ class RouteBasedExceptionListener
         } elseif ($route == 'ccr_metricexplorer_createquery') {
             if ($exception instanceof AccessDeniedHttpException) {
                 $statusCode = Response::HTTP_UNAUTHORIZED;
-                $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
-                // Yes this is supposed to be 'creatQuery'
-                $content['action'] = 'creatQuery';
-                unset($content['count']);
-                unset($content['total']);
-                unset($content['totalCount']);
-                unset($content['results']);
-                unset($content['data']);
+                $content = [
+                    'success' => false,
+                    'message' => $error_during_authorization_message,
+                    'action' => 'creatQuery'
+                ];
             }
         } elseif ($route == 'ccr_metricexplorer_updatequerybyid') {
             if ($exception instanceof AccessDeniedHttpException) {
                 $statusCode = Response::HTTP_UNAUTHORIZED;
-                $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
-                $content['action'] = 'updateQuery';
-                unset($content['count']);
-                unset($content['total']);
-                unset($content['totalCount']);
-                unset($content['results']);
-                unset($content['data']);
+                $content = [
+                    'success' => false,
+                    'message' => $error_during_authorization_message,
+                    'action' => 'updateQuery'
+                ];
             }
         } elseif ($route == 'ccr_reportbuilder_index') {
             if ($exception instanceof UnauthorizedHttpException) {
