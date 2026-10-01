@@ -125,6 +125,7 @@ class RouteBasedExceptionListener
             if (
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof AccessDeniedException
+                || $exception instanceof \Datawarehouse\Query\Exceptions\AccessDeniedException
             ) {
                 $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
                 $content['code'] = 103;
@@ -223,9 +224,6 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
-        } elseif ($route == 'legacy_user_interface') {
-            $response = new JsonResponse($content, $statusCode);
-            $event->setResponse($response);
         }
     }
 
