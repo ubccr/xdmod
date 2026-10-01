@@ -73,6 +73,11 @@ class Field
         return $ret;
     }
 
+    public function getFieldIdentifier()
+    {
+        return $this->_alias;
+    }
+
     /**
      * Returns the field definition.
      *

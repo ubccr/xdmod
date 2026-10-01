@@ -71,7 +71,6 @@ class UsageExplorerJobsTest extends \PHPUnit\Framework\TestCase
             'total_node_hours',
             'total_waitduration_hours',
             'total_wallduration_hours',
-            'utilization'
         ];
 
         $groupBys = [

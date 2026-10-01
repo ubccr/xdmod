@@ -513,7 +513,7 @@ class Query extends Loggable
 
     public function addGroup(\DataWarehouse\Query\Model\Field $field)
     {
-        $this->_groups[$field->getAlias()->getName()] = $field;
+        $this->_groups["{$field->getFieldIdentifier()}"] = $field;
     }
     public function getGroups()
     {
@@ -638,7 +638,7 @@ class Query extends Loggable
         $name_field = $select_fields[ sprintf('%s_name', $primaryGroupById) ];
         $short_name_field = $select_fields[ sprintf('%s_short_name', $primaryGroupById) ];
 
-        $groups_str = implode(', ', $groups);
+        $groups_str = implode(', ', $groups) . ", name, short_name, _dimensionOrderValue";
 
         $orders = $this->getOrders();
         $num_orders = count($orders);
@@ -731,7 +731,7 @@ SQL;
     public function getQueryString($limit = null, $offset = null, $extraHavingClause = null)
     {
         $wheres = $this->getWhereConditions();
-        $groups = $this->getGroups();
+        $groups = array_keys($this->getGroups());
 
         $select_tables = $this->getSelectTables();
         $select_fields = $this->getSelectFields();

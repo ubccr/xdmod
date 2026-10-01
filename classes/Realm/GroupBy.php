@@ -957,21 +957,10 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             // sprintf('%s_id', $groupById)
 
             $alias = $this->qualifyColumnName('id', true);
-            $formula = $this->verifyAndReplaceTableAlias($this->attributeValuesQuery->getRecord('id'), $query);
-            $field = new Field($formula, $alias);
+            $field = $this->verifyAndReplaceTableAlias($this->attributeValuesQuery->getRecord('id'), $query, $alias);
             $query->addField($field);
+            $query->addGroup($field);
 
-            $cleanAlias = 'gb_' . preg_replace('/[^a-zA-Z0-9_]/', '_', $formula);
-            $query->addGroup(new Field($formula, $cleanAlias));
-
-            $formulaNoQuotes = preg_replace('/(\'.*?\'|".*?")/', '', $formula);
-            preg_match_all('/[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+/', $formulaNoQuotes, $matches);
-            if (!empty($matches[0])) {
-                foreach ($matches[0] as $baseCol) {
-                    $cleanBaseAlias = 'gb_' . str_replace('.', '_', $baseCol);
-                    $query->addGroup(new Field($baseCol, $cleanBaseAlias));
-                }
-            }
             // Add a GroupBy and Where condition for each field that is part of the key that maps a
             // dimensional attribute to the aggregate table.
 
@@ -982,11 +971,12 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                 $alias = $this->qualifyColumnName($attributeKey, true);
                 // Aggregation unit group bys use the date table rather than the attribute table
                 $tableObj = ( $this->isAggregationUnit ? $query->getDateTable() : $this->attributeTableObj );
-                $colName = ($useAlternateGroupBy ? $this->alternateGroupByColumns[$mapIndex++] : $attributeKey);
-
-                $tableColFormula = $tableObj->getAlias()->getName() . '.' . $colName;
-                $cleanMapAlias = 'gb_' . str_replace('.', '_', $tableColFormula);
-                $query->addGroup(new Field($tableColFormula, $cleanMapAlias));
+                $groupByField = new TableField(
+                    $tableObj,
+                    ($useAlternateGroupBy ? $this->alternateGroupByColumns[$mapIndex++] : $attributeKey),
+                    $alias
+                );
+                $query->addGroup($groupByField);
 
                 // The aggregation unit where condition is already added by Query::setDuration()
 
@@ -1074,19 +1064,11 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
                 ? $this->qualifyColumnName($fieldName, true)
                 : sprintf('%s_%s', $query->getAggregationUnit(), $fieldName)
             );
-            $finalFormula = $this->verifyAndReplaceTableAlias($formula, $query);
 
-            $field = new Field($this->verifyAndReplaceTableAlias($formula, $query), $alias);
+            $field = $this->verifyAndReplaceTableAlias($formula, $query, $alias);
             $query->addField($field);
             if ($this->id !== 'none') {
-                $formulaNoQuotes = preg_replace('/(\'.*?\'|".*?")/', '', $finalFormula);
-                preg_match_all('/[a-zA-Z0-9_]+\.[a-zA-Z0-9_]+/', $formulaNoQuotes, $matches);
-                if (!empty($matches[0])) {
-                    foreach ($matches[0] as $baseCol) {
-                        $cleanBaseTextAlias = 'gb_' . str_replace('.', '_', $baseCol);
-                        $query->addGroup(new Field($baseCol, $cleanBaseTextAlias));
-                    }
-                }
+                $query->addGroup($field);
             }
         }
 
@@ -1111,29 +1093,25 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
      *
      * @param Query $query Used to determine the table alias when the GroupBy is an aggregation unit.
      *
-     * @return string The formula with aliases changed to the group by table alias, or with an alias
-     *   added if only a column was specified.
+     * @return TableField|Field A TableField or Field object associated with the attributes value
+     *   query.
      *
      * @throws Exception if the formula had an aliased column name but the table that it referred to
      *   did not match the group by attribute table.
      */
 
-    protected function verifyAndReplaceTableAlias($formula, \DataWarehouse\Query\iQuery $query)
+    protected function verifyAndReplaceTableAlias($formula, \DataWarehouse\Query\iQuery $query, $alias)
     {
         $formula = $this->realm->getVariableStore()->substitute($formula);
         if ( $this->isAggregationUnit && 'none' == $this->id ) {
-            return $formula;
+            return new Field($formula, $alias);
         }
 
         $matches = array();
         if ( 0 === preg_match_all('/([a-zA-Z0-9$_]+\.)?([a-zA-Z0-9$_]+\.[a-zA-Z0-9$_]+)/', $formula, $matches, PREG_SET_ORDER) ) {
             // The formula did not contain an aliased column name, assume that it is only a column
             // name and add our table alias.
-            return sprintf(
-                "%s.%s",
-                ( $this->isAggregationUnit ? $query->getDateTable()->getAlias() : $this->attributeTableName ),
-                $formula
-            );
+            return new TableField($this->isAggregationUnit ? $query->getDateTable() : $this->attributeTableObj, $formula, $alias);
         }
 
         foreach ( $matches as $match ) {
@@ -1171,7 +1149,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
             );
         }
 
-        return $formula;
+        return new Field($formula, $alias);
     }
 
     /**
@@ -1258,7 +1236,7 @@ class GroupBy extends \CCR\Loggable implements iGroupBy
 
         foreach ( $queryConfig->orderby as $orderByField ) {
             $orderBy = new OrderBy(
-                new Field($this->verifyAndReplaceTableAlias($orderByField, $query)),
+                $this->verifyAndReplaceTableAlias($orderByField, $query, ''),
                 $direction,
                 $this->id
             );

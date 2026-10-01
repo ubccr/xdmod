@@ -834,7 +834,7 @@ class MetricExplorer extends Common
                         short_name
                     FROM
                         ($dimensionValuesUnion) AS dimensionValuesUnion
-                    GROUP BY id
+                    GROUP BY id, name, short_name
                     ORDER BY _dimensionOrderValue $combinedDimensionValuesSortOrder
                 ";
                 $dimensionValues = $db->query($combinedDimensionValuesQuery);

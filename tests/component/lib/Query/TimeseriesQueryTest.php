@@ -90,7 +90,8 @@ WHERE
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
 GROUP BY duration.id,
-  duration.day_start,
+  day_short_name,
+  day_name,
   duration.day_start_ts,
   person.id,
   person.short_name,

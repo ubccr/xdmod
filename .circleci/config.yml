@@ -68,6 +68,9 @@ jobs:
                 command: |
                   docker exec -w /root/xdmod xdmod /root/xdmod/tests/ci/source_install.sh
       - run:
+          name: Set stricter sql mode
+          command: docker exec xdmod sed -i 's/sql_mode=$/sql_mode=ONLY_FULL_GROUP_BY,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION/g' /etc/my.cnf.d/mariadb-server.cnf
+      - run:
           name: Install / Upgrade XDMoD from the newly created RPM
           command: docker exec -e XDMOD_TEST_MODE=<< parameters.install-type >> xdmod /root/xdmod/tests/ci/bootstrap.sh
       - run:

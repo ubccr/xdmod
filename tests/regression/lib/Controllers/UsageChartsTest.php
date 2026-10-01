@@ -236,7 +236,7 @@ class UsageChartsTest extends \PHPUnit\Framework\TestCase
            'controller_module' => 'user_interface'
         );
 
-        $statistics = array('job_count', 'total_cpu_hours', 'utilization');
+        $statistics = array('job_count', 'total_cpu_hours');
         $agg_err_stats = array('avg_waitduration_hours');
         $errstatistics = array('avg_cpu_hours', 'avg_node_hours', 'avg_waitduration_hours');
 
