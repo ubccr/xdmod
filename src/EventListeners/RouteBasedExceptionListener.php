@@ -58,9 +58,8 @@ class RouteBasedExceptionListener
             if (
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof AccessDeniedException
-                ||  $exception instanceof InsufficientAuthenticationException
+                || $exception instanceof InsufficientAuthenticationException
             ) {
-                $statusCode = Reponse::HTTP_FORBIDDEN;
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
