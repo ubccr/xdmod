@@ -120,12 +120,12 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_metricexplorer_index') {
-            if ($exception instanceof \Datawarehouse\Query\Exceptions\AccessDeniedException) {
-                $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
-                $content['code'] = 103;
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
-            }
+            #if ($exception instanceof \Datawarehouse\Query\Exceptions\AccessDeniedException) {
+            #    $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
+            #    $content['code'] = 103;
+            #    $response = new JsonResponse($content, $statusCode);
+            #    $event->setResponse($response);
+            #}
         } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
             if (
                 $exception instanceof UnauthorizedHttpException
