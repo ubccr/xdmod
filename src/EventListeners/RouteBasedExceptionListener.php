@@ -118,11 +118,7 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_metricexplorer_index') {
-            if (
-                $exception instanceof AccessDeniedHttpException
-                || $exception instanceof AccessDeniedException
-                || $exception instanceof \Datawarehouse\Query\Exceptions\AccessDeniedException
-            ) {
+            if ($exception instanceof \Datawarehouse\Query\Exceptions\AccessDeniedException) {
                 $content['message'] = \DataWarehouse\Query\Exceptions\AccessDeniedException::DEFAULT_MESSAGE;
                 $content['code'] = 103;
                 $response = new JsonResponse($content, $statusCode);
