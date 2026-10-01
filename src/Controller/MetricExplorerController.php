@@ -378,7 +378,7 @@ class MetricExplorerController extends BaseController
             case 'get_data':
                 return $this->forward('CCR\Controller\MetricExplorerController::getData');
             case 'get_dimension':
-                return $this->forward('CCR\Controller\MetricExplorerController::getDimension');
+                return $this->forward('CCR\Controller\MetricExplorerController::getDimensionValues');
             case 'get_dw_descripter':
                 return $this->forward('CCR\Controller\MetricExplorerController::getDwDescriptors');
             case 'get_filters':
