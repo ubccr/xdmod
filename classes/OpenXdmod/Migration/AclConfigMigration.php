@@ -21,7 +21,7 @@ class AclConfigMigration extends Migration
 
         if ($output === false) {
             $this->logger->error("Error executing acl-config");
-        } else if ($output !== null) {
+        } elseif ($output !== null) {
             $this->logger->error($output);
         }
     }
