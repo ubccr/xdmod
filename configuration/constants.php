@@ -134,6 +134,12 @@ define('CHARLIM_FIRST_NAME', '50');
 define('CHARLIM_LAST_NAME', '50');
 define('CHARLIM_EMAIL', '200');
 
+
+define('CHARLIM_REPORT_NAME', '1000');
+define('CHARLIM_REPORT_TITLE', '1000');
+define('CHARLIM_REPORT_HEADER', '1000');
+define('CHARLIM_REPORT_FOOTER', '1000');
+
 /**
  * ROLES
  */
