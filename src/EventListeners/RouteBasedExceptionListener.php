@@ -50,7 +50,7 @@ class RouteBasedExceptionListener
             'code' => 2
         ];
         $error_during_authorization_message = 'An error was encountered while attempting to process the requested authorization procedure.';
-        // Support Legacy format for the Internal Dashboard controller endpoints
+        // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
         if (
             $route == 'ccr_internaldashboard_admin_resetusertourviewed'
             || $route == 'ccr_dashboard_setviewedusertour'
@@ -58,15 +58,19 @@ class RouteBasedExceptionListener
             if (
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof AccessDeniedException
-                || $exception instanceof InsufficientAuthenticationException
             ) {
                 $statusCode = Response::HTTP_FORBIDDEN;
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
+            } elseif ($exception instanceof InsufficientAuthenticationException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
-        // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
+        // Support Legacy format for the Internal Dashboard controller endpoints
         } elseif (
             str_starts_with($route, 'ccr_internaldashboard_')
         ) {
