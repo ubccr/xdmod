@@ -71,7 +71,7 @@ class TimeseriesDataset
         $seriesIds = array();
 
         while($row = $statement->fetch(\PDO::FETCH_ASSOC, \PDO::FETCH_ORI_NEXT)) {
-            $seriesIds[] = "${row[$groupIdColumn]}";
+            $seriesIds[] = "{$row[$groupIdColumn]}";
         }
 
         return $seriesIds;
