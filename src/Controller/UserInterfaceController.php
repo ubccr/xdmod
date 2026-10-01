@@ -45,9 +45,9 @@ class UserInterfaceController extends BaseController
 
         switch ($operation) {
             case 'get_charts':
-                return $this->getCharts($request);
+                return $this->forward('CCR\Controllers\UserInterfaceController::getCharts');
             case 'get_data':
-                return $this->getData($request);
+                return $this->forward('CCR\Controllers\UserInterfaceController::getData');
             case 'get_menus':
                 return $this->getMenus($request);
             case 'get_param_descriptions':
