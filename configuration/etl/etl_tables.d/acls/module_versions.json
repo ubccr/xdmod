@@ -43,7 +43,7 @@
                 "name": "created_on",
                 "type": "timestamp",
                 "nullable": false,
-                "default": 0
+                "default": "CURRENT_TIMESTAMP"
             },
             {
                 "name": "last_modified_on",

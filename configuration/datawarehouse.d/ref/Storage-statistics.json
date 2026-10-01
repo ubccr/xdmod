@@ -1,13 +1,13 @@
 {
     "avg_logical_utilization": {
         "description_html": "Average logical file system usage as a percentage of the quota soft threshold.",
-        "formula": "100 * COALESCE(SUM(agg.avg_logical_usage) / SUM(agg.avg_soft_threshold), 0)",
+        "formula": "100 * COALESCE(SUM(agg.avg_logical_usage) / NULLIF(SUM(agg.avg_soft_threshold), 0), 0)",
         "name": "Quota Utilization: Logical",
         "precision": 2,
         "unit": "%"
     },
     "avg_file_count": {
-        "aggregate_formula": "COALESCE(SUM(agg.avg_file_count) / COUNT(DISTINCT agg.${AGGREGATION_UNIT}_id), 0)",
+        "aggregate_formula": "COALESCE(SUM(agg.avg_file_count) / NULLIF(COUNT(DISTINCT agg.${AGGREGATION_UNIT}_id), 0), 0)",
         "description_html": "Average number of files.",
         "name": "File Count",
         "precision": 2,
@@ -15,7 +15,7 @@
         "unit": "Number of files"
     },
     "avg_hard_threshold": {
-        "aggregate_formula": "COALESCE(SUM(agg.avg_hard_threshold) / COUNT(DISTINCT agg.${AGGREGATION_UNIT}_id), 0)",
+        "aggregate_formula": "COALESCE(SUM(agg.avg_hard_threshold) / NULLIF(COUNT(DISTINCT agg.${AGGREGATION_UNIT}_id), 0), 0)",
         "description_html": "Average file system quota hard threshold measured in bytes.",
         "name": "Quota: Hard Threshold",
         "precision": 2,
@@ -23,7 +23,7 @@
         "unit": "Bytes"
     },
     "avg_logical_usage": {
-        "aggregate_formula": "COALESCE(SUM(agg.avg_logical_usage) / COUNT(DISTINCT agg.${AGGREGATION_UNIT}_id), 0)",
+        "aggregate_formula": "COALESCE(SUM(agg.avg_logical_usage) / NULLIF(COUNT(DISTINCT agg.${AGGREGATION_UNIT}_id), 0), 0)",
         "description_html": "Average logical file system usage measured in bytes.",
         "name": "Logical Usage",
         "precision": 2,
@@ -31,7 +31,7 @@
         "unit": "Bytes"
     },
     "avg_physical_usage": {
-        "aggregate_formula": "COALESCE(SUM(agg.avg_physical_usage) / COUNT(DISTINCT agg.${AGGREGATION_UNIT}_id), 0)",
+        "aggregate_formula": "COALESCE(SUM(agg.avg_physical_usage) / NULLIF(COUNT(DISTINCT agg.${AGGREGATION_UNIT}_id), 0), 0)",
         "description_html": "Average physical file system usage measured in bytes.",
         "name": "Physical Usage",
         "precision": 2,
@@ -40,7 +40,7 @@
     },
     "sem_file_count": {
         "description_html": "The standard error of the average number of files.",
-        "formula": "SQRT(SUM(agg.sum_squared_file_count) / SUM(agg.record_count) - POW(SUM(agg.sum_file_count) / SUM(agg.record_count), 2)) / SQRT(SUM(agg.record_count))",
+        "formula": "SQRT(SUM(agg.sum_squared_file_count) / NULLIF(SUM(agg.record_count), 0) - POW(SUM(agg.sum_file_count) / NULLIF(SUM(agg.record_count), 0), 2)) / NULLIF(SQRT(SUM(agg.record_count)), 0)",
         "name": "File Count: Standard Error of the Mean",
         "precision": 2,
         "show_in_catalog": false,
@@ -48,7 +48,7 @@
     },
     "sem_logical_usage": {
         "description_html": "The standard error of the average logical usage.",
-        "formula": "SQRT(SUM(agg.sum_squared_logical_usage) / SUM(agg.record_count) - POW(SUM(agg.sum_logical_usage) / SUM(agg.record_count), 2)) / SQRT(SUM(agg.record_count))",
+        "formula": "SQRT(SUM(agg.sum_squared_logical_usage) / NULLIF(SUM(agg.record_count), 0) - POW(SUM(agg.sum_logical_usage) / NULLIF(SUM(agg.record_count), 0), 2)) / NULLIF(SQRT(SUM(agg.record_count)), 0)",
         "name": "Logical Usage: Standard Error of the Mean",
         "precision": 2,
         "show_in_catalog": false,
@@ -56,14 +56,14 @@
     },
     "sem_physical_usage": {
         "description_html": "The standard error of the average physical usage.",
-        "formula": "SQRT(SUM(agg.sum_squared_physical_usage) / SUM(agg.record_count) - POW(SUM(agg.sum_physical_usage) / SUM(agg.record_count), 2)) / SQRT(SUM(agg.record_count))",
+        "formula": "SQRT(SUM(agg.sum_squared_physical_usage) / NULLIF(SUM(agg.record_count), 0) - POW(SUM(agg.sum_physical_usage) / NULLIF(SUM(agg.record_count), 0), 2)) / NULLIF(SQRT(SUM(agg.record_count)), 0)",
         "name": "Physical Usage: Standard Error of the Mean",
         "precision": 2,
         "show_in_catalog": false,
         "unit": "Bytes"
     },
     "avg_soft_threshold": {
-        "aggregate_formula": "COALESCE(SUM(agg.avg_soft_threshold) / COUNT(DISTINCT agg.${AGGREGATION_UNIT}_id), 0)",
+        "aggregate_formula": "COALESCE(SUM(agg.avg_soft_threshold) / NULLIF(COUNT(DISTINCT agg.${AGGREGATION_UNIT}_id), 0), 0)",
         "description_html": "Average file system quota soft threshold measured in bytes.",
         "name": "Quota: Soft Threshold",
         "precision": 2,
