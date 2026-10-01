@@ -1,0 +1,14 @@
+title
+"Wait Hours by Eligible Time: Total: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Wait Hours by Eligible Time: Total"
+robertson,243427.6978
+pozidriv,20963.0669
+phillips,18829.9289
+mortorq,18631.2086
+frearson,2.3656
+---------

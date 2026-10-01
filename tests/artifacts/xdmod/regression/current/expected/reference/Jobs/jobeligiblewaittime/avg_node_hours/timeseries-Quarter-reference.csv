@@ -1,0 +1,11 @@
+title
+"Node Hours: Per Job: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Node Hours: Per Job","[1 - 30s] Node Hours: Per Job","[30s - 30min] Node Hours: Per Job","[30 - 60min] Node Hours: Per Job","[1 - 5hr] Node Hours: Per Job","[5 - 10hr] Node Hours: Per Job","[10 - 18hr] Node Hours: Per Job","[18+hr] Node Hours: Per Job"
+"2016 Q4",0.88155758,1.48893056,5.26577797,0.49634703,1.12768541,2.07936017,3.52934378,8.80406222
+"2017 Q1",0.26038960,0.46177284,2.00165645,0.29973995,1.38454668,0.90143198,0.46190997,0.80225127
+---------

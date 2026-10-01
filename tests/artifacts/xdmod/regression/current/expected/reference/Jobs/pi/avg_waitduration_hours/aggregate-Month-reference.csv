@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by PI"
+"Wait Hours by Submit Time: Per Job: by PI"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-PI,"Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+PI,"Wait Hours by Submit Time: Per Job","Std Dev: Wait Hours by Submit Time: Per Job"
 "Tern, Caspian",214.25581950,2.0529931333004057
 Fulmar,71.34538580,15.241596218036447
 "Warbler, Savi's",52.74111111,37.29241880267786

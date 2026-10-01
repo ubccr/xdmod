@@ -1,0 +1,11 @@
+title
+"Number of Users: Active: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[0 - 1s] Number of Users: Active","[1 - 30s] Number of Users: Active","[30s - 30min] Number of Users: Active","[30 - 60min] Number of Users: Active","[1 - 5hr] Number of Users: Active","[5 - 10hr] Number of Users: Active","[10 - 18hr] Number of Users: Active","[18+hr] Number of Users: Active"
+2016,29,43,35,13,23,19,9,16
+2017,17,26,17,5,10,11,4,8
+---------

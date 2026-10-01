@@ -1,0 +1,20 @@
+title
+"Wait Hours by Eligible Time: Total: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[screw - Screwdriver] Wait Hours by Eligible Time: Total","[wrench - Wrench] Wait Hours by Eligible Time: Total","[Unknown - Unknown Organization] Wait Hours by Eligible Time: Total"
+2016-12-22,9.3325,0,0
+2016-12-23,9.5964,0,0
+2016-12-24,0.0000,0,0
+2016-12-25,110.8856,0,0
+2016-12-26,0.0000,0,0.0033
+2016-12-27,635.6631,405.1178,0.0000
+2016-12-28,361.1556,2019.3978,18.4800
+2016-12-29,2850.7003,2596.4203,28.2811
+2016-12-30,166122.1625,28833.3858,7.3803
+2016-12-31,5860.5578,66151.8506,0.5194
+2017-01-01,5971.0192,19850.3347,12.0239
+---------

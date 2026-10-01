@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by QOS"
+"Wait Hours by Submit Time: Total: by QOS"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-QOS,"Wait Hours: Total"
+QOS,"Wait Hours by Submit Time: Total"
 curry,245178.2722
 banana-cream,55855.9608
 derby,2675.0058

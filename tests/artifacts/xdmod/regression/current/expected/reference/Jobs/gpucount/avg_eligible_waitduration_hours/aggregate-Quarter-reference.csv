@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Per Job: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"GPU Count","Wait Hours by Eligible Time: Per Job","Std Dev: Wait Hours by Eligible Time: Per Job"
+0,4.23286779,0.0879197218695822
+2,0.00013889,0.00009820927516479828
+---------

@@ -1,0 +1,17 @@
+title
+"Job Size: Per Job (Core Count): by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time: Eligible Time","Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+"0 - 1s",10.5226,0.036415839109299825
+"1 - 30s",9.7653,0.034325902632554126
+"30s - 30min",6.7987,0.03163306074534476
+"30 - 60min",5.4662,0.13124014108310847
+"1 - 5hr",8.6117,0.05383875091010273
+"5 - 10hr",9.0960,0.12433383456967081
+"10 - 18hr",13.0761,0.4770600686209722
+18+hr,8.8637,0.22988657207114216
+---------

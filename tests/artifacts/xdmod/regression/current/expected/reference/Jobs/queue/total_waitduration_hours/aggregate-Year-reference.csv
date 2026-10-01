@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by Queue"
+"Wait Hours by Submit Time: Total: by Queue"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Queue,"Wait Hours: Total"
+Queue,"Wait Hours by Submit Time: Total"
 white,247850.8092
 black,55733.9806
 nann,2187.3331

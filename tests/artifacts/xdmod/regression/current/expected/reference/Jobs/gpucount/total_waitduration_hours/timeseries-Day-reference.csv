@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by GPU Count"
+"Wait Hours by Submit Time: Total: by GPU Count"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[0] Wait Hours: Total","[2] Wait Hours: Total"
+Day,"[0] Wait Hours by Submit Time: Total","[2] Wait Hours by Submit Time: Total"
 2016-12-22,9.3322,0.0003
 2016-12-23,9.5964,0.0000
 2016-12-24,0.0000,0.0000

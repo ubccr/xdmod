@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by PI Group"
+"Wait Hours by Submit Time: Total: by PI Group"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"PI Group","Wait Hours: Total"
+"PI Group","Wait Hours by Submit Time: Total"
 "Galactic Astronomy",163477.1903
 Sociology,112939.7331
 "Cell Biology",5136.8678

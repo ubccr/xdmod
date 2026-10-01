@@ -66,6 +66,9 @@
         },
         "$ref-with-overwrite": "datawarehouse.d/ref/group-by-common.json#/pi"
     },
+    "jobeligiblewaittime": {
+        "$ref": "datawarehouse.d/ref/Jobs-group-bys.json#/jobeligiblewaittime"
+    },
     "jobsize": {
         "$ref": "datawarehouse.d/ref/group-by-common.json#/jobsize"
     },

@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by Job Size"
+"Wait Hours by Submit Time: Total: by Job Size"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Size","Wait Hours: Total"
+"Job Size","Wait Hours by Submit Time: Total"
 1,6590.6736
 2,2650.6039
 "3 - 4",163387.0994

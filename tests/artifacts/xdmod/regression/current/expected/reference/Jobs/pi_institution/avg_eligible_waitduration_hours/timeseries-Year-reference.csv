@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Per Job: by PI Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[screw - Screwdriver] Wait Hours by Eligible Time: Per Job","[wrench - Wrench] Wait Hours by Eligible Time: Per Job"
+2016,5.51592164,0.35609372
+2017,1.75234235,0.13910800
+---------

@@ -1,0 +1,17 @@
+title
+"Number of Jobs Running: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time: Eligible Time","Number of Jobs Running"
+"0 - 1s",12327
+"1 - 30s",18144
+"30s - 30min",17907
+"30 - 60min",2660
+"1 - 5hr",13138
+"5 - 10hr",3958
+"10 - 18hr",591
+18+hr,2589
+---------

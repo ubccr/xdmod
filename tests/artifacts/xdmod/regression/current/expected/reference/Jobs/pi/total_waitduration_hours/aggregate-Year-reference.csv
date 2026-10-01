@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by PI"
+"Wait Hours by Submit Time: Total: by PI"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-PI,"Wait Hours: Total"
+PI,"Wait Hours by Submit Time: Total"
 "Tern, Caspian",163477.1903
 "Flycatcher, Taiga",112939.7331
 Fulmar,5136.8678

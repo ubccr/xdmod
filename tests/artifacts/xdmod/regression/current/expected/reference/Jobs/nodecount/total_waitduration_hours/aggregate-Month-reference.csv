@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by Node Count"
+"Wait Hours by Submit Time: Total: by Node Count"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Node Count","Wait Hours: Total"
+"Node Count","Wait Hours by Submit Time: Total"
 1,300759.0231
 8,2449.4633
 2,1875.4550

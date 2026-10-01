@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by Department"
+"Wait Hours by Submit Time: Total: by Department"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[Astronomical Sciences] Wait Hours: Total","[Social and Economic Science] Wait Hours: Total","[Molecular Biosciences] Wait Hours: Total","[Materials Research] Wait Hours: Total","[Electrical and Communication Systems] Wait Hours: Total","[Polar Programs] Wait Hours: Total","[Earth Sciences] Wait Hours: Total","[Environmental Biology] Wait Hours: Total","[Microelectronic Information Processing Systems] Wait Hours: Total","[Chemistry] Wait Hours: Total","[Arts] Wait Hours: Total","[Mathematical Sciences] Wait Hours: Total","[Atmospheric Sciences] Wait Hours: Total","[Design and Manufacturing Systems] Wait Hours: Total","[Chemical, Thermal Systems] Wait Hours: Total","[Physics] Wait Hours: Total","[Computer and Computation Research] Wait Hours: Total","[Mechanical and Structural Systems] Wait Hours: Total"
+Day,"[Astronomical Sciences] Wait Hours by Submit Time: Total","[Social and Economic Science] Wait Hours by Submit Time: Total","[Molecular Biosciences] Wait Hours by Submit Time: Total","[Materials Research] Wait Hours by Submit Time: Total","[Electrical and Communication Systems] Wait Hours by Submit Time: Total","[Polar Programs] Wait Hours by Submit Time: Total","[Earth Sciences] Wait Hours by Submit Time: Total","[Environmental Biology] Wait Hours by Submit Time: Total","[Microelectronic Information Processing Systems] Wait Hours by Submit Time: Total","[Chemistry] Wait Hours by Submit Time: Total","[Arts] Wait Hours by Submit Time: Total","[Mathematical Sciences] Wait Hours by Submit Time: Total","[Atmospheric Sciences] Wait Hours by Submit Time: Total","[Design and Manufacturing Systems] Wait Hours by Submit Time: Total","[Chemical, Thermal Systems] Wait Hours by Submit Time: Total","[Physics] Wait Hours by Submit Time: Total","[Computer and Computation Research] Wait Hours by Submit Time: Total","[Mechanical and Structural Systems] Wait Hours by Submit Time: Total"
 2016-12-22,0,0,0.0003,0,0,0,0,0,0,9.3322,0,0,0,0,0,0,0,0
 2016-12-23,9.5964,0,0.0000,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0
 2016-12-24,0.0000,0,0.0000,0,0,0,0,0,0,0.0000,0,0,0,0,0,0,0,0

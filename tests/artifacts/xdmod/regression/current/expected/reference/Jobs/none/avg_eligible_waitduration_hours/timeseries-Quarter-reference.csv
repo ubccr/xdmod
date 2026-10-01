@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Per Job"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[Screwdriver] Wait Hours by Eligible Time: Per Job"
+"2016 Q4",4.91052998
+"2017 Q1",1.71036664
+---------

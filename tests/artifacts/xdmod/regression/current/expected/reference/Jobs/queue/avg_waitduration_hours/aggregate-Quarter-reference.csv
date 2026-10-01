@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by Queue"
+"Wait Hours by Submit Time: Per Job: by Queue"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Queue,"Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+Queue,"Wait Hours by Submit Time: Per Job","Std Dev: Wait Hours by Submit Time: Per Job"
 white,17.34556716,0.427629731161474
 nann,9.55167273,0.4060879409774964
 brioche,4.57930556,2.1091028859691496

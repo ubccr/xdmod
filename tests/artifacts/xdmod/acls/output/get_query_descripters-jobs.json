@@ -62,6 +62,16 @@
   [
     {
       "_realm_name": "Jobs",
+      "_group_by_name": "jobeligiblewaittime",
+      "_default_statisticname": "all",
+      "_order_id": 0,
+      "_show_menu": true,
+      "_disable_menu": false
+    }
+  ],
+  [
+    {
+      "_realm_name": "Jobs",
       "_group_by_name": "jobwaittime",
       "_default_statisticname": "all",
       "_order_id": 0,

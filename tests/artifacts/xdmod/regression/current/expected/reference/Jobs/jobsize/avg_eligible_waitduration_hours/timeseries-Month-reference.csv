@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Per Job: by Job Size"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[1] Wait Hours by Eligible Time: Per Job","[2] Wait Hours by Eligible Time: Per Job","[3 - 4] Wait Hours by Eligible Time: Per Job","[5 - 8] Wait Hours by Eligible Time: Per Job","[9 - 16] Wait Hours by Eligible Time: Per Job","[17 - 32] Wait Hours by Eligible Time: Per Job","[33 - 64] Wait Hours by Eligible Time: Per Job","[65 - 128] Wait Hours by Eligible Time: Per Job","[129 - 256] Wait Hours by Eligible Time: Per Job","[257 - 512] Wait Hours by Eligible Time: Per Job"
+2016-12,0.98835637,27.04697846,223.20641963,2.55636636,0.93134636,17.51081929,7.11443487,26.60398834,9.20631944,6.67972222
+2017-01,0.11091564,0.00000000,0.00000000,1.38397659,2.36263311,7.45386856,6.86741602,6.05006039,18.80388889,0
+---------

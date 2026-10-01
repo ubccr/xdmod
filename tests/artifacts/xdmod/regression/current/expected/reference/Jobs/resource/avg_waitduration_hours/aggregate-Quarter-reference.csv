@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by Resource"
+"Wait Hours by Submit Time: Per Job: by Resource"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Resource,"Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+Resource,"Wait Hours by Submit Time: Per Job","Std Dev: Wait Hours by Submit Time: Per Job"
 robertson,17.22128753,0.42462800598753725
 phillips,4.65396173,0.0640574830554861
 pozidriv,1.85771176,0.04173360028194275

@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by Queue"
+"Wait Hours by Submit Time: Total: by Queue"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Month,"[white] Wait Hours: Total","[black] Wait Hours: Total","[nann] Wait Hours: Total","[croutons] Wait Hours: Total","[cornbread] Wait Hours: Total","[brioche] Wait Hours: Total","[roti] Wait Hours: Total","[pikelet] Wait Hours: Total","[chapti] Wait Hours: Total","[focaccia] Wait Hours: Total","[potbrood] Wait Hours: Total","[brown] Wait Hours: Total","[panettone] Wait Hours: Total","[bannock] Wait Hours: Total","[crumpet] Wait Hours: Total","[barm] Wait Hours: Total","[pita] Wait Hours: Total","[pumpernickel] Wait Hours: Total"
+Month,"[white] Wait Hours by Submit Time: Total","[black] Wait Hours by Submit Time: Total","[nann] Wait Hours by Submit Time: Total","[croutons] Wait Hours by Submit Time: Total","[cornbread] Wait Hours by Submit Time: Total","[brioche] Wait Hours by Submit Time: Total","[roti] Wait Hours by Submit Time: Total","[pikelet] Wait Hours by Submit Time: Total","[chapti] Wait Hours by Submit Time: Total","[focaccia] Wait Hours by Submit Time: Total","[potbrood] Wait Hours by Submit Time: Total","[brown] Wait Hours by Submit Time: Total","[panettone] Wait Hours by Submit Time: Total","[bannock] Wait Hours by Submit Time: Total","[crumpet] Wait Hours by Submit Time: Total","[barm] Wait Hours by Submit Time: Total","[pita] Wait Hours by Submit Time: Total","[pumpernickel] Wait Hours by Submit Time: Total"
 2016-12,230845.7442,49127.7183,0.3231,160.0714,181.6683,91.5861,66.8156,36.5339,1.3389,0.0003,0.0256,0.0106,0.0150,0.0072,0.0025,0.0044,0.0003,0.0000
 2017-01,17005.0650,6606.2622,2187.0100,34.0025,0.0067,0.0000,0,0.0000,0,1.2328,0.0047,0.0047,0,0.0011,0.0031,0.0000,0.0000,0.0003
 ---------

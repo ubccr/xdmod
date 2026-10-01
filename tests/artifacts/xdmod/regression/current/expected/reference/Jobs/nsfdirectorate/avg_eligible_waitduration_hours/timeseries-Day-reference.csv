@@ -1,0 +1,20 @@
+title
+"Wait Hours by Eligible Time: Per Job: by Decanal Unit"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[Mathematical and Physical Sciences] Wait Hours by Eligible Time: Per Job","[Biological Sciences] Wait Hours by Eligible Time: Per Job","[Engineering] Wait Hours by Eligible Time: Per Job","[Humanities/Arts] Wait Hours by Eligible Time: Per Job","[Geosciences] Wait Hours by Eligible Time: Per Job","[Social, Behavioral, and Economic Sciences] Wait Hours by Eligible Time: Per Job","[Computer and Information Science and Engineering] Wait Hours by Eligible Time: Per Job"
+2016-12-22,9.33222222,0.00027778,0,0,0,0,0
+2016-12-23,9.59638889,0.00000000,0,0,0,0,0
+2016-12-24,0.00000000,0.00000000,0,0,0,0,0
+2016-12-25,36.96185185,0.00000000,0,0,0,0,0
+2016-12-26,0.00066667,0.00000000,0,0,0,0,0
+2016-12-27,12.44448611,68.67952381,103.71148148,0,0,0.00000000,0
+2016-12-28,18.33165509,40.87194444,8.21864256,0,0.00027778,0.00000000,0.04097293
+2016-12-29,39.51646368,0.01174679,3.35185897,0.87133838,8.57675926,7.71266385,0.04345597
+2016-12-30,35.41368856,11.41416162,1.28878632,5.77518519,2.45393168,1.34890004,0.32884683
+2016-12-31,0.66417698,1.86669753,14.92098541,0.00000000,6.31357893,2.80448357,0.35112299
+2017-01-01,0.11044023,11.14468327,0.48755291,0.00000000,5.07666460,1.47296404,0.03552149
+---------

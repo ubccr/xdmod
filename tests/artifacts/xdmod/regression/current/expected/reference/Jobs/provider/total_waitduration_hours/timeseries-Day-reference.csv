@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by Service Provider"
+"Wait Hours by Submit Time: Total: by Service Provider"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[screw] Wait Hours: Total","[wrench] Wait Hours: Total"
+Day,"[screw] Wait Hours by Submit Time: Total","[wrench] Wait Hours by Submit Time: Total"
 2016-12-22,0.0003,9.3322
 2016-12-23,0.0000,9.5964
 2016-12-24,0.0000,0.0000

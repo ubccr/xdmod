@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by Decanal Unit"
+"Wait Hours by Submit Time: Per Job: by Decanal Unit"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[Biological Sciences] Wait Hours: Per Job","[Mathematical and Physical Sciences] Wait Hours: Per Job","[Engineering] Wait Hours: Per Job","[Humanities/Arts] Wait Hours: Per Job","[Geosciences] Wait Hours: Per Job","[Social, Behavioral, and Economic Sciences] Wait Hours: Per Job","[Computer and Information Science and Engineering] Wait Hours: Per Job"
+Day,"[Biological Sciences] Wait Hours by Submit Time: Per Job","[Mathematical and Physical Sciences] Wait Hours by Submit Time: Per Job","[Engineering] Wait Hours by Submit Time: Per Job","[Humanities/Arts] Wait Hours by Submit Time: Per Job","[Geosciences] Wait Hours by Submit Time: Per Job","[Social, Behavioral, and Economic Sciences] Wait Hours by Submit Time: Per Job","[Computer and Information Science and Engineering] Wait Hours by Submit Time: Per Job"
 2016-12-22,0.00027778,9.33222222,0,0,0,0,0
 2016-12-23,0.00000000,9.59638889,0,0,0,0,0
 2016-12-24,0.00000000,0.00000000,0,0,0,0,0

@@ -1,0 +1,27 @@
+title
+"Wait Hours by Eligible Time: Total: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Department,"Wait Hours by Eligible Time: Total"
+"Astronomical Sciences",163661.6306
+"Social and Economic Science",114913.3717
+"Materials Research",5141.1656
+"Electrical and Communication Systems",4694.7817
+"Polar Programs",4173.8717
+"Earth Sciences",3927.8758
+"Environmental Biology",3030.4719
+"Molecular Biosciences",772.1419
+"Microelectronic Information Processing Systems",552.5342
+Chemistry,443.1636
+Arts,321.4447
+"Mathematical Sciences",85.0647
+"Atmospheric Sciences",62.0436
+"Design and Manufacturing Systems",37.0053
+"Chemical, Thermal Systems",20.0331
+Physics,11.1744
+"Computer and Computation Research",6.4781
+"Mechanical and Structural Systems",0.0153
+---------

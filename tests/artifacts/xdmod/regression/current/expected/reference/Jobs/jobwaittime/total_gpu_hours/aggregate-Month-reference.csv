@@ -1,11 +1,11 @@
 title
-"GPU Hours: Total: by Job Wait Time"
+"GPU Hours: Total: by Job Wait Time: Submit Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Wait Time","GPU Hours: Total"
+"Job Wait Time: Submit Time","GPU Hours: Total"
 "0 - 1s",0.0094
 "1 - 30s",506.9033
 "30s - 30min",0.0000

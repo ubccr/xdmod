@@ -1,0 +1,10 @@
+title
+"Wait Hours by Eligible Time: Per Job: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Resource Type","Wait Hours by Eligible Time: Per Job","Std Dev: Wait Hours by Eligible Time: Per Job"
+"High-performance computing",4.23274908,0.08791729623104373
+---------

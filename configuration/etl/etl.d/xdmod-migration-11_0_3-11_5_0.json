@@ -212,6 +212,26 @@
             ]
         },
         {
+            "name": "JobWaitTimeIngestor",
+            "description": "Job wait times, including the N/A bucket for jobs with no eligible time",
+            "class": "StructuredFileIngestor",
+            "definition_file": "jobs/xdw/job-wait-times.json",
+            "truncate_destination": true,
+            "endpoints": {
+                "source": {
+                    "type": "jsonfile",
+                    "name": "Job wait times",
+                    "path": "jobs/xdw/job-wait-times.json"
+                },
+                "destination": {
+                    "type": "mysql",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw"
+                }
+            }
+        },
+        {
             "name": "update-nonmanaged-tables",
             "description": "Update tables in modw that are not managed by etlv2",
             "namespace": "ETL\\Maintenance",

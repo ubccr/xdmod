@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Per Job: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[robertson] Wait Hours by Eligible Time: Per Job","[phillips] Wait Hours by Eligible Time: Per Job","[pozidriv] Wait Hours by Eligible Time: Per Job","[mortorq] Wait Hours by Eligible Time: Per Job","[frearson] Wait Hours by Eligible Time: Per Job"
+2016-12,24.98596575,5.25252746,1.48967281,0.76737820,0.00015125
+2017-01,3.18801577,0.25913116,4.44912351,0.47614627,0.00016759
+---------

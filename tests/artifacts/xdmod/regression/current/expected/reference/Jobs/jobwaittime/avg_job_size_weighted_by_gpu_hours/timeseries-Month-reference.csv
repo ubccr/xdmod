@@ -1,5 +1,5 @@
 title
-"Job Size: Weighted By GPU Hours (GPU Count): by Job Wait Time"
+"Job Size: Weighted By GPU Hours (GPU Count): by Job Wait Time: Submit Time"
 parameters
 
 start,end

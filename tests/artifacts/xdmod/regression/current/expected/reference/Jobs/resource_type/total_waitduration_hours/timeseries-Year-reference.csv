@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by Resource Type"
+"Wait Hours by Submit Time: Total: by Resource Type"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Year,"[High-performance computing] Wait Hours: Total"
+Year,"[High-performance computing] Wait Hours by Submit Time: Total"
 2016,280511.8656
 2017,25833.5931
 ---------

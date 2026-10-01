@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by System Username"
+"Wait Hours by Submit Time: Per Job: by System Username"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"System Username","Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+"System Username","Wait Hours by Submit Time: Per Job","Std Dev: Wait Hours by Submit Time: Per Job"
 shttr,233.46900253,27.708500592959215
 swath,229.08833216,0.3165144562337443
 meapi,81.66292824,7.183771270440662

@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Total: by Job Wait Time: Submit Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Wait Hours by Eligible Time: Total","[1 - 30s] Wait Hours by Eligible Time: Total","[30s - 30min] Wait Hours by Eligible Time: Total","[30 - 60min] Wait Hours by Eligible Time: Total","[1 - 5hr] Wait Hours by Eligible Time: Total","[5 - 10hr] Wait Hours by Eligible Time: Total","[10 - 18hr] Wait Hours by Eligible Time: Total","[18+hr] Wait Hours by Eligible Time: Total"
+"2016 Q4",0.0000,10.0369,1551.1433,1795.2542,23716.0000,24737.7503,2342.5175,221868.1878
+"2017 Q1",0.0000,2.1600,1029.0494,94.9956,3636.4136,6782.7900,4784.8564,9503.1128
+---------

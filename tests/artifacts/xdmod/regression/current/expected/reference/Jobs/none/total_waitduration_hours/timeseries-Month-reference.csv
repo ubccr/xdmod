@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total"
+"Wait Hours by Submit Time: Total"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Month,"[Screwdriver] Wait Hours: Total"
+Month,"[Screwdriver] Wait Hours by Submit Time: Total"
 2016-12,280511.8656
 2017-01,25833.5931
 ---------

@@ -59,8 +59,24 @@
             ]
         },
         "expected": {
-            "subtitle": "Job Wait Time = ( 0 - 1s,  1 - 30s )",
+            "subtitle": "Job Wait Time: Submit Time = ( 0 - 1s,  1 - 30s )",
             "yvalue": 80575.1892
+        }
+    },
+    {
+        "settings": {
+            "realm": "Jobs",
+            "metric": "total_cpu_hours",
+            "date": "2016-12-31",
+            "filter_dimension": "jobeligiblewaittime",
+            "filter_values": [
+                "0 - 1s",
+                "1 - 30s"
+            ]
+        },
+        "expected": {
+            "subtitle": "Job Wait Time: Eligible Time = ( 0 - 1s,  1 - 30s )",
+            "yvalue": 80967.3669
         }
     },
     {

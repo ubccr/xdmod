@@ -56,6 +56,12 @@ SET
       WHEN (submit_time_ts > start_time_ts) OR submit_time_ts <= 0
         THEN start_time_ts
       ELSE submit_time_ts
+    END,
+    eligible_waitduration =
+    CASE
+      WHEN eligible_time_ts IS NULL OR eligible_time_ts > start_time_ts OR eligible_time_ts <= 0
+        THEN NULL
+      ELSE start_time_ts - eligible_time_ts
     END
 WHERE
     task.last_modified >= ${LAST_MODIFIED}

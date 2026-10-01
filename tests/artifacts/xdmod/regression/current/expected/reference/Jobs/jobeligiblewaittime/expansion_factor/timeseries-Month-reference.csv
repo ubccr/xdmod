@@ -1,0 +1,11 @@
+title
+"User Expansion Factor: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[0 - 1s] User Expansion Factor","[1 - 30s] User Expansion Factor","[30s - 30min] User Expansion Factor","[30 - 60min] User Expansion Factor","[1 - 5hr] User Expansion Factor","[5 - 10hr] User Expansion Factor","[10 - 18hr] User Expansion Factor","[18+hr] User Expansion Factor"
+2016-12,1.0000,1.0276,1.0296,2.4668,2.8034,5.0950,4.9728,13.0253
+2017-01,1.0000,1.3742,1.1005,3.0903,2.8997,6.6594,29.9375,42.2861
+---------

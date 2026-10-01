@@ -1,0 +1,11 @@
+title
+"Wall Hours: Per Job: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[0 - 1s] Wall Hours: Per Job","[1 - 30s] Wall Hours: Per Job","[30s - 30min] Wall Hours: Per Job","[30 - 60min] Wall Hours: Per Job","[1 - 5hr] Wall Hours: Per Job","[5 - 10hr] Wall Hours: Per Job","[10 - 18hr] Wall Hours: Per Job","[18+hr] Wall Hours: Per Job"
+"2016 Q4",0.55759108,1.09845082,5.14227916,0.35459446,0.86174841,1.88647298,1.92710627,3.17729700
+"2017 Q1",0.20124276,0.45933072,1.95329958,0.26081757,1.14032085,0.70235781,0.41071364,0.56606693
+---------

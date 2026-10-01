@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by Department"
+"Wait Hours by Submit Time: Per Job: by Department"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Department,"Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+Department,"Wait Hours by Submit Time: Per Job","Std Dev: Wait Hours by Submit Time: Per Job"
 "Astronomical Sciences",206.38288882,2.4291502902979274
 "Molecular Biosciences",44.58446092,9.807106639983111
 "Materials Research",33.61029775,1.730173782416776

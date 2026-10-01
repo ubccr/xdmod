@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Per Job: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Service Provider","Wait Hours by Eligible Time: Per Job","Std Dev: Wait Hours by Eligible Time: Per Job"
+screw,4.67925837,0.10404927734613863
+wrench,1.85760451,0.041727592210264626
+---------

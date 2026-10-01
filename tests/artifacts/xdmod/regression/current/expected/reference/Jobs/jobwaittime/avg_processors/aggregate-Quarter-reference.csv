@@ -1,11 +1,11 @@
 title
-"Job Size: Per Job (Core Count): by Job Wait Time"
+"Job Size: Per Job (Core Count): by Job Wait Time: Submit Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Wait Time","Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
+"Job Wait Time: Submit Time","Job Size: Per Job (Core Count)","Std Dev: Job Size: Per Job (Core Count)"
 "0 - 1s",10.5420,0.03629478540827314
 "1 - 30s",9.7539,0.034361815865037997
 "30s - 30min",6.7985,0.03163645187149828

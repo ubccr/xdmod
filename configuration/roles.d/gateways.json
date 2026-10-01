@@ -28,6 +28,10 @@
                 },
                 {
                     "realm": "Gateways",
+                    "group_by": "jobeligiblewaittime"
+                },
+                {
+                    "realm": "Gateways",
                     "group_by": "nodecount"
                 },
                 {
@@ -93,6 +97,10 @@
                 {
                     "realm": "Gateways",
                     "group_by": "jobwaittime"
+                },
+                {
+                    "realm": "Gateways",
+                    "group_by": "jobeligiblewaittime"
                 },
                 {
                     "realm": "Gateways",

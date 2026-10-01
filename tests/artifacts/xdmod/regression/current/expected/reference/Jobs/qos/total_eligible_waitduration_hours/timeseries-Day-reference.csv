@@ -1,0 +1,20 @@
+title
+"Wait Hours by Eligible Time: Total: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[curry] Wait Hours by Eligible Time: Total","[banana-cream] Wait Hours by Eligible Time: Total","[derby] Wait Hours by Eligible Time: Total","[bumbleberry] Wait Hours by Eligible Time: Total","[bavarian-cream] Wait Hours by Eligible Time: Total","[apple] Wait Hours by Eligible Time: Total","[fish] Wait Hours by Eligible Time: Total","[blackberry] Wait Hours by Eligible Time: Total","[cashew] Wait Hours by Eligible Time: Total","[chestnut] Wait Hours by Eligible Time: Total","[blueberry] Wait Hours by Eligible Time: Total","[green-grape] Wait Hours by Eligible Time: Total","[boysenberry] Wait Hours by Eligible Time: Total","[buttermilk] Wait Hours by Eligible Time: Total","[cheese] Wait Hours by Eligible Time: Total","[coconut-cream] Wait Hours by Eligible Time: Total","[butter] Wait Hours by Eligible Time: Total","[cherry] Wait Hours by Eligible Time: Total","[flapper] Wait Hours by Eligible Time: Total"
+2016-12-22,0,0,0,0,0,9.3322,0,0,0,0.0003,0,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0,9.5964,0.0000,0,0,0,0.0000,0,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0,0.0000,0.0000,0,0,0,0.0000,0,0,0,0,0,0,0,0,0
+2016-12-25,0,71.0125,0,0,0.0000,39.8731,0,0,0,0.0000,0,0,0,0,0,0,0,0,0
+2016-12-26,0,0.0000,0,0,0.0000,0.0000,0,0,0.0033,0.0000,0,0,0,0,0,0,0,0,0
+2016-12-27,741.0686,0.0281,299.6806,0,0.0017,0.0000,0.0019,0.0000,0.0000,0.0000,0,0,0,0,0,0.0000,0,0,0
+2016-12-28,1578.0400,300.3025,481.6361,0,0.0000,0.0000,20.5744,0.0000,18.4800,0.0000,0,0,0,0,0.0003,0.0000,0,0,0
+2016-12-29,5003.7186,56.9717,284.6967,0,68.2783,0.1114,43.7711,0.0017,17.8439,0.0000,0.0011,0,0.0044,0.0025,0.0000,0.0000,0,0.0003,0.0000
+2016-12-30,181521.5619,11834.6583,1588.3242,1.6408,0.0861,2.0356,0.0000,14.4292,0.0000,0.0000,0.1533,0.0153,0.0000,0.0050,0.0147,0.0008,0.0033,0.0000,0.0000
+2016-12-31,34848.6294,36984.8586,11.0944,0.3231,104.9797,20.6897,0,42.1194,0.2067,0.0000,0.0000,0.0083,0.0128,0.0031,0,0.0017,0.0008,0.0000,0.0000
+2017-01-01,16995.2972,6606.9167,9.5739,2186.9892,0.0067,33.3481,0,0.0000,0.0000,1.2328,0,0.0047,0.0000,0.0047,0,0.0031,0.0006,0.0000,0.0003
+---------

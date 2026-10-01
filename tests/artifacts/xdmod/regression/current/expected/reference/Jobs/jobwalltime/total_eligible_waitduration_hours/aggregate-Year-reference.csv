@@ -1,0 +1,17 @@
+title
+"Wait Hours by Eligible Time: Total: by Job Wall Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wall Time","Wait Hours by Eligible Time: Total"
+"0 - 1s",3271.5997
+"1 - 30s",22567.1025
+"30s - 30min",161750.7656
+"30 - 60min",44116.3083
+"1 - 5hr",57703.4600
+"5 - 10hr",6688.7622
+"10 - 18hr",631.9958
+18+hr,5124.2736
+---------

@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by Job Size"
+"Wait Hours by Submit Time: Per Job: by Job Size"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[1] Wait Hours: Per Job","[2] Wait Hours: Per Job","[3 - 4] Wait Hours: Per Job","[5 - 8] Wait Hours: Per Job","[9 - 16] Wait Hours: Per Job","[17 - 32] Wait Hours: Per Job","[33 - 64] Wait Hours: Per Job","[65 - 128] Wait Hours: Per Job","[129 - 256] Wait Hours: Per Job","[257 - 512] Wait Hours: Per Job"
+Day,"[1] Wait Hours by Submit Time: Per Job","[2] Wait Hours by Submit Time: Per Job","[3 - 4] Wait Hours by Submit Time: Per Job","[5 - 8] Wait Hours by Submit Time: Per Job","[9 - 16] Wait Hours by Submit Time: Per Job","[17 - 32] Wait Hours by Submit Time: Per Job","[33 - 64] Wait Hours by Submit Time: Per Job","[65 - 128] Wait Hours by Submit Time: Per Job","[129 - 256] Wait Hours by Submit Time: Per Job","[257 - 512] Wait Hours by Submit Time: Per Job"
 2016-12-22,0,0,0,0,4.66625000,0,0,0,0,0
 2016-12-23,9.59638889,0,0,0,0.00000000,0,0,0,0,0
 2016-12-24,0.00000000,0,0,0,0.00000000,0,0,0,0,0

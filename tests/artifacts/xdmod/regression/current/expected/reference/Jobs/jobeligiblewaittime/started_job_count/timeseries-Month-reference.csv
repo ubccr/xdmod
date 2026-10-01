@@ -1,0 +1,11 @@
+title
+"Number of Jobs Started: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[0 - 1s] Number of Jobs Started","[1 - 30s] Number of Jobs Started","[30s - 30min] Number of Jobs Started","[30 - 60min] Number of Jobs Started","[1 - 5hr] Number of Jobs Started","[5 - 10hr] Number of Jobs Started","[10 - 18hr] Number of Jobs Started","[18+hr] Number of Jobs Started"
+2016-12,10000,13325,12929,2522,11921,3029,218,2266
+2017-01,2327,4819,4978,138,1217,929,373,323
+---------
