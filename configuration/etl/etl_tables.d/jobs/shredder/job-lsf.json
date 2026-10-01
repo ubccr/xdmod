@@ -85,6 +85,12 @@
                 "name": "node_list",
                 "type": "mediumtext",
                 "nullable": false
+            },
+            {
+                "name": "gpu_count",
+                "type": "int(10) unsigned",
+                "nullable": false,
+                "default": 0
             }
         ],
         "indexes": [
