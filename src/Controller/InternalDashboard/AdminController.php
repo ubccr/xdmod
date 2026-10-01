@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use XDUser;
 
 /**
@@ -29,7 +30,7 @@ class AdminController extends BaseController
      * @throws BadRequestHttpException if no user is found for the provided uid.
      * @throws BadRequestHttpException if the viewedTour parameter is any integer value other than 0 or 1.
      */
-    #[MgrRequired]
+    #[IsGranted('mgr')]
     #[Route('{prefix}/admin/reset_user_tour_viewed', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function resetUserTourViewed(Request $request): Response
     {
