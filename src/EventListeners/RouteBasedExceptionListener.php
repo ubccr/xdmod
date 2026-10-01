@@ -59,12 +59,12 @@ class RouteBasedExceptionListener
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof AccessDeniedException
             ) {
-                $statusCode = Response::HTTP_FORBIDDEN;
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             } elseif ($exception instanceof InsufficientAuthenticationException) {
+                $statusCode = Response::HTTP_FORBIDDEN;
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
@@ -78,10 +78,8 @@ class RouteBasedExceptionListener
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof AccessDeniedException
             ) {
-                // This is specifically for ControllerTest::testSabRejectsPublic, it expects a 401.
-                if (!$this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
-                    $statusCode = Response::HTTP_UNAUTHORIZED;
-                } else {
+                // This is specifically for ControllerTest::testSabRejectsPublic
+                if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
                     $statusCode = Response::HTTP_OK;
                 }
                 $content = [
