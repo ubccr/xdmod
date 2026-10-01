@@ -113,7 +113,6 @@ class UserInterfaceController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
     #[Route('{prefix}interfaces/user/charts', requirements: ['prefix' => '.*'],  methods: ['POST'])]
     public function getCharts(Request $request): Response
     {
@@ -173,7 +172,6 @@ class UserInterfaceController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
     #[Route('{prefix}interfaces/user/data', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getData(Request $request): Response
     {
