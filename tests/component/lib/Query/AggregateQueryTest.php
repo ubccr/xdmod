@@ -77,7 +77,7 @@ class AggregateQueryTest extends \PHPUnit\Framework\TestCase
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT STRAIGHT_JOIN
+SELECT
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -90,7 +90,10 @@ WHERE
   duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
-GROUP BY person.id
+GROUP BY person.id,
+  person.short_name,
+  person.long_name,
+  person.order_id
 ORDER BY person.order_id ASC
 SQL;
         $this->assertEquals($expected, $generated, 'Aggregate query no statistic');
@@ -113,7 +116,7 @@ SQL;
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT STRAIGHT_JOIN
+SELECT
   systemaccount.username as 'username_id',
   systemaccount.username as 'username_short_name',
   systemaccount.username as 'username_name',
@@ -154,7 +157,7 @@ SQL;
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT STRAIGHT_JOIN
+SELECT
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -169,7 +172,10 @@ WHERE
   duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
-GROUP BY person.id
+GROUP BY person.id,
+  person.short_name,
+  person.long_name,
+  person.order_id
 ORDER BY person.order_id ASC
 SQL;
         $this->assertEquals($expected, $generated, 'Aggregate query group by and main statistic');
@@ -201,7 +207,7 @@ SQL;
         // present.
 
         $expected  =<<<SQL
-SELECT STRAIGHT_JOIN
+SELECT
   COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS running_job_count,
   COALESCE(SUM(agg.ended_job_count), 0) AS job_count
 FROM
@@ -232,7 +238,7 @@ SQL;
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT STRAIGHT_JOIN
+SELECT
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -246,7 +252,10 @@ WHERE
   duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
-GROUP BY person.id
+GROUP BY person.id,
+  person.short_name,
+  person.long_name,
+  person.order_id
 ORDER BY person.order_id ASC
 SQL;
         $this->assertEquals($expected, $generated, 'Aggregate query add group by and statistic');
@@ -279,7 +288,7 @@ SQL;
 
         $generated = $query->getQueryString(10, 0); // Also test limit=10 and offset=0
         $expected  =<<<SQL
-SELECT STRAIGHT_JOIN
+SELECT
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -293,7 +302,10 @@ WHERE
   duration.id = agg.day_id
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
-GROUP BY person.id
+GROUP BY person.id,
+  person.short_name,
+  person.long_name,
+  person.order_id
 ORDER BY job_count desc,
   person.order_id ASC
 LIMIT 10 OFFSET 0
@@ -305,7 +317,7 @@ SQL;
 SELECT
   COUNT(*) AS row_count
 FROM (
-  SELECT STRAIGHT_JOIN
+  SELECT
   SUM(1) AS total
   FROM
     modw_aggregates.jobfact_by_day agg,
@@ -316,7 +328,10 @@ FROM (
     AND agg.day_id between 201600357 and 201700001
     AND person.id = agg.person_id
   GROUP BY
-    person.id
+    person.id,
+    person.short_name,
+    person.long_name,
+    person.order_id
 ) AS a WHERE a.total IS NOT NULL
 SQL;
         $this->assertEquals($expected, $generated, 'Aggregate query count with group by add statistic ');
@@ -350,7 +365,7 @@ SQL;
 
         $generated = $query->getQueryString();
         $expected  =<<<SQL
-SELECT STRAIGHT_JOIN
+SELECT
   queue.id as 'queue_id',
   queue.id as 'queue_short_name',
   queue.id as 'queue_name',
@@ -398,7 +413,7 @@ SQL;
         $query->addOrderByAndSetSortInfo($data_description);
         $generated = $query->getQueryString();
         $expected =<<<SQL
-SELECT STRAIGHT_JOIN
+SELECT
   -9999 as 'none_id',
   'Screwdriver' as 'none_short_name',
   'Screwdriver' as 'none_name',
@@ -450,7 +465,7 @@ SQL;
     public function testAddWhereJoin()
     {
         $expected =<<<SQL
-SELECT STRAIGHT_JOIN
+SELECT
   person.id as 'person_id',
   person.short_name as 'person_short_name',
   person.long_name as 'person_name',
@@ -464,7 +479,10 @@ WHERE
   AND agg.day_id between 201600357 and 201700001
   AND person.id = agg.person_id
   AND person.id > ('constraint')
-GROUP BY person.id
+GROUP BY person.id,
+  person.short_name,
+  person.long_name,
+  person.order_id
 ORDER BY person.order_id ASC
 SQL;
 
@@ -523,7 +541,7 @@ SQL;
 SELECT
   COUNT(*) AS row_count
 FROM (
-  SELECT STRAIGHT_JOIN
+  SELECT
   SUM(1) AS total
   FROM
     modw_aggregates.jobfact_by_day agg,
@@ -534,7 +552,10 @@ FROM (
     AND agg.day_id between 201600357 and 201700001
     AND person.id = agg.person_id
   GROUP BY
-    person.id
+    person.id,
+    person.short_name,
+    person.long_name,
+    person.order_id
 ) AS a WHERE a.total IS NOT NULL
 SQL;
         $this->assertEquals($expected, $generated, 'Aggregate query count');
@@ -568,7 +589,7 @@ SELECT
   person.order_id AS _dimensionOrderValue
 FROM modw.person person
 WHERE person.id IN ( SELECT modw_filters.Jobs_person.person FROM modw_filters.Jobs_person )
-GROUP BY person.id
+GROUP BY person.id, person.short_name, person.long_name, person.order_id
 ORDER BY person.order_id ASC
 SQL;
         $this->assertEquals($expected, $generated, 'Aggregate query dimension values');

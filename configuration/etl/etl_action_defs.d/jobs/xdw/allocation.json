@@ -14,13 +14,13 @@
             "order_id": "NULL",
             "boardtype_id": 0,
             "initial_allocation": 0,
-            "initial_start_date": "'0000-00-00'",
+            "initial_start_date": "'1970-01-01'",
             "initial_start_date_ts": 0,
-            "initial_end_date": "'0000-00-00'",
+            "initial_end_date": "'2037-12-31'",
             "base_allocation": 0,
             "remaining_allocation": 0,
-            "end_date": "'0000-00-00'",
-            "end_date_ts": 0,
+            "end_date": "'2037-12-31'",
+            "end_date_ts": "2145848399",
             "allocation_origin_id": "alf.allocation_id"
         },
         "joins": [

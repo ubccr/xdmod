@@ -23,12 +23,14 @@
             {
                 "name": "created_on",
                 "type": "timestamp",
-                "nullable": false
+                "nullable": false,
+                "default": "1971-01-01 00:00:00"
             },
             {
                 "name": "expires_on",
                 "type": "timestamp",
-                "nullable": false
+                "nullable": false,
+                "default": "2037-12-31 23:59:59"
             }
         ],
         "indexes": [

@@ -81,7 +81,7 @@
             "sum_gpu_time_squared": "COALESCE(SUM( CAST(POW(task.gpu_count * ${wallduration_case_statement}, 2) AS DECIMAL(36,4)) ), 0)",
             "node_time": "COALESCE(SUM(task.node_count * ${wallduration_case_statement}), 0)",
             "sum_node_time_squared": "COALESCE(SUM( CAST(POW(task.node_count * ${wallduration_case_statement}, 2) AS DECIMAL(36,4)) ), 0)",
-            "sum_weighted_expansion_factor": "SUM( ((task.wallduration + task.waitduration) / task.wallduration) * task.node_count * COALESCE(${wallduration_case_statement}, 0))",
+            "sum_weighted_expansion_factor": "SUM( ((task.wallduration + task.waitduration) / NULLIF(task.wallduration, 0)) * task.node_count * COALESCE(${wallduration_case_statement}, 0))",
             "sum_job_weights": "SUM(task.node_count * COALESCE(${wallduration_case_statement}, 0))",
             "job_id_list": "GROUP_CONCAT(task.job_id)"
         },
@@ -92,6 +92,8 @@
             "piperson_organization_id",
             "job_time_bucket_id",
             "job_wait_time_bucket_id",
+            "processorbucket_id",
+            "gpubucket_id",
             "node_count",
             "processor_count",
             "person_id",
