@@ -244,7 +244,12 @@ class ControllerTest extends BaseTest
     {
         $this->helper->authenticate('usr');
 
-        $response = $this->helper->post('controllers/sab_user.php', null, ['operation' => 'enum_tg_users']);
+        $data = array(
+            'start' => 1,
+            'search_mode' => 'username',
+            'pi_only' => 'n'
+        );
+        $response = $this->helper->post('controllers/sab_user.php', $data, ['operation' => 'enum_tg_users']);
 
         $this->assertEquals($response[1]['content_type'], 'application/json');
         $this->assertEquals(200, $response[1]['http_code']);

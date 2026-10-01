@@ -121,8 +121,6 @@ class ReportBuilderTest extends BaseTest
     public function testDownloadReportInputValidation($params, $expected)
     {
         $this->helper->authenticate('usr');
-        $data = $this->helper->get('controllers/report_builder.php', $params);
-
         $response = $this->helper->get('controllers/report_builder.php', $params);
         $data = $response[0];
         $curlinfo = $response[1];
@@ -136,7 +134,7 @@ class ReportBuilderTest extends BaseTest
         } else {
             // expect text data back
             $this->assertEquals('text/html; charset=UTF-8', $curlinfo['content_type']);
-            $this->assertEquals($expected, $response[0]);
+            $this->assertEquals($expected, $data);
         }
     }
 
@@ -587,10 +585,6 @@ class ReportBuilderTest extends BaseTest
         $this->log('Expected HTTP-Code   : [' . $expectedHttpCode . ']');
         $this->log("Response HTTP-Code   : [" . $response[1]['http_code'] . "]");
 
-        if (($expectedContentType !== $response[1]['content_type']) ||
-            ($expectedHttpCode !== $response[1]['http_code'])) {
-            echo var_export($response, true) . "\n";
-        }
         $this->assertEquals($expectedContentType, $response[1]['content_type']);
         $this->assertEquals($expectedHttpCode, $response[1]['http_code']);
 

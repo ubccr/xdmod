@@ -13,6 +13,7 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use XDReportManager;
 use XDUser;
 use function xd_response\buildError;
@@ -32,6 +33,7 @@ class ReportBuilderController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('ROLE_USER')]
     #[Route('/controllers/report_builder.php', methods: ['POST', 'GET'])]
     public function index(Request $request): Response
     {
@@ -40,37 +42,33 @@ class ReportBuilderController extends BaseController
             return $this->json(buildError('operation_not_defined'));
         }
 
-        try {
-            switch ($operation) {
-                case 'build_from_template':
-                    $templateId = $this->getStringParam($request, 'template_id');
-                    return $this->getReportFromTemplate($request, $templateId);
-                case 'download_report':
-                    return $this->downloadReport($request);
-                case 'enum_available_charts':
-                    return $this->getAvailableCharts($request);
-                case 'enum_reports':
-                    return $this->getReports($request);
-                case 'enum_templates':
-                    return $this->getTemplates($request);
-                case 'fetch_report_data':
-                    $reportId = $this->getStringParam($request, 'selected_report', true);
-                    return $this->getReportData($request, $reportId);
-                case 'get_new_report_name':
-                    return $this->getNewReportName($request);
-                case 'get_preview_data':
-                    return $this->getPreviewData($request);
-                case 'remove_chart_from_pool':
-                    return $this->removeChartFromPool($request);
-                case 'remove_report_by_id':
-                    return $this->removeReportsById($request);
-                case 'save_report':
-                    return $this->saveReport($request);
-                case 'send_report':
-                    return $this->sendReport($request);
-            }
-        } catch(\Exception $e) {
-            return $this->json(buildError($e));
+        switch ($operation) {
+            case 'build_from_template':
+                $templateId = $this->getStringParam($request, 'template_id');
+                return $this->getReportFromTemplate($request, $templateId);
+            case 'download_report':
+                return $this->downloadReport($request);
+            case 'enum_available_charts':
+                return $this->getAvailableCharts($request);
+            case 'enum_reports':
+                return $this->getReports($request);
+            case 'enum_templates':
+                return $this->getTemplates($request);
+            case 'fetch_report_data':
+                $reportId = $this->getStringParam($request, 'selected_report', true);
+                return $this->getReportData($request, $reportId);
+            case 'get_new_report_name':
+                return $this->getNewReportName($request);
+            case 'get_preview_data':
+                return $this->getPreviewData($request);
+            case 'remove_chart_from_pool':
+                return $this->removeChartFromPool($request);
+            case 'remove_report_by_id':
+                return $this->removeReportsById($request);
+            case 'save_report':
+                return $this->saveReport($request);
+            case 'send_report':
+                return $this->sendReport($request);
         }
 
         return $this->json(buildError('invalid_operation_specified'));
@@ -83,14 +81,11 @@ class ReportBuilderController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('ROLE_USER')]
     #[Route('/reports/builder/list', methods: ['GET'])]
     public function getReports(Request $request): Response
     {
-        try {
-            $user = $this->detectUser($request, [XDUser::PUBLIC_USER]);
-        } catch(Exception $e) {
-            return $this->json(buildError($e), 401);
-        }
+        $user = $this->getXDUser();
 
         $reportManager = new \XDReportManager($user);
 
@@ -110,11 +105,7 @@ class ReportBuilderController extends BaseController
     #[Route('/reports/builder/charts', methods: ['POST'])]
     public function getAvailableCharts(Request $request): Response
     {
-        try {
-            $user = $this->detectUser($request, [XDUser::PUBLIC_USER]);
-        } catch(Exception $e) {
-            return $this->json(buildError($e), 401);
-        }
+        $user = $this->getXDUser();
 
         $reportManager = new \XDReportManager($user);
         return $this->json([
@@ -134,7 +125,7 @@ class ReportBuilderController extends BaseController
     public function getReportFromTemplate(Request $request, string $templateId): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->getXDUser();
         $template = \XDReportManager::retrieveReportTemplate($user, $templateId);
         $parameters = $request->request->all();
         $template->buildReportFromTemplate($parameters);
@@ -151,7 +142,7 @@ class ReportBuilderController extends BaseController
     public function sendReport(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->getXDUser();
         $reportManager = new \XDReportManager($user);
 
         $buildOnly = $this->getBooleanParam($request, 'build_only');
@@ -195,8 +186,6 @@ class ReportBuilderController extends BaseController
     #[Route('/controllers/report_builder.php/{report_name}', methods: ["GET"])]
     public function downloadReport(Request $request, string $reportName = ''): Response
     {
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
         $reportLoc = $this->getStringParam($request, 'report_loc');
         if (empty($reportLoc)) {
             return $this->json([
@@ -220,7 +209,7 @@ class ReportBuilderController extends BaseController
             throw new BadRequestHttpException('Invalid format specified');
         }
 
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->getXDUser();
         $reportManager = new \XDReportManager($user);
 
         $reportId = preg_replace('/(.+)-(.+)-(.+)/', '$1-$2', $reportLoc);
@@ -250,7 +239,7 @@ class ReportBuilderController extends BaseController
     public function getPreviewData(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->getXDUser();
 
         $reportId = $this->getStringParam($request, 'report_id', true);
         $token = $this->getStringParam($request, 'token', true);
@@ -276,7 +265,7 @@ class ReportBuilderController extends BaseController
     public function getNewReportName(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->getXDUser();
         $reportManager = new \XDReportManager($user);
         return $this->json([
             'success'     => true,
@@ -290,6 +279,7 @@ class ReportBuilderController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[IsGranted('ROLE_USER')]
     #[Route('/reports/builder/save', methods: ['POST'])]
     public function saveReport(Request $request): Response
     {
@@ -297,7 +287,7 @@ class ReportBuilderController extends BaseController
         $map = [];
 
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->getXDUser();
         $reportManager = new \XDReportManager($user);
         switch ($phase) {
             case 'create':
@@ -424,7 +414,7 @@ class ReportBuilderController extends BaseController
     public function removeReportsById(Request $request): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->getXDUser();
         $reportManager = new \XDReportManager($user);
 
         $reportIds = explode(';', $this->getStringParam($request, 'selected_report', true));
@@ -482,12 +472,7 @@ class ReportBuilderController extends BaseController
     #[Route('/reports/builder/templates', methods: ['GET'])]
     public function getTemplates(Request $request): Response
     {
-        try {
-            $user = $this->getLoggedInUser($request->getSession());
-        } catch (Exception $e) {
-            return $this->json(buildError($e), 401);
-        }
-
+        $user = $this->getXDUser();
 
         $templates = \XDReportManager::enumerateReportTemplates($user->getRoles());
         // We do not want to show the "Dashboard Tab Reports"
@@ -651,7 +636,7 @@ class ReportBuilderController extends BaseController
     public function getReportData(Request $request, string $reportId): Response
     {
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-        $user = XDUser::getUserByUserName($this->getUser()->getUserIdentifier());
+        $user = $this->getXDUser();
 
         $reportManager = new \XDReportManager($user);
 

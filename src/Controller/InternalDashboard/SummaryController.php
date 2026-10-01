@@ -71,7 +71,6 @@ class SummaryController extends BaseController
     #[Route('{prefix}summary/configs', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getConfig(Request $request): Response
     {
-
         $config = XdmodConfiguration::assocArrayFactory(
             'internal_dashboard.json',
             CONFIG_DIR
@@ -124,7 +123,6 @@ class SummaryController extends BaseController
     #[Route('{prefix}summary/portlets', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getPortlets(Request $request): Response
     {
-
         $config = XdmodConfiguration::assocArrayFactory(
             'internal_dashboard.json',
             CONFIG_DIR

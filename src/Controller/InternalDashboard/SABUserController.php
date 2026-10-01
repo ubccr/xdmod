@@ -23,7 +23,7 @@ class SABUserController extends BaseController
     #[Route('/controllers/sab_user.php')]
     public function index(Request $request): Response
     {
-        $user = $this->getXDUser($request->getSession());
+        $user = $this->getXDUser();
 
         $operation = $this->getStringParam($request, 'operation', true);
         switch ($operation) {

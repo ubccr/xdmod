@@ -35,7 +35,6 @@ class TokenUserProvider implements UserProviderInterface
      */
     public function refreshUser(UserInterface $user): UserInterface
     {
-        $this->logger->debug('Refreshing User', [$user]);
         try {
             return User::fromXDUser(XDUser::getUserByUserName($user->getUserIdentifier()));
         } catch (\Exception $e) {
