@@ -41,7 +41,9 @@
         "groupby": [
             "raw.resource_id",
             "raw.provider_instance_identifier",
-            "raw.service_provider"
+            "raw.service_provider",
+            "act.account_id",
+            "sp.organization_id"
         ]
     }
 }

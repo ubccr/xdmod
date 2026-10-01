@@ -743,7 +743,7 @@ SQL;
         $select_order_by = $this->getSelectOrderBy();
 
         $format = <<<SQL
-SELECT STRAIGHT_JOIN%s
+SELECT%s
   %s
 FROM
   %s%s
@@ -784,7 +784,7 @@ SQL;
 SELECT
   COUNT(*) AS row_count
 FROM (
-  SELECT STRAIGHT_JOIN
+  SELECT
   %s AS total
   FROM
     %s

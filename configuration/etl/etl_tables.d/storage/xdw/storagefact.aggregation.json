@@ -191,42 +191,49 @@
             {
                 "name": "idx_resource_id",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "resource_id"
                 ]
             },
             {
                 "name": "idx_resourcetype_id",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "resourcetype_id"
                 ]
             },
             {
                 "name": "idx_mountpoint_id",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "mountpoint_id"
                 ]
             },
             {
                 "name": "idx_person_id",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "person_id"
                 ]
             },
             {
                 "name": "idx_principalinvestigator_person_id",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "principalinvestigator_person_id"
                 ]
             },
             {
                 "name": "idx_systemaccount_id",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "systemaccount_id"
                 ]
             },
             {
                 "name": "idx_fos_id",
                 "columns": [
+                    "${AGGREGATION_UNIT}_id",
                     "fos_id"
                 ]
             },

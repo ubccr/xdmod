@@ -3,10 +3,6 @@
 1c
 ["1004733","Mortorq","Arts"]
 30
-["2276028","Frearson","Mechanics and Materials"]
-30
-["2276029","Frearson","Mechanics and Materials"]
-30
 ["2276367","Frearson","Mechanics and Materials"]
 30
 ["2276742","Frearson","Mechanics and Materials"]
@@ -172,6 +168,10 @@
 ["2313427","Frearson","Mechanics and Materials"]
 1b
 ["965514","Mortorq","Arts"]
+1b
+["968494","Mortorq","Arts"]
+1b
+["970129","Mortorq","Arts"]
 1b
 ["992569","Mortorq","Arts"]
 1b

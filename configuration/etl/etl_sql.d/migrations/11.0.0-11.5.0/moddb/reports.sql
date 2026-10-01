@@ -16,7 +16,12 @@ CREATE TEMPORARY TABLE `tmp_uniquereports` (
   `active_role` varchar(30) DEFAULT NULL,
   `last_modified` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   UNIQUE INDEX idx_report (report_id)
-)//
+)
+-- Explicitly set the charset rather than inheriting the database default. From
+-- MariaDB 11.5 on, the default is utf8mb4_uca1400_ai_ci, which is accent insensitive, 
+-- so the UNIQUE INDEX above would collapse report_ids that differ only by accent and
+-- INSERT IGNORE would silently discard those rows before they are written back.
+CHARACTER SET utf8 COLLATE utf8_unicode_ci//
 INSERT IGNORE INTO `tmp_uniquereports` SELECT * FROM `moddb`.`Reports`//
 DELETE FROM `moddb`.`Reports`//
 INSERT INTO `moddb`.`Reports` SELECT * FROM `tmp_uniquereports`//
