@@ -121,6 +121,7 @@ class RouteBasedExceptionListener
             }
         } elseif ($route == 'ccr_metricexplorer_index') {
             if ($exception instanceof \Datawarehouse\Query\Exceptions\AccessDeniedException) {
+                $content['message'] = $exception->getMessage();
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
