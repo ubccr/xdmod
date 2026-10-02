@@ -445,7 +445,7 @@ class MetricExplorerController extends BaseController
 
         $realms = $this->getStringParam($request, 'realm', false);
         if ($realms !== null) {
-            $realms = preg_split('/,\s*/', trim($realms), null, PREG_SPLIT_NO_EMPTY);
+            $realms = preg_split('/,\s*/', trim($realms), -1, PREG_SPLIT_NO_EMPTY);
         }
 
         return $this->json(MetricExplorer::getDimensionValues(
