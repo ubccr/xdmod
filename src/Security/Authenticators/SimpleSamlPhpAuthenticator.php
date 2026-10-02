@@ -187,6 +187,9 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         $this->logger->info('SimpleSAMLPHP Authentication Succeeded!');
+        $user = $token->getUser();
+        $xdUser = XDUser::getUserByUserName($user->getUserIdentifier());
+        $xdUser->postLogin($request);
         return null;
     }
 

@@ -56,7 +56,6 @@ class BaseController extends AbstractController
     }
 
     /**
-     *  DELETE ME
      *  Used in place for now because the controllers act on an XDUser
      * Retrieve the XDMoD user
      *
