@@ -810,6 +810,7 @@ class WarehouseController extends BaseController
      *                           the dimension values retrieved.
      * @throws Exception
      */
+    #[IsGranted('ROLE_USER')]
     #[Route('/warehouse/dimensions/{dimension}', requirements: ["dimension" => "\w+"], methods: ['GET'])]
     #[Route('{prefix}warehouse/dimensions/{dimension}', requirements: ["dimension" => "\w+", 'prefix' => '.*'], methods: ['GET'])]
     public function getDimensionValues(Request $request, string $dimension): Response
