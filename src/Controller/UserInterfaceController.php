@@ -43,17 +43,21 @@ class UserInterfaceController extends BaseController
             );
         }
 
-        switch ($operation) {
-            case 'get_charts':
-                return $this->forward('CCR\Controller\UserInterfaceController::getCharts');
-            case 'get_data':
-                return $this->forward('CCR\Controller\UserInterfaceController::getData');
-            case 'get_menus':
-                return $this->getMenus($request);
-            case 'get_param_descriptions':
-                return $this->getParamDescriptions($request);
-            case 'get_tabs':
-                return $this->getTabs($request);
+        try {
+            switch ($operation) {
+                case 'get_charts':
+                    return $this->forward('CCR\Controller\UserInterfaceController::getCharts');
+                case 'get_data':
+                    return $this->forward('CCR\Controller\UserInterfaceController::getData');
+                case 'get_menus':
+                    return $this->getMenus($request);
+                case 'get_param_descriptions':
+                    return $this->getParamDescriptions($request);
+                case 'get_tabs':
+                    return $this->getTabs($request);
+            }
+        } catch (\Exception $e) {
+            return $this->json(buildError($e));
         }
 
         return $this->json(
