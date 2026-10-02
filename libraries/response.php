@@ -67,24 +67,3 @@ function presentError($error)
 {
     xd_controller\returnJSON(buildError($error));
 }
-
-/**
- * Sets response headers appropriate for dynamically-generated JavaScript.
- *
- * @param  boolean $allow_caching Allow the generated JavaScript to be cached.
- *                                (Defaults to false.)
- */
-function useDynamicJavascriptHeaders($allow_caching = false) {
-    // Set the content type of the response to JavaScript.
-    header('Content-Type: application/javascript');
-
-    // If desired, prevent this response from being cached.
-    // See Example #2: http://php.net/manual/en/function.header.php
-    // See: http://stackoverflow.com/a/13640164
-    if (!$allow_caching) {
-        header("Cache-Control: no-store, no-cache, must-revalidate, max-age=0");
-        header("Cache-Control: post-check=0, pre-check=0", false);
-        header("Expires: Sat, 26 Jul 1997 05:00:00 GMT");
-        header("Pragma: no-cache");
-    }
-}

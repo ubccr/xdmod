@@ -360,7 +360,7 @@ class RegressionTestHelper extends XdmodTestHelper
             throw new SkippedTestError($fullTestName . ' intentionally skipped');
         }
 
-        list($csvdata, $curldata) = self::post('/controllers/user_interface.php', null, $input);
+        list($csvdata, $curldata) = self::post('controllers/user_interface.php', null, $input);
         if (!empty(self::$timingOutputDir)) {
             $time_data = $fullTestName . "," . $curldata['total_time'] . "," . $curldata['starttransfer_time'] . "\n";
             $outputCSV = self::$timingOutputDir . "timings.csv";

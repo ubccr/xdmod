@@ -1144,27 +1144,27 @@ class Configuration extends Loggable implements iConfiguration
      * ==========================================================================================
      */
 
-    public function current()
+    public function current(): mixed
     {
         return current($this->sectionData);
     }
 
-    public function key()
+    public function key(): mixed
     {
         return key($this->sectionData);
     }
 
-    public function next()
+    public function next(): void
     {
-        return next($this->sectionData);
+        next($this->sectionData);
     }
 
-    public function rewind()
+    public function rewind(): void
     {
-        return reset($this->sectionData);
+        reset($this->sectionData);
     }
 
-    public function valid()
+    public function valid(): bool
     {
         return false !== current($this->sectionData);
     }

@@ -374,29 +374,30 @@ class Realm extends \CCR\Loggable implements iRealm
             // use late static binding. For other classes use the class name specified unless the
             // configuration explicitly provides a class name.
 
-            $factoryClassName = ('Realm' == $className ? 'static' : $className);
-            if ( 'Realm' != $className && isset($configObj->class) ) {
-                if ( ! class_exists($configObj->class) ) {
+            $factoryClassName = ('Realm' == $className ? Realm::class : $className);
+            if ('Realm' != $className && isset($configObj->class)) {
+                if (!class_exists($configObj->class)) {
                     $msg = sprintf("Attempt to instantiate undefined %s class %s", $className, $configObj->class);
-                    if ( null !== $logger ) {
+                    if (null !== $logger) {
                         $logger->error($msg);
                     }
                     throw new \Exception($msg);
                 }
                 $factoryClassName = $configObj->class;
-            } elseif ( false === strpos($factoryClassName, '\\')  && 'static' != $factoryClassName ) {
+            } elseif (false === strpos($factoryClassName, '\\') && 'static' != $factoryClassName) {
                 $factoryClassName = sprintf('\\%s\\%s', __NAMESPACE__, $factoryClassName);
             }
 
-            $factory = sprintf('%s::factory', $factoryClassName);
-
-            if ( 'Realm' == $className ) {
+            // When using the string form of a callable, the use of `static::` is deprecated, hence switching to using the array format for a callable.
+            $factoryCallable = [$factoryClassName, 'factory'];
+            if ('Realm' == $className) {
                 // The Realm class already has the configuration and does not need it to be passed
                 // to factory().
-                $list[$shortName] = forward_static_call($factory, $shortName, $logger);
+                $list[$shortName] = forward_static_call($factoryCallable, $shortName, null, null, $logger);
             } else {
+
                 // Entities encapsulated by the realm need their config objects
-                $list[$shortName] = forward_static_call($factory, $shortName, $config, $realmObj, $logger);
+                $list[$shortName] = forward_static_call($factoryCallable, $shortName, $config, $realmObj, $logger);
             }
         }
 

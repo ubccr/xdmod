@@ -24,7 +24,7 @@ function xdmodAutoload($className)
     $pathList = explode(":", ini_get('include_path'));
 
    // if class does not have a namespace
-    if(strpos($className, '\\') === false) {
+    if(!is_null($className) && strpos($className, '\\') === false) {
         $includeFile = $className.".php";
         foreach ($pathList as $path) {
             if (is_readable("$path/$includeFile")) {

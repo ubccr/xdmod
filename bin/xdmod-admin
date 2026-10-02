@@ -37,8 +37,13 @@ try {
  */
 function main()
 {
-    global $argv, $logger, $force;
+    global $argc, $argv, $logger, $force;
 
+    # Check if we should run in xdmod-admin or symfony mode
+    if ($argc > 1 && $argv[1] === '--console') {
+        echo (new \CCR\Helper\SymfonyCommandHelper())->executeCommand(array_slice($argv, 1));
+        exit(0);
+    }
     $opts = array(
         array('h', 'help'),
         array('v', 'verbose'),
@@ -53,7 +58,7 @@ function main()
         array('t', 'truncate'),
         array('', 'users'),
         array('', 'load:'),
-        array('', 'delete:'),
+        array('', 'delete:')
      );
 
     $shortOptions = implode(
@@ -229,7 +234,7 @@ function main()
                     loadUsers($params);
                     break;
                 default:
-                    $logger->crit("Cannot perform '$action' on '$entity'");
+                    $logger->critical("Cannot perform '$action' on '$entity'");
                     exit(1);
                     break;
             }
@@ -237,7 +242,6 @@ function main()
         default:
             $logger->critical("Unknown entity type '$entity'");
             exit(1);
-            break;
     }
 
     exit;
@@ -289,7 +293,7 @@ function addSSOUsers(array $data)
     foreach ($data as $user) {
         $xdmodUserId = \XDUser::userExistsWithUsername($user['username']);
         if ($xdmodUserId !== INVALID) {
-            $logger->warning("Skipping user '${user['username']}' - account already exists");
+            $logger->warning("Skipping user '{$user['username']}' - account already exists");
             continue;
         }
 

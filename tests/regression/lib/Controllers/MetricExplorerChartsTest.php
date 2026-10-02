@@ -108,7 +108,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
         return $filters;
     }
 
-    private function getDimensionValues($helper, $realm, $dimension)
+    private static function getDimensionValues($helper, $realm, $dimension)
     {
         $params = array(
             'operation' => 'get_dimension',
@@ -120,12 +120,12 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
             'selectedFilterIds' => ''
         );
 
-        $response = $helper->post('/controllers/metric_explorer.php', null, $params);
+        $response = $helper->post('controllers/metric_explorer.php', null, $params);
 
-        $this->assertEquals('application/json', $response[1]['content_type']);
-        $this->assertEquals(200, $response[1]['http_code']);
+        self::assertEquals('application/json', $response[1]['content_type']);
+        self::assertEquals(200, $response[1]['http_code']);
 
-        $this->assertEquals($response[0]['totalCount'], count($response[0]['data']));
+        self::assertEquals($response[0]['totalCount'], count($response[0]['data']));
 
         return $response[0]['data'];
     }
@@ -421,7 +421,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
      * and is intended to be run against a known working XDMoD to generate a baseline
      * set of values for regression testing.
      */
-    private function generateFilterTests()
+    private static function generateFilterTests()
     {
         // Generate test scenario for filter tests.
         $baseConfig = array(
@@ -441,7 +441,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
             foreach ($response[0]['results'] as $dimConfig)
             {
                 $dimension = $dimConfig['id'];
-                $dimensionValues = $this->getDimensionValues($helper, $config['realm'], $dimension);
+                $dimensionValues = self::getDimensionValues($helper, $config['realm'], $dimension);
 
                 $testConfig = array(
                     'settings' => array(
@@ -475,7 +475,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
         return $output;
     }
 
-    public function filterTestsProvider()
+    public static function filterTestsProvider()
     {
         $data_file = realpath(__DIR__ . '/../../../artifacts/xdmod/regression/chartFilterTests.json');
         if (file_exists($data_file)) {
@@ -484,7 +484,7 @@ class MetricExplorerChartsTest extends \PHPUnit\Framework\TestCase
             // Generate test permutations. The expected values for the data points are not set.
             // this causes the test function to record the values and they are then written
             // to a file in the tearDownAfterClass function.
-            $inputs = $this->generateFilterTests();
+            $inputs = self::generateFilterTests();
         }
 
         $helper = new XdmodTestHelper();

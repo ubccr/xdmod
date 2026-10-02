@@ -54,6 +54,7 @@ user_dashboard = "[:features_user_dashboard:]"
 [sso]
 ; Set to "on" to enable the local user option in login modal.
 show_local_login = "off"
+auth_referer=https://xdmod:7000
 
 [internal]
 dw_desc_cache = "off"

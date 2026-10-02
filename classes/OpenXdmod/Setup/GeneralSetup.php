@@ -5,6 +5,9 @@
 
 namespace OpenXdmod\Setup;
 
+use CCR\Helper\SymfonyCommandHelper;
+use Xdmod\Template;
+
 /**
  * General setup.
  */
@@ -124,5 +127,10 @@ EOT
         );
 
         $this->saveIniConfig($settings, 'portal_settings');
+
+        file_put_contents(BASE_DIR . '/.env', '');
+
+        // Make sure that we keep .env up to date.
+        (new SymfonyCommandHelper())->dumpDotEnv();
     }
 }

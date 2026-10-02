@@ -385,7 +385,7 @@ EOF
 
         $response = $this->helper->post('/controllers/user_interface.php', null, $view);
 
-        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/html; charset=UTF-8'));
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode($response[0], true);
@@ -416,7 +416,7 @@ EOF
         }
         $response = $this->helper->post('/controllers/user_interface.php', null, $input);
 
-        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/plain'));
+        $this->assertNotFalse(strpos($response[1]['content_type'], 'text/html; charset=UTF-8'));
         $this->assertEquals($response[1]['http_code'], 200);
 
         $plotdata = json_decode(UsageExplorerHelper::demanglePlotData($response[0]), true);
@@ -496,7 +496,6 @@ EOF;
         $response = $this->helper->post('/controllers/user_interface.php', null, $chartConfig);
 
         $this->assertEquals($response[1]['http_code'], 200);
-
         $actualContentType = $response[1]['content_type'];
         $this->assertEquals($expectedMimeType, $actualContentType);
 

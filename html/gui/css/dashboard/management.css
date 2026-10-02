@@ -1,0 +1,72 @@
+.dashboard_user_stats_timeframe .x-form-check-wrap {
+   padding-left: 10px;
+}
+
+.btn_refresh
+{
+   background-image: url('../../images/dashboard/icon_refresh.png') !important;
+}
+
+.btn_delete,
+.general_btn_close
+{
+   background-image: url('../../images/dashboard/icon_delete.png') !important;
+}
+
+.btn_edit
+{
+   background-image: url('../../images/dashboard/icon_edit.png') !important;
+}
+
+.btn_init_dialog
+{
+   background-image: url('../../images/dashboard/icon_dialog.png') !important;
+}
+
+.update_highlight
+{
+   background-color: #eaf945;
+}
+
+.btn_login_as
+{
+   background-image: url('../../images/dashboard/icon_login.png') !important;
+}
+
+/* ------ Current Users Section Stylings ------- */
+
+.btn_email
+{
+   background-image: url('../../images/dashboard/icon_email.png') !important;
+}
+
+/* --------------------------------------------- */
+
+.btn_group
+{
+   background-image: url('../../images/dashboard/icon_group.png') !important;
+}
+
+
+.btn_role
+{
+   background-image: url('../../images/dashboard/icon_role.png') !important;
+}
+
+.selected_menu_item
+{
+   color: #00f;
+}
+
+/* ------ Recipient Verification Window Stylings ------- */
+
+.btn_email_send
+{
+   background-image: url('../../images/dashboard/icon_email_send.png') !important;
+}
+
+.btn_email_cancel
+{
+   background-image: url('../../images/dashboard/icon_email_cancel.png') !important;
+}
+
