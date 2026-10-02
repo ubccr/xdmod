@@ -409,18 +409,10 @@ class MetricExplorerController extends BaseController
 
         $params = array_merge($request->query->all(), $request->request->all());
         $m = new \DataWarehouse\Access\MetricExplorer($params);
-        try {
-            $result = $m->get_data($user);
-            return new Response($result['results'], 200, $result['headers']);
-        } catch (Exception $e) {
-            return $this->json(
-                [
-                    'success' => false,
-                    'message' => $e->getMessage()
-                ],
-                400
-            );
-        }
+
+        $result = $m->get_data($user);
+        return new Response($result['results'], 200, $result['headers']);
+
     }
 
 
