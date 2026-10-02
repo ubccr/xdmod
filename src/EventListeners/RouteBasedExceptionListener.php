@@ -212,6 +212,11 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
+        } elseif (str_starts_with($route, 'ccr_chartpool_index')) {
+            if ($exception instanceof InsufficientAuthenticationException) {
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
         }
     }
 
