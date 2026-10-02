@@ -50,7 +50,7 @@ class ChartExportTest extends BaseTest
 
             $format = $exportParams['format'];
             $exportResponse = $this->helper->get($url, $exportParams);
-            $this->log($exportResponse);
+            $this->log(var_dump($exportResponse));
             $this->assertEquals(200, $exportResponse[1]['http_code'], "Request to export in $format was unsuccessful.");
 
             // Make sure that the file that shouldnt' exist, does not in fact exist.

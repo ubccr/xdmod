@@ -2442,7 +2442,7 @@ SQL;
         $session_token = md5($user_id . $session_id . $init_time);
 
         $ip_address = $request->getClientIp();
-        $user_agent = 'foo';//$request->get('HTTP_USER_AGENT');
+        $user_agent = $request->server->get('HTTP_USER_AGENT');
 
         $record_query = "
             INSERT INTO SessionManager (
