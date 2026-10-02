@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace CCR\Controller;
 
 use CCR\DB;
+use CCR\Security\Attributes\MustBeLoggedIn;
 use Models\Services\Organizations;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -67,7 +68,7 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route("{prefix}users/current", name: "get_current_user", requirements: ['prefix' => '.*'], methods: ["GET"])]
     public function getCurrentUser(Request $request)
     {
@@ -168,7 +169,7 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getCurrentAPIToken(Request $request): Response
     {
@@ -196,7 +197,7 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception if there is a problem retrieving a database connection.
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function createAPIToken(Request $request): Response
     {
@@ -223,7 +224,7 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['DELETE'])]
     public function revokeAPIToken(Request $request): Response
     {

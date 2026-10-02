@@ -3,6 +3,7 @@
 namespace CCR\Controller;
 
 use CCR\DB;
+use CCR\Security\Attributes\MustBeLoggedIn;
 use DataWarehouse\Data\RawStatisticsConfiguration;
 use DataWarehouse\Export\FileManager;
 use DataWarehouse\Export\QueryHandler;
@@ -27,7 +28,7 @@ use function xd_response\buildError;
 /**
  *
  */
-#[IsGranted('ROLE_USER')]
+#[MustBeLoggedIn]
 #[Route('{prefix}warehouse/export', requirements: ['prefix' => '.*'])]
 class WarehouseExportController extends BaseController
 {

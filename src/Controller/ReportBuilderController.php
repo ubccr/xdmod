@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
+use CCR\Security\Attributes\MustBeLoggedIn;
 use DataWarehouse\Access\ReportGenerator;
 use Exception;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -13,7 +14,6 @@ use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use XDReportManager;
 use XDUser;
 use function xd_response\buildError;
@@ -33,7 +33,7 @@ class ReportBuilderController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/controllers/report_builder.php', methods: ['POST', 'GET'])]
     public function index(Request $request): Response
     {
@@ -81,7 +81,7 @@ class ReportBuilderController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/reports/builder/list', methods: ['GET'])]
     public function getReports(Request $request): Response
     {
@@ -279,7 +279,7 @@ class ReportBuilderController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/reports/builder/save', methods: ['POST'])]
     public function saveReport(Request $request): Response
     {

@@ -200,6 +200,6 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
      */
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
-        throw UnauthorizedHttpException('');
+        throw $authException;
     }
 }

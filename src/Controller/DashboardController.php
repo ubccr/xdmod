@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
+use CCR\Security\Attributes\MustBeLoggedIn;
 use CCR\ColumnLayout;
 use Configuration\XdmodConfiguration;
 use Exception;
@@ -16,7 +17,6 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use XDUser;
 use function xd_response\buildError;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  *
@@ -196,7 +196,7 @@ class DashboardController extends BaseController
      * property.
      * @throws Exception if there is a problem authorizing the current user.
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/layout', methods: ['POST'])]
     public function setLayout(Request $request): Response
     {
@@ -224,7 +224,7 @@ class DashboardController extends BaseController
      * @return Response
      * @throws Exception if there is a problem authorizing the current user.
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/layout', methods: ['DELETE'])]
     public function resetLayout(Request $request): Response
     {
@@ -248,7 +248,7 @@ class DashboardController extends BaseController
      * @throws BadRequestHttpException
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/viewedUserTour', methods: ['POST'])]
     public function setViewedUserTour(Request $request): Response
     {
@@ -342,7 +342,7 @@ class DashboardController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/viewedUserTour', methods: ['GET'])]
     public function getViewedUserTour(Request $request): Response
     {
@@ -362,7 +362,7 @@ class DashboardController extends BaseController
      * @return Response
      * @throws Exception if there is a problem authorizing the current user.
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/savedchartsreports', methods: ['GET'])]
     public function getSavedChartReports(Request $request): Response
     {

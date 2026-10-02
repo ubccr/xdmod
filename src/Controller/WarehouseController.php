@@ -6,6 +6,7 @@ namespace CCR\Controller;
 
 use CCR\DB;
 use CCR\Log;
+use CCR\Security\Attributes\MustBeLoggedIn;
 use DataWarehouse\Data\BatchDataset;
 use DataWarehouse\Export\RealmManager;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
@@ -209,7 +210,7 @@ class WarehouseController extends BaseController
      * @throws BadRequestHttpException
      * @throws NotFoundHttpException
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/warehouse/search/history', methods: ['GET'])]
     #[Route('{prefix}warehouse/search/history', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function searchHistory(Request $request): Response
@@ -267,7 +268,7 @@ class WarehouseController extends BaseController
      *
      * @throws UnauthorizedHttpException|AccessDeniedHttpException|Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/warehouse/search/history/{id}', requirements: ["id" => "\d+"], methods: ['GET'])]
     #[Route('{prefix}warehouse/search/history/{id}', requirements: ["id" => "\d+", 'prefix' => '.*'], methods: ['GET'])]
     public function getHistoryById(Request $request, int $id): Response
@@ -363,7 +364,7 @@ class WarehouseController extends BaseController
      * @throws BadRequestHttpException
      * @throws \Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/warehouse/search/history', methods: ['POST'])]
     #[Route('{prefix}warehouse/search/history', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function createHistory(Request $request): Response
@@ -415,7 +416,7 @@ class WarehouseController extends BaseController
      * @throws AccessDeniedHttpException
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/warehouse/search/history/{id}', requirements: ["id" => '\d+'], methods: ['POST', 'PUT'])]
     #[Route('{prefix}warehouse/search/history/{id}', requirements: ["id" => '\d+', 'prefix' => '.*'], methods: ['POST', 'PUT'])]
     public function updateHistory(Request $request, int $id): Response
@@ -457,7 +458,7 @@ class WarehouseController extends BaseController
      * @return Response
      * @throws BadRequestHttpException|AccessDeniedHttpException|Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/warehouse/search/history/{id}', requirements: ["id" => "\d+"], methods: ['DELETE'])]
     #[Route('{prefix}warehouse/search/history/{id}', requirements: ["id" => "\d+", 'prefix' => '.*'], methods: ['DELETE'])]
     public function deleteHistory(Request $request, int $id): Response
@@ -489,7 +490,7 @@ class WarehouseController extends BaseController
      * @throws AccessDeniedHttpException
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/warehouse/search/history', methods: ['DELETE'])]
     #[Route('{prefix}warehouse/search/history', requirements: ['prefix' => '.*'], methods: ['DELETE'])]
     public function deleteAllHistory(Request $request): Response
@@ -520,7 +521,7 @@ class WarehouseController extends BaseController
      * @throws AccessDeniedHttpException if the user executing this request does not have access to the provided realm.
      * @throws Exception if a user record is not found in the database that corresponds to the current user's username.
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('{prefix}warehouse/search/jobs', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function searchJobs(Request $request): Response
     {
@@ -553,7 +554,7 @@ class WarehouseController extends BaseController
      * @throws AccessDeniedHttpException
      * @throws Exception if a user record is not found in the database that corresponds to the current user's username.
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route(
         "/warehouse/search/{realms}/{action}",
         requirements: ["action" => "([\w|_|-])+", "realms" => "cloud|jobs"],
@@ -595,7 +596,7 @@ class WarehouseController extends BaseController
      *                           the dimensions retrieved.
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/warehouse/resources', methods: ['GET'])]
     #[Route('{prefix}warehouse/resources', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getResources(Request $request): Response
@@ -669,7 +670,7 @@ class WarehouseController extends BaseController
      *
      * @throws AccessDeniedHttpException|UnauthorizedHttpException|BadRequestHttpException
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/warehouse/aggregatedata', methods: ['GET'])]
     #[Route('{prefix}warehouse/aggregatedata', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getAggregateData(Request $request): Response
@@ -759,7 +760,7 @@ class WarehouseController extends BaseController
      *                  the dimensions retrieved.
      * @throws Exception if a XDMoD user cannot be found for the currently logged in users username.
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('{prefix}warehouse/dimensions', requirements: ['prefix' => '.*'],  methods: ['GET'])]
     #[Route('/warehouse/dimensions',  methods: ['GET'])]
     public function getDimensions(Request $request): Response
@@ -810,7 +811,7 @@ class WarehouseController extends BaseController
      *                           the dimension values retrieved.
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/warehouse/dimensions/{dimension}', requirements: ["dimension" => "\w+"], methods: ['GET'])]
     #[Route('{prefix}warehouse/dimensions/{dimension}', requirements: ["dimension" => "\w+", 'prefix' => '.*'], methods: ['GET'])]
     public function getDimensionValues(Request $request, string $dimension): Response
@@ -2117,7 +2118,7 @@ class WarehouseController extends BaseController
      * get raw data from the requested realm.
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/warehouse/raw-data', methods: ['GET'])]
     #[Route('{prefix}warehouse/raw-data', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getRawData(Request $request): Response
