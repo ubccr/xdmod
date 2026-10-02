@@ -263,7 +263,6 @@ abstract class BaseUserAdminTest extends BaseTest
             $userId = $this->retrieveUserId($username);
             self::$newUsers[$username] = $userId;
         }
-        $this->log("Logging out of mgr session");
         // make sure to logout of the current 'mgr' session.
         $this->helper->logout();
 
@@ -274,11 +273,9 @@ abstract class BaseUserAdminTest extends BaseTest
     {
         $helper = new XdmodTestHelper();
 
-        $this->log("Logging in as Manager!");
         $helper->authenticate('mgr');
 
         // perform the pseudo-login
-        $this->log("Attempting to Switch Users");
         $switchResult = $helper->get("?_switch_user=$username");
         if ($switchResult[1]['http_code'] !== 200) {
             $this->fail("Unable to switch to $username");
