@@ -531,7 +531,7 @@ class WarehouseController extends BaseController
 
         $params = json_decode($params, true);
 
-        if($params === null) {
+        if ($params === null) {
             throw new BadRequestHttpException('params parameter must be valid JSON');
         }
 

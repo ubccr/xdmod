@@ -205,12 +205,7 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
-        } elseif (
-            str_starts_with($route, 'ccr_warehouse_createhistory')
-            || str_starts_with($route, 'ccr_warehouse_updatehistory')
-            || str_starts_with($route, 'ccr_warehouse_deletehistory')
-            || str_starts_with($route, 'ccr_warehouse_deleteallhistory')
-        ) {
+        } elseif (str_starts_with($route, 'ccr_warehouse_')) {
             if ($exception instanceof InsufficientAuthenticationException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
