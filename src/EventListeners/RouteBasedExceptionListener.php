@@ -53,6 +53,7 @@ class RouteBasedExceptionListener
         // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
         if ($route == 'ccr_internaldashboard_admin_resetusertourviewed') {
             if ($exception instanceof AccessDeniedHttpException) {
+                $statusCode = Response::HTTP_FORBIDDEN;
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
@@ -65,16 +66,13 @@ class RouteBasedExceptionListener
             }
         // Support Legacy format for the Internal Dashboard controller endpoints
         } elseif ($route == 'ccr_dashboard_setviewedusertour') {
-            if (
-                $exception instanceof AccessDeniedHttpException
-            ) {
+            if ($exception instanceof AccessDeniedHttpExceptioni) {
+                $statusCode = Response::HTTP_FORBIDDEN;
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
-            } elseif (
-                $exception instanceof InsufficientAuthenticationException
-            ) {
+            } elseif ($exception instanceof InsufficientAuthenticationException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
