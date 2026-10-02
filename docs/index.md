@@ -10,15 +10,19 @@ providing quality of service metrics designed to proactively identify
 underperforming system hardware and software, and reporting job level
 performance data for every job running on the HPC system without the
 need to recompile applications.  Open XDMoD is designed to meet the
-following objectives: (1) provide the user community with a tool to more
+following objectives:
+1. Provide the user community with a tool to more
 effectively and efficiently use their allocations and optimize their use
-of HPC resources, (2) provide operational staff with the ability to
+of HPC resources;
+1. Provide operational staff with the ability to
 monitor, diagnose, and tune system performance as well as measure the
-performance of all applications running on their system, (3) provide
+performance of all applications running on their system;
+1. Provide
 software developers with the ability to easily obtain detailed analysis
-of application performance to aid in optimizing code performance, (4)
-provide stakeholders with a diagnostic tool to facilitate HPC planning
-and analysis, and (5) provide metrics to help measure scientific impact.
+of application performance to aid in optimizing code performance;
+1. Provide stakeholders with a diagnostic tool to facilitate HPC planning
+and analysis;
+1. Provide metrics to help measure scientific impact.
 In addition, analyses of the operational characteristics of the HPC
 environment can be carried out at different levels of granularity,
 including job, user, or on a system-wide basis.
@@ -30,9 +34,23 @@ wait time, and wall time, with minimum, maximum and the average of
 these metrics, in addition to many others.  Metrics are organized by a
 customizable hierarchy appropriate for your organization.
 
-A version of Open XDMoD, [ACCESS XDMoD](https://xdmod.access-ci.org)
-is used to monitor the NSF-supported portfolio of advanced computing
+Open XDMoD also features a [Data Analytics Framework](data-analytics-framework.md) that provides API access to the data in the portal.
+
+The base Open XDMoD software supports monitoring
+and analysis of HPC batch computing systems, OpenStack-based clouds
+and compute storage. Other features are enabled via optional modules:
+- Compute Job performance monitoring is enabled via the [Job Performance](https://supremm.xdmod.org) module
+- HPC quality of service tracking is enabled via the [Application Kernels](https://appkernels.xdmod.org) module
+- Reporting on the usage of Open OnDemand is enabled by the [Open OnDemand](https://ondemand.xdmod.org) module
+
+Open XDMoD is the core technology behind [ACCESS XDMoD](https://xdmod.access-ci.org)
+which is used to monitor the NSF-supported portfolio of advanced computing
 systems and services that are integrated with the NSF-funded [ACCESS](https://access-ci.org) program.
+The ACCESS XDMoD instance is based on Open XDMoD with customization and
+ additional modules that support ingestion and processing of data from
+multiple ACCESS-specific sources such as the ACCESS Allocations
+database and NSF Award search database as well as from ACCESS resource
+providers such as CloudBank and Jetstream2.
 
 This material is based upon work supported by the National Science Foundation
 under Grant Numbers [OAC 2137603][nsf-2137603],

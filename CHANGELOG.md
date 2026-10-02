@@ -1,5 +1,33 @@
 # Open XDMoD Change Log
 
+## 2026-08-06 v11.0.4
+
+- Important Notes
+    - This release fixes a low severity security vulnerability in Open XDMoD:
+        - https://github.com/ubccr/xdmod/security/advisories/GHSA-3gcq-4wrp-27g5
+- Bug Fixes
+    - Fix extraneous rows appearing in the `modw_cloud.instance_type` table
+      ([\#2251](https://github.com/ubccr/xdmod/pull/2251),
+      [\#2262](https://github.com/ubccr/xdmod/pull/2262)).
+    - Fix calculation of the Cloud realm's "Wall Hours: Per Session" metric
+      ([\#2196](https://github.com/ubccr/xdmod/pull/2196)).
+    - Fix migrations for versions 10.5.1 -> 11.0.0 -> 11.0.1
+      ([\#2237](https://github.com/ubccr/xdmod/pull/2237)).
+    - Fix rendering bug with job efficiency dashboard component
+      ([\#2270](https://github.com/ubccr/xdmod/pull/2270)).
+    - Fix display of timeseries plots in the Job Viewer tab
+      ([\#2269](https://github.com/ubccr/xdmod/pull/2269)).
+    - Add missing metadata and image alt text to the maintenance page
+      ([\#2269](https://github.com/ubccr/xdmod/pull/2269)).
+- Enhancements
+    - Add login screen for tutorial accounts
+      ([\#2238](https://github.com/ubccr/xdmod/pull/2238)).
+    - Improve performance of database queries
+      ([\#2199](https://github.com/ubccr/xdmod/pull/2199)).
+- Maintenance / Code Quality
+    - Refactor chart generation during export
+      ([\#2272](https://github.com/ubccr/xdmod/pull/2272)).
+
 ## 2026-05-12 v11.0.3
 
 - Important Notes

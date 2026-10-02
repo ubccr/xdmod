@@ -3,6 +3,7 @@
 namespace IntegrationTests\Rest;
 
 use IntegrationTests\TokenAuthTest;
+use IntegrationTests\TestHarness\Utilities;
 use IntegrationTests\TestHarness\XdmodTestHelper;
 
 class WarehouseControllerProviderTest extends TokenAuthTest
@@ -454,33 +455,51 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             'params' => ['tsid' => 'foo'],
             'data' => null
         ];
-        $tests = parent::provideRestEndpointTests(
-            $validInput,
-            [
-                'authentication' => true,
-                'run_as' => 'cd',
-                'additional_params' => [
-                    'realm' => 'Cloud',
-                    'jobid' => '3',
-                    'format' => 'png'
-                ],
-                'int_params' => [
-                    'jobid',
-                    'nodeid',
-                    'cpuid',
-                    'width',
-                    'height',
-                    'font_size'
-                ],
-                'string_params' => [
-                    'realm',
-                    'tsid',
-                    'format',
-                    'scale',
-                    'show_title'
+        if (in_array('cloud', Utilities::getRealmsToTest())) {
+            $tests = parent::provideRestEndpointTests(
+                $validInput,
+                [
+                    'authentication' => true,
+                    'run_as' => 'cd',
+                    'additional_params' => [
+                        'realm' => 'Cloud',
+                        'jobid' => '3',
+                        'format' => 'png'
+                    ],
+                    'int_params' => [
+                        'jobid',
+                        'nodeid',
+                        'cpuid',
+                        'width',
+                        'height',
+                        'font_size'
+                    ],
+                    'string_params' => [
+                        'realm',
+                        'tsid',
+                        'format',
+                        'scale',
+                        'show_title'
+                    ]
                 ]
-            ]
-        );
+            );
+            $tests[] = [
+                'unsupported_format_type',
+                'cd',
+                parent::mergeParams(
+                    $validInput,
+                    'params',
+                    [
+                        'realm' => 'Cloud',
+                        'jobid' => '3',
+                        'format' => 'foo'
+                    ]
+                ),
+                parent::validateBadRequestResponse('Unsupported format type.')
+            ];
+        } else {
+            $tests = [];
+        }
         $tests[] = [
             'resource_not_found',
             'cd',
@@ -492,20 +511,6 @@ class WarehouseControllerProviderTest extends TokenAuthTest
             parent::validateNotFoundResponse(
                 'The requested resource does not exist'
             )
-        ];
-        $tests[] = [
-            'unsupported_format_type',
-            'cd',
-            parent::mergeParams(
-                $validInput,
-                'params',
-                [
-                    'realm' => 'Cloud',
-                    'jobid' => '3',
-                    'format' => 'foo'
-                ]
-            ),
-            parent::validateBadRequestResponse('Unsupported format type.')
         ];
         return $tests;
     }
@@ -831,11 +836,6 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                 parent::validateBadRequestResponse('No realm exists with the requested name.')
             ],
             [
-                'realm_not_configured',
-                ['realm' => 'Storage'],
-                parent::validateBadRequestResponse('The requested realm is not configured to provide raw data.')
-            ],
-            [
                 'invalid_fields',
                 ['fields' => 'foo,bar;'],
                 parent::validateBadRequestResponse(
@@ -857,6 +857,13 @@ class WarehouseControllerProviderTest extends TokenAuthTest
                 )
             ]
         );
+        if (in_array('storage', Utilities::getRealmsToTest())) {
+            $testData[] = [
+                'realm_not_configured',
+                ['realm' => 'Storage'],
+                parent::validateBadRequestResponse('The requested realm is not configured to provide raw data.')
+            ];
+        }
         foreach ($testData as $t) {
             list($id, $params, $output) = $t;
             $tests[] = [

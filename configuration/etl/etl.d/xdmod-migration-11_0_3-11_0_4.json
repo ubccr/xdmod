@@ -1,0 +1,108 @@
+{
+    "module": "xdmod",
+    "defaults": {
+        "move-disk-gb-property": {
+            "namespace": "ETL\\Ingestor",
+            "options_class": "IngestorOptions",
+            "class": "DatabaseIngestor",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                },
+                "source": {
+                    "type": "mysql",
+                    "name": "Datawarehouse",
+                    "config": "datawarehouse",
+                    "schema": "modw_cloud"
+                }
+            }
+        }
+    },
+    "move-disk-gb-property": [
+        {
+            "name": "cloud-add-disk-gb-to-instance-data",
+            "description": "Add disk_gb column to modw_cloud.instance_data",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ManageTables",
+            "definition_file_list": [
+                "cloud_common/instance_data.json"
+            ]
+        },
+        {
+            "name": "updateInsetanceData",
+            "description": "Create temporary table for instance data",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "migrations/11_0_3-11_0_4/modw_cloud/move_disk_gb_to_instance_data.sql"
+            ]
+        },
+        {
+            "name": "migrateOpenStackCloudData",
+            "description": "Migrate OpenStack cloud data from staging tables to fact and dimension tables in modw",
+            "class": "DatabaseIngestor",
+            "truncate_destination": true,
+            "definition_file": "cloud_openstack/staging_existing_instance_type.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeChangeFlagIngestor",
+            "description": "Calculate is_change flag for instance type observations",
+            "class": "DatabaseIngestor",
+            "truncate_destination": true,
+            "definition_file": "cloud_openstack/instance_type_change_flag.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeConfigGroupIngestor",
+            "description": "Calculate config_group for instance type observations",
+            "class": "DatabaseIngestor",
+            "truncate_destination": true,
+            "definition_file": "cloud_openstack/instance_type_config_group.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeGroupedIngestor",
+            "description": "Group consecutive same-config instance type observations",
+            "class": "DatabaseIngestor",
+            "truncate_destination": true,
+            "definition_file": "cloud_openstack/instance_type_grouped.json"
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeStagingIngestor",
+            "description": "Calculate end times for instance type configurations",
+            "class": "DatabaseIngestor",
+            "truncate_destination": true,
+            "definition_file": "cloud_openstack/instance_type_staging.json"
+        },
+        {
+            "name": "createInstanceDataTempTable",
+            "description": "Create temporary table for instance data",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "migrations/11_0_3-11_0_4/modw_cloud/create_instance_temp_table.sql"
+            ]
+        },
+        {
+            "name": "OpenStackCloudInstanceTypeIngestor",
+            "description": "Open Stack cloud instance type data",
+            "class": "DatabaseIngestor",
+            "truncate_destination": true,
+            "definition_file": "cloud_openstack/instance_type.json"
+        },
+        {
+            "name": "updateInstanceData",
+            "description": "Update instance data with new instance type IDs",
+            "namespace": "ETL\\Maintenance",
+            "options_class": "MaintenanceOptions",
+            "class": "ExecuteSql",
+            "sql_file_list": [
+                "migrations/11_0_3-11_0_4/modw_cloud/update_instance_data.sql"
+            ]
+        }
+    ]
+}

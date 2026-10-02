@@ -63,22 +63,20 @@ then
     dnf install -y ~/rpmbuild/RPMS/*/*.rpm
     mysql_install_db --user mysql
 
-    if [ -f /etc/my.cnf.d/mariadb-server.cnf ]; then
-        >/etc/my.cnf.d/mariadb-server.cnf
-        echo "# this is read by the standalone daemon and embedded servers
-              [server]
-              sql_mode=
-              # this is only for the mysqld standalone daemon
-              # Settings user and group are ignored when systemd is used.
-              # If you need to run mysqld under a different user or group,
-              # customize your systemd unit file for mysqld/mariadb according to the
-              # instructions in http://fedoraproject.org/wiki/Systemd
-              [mysqld]
-              datadir=/var/lib/mysql
-              socket=/var/lib/mysql/mysql.sock
-              log-error=/var/log/mariadb/mariadb.log
-              pid-file=/run/mariadb/mariadb.pid" > /etc/my.cnf.d/mariadb-server.cnf
-    fi
+    # Make sure that the db config file is setup correctly w/ `sql_mode=`
+    echo "# this is read by the standalone daemon and embedded servers
+          [server]
+          sql_mode=
+          # this is only for the mysqld standalone daemon
+          # Settings user and group are ignored when systemd is used.
+          # If you need to run mysqld under a different user or group,
+          # customize your systemd unit file for mysqld/mariadb according to the
+          # instructions in http://fedoraproject.org/wiki/Systemd
+          [mysqld]
+          datadir=/var/lib/mysql
+          socket=/var/lib/mysql/mysql.sock
+          log-error=/var/log/mariadb/mariadb.log
+          pid-file=/run/mariadb/mariadb.pid" > /etc/my.cnf.d/mariadb-server.cnf
 
     copy_template_httpd_conf
     ~/bin/services start
@@ -137,6 +135,7 @@ then
         sudo -u xdmod xdmod-shredder -r openstack -d $REF_DIR/openstack_error_sessions -f openstack
         sudo -u xdmod xdmod-ingestor --datatype openstack
         sudo -u xdmod xdmod-ingestor --aggregate=cloud --last-modified-start-date "$last_modified_start_date"
+        sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names-cloud.csv
     fi
 
     if [[ "$XDMOD_REALMS" == *"storage"* ]];
@@ -147,12 +146,10 @@ then
         last_modified_start_date=$(date +'%F %T')
         sudo -u xdmod xdmod-ingestor --datatype storage
         sudo -u xdmod xdmod-ingestor --aggregate=storage --last-modified-start-date "$last_modified_start_date"
+        sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names-storage.csv
     fi
 
-    sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
-    sudo -u xdmod xdmod-ingestor --start-date "2016-12-01" --end-date "2022-01-01" --last-modified-start-date "2017-01-01 00:00:00"
-
-    last_modified_start_date_update_filter_list=$(date +'%F %T')
+    sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names-jobs.csv
     sudo -u xdmod xdmod-shredder -r 'robertson' -f slurm -i $REF_DIR/robertson-filter-log/robertson-filter-test.log
     sudo -u xdmod xdmod-ingestor --start-date "2016-12-01" --end-date "2022-01-01" --last-modified-start-date "2017-01-01 00:00:00"
     sudo -u xdmod xdmod-build-filter-lists -r Jobs --append
@@ -181,9 +178,18 @@ then
     sudo -u xdmod /usr/share/xdmod/tools/etl/etl_overseer.php -p ingest-organizations -p ingest-resources
     sudo -u xdmod xdmod-ingestor --last-modified-start-date "2017-01-01 00:00:00"
 
-    sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names.csv
+    if [[ "$XDMOD_REALMS" == *"cloud"* ]];
+    then
+        sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names-cloud.csv
+    fi
 
-    last_modified_start_date_update_filter_list=$(date +'%F %T')
+    if [[ "$XDMOD_REALMS" == *"storage"* ]];
+    then
+        sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names-storage.csv
+    fi
+
+    sudo -u xdmod xdmod-import-csv -t names -i $REF_DIR/names-jobs.csv
+
     sudo -u xdmod xdmod-shredder -r 'robertson' -f slurm -i $REF_DIR/robertson-filter-log/robertson-filter-test.log
     sudo -u xdmod xdmod-ingestor --start-date "2016-12-01" --end-date "2022-01-01" --last-modified-start-date "2017-01-01 00:00:00"
     sudo -u xdmod xdmod-build-filter-lists -r Jobs --append

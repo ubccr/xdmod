@@ -298,7 +298,12 @@ class ControllerTest extends BaseTest
         $this->assertEquals('success', $data['message'], "Expected the 'message' property to equal 'success'. Received: " . $data['message']);
         $this->assertCount(300, $data['users'], "Expected 300 users to be returned. Received: " . count($data['users']));
 
-        $expectedFilePath = parent::getTestFiles()->getFile('controllers', 'sab_user_enum_tg_users');
+        if (in_array('cloud', self::$XDMOD_REALMS)) {
+            $filename = 'sab_user_enum_tg_users_with_cloud';
+        } else {
+            $filename = 'sab_user_enum_tg_users_without_cloud';
+        }
+        $expectedFilePath = parent::getTestFiles()->getFile('controllers', $filename);
 
         if (!is_file($expectedFilePath)) {
             file_put_contents($expectedFilePath, json_encode($data, JSON_PRETTY_PRINT) . "\n");
