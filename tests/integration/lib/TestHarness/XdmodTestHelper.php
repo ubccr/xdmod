@@ -12,6 +12,10 @@ class XdmodTestHelper
     private $responseHeaders;
 
     private $config;
+    /**
+     * siteurl is the base URL to XDMoD _without_ trailing slash
+     * @var string
+     */
     private $siteurl;
     private $headers;
     private $decodeTextAsJson;
@@ -25,7 +29,7 @@ class XdmodTestHelper
     {
         $this->config = json_decode(file_get_contents(__DIR__ . '/../../../ci/testing.json'), true);
 
-        $this->siteurl = $this->config['url'];
+        $this->siteurl = rtrim($this->config['url'], '/');
         $this->headers = array();
         $this->decodeTextAsJson = false;
 
@@ -258,10 +262,7 @@ class XdmodTestHelper
 
     public function delete($path, $params = null, $data = null)
     {
-        $url = $this->siteurl . $path;
-        if ($params !== null) {
-            $url .= "?" . http_build_query($params);
-        }
+        $url = $this->getUrl($path, $params, false);
 
         curl_setopt($this->curl, CURLOPT_URL, $url);
 
@@ -283,15 +284,8 @@ class XdmodTestHelper
 
     public function get($path, $params = null, $isurl = false)
     {
-        if ($isurl) {
-            $url = $path;
-        } else {
-            $url = $this->siteurl . $path;
-        }
+        $url = $this->getUrl($path, $params, $isurl);
 
-        if ($params !== null) {
-            $url .= "?" . http_build_query($params);
-        }
         if (isset($this->verbose)) {
             echo "$url\n";
         }
@@ -304,15 +298,8 @@ class XdmodTestHelper
 
     public function post($path, $params, $data, $isurl = false)
     {
-        if ($isurl) {
-            $url = $path;
-        } else {
-            $url = $this->siteurl . $path;
-        }
+        $url = $this->getUrl($path, $params, $isurl);
 
-        if ($params !== null) {
-            $url .= "?" . http_build_query($params);
-        }
         if (isset($this->verbose)) {
             echo "$url\n";
         }
@@ -330,15 +317,8 @@ class XdmodTestHelper
 
     public function put($path, $params, $data, $isurl = false)
     {
-        if ($isurl) {
-            $url = $path;
-        } else {
-            $url = $this->siteurl . $path;
-        }
+        $url = $this->getUrl($path, $params, $isurl);
 
-        if ($params !== null) {
-            $url .= "?" . http_build_query($params);
-        }
         if (isset($this->verbose)) {
             echo "$url\n";
         }
@@ -359,11 +339,8 @@ class XdmodTestHelper
 
     public function patch($path, $params = null, $data = null)
     {
-        $url = $this->siteurl . $path;
+        $url = $this->getUrl($path, $params, false);
 
-        if ($params !== null) {
-            $url .= "?" . http_build_query($params);
-        }
         if (isset($this->verbose)) {
             echo "$url\n";
         }
@@ -390,5 +367,29 @@ class XdmodTestHelper
     public function __destruct() {
         curl_close($this->curl);
         unlink($this->cookiefile);
+    }
+
+    /**
+     * Helper function to construct the full URL.
+
+     * @param string $path The path under the root of the site or the full path if isurl is true
+     * @param array $params parameters that are urlencoded and added to the url
+     * @param bool $isurl If true then don't prepend the site (so treat the path string as a full url
+     *
+     * @return string the full url
+     */
+    private function getUrl($path, $params, $isurl)
+    {
+        if ($isurl) {
+            $url = $path;
+        } else {
+            $url = $this->siteurl . '/' . ltrim($path, '/');
+        }
+
+        if ($params !== null) {
+            $url .= "?" . http_build_query($params);
+        }
+
+        return $url;
     }
 }
