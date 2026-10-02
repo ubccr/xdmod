@@ -27,7 +27,6 @@ security:
             switch_user: true
             logout:
               path: /logout
-            access_denied_handler: CCR\Security\AccessDeniedHandler
             entry_point: CCR\Security\Authenticators\FormLoginAuthenticator
     access_control:
         - { path: ^/, roles: PUBLIC_ACCESS}
