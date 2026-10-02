@@ -197,6 +197,3 @@ then
     # Restart so that the above changes take effect.
     ~/bin/services restart
 fi
-
-# Clearing the Symfony cache so that we start fresh.
-xdmod-admin --console cache:clear
