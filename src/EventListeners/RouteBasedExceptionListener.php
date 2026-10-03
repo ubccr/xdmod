@@ -37,7 +37,7 @@ class RouteBasedExceptionListener
         $exception = $event->getThrowable();
         $event->allowCustomResponseCode();
         $this->logger->debug("Exception occurred:", [$exception]);
-        $statusCode = Response::HTTP_UNAUTHORIZED;
+        $statusCode = $exception->getStatusCode();
 
         $content = [
             'success' => false,
@@ -52,40 +52,18 @@ class RouteBasedExceptionListener
         $error_during_authorization_message = 'An error was encountered while attempting to process the requested authorization procedure.';
         // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
         if ($route == 'ccr_internaldashboard_admin_resetusertourviewed') {
-            if ($exception instanceof AccessDeniedHttpException) {
-                $statusCode = Response::HTTP_FORBIDDEN;
+            if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
-            } elseif ($exception instanceof InsufficientAuthenticationException) {
-                $content['message'] = $error_during_authorization_message;
-                $content['code'] = 0;
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
-            } elseif ($exception instanceof HttpException) {
-                $content['message'] = $error_during_authorization_message;
-                $content['code'] = 0;
-                $response = new JsonResponse($content, $exception->getStatusCode());
                 $event->setResponse($response);
             }
         // Support Legacy format for the Internal Dashboard controller endpoints
         } elseif ($route == 'ccr_dashboard_setviewedusertour') {
-            if ($exception instanceof AccessDeniedHttpException) {
-                $statusCode = Response::HTTP_FORBIDDEN;
+            if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
-            } elseif ($exception instanceof InsufficientAuthenticationException) {
-                $content['message'] = $error_during_authorization_message;
-                $content['code'] = 0;
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
-            } elseif ($exception instanceof HttpException) {
-                $content['message'] = $error_during_authorization_message;
-                $content['code'] = 0;
-                $response = new JsonResponse($content, $exception->getStatusCode());
                 $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_internaldashboard_')) {
@@ -128,7 +106,7 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_dashboard_setlayout') {
-            if ($exception instanceof HttpException) {
+            if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $exception->getStatusCode());
