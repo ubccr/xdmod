@@ -137,76 +137,66 @@ class RouteBasedExceptionListener
         } elseif ($route == 'ccr_metricexplorer_index') {
             if ($exception instanceof \Datawarehouse\Query\Exceptions\AccessDeniedException) {
                 $content['message'] = $exception->getMessage();
-                $response = new JsonResponse($content, $statusCode);
+                $response = new JsonResponse($content, $exception->getStatusCode());
                 $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
-            if (
-                $exception instanceof UnauthorizedHttpException
-                || $exception instanceof AccessDeniedException
-                || $exception instanceof InsufficientAuthenticationException
-            ) {
+            if ($exception instanceof HttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-                $response = new JsonResponse($content, $statusCode);
+                $response = new JsonResponse($content, $exception->getStatusCode());
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_user_createapitoken') {
-            if ($exception instanceof InsufficientAuthenticationException) {
+            if ($exception instanceof HttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-                $response = new JsonResponse($content, $statusCode);
+                $response = new JsonResponse($content, $exception->getStatusCode());
                 $event->setResponse($response);
             } elseif ($exception instanceof NotFoundHttpException) {
                 $content = [
                     'message' => 'API token not found.'
                 ];
                 $statusCode = Response::HTTP_NOT_FOUND;
-                $response = new JsonResponse($content, $statusCode);
+                $response = new JsonResponse($content, $exception->getStatusCode());
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_user_getcurrentapitoken') {
-            if ($exception instanceof InsufficientAuthenticationException) {
+            if ($exception instanceof HttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-                $response = new JsonResponse($content, $statusCode);
+                $response = new JsonResponse($content, $exception->getStatusCode());
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_user_revokeapitoken') {
-            if ($exception instanceof InsufficientAuthenticationException) {
+            if ($exception instanceof HttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_metricexplorer_createquery') {
-            if (
-                $exception instanceof AccessDeniedHttpException
-                || $exception instanceof InsufficientAuthenticationException
-            ) {
+            if ($exception instanceof HttpException) {
                 $content = [
                     'success' => false,
                     'message' => $error_during_authorization_message,
                     'action' => 'creatQuery'
                 ];
-                $response = new JsonResponse($content, $statusCode);
+                $response = new JsonResponse($content, $exception->getStatusCode());
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_metricexplorer_updatequerybyid') {
-            if (
-                $exception instanceof AccessDeniedHttpException
-                || $exception instanceof InsufficientAuthenticationException
-            ) {
+            if ($exception instanceof HttpException) {
                 $content = [
                     'success' => false,
                     'message' => $error_during_authorization_message,
                     'action' => 'updateQuery'
                 ];
-                $response = new JsonResponse($content, $statusCode);
+                $response = new JsonResponse($content, $exception->getStatusCode());
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_reportbuilder_index') {
-            if ($exception instanceof InsufficientAuthenticationException) {
+            if ($exception instanceof HttpException) {
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
