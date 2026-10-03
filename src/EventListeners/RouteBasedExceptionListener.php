@@ -63,10 +63,12 @@ class RouteBasedExceptionListener
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
+            } elseif ($exception instanceof HttpException) {
+                $
             }
         // Support Legacy format for the Internal Dashboard controller endpoints
         } elseif ($route == 'ccr_dashboard_setviewedusertour') {
-            if ($exception instanceof AccessDeniedHttpExceptioni) {
+            if ($exception instanceof AccessDeniedHttpException) {
                 $statusCode = Response::HTTP_FORBIDDEN;
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
@@ -77,10 +79,13 @@ class RouteBasedExceptionListener
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
+            } elseif ($exception instanceof HttpException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $exception->getStatusCode());
+                $event->setResponse($response);
             }
-        } elseif (
-            str_starts_with($route, 'ccr_internaldashboard_')
-        ) {
+        } elseif (str_starts_with($route, 'ccr_internaldashboard_')) {
             if (
                 $exception instanceof AccessDeniedHttpException
                 || $exception instanceof AccessDeniedException
@@ -120,10 +125,10 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_dashboard_setlayout') {
-            if ($exception instanceof InsufficientAuthenticationException) {
+            if ($exception instanceof HttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-                $response = new JsonResponse($content, $statusCode);
+                $response = new JsonResponse($content, $exception->getStatusCode());
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_metricexplorer_index') {
@@ -203,20 +208,17 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         } elseif ($route == 'get_current_user') {
-            if (
-                $exception instanceof UnauthorizedHttpException
-                || $exception instanceof InsufficientAuthenticationException
-            ) {
+            if ($exception instanceof HttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-                $response = new JsonResponse($content, $statusCode);
+                $response = new JsonResponse($content, $exception->getStatusCode());
                 $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_warehouse_')) {
-            if ($exception instanceof InsufficientAuthenticationException) {
+            if ($exception instanceof HttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-                $response = new JsonResponse($content, $statusCode);
+                $response = new JsonResponse($content, $exception->getStatusCode());
                 $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_chartpool_index')) {
