@@ -64,7 +64,10 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             } elseif ($exception instanceof HttpException) {
-                $
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $exception->getStatusCode());
+                $event->setResponse($response);
             }
         // Support Legacy format for the Internal Dashboard controller endpoints
         } elseif ($route == 'ccr_dashboard_setviewedusertour') {
