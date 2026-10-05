@@ -8,6 +8,7 @@ use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
@@ -54,7 +55,7 @@ class RouteBasedExceptionListener
              if ($exception instanceof AccessDeniedHttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-                $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
+                $response = new JsonResponse($content, Response::HTTP_FORBIDDEN);
                 $event->setResponse($response);
              } elseif ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_FORBIDDEN) {
@@ -72,7 +73,11 @@ class RouteBasedExceptionListener
                     $event->setResponse($response);
                 }
             }
-        } elseif ($route == 'ccr_user_createapitoken') {
+        } elseif (
+            $route == 'ccr_user_createapitoken'
+            || $route == 'ccr_user_getcurrentapitoken'
+            || $route == 'ccr_user_revokeapitoken'
+        ) {
             if ($exception instanceof HttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
@@ -82,21 +87,7 @@ class RouteBasedExceptionListener
                 $content = [
                     'message' => 'API token not found.'
                 ];
-                $statusCode = Response::HTTP_NOT_FOUND;
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
-            }
-        } elseif ($route == 'ccr_user_getcurrentapitoken') {
-            if ($exception instanceof HttpException) {
-                $content['message'] = $error_during_authorization_message;
-                $content['code'] = 0;
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
-            }
-        } elseif ($route == 'ccr_user_revokeapitoken') {
-            if ($exception instanceof HttpException) {
-                $content['message'] = $error_during_authorization_message;
-                $content['code'] = 0;
+                $statusCode = Response::HTTP_BAD_REQUEST;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
@@ -251,7 +242,12 @@ class RouteBasedExceptionListener
                 }
             }
         } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
-            if ($exception instanceof HttpException) {
+            if ($exception instanceof BadRequestHttpException) {
+                $content['message'] = $exception->getMessage();
+                $content['code'] = 0;
+                $response = new JsonResponse($content, Response::HTTP_BAD_REQUEST);
+                $event->setResponse($response);
+            } elseif ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
