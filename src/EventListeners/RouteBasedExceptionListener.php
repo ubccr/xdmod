@@ -159,6 +159,13 @@ class RouteBasedExceptionListener
                     $event->setResponse($response);
                 }
             }
+        } elseif (str_starts_with($route, 'ccr_reportbuilder_')) {
+            if ($exception instanceof HttpException) {
+                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
+                }
+            }
         } elseif (str_starts_with($route, 'ccr_user_')) {
             if ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
