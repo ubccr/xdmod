@@ -144,7 +144,7 @@ class RouteBasedExceptionListener
                         'success' => false,
                         'status' => 'not_a_center_director',
                         'message' => 'not_a_center_director',
-                        'totalCount' => 0
+                        'totalCount' => 0,
                         'data' => array(),
                     ];
                 }
