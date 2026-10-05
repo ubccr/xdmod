@@ -73,9 +73,9 @@ class RouteBasedExceptionListener
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
                 }
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_internaldashboard_')) {
             if ($exception instanceof HttpException) {
@@ -91,9 +91,9 @@ class RouteBasedExceptionListener
                         'message' => 'not_a_manager',
                         'data' => array()
                     ];
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
                 }
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
             }
         } elseif ($route == 'ccr_metricexplorer_createquery') {
             if ($exception instanceof HttpException) {
@@ -103,18 +103,18 @@ class RouteBasedExceptionListener
                         'message' => $error_during_authorization_message,
                         'action' => 'creatQuery',
                     ];
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
                 }
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_dashboard_')) {
             if ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
                 }
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
             }
         } elseif ($route == 'ccr_metricexplorer_updatequerybyid') {
             if ($exception instanceof HttpException) {
@@ -124,18 +124,18 @@ class RouteBasedExceptionListener
                         'message' => $error_during_authorization_message,
                         'action' => 'updateQuery',
                     ];
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
                 }
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_metricexplorer_')) {
             if ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
                 }
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_organization_')) {
             if ($exception instanceof HttpException) {
@@ -147,27 +147,36 @@ class RouteBasedExceptionListener
                         'totalCount' => 0,
                         'data' => array(),
                     ];
+                    $response = new JsonResponse($content, Response::HTTP_OK);
+                    $event->setResponse($response);
                 }
-                $response = new JsonResponse($content, Response::HTTP_OK);
-                $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_user_')) {
             if ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
                 }
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_warehouse_')) {
             if ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
+                    $response = new JsonResponse($content, Response::HTTP_OK);
+                    $event->setResponse($response);
                 }
-                $response = new JsonResponse($content, Response::HTTP_OK);
-                $event->setResponse($response);
+            }
+        } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
+            if ($exception instanceof HttpException) {
+                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                    $content['message'] = $error_during_authorization_message;
+                    $content['code'] = 0;
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
+                }
             }
         } elseif ($route == 'get_current_user') {
             if ($exception instanceof HttpException) {
