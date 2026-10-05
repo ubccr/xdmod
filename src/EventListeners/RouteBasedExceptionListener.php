@@ -131,7 +131,7 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         } elseif ($route == 'get_current_user') {
-            if ($statusCode == Response:HTTP_UNAUTHORIZED) {
+            if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
