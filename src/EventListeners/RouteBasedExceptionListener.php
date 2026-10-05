@@ -54,7 +54,7 @@ class RouteBasedExceptionListener
              if ($exception instanceof AccessDeniedHttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-                $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
+                $response = new JsonResponse($content, Response::HTTP_FORBIDDEN);
                 $event->setResponse($response);
              } elseif ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_FORBIDDEN) {
@@ -147,7 +147,17 @@ class RouteBasedExceptionListener
                 }
             }
         } elseif (str_starts_with($route, 'ccr_organization_')) {
-            if ($exception instanceof HttpException) {
+            if ($exception instanceof AccessDeniedHttpException) {
+                $content = [
+                    'success' => false,
+                    'status' => 'not_a_center_director',
+                    'message' => 'not_a_center_director',
+                    'totalCount' => 0,
+                    'data' => array(),
+                ];
+                $response = new JsonResponse($content, Response::HTTP_OK);
+                $event->setResponse($response);
+            } elseif ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_FORBIDDEN) {
                     $content = [
                         'success' => false,
