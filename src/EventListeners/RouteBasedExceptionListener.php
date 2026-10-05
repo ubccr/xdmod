@@ -199,9 +199,4 @@ class RouteBasedExceptionListener
             }
         }
     }
-
-    private function generateMetricExplorerQueryResponse(string $action = '') : string
-    {
-        return $action;
-    }
 }
