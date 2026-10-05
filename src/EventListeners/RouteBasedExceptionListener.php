@@ -52,7 +52,7 @@ class RouteBasedExceptionListener
         // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
         if ($route == 'ccr_internaldashboard_admin_resetusertourviewed') {
              if ($exception instanceof AccessDeniedHttpException) {
-                $response = new JsonResponse($content, Response::HTTP_FORBIDDEN);
+                $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
                 $event->setResponse($response);
              } elseif ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_FORBIDDEN) {
