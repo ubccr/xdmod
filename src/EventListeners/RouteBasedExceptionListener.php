@@ -52,7 +52,10 @@ class RouteBasedExceptionListener
         $error_during_authorization_message = 'An error was encountered while attempting to process the requested authorization procedure.';
         // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
         if ($route == 'ccr_internaldashboard_admin_resetusertourviewed') {
-            if ($exception instanceof HttpException) {
+             if ($exception instanceof AccessDeniedHttpException) {
+                $response = new JsonResponse($content, Response::HTTP_FORBIDDEN);
+                $event->setResponse($response);
+             } elseif ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_FORBIDDEN) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
@@ -88,7 +91,7 @@ class RouteBasedExceptionListener
             }
         } elseif (str_starts_with($route, 'ccr_internaldashboard_')) {
             if ($exception instanceof HttpException) {
-                if ($statusCode == Reponse::HTTP_UNAUTHORIZED) {
+                if ($statusCode == Reponse::HTTP_FORBIDDEN) {
                     // This is specifically for ControllerTest::testSabRejectsPublic
                     if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
                         $statusCode = Response::HTTP_OK;
@@ -165,6 +168,26 @@ class RouteBasedExceptionListener
                     $event->setResponse($response);
                 }
             }
+        } elseif (
+            str_starts_with($route, 'ccr_warehouse_searchhistory')
+            || str_starts_with($route, 'ccr_warehouse_createhistory')
+            || str_starts_with($route, 'ccr_warehouse_gethistorybyid')
+            || str_starts_with($route, 'ccr_warehouse_deletehistory')
+            || str_starts_with($route, 'ccr_warehouse_deleteallhistory')
+            || str_starts_with($route, 'ccr_warehouse_searchjobsby')
+            || str_starts_with($route, 'ccr_warehouse_getaggregatedata')
+            || str_starts_with($route, 'ccr_warehouse_getdimensions')
+            || str_starts_with($route, 'ccr_warehouse_getdimensionvalues')
+            || str_starts_with($route, 'ccr_warehouse_getrawdata')
+        ) {
+            if ($exception instanceof HttpException) {
+                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                    $content['message'] = $error_during_authorization_message;
+                    $content['code'] = 0;
+                    $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
+                    $event->setResponse($response);
+                }
+           }
         } elseif (str_starts_with($route, 'ccr_warehouse_')) {
             if ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
