@@ -71,6 +71,7 @@ class RouteBasedExceptionListener
                     $response = new JsonResponse($content, $statusCode);
                     $event->setResponse($response);
                 }
+            }
         } elseif ($route == 'ccr_user_createapitoken') {
             if ($exception instanceof InsufficientAuthenticationException) {
                 $content['message'] = $error_during_authorization_message;
