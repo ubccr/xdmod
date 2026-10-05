@@ -37,8 +37,7 @@ class RouteBasedExceptionListener
         $exception = $event->getThrowable();
         $event->allowCustomResponseCode();
         $this->logger->debug("Exception occurred:", [$exception]);
-        $statusCode = $exception->getStatusCode();
-
+        $statusCode = Response::HTTP_UNAUTHORIZED;
         $content = [
             'success' => false,
             'count' => 0,

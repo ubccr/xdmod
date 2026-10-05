@@ -34,7 +34,7 @@ class ReportBuilderController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[IsGranted('ROLE_USER')]
+    #[MustBeLoggedIn]
     #[Route('/controllers/report_builder.php', methods: ['POST', 'GET'])]
     public function index(Request $request): Response
     {
