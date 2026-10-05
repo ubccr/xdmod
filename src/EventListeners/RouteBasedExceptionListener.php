@@ -59,6 +59,11 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         // Support Legacy format for the Internal Dashboard controller endpoints
+        } elseif ($route == 'ccr_chartpool_index') {
+            if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
         } elseif ($route == 'ccr_dashboard_setviewedusertour') {
             if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                 $content['message'] = $error_during_authorization_message;
@@ -85,6 +90,54 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
+        } elseif ($route, 'ccr_metricexplorer_createquery')) {
+            if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                $content = [
+                    'success' => false,
+                    'message' => $error_during_authorization_message,
+                    'action' => 'creatQuery',
+                    'code' => 0
+                ];
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
+        } elseif ($route == 'ccr_metricexplorer_') {
+            if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                $content = [
+                    'success' => false,
+                    'message' => $error_during_authorization_message,
+                    'action' => 'updateQuery',
+                    'code' => 0
+                ];
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
+        } elseif (str_starts_with($route, 'ccr_metricexplorer_')) {
+            if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
+        } elseif (str_starts_with($route, 'ccr_organization__')) {
+            if ($statusCode == Response::HTTP_FORBIDDEN) {
+                $content = [
+                    'success' => false,
+                    'status' => 'not_a_center_director',
+                    'message' => 'not_a_center_director',
+                    'data' => array()
+                ];
+                $response = new JsonResponse($content, Response::HTTP_OK);
+                $event->setResponse($response);
+            }
+        } elseif ($route == 'get_current_user') {
+            if ($statusCode == Response:HTTP_UNAUTHORIZED) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
         }
+
     }
 }
