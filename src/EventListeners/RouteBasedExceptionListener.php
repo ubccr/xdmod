@@ -54,7 +54,7 @@ class RouteBasedExceptionListener
              if ($exception instanceof AccessDeniedHttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
-                $response = new JsonResponse($content, Response::HTTP_FORBIDDEN);
+                $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
                 $event->setResponse($response);
              } elseif ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_FORBIDDEN) {
@@ -73,7 +73,7 @@ class RouteBasedExceptionListener
                 }
             }
         } elseif ($route == 'ccr_user_createapitoken') {
-            if ($exception instanceof InsufficientAuthenticationException) {
+            if ($exception instanceof HttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
@@ -87,14 +87,14 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_user_getcurrentapitoken') {
-            if ($exception instanceof InsufficientAuthenticationException) {
+            if ($exception instanceof HttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_user_revokeapitoken') {
-            if ($exception instanceof InsufficientAuthenticationException) {
+            if ($exception instanceof HttpException) {
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
