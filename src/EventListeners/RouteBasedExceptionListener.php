@@ -71,6 +71,33 @@ class RouteBasedExceptionListener
                     $response = new JsonResponse($content, $statusCode);
                     $event->setResponse($response);
                 }
+        } elseif ($route == 'ccr_user_createapitoken') {
+            if ($exception instanceof InsufficientAuthenticationException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            } elseif ($exception instanceof NotFoundHttpException) {
+                $content = [
+                    'message' => 'API token not found.'
+                ];
+                $statusCode = Response::HTTP_NOT_FOUND;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
+        } elseif ($route == 'ccr_user_getcurrentapitoken') {
+            if ($exception instanceof InsufficientAuthenticationException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
+        } elseif ($route == 'ccr_user_revokeapitoken') {
+            if ($exception instanceof InsufficientAuthenticationException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         } elseif ($route == 'ccr_dashboard_setviewedusertour') {
             if ($exception instanceof HttpException) {
@@ -170,7 +197,7 @@ class RouteBasedExceptionListener
                     $event->setResponse($response);
                 }
             }
-        } elseif (str_starts_with($route, 'ccr_reportbuilder_')) {
+        } elseif ($route == 'ccr_reportbuilder_index') {
             if ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $response = new JsonResponse($content, $statusCode);
