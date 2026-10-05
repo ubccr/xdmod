@@ -110,7 +110,12 @@ class RouteBasedExceptionListener
                 }
             }
         } elseif (str_starts_with($route, 'ccr_dashboard_')) {
-            if ($exception instanceof HttpException) {
+            if ($exception instanceof BadRequestHttpException) {
+                $content['message'] = $exception->getMessage();
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            } elseif ($exception instanceof HttpException) {
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
@@ -278,6 +283,6 @@ class RouteBasedExceptionListener
                 }
             }
         }
-
+        return;
     }
 }
