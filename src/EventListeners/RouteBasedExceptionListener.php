@@ -90,7 +90,7 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
-        } elseif ($route, 'ccr_metricexplorer_createquery')) {
+        } elseif ($route, 'ccr_metricexplorer_createquery') {
             if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                 $content = [
                     'success' => false,
