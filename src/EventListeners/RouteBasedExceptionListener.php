@@ -53,10 +53,10 @@ class RouteBasedExceptionListener
         // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
         if ($route == 'ccr_internaldashboard_admin_resetusertourviewed') {
             if ($exception instanceof HttpException) {
-                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                if ($statusCode == Response::HTTP_FORBIDDEN) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
-                    $response = new JsonResponse($content, $statusCode);
+                    $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
                     $event->setResponse($response);
                 }
             }
@@ -102,8 +102,16 @@ class RouteBasedExceptionListener
                         'success' => false,
                         'message' => $error_during_authorization_message,
                         'action' => 'creatQuery',
-                        'code' => 0
                     ];
+                }
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
+        } elseif (str_starts_with($route, 'ccr_dashboard_')) {
+            if ($exception instanceof HttpException) {
+                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                    $content['message'] = $error_during_authorization_message;
+                    $content['code'] = 0;
                 }
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
@@ -115,7 +123,6 @@ class RouteBasedExceptionListener
                         'success' => false,
                         'message' => $error_during_authorization_message,
                         'action' => 'updateQuery',
-                        'code' => 0
                     ];
                 }
                 $response = new JsonResponse($content, $statusCode);
@@ -137,8 +144,27 @@ class RouteBasedExceptionListener
                         'success' => false,
                         'status' => 'not_a_center_director',
                         'message' => 'not_a_center_director',
-                        'data' => array()
+                        'totalCount' => 0
+                        'data' => array(),
                     ];
+                }
+                $response = new JsonResponse($content, Response::HTTP_OK);
+                $event->setResponse($response);
+            }
+        } elseif (str_starts_with($route, 'ccr_user_')) {
+            if ($exception instanceof HttpException) {
+                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                    $content['message'] = $error_during_authorization_message;
+                    $content['code'] = 0;
+                }
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
+        } elseif (str_starts_with($route, 'ccr_warehouse_')) {
+            if ($exception instanceof HttpException) {
+                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                    $content['message'] = $error_during_authorization_message;
+                    $content['code'] = 0;
                 }
                 $response = new JsonResponse($content, Response::HTTP_OK);
                 $event->setResponse($response);
