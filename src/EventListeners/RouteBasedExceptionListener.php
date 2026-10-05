@@ -52,6 +52,8 @@ class RouteBasedExceptionListener
         // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
         if ($route == 'ccr_internaldashboard_admin_resetusertourviewed') {
              if ($exception instanceof AccessDeniedHttpException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
                 $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
                 $event->setResponse($response);
              } elseif ($exception instanceof HttpException) {
@@ -178,8 +180,10 @@ class RouteBasedExceptionListener
             str_starts_with($route, 'ccr_warehouse_searchhistory')
             || str_starts_with($route, 'ccr_warehouse_createhistory')
             || str_starts_with($route, 'ccr_warehouse_gethistorybyid')
+            || str_starts_with($route, 'ccr_warehouse_updatehistory')
             || str_starts_with($route, 'ccr_warehouse_deletehistory')
             || str_starts_with($route, 'ccr_warehouse_deleteallhistory')
+            || $route == 'ccr_warehouse_searchjobs'
             || str_starts_with($route, 'ccr_warehouse_searchjobsby')
             || str_starts_with($route, 'ccr_warehouse_getaggregatedata')
             || str_starts_with($route, 'ccr_warehouse_getdimensions')
