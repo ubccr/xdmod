@@ -3,7 +3,6 @@
 // Operation: sab_user->enum_tg_users
 
 use Models\Services\Acls;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 $params = array(
     'start'       => RESTRICTION_NUMERIC_POS,
