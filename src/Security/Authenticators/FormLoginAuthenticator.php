@@ -200,6 +200,6 @@ class FormLoginAuthenticator extends AbstractLoginFormAuthenticator implements A
      */
     public function start(Request $request, AuthenticationException $authException = null): Response
     {
-        throw $authException;
+        return new RedirectResponse($this->urlGenerator->generate('xdmod_home'));
     }
 }
