@@ -17,7 +17,7 @@ class ControllerTest extends BaseTest
 
     protected function setup(): void
     {
-        $this->helper = new XdmodTestHelper(__DIR__ . '/../../../');
+        $this->helper = new XdmodTestHelper();
     }
 
     public function testEnumExistingUsers()
