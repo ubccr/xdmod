@@ -128,6 +128,8 @@ class RouteBasedExceptionListener
                 // This is specifically for ControllerTest::testSabRejectsPublic
                 if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
                     $statusCode = Response::HTTP_OK;
+                } else {
+                    $statusCode = Response::HTTP_UNAUTHORIZED;
                 }
                 $content = [
                     'status' => 'not_a_manager',
@@ -136,7 +138,7 @@ class RouteBasedExceptionListener
                     'message' => 'not_a_manager',
                     'data' => array()
                 ];
-                $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
+                $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             }
         } elseif ($route == 'ccr_metricexplorer_createquery') {
