@@ -240,7 +240,10 @@ class RouteBasedExceptionListener
             || str_starts_with($route, 'ccr_warehouse_getdimensionvalues')
             || str_starts_with($route, 'ccr_warehouse_getrawdata')
         ) {
-            if ($exception instanceof HttpException) {
+            if ($exception instanceof UnauthorizedHttpException) {
+                $content['message'] = $exception->getMessage();
+                $content['code'] = 0;
+            } elseif ($exception instanceof HttpException) {
                 $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
