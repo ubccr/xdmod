@@ -138,7 +138,7 @@ class RouteBasedExceptionListener
                         'message' => 'not_a_manager',
                         'data' => array()
                     ];
-                    $response = new JsonResponse($content, $statusCode);
+                    $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
                     $event->setResponse($response);
                 }
             }
