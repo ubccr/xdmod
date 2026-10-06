@@ -126,7 +126,7 @@ class RouteBasedExceptionListener
         } elseif (str_starts_with($route, 'ccr_internaldashboard_')) {
             if ($exception instanceof HttpException) {
                 $statusCode = $exception->getStatusCode();
-                if ($statusCode == Reponse::HTTP_FORBIDDEN) {
+                if ($statusCode == Response::HTTP_FORBIDDEN) {
                     // This is specifically for ControllerTest::testSabRejectsPublic
                     if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
                         $statusCode = Response::HTTP_OK;
@@ -243,6 +243,8 @@ class RouteBasedExceptionListener
             if ($exception instanceof UnauthorizedHttpException) {
                 $content['message'] = $exception->getMessage();
                 $content['code'] = 0;
+                $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
+                $event->setResponse($response);
             } elseif ($exception instanceof HttpException) {
                 $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
