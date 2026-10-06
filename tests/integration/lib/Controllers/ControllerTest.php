@@ -252,7 +252,7 @@ class ControllerTest extends BaseTest
     {
 
 
-        $this->helper->authenticateDashboard('mgr');
+        $this->helper->authenticate('usr');
 
         $data = array(
             'start' => 0,
