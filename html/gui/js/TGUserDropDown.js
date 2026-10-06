@@ -69,8 +69,7 @@ CCR.xdmod.ui.TGUserDropDown = Ext.extend(Ext.form.ComboBox, {
 
         var bParams = {
             operation: 'enum_tg_users',
-            pi_only: 'n',
-            search_mode: 'formal_name'
+            pi_only: 'n'
         };
 
         if (self.user_management_mode === true) {

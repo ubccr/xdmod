@@ -3,11 +3,11 @@
 // Operation: sab_user->enum_tg_users
 
 use Models\Services\Acls;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 $params = array(
     'start'       => RESTRICTION_NUMERIC_POS,
     'limit'       => RESTRICTION_NUMERIC_POS,
-    'search_mode' => RESTRICTION_SEARCH_MODE,
     'pi_only'     => RESTRICTION_YES_NO
 );
 
@@ -49,16 +49,7 @@ if (
     $university_id = Acls::getDescriptorParamValue($user, ROLE_ID_CAMPUS_CHAMPION, 'provider');
 }
 
-if ($_POST['search_mode'] == 'formal_name') {
-    $searchMethod = FORMAL_NAME_SEARCH;
-}
-
-if ($_POST['search_mode'] == 'username') {
-    $searchMethod = USERNAME_SEARCH;
-}
-
 list($userCount, $users) = $xdw->enumerateGridUsers(
-    $searchMethod,
     $_POST['start'],
     $_POST['limit'],
     $name_filter,
@@ -72,25 +63,10 @@ $userEntries = array();
 
 foreach ($users as $currentUser) {
     $entry_id++;
-
-    if ($searchMethod == FORMAL_NAME_SEARCH) {
-        $personName = $currentUser['long_name'];
-        $personID = $currentUser['id'];
-    }
-
-    if ($searchMethod == USERNAME_SEARCH) {
-        $personName = $currentUser['absusername'];
-
-        // Append the absusername to the id so that each entry is guaranteed
-        // to have a unique identifier (needed for dependent ExtJS combobox
-        // (TGUserDropDown.js) to work properly regarding selections).
-        $personID = $currentUser['id'] . ';' . $currentUser['absusername'];
-    }
-
     $userEntries[] = array(
         'id'          => $entry_id,
-        'person_id'   => $personID,
-        'person_name' => $personName
+        'person_id'   => $currentUser['id'],
+        'person_name' => $currentUser['long_name']
     );
 }
 
