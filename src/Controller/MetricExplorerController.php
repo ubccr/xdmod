@@ -405,7 +405,6 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception if there is a problem with the processing of the get_data function.
      */
-    #[MustBeLoggedIn]
     #[Route('{prefix}metrics/explorer/data', requirements: ['prefix' => '.*'], methods: ['POST', 'GET'])]
     public function getData(Request $request): Response
     {
@@ -667,7 +666,6 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception if there is a problem retrieving a user for the request.
      */
-    #[MustBeLoggedIn]
     #[Route('{prefix}metrics/explorer/raw_data', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getRawData(Request $request): Response
     {

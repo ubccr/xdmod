@@ -124,23 +124,20 @@ class RouteBasedExceptionListener
                 }
             }
         } elseif (str_starts_with($route, 'ccr_internaldashboard_')) {
-            if ($exception instanceof HttpException) {
-                $statusCode = $exception->getStatusCode();
-                if ($statusCode == Response::HTTP_FORBIDDEN) {
-                    // This is specifically for ControllerTest::testSabRejectsPublic
-                    if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
-                        $statusCode = Response::HTTP_OK;
-                    }
-                    $content = [
-                        'status' => 'not_a_manager',
-                        'success' => false,
-                        'totalCount' => 0,
-                        'message' => 'not_a_manager',
-                        'data' => array()
-                    ];
-                    $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
-                    $event->setResponse($response);
+            if ($exception instanceof AccessDeniedHttpException) {
+                // This is specifically for ControllerTest::testSabRejectsPublic
+                if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
+                    $statusCode = Response::HTTP_OK;
                 }
+                $content = [
+                    'status' => 'not_a_manager',
+                    'success' => false,
+                    'totalCount' => 0,
+                    'message' => 'not_a_manager',
+                    'data' => array()
+                ];
+                $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
+                $event->setResponse($response);
             }
         } elseif ($route == 'ccr_metricexplorer_createquery') {
             if ($exception instanceof HttpException) {
