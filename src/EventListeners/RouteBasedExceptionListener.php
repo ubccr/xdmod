@@ -88,12 +88,17 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             } elseif ($exception instanceof HttpException) {
                 $statusCode = $exception->getStatusCode();
-                $content['message'] = $error_during_authorization_message;
+                if ($statusCode == Response::HTTP_CONFLICT) {
+                    $content['message'] = 'Token already exists.';
+                } else {
+                    $content['message'] = $error_during_authorization_message;
+                }
                 $content['code'] = 0;
                 $statusCode = $exception->getStatusCode();
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
-            }        } elseif ($route == 'ccr_dashboard_setviewedusertour') {
+            }
+        } elseif ($route == 'ccr_dashboard_setviewedusertour') {
             if ($exception instanceof HttpException) {
                 $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
