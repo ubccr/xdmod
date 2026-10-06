@@ -58,6 +58,7 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, Response::HTTP_FORBIDDEN);
                 $event->setResponse($response);
              } elseif ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_FORBIDDEN) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
@@ -68,6 +69,7 @@ class RouteBasedExceptionListener
         // Support Legacy format for the Internal Dashboard controller endpoints
         } elseif ($route == 'ccr_chartpool_index') {
             if ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $response = new JsonResponse($content, $statusCode);
                     $event->setResponse($response);
@@ -78,21 +80,21 @@ class RouteBasedExceptionListener
             || $route == 'ccr_user_getcurrentapitoken'
             || $route == 'ccr_user_revokeapitoken'
         ) {
-            if ($exception instanceof HttpException) {
+            if ($exception instanceof NotFoundHttpException) {
+                $content['message'] = 'API token not found.';
+                $statusCode = Response::HTTP_NOT_FOUND;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            } elseif ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
+                $statusCode = $exception->getStatusCode();
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
-            } elseif ($exception instanceof NotFoundHttpException) {
-                $content = [
-                    'message' => 'API token not found.'
-                ];
-                $statusCode = Response::HTTP_BAD_REQUEST;
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
-            }
-        } elseif ($route == 'ccr_dashboard_setviewedusertour') {
+            }        } elseif ($route == 'ccr_dashboard_setviewedusertour') {
             if ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
@@ -104,9 +106,10 @@ class RouteBasedExceptionListener
             if ($exception instanceof BadRequestHttpException) {
                 $content['message'] = $exception->getMessage();
                 $content['code'] = 0;
-                $response = new JsonResponse($content, $statusCode);
+                $response = new JsonResponse($content, Response::HTTP_NOT_FOUND);
                 $event->setResponse($response);
             } elseif ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
@@ -116,6 +119,7 @@ class RouteBasedExceptionListener
             }
         } elseif (str_starts_with($route, 'ccr_internaldashboard_')) {
             if ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Reponse::HTTP_FORBIDDEN) {
                     // This is specifically for ControllerTest::testSabRejectsPublic
                     if ($this->security->isGranted('IS_AUTHENTICATED_FULLY')) {
@@ -134,6 +138,7 @@ class RouteBasedExceptionListener
             }
         } elseif ($route == 'ccr_metricexplorer_createquery') {
             if ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content = [
                         'success' => false,
@@ -146,6 +151,7 @@ class RouteBasedExceptionListener
             }
         } elseif ($route == 'ccr_metricexplorer_updatequerybyid') {
             if ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content = [
                         'success' => false,
@@ -160,9 +166,10 @@ class RouteBasedExceptionListener
             if ($exception instanceof UnauthorizedHttpException) {
                 $content['message'] = $exception->getMessage();
                 $content['code'] = 0;
-                $response = new JsonResponse($content, $statusCode);
+                $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
                 $event->setResponse($response);
             } elseif ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
@@ -182,6 +189,7 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, Response::HTTP_OK);
                 $event->setResponse($response);
             } elseif ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_FORBIDDEN) {
                     $content = [
                         'success' => false,
@@ -196,6 +204,7 @@ class RouteBasedExceptionListener
             }
         } elseif ($route == 'ccr_reportbuilder_index') {
             if ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $response = new JsonResponse($content, $statusCode);
                     $event->setResponse($response);
@@ -203,6 +212,7 @@ class RouteBasedExceptionListener
             }
         } elseif (str_starts_with($route, 'ccr_user_')) {
             if ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
@@ -225,6 +235,7 @@ class RouteBasedExceptionListener
             || str_starts_with($route, 'ccr_warehouse_getrawdata')
         ) {
             if ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
@@ -234,6 +245,7 @@ class RouteBasedExceptionListener
            }
         } elseif (str_starts_with($route, 'ccr_warehouse_')) {
             if ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
@@ -248,6 +260,7 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, Response::HTTP_BAD_REQUEST);
                 $event->setResponse($response);
             } elseif ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
@@ -257,6 +270,7 @@ class RouteBasedExceptionListener
             }
         } elseif ($route == 'get_current_user') {
             if ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
@@ -271,6 +285,7 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             } elseif ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
@@ -279,6 +294,5 @@ class RouteBasedExceptionListener
                 }
             }
         }
-        return;
     }
 }
