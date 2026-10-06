@@ -82,6 +82,7 @@ class RouteBasedExceptionListener
         ) {
             if ($exception instanceof NotFoundHttpException) {
                 $content['message'] = 'API token not found.';
+                $content['code'] = 0;
                 $statusCode = Response::HTTP_NOT_FOUND;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
@@ -106,7 +107,7 @@ class RouteBasedExceptionListener
             if ($exception instanceof BadRequestHttpException) {
                 $content['message'] = $exception->getMessage();
                 $content['code'] = 0;
-                $response = new JsonResponse($content, Response::HTTP_NOT_FOUND);
+                $response = new JsonResponse($content, Response::HTTP_BAD_REQUEST);
                 $event->setResponse($response);
             } elseif ($exception instanceof HttpException) {
                 $statusCode = $exception->getStatusCode();
