@@ -121,7 +121,7 @@ SQL;
      * @param string $message
      * @throws UnauthorizedHttpException
      */
-    private static function throwUnauthorized(string $message)
+    public static function throwUnauthorized(string $message)
     {
         throw new UnauthorizedHttpException('Bearer', $message);
     }

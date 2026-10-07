@@ -12,6 +12,20 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        token:
+            lazy: true
+            stateless: true
+            pattern:
+              - ^/warehouse/export/realms
+              - ^/warehouse/raw-data
+            provider: username_provider
+            access_token:
+                token_handler: CCR\Security\TokenHandlers\TokenHandler
+                token_extractors:
+                    - 'header'
+                    - 'query_string'
+                    - 'request_body'
+            entry_point: CCR\Security\EntryPoints\TokenAuthenticationEntryPoint
         main:
             lazy: true
             provider: username_provider
