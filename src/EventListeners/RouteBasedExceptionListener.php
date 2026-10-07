@@ -169,8 +169,11 @@ class RouteBasedExceptionListener
             }
         } elseif ($route == 'ccr_metricexplorer_index') {
             if ($exception instanceof HttpException) {
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
+                $statusCode = $exception->getStatusCode();
+                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
+                }
             }
         } elseif (str_starts_with($route, 'ccr_organization_')) {
             if ($exception instanceof AccessDeniedHttpException) {
