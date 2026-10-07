@@ -168,8 +168,12 @@ class RouteBasedExceptionListener
                 }
             }
         } elseif ($route == 'ccr_metricexplorer_index') {
-            if ($exception instanceof HttpException) {
+            if ($exception instanceof UnauthorizedHttpException) {
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            } elseif ($exception instanceof HttpException) {
                 $statusCode = $exception->getStatusCode();
+                $this->logger->debug($statusCode);
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $response = new JsonResponse($content, $statusCode);
                     $event->setResponse($response);
@@ -245,6 +249,13 @@ class RouteBasedExceptionListener
                     $event->setResponse($response);
                 }
            }
+        } elseif ($route == 'ccr_warehouseexport_getrealms') {
+            if ($exception instanceof UnauthorizedHttpException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
         } elseif ($route == 'get_current_user') {
             if ($exception instanceof HttpException) {
                 $statusCode = $exception->getStatusCode();
@@ -257,8 +268,6 @@ class RouteBasedExceptionListener
             }
         } elseif ($route == 'legacy_user_interface') {
             if ($exception instanceof UnauthorizedHttpException) {
-                $content['message'] = $exception->getMessage();
-                $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             } elseif ($exception instanceof HttpException) {
