@@ -237,7 +237,6 @@ class RouteBasedExceptionListener
             || str_starts_with($route, 'ccr_warehouse_getaggregatedata')
             || str_starts_with($route, 'ccr_warehouse_getdimensions')
             || str_starts_with($route, 'ccr_warehouse_getdimensionvalues')
-            || str_starts_with($route, 'ccr_warehouse_getrawdata')
         ) {
             if ($exception instanceof UnauthorizedHttpException) {
                 $content['message'] = $exception->getMessage();
@@ -253,16 +252,6 @@ class RouteBasedExceptionListener
                     $event->setResponse($response);
                 }
            }
-        } elseif (str_starts_with($route, 'ccr_warehouse_')) {
-            if ($exception instanceof HttpException) {
-                $statusCode = $exception->getStatusCode();
-                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
-                    $content['message'] = $error_during_authorization_message;
-                    $content['code'] = 0;
-                    $response = new JsonResponse($content, Response::HTTP_OK);
-                    $event->setResponse($response);
-                }
-            }
         } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
             if ($exception instanceof BadRequestHttpException) {
                 $content['message'] = $exception->getMessage();
