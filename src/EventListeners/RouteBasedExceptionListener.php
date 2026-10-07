@@ -167,21 +167,6 @@ class RouteBasedExceptionListener
                     $event->setResponse($response);
                 }
             }
-        } elseif (str_starts_with($route, 'ccr_metricexplorer_')) {
-            if ($exception instanceof UnauthorizedHttpException) {
-                $content['message'] = $exception->getMessage();
-                $content['code'] = 0;
-                $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
-                $event->setResponse($response);
-            } elseif ($exception instanceof HttpException) {
-                $statusCode = $exception->getStatusCode();
-                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
-                    $content['message'] = $error_during_authorization_message;
-                    $content['code'] = 0;
-                    $response = new JsonResponse($content, $statusCode);
-                    $event->setResponse($response);
-                }
-            }
         } elseif (str_starts_with($route, 'ccr_organization_')) {
             if ($exception instanceof AccessDeniedHttpException) {
                 $content = [
@@ -252,21 +237,6 @@ class RouteBasedExceptionListener
                     $event->setResponse($response);
                 }
            }
-        } elseif (str_starts_with($route, 'ccr_warehouseexport_')) {
-            if ($exception instanceof BadRequestHttpException) {
-                $content['message'] = $exception->getMessage();
-                $content['code'] = 0;
-                $response = new JsonResponse($content, Response::HTTP_BAD_REQUEST);
-                $event->setResponse($response);
-            } elseif ($exception instanceof HttpException) {
-                $statusCode = $exception->getStatusCode();
-                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
-                    $content['message'] = $error_during_authorization_message;
-                    $content['code'] = 0;
-                    $response = new JsonResponse($content, $statusCode);
-                    $event->setResponse($response);
-                }
-            }
         } elseif ($route == 'get_current_user') {
             if ($exception instanceof HttpException) {
                 $statusCode = $exception->getStatusCode();
