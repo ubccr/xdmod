@@ -46,9 +46,9 @@ class UserInterfaceController extends BaseController
         try {
             switch ($operation) {
                 case 'get_charts':
-                    return $this->forward('CCR\Controller\UserInterfaceController::getCharts');
+                    return $this->forward('CCR\Controller\UserInterfaceController::getCharts', ['request' => $request]);
                 case 'get_data':
-                    return $this->forward('CCR\Controller\UserInterfaceController::getData');
+                    return $this->forward('CCR\Controller\UserInterfaceController::getData', ['request' => $request]);
                 case 'get_menus':
                     return $this->getMenus($request);
                 case 'get_param_descriptions':
@@ -179,7 +179,7 @@ class UserInterfaceController extends BaseController
     #[Route('{prefix}interfaces/user/data', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getData(Request $request): Response
     {
-        return $this->getCharts($request);
+        return $this->forward('CCR\Controller\UserInterfaceController::getCharts', ['request' => $request]);
     }
 
     /**

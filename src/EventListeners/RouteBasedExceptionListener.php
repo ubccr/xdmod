@@ -172,12 +172,8 @@ class RouteBasedExceptionListener
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
             } elseif ($exception instanceof HttpException) {
-                $statusCode = $exception->getStatusCode();
-                $this->logger->debug($statusCode);
-                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
-                    $response = new JsonResponse($content, $statusCode);
-                    $event->setResponse($response);
-                }
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_organization_')) {
             if ($exception instanceof AccessDeniedHttpException) {
@@ -255,6 +251,21 @@ class RouteBasedExceptionListener
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
+            } elseif ($exception instanceof HttpException) {
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+            }
+        } elseif ($route == 'ccr_warehouseexport_createrequest') {
+            if ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
+                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                    $content['message'] = $error_during_authorization_message;
+                    $content['code'] = 0;
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
+                }
             }
         } elseif ($route == 'get_current_user') {
             if ($exception instanceof HttpException) {

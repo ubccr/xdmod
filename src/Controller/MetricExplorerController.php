@@ -427,7 +427,6 @@ class MetricExplorerController extends BaseController
      * @throws AccessDeniedException
      * @throws UnknownGroupByException
      */
-    #[MustBeLoggedIn]
     #[Route('{prefix}metrics/explorer/dimension/values', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDimensionValues(Request $request): Response
     {
@@ -468,7 +467,6 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception if unable to get the currently logged in user.
      */
-    #[MustBeLoggedIn]
     #[Route('{prefix}metrics/explorer/get_dw_descripter', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDwDescriptors(Request $request): Response
     {
