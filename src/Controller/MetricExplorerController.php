@@ -377,15 +377,15 @@ class MetricExplorerController extends BaseController
         try {
             switch ($operation) {
                 case 'get_data':
-                    return $this->forward('CCR\Controller\MetricExplorerController::getData');
+                    return $this->forward('CCR\Controller\MetricExplorerController::getData', ['request' => $request]);
                 case 'get_dimension':
-                    return $this->forward('CCR\Controller\MetricExplorerController::getDimensionValues');
+                    return $this->forward('CCR\Controller\MetricExplorerController::getDimensionValues', ['request' => $request]);
                 case 'get_dw_descripter':
                     return $this->forward('CCR\Controller\MetricExplorerController::getDwDescriptors');
                 case 'get_filters':
                     return $this->forward('CCR\Controller\MetricExplorerController::getFilters');
                 case 'get_rawdata':
-                    return $this->forward('CCR\Controller\MetricExplorerController::getRawData');
+                    return $this->forward('CCR\Controller\MetricExplorerController::getRawData', ['request' => $request]);
             }
         } catch (\Exception $e) {
             return $this->json(buildError($e));
@@ -468,7 +468,7 @@ class MetricExplorerController extends BaseController
      * @throws Exception if unable to get the currently logged in user.
      */
     #[Route('{prefix}metrics/explorer/get_dw_descripter', requirements: ['prefix' => '.*'], methods: ['POST'])]
-    public function getDwDescriptors(Request $request): Response
+    public function getDwDescriptors(): Response
     {
         $user = $this->getXDUser();
 
@@ -620,8 +620,10 @@ class MetricExplorerController extends BaseController
      */
     #[MustBeLoggedIn]
     #[Route('{prefix}metrics/explorer/filters', requirements: ['prefix' => '.*'], methods: ['POST'])]
-    public function getFilters(Request $request): Response
+    public function getFilters(): Response
     {
+        $user = $this->getXDUser();
+
         $returnData = [
             'totalCount' => 0,
             'message' => 'success',
@@ -630,8 +632,6 @@ class MetricExplorerController extends BaseController
         ];
 
         try {
-            $user = $this->getXDUser();
-
             $userProfile = $user->getProfile();
             $filters = $userProfile->fetchValue('filters');
             if ($filters != null) {
