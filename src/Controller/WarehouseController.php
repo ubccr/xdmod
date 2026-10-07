@@ -2118,7 +2118,6 @@ class WarehouseController extends BaseController
      * get raw data from the requested realm.
      * @throws Exception
      */
-    #[MustBeLoggedIn]
     #[Route('/warehouse/raw-data', methods: ['GET'])]
     #[Route('{prefix}warehouse/raw-data', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getRawData(Request $request): Response
