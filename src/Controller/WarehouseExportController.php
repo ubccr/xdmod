@@ -28,7 +28,6 @@ use function xd_response\buildError;
 /**
  *
  */
-#[MustBeLoggedIn]
 #[Route('{prefix}warehouse/export', requirements: ['prefix' => '.*'])]
 class WarehouseExportController extends BaseController
 {
@@ -99,6 +98,7 @@ class WarehouseExportController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[MustBeLoggedIn]
     #[Route('/requests', methods: ['GET'])]
     public function getRequests(Request $request): Response
     {
@@ -121,6 +121,7 @@ class WarehouseExportController extends BaseController
      * @throws BadRequestHttpException
      * @throws Exception
      */
+    #[MustBeLoggedIn]
     #[Route('/request', methods: ['POST'])]
     public function createRequest(Request $request): Response
     {
@@ -197,6 +198,7 @@ class WarehouseExportController extends BaseController
      * @throws BadRequestHttpException if the request that corresponds to the provided id is not in the Available state.
      *  @throws Exception if the user is not authorized for this route.
  */
+    #[MustBeLoggedIn]
     #[Route('/download/{id}', requirements: ["id" => "\d+"], methods: ['GET'])]
     public function getExportedDataFile(Request $request, int $id): Response
     {
@@ -269,6 +271,7 @@ class WarehouseExportController extends BaseController
      * @throws NotFoundHttpException
      * @throws \Exception
      */
+    #[MustBeLoggedIn]
     #[Route('/request/{id}', requirements: ["id" => "\w+"], methods: ['DELETE'])]
     public function deleteRequest(Request $request, string $id): Response
     {
@@ -310,6 +313,7 @@ class WarehouseExportController extends BaseController
      * @throws NotFoundHttpException if any of the provided request ids are not found.
      *
      */
+    #[MustBeLoggedIn]
     #[Route('/requests', methods: ['DELETE'])]
     public function deleteRequests(Request $request): Response
     {
