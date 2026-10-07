@@ -259,6 +259,7 @@ class ControllerTest extends BaseTest
             'limit' => 300,
             'operation' => 'enum_tg_users',
             'pi_only' => 'n',
+            'search_mode' => 'formal_name',
             'userManagement' => 'y',
             'dashboard_mode' => 1,
             'query' => ''

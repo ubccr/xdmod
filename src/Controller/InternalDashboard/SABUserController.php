@@ -19,7 +19,6 @@ class SABUserController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[MgrRequired]
     #[Route('/controllers/sab_user.php')]
     public function index(Request $request): Response
     {
