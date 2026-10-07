@@ -1,6 +1,6 @@
 <?php
 
-namespace CCR\Security;
+namespace CCR\Security\EntryPoints;
 
 use CCR\Security\TokenHandlers\TokenHandler;
 use Symfony\Component\HttpFoundation\Request;
