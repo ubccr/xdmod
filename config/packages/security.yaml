@@ -16,8 +16,8 @@ security:
             lazy: true
             stateless: true
             pattern:
-              - ^/warehouse/export/realms
-              - ^/warehouse/raw-data
+              - ^/rest/warehouse/export/realms
+              - ^/rest/warehouse/raw-data
             provider: username_provider
             access_token:
                 token_handler: CCR\Security\TokenHandlers\TokenHandler
