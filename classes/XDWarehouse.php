@@ -32,10 +32,8 @@ class XDWarehouse
     }
 
     /**
-     * Search for users by formal name or username.
+     * Search for users by formal name.
      *
-     * @param int $searchMode Constant FORMAL_NAME_SEARCH or
-     *     USERNAME_SEARCH.
      * @param int $start Query offset.
      * @param int $limit Query limit.
      * @param string $nameFilter Search string.
@@ -48,20 +46,12 @@ class XDWarehouse
      *     and $limit.
      */
     public function enumerateGridUsers(
-        $searchMode,
         $start,
         $limit,
         $nameFilter = null,
         $piFilter = false,
         $university_id = null
     ) {
-        if (
-            $searchMode != FORMAL_NAME_SEARCH
-            && $searchMode != USERNAME_SEARCH
-        ) {
-            throw new \Exception('Invalid search mode specified');
-        }
-
         if (!isset($start) || !isset($limit)) {
             return array(0, array());
         }
@@ -81,19 +71,10 @@ class XDWarehouse
         }
 
         if ($nameFilter != null) {
-            if ($searchMode == FORMAL_NAME_SEARCH) {
-                $name = $this->_pdo->handle()->quote("%$nameFilter%");
+            $name = $this->_pdo->handle()->quote("%$nameFilter%");
 
-                $filterElements[]
-                    = "CONCAT(p.last_name, ', ', p.first_name) LIKE $name";
-            }
-
-            if ($searchMode == USERNAME_SEARCH) {
-                $name = $this->_pdo->handle()->quote("$nameFilter%");
-
-                $filterElements[]
-                    = "CONCAT(s.username, '@', r.name) LIKE $name";
-            }
+            $filterElements[]
+                = "CONCAT(p.last_name, ', ', p.first_name) LIKE $name";
         }
 
         if ($university_id != null) {
@@ -101,87 +82,25 @@ class XDWarehouse
             $filterElements[] = "p.organization_id = $id";
         }
 
-        if ($searchMode == FORMAL_NAME_SEARCH) {
-            $filterConcatClause = 'WHERE';
-        }
-
-        if ($searchMode == USERNAME_SEARCH) {
-            $filterConcatClause = 'AND';
-        }
-
         $filter
             = (count($filterElements) > 0)
-            ? $filterConcatClause . ' ' . implode(' AND ', $filterElements)
+            ? 'WHERE ' . implode(' AND ', $filterElements)
             : '';
 
-        switch ($searchMode) {
-            case FORMAL_NAME_SEARCH:
+        // For pagination, a total record count is needed ...
+        $recordCountQuery = $this->_pdo->query(
+            "SELECT COUNT(*) AS total_records FROM person AS p $filter"
+        );
 
-                // For pagination, a total record count is needed ...
-                $recordCountQuery = $this->_pdo->query(
-                    "SELECT COUNT(*) AS total_records FROM person AS p $filter"
-                );
-
-                $usersQuery = $this->_pdo->query(
-                    "
-                        SELECT p.id, p.long_name
-                        FROM person AS p
-                        $filter
-                        ORDER BY p.last_name ASC, p.first_name ASC
-                        LIMIT $limit OFFSET $start
-                    "
-                );
-
-                break;
-
-            case USERNAME_SEARCH:
-
-                // For pagination, a total record count is needed ...
-                $recordCountQuery = $this->_pdo->query(
-                    "
-                        SELECT COUNT(*) AS total_records
-                        FROM
-                            systemaccount AS s,
-                            resourcefact AS r,
-                            person AS p
-                        WHERE s.person_id = p.id
-                            AND r.id = s.resource_id
-                            $filter
-                    "
-                );
-
-                $usersQuery = $this->_pdo->query(
-                    "
-                        SELECT
-                            CONCAT(
-                                s.username,
-                                '@',
-                                r.name,
-                                ' (',
-                                p.last_name,
-                                ', ',
-                                p.first_name,
-                                ')'
-                            ) AS absusername,
-                            s.person_id AS id
-                        FROM
-                            systemaccount AS s,
-                            resourcefact AS r,
-                            person AS p
-                        WHERE s.person_id = p.id
-                            AND r.id = s.resource_id
-                            $filter
-                        ORDER BY absusername ASC, s.person_id
-                        LIMIT $limit OFFSET $start
-                    "
-                );
-
-                break;
-
-            default:
-                throw new \Exception('Invalid search mode specified');
-                break;
-        }
+        $usersQuery = $this->_pdo->query(
+            "
+                SELECT p.id, p.long_name
+                FROM person AS p
+                $filter
+                ORDER BY p.last_name ASC, p.first_name ASC
+                LIMIT $limit OFFSET $start
+            "
+        );
 
         return array($recordCountQuery[0]['total_records'], $usersQuery);
     }

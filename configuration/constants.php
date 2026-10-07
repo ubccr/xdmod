@@ -86,13 +86,6 @@ define('FAILOVER', 0);
 define('EXCLUSIVE', 1);
 
 /**
- * SEARCH-based CONSTANTS
- */
-
-define('FORMAL_NAME_SEARCH', 0);
-define('USERNAME_SEARCH', 1);
-
-/**
  * REST
  */
 
@@ -179,7 +172,6 @@ define('RESTRICTION_CHART_DATE_DESC', '/^.{1,}$/');
 define('RESTRICTION_CHART_TYPE', '/^.{1,}$/');
 define('RESTRICTION_CHART_MODULE', '/^.{1,}$/');
 define('RESTRICTION_OPERATION', '/^[_a-z]+$/');
-define('RESTRICTION_SEARCH_MODE', '/^\bformal_name\b|\busername\b$/');
 define('RESTRICTION_INSTITUTION', '/^(-)?[0-9]+$/');
 
 // Associated with 'id' in modw.daterange
