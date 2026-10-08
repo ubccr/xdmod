@@ -266,7 +266,7 @@ class Column extends NamedEntity implements iEntity
                 if ( $srcExtra != $destExtra ) {
                     $this->logCompareFailure('timestamp extra', $srcExtra, $destExtra, $this->name);
                     return -1;
-                } elseif ( strtolower($srcDefault) != strtolower($destDefault)
+                } elseif ( strtolower($srcDefault) != strtolower($destDefault ?? '')
                             && ( ("0" == "$srcDefault" && '0000-00-00 00:00:00' != $destDefault)
                                  || ("0" != "$srcDefault" && $srcDefault . ' 00:00:00' != $destDefault)) )
                 {
