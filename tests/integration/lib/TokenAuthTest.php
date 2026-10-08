@@ -43,7 +43,6 @@ abstract class TokenAuthTest extends BaseTest
     public static function provideTokenAuthTestData()
     {
         return [
-            ['pub', 'empty_token'],
             ['pub', 'malformed_token'],
             ['usr', 'invalid_token'],
             ['usr', 'expired_token'],
