@@ -219,12 +219,7 @@ abstract class TimeAggregationUnit
      */
     public static function deriveAggregationUnitName($time_period, $start_date, $end_date, $min_aggregation_unit = null)
     {
-        // This has been added because `strtolower` no longer supports null values.
-        if (empty($time_period)) {
-            $time_period = 'auto';
-        }
-
-        $time_period = strtolower($time_period);
+        $time_period = strtolower($time_period ?? 'auto');
 
         if ($time_period === 'auto') {
             $dt_format = '!Y-m-d';
@@ -269,15 +264,9 @@ abstract class TimeAggregationUnit
      */
     public static function getMaxUnit($unit_1, $unit_2)
     {
-        if (is_null($unit_1)) {
-            $unit_1 = 'null';
-        }
-        if (is_null($unit_2)) {
-            $unit_2 = 'null';
-        }
         // Convert input units to the expected unit name format.
-        $unit_1_name = strtolower($unit_1);
-        $unit_2_name = strtolower($unit_2);
+        $unit_1_name = strtolower($unit_1 ?? '');
+        $unit_2_name = strtolower($unit_2 ?? '');
 
         // If one unit is unknown, return the other unit.
         if (!array_key_exists($unit_1_name, self::$unit_sizes_in_days)) {
