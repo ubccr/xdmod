@@ -27,6 +27,7 @@ class PersonController extends BaseController
     #[Route('/{id}/organization', requirements: ["id" => "(-)?\d+"], methods: ['GET'])]
     public function getOrganizationForPerson(Request $request, int $id): Response
     {
+
         return $this->json([
             'success' => true,
             'results' => [
