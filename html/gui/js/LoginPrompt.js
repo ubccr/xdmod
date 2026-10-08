@@ -104,30 +104,18 @@ XDMoD.LoginPrompt = Ext.extend(Ext.Window,  {
 
 
       var processLogin = function() {
-
          // Sanitization --------------------------------------------
-
          if (!(passwordField.validate())) {
-
             presentOverlay (
-
                FAIL,
                passwordField.formatMessage,
                null,
-
                function(){
-
                   passwordField.focus(true);
-
                }
-
-            );//presentOverlay
-
+            );
             return;
-
-         }//if
-
-         // ---------------------------------------------------------
+         }
 
          var restArgs = {
             'username' : usernameField.getValue(),
@@ -139,8 +127,7 @@ XDMoD.LoginPrompt = Ext.extend(Ext.Window,  {
             'arguments': restArgs,
             callback: loginCallback
          });
-
-      };//processLogin
+      };
 
 
 
@@ -195,13 +182,8 @@ XDMoD.LoginPrompt = Ext.extend(Ext.Window,  {
       var loginCallback = function(responseData) {
 
             if (responseData.success) {
-
-               // Cache the new token
-               XDMoD.REST.token = responseData.results.token;
-
                self.hide();
                passwordField.setValue('');
-
 
                // Upon successful re-login, look in the REST call configuration to see if a custom callback (override) has
                // been specified.  If so, invoke that callback.
@@ -236,7 +218,7 @@ XDMoD.LoginPrompt = Ext.extend(Ext.Window,  {
 
             }
 
-      };//loginCallback
+      };
 
       // -----------------------------------------------------------------
 
