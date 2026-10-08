@@ -108,7 +108,7 @@ class FilterListBuilder extends Loggable
     public function buildRealmLists($realmName, $appendToList = false)
     {
         // Get a query for the given realm.
-        $startTime = microtime(true);
+        $startTime = time();
         $this->logger->notice('start', ['action' => $realmName . '.build-filter-list']);
 
         $realmQuery = new \DataWarehouse\Query\AggregateQuery(
