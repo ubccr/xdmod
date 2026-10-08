@@ -32,23 +32,6 @@ class OrganizationController extends BaseController
     public function index(Request $request): Response
     {
         $operation = $this->getStringParam($request, 'operation', true);
-        # Note: this is here so that we get the same error messages for the same tests as previously.
-        # Once we deprecate the old routes this should go away.
-        if (in_array($operation, ['upgrade_member', 'downgrade_member'])) {
-            try {
-                $user = $this->getXDUser();
-            } catch (Exception $e) {
-                return $this->json(
-                    [
-                        "status" => "not_a_center_director",
-                        "success" => false,
-                        "totalCount" => 0,
-                        "message" => "not_a_center_director",
-                        "data" => []
-                    ]
-                );
-            }
-        }
 
         try {
             $memberId = $this->getStringParam($request, 'member_id',false, null, RESTRICTION_UID );
@@ -62,13 +45,26 @@ class OrganizationController extends BaseController
 
         switch($operation) {
             case 'downgrade_member':
-                return $this->downgradeMember($request, $memberId);
+                return $this->forward(
+                    'CCR\Controller\OrganizationController::downgradeMember',
+                    ['request' => $request, 'memberId' => $memberId]
+                );
             case 'enum_center_staff_members':
-                return $this->getMembers($request);
+                return $this->forward(
+                    'CCR\Controller\OrganizationController::getMembers',
+                    ['request' => $request]
+                );
             case 'get_member_status':
+                return $this->forward(
+                    'CCR\Controller\OrganizationController::getMemberStatus',
+                    ['request' => $request, 'memberId' => $memberId]
+                );
                 return $this->getMemberStatus($request, $memberId);
             case 'upgrade_member':
-                return $this->upgradeMember($request, $memberId);
+                return $this->forward(
+                    'CCR\Controller\OrganizationController::upgradeMember',
+                    ['request' => $request, 'memberId' => $memberId]
+                );
         }
 
         return $this->json(buildError('Unknown operation provided.'));
@@ -84,7 +80,6 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('center_related_acls')
     #[CenterDirectorRequired]
     #[Route('{prefix}organizations/members', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getMembers(Request $request): Response
@@ -106,7 +101,7 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
-    // TODO needs something like IsGranted('center_related_acls')
+    #[CenterDirectorRequired]
     #[Route('{prefix}organizations/members/{memberId}/status', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getMemberStatus(Request $request, string $memberId): Response
     {

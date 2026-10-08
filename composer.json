@@ -273,7 +273,6 @@
             "classes/DB"
         ],
         "psr-4": {
-            "Authentication\\": "classes/Authentication/",
             "CCR\\": ["classes/CCR/", "src/"],
             "Common\\": "classes/Common/",
             "Configuration\\": "classes/Configuration/",

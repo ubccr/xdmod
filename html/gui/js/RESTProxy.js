@@ -44,8 +44,7 @@ XDMoD.REST.Call = function(config) {
    // If config.action has an absolute url (http://....), then do not use XDMoD.REST.baseURL
    // If config.action is using a relative url (/action/....), then use XDMoD.REST.baseURL
 
-   var fullURL = (config.action.indexOf('http') == 0) ? '' : '';
-   fullURL = fullURL + config.action + restArgumentString;
+   let fullURL = config.action + restArgumentString;
 
    // =================================================================
 
