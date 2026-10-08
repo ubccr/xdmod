@@ -9,10 +9,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 
-
 class TokenAuthenticationEntryPoint implements AuthenticationEntryPointInterface
 {
-    public function __construct(private LoggerInterface $logger) {}
+    public function __construct(private LoggerInterface $logger) {
+    }
 
     public function start(Request $request, ?AuthenticationException $authException = null): Response
     {

@@ -10,7 +10,8 @@ class MustBeLoggedIn extends \CCR\Security\Attributes\RoleRequired
 {
     public function __construct(Expression|string $attribute = '', array|Expression|string|null $subject = null, ?string $message = null, ?int $statusCode = null, ?int $exceptionCode = null)
     {
-        parent::__construct(new Expression('is_authenticated() and "pub" not in role_names'),
+        parent::__construct(
+            new Expression('is_authenticated() and "pub" not in role_names'),
             $subject,
             $message,
             Response::HTTP_UNAUTHORIZED,

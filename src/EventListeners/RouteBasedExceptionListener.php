@@ -52,13 +52,13 @@ class RouteBasedExceptionListener
         $error_during_authorization_message = 'An error was encountered while attempting to process the requested authorization procedure.';
         // For src/Controller/InternalDashboard/AdminController::resetUserTourViewed
         if ($route == 'ccr_internaldashboard_admin_resetusertourviewed') {
-             if ($exception instanceof AccessDeniedHttpException) {
+            if ($exception instanceof AccessDeniedHttpException) {
                 $statusCode = $this->security->getUser() ? Response::HTTP_FORBIDDEN : Response::HTTP_UNAUTHORIZED;
                 $content['message'] = $error_during_authorization_message;
                 $content['code'] = 0;
                 $response = new JsonResponse($content, $statusCode);
                 $event->setResponse($response);
-             } elseif ($exception instanceof HttpException) {
+            } elseif ($exception instanceof HttpException) {
                 $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_FORBIDDEN) {
                     $content['message'] = $error_during_authorization_message;
@@ -66,7 +66,7 @@ class RouteBasedExceptionListener
                     $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
                     $event->setResponse($response);
                 }
-             }
+            }
         // Support Legacy format for the Internal Dashboard controller endpoints
         } elseif ($route == 'ccr_chartpool_index') {
             if ($exception instanceof HttpException) {
@@ -177,26 +177,18 @@ class RouteBasedExceptionListener
                 $event->setResponse($response);
             }
         } elseif (str_starts_with($route, 'ccr_organization_')) {
+            $content = [
+                'success' => false,
+                'status' => 'not_a_center_director',
+                'message' => 'not_a_center_director',
+                'totalCount' => 0,
+                'data' => array(),
+            ];
             if ($exception instanceof AccessDeniedHttpException) {
-                $content = [
-                    'success' => false,
-                    'status' => 'not_a_center_director',
-                    'message' => 'not_a_center_director',
-                    'totalCount' => 0,
-                    'data' => array(),
-                ];
                 $response = new JsonResponse($content, Response::HTTP_OK);
                 $event->setResponse($response);
             } elseif ($exception instanceof HttpException) {
-                $statusCode = $exception->getStatusCode();
                 if ($statusCode == Response::HTTP_FORBIDDEN) {
-                    $content = [
-                        'success' => false,
-                        'status' => 'not_a_center_director',
-                        'message' => 'not_a_center_director',
-                        'totalCount' => 0,
-                        'data' => array(),
-                    ];
                     $response = new JsonResponse($content, Response::HTTP_OK);
                     $event->setResponse($response);
                 }
