@@ -41,6 +41,6 @@ security:
             switch_user: true
             logout:
                 path: /logout
-            entry_point: access_token
+            entry_point: security.authenticator.access_token.main
     access_control:
         - { path: ^/, roles: PUBLIC_ACCESS}
