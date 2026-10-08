@@ -40,7 +40,7 @@ security:
                 - CCR\Security\Authenticators\SimpleSamlPhpAuthenticator
             switch_user: true
             logout:
-              path: /logout
-            entry_point: CCR\Security\Authenticators\FormLoginAuthenticator
+                path: /logout
+            entry_point: access_token
     access_control:
         - { path: ^/, roles: PUBLIC_ACCESS}
