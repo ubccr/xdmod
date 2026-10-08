@@ -2430,7 +2430,6 @@ SQL;
             $this->synchronizeOrganization();
         }
 
-        // XDSessionManager::recordLogin($user)
         $pdo = DB::factory('database');
 
         list($usec, $sec) = explode(' ', microtime());

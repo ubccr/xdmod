@@ -237,7 +237,7 @@ class RouteBasedExceptionListener
                     $response = new JsonResponse($content, Response::HTTP_UNAUTHORIZED);
                     $event->setResponse($response);
                 }
-           }
+            }
         } elseif ($route == 'ccr_warehouseexport_getrealms') {
             if ($exception instanceof UnauthorizedHttpException) {
                 $content['message'] = $error_during_authorization_message;
