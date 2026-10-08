@@ -25,7 +25,6 @@ security:
                     - 'header'
                     - 'query_string'
                     - 'request_body'
-            entry_point: CCR\Security\EntryPoints\TokenAuthenticationEntryPoint
         main:
             lazy: true
             provider: username_provider
@@ -41,6 +40,6 @@ security:
             switch_user: true
             logout:
                 path: /logout
-            entry_point: security.authenticator.access_token.main
+            entry_point: CCR\Security\Authenticators\FormLoginAuthenticator
     access_control:
         - { path: ^/, roles: PUBLIC_ACCESS}
