@@ -17,7 +17,7 @@ class QueryTokenExtractor implements AccessTokenExtractorInterface
     {
         $queryParameter = $request->query->get($this->parameter);
         if ('' === $queryParameter) {
-            TokenHandler::throwUnauthorized(TokenHandler::MISSING_TOKEN_MESSAGE)
+            TokenHandler::throwUnauthorized(TokenHandler::MISSING_TOKEN_MESSAGE);
         }
         return $queryParameter;
     }
