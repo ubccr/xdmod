@@ -32,7 +32,7 @@ security:
                 token_handler: CCR\Security\TokenHandlers\TokenHandler
                 token_extractors:
                     - 'header'
-                    - 'query_string'
+                    - CCR\Security\TokenExtractors\QueryTokenExtractor
                     - 'request_body'
             custom_authenticators:
                 - CCR\Security\Authenticators\FormLoginAuthenticator
