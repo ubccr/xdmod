@@ -3,7 +3,7 @@
 namespace CCR\Security\TokenExtractors;
 
 use Symfony\Component\HttpFoundation\Request;
-
+use Symfony\Component\Security\Http\AccessToken\AccessTokenExtractorInterface;
 /**
  */
 class QueryTokenExtractor implements AccessTokenExtractorInterface
