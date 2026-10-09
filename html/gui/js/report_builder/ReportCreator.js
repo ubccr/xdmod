@@ -690,7 +690,6 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                 self.parent.reportPreview.initPreview(
                     txtReportName.getValue(),
                     self.getReportID(),
-                    XDMoD.REST.token,
                     1,
                     reportData,
                     rdoChartLayout.getValue().charts_per_page
@@ -699,7 +698,6 @@ XDMoD.ReportCreator = Ext.extend(Ext.form.FormPanel, {
                 self.parent.reportPreview.initPreview(
                     txtReportName.getValue(),
                     self.getReportID(),
-                    XDMoD.REST.token,
                     1,
                     undefined,
                     rdoChartLayout.getValue().charts_per_page

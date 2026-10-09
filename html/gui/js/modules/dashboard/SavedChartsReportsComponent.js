@@ -18,7 +18,7 @@ XDMoD.Module.Dashboard.SavedChartsReportsComponent = Ext.extend(CCR.xdmod.ui.Por
         this.chartReportStore = new Ext.data.JsonStore({
             // store configs
             autoDestroy: true,
-            url: XDMoD.REST.url + '/dashboard/savedchartsreports',
+            url: '/dashboard/savedchartsreports',
             // reader configs
             root: 'data',
             idProperty: 'name',

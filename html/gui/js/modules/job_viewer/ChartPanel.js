@@ -32,9 +32,9 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
         var jv = this.jobViewer;
         this.store.proxy.on('beforeload', function (proxy) {
             var path = self.path;
-            var token = jv._createHistoryTokenFromArray(path);
+            var historyToken = jv._createHistoryTokenFromArray(path);
             self.loaded = true;
-            var url = self.baseUrl + '?' + token + '&token=' + XDMoD.REST.token;
+            var url = self.baseUrl + '?' + historyToken;
             proxy.setUrl(url, true);
         });
         this.store.on('load', function (store, records, params) {
@@ -177,8 +177,8 @@ XDMoD.Module.JobViewer.ChartPanel = Ext.extend(Ext.Panel, {
                             };
                         }
                         var path = self.path.concat([drilldown]);
-                        var token = self.jobViewer.module_id + '?' + self.jobViewer._createHistoryTokenFromArray(path);
-                        Ext.History.add(token);
+                        var historyToken = self.jobViewer.module_id + '?' + self.jobViewer._createHistoryTokenFromArray(path);
+                        Ext.History.add(historyToken);
                     });
                 }
             }

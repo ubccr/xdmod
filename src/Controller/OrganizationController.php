@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CCR\Controller;
 
 use Exception;
+use CCR\Security\Attributes\CenterDirectorRequired;
 use Models\Services\Centers;
 use Models\Services\Users;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -26,27 +27,11 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[CenterDirectorRequired]
     #[Route('/controllers/role_manager.php')]
     public function index(Request $request): Response
     {
         $operation = $this->getStringParam($request, 'operation', true);
-        # Note: this is here so that we get the same error messages for the same tests as previously.
-        # Once we deprecate the old routes this should go away.
-        if (in_array($operation, ['upgrade_member', 'downgrade_member'])) {
-            try {
-                $user = $this->authorize($request, [ROLE_ID_CENTER_DIRECTOR], true);
-            } catch (Exception $e) {
-                return $this->json(
-                    [
-                        "status" => "not_a_center_director",
-                        "success" => false,
-                        "totalCount" => 0,
-                        "message" => "not_a_center_director",
-                        "data" => []
-                    ]
-                );
-            }
-        }
 
         try {
             $memberId = $this->getStringParam($request, 'member_id',false, null, RESTRICTION_UID );
@@ -60,13 +45,26 @@ class OrganizationController extends BaseController
 
         switch($operation) {
             case 'downgrade_member':
-                return $this->downgradeMember($request, $memberId);
+                return $this->forward(
+                    'CCR\Controller\OrganizationController::downgradeMember',
+                    ['request' => $request, 'memberId' => $memberId]
+                );
             case 'enum_center_staff_members':
-                return $this->getMembers($request);
+                return $this->forward(
+                    'CCR\Controller\OrganizationController::getMembers',
+                    ['request' => $request]
+                );
             case 'get_member_status':
+                return $this->forward(
+                    'CCR\Controller\OrganizationController::getMemberStatus',
+                    ['request' => $request, 'memberId' => $memberId]
+                );
                 return $this->getMemberStatus($request, $memberId);
             case 'upgrade_member':
-                return $this->upgradeMember($request, $memberId);
+                return $this->forward(
+                    'CCR\Controller\OrganizationController::upgradeMember',
+                    ['request' => $request, 'memberId' => $memberId]
+                );
         }
 
         return $this->json(buildError('Unknown operation provided.'));
@@ -82,10 +80,11 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[CenterDirectorRequired]
     #[Route('{prefix}organizations/members', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getMembers(Request $request): Response
     {
-        $user = $this->authorize($request, $this->getParameter('center_related_acls'), true);
+        $user = $this->getXDUser();
         $members = Users::getUsersAssociatedWithCenter($user->getUserID());
 
         return $this->json([
@@ -102,10 +101,11 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[CenterDirectorRequired]
     #[Route('{prefix}organizations/members/{memberId}/status', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getMemberStatus(Request $request, string $memberId): Response
     {
-        $user = $this->authorize($request, $this->getParameter('center_related_acls'), true);
+        $user = $this->getXDUser();
 
         if (empty($memberId)) {
             return $this->json(buildError("Invalid value specified for 'member_id'."));
@@ -113,7 +113,7 @@ class OrganizationController extends BaseController
 
         $member = XDUser::getUserByID($memberId);
         if ($member === null) {
-            return $this->json(\xd_response\buildError('user_does_not_exist'));
+            return $this->json(buildError('user_does_not_exist'));
         }
 
         $returnData = [
@@ -158,47 +158,29 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[CenterDirectorRequired]
     #[Route('{prefix}organizations/members/{memberId}/upgrade', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function upgradeMember(Request $request, string $memberId): Response
     {
-        $this->logger->error('Upgrading Member Id: ' . var_export($memberId, true));
-        try {
-            $user = $this->authorize($request, [ROLE_ID_CENTER_DIRECTOR], true);
-            $this->logger->error('Successfully Authenticated requesting user has CD');
-        } catch (Exception $e) {
-            return $this->json(
-                [
-                    "status" => "not_a_center_director",
-                    "success" => false,
-                    "totalCount" => 0,
-                    "message" => "not_a_center_director",
-                    "data" => []
-                ]
-            );
-        }
-        $this->logger->error('Checking member id next.');
+        $this->logger->debug('Upgrading Member Id: ' . var_export($memberId, true));
+        $user = $this->getXDUser();
+
+        $this->logger->debug('Checking member id.');
         if (empty($memberId)) {
             return $this->json(buildError("Invalid value specified for 'member_id'."));
         }
         $member = XDUser::getUserByID($memberId);
         if ($member === null) {
-            return $this->json(\xd_response\buildError('user_does_not_exist'));
+            return $this->json(buildError('user_does_not_exist'));
         }
         $returnData = [];
 
-        // Ensure that the user performing this operation is authorized
-        if (!$user->hasAcl(ROLE_ID_CENTER_DIRECTOR) || !$user->getAccountStatus()) {
-            return $this->json([
-                'success' => false,
-                'message' => 'You are not authorized to perform this action'
-            ]);
-        }
         $organization = $user->getActiveOrganization();
         $memberUserId = $member->getUserID();
 
         // An eligible user must be associated with the currently logged in users center.
         if (!Users::userIsAssociatedWithCenter($memberUserId, $organization)) {
-            $this->json(\xd_response\buildError('center_mismatch_between_member_and_director'));
+            $this->json(buildError('center_mismatch_between_member_and_director'));
         }
 
         // They must not already be a Center Director for the organization.
@@ -229,22 +211,11 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[CenterDirectorRequired]
     #[Route('{prefix}organizations/members/{memberId}/downgrade', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function downgradeMember(Request $request, ?string $memberId): Response
     {
-        try {
-            $user = $this->authorize($request, [ROLE_ID_CENTER_DIRECTOR], true);
-        } catch (Exception $e) {
-            return $this->json(
-                [
-                    "status" => "not_a_center_director",
-                    "success" => false,
-                    "totalCount" => 0,
-                    "message" => "not_a_center_director",
-                    "data" => []
-                ]
-            );
-        }
+        $user = $this->getXDUser();
 
         if (empty($memberId)) {
             return $this->json(buildError("Invalid value specified for 'member_id'."));
@@ -258,7 +229,7 @@ class OrganizationController extends BaseController
 
         $member = XDUser::getUserByID($memberId);
         if ($member === null) {
-            return $this->json(\xd_response\buildError('user_does_not_exist'));
+            return $this->json(buildError('user_does_not_exist'));
         }
 
         $organization = $user->getOrganizationID();
@@ -266,7 +237,7 @@ class OrganizationController extends BaseController
 
         // An eligible user must be associated with the currently logged in users center.
         if (!Users::userIsAssociatedWithCenter($memberUserId, $organization)) {
-            return $this->json(\xd_response\buildError('center_mismatch_between_member_and_director'));
+            return $this->json(buildError('center_mismatch_between_member_and_director'));
         }
 
         Users::demoteUserFromCenterStaff($member, $organization);

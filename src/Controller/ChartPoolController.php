@@ -2,6 +2,7 @@
 
 namespace CCR\Controller;
 
+use CCR\Security\Attributes\MustBeLoggedIn;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,30 +23,23 @@ class ChartPoolController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[MustBeLoggedIn]
     #[Route('/controllers/chart_pool.php', methods: ['POST'])]
     #[Route('/chart_pool')]
     public function index(Request $request): Response
     {
-        try {
-            $user = $this->authorize($request);
-        } catch (Exception $e) {
-            return $this->json(buildError(new \SessionExpiredException()), 401);
-        }
+        $user = $this->getXDUser();
 
         $operation = $this->getStringParam($request, 'operation');
         if (empty($operation)) {
             return $this->json(buildError('operation_not_defined'));
         }
 
-        try {
-            switch ($operation) {
-                case 'add_to_queue':
-                    return $this->addToQueue($request, $user);
-                case 'remove_from_queue':
-                    return $this->removeFromQueue($request, $user);
-            }
-        } catch(\Exception $e) {
-            return $this->json(buildError($e));
+        switch ($operation) {
+            case 'add_to_queue':
+                return $this->addToQueue($request, $user);
+            case 'remove_from_queue':
+                return $this->removeFromQueue($request, $user);
         }
 
         return $this->json(buildError('invalid_operation_specified'));
@@ -75,16 +69,12 @@ class ChartPoolController extends BaseController
 
         $chart_pool = new XDChartPool($user);
 
-        try {
-            $chart_pool->addChartToQueue(
-                $chartId,
-                $chartTitle,
-                $chartDrillDetails,
-                $chartDateDesc
-            );
-        } catch (Exception $e) {
-            return $this->json(buildError($e->getMessage()));
-        }
+        $chart_pool->addChartToQueue(
+            $chartId,
+            $chartTitle,
+            $chartDrillDetails,
+            $chartDateDesc
+        );
 
         return $this->json([
             'success' => true,

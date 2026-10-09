@@ -148,7 +148,7 @@ class XdmodTestHelper
         }
         $this->userrole = $userrole;
         $this->setauthvariables(null);
-        $authresult = $this->post("rest/auth/login", null, $this->config['role'][$userrole]);
+        $authresult = $this->post("/login", null, $this->config['role'][$userrole]);
         $authtokens = $authresult[0]['results'];
         $this->setauthvariables($authtokens['token']);
     }
@@ -160,7 +160,7 @@ class XdmodTestHelper
             'password' => $password
         );
         $this->setauthvariables(null);
-        $authresult = $this->post("rest/auth/login", null, $data);
+        $authresult = $this->post("/login", null, $data);
         $authtokens = $authresult[0]['results'];
         $this->setauthvariables($authtokens['token']);
     }
@@ -232,7 +232,7 @@ class XdmodTestHelper
 
     public function logout()
     {
-        $this->post("rest/auth/logout", null, null);
+        $this->post("logout", null, null);
         $this->setauthvariables(null);
     }
 

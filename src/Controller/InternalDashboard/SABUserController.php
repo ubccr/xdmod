@@ -3,7 +3,7 @@
 namespace CCR\Controller\InternalDashboard;
 
 use CCR\Controller\BaseController;
-use CCR\Security\Attributes\MgrRequired;
+use CCR\Security\Attributes\MustBeLoggedIn;
 use Exception;
 use Models\Services\Acls;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,11 +19,11 @@ class SABUserController extends BaseController
      * @return Response
      * @throws Exception
      */
-    #[MgrRequired]
+    #[MustBeLoggedIn]
     #[Route('/controllers/sab_user.php')]
     public function index(Request $request): Response
     {
-        $user = $this->getXDUser($request->getSession());
+        $user = $this->getXDUser();
 
         $operation = $this->getStringParam($request, 'operation', true);
         switch ($operation) {

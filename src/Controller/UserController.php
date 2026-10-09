@@ -4,15 +4,18 @@ declare(strict_types=1);
 namespace CCR\Controller;
 
 use CCR\DB;
+use CCR\Security\Attributes\MustBeLoggedIn;
 use Models\Services\Organizations;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\HttpKernel\Exception\ConflictHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use XDUser;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use xd_security\SessionSingleton;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Security\Http\Attribute\NoPublicAllowed;
+use XDUser;
 
 /**
  * Class UserControllerProvider
@@ -65,14 +68,46 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception
      */
+    #[MustBeLoggedIn]
     #[Route("{prefix}users/current", name: "get_current_user", requirements: ['prefix' => '.*'], methods: ["GET"])]
     public function getCurrentUser(Request $request)
     {
-        $this->authorize($request);
+        $user = $this->getXDUser();
+        $emailAddress = $user->getEmailAddress();
+        if ($emailAddress == NO_EMAIL_ADDRESS_SET) {
+            $emailAddress = '';
+        }
+        $mostPrivileged = $user->getMostPrivilegedRole();
+        $mostPrivilegedFormalName = $mostPrivileged->getDisplay();
+        if (count(array_intersect(XDUser::$CENTER_ACLS, $user->getAcls(true))) > 0) {
+            $organization = Organizations::getAbbrevById($user->getOrganizationID());
+            $mostPrivilegedFormalName = "$mostPrivilegedFormalName - $organization";
+        }
+        $rawRealmConfig = \DataWarehouse\Access\RawData::getRawDataRealms($user);
+        $rawDataRealms = array_map(
+            function ($item) {
+                return $item['name'];
+            },
+            $rawRealmConfig
+        );
+
+        $results = [
+            'first_name' => $user->getFirstName(),
+            'last_name' => $user->getLastName(),
+            'email_address' => $emailAddress,
+            'is_sso_user' => $user->isSSOUser(),
+            'first_time_login' => $user->getCreationTimestamp() == $user->getLastLoginTimestamp(),
+            'autoload_suppression' => $request->getSession()->get('suppress_profile_autoload', false),
+            'field_of_science' => $user->getFieldOfScience(),
+            'active_role' => $mostPrivilegedFormalName,
+            'most_privileged_role' => $mostPrivilegedFormalName,
+            'person_id' => $user->getPersonID(true),
+            'raw_data_allowed_realms' => $rawDataRealms
+        ];
 
         return $this->json([
             'success' => true,
-            'results' => $this->extractUserData(XDUser::getUserByUserName($this->getUser()->getUserIdentifier()))
+            'results' => $results
         ]);
     }
 
@@ -86,20 +121,35 @@ class UserController extends BaseController
     #[Route("{prefix}users/current", name: "update_current_user", requirements: ['prefix' => '.*'], methods: ["PATCH"])]
     public function updateCurrentUser(Request $request)
     {
-        // Ensure that the user is logged in.
-        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+        $requestProperties = array();
+        foreach (self::$userSettableProperties as $propertyName => $propertyType) {
+            $propertyValue = $request->get($propertyName);
 
-        $this->authorize($request);
+            if ($propertyValue === null) {
+                continue;
+            }
+
+            // Check to make sure that the property value type is what we expect.
+            if (get_debug_type($propertyValue) !== $propertyType) {
+                throw new BadRequestHttpException(
+                    sprintf(
+                        "Invalid value for $propertyName. Must be a(n) %s.",
+                        $propertyType
+                    )
+                );
+            }
+            $requestProperties[$propertyName] = $propertyValue;
+        }
 
         // Attempt to update the user's profile with the given information.
         $this->updateUser(
             XDUser::getUserByUserName($this->getUser()->getUserIdentifier()),
-            $this->extractUserSettableProperties($request)
+            $requestProperties
         );
 
         // If the last step completed successfully, hide the welcome message
         // for first-time XSEDE users and return a success message.
-        SessionSingleton::getSession()->set('suppress_profile_autoload', true);
+        $request->getSession()->set('suppress_profile_autoload', true);
 
         return $this->json([
             'success' => true,
@@ -119,10 +169,11 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception
      */
+    #[MustBeLoggedIn]
     #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getCurrentAPIToken(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         if ($this->canCreateToken($user)) {
             throw new NotFoundHttpException('API token not found.');
@@ -146,10 +197,11 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception if there is a problem retrieving a database connection.
      */
+    #[MustBeLoggedIn]
     #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function createAPIToken(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         if (!$this->canCreateToken($user)) {
             throw new ConflictHttpException('Token already exists.');
@@ -172,12 +224,13 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception
      */
+    #[MustBeLoggedIn]
     #[Route('{prefix}users/current/api/token', requirements: ['prefix' => '.*'], methods: ['DELETE'])]
     public function revokeAPIToken(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
-        // If we can create a token then we can't really revoke it can we.
+        // If we can create a token then we can't really revoke it
         if ($this->canCreateToken($user)) {
             throw new NotFoundHttpException('API token not found.');
         }
@@ -192,81 +245,6 @@ class UserController extends BaseController
 
         // If the `revokeToken` failed for some reason then we let the user know.
         throw new \Exception('Unable to revoke API token.');
-    }
-
-    /**
-     * Extract information from a user object.
-     *
-     * Ported from: classes/REST/Portal/Profile.php
-     *
-     * @param XDUser $user The user object to extract data from.
-     * @return array        An associative array of data for the user.
-     * @throws \Exception
-     */
-    private function extractUserData(XDUser $user)
-    {
-        $emailAddress = $user->getEmailAddress();
-        if ($emailAddress == NO_EMAIL_ADDRESS_SET) {
-            $emailAddress = '';
-        }
-        $mostPrivileged = $user->getMostPrivilegedRole();
-        $mostPrivilegedFormalName = $mostPrivileged->getDisplay();
-        if (count(array_intersect(XDUser::$CENTER_ACLS, $user->getAcls(true))) > 0) {
-            $organization = Organizations::getAbbrevById($user->getOrganizationID());
-            $mostPrivilegedFormalName = "$mostPrivilegedFormalName - $organization";
-        }
-        $rawRealmConfig = \DataWarehouse\Access\RawData::getRawDataRealms($user);
-        $rawDataRealms = array_map(
-            function ($item) {
-                return $item['name'];
-            },
-            $rawRealmConfig
-        );
-
-        return [
-            'first_name' => $user->getFirstName(),
-            'last_name' => $user->getLastName(),
-            'email_address' => $emailAddress,
-            'is_sso_user' => $user->isSSOUser(),
-            'first_time_login' => $user->getCreationTimestamp() == $user->getLastLoginTimestamp(),
-            'autoload_suppression' => SessionSingleton::getSession()->get('suppress_profile_autoload', false),
-            'field_of_science' => $user->getFieldOfScience(),
-            'active_role' => $mostPrivilegedFormalName,
-            'most_privileged_role' => $mostPrivilegedFormalName,
-            'person_id' => $user->getPersonID(true),
-            'raw_data_allowed_realms' => $rawDataRealms
-        ];
-    }
-
-    /**
-     * Extract user profile properties from a request that are allowed to be
-     * set by the user.
-     *
-     * @param Request $request The request to extract properties from.
-     * @return array            An array containing properties
-     */
-    private function extractUserSettableProperties(Request $request)
-    {
-        $requestProperties = array();
-        foreach (self::$userSettableProperties as $propertyName => $propertyType) {
-            $propertyValue = $request->get($propertyName);
-
-            if ($propertyValue === null) {
-                continue;
-            }
-
-            // Check to make sure that the property value type is what we expect.
-            if (get_debug_type($propertyValue) !== $propertyType) {
-                throw new BadRequestHttpException(
-                    sprintf(
-                        "Invalid value for $propertyName. Must be a(n) %s.",
-                        $propertyType
-                    )
-                );
-            }
-            $requestProperties[$propertyName] = $propertyValue;
-        }
-        return $requestProperties;
     }
 
     /**

@@ -2,11 +2,9 @@
 
 namespace CCR\Security\Authenticators;
 
-use CCR\Entity\User;
-use Authentication\SAML\XDSamlAuthentication;
-use Configuration\Configuration;
-use Models\Services\Organizations;
 use Psr\Log\LoggerInterface;
+use SimpleSAML\Auth\Source;
+use SimpleSAML\Auth\Simple;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,11 +22,12 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
-use SimpleSAML\Auth\Source;
-
+use CCR\Entity\User;
+use Configuration\Configuration;
+use Models\Services\Organizations;
 use XDUser;
 
-class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
+class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements AuthenticatorInterface
 {
     private LoggerInterface $logger;
 
@@ -36,40 +35,23 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
 
     private UrlGeneratorInterface $urlGenerator;
 
-
     private array $sources;
 
     private string $authSourceName;
-    private \SimpleSAML\Auth\Simple $authSource;
+
+    private Simple $authSource;
 
     private ContainerBagInterface $parameters;
 
-    public function __construct(LoggerInterface $logger, HttpUtils $httpUtils, UrlGeneratorInterface $urlGenerator, ContainerBagInterface $parameters )
+    public function __construct(LoggerInterface $logger, HttpUtils $httpUtils, UrlGeneratorInterface $urlGenerator, ContainerBagInterface $parameters)
     {
         $this->logger = $logger;
         $this->httpUtils = $httpUtils;
         $this->urlGenerator = $urlGenerator;
         $this->parameters = $parameters;
-
         $this->sources = Source::getSources();
         $this->logger->debug('Auth Sources', [$this->sources]);
-        if (!empty($this->sources)) {
-            try {
-                $authSource = \xd_utilities\getConfiguration('authentication', 'source');
-                $this->logger->debug('Found Auth Source', [$authSource]);
-            } catch (\Exception $e) {
-                $authSource = null;
-            }
-            if (!is_null($authSource) && array_search($authSource, $this->sources) !== false) {
-                $this->authSourceName = $authSource;
-                $this->authSource = new \SimpleSAML\Auth\Simple($authSource);
-            } else {
-                $this->authSourceName = $this->sources[0];
-                $this->authSource = new \SimpleSAML\Auth\Simple($this->authSourceName);
-            }
-        }
     }
-
 
     /**
      * Determine whether or not this authenticator supports the provided $request.
@@ -81,6 +63,15 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
      */
     public function supports(Request $request): ?bool
     {
+        try {
+            $this->authSourceName = \xd_utilities\getConfiguration('authentication', 'source');
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        if (empty($this->sources)) {
+            return false;
+        }
         // We only allow SSO Auth when the request is a GET for the home page.
         if (!$request->isMethod('GET') ||
             !$this->httpUtils->checkRequestPath($request, 'xdmod_home')) {
@@ -106,6 +97,13 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
 
     public function authenticate(Request $request): Passport
     {
+        if (array_search($this->authSourceName, $this->sources)) {
+            $this->authSource = new Simple($this->authSourceName);
+        } else {
+            $this->authSourceName = $this->sources[0];
+            $this->authSource = new Simple($this->authSourceName);
+        }
+
         if ($this->authSource->isAuthenticated()) {
             $attributes = $this->authSource->getAttributes();
             $username = $attributes['username'][0];
@@ -113,7 +111,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
             return new SelfValidatingPassport(
                 new UserBadge(
                     $username,
-                    function($userName, $samlAttributes) use ($logger) {
+                    function ($userName, $samlAttributes) use ($logger) {
                         $logger->debug('Loading SimpleSAMLPHP User');
 
                         function getOrganizationId($samlAttrs, $personId)
@@ -126,10 +124,10 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
                             return -1;
                         }
 
-                        $xdmodUserId = \XDUser::userExistsWithUsername($userName);
+                        $xdmodUserId = XDUser::userExistsWithUsername($userName);
                         $logger->debug('XDMoD UserID ', [$xdmodUserId]);
                         if ($xdmodUserId !== INVALID) {
-                            $user = \XDUser::getUserByID($xdmodUserId);
+                            $user = XDUser::getUserByID($xdmodUserId);
                             $user->setSSOAttrs($samlAttributes);
                             return User::fromXDUser($user);
                         }
@@ -150,7 +148,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
                         $userOrganization = getOrganizationId($samlAttributes, $personId);
 
                         try {
-                            $newUser = new \XDUser(
+                            $newUser = new XDUser(
                                 $userName,
                                 null,
                                 $emailAddress,
@@ -188,6 +186,9 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         $this->logger->info('SimpleSAMLPHP Authentication Succeeded!');
+        $user = $token->getUser();
+        $xdUser = XDUser::getUserByUserName($user->getUserIdentifier());
+        $xdUser->postLogin($request);
         return null;
     }
 
@@ -195,10 +196,5 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     {
         $this->logger->info('SimpleSAMLPHP Authentication Failed!', [$exception]);
         return null;
-    }
-
-    public function start(Request $request, ?AuthenticationException $authException = null): Response
-    {
-        return new RedirectResponse($this->urlGenerator->generate('xdmod_home'));
     }
 }

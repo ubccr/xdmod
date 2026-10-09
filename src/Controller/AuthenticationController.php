@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
-use CCR\Security\Helpers\Tokens;
+use CCR\DB;
 use Exception;
 use Models\Services\JsonWebToken;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
+use SimpleSAML\Auth\Source;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -20,7 +21,7 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Twig\Environment;
-use function xd_response\buildError;
+use xd_response\buildError;
 
 
 /**
@@ -39,8 +40,8 @@ class AuthenticationController extends BaseController
      * present is the throwing of an Exception. The actual "login" process is handled by the Symfony Authentication
      * process in conjunction with our custom Authenticators that are responsible for pulling / providing creds from a
      * Request:
-     * - `src/Authenticators/FormLoginAuthenticator`
-     * - `src/Authenticators/SimpleSamlPhpAuthenticator`
+     * - `src/Security/Authenticators/FormLoginAuthenticator`
+     * - `src/Security/Authenticators/SimpleSamlPhpAuthenticator`
      *
      * and our UserProviders that know how to lookup a user in our database:
      * - `src/Security/UsernameUserProvider.php`
@@ -59,28 +60,6 @@ class AuthenticationController extends BaseController
     }
 
     /**
-     * This route is responsible for any logic that may need to be executed when a user is logged out. Currently, the
-     * actual heavy lifting of logging out is done by the configuration in `config/packages/security.yaml`. This function
-     * just ensures that we clean up our custom Session.
-     *
-     * @param Request $request
-     * @return Response
-     */
-    #[Route('/rest/logout', name: 'xdmod_logout', methods: ['POST', 'GET'])]
-    #[Route('/logout', name: 'xdmod_new_logout', methods: ['POST'])]
-    #[Route('/rest/auth/logout', name: 'xdmod_rest_auth_logout', methods: ['POST'])]
-    public function logout(Request $request): Response
-    {
-        $token = $request->getSession()->get('xdmod_token');
-        \XDSessionManager::logoutUser($token);
-        $request->getSession()->invalidate();
-
-        $response = $this->redirectToRoute('xdmod_home');
-        $response->headers->removeCookie('xdmod_token');
-        return $response;
-    }
-
-    /**
      * Return an IDP redirect URL for SSO login
      *
      * @param Request $request
@@ -94,13 +73,18 @@ class AuthenticationController extends BaseController
 
         $request->getSession()->set('_security.main.target_path', $returnTo);
 
-        $auth = new \Authentication\SAML\XDSamlAuthentication();
-        $redirectUrl = $auth->getLoginURL($returnTo);
-        if ($redirectUrl === false ) {
+        $ssoAuthSources = Source::getSources();
+        $ssoAuthSource = !empty($ssoAuthSources) ? $ssoAuthSources[0] : false;
+        $auth = ($ssoAuthSource) ? new \SimpleSAML\Auth\Simple($ssoAuthSource) : false;
+
+        $redirectURL = false;
+        if ($auth) {
+            $redirectURL = $auth->getLoginURL($returnTo);
+        } else {
             return $this->json(buildError(new \Exception('SSO not configured.')));
         }
 
-        return new Response($redirectUrl, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
+        return new Response($redirectURL, Response::HTTP_OK, ['Content-Type' => 'text/plain']);
     }
 
 
@@ -122,7 +106,7 @@ class AuthenticationController extends BaseController
             throw new HttpException(501, 'JupyterHub not configured.');
         }
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
         } catch (UnauthorizedHttpException $e) {
             return new RedirectResponse('/#jwt-redirect');
         }
@@ -131,14 +115,14 @@ class AuthenticationController extends BaseController
             'xdmod_jwt',
             $jwt,
             $expiration,
-            '/',  // path
-            null, // domain
-            true, // secure
-            true  // httpOnly
+            sameSite: 'strict',
+            path: '/',
+            domain: null,
+            secure: true,
+            httpOnly: true
         );
         $response = new RedirectResponse($jupyterhub_url);
         $response->headers->setCookie($cookie);
         return $response;
     }
 }
-
