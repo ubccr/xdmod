@@ -44,9 +44,6 @@ class TokenHandler implements AccessTokenHandlerInterface
      */
     public function getUserBadgeFrom(string $accessToken): UserBadge
     {
-        if (empty($accessToken)) {
-            self::throwUnauthorized(self::MISSING_TOKEN_MESSAGE);
-        }
         // Determine token type
         $tokenParts = explode('.', $accessToken);
         $tokenPartsSize = sizeof($tokenParts);
