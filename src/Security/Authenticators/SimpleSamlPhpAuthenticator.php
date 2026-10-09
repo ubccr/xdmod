@@ -2,10 +2,9 @@
 
 namespace CCR\Security\Authenticators;
 
-use CCR\Entity\User;
-use Configuration\Configuration;
-use Models\Services\Organizations;
 use Psr\Log\LoggerInterface;
+use SimpleSAML\Auth\Source;
+use SimpleSAML\Auth\Simple;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,11 +22,12 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 use Symfony\Component\Security\Http\HttpUtils;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 
-use SimpleSAML\Auth\Source;
-
+use CCR\Entity\User;
+use Configuration\Configuration;
+use Models\Services\Organizations;
 use XDUser;
 
-class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements AuthenticatorInterface, AuthenticationEntryPointInterface
+class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements AuthenticatorInterface
 {
     private LoggerInterface $logger;
 
@@ -35,11 +35,11 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
 
     private UrlGeneratorInterface $urlGenerator;
 
-
     private array $sources;
 
     private string $authSourceName;
-    private \SimpleSAML\Auth\Simple $authSource;
+
+    private Simple $authSource;
 
     private ContainerBagInterface $parameters;
 
@@ -52,7 +52,6 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
         $this->sources = Source::getSources();
         $this->logger->debug('Auth Sources', [$this->sources]);
     }
-
 
     /**
      * Determine whether or not this authenticator supports the provided $request.
