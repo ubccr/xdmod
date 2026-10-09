@@ -43,7 +43,7 @@ abstract class TokenAuthTest extends BaseTest
     public static function provideTokenAuthTestData()
     {
         return [
-            ['pub', 'empty_token']
+            ['pub', 'empty_token'],
             ['pub', 'malformed_token'],
             ['usr', 'invalid_token'],
             ['usr', 'expired_token'],
@@ -197,8 +197,7 @@ abstract class TokenAuthTest extends BaseTest
         if (is_null($input['params'])) {
             $input['params'] = [];
         }
-        $input['params']['access_token'] = $token;
-        $helper->logout();
+        $input['params']['Bearer'] = $token;
 
         // Make the request and validate the response.
         $actualBody = parent::requestAndValidateJson(
