@@ -99,10 +99,10 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     public function authenticate(Request $request): Passport
     {
         if (array_search($this->authSourceName, $this->sources)) {
-            $this->authSource = new \SimpleSAML\Auth\Simple($this->authSourceName);
+            $this->authSource = new Simple($this->authSourceName);
         } else {
             $this->authSourceName = $this->sources[0];
-            $this->authSource = new \SimpleSAML\Auth\Simple($this->authSourceName);
+            $this->authSource = new Simple($this->authSourceName);
         }
 
         if ($this->authSource->isAuthenticated()) {
@@ -125,10 +125,10 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
                             return -1;
                         }
 
-                        $xdmodUserId = \XDUser::userExistsWithUsername($userName);
+                        $xdmodUserId = XDUser::userExistsWithUsername($userName);
                         $logger->debug('XDMoD UserID ', [$xdmodUserId]);
                         if ($xdmodUserId !== INVALID) {
-                            $user = \XDUser::getUserByID($xdmodUserId);
+                            $user = XDUser::getUserByID($xdmodUserId);
                             $user->setSSOAttrs($samlAttributes);
                             return User::fromXDUser($user);
                         }
@@ -149,7 +149,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
                         $userOrganization = getOrganizationId($samlAttributes, $personId);
 
                         try {
-                            $newUser = new \XDUser(
+                            $newUser = new XDUser(
                                 $userName,
                                 null,
                                 $emailAddress,
@@ -197,10 +197,5 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     {
         $this->logger->info('SimpleSAMLPHP Authentication Failed!', [$exception]);
         return null;
-    }
-
-    public function start(Request $request, ?AuthenticationException $authException = null): Response
-    {
-        return new RedirectResponse($this->urlGenerator->generate('xdmod_home'));
     }
 }
