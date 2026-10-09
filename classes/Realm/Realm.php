@@ -374,7 +374,7 @@ class Realm extends \CCR\Loggable implements iRealm
             // use late static binding. For other classes use the class name specified unless the
             // configuration explicitly provides a class name.
 
-            $factoryClassName = ('Realm' == $className ? Realm::class : $className);
+            $factoryClassName = ('Realm' == $className ? 'static' : $className);
             if ('Realm' != $className && isset($configObj->class)) {
                 if (!class_exists($configObj->class)) {
                     $msg = sprintf("Attempt to instantiate undefined %s class %s", $className, $configObj->class);
@@ -384,7 +384,8 @@ class Realm extends \CCR\Loggable implements iRealm
                     throw new \Exception($msg);
                 }
                 $factoryClassName = $configObj->class;
-            } elseif (false === strpos($factoryClassName, '\\') && 'static' != $factoryClassName) {
+            } elseif (!str_contains($factoryClassName, '\\') && 'static' !== $factoryClassName) {
+                // Make sure that if we are just using a short class name, we prepend the namespace.
                 $factoryClassName = sprintf('\\%s\\%s', __NAMESPACE__, $factoryClassName);
             }
 
@@ -393,7 +394,7 @@ class Realm extends \CCR\Loggable implements iRealm
             if ('Realm' == $className) {
                 // The Realm class already has the configuration and does not need it to be passed
                 // to factory().
-                $list[$shortName] = forward_static_call($factoryCallable, $shortName, null, null, $logger);
+                $list[$shortName] = forward_static_call($factoryCallable, $shortName, null, $logger);
             } else {
 
                 // Entities encapsulated by the realm need their config objects
