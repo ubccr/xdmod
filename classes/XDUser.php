@@ -77,6 +77,13 @@ class XDUser extends CCR\Loggable implements JsonSerializable, UserInterface, Pa
      */
     private static $_publicUser;
 
+    /**
+     * Property to track when this user instance's password has been changed.
+     *
+     * @var bool
+     */
+    private $_passwordChanged = false;
+
     const PUBLIC_USER = 1;
     const INTERNAL_USER = 2;
 
@@ -229,7 +236,13 @@ SQL;
         $this->_account_is_active = true;
 
         $this->_username = $username;
-        $this->_password = $password;
+
+        // Make sure that if we do have a password, that it conforms to our password policy, such as it is.
+        if ($password !== null && strlen($password) > CHARLIM_PASSWORD) {
+            throw new InvalidArgumentException("Password is too long. Maximum length is " . CHARLIM_PASSWORD);
+        }
+
+        $this->_password = ($password === null || $password === '' ? null : $this->hash($password));
 
         if (self::userExistsWithEmailAddress($email_address) != INVALID) {
             throw new Exception("An XDMoD user with e-mail address $email_address exists");
@@ -655,7 +668,17 @@ SQL;
             throw new AccessDeniedException("Permission Denied. Only local accounts may have their passwords modified.");
         }
 
+        if ($raw_password === '') {
+            throw new InvalidArgumentException("Password cannot be empty.");
+        }
+
+        # Make sure that the password conforms to the password policy, such as it is.
+        if (strlen($raw_password) > CHARLIM_PASSWORD) {
+            throw new InvalidArgumentException("Password is too long. Maximum length is " . CHARLIM_PASSWORD);
+        }
+
         $this->_password = $this->hash($raw_password);
+        $this->_passwordChanged = true;
     }//setPassword
 
     // ---------------------------
@@ -950,16 +973,9 @@ SQL;
         }
 
         $update_data['username'] = $this->_username;
-        $includePassword = empty($this->_password) || strlen($this->_password) <= CHARLIM_PASSWORD;
+        $includePassword = !$forUpdate || $this->_passwordChanged;
         if ($includePassword) {
-            if ($this->_password == "" || is_null($this->_password)) {
-                $update_data['password'] = NULL;
-            } else if (!$forUpdate) {
-                $this->_password = $this->hash($this->_password);
-                $update_data['password'] = $this->_password;
-            } else {
-                $update_data['password'] = $this->_password;
-            }
+            $update_data['password'] = $this->_password;
         }
 
         $update_data['email_address'] = ($this->_email);
@@ -999,6 +1015,9 @@ SQL;
                 // New User Creation -- assign the new user id to the associated roles
                 $this->_id = $new_user_id;
             }
+
+            // Make sure to reset the password changed flag.
+            $this->_passwordChanged = false;
         } catch (Exception $e) {
             $values = array_reduce(
                 array_values($update_data),
