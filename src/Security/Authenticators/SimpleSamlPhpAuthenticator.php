@@ -63,12 +63,6 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
      */
     public function supports(Request $request): ?bool
     {
-        try {
-            $this->authSourceName = \xd_utilities\getConfiguration('authentication', 'source');
-        } catch (\Exception $e) {
-            return false;
-        }
-
         if (empty($this->sources)) {
             return false;
         }
@@ -97,11 +91,16 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
 
     public function authenticate(Request $request): Passport
     {
-        if (array_search($this->authSourceName, $this->sources)) {
-            $this->authSource = new Simple($this->authSourceName);
+        try {
+            $authSourceName = \xd_utilities\getConfiguration('authentication', 'source');
+        } catch (\Exception $e) {
+            $authSourceName = null;
+        }
+
+        if (array_search($authSourceName, $this->sources)) {
+            $this->authSource = new Simple($authSourceName);
         } else {
-            $this->authSourceName = $this->sources[0];
-            $this->authSource = new Simple($this->authSourceName);
+            $this->authSource = new Simple($this->sources[0]);
         }
 
         if ($this->authSource->isAuthenticated()) {
