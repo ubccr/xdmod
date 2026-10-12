@@ -266,9 +266,9 @@ class RouteBasedExceptionListener
                 if ($statusCode == Response::HTTP_UNAUTHORIZED) {
                     $content['message'] = $error_during_authorization_message;
                     $content['code'] = 0;
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
                 }
-                $response = new JsonResponse($content, $statusCode);
-                $event->setResponse($response);
             }
         } elseif ($route == 'legacy_user_interface') {
             if ($exception instanceof UnauthorizedHttpException) {
