@@ -118,8 +118,8 @@
     {% endif %}
 
     <script type="text/javascript">
-        // If we don't have any realms than make sure to alert the user.
         {% if realms|length is same as 0 %}
+        <!-- If we don't have any realms than make sure to alert the user. -->
         Ext.onReady(function () {
             Ext.MessageBox.alert(
                 'Invalid State Detected',
@@ -147,13 +147,13 @@
         CCR.xdmod.ui.isCenterDirector = {{ user.hasAcl('cd') ? 'true' : 'false' }};
         CCR.xdmod.ui.allRoles = {{ all_user_roles | raw }};
         CCR.xdmod.ui.colors = {{ colors | raw }}
-            {% endif %}
+        {% endif %}
 
-            CCR.xdmod.ui.rawDataAllowedRealms = {{ raw_data_realms | raw }};
+        CCR.xdmod.ui.rawDataAllowedRealms = {{ raw_data_realms | raw }};
         CCR.xdmod.ui.disabledMenus = {{ disabled_menus | raw }};
         CCR.xdmod.org_name = "{{ ORGANIZATION_NAME }}";
         CCR.xdmod.org_abbrev = "{{ ORGANIZATION_NAME_ABBREV }}";
-        CCR.xdmod.logged_in = !CCR.xdmod.publicUser;
+        CCR.xdmod.logged_in = {{ is_public_user ? 'false' : 'true' }};
         CCR.xdmod.captcha_sitekey = "{{ captcha_site_key }}";
         CCR.xdmod.features = {{ xdmod_features | raw }};
         CCR.xdmod.timezone = "{{ timezone }}";

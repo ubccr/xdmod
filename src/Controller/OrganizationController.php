@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use XDUser;
-use xd_response\buildError;
+use function xd_response\buildError;
 
 /**
  *

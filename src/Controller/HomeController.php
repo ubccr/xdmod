@@ -49,9 +49,9 @@ class HomeController extends BaseController
         if (!empty($returnTo)) {
             $returnTo = urldecode($returnTo);
             $session->set('_security.main.target_path', null);
-            $response = new RedirectResponse("$returnTo");
-            return $response;
+            return new RedirectResponse("$returnTo");
         }
+
         $user = $this->getXDUser();
         $userLoggedIn = !$user->isPublicUser();
 
@@ -61,7 +61,6 @@ class HomeController extends BaseController
         }, []);
 
         $features = $this->getFeatures();
-
 
         $ssoSources = Source::getSources();
         $isSSOConfigured = !empty($ssoSources);
@@ -305,45 +304,5 @@ class HomeController extends BaseController
         }
 
         return $message;
-    }
-
-    /**
-     * Validates the provided $settings against the $required structure. This function only validates that
-     * keys are present and have non-empty values.
-     *
-     * @param array $required
-     * @param array $settings
-     * @return bool
-     */
-    private function validate(array $required, array $settings): bool
-    {
-        foreach ($required as $key => $values) {
-            // We need to account for PHP's wonderful dual-index arrays, and since $settings is expected
-            // to be indexed by string we translate the $required indexes to their string counterpart here.
-            if (is_numeric($key) && is_string($values)) {
-                $key = $values;
-            }
-
-            // the following logic goes something like:
-            //   If:
-            //     -     The required key exists in $settings
-            //     - AND The required key is a string
-            //     - AND The value for the given key in $settings is non-empty
-            //  - OR -
-            //   If:
-            //     -     The required key exists in $settings
-            //     - AND the $required values are an array ( aka, we must go deeper )
-            //     - AND and it's value in $settings is non-empty
-            //     - AND the validation of the levels below this one are valid
-            // THEN continue the validation
-            // ELSE it's invalid
-            if (array_key_exists($key, $settings) && is_string($values) && !empty($settings[$key]) ||
-                (array_key_exists($key, $settings) && is_array($values) && !empty($settings[$key]) && $this->validate($values, $settings[$key]))) {
-                continue;
-            }
-            return false;
-        }
-        // If we've gotten this far then the settings must be valid.
-        return true;
     }
 }
