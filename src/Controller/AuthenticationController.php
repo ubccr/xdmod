@@ -11,6 +11,7 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use Psr\Log\LoggerInterface;
 use SimpleSAML\Auth\Source;
+use SimpleSAML\Auth\Simple;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -74,8 +75,9 @@ class AuthenticationController extends BaseController
         $request->getSession()->set('_security.main.target_path', $returnTo);
 
         $ssoAuthSources = Source::getSources();
+        $this->logger->debug($ssoAuthSources);
         $ssoAuthSource = !empty($ssoAuthSources) ? $ssoAuthSources[0] : false;
-        $auth = ($ssoAuthSource) ? new \SimpleSAML\Auth\Simple($ssoAuthSource) : false;
+        $auth = ($ssoAuthSource) ? new Simple($ssoAuthSource) : false;
 
         $redirectURL = false;
         if ($auth) {
