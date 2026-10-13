@@ -82,7 +82,7 @@ class Entity extends Loggable
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($config, $systemQuoteChar = '`', LoggerInterface $logger = null)
+    public function __construct($config, $systemQuoteChar = null, LoggerInterface $logger = null)
     {
         parent::__construct($logger);
         if ($systemQuoteChar === null) {
