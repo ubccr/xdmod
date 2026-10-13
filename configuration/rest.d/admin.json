@@ -1,6 +1,0 @@
-{
-  "admin": {
-    "prefix": "admin",
-    "controller": "Rest\\Controllers\\AdminControllerProvider"
-  }
-}
