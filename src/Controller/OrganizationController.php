@@ -14,7 +14,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use XDUser;
-use function xd_response\buildError;
+use xd_response\buildError;
 
 /**
  *
@@ -59,7 +59,6 @@ class OrganizationController extends BaseController
                     'CCR\Controller\OrganizationController::getMemberStatus',
                     ['request' => $request, 'memberId' => $memberId]
                 );
-                return $this->getMemberStatus($request, $memberId);
             case 'upgrade_member':
                 return $this->forward(
                     'CCR\Controller\OrganizationController::upgradeMember',

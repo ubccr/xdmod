@@ -5,6 +5,7 @@ namespace CCR\Controller;
 
 use CCR\DB;
 use CCR\Security\Attributes\MustBeLoggedIn;
+use DataWarehouse\Access\RawData;
 use Models\Services\Organizations;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -83,7 +84,7 @@ class UserController extends BaseController
             $organization = Organizations::getAbbrevById($user->getOrganizationID());
             $mostPrivilegedFormalName = "$mostPrivilegedFormalName - $organization";
         }
-        $rawRealmConfig = \DataWarehouse\Access\RawData::getRawDataRealms($user);
+        $rawRealmConfig = RawData::getRawDataRealms($user);
         $rawDataRealms = array_map(
             function ($item) {
                 return $item['name'];
@@ -118,6 +119,7 @@ class UserController extends BaseController
      * @return Response
      * @throws \Exception if unable to look up an XDUser by the currently logged in user's id.
      */
+    #[MustBeLoggedIn]
     #[Route("{prefix}users/current", name: "update_current_user", requirements: ['prefix' => '.*'], methods: ["PATCH"])]
     public function updateCurrentUser(Request $request)
     {

@@ -2421,27 +2421,25 @@ SQL;
 
     /**
      * Executes any actions that need to be conducted immediately after a user is logged into XDMoD.
-     *
-     * @throws Exception if there is a problem executing any of the required post logged in steps.
      */
-    public function postLogin(Request $request) {
+    public function postLogin(Request $request)
+    {
         if (!$this->isSticky()) {
             $this->updatePerson();
             $this->synchronizeOrganization();
         }
 
+        $this->currentToken = $this->recordLogin($request);
+    }
+
+    private function recordLogin(Request $request) : string
+    {
         $pdo = DB::factory('database');
 
-        list($usec, $sec) = explode(' ', microtime());
-        $init_time = $usec + $sec;
-
+        $init_time = microtime();
         $session_id = $request->getSession()->getId();
         $user_id = $this->getUserID();
-
         $session_token = md5($user_id . $session_id . $init_time);
-
-        $ip_address = $request->getClientIp();
-        $user_agent = $request->server->get('HTTP_USER_AGENT');
 
         $record_query = "
             INSERT INTO SessionManager (
@@ -2469,13 +2467,13 @@ SQL;
             ':session_token' => $session_token,
             ':session_id'    => $session_id,
             ':user_id'       => $user_id,
-            ':ip_address'    => $ip_address,
-            ':user_agent'    => $user_agent,
+            ':ip_address'    => $request->getClientIp(),
+            ':user_agent'    => $request->server->get('HTTP_USER_AGENT'),
             ':init_time'     => $init_time,
             ':last_active'   => $init_time,
         ));
 
-        $this->currentToken = $session_token;
+        return $session_token;
     }
 
     /**
