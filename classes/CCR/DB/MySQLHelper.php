@@ -345,6 +345,47 @@ class MySQLHelper
             throw new Exception($msg);
         }
     }
+    /*
+    * Checks for existence of user
+    */
+    /**
+     * @throws Exception
+     */
+    public static function userExists(
+        $host,
+        $port,
+        $dbusername,
+        $dbpassword,
+        $userName,
+        $xdmod_host
+    ) {
+        $stmt = "SELECT User, Host FROM mysql.user WHERE User = '$userName' AND Host = '$xdmod_host'";
+        $output = static::staticExecuteStatement(
+            $host,
+            $port,
+            $dbusername,
+            $dbpassword,
+            null,
+            $stmt
+        );
+
+        $output = preg_replace('/\s+/', ' ', $output);
+        if (!isset($output[0])) {
+            return false;
+        }
+        $output = explode(' ', $output[0]);
+        if (count($output) == 0 || (count($output) == 1 && $output[0] == '')) {
+            return false;
+        } elseif (count($output) == 2 && $output[0] == $userName && $output[1]== $xdmod_host) {
+            return true;
+        } else {
+            $msg = 'Failed to check for existence of user: '
+                . implode("\n", array_map(function ($row) {
+                    return $row[0] . ' ' . $row[1];
+                }, $output));
+            throw new Exception($msg);
+        }
+    }
 
     /**
      * Create a database.
@@ -418,7 +459,7 @@ class MySQLHelper
         $port,
         $username,
         $password,
-        $localHost,
+        $xdmodHost,
         $dbUsername,
         $dbPassword
     ) {
@@ -432,8 +473,8 @@ class MySQLHelper
             . " CREATE ROUTINE, ALTER ROUTINE, EVENT, RELOAD, FILE,"
             . " CREATE TABLESPACE, PROCESS, REFERENCES,"
             . " LOCK TABLES"
-            . " ON *.* TO '$dbUsername'@'$localHost'"
-            . " IDENTIFIED BY '$dbPassword';FLUSH PRIVILEGES;";
+            . " ON *.* TO '$dbUsername'@'$xdmodHost';"
+            . " FLUSH PRIVILEGES;";
 
         static::staticExecuteStatement(
             $host,
@@ -463,11 +504,11 @@ class MySQLHelper
         $username,
         $password,
         $dbName,
-        $localHost,
+        $xdmodHost,
         $dbUsername,
         $dbPassword
     ) {
-        $stmt = "GRANT ALL ON $dbName.* TO '$dbUsername'@'$localHost'"
+        $stmt = "GRANT ALL ON $dbName.* TO '$dbUsername'@'$xdmodHost'"
             . " IDENTIFIED BY '$dbPassword'";
 
         static::staticExecuteStatement(
