@@ -1,13 +1,9 @@
 security:
     password_hashers:
         CCR\Entity\User: 'auto'
-        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
     providers:
         username_provider:
             id: CCR\Security\UsernameUserProvider
-        all_users:
-            chain:
-                providers: ['username_provider']
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
