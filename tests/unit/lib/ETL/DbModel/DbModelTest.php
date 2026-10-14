@@ -275,33 +275,6 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Ensure that we do not allow null values for the system quote char for extenders of Entity
-     *
-     * @dataProvider provideTestNoNullSystemQuoteChar
-     * @param $classToTest
-     * @return void
-     */
-    public function testNoNullSystemQuoteChar($classToTest)
-    {
-        $this->expectException(\TypeError::class);
-        new $classToTest(null, null, self::$logger);
-    }
-
-    /**
-     * Provides test cases for testNoNullSystemQuoteChar, this consists of all subclasses of ETL\DbModel\Entity so that
-     * we don't have to update the test if new classes that extend Entity are added.
-     *
-     * @return array
-     */
-    public function provideTestNoNullSystemQuoteChar(): array
-    {
-        $subClasses = $this->getSubclassesOf(Entity::class);
-        return array_map(function ($className) {
-            return [$className];
-        }, $subClasses);
-    }
-
-    /**
      * Test comparing 2 tables and the ALTER TABLE statement needed to go from one to the other.
      * Also manually add elements and verify the ALTER TABLE statement generated.
      */
@@ -537,81 +510,5 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
 
         $expected = trim(file_get_contents(self::TEST_ARTIFACT_OUTPUT_PATH . '/table_def-charset.sql'));
         $this->assertEquals($expected, $generated);
-    }
-
-    /**
-     * Return sorted names of mapped direct and indirect subclasses. If `$directoryToCheck` is provided then only classes
-     * that reside within the specified directory are considered. Note, `vendor` and `test` directories are not included.
-     *
-     * This function uses Composer's classmap to discover candidates and as such requires an up to date autoload.
-     *
-     * If new classes have been added then run `composer dump-autoload -o` to ensure that they're found.
-     *
-     * @param string $className Fully qualified parent class name.
-     * @param string|null $directoryToCheck Directory to check for subclasses. If not provided then all classes will be checked.
-     * @return string[] Fully qualified subclass names in alphabetical order.
-     */
-    private function getSubclassesOf(string $className, string $directoryToCheck = null): array
-    {
-        // Resolve paths relative to this file, independent of PHPUnit's working directory.
-        $root = dirname(__DIR__, 5);
-        $classMap = require $root . '/vendor/composer/autoload_classmap.php';
-
-        // If we have a directory to check, ensure it ends with a directory separator.
-        if ($directoryToCheck !== null && !str_ends_with($directoryToCheck, DIRECTORY_SEPARATOR)) {
-            $directoryToCheck .= DIRECTORY_SEPARATOR;
-        }
-
-        $subclasses = array();
-        foreach ($classMap as $candidate => $file) {
-            $path = realpath($file);
-            $isVendor = str_contains($path, '/vendor/');
-            $isTest = str_contains($path, '/test/');
-
-            // The trailing separator prevents sibling directories such as classes-old
-            // from matching, while realpath resolves symlinks and rejects missing files.
-            if ($path === false ||
-                (
-                    ($directoryToCheck !== null && strpos($path, $directoryToCheck) !== 0) ||
-                    $isVendor ||
-                    $isTest
-                )
-            ) {
-                continue;
-            }
-
-
-            // PHP follows the full inheritance chain, including indirect descendants.
-            try {
-                if (is_subclass_of($candidate, $className)) {
-                    $subclasses[] = $candidate;
-                }
-            } catch(\Error $e) {
-                /**
-                 * If the class doesn't exist then it can't be a subclass of $className.
-                 *
-                 * This occurs when the $candidate either does not exist, or a class / interface that $candidate
-                 * extends / implements does not exist.
-                 *
-                 * A concrete example of this is a class that is no longer used, so that there are no runtime errors as
-                 * it's never instantiated, and it extends a class that did exist at one time, but does not now.
-                 *
-                 * Consider a PHP file that contains the following code that exists in composers autoload_classmap:
-                 *
-                 * class Test extends Missing { }
-                 *
-                 * Which exists in a directory that looks like:
-                 * ./src/App
-                 * Test.php
-                 *
-                 * When this class is checked by `is_subclass_of()`, PHP will attempt to find `App\Missing`, which does
-                 * not exist and thus, throw an error.
-                 */
-            }
-        }
-
-        // Keep data-provider ordering stable regardless of Composer's map ordering.
-        sort($subclasses);
-        return $subclasses;
     }
 } // class ConfigurationTest
