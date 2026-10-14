@@ -88,8 +88,6 @@
             "configuration/resources.json",
             "configuration/roles.json",
             "configuration/roles.d",
-            "configuration/rest.json",
-            "configuration/rest.d",
             "configuration/setup.json",
             "configuration/update_check.json",
             "configuration/user_management.json",
