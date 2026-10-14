@@ -598,7 +598,6 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
                  *
                  * Consider a PHP file that contains the following code that exists in composers autoload_classmap:
                  *
-                 * namespace App;
                  * class Test extends Missing { }
                  *
                  * Which exists in a directory that looks like:
