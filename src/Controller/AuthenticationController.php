@@ -75,7 +75,6 @@ class AuthenticationController extends BaseController
         $request->getSession()->set('_security.main.target_path', $returnTo);
 
         $ssoAuthSources = Source::getSources();
-        $this->logger->debug($ssoAuthSources);
         $ssoAuthSource = !empty($ssoAuthSources) ? $ssoAuthSources[0] : false;
         $auth = ($ssoAuthSource) ? new Simple($ssoAuthSource) : false;
 
