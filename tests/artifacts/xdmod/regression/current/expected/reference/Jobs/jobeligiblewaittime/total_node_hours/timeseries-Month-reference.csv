@@ -1,0 +1,11 @@
+title
+"Node Hours: Total: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[0 - 1s] Node Hours: Total","[1 - 30s] Node Hours: Total","[30s - 30min] Node Hours: Total","[30 - 60min] Node Hours: Total","[1 - 5hr] Node Hours: Total","[5 - 10hr] Node Hours: Total","[10 - 18hr] Node Hours: Total","[18+hr] Node Hours: Total"
+2016-12,8815.5758,19839.9997,68081.2433,1251.7872,13443.1378,6298.3819,769.3969,19950.0050
+2017-01,634.5694,2326.8733,11647.6389,42.2633,1768.0661,871.6847,197.2356,368.2333
+---------

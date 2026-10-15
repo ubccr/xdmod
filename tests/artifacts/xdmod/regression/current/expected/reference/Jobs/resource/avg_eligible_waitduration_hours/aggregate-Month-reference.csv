@@ -1,0 +1,14 @@
+title
+"Wait Hours by Eligible Time: Per Job: by Resource"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Resource,"Wait Hours by Eligible Time: Per Job","Std Dev: Wait Hours by Eligible Time: Per Job"
+robertson,16.90939829,0.4167612205270827
+phillips,4.65396166,0.06405748302677304
+pozidriv,1.85760451,0.041727592210264626
+mortorq,0.71003082,0.008170897676520178
+frearson,0.00015414,0.000001786708795711265
+---------

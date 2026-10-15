@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by User"
+"Wait Hours by Submit Time: Total: by User"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-User,"Wait Hours: Total"
+User,"Wait Hours by Submit Time: Total"
 "Thrush, Swainson's",163339.9808
 Honey-buzzard,112848.1472
 "Treecreeper, Short-toed",5136.3181

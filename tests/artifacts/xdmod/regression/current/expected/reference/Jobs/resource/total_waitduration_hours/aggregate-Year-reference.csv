@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by Resource"
+"Wait Hours by Submit Time: Total: by Resource"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Resource,"Wait Hours: Total"
+Resource,"Wait Hours by Submit Time: Total"
 robertson,247917.6553
 pozidriv,20964.2772
 phillips,18829.9292
