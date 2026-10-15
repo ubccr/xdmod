@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Total: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[screw - Screwdriver] Wait Hours by Eligible Time: Total","[wrench - Wrench] Wait Hours by Eligible Time: Total","[Unknown - Unknown Organization] Wait Hours by Eligible Time: Total"
+"2016 Q4",175960.0536,100006.1722,54.6642
+"2017 Q1",5971.0192,19850.3347,12.0239
+---------

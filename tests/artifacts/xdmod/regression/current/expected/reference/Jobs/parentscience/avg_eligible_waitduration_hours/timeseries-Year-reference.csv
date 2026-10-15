@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Per Job: by Department"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Astronomical Sciences] Wait Hours by Eligible Time: Per Job","[Materials Research] Wait Hours by Eligible Time: Per Job","[Atmospheric Sciences] Wait Hours by Eligible Time: Per Job","[Electrical and Communication Systems] Wait Hours by Eligible Time: Per Job","[Environmental Biology] Wait Hours by Eligible Time: Per Job","[Chemical, Thermal Systems] Wait Hours by Eligible Time: Per Job","[Molecular Biosciences] Wait Hours by Eligible Time: Per Job","[Arts] Wait Hours by Eligible Time: Per Job","[Polar Programs] Wait Hours by Eligible Time: Per Job","[Earth Sciences] Wait Hours by Eligible Time: Per Job","[Physics] Wait Hours by Eligible Time: Per Job","[Social and Economic Science] Wait Hours by Eligible Time: Per Job","[Mathematical Sciences] Wait Hours by Eligible Time: Per Job","[Computer and Computation Research] Wait Hours by Eligible Time: Per Job","[Microelectronic Information Processing Systems] Wait Hours by Eligible Time: Per Job","[Design and Manufacturing Systems] Wait Hours by Eligible Time: Per Job","[Chemistry] Wait Hours by Eligible Time: Per Job","[Mechanical and Structural Systems] Wait Hours by Eligible Time: Per Job"
+2016,207.94704504,33.60238925,25.72861111,32.16831034,12.03978611,6.67768519,8.28932497,4.87037458,1.07632071,3.82833875,3.72481481,2.14921754,1.30868803,0.32390278,0.22190701,0.12305649,0.06183067,0.00016493
+2017,1.21768519,0,36.31500000,1.89854167,13.14023981,0,0.04938889,0.00000000,5.05670373,0.00009259,0,1.47296404,0.00000000,0,0.03552149,0.01760234,0.09336190,0.00016865
+---------

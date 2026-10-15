@@ -57,6 +57,7 @@ class UsageExplorerJobsTest extends \PHPUnit\Framework\TestCase
             'avg_node_hours',
             'avg_processors',
             'avg_gpus',
+            'avg_eligible_waitduration_hours',
             'avg_waitduration_hours',
             'avg_wallduration_hours',
             'expansion_factor',
@@ -67,6 +68,7 @@ class UsageExplorerJobsTest extends \PHPUnit\Framework\TestCase
             'started_job_count',
             'submitted_job_count',
             'total_cpu_hours',
+            'total_eligible_waitduration_hours',
             'total_gpu_hours',
             'total_node_hours',
             'total_waitduration_hours',
@@ -77,6 +79,7 @@ class UsageExplorerJobsTest extends \PHPUnit\Framework\TestCase
         $groupBys = [
             'fieldofscience',
             'gpucount',
+            'jobeligiblewaittime',
             'jobsize',
             'jobwalltime',
             'jobwaittime',

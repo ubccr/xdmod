@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by Department"
+"Wait Hours by Submit Time: Total: by Department"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Department,"Wait Hours: Total"
+Department,"Wait Hours by Submit Time: Total"
 "Astronomical Sciences",163661.6308
 "Social and Economic Science",114914.2053
 "Molecular Biosciences",5260.9664

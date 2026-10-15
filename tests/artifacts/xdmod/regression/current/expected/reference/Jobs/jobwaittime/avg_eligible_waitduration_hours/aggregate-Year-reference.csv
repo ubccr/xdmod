@@ -1,0 +1,17 @@
+title
+"Wait Hours by Eligible Time: Per Job: by Job Wait Time: Submit Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time: Submit Time","Wait Hours by Eligible Time: Per Job","Std Dev: Wait Hours by Eligible Time: Per Job"
+"0 - 1s",0.00000000,0
+"1 - 30s",0.00067119,0.000009516039321439488
+"30s - 30min",0.14410460,0.0009029521280698039
+"30 - 60min",0.71062020,0.0027795046033100685
+"1 - 5hr",2.08193131,0.007078243714977406
+"5 - 10hr",7.96576707,0.023416806668632644
+"10 - 18hr",12.05985430,0.10210216916944022
+18+hr,89.12607880,1.7031740172221208
+---------
