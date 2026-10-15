@@ -1,11 +1,11 @@
 title
-"Job Size: Min (Core Count): by Job Wait Time"
+"Job Size: Min (Core Count): by Job Wait Time: Submit Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Wait Time","Job Size: Min (Core Count)"
+"Job Wait Time: Submit Time","Job Size: Min (Core Count)"
 "0 - 1s",1
 "1 - 30s",1
 "30s - 30min",1

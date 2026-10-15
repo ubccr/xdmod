@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Total: by Service Provider"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Service Provider","Wait Hours by Eligible Time: Total"
+screw,280891.2008
+wrench,20963.0669
+---------

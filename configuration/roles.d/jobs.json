@@ -24,6 +24,10 @@
                 },
                 {
                     "realm": "Jobs",
+                    "group_by": "jobeligiblewaittime"
+                },
+                {
+                    "realm": "Jobs",
                     "group_by": "nodecount"
                 },
                 {
