@@ -1,10 +1,10 @@
 title
-"Wait Hours: Per Job"
+"Wait Hours by Submit Time: Per Job"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Summary,"Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+Summary,"Wait Hours by Submit Time: Per Job","Std Dev: Wait Hours by Submit Time: Per Job"
 Screwdriver,4.29572677,0.0895644743521742
 ---------

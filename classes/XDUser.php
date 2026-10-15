@@ -1643,7 +1643,7 @@ SQL
         }
 
         if ($role != ROLE_ID_CENTER_DIRECTOR && $role != ROLE_ID_CENTER_STAFF) {
-            throw new Exception("This user must be saved prior to calling setOrganization()");
+            throw new Exception("setOrganization() call only valid for Center Director or Center Staff role.");
         }
 
         $acl = Acls::getAclByName($role);

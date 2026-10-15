@@ -58,7 +58,7 @@ class ReportBuilderTest extends BaseTest
         if (!isset($this->verbose)) {
             $this->verbose = false;
         }
-        $this->helper = new XdmodTestHelper(__DIR__ . '/../../../');
+        $this->helper = new XdmodTestHelper();
     }
 
     public function provideDlReportInputValidation()

@@ -1,0 +1,20 @@
+title
+"Wait Hours by Eligible Time: Total: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Day,"[white] Wait Hours by Eligible Time: Total","[black] Wait Hours by Eligible Time: Total","[nann] Wait Hours by Eligible Time: Total","[croutons] Wait Hours by Eligible Time: Total","[cornbread] Wait Hours by Eligible Time: Total","[brioche] Wait Hours by Eligible Time: Total","[roti] Wait Hours by Eligible Time: Total","[pikelet] Wait Hours by Eligible Time: Total","[chapti] Wait Hours by Eligible Time: Total","[focaccia] Wait Hours by Eligible Time: Total","[potbrood] Wait Hours by Eligible Time: Total","[brown] Wait Hours by Eligible Time: Total","[panettone] Wait Hours by Eligible Time: Total","[bannock] Wait Hours by Eligible Time: Total","[crumpet] Wait Hours by Eligible Time: Total","[barm] Wait Hours by Eligible Time: Total","[pita] Wait Hours by Eligible Time: Total","[pumpernickel] Wait Hours by Eligible Time: Total"
+2016-12-22,0,0,0,9.3322,0,0,0,0,0,0.0003,0,0,0,0,0,0,0,0
+2016-12-23,0,0,0,0.0000,9.5964,0,0,0,0,0.0000,0,0,0,0,0,0,0,0
+2016-12-24,0,0,0,0.0000,0.0000,0,0,0,0,0.0000,0,0,0,0,0,0,0,0
+2016-12-25,0,0,0,110.8856,0.0000,0,0,0,0,0.0000,0,0,0,0,0,0,0,0
+2016-12-26,0,0,0,0.0000,0.0000,0,0,0.0033,0,0.0000,0,0,0,0,0,0,0,0
+2016-12-27,1040.7492,0.0003,0,0.0269,0.0025,0.0000,0.0019,0.0000,0,0.0000,0,0,0,0,0.0000,0,0,0
+2016-12-28,2058.2917,288.0275,0,12.2750,0.0000,0.0000,21.9589,18.4800,0,0.0000,0,0,0.0003,0,0.0000,0,0,0
+2016-12-29,5287.4075,56.7914,0,0.2917,68.2783,0.0017,44.7789,17.8439,0.0011,0.0000,0,0.0025,0.0000,0,0.0000,0.0044,0.0003,0.0000
+2016-12-30,183109.8094,11815.7981,0,13.1892,8.2494,14.4292,0.0758,0.0000,1.3358,0.0000,0.0161,0.0050,0.0147,0.0050,0.0008,0.0000,0.0000,0.0000
+2016-12-31,34859.7239,36965.8892,0.3231,14.0708,95.5417,77.1553,0.0000,0.2067,0.0019,0.0000,0.0083,0.0031,0,0.0022,0.0017,0.0000,0.0000,0.0000
+2017-01-01,17004.8711,6606.2617,2186.9892,34.0025,0.0067,0.0000,0,0.0000,0,1.2328,0.0047,0.0047,0,0.0011,0.0031,0.0000,0.0000,0.0003
+---------
