@@ -1,0 +1,17 @@
+title
+"Wait Hours by Submit Time: Total: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time: Eligible Time","Wait Hours by Submit Time: Total"
+"0 - 1s",0.0089
+"1 - 30s",1419.1928
+"30s - 30min",3207.0150
+"30 - 60min",1890.6331
+"1 - 5hr",27352.8039
+"5 - 10hr",31845.1369
+"10 - 18hr",7127.5175
+18+hr,233503.1506
+---------

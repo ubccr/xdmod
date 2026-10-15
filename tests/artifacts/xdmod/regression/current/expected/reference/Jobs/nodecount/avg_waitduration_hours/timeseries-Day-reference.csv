@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by Node Count"
+"Wait Hours by Submit Time: Per Job: by Node Count"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[20] Wait Hours: Per Job","[8] Wait Hours: Per Job","[2] Wait Hours: Per Job","[16] Wait Hours: Per Job","[4] Wait Hours: Per Job","[24] Wait Hours: Per Job","[12] Wait Hours: Per Job","[5] Wait Hours: Per Job","[6] Wait Hours: Per Job","[28] Wait Hours: Per Job","[1] Wait Hours: Per Job","[3] Wait Hours: Per Job","[14] Wait Hours: Per Job","[9] Wait Hours: Per Job","[7] Wait Hours: Per Job"
+Day,"[20] Wait Hours by Submit Time: Per Job","[8] Wait Hours by Submit Time: Per Job","[2] Wait Hours by Submit Time: Per Job","[16] Wait Hours by Submit Time: Per Job","[4] Wait Hours by Submit Time: Per Job","[24] Wait Hours by Submit Time: Per Job","[12] Wait Hours by Submit Time: Per Job","[5] Wait Hours by Submit Time: Per Job","[6] Wait Hours by Submit Time: Per Job","[28] Wait Hours by Submit Time: Per Job","[1] Wait Hours by Submit Time: Per Job","[3] Wait Hours by Submit Time: Per Job","[14] Wait Hours by Submit Time: Per Job","[9] Wait Hours by Submit Time: Per Job","[7] Wait Hours by Submit Time: Per Job"
 2016-12-22,0,0,0,0,0,0,0,0,0,0,4.66625000,0,0,0,0
 2016-12-23,0,0,0,0,0,0,0,0,0,0,9.59638889,0,0,0,0
 2016-12-24,0,0,0,0,0,0,0,0,0,0,0.00000000,0,0,0,0

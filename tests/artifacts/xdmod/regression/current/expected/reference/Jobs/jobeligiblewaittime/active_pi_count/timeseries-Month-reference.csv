@@ -1,0 +1,11 @@
+title
+"Number of PIs: Active: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[0 - 1s] Number of PIs: Active","[1 - 30s] Number of PIs: Active","[30s - 30min] Number of PIs: Active","[30 - 60min] Number of PIs: Active","[1 - 5hr] Number of PIs: Active","[5 - 10hr] Number of PIs: Active","[10 - 18hr] Number of PIs: Active","[18+hr] Number of PIs: Active"
+2016-12,19,28,26,12,21,16,6,12
+2017-01,11,19,14,5,10,11,4,7
+---------

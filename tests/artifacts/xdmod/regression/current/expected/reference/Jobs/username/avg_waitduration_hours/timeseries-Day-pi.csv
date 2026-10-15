@@ -1,12 +1,12 @@
 title
-"Wait Hours: Per Job: by System Username"
+"Wait Hours by Submit Time: Per Job: by System Username"
 parameters
 
 "*Restricted To: PI = Tern, C OR User = Tern, C"
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[swath] Wait Hours: Per Job","[ovenb] Wait Hours: Per Job","[sante] Wait Hours: Per Job","[ybsbu] Wait Hours: Per Job","[litst] Wait Hours: Per Job","[savsp] Wait Hours: Per Job"
+Day,"[swath] Wait Hours by Submit Time: Per Job","[ovenb] Wait Hours by Submit Time: Per Job","[sante] Wait Hours by Submit Time: Per Job","[ybsbu] Wait Hours by Submit Time: Per Job","[litst] Wait Hours by Submit Time: Per Job","[savsp] Wait Hours by Submit Time: Per Job"
 2016-12-23,0,0,9.59638889,0,0,0
 2016-12-24,0,0,0.00000000,0,0,0
 2016-12-25,0,0,0.00000000,0,0,0

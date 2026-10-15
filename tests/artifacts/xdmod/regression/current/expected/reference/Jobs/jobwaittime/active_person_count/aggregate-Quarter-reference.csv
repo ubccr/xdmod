@@ -1,11 +1,11 @@
 title
-"Number of Users: Active: by Job Wait Time"
+"Number of Users: Active: by Job Wait Time: Submit Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Wait Time","Number of Users: Active"
+"Job Wait Time: Submit Time","Number of Users: Active"
 "0 - 1s",31
 "1 - 30s",45
 "30s - 30min",35
