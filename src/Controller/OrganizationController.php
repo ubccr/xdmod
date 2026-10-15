@@ -38,8 +38,8 @@ class OrganizationController extends BaseController
         $forwardTo = null;
         switch($operation) {
             case 'downgrade_member':
-                $memberID = $this->getValidMemberIDParameter($request);
-                $forwardTo = $this->forward(
+                list($memberID, $error) = $this->getValidMemberIDParameter($request);
+                $forwardTo = $error ?? $this->forward(
                     'CCR\Controller\OrganizationController::downgradeMember',
                     ['request' => $request, 'memberID' => $memberID]
                 );
@@ -51,22 +51,24 @@ class OrganizationController extends BaseController
                 );
                 break;
             case 'get_member_status':
-                $memberID = $this->getValidMemberIDParameter($request);
-                $forwardTo = $this->forward(
+                list($memberID, $error) = $this->getValidMemberIDParameter($request);
+                $forwardTo = $error ?? $this->forward(
                     'CCR\Controller\OrganizationController::getMemberStatus',
                     ['request' => $request, 'memberID' => $memberID]
                 );
                 break;
             case 'upgrade_member':
-                $memberID = $this->getValidMemberIDParameter($request);
-                $forwardTo = $this->forward(
+                list($memberID, $error) = $this->getValidMemberIDParameter($request);
+                $forwardTo = $error ?? $this->forward(
                     'CCR\Controller\OrganizationController::upgradeMember',
                     ['request' => $request, 'memberID' => $memberID]
                 );
                 break;
+            default:
+                $forwardTo = $this->json(buildError('Unknown operation provided.'));
         }
 
-        return $forwardTo ?? $this->json(buildError('Unknown operation provided.'));
+        return $forwardTo;
     }
 
     /**
@@ -111,7 +113,10 @@ class OrganizationController extends BaseController
             'eligible' => true
         ];
 
-        $member = $this->getValidXDUser($memberID);
+        list($member, $error) = $this->getValidXDUser($memberID);
+        if (isset($error)) {
+            return $error;
+        }
         $organization = $user->getOrganizationID();
 
         // An eligible user must be associated with the currently logged in users center.
@@ -155,7 +160,10 @@ class OrganizationController extends BaseController
 
         $returnData = [];
 
-        $member = $this->getValidXDUser($memberID);
+        list($member, $error) = $this->getValidXDUser($memberID);
+        if (isset($error)) {
+            return $error;
+        }
         $organization = $user->getActiveOrganization();
 
         // An eligible user must be associated with the currently logged in users center.
@@ -197,7 +205,10 @@ class OrganizationController extends BaseController
     {
         $user = $this->getXDUser();
 
-        $member = $this->getValidXDUser($memberID);
+        list($member, $error) = $this->getValidXDUser($memberID);
+        if (isset($error)) {
+            return $error;
+        }
         $organization = $user->getOrganizationID();
 
         // An eligible user must be associated with the currently logged in users center.
@@ -215,14 +226,25 @@ class OrganizationController extends BaseController
      * @return string
      * @throws BadRequestHttpException
      */
-    private function getValidMemberIDParameter(Request $request): string
+    private function getValidMemberIDParameter(Request $request): array
     {
-        return $this->getStringParam(
-            request: $request,
-            name: 'member_id',
-            mandatory: true,
-            pattern: RESTRICTION_UID
-        );
+        $memberID = null;
+        $error = null;
+        try {
+            $memberID = $this->getStringParam(
+                request: $request,
+                name: 'member_id',
+                pattern: RESTRICTION_UID
+            );
+        } catch (BadRequestHttpException) {
+            $error = $this->json(buildError("Invalid value specified for 'member_id'."));
+        }
+
+        if (empty($memberID) && empty($error)) {
+            $error = $this->json(buildError("'member_id' not specified."));
+        }
+
+        return [$memberID, $error];
     }
 
     /**
@@ -230,8 +252,10 @@ class OrganizationController extends BaseController
      * @return XDUser
      * @throws BadRequestHttpException
      */
-    private function getValidXDUser(string $memberID): XDUser
+    private function getValidXDUser(string $memberID): array
     {
-        return XDUser::getUserByID($memberID) ?? throw new BadRequestHttpException('user_does_not_exist');
+        $member = XDUser::getUserByID($memberID);
+        $error = empty($member) ? $this->json(buildError('user_does_not_exist')) : null;
+        return [$member, $error];
     }
 }

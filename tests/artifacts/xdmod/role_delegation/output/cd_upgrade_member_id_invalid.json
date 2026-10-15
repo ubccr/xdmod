@@ -5,6 +5,5 @@
   "totalCount": 0,
   "results": [],
   "data": [],
-  "message": "Invalid member_id",
-  "code": 0
+  "message": "Invalid value specified for 'member_id'."
 }

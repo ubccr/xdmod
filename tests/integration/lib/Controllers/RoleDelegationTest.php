@@ -108,7 +108,7 @@ class RoleDelegationTest extends BaseUserAdminTest
         $this->helper->authenticate($user);
 
         $response = $this->helper->post('controllers/role_manager.php', null, $data);
-        $this->validateResponse($response, Response::HTTP_BAD_REQUEST);
+        $this->validateResponse($response);
 
         $content = $response[0];
         $expected = JSON::loadFile($this->getTestFiles()->getFile('role_delegation', $expectedFileName));

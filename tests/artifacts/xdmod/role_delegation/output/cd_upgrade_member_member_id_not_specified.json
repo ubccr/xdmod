@@ -5,6 +5,5 @@
   "totalCount": 0,
   "results": [],
   "data": [],
-  "message": "member_id is a required parameter.",
-  "code": 0
+  "message": "'member_id' not specified."
 }
