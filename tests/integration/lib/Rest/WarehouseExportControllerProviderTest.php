@@ -191,16 +191,6 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
      * @dataProvider provideTokenAuthTestData
      */
     public function testGetRealmsTokenAuth($role, $tokenType) {
-        $find_index_by_id = function($value, $array) {
-            $i = 0;
-            foreach ($array as $item) {
-                if (array_key_exists('id', $item) && $item['id'] === $value) {
-                    return $i;
-                }
-                $i += 1;
-            }
-            return false;
-        };
         parent::runTokenAuthTest(
             $role,
             $tokenType,
@@ -212,12 +202,10 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                 'endpoint_type' => 'rest',
                 'authentication_type' => 'token_optional'
             ],
-            parent::validateSuccessResponse(function ($body, $assertMessage) use($find_index_by_id) {
+            parent::validateSuccessResponse(function ($body, $assertMessage) {
                 $this->assertSame(3, $body['total'], $assertMessage);
-                foreach (['Jobs' => 31, 'Cloud' => 19, 'ResourceSpecifications' =>16] as $realmName => $fieldCount) {
-                    // We can't assume that the data returned from export/realms will always be in the same order so we
-                    // start by finding the index of the realm we're currently testing.
-                    $index = $find_index_by_id($realmName, $body['data']);
+                $index = 0;
+                foreach (['Jobs', 'Cloud', 'ResourceSpecifications'] as $realmName) {
                     $realm = $body['data'][$index];
                     foreach (['id', 'name'] as $property) {
                         $this->assertSame(
@@ -243,9 +231,14 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
                             $assertMessage
                         );
                     }
+                    $index++;
+                }
+
+                $counts = [31, 19, 16];
+                for ($i = 0; $i < count($counts); $i++) {
                     $this->assertCount(
-                        $fieldCount,
-                        $body['data'][$index]['fields'],
+                        $counts[$i],
+                        $body['data'][$i]['fields'],
                         $assertMessage
                     );
                 }
@@ -449,9 +442,10 @@ class WarehouseExportControllerProviderTest extends TokenAuthTest
             $datum['id'] = (int)$datum['id'];
             $ids[] = $datum['id'];
         }
-        $data = ['ids' => json_encode($ids)];
+        $data = json_encode($ids);
+
         // Delete all existing requests.
-        list($content, $info, $headers) = self::$helpers[$role]->delete('rest/warehouse/export/requests', $data, $data);
+        list($content, $info, $headers) = self::$helpers[$role]->delete('rest/warehouse/export/requests', null, $data);
         $this->assertMatchesRegularExpression('#\bapplication/json\b#', $headers['Content-Type'], 'Content type header');
         $this->assertEquals($httpCode, $info['http_code'], 'HTTP response code');
         $this->validateAgainstSchema($content, $schema);

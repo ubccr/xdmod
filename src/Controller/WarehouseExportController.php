@@ -329,7 +329,7 @@ class WarehouseExportController extends BaseController
         $requestIds = [];
 
         try {
-            $requestIds = @json_decode($request->get('ids'));
+            $requestIds = @json_decode($request->getContent());
 
             if ($requestIds === null) {
                 throw new Exception('Failed to decode JSON');
