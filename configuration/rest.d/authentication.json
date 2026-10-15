@@ -1,6 +1,0 @@
-{
-  "auth": {
-    "prefix": "auth",
-    "controller": "Rest\\Controllers\\AuthenticationControllerProvider"
-  }
-}
