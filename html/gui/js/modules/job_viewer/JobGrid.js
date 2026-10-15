@@ -59,7 +59,7 @@ XDMoD.Module.JobViewer.JobGrid = Ext.extend(Ext.grid.GridPanel, {
         var page_size = this.config.page_size;
 
         var jobStore = new Ext.data.JsonStore({
-            url: XDMoD.REST.url + '/warehouse/search/jobs',
+            url: '/warehouse/search/jobs',
             restful: true,
             root: 'results',
             autoLoad: true,

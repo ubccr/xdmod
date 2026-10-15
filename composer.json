@@ -250,7 +250,6 @@
             "libraries/date.php",
             "libraries/utilities.php",
             "libraries/dashboard.php",
-            "libraries/security.php",
             "libraries/regression.php",
             "libraries/controller.php",
             "libraries/charting.php"
@@ -270,12 +269,10 @@
             "classes/UserStorage.php",
             "classes/XDReportManager.php",
             "classes/XDAdmin.php",
-            "classes/XDSessionManager.php",
             "classes/ExtJS",
             "classes/DB"
         ],
         "psr-4": {
-            "Authentication\\": "classes/Authentication/",
             "CCR\\": ["classes/CCR/", "src/"],
             "Common\\": "classes/Common/",
             "Configuration\\": "classes/Configuration/",

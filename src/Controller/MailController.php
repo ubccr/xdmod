@@ -24,7 +24,7 @@ class MailController extends BaseController
     #[Route('/controllers/mailer.php', methods: ['POST'], name: 'legacy_mailer_index')]
     public function index(Request $request): Response
     {
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
         $operation = $this->getStringParam($request, 'operation');
 
         if (empty($operation)) {

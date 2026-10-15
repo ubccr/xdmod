@@ -8,7 +8,6 @@ use CCR\Controller\BaseController;
 use CCR\DB;
 use CCR\Helper\PasswordResetService;
 use CCR\MailWrapper;
-use CCR\Security\Helpers\Tokens;
 use Exception;
 use Models\Acl;
 use Models\Services\Acls;
@@ -41,11 +40,10 @@ class UserAdminController extends BaseController
     public function __construct(
         LoggerInterface $logger,
         Environment $twig,
-        Tokens $tokenHelper,
         ContainerBagInterface $parameters,
         PasswordResetService $passwordResetService
     ) {
-        parent::__construct($logger, $twig, $tokenHelper, $parameters);
+        parent::__construct($logger, $twig, $parameters);
         $this->passwordResetService = $passwordResetService;
     }
 
@@ -58,7 +56,6 @@ class UserAdminController extends BaseController
     #[Route('/controllers/user_admin.php')]
     public function index(Request $request): Response
     {
-
         $operation = $this->getStringParam($request, 'operation');
         if (empty($operation)) {
             return $this->json(buildError('operation_not_defined'));
@@ -346,7 +343,7 @@ class UserAdminController extends BaseController
     #[Route('{prefix}internal_dashboard/users/update', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function updateUser(Request $request): Response
     {
-        $currentUser = $this->getXDUser($request->getSession());
+        $currentUser = $this->getXDUser();
 
         $userId = intval($this->getStringParam($request, 'uid', true, null, RESTRICTION_UID));
         $userToUpdate = \XDUser::getUserByID($userId);
@@ -741,8 +738,7 @@ class UserAdminController extends BaseController
     #[Route('{prefix}internal_dashboard/users/delete', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function deleteUser(Request $request): Response
     {
-        $requestingUser = $this->getXDUser($request->getSession());
-
+        $requestingUser = $this->getXDUser();
         $userId = $this->getStringParam($request, 'uid', true, null, RESTRICTION_UID);
         $targetUser = XDUser::getUserByID($userId);
         if (!isset($targetUser)) {

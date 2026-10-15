@@ -6,6 +6,7 @@ namespace CCR\Controller;
 
 use CCR\DB;
 use CCR\Log;
+use CCR\Security\Attributes\MustBeLoggedIn;
 use DataWarehouse\Data\BatchDataset;
 use DataWarehouse\Export\RealmManager;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
@@ -41,6 +42,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Routing\Exception\MissingMandatoryParametersException;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 /**
  * This controller is ported from the old classes/Rest/Controllers/WarehouseControllerProvider.php
@@ -208,12 +210,13 @@ class WarehouseController extends BaseController
      * @throws BadRequestHttpException
      * @throws NotFoundHttpException
      */
+    #[MustBeLoggedIn]
     #[Route('/warehouse/search/history', methods: ['GET'])]
     #[Route('{prefix}warehouse/search/history', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function searchHistory(Request $request): Response
     {
         $action = 'searchHistory';
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $nodeId = $this->getIntParam($request, 'nodeid');
         $tsId = $this->getStringParam($request, 'tsid');
@@ -265,13 +268,14 @@ class WarehouseController extends BaseController
      *
      * @throws UnauthorizedHttpException|AccessDeniedHttpException|Exception
      */
+    #[MustBeLoggedIn]
     #[Route('/warehouse/search/history/{id}', requirements: ["id" => "\d+"], methods: ['GET'])]
     #[Route('{prefix}warehouse/search/history/{id}', requirements: ["id" => "\d+", 'prefix' => '.*'], methods: ['GET'])]
     public function getHistoryById(Request $request, int $id): Response
     {
         $action = 'getHistoryById';
 
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $realm = $this->getStringParam($request, 'realm', true);
 
@@ -360,12 +364,13 @@ class WarehouseController extends BaseController
      * @throws BadRequestHttpException
      * @throws \Exception
      */
+    #[MustBeLoggedIn]
     #[Route('/warehouse/search/history', methods: ['POST'])]
     #[Route('{prefix}warehouse/search/history', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function createHistory(Request $request): Response
     {
         $action = 'createHistory';
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $realm = $this->getStringParam($request, 'realm', true);
 
@@ -411,11 +416,12 @@ class WarehouseController extends BaseController
      * @throws AccessDeniedHttpException
      * @throws Exception
      */
+    #[MustBeLoggedIn]
     #[Route('/warehouse/search/history/{id}', requirements: ["id" => '\d+'], methods: ['POST', 'PUT'])]
     #[Route('{prefix}warehouse/search/history/{id}', requirements: ["id" => '\d+', 'prefix' => '.*'], methods: ['POST', 'PUT'])]
     public function updateHistory(Request $request, int $id): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $action = 'updateHistory';
 
@@ -452,11 +458,12 @@ class WarehouseController extends BaseController
      * @return Response
      * @throws BadRequestHttpException|AccessDeniedHttpException|Exception
      */
+    #[MustBeLoggedIn]
     #[Route('/warehouse/search/history/{id}', requirements: ["id" => "\d+"], methods: ['DELETE'])]
     #[Route('{prefix}warehouse/search/history/{id}', requirements: ["id" => "\d+", 'prefix' => '.*'], methods: ['DELETE'])]
     public function deleteHistory(Request $request, int $id): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
         $action = 'deleteHistory';
 
         $realm = $this->getStringParam($request, 'realm', true);
@@ -483,11 +490,12 @@ class WarehouseController extends BaseController
      * @throws AccessDeniedHttpException
      * @throws Exception
      */
+    #[MustBeLoggedIn]
     #[Route('/warehouse/search/history', methods: ['DELETE'])]
     #[Route('{prefix}warehouse/search/history', requirements: ['prefix' => '.*'], methods: ['DELETE'])]
     public function deleteAllHistory(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $action = 'deleteAllHistory';
 
@@ -513,17 +521,18 @@ class WarehouseController extends BaseController
      * @throws AccessDeniedHttpException if the user executing this request does not have access to the provided realm.
      * @throws Exception if a user record is not found in the database that corresponds to the current user's username.
      */
+    #[MustBeLoggedIn]
     #[Route('{prefix}warehouse/search/jobs', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function searchJobs(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $realm = $this->getStringParam($request, 'realm', true);
         $params = $this->getStringParam($request, 'params', true);
 
         $params = json_decode($params, true);
 
-        if($params === null) {
+        if ($params === null) {
             throw new BadRequestHttpException('params parameter must be valid JSON');
         }
 
@@ -545,6 +554,7 @@ class WarehouseController extends BaseController
      * @throws AccessDeniedHttpException
      * @throws Exception if a user record is not found in the database that corresponds to the current user's username.
      */
+    #[MustBeLoggedIn]
     #[Route(
         "/warehouse/search/{realms}/{action}",
         requirements: ["action" => "([\w|_|-])+", "realms" => "cloud|jobs"],
@@ -557,7 +567,7 @@ class WarehouseController extends BaseController
     )]
     public function searchJobsByAction(Request $request, string $action): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $actionName = 'searchJobsByAction';
 
@@ -586,12 +596,11 @@ class WarehouseController extends BaseController
      *                           the dimensions retrieved.
      * @throws Exception
      */
+    #[MustBeLoggedIn]
     #[Route('/warehouse/resources', methods: ['GET'])]
     #[Route('{prefix}warehouse/resources', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getResources(Request $request): Response
     {
-        $this->tokenHelper->authenticate($request);
-
         $config = \Configuration\XdmodConfiguration::assocArrayFactory('resource_metadata.json', CONFIG_DIR);
 
         $query_sql = $config['resource_query'];
@@ -640,8 +649,7 @@ class WarehouseController extends BaseController
     #[Route('/warehouse/realms', methods: ['GET'])]
     public function getRealms(Request $request): Response
     {
-        /*TODO: verify that unauthorized users should be able to access this endpoint */
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         // Get the realms for the user's active role.
         $realms = Realms::getRealmsForUser($user);
@@ -662,11 +670,12 @@ class WarehouseController extends BaseController
      *
      * @throws AccessDeniedHttpException|UnauthorizedHttpException|BadRequestHttpException
      */
+    #[MustBeLoggedIn]
     #[Route('/warehouse/aggregatedata', methods: ['GET'])]
     #[Route('{prefix}warehouse/aggregatedata', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getAggregateData(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         $json_config = $this->getStringParam($request, 'config', true);
         $start = $this->getIntParam($request, 'start', true);
@@ -751,11 +760,12 @@ class WarehouseController extends BaseController
      *                  the dimensions retrieved.
      * @throws Exception if a XDMoD user cannot be found for the currently logged in users username.
      */
+    #[MustBeLoggedIn]
     #[Route('{prefix}warehouse/dimensions', requirements: ['prefix' => '.*'],  methods: ['GET'])]
     #[Route('/warehouse/dimensions',  methods: ['GET'])]
     public function getDimensions(Request $request): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         // Get parameters.
         $realmParam = $this->getStringParam($request, 'realm');
@@ -801,11 +811,12 @@ class WarehouseController extends BaseController
      *                           the dimension values retrieved.
      * @throws Exception
      */
+    #[MustBeLoggedIn]
     #[Route('/warehouse/dimensions/{dimension}', requirements: ["dimension" => "\w+"], methods: ['GET'])]
     #[Route('{prefix}warehouse/dimensions/{dimension}', requirements: ["dimension" => "\w+", 'prefix' => '.*'], methods: ['GET'])]
     public function getDimensionValues(Request $request, string $dimension): Response
     {
-        $user = $this->authorize($request);
+        $user = $this->getXDUser();
 
         // Get Parameter values for feeding to MetricExplorer::getDimensionValues
         $offset = $this->getIntParam($request, 'offset', false, 0);
@@ -860,12 +871,7 @@ class WarehouseController extends BaseController
     #[Route('{prefix}warehouse/quick_filters', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getQuickFilters(Request $request): Response
     {
-        $user = $this->getUser();
-        if (null === $user) {
-            $user = XDUser::getPublicUser();
-        } else {
-            $user = XDUser::getUserByUserName($user->getUserIdentifier());
-        }
+        $user = $this->getXDUser();
 
         // Check whether multiple service providers are supported or not.
         try {
@@ -961,7 +967,7 @@ class WarehouseController extends BaseController
     #[Route('/warehouse/dimensions/{dimensionId}/name', requirements: ["dimensionId" => "(\w|_|-])+"], methods: ['GET'])]
     public function getDimensionName(Request $request, string $dimensionId): Response
     {
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
         $dimensionName = MetricExplorer::getDimensionName($user, $dimensionId);
         $success = !empty($dimensionName);
 
@@ -1000,7 +1006,7 @@ class WarehouseController extends BaseController
     )]
     public function getDimensionValueName(Request $request, string $dimensionId, string $valueId): Response
     {
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
         $valueName = MetricExplorer::getDimensionValueName($user, $dimensionId, $valueId);
         $success = !empty($valueName);
 
@@ -1038,8 +1044,6 @@ class WarehouseController extends BaseController
     #[Route('/warehouse/aggregation_units', methods: ['GET'])]
     public function getAggregationUnits(Request $request): Response
     {
-        $this->authorize($request);
-
         // Return the available aggregation units.
         $aggregation_units = \DataWarehouse\QueryBuilder::getAggregationUnits();
         return $this->json(array(
@@ -1063,8 +1067,6 @@ class WarehouseController extends BaseController
     #[Route('/warehouse/dataset/types', methods: ['GET'])]
     public function getDatasetTypes(Request $request): Response
     {
-        $this->authorize($request);
-
         // Return the available dataset types.
         $datasetTypes = \DataWarehouse\QueryBuilder::getDatasetTypes();
         return $this->json(array(
@@ -1087,8 +1089,6 @@ class WarehouseController extends BaseController
     #[Route('/warehouse/dataset/output_formats', methods: ['GET'])]
     public function getDatasetOutputFormats(Request $request): Response
     {
-        $this->authorize($request);
-
         // Return the available dataset output formats.
         return $this->json(array(
             'success' => true,
@@ -1106,7 +1106,7 @@ class WarehouseController extends BaseController
     #[Route('/datasets', methods: ['GET'])]
     public function getDatasets(Request $request): Response
     {
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
 
         // Get parameters.
         $params = $request->query->all();
@@ -1137,8 +1137,6 @@ class WarehouseController extends BaseController
     #[Route('/warehouse/plots/formats/output', methods: ['GET'])]
     public function getPlotOutputFormats(Request $request)
     {
-        $this->authorize($request);
-
         // Return the available plot output formats.
         return $this->json(array(
             'success' => true,
@@ -1161,8 +1159,6 @@ class WarehouseController extends BaseController
     #[Route('/warehouse/plots/formats/output', methods: ['GET'])]
     public function getPlotDisplayTypes(Request $request): Response
     {
-        $this->authorize($request);
-
         // Return the available plot display types.
         return $this->json(array(
             'success' => true,
@@ -1185,8 +1181,6 @@ class WarehouseController extends BaseController
     #[Route('/warehouse/plots/types/combine', methods: ['GET'])]
     public function getPlotCombineTypes(Request $request): Response
     {
-        $this->authorize($request);
-
         // Return the available plot combine types.
         return $this->json(array(
             'success' => true,
@@ -1211,9 +1205,6 @@ class WarehouseController extends BaseController
     #[Route('/warehouse/plots', methods: ['GET'])]
     public function getPlots(Request $request): Response
     {
-
-        $this->authorize($request);
-
         return $this->getDatasets($request);
     }
 
@@ -2127,19 +2118,12 @@ class WarehouseController extends BaseController
      * get raw data from the requested realm.
      * @throws Exception
      */
+    #[MustBeLoggedIn]
     #[Route('/warehouse/raw-data', methods: ['GET'])]
     #[Route('{prefix}warehouse/raw-data', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getRawData(Request $request): Response
     {
-        $user = $this->tokenHelper->authenticate($request, false);
-
-        /*TODO: Validate that this is supposed to be here. */
-        if ($user === null) {
-            return $this->json(buildError(new Exception('No token provided.')), 401, [
-                'WWW-Authenticate' => 'Bearer'
-            ]);
-        }
-
+        $user = $this->getXDUser();
         try {
             $params = $this->validateRawDataParams($request, $user);
         } catch (HttpException $e) {
@@ -2594,8 +2578,6 @@ class WarehouseController extends BaseController
     #[Route('{prefix}warehouse/raw-data/limit', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getRawDataLimit(Request $request): JsonResponse
     {
-        $this->tokenHelper->authenticate($request);
-
         $limit = $this->getConfiguredRawDataLimit();
 
         return $this->json([
