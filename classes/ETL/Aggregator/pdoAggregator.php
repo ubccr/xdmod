@@ -544,7 +544,7 @@ class pdoAggregator extends aAggregator
 
             $this->logger->debug("Discover table $fromTable");
 
-            $firstTableDef = new Table(null, null, $this->logger);
+            $firstTableDef = new Table(null, '', $this->logger);
 
             // If we are in dryrun mode the table may not have been created yet but we still want to
             // be able to display the generated queries so simply set the start and end day id

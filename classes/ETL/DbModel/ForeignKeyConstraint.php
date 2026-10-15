@@ -43,7 +43,7 @@ class ForeignKeyConstraint extends SchemaEntity implements iEntity
 
     public function __construct(
         $config,
-        $systemQuoteChar = null,
+        string $systemQuoteChar = '',
         LoggerInterface $logger = null
     ) {
         // Property merging is performed first so the values can be used in the
