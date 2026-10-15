@@ -6,8 +6,18 @@ namespace DB;
  * Helper class for managing the logs of the last_modified times
  * for the ETL process.
  */
+
+use CCR\DB\iDatabase;
+
 class EtlJournalHelper
 {
+    private string $schema;
+    private string $table;
+    private string $lastModifiedColumn;
+    private iDatabase $sourcedb;
+    private iDatabase $dwdb;
+    private mixed $lastModifiedTs;
+    private mixed $mostRecentTs;
 
     /**
      * Helper class for managing the logs of the last_modified times for ingestion

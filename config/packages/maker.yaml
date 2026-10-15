@@ -1,0 +1,5 @@
+when@dev:
+    maker:
+        root_namespace: 'CCR\'
+        generate_final_classes: true
+        generate_final_entities: false

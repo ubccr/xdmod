@@ -226,7 +226,7 @@ class XDReportManager
                 'chart_title_' . $suffix         => $this->fontWrapper($report_chart['chart_title'], 16),
                 'chart_drill_details_' . $suffix => $this->fontWrapper($report_chart['chart_drill_details'], 12),
                 'chart_timeframe_' . $suffix     => $this->fontWrapper($report_chart['chart_date_description'], 14),
-                'chart_id_' . $suffix            => '/report_image_renderer.php?type=report&ref=' . $report_id . ';' . $report_chart['ordering']
+                'chart_id_' . $suffix            => '/reports/builder/image?type=report&ref=' . $report_id . ';' . $report_chart['ordering']
             );
 
             if (count($chartSlot) == $charts_per_page) {
@@ -436,7 +436,7 @@ class XDReportManager
             $timeframe_type = urldecode($timeframe_type);
 
             $thumbnail_link
-                = '/report_image_renderer.php?type=chart_pool&ref='
+                = '/reports/builder/image?type=chart_pool&ref='
                 . $entry['user_id']
                 . ';'
                 . $entry['insertion_rank']
@@ -618,7 +618,7 @@ class XDReportManager
             $chart_data['chart_id'] = $entry['chart_id'];
 
             $chart_data['thumbnail_link']
-                = '/report_image_renderer.php?type=report&ref='
+                = '/reports/builder/image?type=report&ref='
                 . $entry['report_id']
                 . ';'
                 . $entry['ordering']
@@ -1113,7 +1113,7 @@ class XDReportManager
                 );
 
                 if (file_exists($temp_file)) {
-                    print file_get_contents($temp_file);
+                    return file_get_contents($temp_file);
                 }
                 else {
                     if (
@@ -1166,10 +1166,8 @@ class XDReportManager
 
                     file_put_contents($temp_file, $blob);
 
-                    print $blob;
+                    return $blob;
                 }
-
-                exit;
                 break;
             case 'chart_pool':
                 $this->ripTransform($insertion_rank, 'did');
@@ -1194,7 +1192,7 @@ class XDReportManager
                 $temp_file = $this->generateCachedFilename($insertion_rank);
 
                 if (file_exists($temp_file)) {
-                    print file_get_contents($temp_file);
+                    return file_get_contents($temp_file);
                 }
                 else {
                     $blob = $this->generateChartBlob(
@@ -1204,11 +1202,8 @@ class XDReportManager
                         $insertion_rank['end_date']
                     );
                     file_put_contents($temp_file, $blob);
-                    print $blob;
+                    return $blob;
                 }
-
-                exit;
-                break;
             case 'report':
                 $iq = $pdo->query(
                     "
@@ -1400,7 +1395,6 @@ class XDReportManager
         $end_date
     ) {
         $pdo = DB::factory('database');
-
         switch ($type) {
             case 'volatile':
                 $temp_file = $this->generateCachedFilename(
@@ -1411,7 +1405,6 @@ class XDReportManager
                 $temp_file = str_replace('.png', '.xrc', $temp_file);
 
                 $iq = array();
-
                 if (file_exists($temp_file) == true) {
                     $chart_id_config = file($temp_file);
                     $iq[] = array('chart_id' => $chart_id_config[0]);
@@ -1425,7 +1418,6 @@ class XDReportManager
                     );
                 }
                 break;
-
             case 'chart_pool':
                 $iq = $pdo->query(
                     "
@@ -1459,7 +1451,7 @@ class XDReportManager
         }
 
         if (count($iq) == 0) {
-            throw new \Exception("Unable to target chart entry");
+            throw new \Exception("Unable to target chart entry $type {$this->_user_id} $insertion_rank ". (new \Exception())->getTraceAsString());
         }
 
         $chart_id = $iq[0]['chart_id'];

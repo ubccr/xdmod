@@ -914,7 +914,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * @see current()
      */
 
-    public function current()
+    public function current(): mixed
     {
         if ( null === $this->currentFileIterator ) {
             return false;
@@ -931,7 +931,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * @see key()
      */
 
-    public function key()
+    public function key(): mixed
     {
         if ( null === $this->currentFileIterator ) {
             return null;
@@ -947,7 +947,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * @see Iterator::next()
      */
 
-    public function next()
+    public function next(): void
     {
         if ( null !== $this->currentFileIterator ) {
             $this->currentFileIterator->next();
@@ -963,7 +963,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * @see Iterator::rewind()
      */
 
-    public function rewind()
+    public function rewind(): void
     {
         $this->handle->rewind();
         $this->numFilesScanned = 0;
@@ -1004,7 +1004,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * @see Iterator::valid()
      */
 
-    public function valid()
+    public function valid(): bool
     {
         // Ensure the handle is valid since there may be no files matching the specified criteria or
         // we could be at the end of the file list.
@@ -1062,7 +1062,7 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
      * @see Countable::count()
      */
 
-    public function count()
+    public function count(): int
     {
         return $this->numRecordsParsed;
     }

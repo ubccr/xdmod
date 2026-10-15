@@ -27,6 +27,7 @@
  *
  * @author Ryan Rathsam <ryanrath@buffalo.edu>
  */
+#[\AllowDynamicProperties]
 class DBObject
 {
 

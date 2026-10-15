@@ -93,6 +93,7 @@ class MigrationFactory
         }
 
         $migrations[] = new AclConfigMigration($fromVersion, $toVersion);
+        $migrations[] = new DotEnvConfigMigration($fromVersion, $toVersion);
 
         $migration = new CompositeMigration(
             $fromVersion,

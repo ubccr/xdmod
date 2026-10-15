@@ -128,11 +128,11 @@ XDMoD.Module.About = Ext.extend(XDMoD.PortalModule, {
         this.addListener('activate', function() {
             var item = decodeURIComponent(CCR.tokenize(Ext.History.getToken()).params);
             var items = {
-                XDMoD: '/about/xdmod.php',
+                XDMoD: '/about/xdmod.html',
                 'Open XDMoD': '/about/openxd.html',
                 SUPReMM: '/about/supremm.html',
-                Federated: '/about/federated.php',
-                Roadmap: '/about/roadmap.php',
+                Federated: '/about/federated.html',
+                Roadmap: '/about/roadmap.html',
                 Team: '/about/team.html',
                 Publications: '/about/publications.html',
                 Presentations: '/about/presentations.html',

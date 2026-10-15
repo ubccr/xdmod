@@ -1,6 +1,0 @@
-{
-  "legacy": {
-    "prefix": "",
-    "controller": "Rest\\Controllers\\LegacyControllerProvider"
-  }
-}

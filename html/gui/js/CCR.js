@@ -16,58 +16,7 @@ XDMoD.Tracking = {
 };
 
 XDMoD.TrackEvent = function (category, action, details, suppress_close_handler) {
-    // Tracking is not implemented outside of the XSEDE XDMoD instance.
-    if (!CCR.xdmod.features) {
-        return;
-    }
-    if (!CCR.xdmod.features.xsede) {
-        return;
-    }
-
-    details = details || '';
-    suppress_close_handler = suppress_close_handler || false;
-
-    XDMoD.Tracking.suppress_close_handler = suppress_close_handler;
-
-    if (typeof details !== 'string') {
-        details = JSON.stringify(details);
-    }
-
-    var dimension_limit = 150; // dimension limit imposed by Google
-    var action_dimension_slots = 3; // how many custom dimensions are dedicated to storing action details
-
-    var action_details = [];
-    var i = 0;
-
-    for (i = 0; i < action_dimension_slots; i++) {
-        action_details.push((details.substr(0, dimension_limit).length > 0) ? details.substr(0, dimension_limit) : '-');
-        details = details.substr(dimension_limit);
-    }
-
-    XDMoD.Tracking.sequence_index++;
-
-    var current_date = new Date();
-    var current_timestamp = current_date.getTime();
-    var timezone_offset = current_date.getTimezoneOffset();
-
-    var time_delta = current_timestamp - XDMoD.Tracking.timestamp;
-
-    ga('send', 'event', category, action, {
-        'dimension1': XDMoD.Tracking.sequence_index,
-        'dimension2': CCR.xdmod.ui.username,
-        'dimension3': current_timestamp.toString(),
-        'dimension4': XDMoD.REST.token,
-        'dimension5': (timezone_offset / 60).toString(),
-        'dimension6': action_details[0],
-        'dimension7': action_details[1],
-        'dimension8': action_details[2],
-        'metric1': time_delta.toString()
-    });
-
-    XDMoD.Tracking.timestamp = current_timestamp;
-
-    _gaq.push(['_trackEvent', CCR.xdmod.ui.username, category, action]);
-
+    /* This function is now a no-op as Google Analytics is no longer used in Open XDMoD.*/
 }; //XDMoD.TrackEvent
 
 // ==============================================================
@@ -490,7 +439,7 @@ XDMoD.constants.minPasswordLength = 5;
 /**
  * The maximum length of a password.
  */
-XDMoD.constants.maxPasswordLength = 20;
+XDMoD.constants.maxPasswordLength = 255;
 
 /**
  * The maximum length of a report name.
@@ -938,33 +887,7 @@ CCR.invokePostImmediately = function (url, params) {
  *                                   of the main user session. (Default: false)
  */
 CCR.submitHiddenForm = function (url, method, params, options) {
-
-    options = options || {};
-
-    var checkDashboardUser = typeof options.checkDashboardUser === "undefined" ? false : options.checkDashboardUser;
-    var checkUrlPrefix = checkDashboardUser ? "../" : "";
-
-    Ext.Ajax.request({
-        url: checkUrlPrefix + "controllers/user_auth.php",
-        params: {
-            operation: "session_check",
-            public_user: typeof params.public_user === "undefined" ? false : params.public_user,
-            session_user_id_type: checkDashboardUser ? "Dashboard" : ""
-        },
-
-        callback: function (options, success, response) {
-            if (success) {
-                success = CCR.checkJSONResponseSuccess(response);
-            }
-
-            if (success) {
-                CCR.submitHiddenFormImmediately(url, method, params);
-            } else {
-                CCR.xdmod.ui.presentFailureResponse(response);
-            }
-        }
-    });
-
+    CCR.submitHiddenFormImmediately(url, method, params);
 }; //CCR.invokePost
 
 // -----------------------------------
@@ -1050,7 +973,6 @@ CCR.WebPanel = Ext.extend(Ext.Window, {
 
 CCR.xdmod.sponsor_message = 'This work was sponsored by NSF under grant numbers ACI 1025159, ACI 1445806 and ACI 2137603';
 
-//Used in html/gui/general/login.php
 var toggle_about_footer = function (o) {
     o.innerHTML = (o.innerHTML == CCR.xdmod.version) ? CCR.xdmod.sponsor_message : CCR.xdmod.version;
 }; //toggle_about_footer
@@ -1122,16 +1044,40 @@ var logoutCallback = function () {
 };
 
 CCR.xdmod.ui.actionLogout = function () {
-    XDMoD.TrackEvent("Portal", "logout link clicked");
-    XDMoD.REST.Call({
-        action: 'auth/logout',
-        method: 'POST',
-        callback: logoutCallback
-    });
+    if (CCR.xdmod.ui.isImpersonating) {
+        CCR.xdmod.ui.stopImpersonation();
+    } else {
+        XDMoD.TrackEvent("Portal", "logout link clicked");
+        Ext.Ajax.request({
+            url: '/logout',
+            method: 'POST',
+            success: function () {
+                location.href = "/";
+            }
+        });
+    }
 }; //actionLogout
 
+CCR.xdmod.ui.stopImpersonation = function() {
+    XDMoD.TrackEvent('Portal', 'Exiting Impersonation');
+    Ext.Ajax.request({
+        url: '/' + '?_switch_user=_exit&token=' + XDMoD.REST.token,
+        method: 'GET',
+        success: function () {
+            location.reload();
+        }
+    });
+}
 
-// Used in html/gui/general/login.php
+
+/**
+ * Present a message to the user after a login attempt.
+ *
+ * @param message the login response.
+ * @param status if true then the provided message will be rendered green, else it will be rendered in red.
+ * @param target the Ext identifier for the component that will be used to display the login response.
+ * @param cb callback function, if present it will be called after presenting the provided login response.
+ */
 var presentLoginResponse = function (message, status, target, cb) {
     var messageColor = status ? '#080' : '#f00';
     var targetCmp = Ext.getCmp(target);
@@ -1144,32 +1090,12 @@ var presentLoginResponse = function (message, status, target, cb) {
     }
 }; //presentLoginResponse
 
-// Used in html/gui/general/login.php
-var clearLoginResponse = function (target) {
-
-    var targetCmp = Ext.getCmp(target);
-    targetCmp.hide();
-}; //clearLoginResponse
-
-// Used in html/gui/general/login.php
-var presentContactFormViaLoginError = function () {
-    XDMoD.TrackEvent('Login Window', 'Clicked on Conact Us');
-    CCR.xdmod.ui.login_prompt.close();
-
-    var contact = new XDMoD.ContactDialog();
-    contact.show();
-}; //presentContactFormViaLoginError
-
-// Used in html/gui/general/login.php
-var presentSignUpViaLoginPrompt = function () {
-
+// eslint-disable-next-line no-unused-vars
+const presentSignUpViaLoginPrompt = function () {
     XDMoD.TrackEvent('Login Window', 'Clicked on Sign Up button');
     CCR.xdmod.ui.login_prompt.close();
     CCR.xdmod.ui.actionSignUp();
-
-}; //presentSignUpViaLoginPrompt
-
-// -----------------------------------
+};
 
 CCR.xdmod.ui.actionSignUp = function () {
 
@@ -1214,10 +1140,10 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
             url: '/rest/auth/idpredirect',
             method: 'GET',
             params: {
-                returnTo: '/gui/general/login.php' + document.location.hash
+                returnTo: '/' + document.location.hash
             },
             success: function (response) {
-                document.location = Ext.decode(response.responseText);
+                document.location = Ext.decode('"' + response.responseText + '"');
             },
             failure: function (response, opts) {
                 var message = 'Please contact the XDMoD administrator.';
@@ -1360,7 +1286,7 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
                 },
                 {
                     xtype: 'tbtext',
-                    html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
+                   html: '<a href="javascript:presentSignUpViaLoginPrompt()">Don\'t have an account?</a>',
                     id: 'sign_up_link'
                 }]
             }]
@@ -1381,10 +1307,10 @@ CCR.xdmod.ui.actionLogin = function (config, animateTarget) {
                     url: '/rest/auth/idpredirect',
                     method: 'GET',
                     params: {
-                        returnTo: '/gui/general/login.php' + document.location.hash
+                        returnTo: '/' + document.location.hash
                     },
                     success: function (response) {
-                        var destination = Ext.decode(response.responseText);
+                        var destination = Ext.decode('"' + response.responseText + '"');
                         document.location = destination;
                     },
                     failure: function (response, opts) {
@@ -1606,25 +1532,8 @@ CCR.xdmod.initDashboard = function () {
 
     // Opening the window before the AJAX request is necessary to prevent
     // it being treated as a popup. Solution from: http://stackoverflow.com/a/20822754
-    var dashboardWindow = window.open("", "_blank");
+    var dashboardWindow = window.open("/internal_dashboard", "_blank");
     dashboardWindow.focus();
-
-    Ext.Ajax.request({
-        url: 'controllers/dashboard_launch.php',
-        method: 'POST',
-        callback: function (options, success, response) {
-            if (success && CCR.checkJSONResponseSuccess(response)) {
-                dashboardWindow.location.href = 'internal_dashboard';
-            }
-            else {
-                dashboardWindow.close();
-                window.focus();
-                CCR.xdmod.ui.presentFailureResponse(response, {
-                    title: 'XDMoD Dashboard'
-                });
-            }
-        }
-    });
 }; //CCR.xdmod.initDashboard
 
 // -----------------------------------

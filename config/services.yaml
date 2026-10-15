@@ -1,0 +1,52 @@
+imports:
+    # This imports the contents of our portal_settings.[ini,d] into Symfony Parameters.
+    - { resource: 'portal_settings.php'}
+parameters:
+    log_dir: !php/const LOG_DIR
+services:
+    _defaults:
+        autowire: true
+        autoconfigure: true
+        bind:
+            $sectionName: database
+    db.default:
+        class: CCR\DB\iDatabase
+        autowire: false
+        factory:
+            - CCR\DB
+            - factory
+    symfony_code:
+        namespace: CCR\
+        resource: ../src/
+        exclude:
+            - ../src/Entity/
+            - ../src/Kernel.php
+    legacy_code:
+        namespace: CCR\
+        resource: ../classes/CCR/
+    CCR\EventListeners\RouteBasedExceptionListener:
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }
+    CCR\DB\iDatabase:
+        factory:
+            - CCR\DB
+            - factory
+    CCR\Security\Authenticators\FormLoginAuthenticator:
+        arguments:
+            $options:
+                username_parameter: username
+                password_parameter: password
+    CCR\Errors\ErrorController:
+        tags:
+            - controller.service_arguments
+        arguments:
+            - '@http_kernel'
+            - error_controller
+            - '@error_renderer'
+    CCR\EnvVar\ReCaptchaEnvVarLoader:
+        tags:
+            - container.env_var_loader
+    CCR\EnvVar\DefaultXdmodEnvVarLoader:
+        tags:
+            - container.env_var_loader
+    Symfony\Component\Dotenv\Command\DotenvDumpCommand: null

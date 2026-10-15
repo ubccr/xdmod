@@ -6,6 +6,11 @@ use CCR\MailWrapper;
 use \Exception;
 use CCR\Log;
 use Models\Services\Organizations;
+use Psr\Log\LoggerInterface;
+use SimpleSAML\Auth\Simple;
+use SimpleSAML\Auth\Source;
+use SimpleSAML\Metadata\MetaDataStorageHandler;
+use SimpleSAML\Session;
 use XDUser;
 
 class XDSamlAuthentication
@@ -13,7 +18,7 @@ class XDSamlAuthentication
     /**
      * The selected auth source
      *
-     * @var \SimpleSAML_Auth_Simple
+     * @var Simple
      */
     protected $_as = null;
 
@@ -65,7 +70,7 @@ EML;
             )
         );
 
-        $this->_sources = \SimpleSAML_Auth_Source::getSources();
+        $this->_sources = Source::getSources();
         if ($this->isSamlConfigured()) {
             try {
                 $authSource = \xd_utilities\getConfiguration('authentication', 'source');
@@ -97,7 +102,7 @@ EML;
      */
     public function logout(){
         if ($this->isSamlConfigured()) {
-            \SimpleSAML_Session::getSessionFromRequest()->doLogout($this->authSourceName);
+            Session::getSessionFromRequest()->doLogout($this->authSourceName);
         }
     }
     /**
@@ -112,7 +117,7 @@ EML;
         /*
          * SimpleSAMLphp uses its own session, this sets it back.
          */
-        \SimpleSAML_Session::getSessionFromRequest()->cleanup();
+        Session::getSessionFromRequest()->cleanup();
         if ($this->_as->isAuthenticated()) {
             $userName = $samlAttrs['username'][0];
 
@@ -205,7 +210,7 @@ EML;
      *
      * @param string $returnTo the URI to redirect to after auth.
      *
-     * @return the login URL or false if no provider is configured
+     * @return string|bool login URL or false if no provider is configured
      */
     public function getLoginURL($returnTo)
     {
@@ -226,8 +231,8 @@ EML;
         if (!$this->isSamlConfigured()) {
             return false;
         }
-        $idp = \SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler()->getMetadata(
-            \SimpleSAML_Auth_Source::getById($this->authSourceName)->getMetadata()->toArray()['idp'],
+        $idp = MetaDataStorageHandler::getMetadataHandler()->getMetaData(
+            Source::getById($this->authSourceName)->getMetadata()->toArray()['idp'],
             'saml20-idp-remote'
         );
         if (!empty($idp['OrganizationDisplayName'])) {

@@ -1,0 +1,39 @@
+#!/usr/bin/env php
+<?php
+
+use CCR\Kernel;
+use Symfony\Bundle\FrameworkBundle\Console\Application;
+
+/* Since we want to be able to use this file in at least the following cases:
+ *   - in the working repository for dev purposes
+ *   - while installed via rpm ( location: /usr/bin/console, in $PATH by default )
+ *   - while installed via source ( location: /usr/local/xdmod/bin, not in $PATH by default )
+ *
+ * We need to be able to find the `vendor/autoload_runtime.php` in a couple different places.
+ *   - `'__XDMOD_SHARE_PATH__/vendor/autoload_runtime.php'` is for when XDMoD is installed from source or by RPM
+ *   - `dirname(__DIR__).'/vendor/autoload_runtime.php'` is for when doing dev work in the XDMoD git repo.
+ */
+$files = [
+    '__XDMOD_SHARE_PATH__/vendor/autoload_runtime.php',
+    dirname(__DIR__).'/vendor/autoload_runtime.php'
+];
+
+$file = null;
+foreach($files as $potentialFile) {
+    if (is_file($potentialFile)) {
+        $file = $potentialFile;
+        break;
+    }
+}
+
+if ($file === null) {
+    throw new RuntimeException('Symfony Runtime is missing. Try running "composer require symfony/runtime".');
+}
+
+require_once $file;
+
+return function (array $context) {
+    $kernel = new Kernel($context['APP_ENV'], (bool) $context['APP_DEBUG']);
+
+    return new Application($kernel);
+};
