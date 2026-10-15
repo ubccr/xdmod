@@ -5,5 +5,6 @@
   "totalCount": 0,
   "results": [],
   "data": [],
-  "message": "user_does_not_exist"
+  "message": "user_does_not_exist",
+  "code": 0
 }
