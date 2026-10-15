@@ -296,6 +296,7 @@ class RouteBasedExceptionListener
         } elseif (
                 $route == 'ccr_supremmdataflowcontrollerprovider_getdbstats'
                 || $route == 'ccr_supremmdataflowcontrollerprovider_getquality'
+                || $route == 'ccr_supremmdataflowcontrollerprovider_getresources'
         ) {
             if ($exception instanceof AccessDeniedHttpException) {
                 $statusCode = $this->security->getUser() ? Response::HTTP_FORBIDDEN : Response::HTTP_UNAUTHORIZED;
