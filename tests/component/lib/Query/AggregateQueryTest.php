@@ -611,8 +611,8 @@ SQL;
             'person',
             'job_count'
         );
-        $query->addStatField($this->getDerivedStatistic());
-        $query->addOrderBy('jobs_per_person', 'desc');
+        $query->addStatField($this->getUtilizationStatistic());
+        $query->addOrderBy('utilization', 'desc');
 
         $generated = $query->getQueryString(10, 0, 'person_id = 82');
         $expected =<<<SQL
@@ -623,7 +623,7 @@ SELECT
   derived_stats.`person_order_id` AS 'person_order_id',
   derived_stats.running_job_count AS running_job_count,
   derived_stats.job_count AS job_count,
-  derived_stats.jobs_per_person__job_count / NULLIF((SELECT COUNT(*) FROM modw.person AS p WHERE FIND_IN_SET(p.id, derived_stats.jobs_per_person__person_ids) <> 0), 0) AS jobs_per_person
+  COALESCE((derived_stats.utilization__numerator / NULLIF((SELECT SUM(rsa.allocated_cpu_core_time) FROM modw_aggregates.resourcespecsfact_by_day AS rsa WHERE rsa.day_id BETWEEN 201600357 AND 201700001 AND FIND_IN_SET(rsa.record_resource_id, derived_stats.utilization__resource_ids) <> 0), 0)) * 100, 0) AS utilization
 FROM (
 SELECT
   person.id as 'person_id',
@@ -632,8 +632,8 @@ SELECT
   person.order_id as 'person_order_id',
   COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS running_job_count,
   COALESCE(SUM(agg.ended_job_count), 0) AS job_count,
-  SUM(agg.ended_job_count) AS jobs_per_person__job_count,
-  GROUP_CONCAT(DISTINCT agg.person_id) AS jobs_per_person__person_ids,
+  SUM(agg.cpu_time) AS utilization__numerator,
+  GROUP_CONCAT(DISTINCT agg.task_resource_id) AS utilization__resource_ids,
   MIN(person.order_id) AS _order_1
 FROM
   modw_aggregates.jobfact_by_day agg,
@@ -649,7 +649,7 @@ GROUP BY person.id,
   person.order_id
 ) AS derived_stats
 HAVING person_id = 82
-ORDER BY jobs_per_person desc,
+ORDER BY utilization desc,
   derived_stats._order_1 ASC
 LIMIT 10 OFFSET 0
 SQL;
@@ -673,7 +673,7 @@ SQL;
             'person',
             'job_count'
         );
-        $query->addStatField($this->getDerivedStatistic());
+        $query->addStatField($this->getUtilizationStatistic());
 
         $generated = $query->getCountQueryString();
         $this->assertStringNotContainsString('derived_stats', $generated, 'Count query must not reference the derived table');
@@ -719,37 +719,30 @@ SQL;
         );
         // The 'person' group by selects a dimension field aliased 'person_id'; giving the
         // statistic the same id reproduces the collision this guards against.
-        $query->addStatField($this->getDerivedStatistic('person_id'));
+        $query->addStatField($this->getUtilizationStatistic('person_id'));
 
         $this->expectException(\Exception::class);
         $query->getQueryString();
     }
 
     /**
-     * Create a statistic that is evaluated against a derived table. The formula uses a per-group
-     * GROUP_CONCAT() inside a subquery, which ONLY_FULL_GROUP_BY rejects on MariaDB prior to 11
+     * Load the real 'utilization' statistic from the Jobs realm's configuration. It is evaluated
+     * against a derived table because its formula needs the per-group set of resources and their
+     * total CPU time inside a correlated subquery, which ONLY_FULL_GROUP_BY otherwise rejects
      * unless the grouping is done in a derived table.
      *
-     * @param string $id The statistic's id. Defaults to 'jobs_per_person'; tests that need to
-     *   reproduce a key collision with a dimension field pass that field's alias instead.
+     * @param string $id The statistic's id. Defaults to 'utilization'; tests that need to
+     *   reproduce a key collision with a dimension field pass that field's alias instead, while
+     *   keeping the statistic's own formula and derived fields.
      *
      * @return \Realm\Statistic
      */
 
-    private function getDerivedStatistic($id = 'jobs_per_person')
+    private function getUtilizationStatistic($id = 'utilization')
     {
-        $config = json_decode('{
-            "name": "Jobs Per Person",
-            "unit": "Number of Jobs",
-            "description_html": "Statistic evaluated against a derived table",
-            "derived_fields": {
-                "job_count": "SUM(agg.ended_job_count)",
-                "person_ids": "GROUP_CONCAT(DISTINCT agg.person_id)",
-                "period_id": "MIN(agg.${AGGREGATION_UNIT}_id)"
-            },
-            "aggregate_formula": "${derived.job_count} / NULLIF((SELECT COUNT(*) FROM modw.person AS p WHERE FIND_IN_SET(p.id, ${derived.person_ids}) <> 0), 0)",
-            "timeseries_formula": "${derived.job_count} / NULLIF((SELECT COUNT(*) FROM modw.person AS p WHERE FIND_IN_SET(p.id, ${derived.person_ids}) <> 0 AND ${derived.period_id} > 0), 0)"
-        }');
+        $config = json_decode(file_get_contents(
+            realpath('../../configuration/datawarehouse.d/ref/Jobs-statistics.json')
+        ))->utilization;
 
         return \Realm\Statistic::factory($id, $config, \Realm\Realm::factory('Jobs', self::$logger), self::$logger);
     }
