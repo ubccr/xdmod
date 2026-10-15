@@ -283,6 +283,37 @@ class RouteBasedExceptionListener
                     $event->setResponse($response);
                 }
             }
+        } elseif (str_starts_with($route, 'ccr_efficiencycontrollerprovider_')) {
+            if ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
+                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                    $content['message'] = $error_during_authorization_message;
+                    $content['code'] = 0;
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
+                }
+            }
+        } elseif (
+                $route == 'ccr_supremmdataflowcontrollerprovider_getdbstats'
+                $route == 'ccr_supremmdataflowcontrollerprovider_getquality'
+        ) {
+            if ($exception instanceof AccessDeniedHttpException) {
+                $statusCode = $this->security->getUser() ? Response::HTTP_FORBIDDEN : Response::HTTP_UNAUTHORIZED;
+                $content['message'] = $error_during_authorization_message;
+                $content['code'] = 0;
+                $response = new JsonResponse($content, $statusCode);
+                $event->setResponse($response);
+
+            } elseif ($exception instanceof HttpException) {
+                $statusCode = $exception->getStatusCode();
+                if ($statusCode == Response::HTTP_UNAUTHORIZED) {
+                    $content['message'] = $error_during_authorization_message;
+                    $content['code'] = 0;
+                    $response = new JsonResponse($content, $statusCode);
+                    $event->setResponse($response);
+                }
+            }
         }
+
     }
 }
