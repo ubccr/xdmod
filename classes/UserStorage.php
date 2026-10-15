@@ -79,9 +79,9 @@ class UserStorage
 
     private function _getnewid(&$storage)
     {
-        $newid = ($storage['maxid'] + 1) % PHP_INT_MAX;
+        $newid = ($storage['maxid'] > PHP_INT_MAX - 2) ? 0 : $storage['maxid'] + 1;
         while(isset($storage['data'][$newid])) {
-            $newid = ($newid + 1) % PHP_INT_MAX;
+            $newid = ($newid > PHP_INT_MAX - 2) ? 0 : $newid + 1;
         }
         $storage['maxid'] = $newid;
         return $newid;
