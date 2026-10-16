@@ -133,7 +133,7 @@ XDMoD.ProfileEditor = Ext.extend(Ext.Window, {
                             text: 'Reset to Default',
                             handler: function (button) {
                                 Ext.Ajax.request({
-                                    url: XDMoD.REST.url + '/dashboard/layout',
+                                    url: '/dashboard/layout',
                                     method: 'DELETE',
                                     success: function () {
                                         button.setDisabled(true);

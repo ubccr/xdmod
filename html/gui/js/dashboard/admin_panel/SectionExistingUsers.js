@@ -538,7 +538,7 @@ XDMoD.ExistingUsers = Ext.extend(Ext.Panel, {
 
         var resetNewUserTour = function () {
             Ext.Ajax.request({
-                url: XDMoD.REST.url + '/admin/reset_user_tour_viewed',
+                url: '/admin/reset_user_tour_viewed',
                 params: {
                     viewedTour: 0,
                     uid: selected_user_id
