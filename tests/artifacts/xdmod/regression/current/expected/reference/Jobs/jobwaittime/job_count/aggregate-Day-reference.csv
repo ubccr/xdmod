@@ -1,11 +1,11 @@
 title
-"Number of Jobs Ended: by Job Wait Time"
+"Number of Jobs Ended: by Job Wait Time: Submit Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Wait Time","Number of Jobs Ended"
+"Job Wait Time: Submit Time","Number of Jobs Ended"
 "0 - 1s",12295
 "1 - 30s",18172
 "30s - 30min",17905

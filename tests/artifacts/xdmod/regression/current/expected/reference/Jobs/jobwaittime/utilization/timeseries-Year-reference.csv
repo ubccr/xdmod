@@ -1,5 +1,5 @@
 title
-"Screwdriver CPU Utilization (%): by Job Wait Time"
+"Screwdriver CPU Utilization (%): by Job Wait Time: Submit Time"
 parameters
 
 start,end

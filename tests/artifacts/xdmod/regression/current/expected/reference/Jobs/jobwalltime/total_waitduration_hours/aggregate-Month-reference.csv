@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by Job Wall Time"
+"Wait Hours by Submit Time: Total: by Job Wall Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Wall Time","Wait Hours: Total"
+"Job Wall Time","Wait Hours by Submit Time: Total"
 "0 - 1s",3271.5997
 "1 - 30s",22567.2086
 "30s - 30min",161752.1822

@@ -1,0 +1,11 @@
+title
+"Wait Hours by Submit Time: Total: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[0 - 1s] Wait Hours by Submit Time: Total","[1 - 30s] Wait Hours by Submit Time: Total","[30s - 30min] Wait Hours by Submit Time: Total","[30 - 60min] Wait Hours by Submit Time: Total","[1 - 5hr] Wait Hours by Submit Time: Total","[5 - 10hr] Wait Hours by Submit Time: Total","[10 - 18hr] Wait Hours by Submit Time: Total","[18+hr] Wait Hours by Submit Time: Total"
+2016-12,0.0022,1417.0328,2177.9314,1795.6292,23716.2794,25062.3008,2342.6519,224000.0378
+2017-01,0.0067,2.1600,1029.0836,95.0039,3636.5244,6782.8361,4784.8656,9503.1128
+---------
