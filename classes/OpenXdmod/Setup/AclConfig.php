@@ -36,7 +36,8 @@ MSG;
 
         $output = shell_exec($cmd);
 
-        $hadError = strpos($output, 'error') !== false;
+        $output = $output ?? '';
+        $hadError = str_contains($output, 'error');
 
         if ($hadError == true) {
             $this->console->displayBlankLine();
