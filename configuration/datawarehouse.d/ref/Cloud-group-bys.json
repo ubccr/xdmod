@@ -25,7 +25,7 @@
                 }
             ],
             "orderby": [
-                "instance_type_id"
+                "display"
             ],
             "query_hint": "DISTINCT"
         },
