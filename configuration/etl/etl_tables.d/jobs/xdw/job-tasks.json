@@ -173,6 +173,12 @@
                 "comment": "Time the job waited in the queue"
             },
             {
+                "name": "eligible_waitduration",
+                "type": "int(11)",
+                "nullable": true,
+                "comment": "Time the job waited in the queue, measured from the time it became eligible to run. NULL if the job's eligible time is not known."
+            },
+            {
                 "name": "cpu_time",
                 "type": "decimal(18,0)",
                 "nullable": false,

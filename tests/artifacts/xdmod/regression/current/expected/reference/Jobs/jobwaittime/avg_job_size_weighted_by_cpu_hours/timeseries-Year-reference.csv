@@ -1,5 +1,5 @@
 title
-"Job Size: Weighted By CPU Hours (Core Count): by Job Wait Time"
+"Job Size: Weighted By CPU Hours (Core Count): by Job Wait Time: Submit Time"
 parameters
 
 start,end

@@ -1,0 +1,17 @@
+title
+"Node Hours: Total: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time: Eligible Time","Node Hours: Total"
+"0 - 1s",9450.1453
+"1 - 30s",22166.8731
+"30s - 30min",79728.8822
+"30 - 60min",1294.0506
+"1 - 5hr",15211.2039
+"5 - 10hr",7170.0667
+"10 - 18hr",966.6325
+18+hr,20318.2383
+---------

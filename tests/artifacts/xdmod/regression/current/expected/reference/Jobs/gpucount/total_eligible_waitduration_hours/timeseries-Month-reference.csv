@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Total: by GPU Count"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[0] Wait Hours by Eligible Time: Total","[2] Wait Hours by Eligible Time: Total"
+2016-12,276020.8897,0.0003
+2017-01,25833.3778,0.0000
+---------
