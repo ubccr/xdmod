@@ -28,6 +28,7 @@ class JobViewerTest extends BaseTest
             'parentscience',
             'gpucount',
             'jobsize',
+            'jobeligiblewaittime',
             'jobwaittime',
             'jobwalltime',
             'nodecount',

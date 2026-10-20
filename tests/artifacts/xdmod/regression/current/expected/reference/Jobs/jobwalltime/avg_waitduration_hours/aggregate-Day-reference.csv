@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by Job Wall Time"
+"Wait Hours by Submit Time: Per Job: by Job Wall Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Wall Time","Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+"Job Wall Time","Wait Hours by Submit Time: Per Job","Std Dev: Wait Hours by Submit Time: Per Job"
 "0 - 1s",1.75797943,0.07225916089808289
 "1 - 30s",1.34280665,0.027298224161272592
 "30s - 30min",4.78146508,0.1585947247097037

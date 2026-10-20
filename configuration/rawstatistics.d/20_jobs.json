@@ -315,6 +315,15 @@
                 "batchExport": true
             },
             {
+                "name": "Eligible Wait Time",
+                "tableAlias": "jt",
+                "column": "eligible_waitduration",
+                "group": "Timing",
+                "units": "seconds",
+                "documentation": "Time the job waited in the queue, measured from the time it became eligible to run. There is no value for jobs with no reported eligible time: null in the REST API and JSON export, and an empty field in the CSV export.",
+                "batchExport": true
+            },
+            {
                 "name": "Core Time",
                 "tableAlias": "jt",
                 "column": "cpu_time",

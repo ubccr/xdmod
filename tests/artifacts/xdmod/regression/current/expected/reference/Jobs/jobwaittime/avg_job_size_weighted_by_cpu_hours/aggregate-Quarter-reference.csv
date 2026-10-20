@@ -1,11 +1,11 @@
 title
-"Job Size: Weighted By CPU Hours (Core Count): by Job Wait Time"
+"Job Size: Weighted By CPU Hours (Core Count): by Job Wait Time: Submit Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Wait Time","Job Size: Weighted By CPU Hours (Core Count)"
+"Job Wait Time: Submit Time","Job Size: Weighted By CPU Hours (Core Count)"
 "0 - 1s",84.5716
 "1 - 30s",86.2606
 "30s - 30min",16.6399

@@ -84,7 +84,10 @@ JOIN (
 WHERE $whereClause
 GROUP BY
   ud.id,
+  ud.last_name,
+  ud.first_name,
   ud.email_address,
+  ud.username,
   ud.type,
   ud.role_list,
   timeframe

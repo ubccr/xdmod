@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by PI Group"
+"Wait Hours by Submit Time: Per Job: by PI Group"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"PI Group","Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+"PI Group","Wait Hours by Submit Time: Per Job","Std Dev: Wait Hours by Submit Time: Per Job"
 "Galactic Astronomy",214.25581950,2.0529931333004057
 "Cell Biology",71.34538580,15.241596218036447
 "Polar Aeronomy and Astrophysics",52.74111111,37.29241880267786

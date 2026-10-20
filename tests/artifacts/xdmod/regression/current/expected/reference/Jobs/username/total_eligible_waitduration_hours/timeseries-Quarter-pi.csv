@@ -1,0 +1,12 @@
+title
+"Wait Hours by Eligible Time: Total: by System Username"
+parameters
+
+"*Restricted To: PI = Tern, C OR User = Tern, C"
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[swath] Wait Hours by Eligible Time: Total","[ovenb] Wait Hours by Eligible Time: Total","[sante] Wait Hours by Eligible Time: Total","[ybsbu] Wait Hours by Eligible Time: Total","[litst] Wait Hours by Eligible Time: Total","[savsp] Wait Hours by Eligible Time: Total"
+"2016 Q4",163339.9806,94.3467,28.5511,12.9547,0.9917,0.3586
+"2017 Q1",0,0.0000,0,0,0,0.0067
+---------
