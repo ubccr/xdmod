@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by Node Count"
+"Wait Hours by Submit Time: Per Job: by Node Count"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Node Count","Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+"Node Count","Wait Hours by Submit Time: Per Job","Std Dev: Wait Hours by Submit Time: Per Job"
 20,31.02180556,3.7428536858056267
 8,23.32822222,3.5623533676578716
 2,12.75819728,1.7916575165582784

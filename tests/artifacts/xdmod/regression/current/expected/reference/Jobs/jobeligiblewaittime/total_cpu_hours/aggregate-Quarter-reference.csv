@@ -1,0 +1,17 @@
+title
+"CPU Hours: Total: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"Job Wait Time: Eligible Time","CPU Hours: Total"
+"0 - 1s",114466.7067
+"1 - 30s",197099.0106
+"30s - 30min",132443.3014
+"30 - 60min",6972.5603
+"1 - 5hr",114549.0461
+"5 - 10hr",34639.6350
+"10 - 18hr",12186.1800
+18+hr,228227.5369
+---------

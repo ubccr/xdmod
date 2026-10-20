@@ -1,0 +1,11 @@
+title
+"CPU Hours: Per Job: by Job Wait Time: Eligible Time"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[0 - 1s] CPU Hours: Per Job","[1 - 30s] CPU Hours: Per Job","[30s - 30min] CPU Hours: Per Job","[30 - 60min] CPU Hours: Per Job","[1 - 5hr] CPU Hours: Per Job","[5 - 10hr] CPU Hours: Per Job","[10 - 18hr] CPU Hours: Per Job","[18+hr] CPU Hours: Per Job"
+2016,10.85106700,13.96381119,8.64497398,2.57788241,8.09504805,8.93785325,45.17256881,99.08735719
+2017,2.44400356,2.18916975,3.55257480,3.34142435,14.13310754,7.82510600,5.47672131,8.05138465
+---------

@@ -1,0 +1,12 @@
+title
+"Wait Hours by Eligible Time: Per Job: by User Institution"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+"User Institution","Wait Hours by Eligible Time: Per Job","Std Dev: Wait Hours by Eligible Time: Per Job"
+"screw - Screwdriver",11.30638697,0.37145533251395413
+"wrench - Wrench",2.17312447,0.028918696550445048
+"Unknown - Unknown Organization",0.96649356,0.19604433605096497
+---------

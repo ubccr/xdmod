@@ -1,11 +1,11 @@
 title
-"Wait Hours: Per Job: by User"
+"Wait Hours by Submit Time: Per Job: by User"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-User,"Wait Hours: Per Job","Std Dev: Wait Hours: Per Job"
+User,"Wait Hours by Submit Time: Per Job","Std Dev: Wait Hours by Submit Time: Per Job"
 "Treecreeper, Short-toed",233.46900253,27.708500592959215
 "Thrush, Swainson's",229.08833216,0.3165144562337443
 "Pipit, Meadow",81.66292824,7.183771270440662

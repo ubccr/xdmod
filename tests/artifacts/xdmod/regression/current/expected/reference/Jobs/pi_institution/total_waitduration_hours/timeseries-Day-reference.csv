@@ -1,11 +1,11 @@
 title
-"Wait Hours: Total: by PI Institution"
+"Wait Hours by Submit Time: Total: by PI Institution"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-Day,"[screw - Screwdriver] Wait Hours: Total","[wrench - Wrench] Wait Hours: Total"
+Day,"[screw - Screwdriver] Wait Hours by Submit Time: Total","[wrench - Wrench] Wait Hours by Submit Time: Total"
 2016-12-22,0.0003,9.3322
 2016-12-23,9.5964,0.0000
 2016-12-24,0.0000,0.0000

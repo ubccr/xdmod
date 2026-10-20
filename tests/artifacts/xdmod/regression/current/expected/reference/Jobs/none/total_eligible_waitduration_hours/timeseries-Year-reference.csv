@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Total"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[Screwdriver] Wait Hours by Eligible Time: Total"
+2016,276020.8900
+2017,25833.3778
+---------

@@ -1,11 +1,11 @@
 title
-"Node Hours: Per Job: by Job Wait Time"
+"Node Hours: Per Job: by Job Wait Time: Submit Time"
 parameters
 
 start,end
 2016-12-22,2017-01-01
 ---------
-"Job Wait Time","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
+"Job Wait Time: Submit Time","Node Hours: Per Job","Std Dev: Node Hours: Per Job"
 "0 - 1s",0.76837495,0.075246069816645
 "1 - 30s",1.21292643,0.06540317334738192
 "30s - 30min",4.44541052,0.060029614994566785
