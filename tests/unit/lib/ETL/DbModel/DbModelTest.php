@@ -10,7 +10,7 @@
 namespace UnitTests\ETL\DbModel;
 
 use CCR\Log;
-use ETL\Utilities;
+use ETL\DbModel\Entity;
 use ETL\VariableStore;
 use ETL\DbModel\Table;
 use ETL\DbModel\AggregationTable;
@@ -19,7 +19,6 @@ use ETL\DbModel\Column;
 use ETL\DbModel\Index;
 use ETL\DbModel\ForeignKeyConstraint;
 use ETL\DbModel\Trigger;
-use ETL\Configuration\EtlConfiguration;
 use Exception;
 use Psr\Log\LoggerInterface;
 
@@ -234,7 +233,7 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $generated);
 
         // Test with no system quote character
-        $obj = new Index($config, null, self::$logger);
+        $obj = new Index($config, '', self::$logger);
         $generated = $obj->getSql();
         $expected = "INDEX index_col1_col2 (col1, col2)";
         $this->assertEquals($expected, $generated);
@@ -252,7 +251,7 @@ class DbModelTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expected, $generated);
 
         // Test with no system quote character
-        $obj = new ForeignKeyConstraint($config, null, self::$logger);
+        $obj = new ForeignKeyConstraint($config, '', self::$logger);
         $generated = $obj->getSql();
         $expected = "CONSTRAINT fk_col1_col2 FOREIGN KEY (col1, col2) REFERENCES other_table (col3, col4)";
         $this->assertEquals($expected, $generated);

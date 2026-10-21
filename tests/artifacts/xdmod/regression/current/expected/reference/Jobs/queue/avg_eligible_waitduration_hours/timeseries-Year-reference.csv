@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Per Job: by Queue"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Year,"[white] Wait Hours by Eligible Time: Per Job","[nann] Wait Hours by Eligible Time: Per Job","[brioche] Wait Hours by Eligible Time: Per Job","[cornbread] Wait Hours by Eligible Time: Per Job","[roti] Wait Hours by Eligible Time: Per Job","[black] Wait Hours by Eligible Time: Per Job","[pikelet] Wait Hours by Eligible Time: Per Job","[croutons] Wait Hours by Eligible Time: Per Job","[chapti] Wait Hours by Eligible Time: Per Job","[focaccia] Wait Hours by Eligible Time: Per Job","[barm] Wait Hours by Eligible Time: Per Job","[panettone] Wait Hours by Eligible Time: Per Job","[bannock] Wait Hours by Eligible Time: Per Job","[potbrood] Wait Hours by Eligible Time: Per Job","[brown] Wait Hours by Eligible Time: Per Job","[crumpet] Wait Hours by Eligible Time: Per Job","[pumpernickel] Wait Hours by Eligible Time: Per Job","[pita] Wait Hours by Eligible Time: Per Job"
+2016,25.20948677,0.02019097,4.57930556,4.12882576,3.71197531,1.06375875,0.68931866,0.22325159,0.16736111,0.00027778,0.00444444,0.00100000,0.00090278,0.00039427,0.00016493,0.00019231,0.00000000,0.00004630
+2017,3.20242394,10.26755477,0.00000000,0.00666667,0,0.71877507,0.00000000,0.11565476,0,0.10273148,0.00000000,0,0.00011111,0.00020531,0.00016865,0.00014550,0.00027778,0.00000000
+---------
