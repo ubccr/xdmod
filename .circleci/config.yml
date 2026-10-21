@@ -48,7 +48,7 @@ jobs:
       - run:
           name: Copy Files for Playwright and XDMoD containers
           command: |
-            docker cp ~/rpmbuild xdmod:/root/rpmbuild
+            docker cp ~/project/rpmbuild xdmod:/root/rpmbuild
             docker cp ~/project xdmod:/root/xdmod
             docker cp ~/project playwright:/root/xdmod
       - run:
