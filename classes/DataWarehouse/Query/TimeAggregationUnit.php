@@ -219,7 +219,7 @@ abstract class TimeAggregationUnit
      */
     public static function deriveAggregationUnitName($time_period, $start_date, $end_date, $min_aggregation_unit = null)
     {
-        $time_period = strtolower($time_period ?? 'auto');
+        $time_period = strtolower($time_period ?? '');
 
         if ($time_period === 'auto') {
             $dt_format = '!Y-m-d';
