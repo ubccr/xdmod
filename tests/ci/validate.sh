@@ -74,14 +74,14 @@ for PAGE in "${PAGES[@]}"; do
 done
 
 # Check if user manual is being properly hosted by the webserver
-MANUAL_URL=https://localhost:443/user_manual/index.html
+MANUAL_URL=https://xdmod/user_manual/index.html
 if [ !$(curl -I -s -o /dev/null -w "%{http_code}" -k $MANUAL_URL) == "200" ];
 then
     echo "Non 200 response from $MANUAL_URL"
     exitcode=1
 fi
 
-if !(curl -s -k https://localhost:443/user_manual/index.html | grep -q h1)
+if !(curl -s -k $MANUAL_URL | grep -q h1)
 then
     echo "User manual pages unavailable at $MANUAL_URL"
     exitcode=1
