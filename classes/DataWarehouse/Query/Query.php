@@ -638,7 +638,7 @@ class Query extends Loggable
         $name_field = $select_fields[ sprintf('%s_name', $primaryGroupById) ];
         $short_name_field = $select_fields[ sprintf('%s_short_name', $primaryGroupById) ];
 
-        $groups_str = implode(', ', $groups);
+        $groups_str = "$id_field, $name_field, $short_name_field, _dimensionOrderValue";
 
         $orders = $this->getOrders();
         $num_orders = count($orders);
