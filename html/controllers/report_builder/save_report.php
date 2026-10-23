@@ -56,6 +56,27 @@ try {
     $report_header = mb_convert_encoding($_POST['report_header'], ReportGenerator::REPORT_CHAR_ENCODING, 'UTF-8');
     $report_footer = mb_convert_encoding($_POST['report_footer'], ReportGenerator::REPORT_CHAR_ENCODING, 'UTF-8');
 
+    // The report builder limits these fields in the browser, but that check is not applied to a
+    // request that arrives by any other route. Check the lengths here so that an over-long value
+    // is reported back to the user instead of reaching the database, where it would either be
+    // silently truncated or, with MySQL in strict mode, fail the whole save.
+    //
+    // The columns are counted in characters rather than bytes, and these values have already been
+    // converted away from UTF-8, so the encoding has to be named explicitly.
+    $reportFieldLimits = array(
+        'Report name' => array($report_name, CHARLIM_REPORT_NAME),
+        'Report title' => array($report_title, CHARLIM_REPORT_TITLE),
+        'Report header' => array($report_header, CHARLIM_REPORT_HEADER),
+        'Report footer' => array($report_footer, CHARLIM_REPORT_FOOTER)
+    );
+
+    foreach ($reportFieldLimits as $fieldLabel => $fieldInfo) {
+        list($fieldValue, $fieldLimit) = $fieldInfo;
+        if (mb_strlen($fieldValue, ReportGenerator::REPORT_CHAR_ENCODING) > $fieldLimit) {
+            \xd_response\presentError("$fieldLabel must be $fieldLimit characters or fewer.");
+        }
+    }
+
     $rm->configureSelectedReport(
         $report_id,
         $report_name,

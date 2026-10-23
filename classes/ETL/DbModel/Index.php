@@ -37,7 +37,7 @@ class Index extends NamedEntity implements iEntity
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($config, $systemQuoteChar = null, LoggerInterface $logger = null)
+    public function __construct($config, string $systemQuoteChar = '', LoggerInterface $logger = null)
     {
         // Property merging is performed first so the values can be used in the constructor
         parent::mergeProperties($this->localRequiredProperties, $this->localProperties);
