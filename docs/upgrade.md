@@ -55,7 +55,7 @@ RPM file.
 - [Job Performance (SUPReMM)](https://supremm.xdmod.org/{{ page.version }}/supremm-upgrade.html)
 - [OnDemand](https://ondemand.xdmod.org/{{ page.version }}/upgrade.html)
 
-The nodejs dependency changed from version 16 to 24. If you installed nodejs
+In Open XDMoD 11.5.0 the Node.js dependency has changed from version 16 to 24. If you installed Node.js
 using dnf modules then update the module as follows:
 
     # dnf module reset nodejs
