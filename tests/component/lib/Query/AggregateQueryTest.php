@@ -589,7 +589,7 @@ SELECT
   person.order_id AS _dimensionOrderValue
 FROM modw.person person
 WHERE person.id IN ( SELECT modw_filters.Jobs_person.person FROM modw_filters.Jobs_person )
-GROUP BY id, name, short_name, _dimensionOrderValue
+GROUP BY person.id, person.long_name, person.short_name, _dimensionOrderValue
 ORDER BY person.order_id ASC
 SQL;
         $this->assertEquals($expected, $generated, 'Aggregate query dimension values');
