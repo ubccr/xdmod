@@ -23,6 +23,11 @@ class TableField extends Field
         return $ret;
     }
 
+    public function getFieldIdentifier()
+    {
+        return "{$this->_table->getAlias()}.{$this->getDefinition()}";
+    }
+
     public function __toString()
     {
         return $this->_table->getAlias().'.'.$this->getDefinition();

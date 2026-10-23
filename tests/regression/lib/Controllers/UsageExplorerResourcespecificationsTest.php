@@ -56,14 +56,6 @@ class UsageExplorerResourcespecificationsTest extends TestCase
             'allocated_cpu_node_hours',
             'total_gpu_node_hours',
             'allocated_gpu_node_hours',
-            'total_avg_number_of_cpu_nodes',
-            'allocated_avg_number_of_cpu_nodes',
-            'total_avg_number_of_gpu_nodes',
-            'allocated_avg_number_of_gpu_nodes',
-            'total_avg_number_of_cpu_cores',
-            'allocated_avg_number_of_cpu_cores',
-            'total_avg_number_of_gpus',
-            'allocated_avg_number_of_gpus'
         ];
 
         $groupBys = [
