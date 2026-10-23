@@ -227,7 +227,7 @@ class Column extends NamedEntity implements iEntity
                         'on update current_timestamp' === strtolower($srcExtra)
                     )
                 )
-                && ((!is_null($destDefault) && 'current_timestamp' != strtolower($destDefault)) || null === $destExtra)
+                && (null === $destDefault || 'current_timestamp' != strtolower($destDefault) || null === $destExtra)
             ) {
                 $this->logCompareFailure('timestamp', "$srcDefault $srcExtra", "$destDefault $destExtra", $this->name);
                 return -1;
@@ -266,7 +266,7 @@ class Column extends NamedEntity implements iEntity
                 if ( $srcExtra != $destExtra ) {
                     $this->logCompareFailure('timestamp extra', $srcExtra, $destExtra, $this->name);
                     return -1;
-                } elseif ( strtolower($srcDefault) != strtolower($destDefault)
+                } elseif ( strtolower($srcDefault) != strtolower($destDefault ?? '')
                             && ( ("0" == "$srcDefault" && '0000-00-00 00:00:00' != $destDefault)
                                  || ("0" != "$srcDefault" && $srcDefault . ' 00:00:00' != $destDefault)) )
                 {

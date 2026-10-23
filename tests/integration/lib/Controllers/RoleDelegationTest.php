@@ -3,6 +3,7 @@
 namespace IntegrationTests\Controllers;
 
 use CCR\Json;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * This class conducts a series of tests meant to exercise the promotion /
@@ -56,7 +57,7 @@ class RoleDelegationTest extends BaseUserAdminTest
         $this->helper->authenticate($user);
 
         $response = $this->helper->post('controllers/role_manager.php', null, $data);
-        $this->validateResponse($response, 200, 'application/json');
+        $this->validateResponse($response, Response::HTTP_OK, 'application/json');
 
         $expected = JSON::loadFile($this->getTestFiles()->getFile('role_delegation', $expectedFileName));
         if ($response[0] !== $expected) {
@@ -156,7 +157,7 @@ class RoleDelegationTest extends BaseUserAdminTest
         $this->helper->authenticate($user);
 
         $response = $this->helper->post('controllers/role_manager.php', null, $data);
-        $this->validateResponse($response, 200, 'application/json');
+        $this->validateResponse($response, Response::HTTP_OK, 'application/json');
 
         $content = $response[0];
         $expected = JSON::loadFile($this->getTestFiles()->getFile('role_delegation', $expectedFileName));
