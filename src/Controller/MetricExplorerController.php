@@ -2,6 +2,7 @@
 
 namespace CCR\Controller;
 
+use CCR\Security\Attributes\MustBeLoggedIn;
 use DataWarehouse;
 use DataWarehouse\Access\MetricExplorer;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
@@ -16,7 +17,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use XDUser;
 use function xd_response\buildError;
 
@@ -43,6 +46,7 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[MustBeLoggedIn]
     #[Route('{prefix}metrics/explorer/queries', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getQueries(Request $request): Response
     {
@@ -54,7 +58,7 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
             if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
                 $data = $queries->get();
@@ -88,6 +92,7 @@ class MetricExplorerController extends BaseController
      * @param string $queryId
      * @return Response
      */
+    #[MustBeLoggedIn]
     #[Route('{prefix}metrics/explorer/queries/{queryId}', requirements: ["queryId"=>"\w+", 'prefix' => '.*'], methods: ['GET'])]
     public function getQueryByid(Request $request, string $queryId): Response
     {
@@ -99,7 +104,7 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
             if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
 
@@ -134,6 +139,7 @@ class MetricExplorerController extends BaseController
      * @param Request $request
      * @return Response
      */
+    #[MustBeLoggedIn]
     #[Route('{prefix}metrics/explorer/queries', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function createQuery(Request $request): Response
     {
@@ -144,7 +150,7 @@ class MetricExplorerController extends BaseController
         );
         $statusCode = 401;
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
             if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
                 $data = $request->get('data');
@@ -190,6 +196,7 @@ class MetricExplorerController extends BaseController
      * @param string $queryId
      * @return Response
      */
+    #[MustBeLoggedIn]
     #[Route('{prefix}metrics/explorer/queries/{queryId}', requirements: ["queryId"=> "\w+", 'prefix' => '.*'], methods: ['PUT', "POST"])]
     public function updateQueryById(Request $request, string $queryId): Response
     {
@@ -202,7 +209,7 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
             if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
 
@@ -267,6 +274,7 @@ class MetricExplorerController extends BaseController
      * @param string $queryId
      * @return Response
      */
+    #[MustBeLoggedIn]
     #[Route('{prefix}metrics/explorer/queries/{queryId}', requirements: ["queryId"=> "\w+", 'prefix' => '.*'], methods: ['DELETE'])]
     public function deleteQueryById(Request $request, string $queryId): Response
     {
@@ -279,7 +287,7 @@ class MetricExplorerController extends BaseController
         $statusCode = 401;
 
         try {
-            $user = $this->authorize($request);
+            $user = $this->getXDUser();
             if (isset($user)) {
                 $queries = new \UserStorage($user, self::QUERIES_STORE);
                 $query = $queries->getById($queryId);
@@ -369,24 +377,27 @@ class MetricExplorerController extends BaseController
         try {
             switch ($operation) {
                 case 'get_data':
-                    return $this->getData($request);
+                    return $this->forward('CCR\Controller\MetricExplorerController::getData', ['request' => $request]);
                 case 'get_dimension':
-                    return $this->getDimensionValues($request);
+                    return $this->forward('CCR\Controller\MetricExplorerController::getDimensionValues', ['request' => $request]);
                 case 'get_dw_descripter':
-                    return $this->getDwDescriptors($request);
+                    return $this->forward('CCR\Controller\MetricExplorerController::getDwDescriptors');
                 case 'get_filters':
-                    return $this->getFilters($request);
+                    return $this->forward('CCR\Controller\MetricExplorerController::getFilters');
                 case 'get_rawdata':
-                    return $this->getRawData($request);
+                    return $this->forward('CCR\Controller\MetricExplorerController::getRawData', ['request' => $request]);
             }
         } catch (\Exception $e) {
             return $this->json(buildError($e));
         }
 
-        return $this->json([
-            'success' => false,
-            'message' => 'Unknown Operation provided.'
-        ]);
+        return $this->json(
+            [
+                'success' => false,
+                'message' => 'Unknown Operation provided.'
+            ],
+            Response::HTTP_BAD_REQUEST
+        );
     }
 
 
@@ -399,22 +410,14 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/data', requirements: ['prefix' => '.*'], methods: ['POST', 'GET'])]
     public function getData(Request $request): Response
     {
-        $user = $this->detectUser($request, [XDUser::INTERNAL_USER, XDUser::PUBLIC_USER]);
+        $user = $this->getXDUser();
 
         $params = array_merge($request->query->all(), $request->request->all());
         $m = new \DataWarehouse\Access\MetricExplorer($params);
-        try {
-            $result = $m->get_data($user);
-            return new Response($result['results'], 200, $result['headers']);
-        } catch (Exception $e) {
-            return $this->json(
-                [
-                    'success' => false,
-                    'message' => $e->getMessage()
-                ],
-                400
-            );
-        }
+
+        $result = $m->get_data($user);
+        return new Response($result['results'], 200, $result['headers']);
+
     }
 
 
@@ -429,22 +432,10 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/dimension/values', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getDimensionValues(Request $request): Response
     {
-        try {
-            $user = $this->tokenHelper->authenticate($request, false);
-
-            // If token authentication failed then fallback to the standard session based authentication method.
-            if ($user === null) {
-                $user = $this->detectUser($request, array(\XDUser::PUBLIC_USER));
-            }
-        } catch (Exception $e) {
-            return $this->json(
-                buildError(new Exception('Session Expired', 2)),
-                401
-            );
-        }
+        $user = $this->getXDUser();
 
         $dimensionId = $this->getStringParam($request, 'dimension_id', true);
-        $offset = $this->getStringParam($request ,'start');
+        $offset = $this->getStringParam($request, 'start');
         if (empty($offset)) {
             $offset = 0;
         }
@@ -458,7 +449,7 @@ class MetricExplorerController extends BaseController
 
         $realms = $this->getStringParam($request, 'realm', false);
         if ($realms !== null) {
-            $realms = preg_split('/,\s*/', trim($realms), null, PREG_SPLIT_NO_EMPTY);
+            $realms = preg_split('/,\s*/', trim($realms), -1, PREG_SPLIT_NO_EMPTY);
         }
 
         return $this->json(MetricExplorer::getDimensionValues(
@@ -478,23 +469,10 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception if unable to get the currently logged in user.
      */
-    #[Route('{prefix}metrics/explorer/get_dw_descripter',requirements: ['prefix' => '.*'], methods: ['POST'])]
-    public function getDwDescriptors(Request $request): Response
+    #[Route('{prefix}metrics/explorer/get_dw_descripter', requirements: ['prefix' => '.*'], methods: ['POST'])]
+    public function getDwDescriptors(): Response
     {
-        try {
-            $user = $this->tokenHelper->authenticate($request, false);
-
-            // If token authentication failed then fallback to the standard session based authentication method.
-            if ($user === null) {
-                $user = $this->getLoggedInUser($request->getSession());
-            }
-        } catch (Exception $e) {
-            return $this->json(
-                buildError(new Exception('Session Expired', 2)),
-                401
-            );
-        }
-
+        $user = $this->getXDUser();
 
         $roles = $user->getAllRoles(true);
 
@@ -642,12 +620,20 @@ class MetricExplorerController extends BaseController
      * @return Response
      * @throws Exception if unable to retrieve the currently logged in user.
      */
+    #[MustBeLoggedIn]
     #[Route('{prefix}metrics/explorer/filters', requirements: ['prefix' => '.*'], methods: ['POST'])]
-    public function getFilters(Request $request): Response
+    public function getFilters(): Response
     {
-        try {
-            $user = $this->getLoggedInUser($request->getSession());
+        $user = $this->getXDUser();
 
+        $returnData = [
+            'totalCount' => 0,
+            'message' => 'success',
+            'data' => [],
+            'success' => true
+        ];
+
+        try {
             $userProfile = $user->getProfile();
             $filters = $userProfile->fetchValue('filters');
             if ($filters != null) {
@@ -658,15 +644,7 @@ class MetricExplorerController extends BaseController
                     'data' => $filtersArray,
                     'success' => true
                 ];
-            } else {
-                $returnData = [
-                    'totalCount' => 0,
-                    'message' => 'success',
-                    'data' => [],
-                    'success' => true
-                ];
             }
-
         } catch (SessionExpiredException $see) {
             // TODO: Refactor generic catch block below to handle specific exceptions,
             //       which would allow this block to be removed.
@@ -691,7 +669,7 @@ class MetricExplorerController extends BaseController
     #[Route('{prefix}metrics/explorer/raw_data', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getRawData(Request $request): Response
     {
-        $user = $this->detectUser($request, array(XDUser::INTERNAL_USER, XDUser::PUBLIC_USER));
+        $user = $this->getXDUser();
 
         try {
             $requestedFormat = $this->getStringParam($request, 'format');
@@ -868,7 +846,7 @@ class MetricExplorerController extends BaseController
                 if ($offsetParam === null && !empty($limit)) {
                     $offset = null;
                 }
-                $ret['data'] = $dataset->getResults($limit, $offset,false, false, null, null, $this->logger);
+                $ret['data'] = $dataset->getResults($limit, $offset, false, false, null, null, $this->logger);
                 $ret['totalCount'] = $totalCount;
 
                 return $this->json($ret);

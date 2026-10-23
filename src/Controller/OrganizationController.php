@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace CCR\Controller;
 
 use Exception;
+use CCR\Security\Attributes\CenterDirectorRequired;
 use Models\Services\Centers;
 use Models\Services\Users;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,6 +25,7 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[CenterDirectorRequired]
     #[Route('/controllers/role_manager.php')]
     public function index(Request $request): Response
     {
@@ -32,22 +34,6 @@ class OrganizationController extends BaseController
             name: 'operation',
             mandatory: true
         );
-
-        if (in_array($operation, ['upgrade_member', 'downgrade_member'])) {
-            try {
-                $user = $this->authorize($request, [ROLE_ID_CENTER_DIRECTOR], true);
-            } catch (Exception $e) {
-                return $this->json(
-                    [
-                        "status" => "not_a_center_director",
-                        "success" => false,
-                        "totalCount" => 0,
-                        "message" => "not_a_center_director",
-                        "data" => []
-                    ]
-                );
-            }
-        }
 
         $forwardTo = null;
         switch($operation) {
@@ -94,10 +80,11 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[CenterDirectorRequired]
     #[Route('{prefix}organizations/members', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getMembers(Request $request): Response
     {
-        $user = $this->authorize($request, $this->getParameter('center_related_acls'), true);
+        $user = $this->getXDUser();
         $members = Users::getUsersAssociatedWithCenter($user->getUserID());
 
         return $this->json([
@@ -114,10 +101,11 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[CenterDirectorRequired]
     #[Route('{prefix}organizations/members/{memberID}/status', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function getMemberStatus(Request $request, string $memberID): Response
     {
-        $user = $this->authorize($request, $this->getParameter('center_related_acls'), true);
+        $user = $this->getXDUser();
 
         $returnData = [
             'success' => true,
@@ -164,32 +152,17 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[CenterDirectorRequired]
     #[Route('{prefix}organizations/members/{memberID}/upgrade', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function upgradeMember(Request $request, string $memberID): Response
     {
-        try {
-            $user = $this->authorize($request, [ROLE_ID_CENTER_DIRECTOR], true);
-            $this->logger->error('Successfully Authenticated requesting user has CD');
-        } catch (Exception $e) {
-            return $this->json(
-                [
-                    "status" => "not_a_center_director",
-                    "success" => false,
-                    "totalCount" => 0,
-                    "message" => "not_a_center_director",
-                    "data" => []
-                ]
-            );
-        }
+        $user = $this->getXDUser();
 
         $returnData = [];
 
-        // Ensure that the user performing this operation is authorized
-        if (!$user->hasAcl(ROLE_ID_CENTER_DIRECTOR) || !$user->getAccountStatus()) {
-            return $this->json([
-                'success' => false,
-                'message' => 'You are not authorized to perform this action'
-            ]);
+        list($member, $error) = $this->getValidXDUser($memberID);
+        if (isset($error)) {
+            return $error;
         }
 
         list($member, $error) = $this->getValidXDUser($memberID);
@@ -200,7 +173,7 @@ class OrganizationController extends BaseController
 
         // An eligible user must be associated with the currently logged in users center.
         if (!Users::userIsAssociatedWithCenter($memberID, $organization)) {
-            $this->json(\xd_response\buildError('center_mismatch_between_member_and_director'));
+            $this->json(buildError('center_mismatch_between_member_and_director'));
         }
 
         // They must not already be a Center Director for the organization.
@@ -231,22 +204,11 @@ class OrganizationController extends BaseController
      * @return Response
      * @throws Exception
      */
+    #[CenterDirectorRequired]
     #[Route('{prefix}organizations/members/{memberID}/downgrade', requirements: ['prefix' => '.*'], methods: ['POST'])]
     public function downgradeMember(Request $request, ?string $memberID): Response
     {
-        try {
-            $user = $this->authorize($request, [ROLE_ID_CENTER_DIRECTOR], true);
-        } catch (Exception $e) {
-            return $this->json(
-                [
-                    "status" => "not_a_center_director",
-                    "success" => false,
-                    "totalCount" => 0,
-                    "message" => "not_a_center_director",
-                    "data" => []
-                ]
-            );
-        }
+        $user = $this->getXDUser();
 
         list($member, $error) = $this->getValidXDUser($memberID);
         if (isset($error)) {
@@ -256,7 +218,7 @@ class OrganizationController extends BaseController
 
         // An eligible user must be associated with the currently logged in users center.
         if (!Users::userIsAssociatedWithCenter($memberID, $organization)) {
-            return $this->json(\xd_response\buildError('center_mismatch_between_member_and_director'));
+            return $this->json(buildError('center_mismatch_between_member_and_director'));
         }
 
         Users::demoteUserFromCenterStaff($member, $organization);

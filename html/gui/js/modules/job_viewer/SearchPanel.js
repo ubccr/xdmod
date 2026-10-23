@@ -629,12 +629,12 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
 
         return new Ext.data.JsonStore({
             id: 'results_store',
-            url: XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/search/jobs',
+            url: self.jobViewer.rest.warehouse + '/search/jobs',
             proxy: new Ext.data.HttpProxy({
                 api: {
                     read: {
                         method: 'GET',
-                        url   : XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/search/jobs'
+                        url   : self.jobViewer.rest.warehouse + '/search/jobs'
                     }
                 }
             }),
@@ -943,12 +943,11 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                         enableKeyEvents: true,
                         store: new Ext.data.JsonStore({
                             proxy: new Ext.data.HttpProxy({
-                                url: XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/dimensions/resource',
+                                url: self.jobViewer.rest.warehouse + '/dimensions/resource',
                                 method: 'GET'
                             }),
                             baseParams: {
-                                realm: CCR.xdmod.ui.rawDataAllowedRealms[0],
-                                token: self.token
+                                realm: CCR.xdmod.ui.rawDataAllowedRealms[0]
                             },
                             storeId: 'jobviewer-basicsearch-resource',
                             autoLoad: true,
@@ -1111,10 +1110,9 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                                 store: new Ext.data.GroupingStore({
                                     proxy: new Ext.data.HttpProxy({
                                         method: 'GET',
-                                        url: XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/dimensions'
+                                        url: self.jobViewer.rest.warehouse + '/dimensions'
                                     }),
                                     baseParams: {
-                                        token: self.token,
                                         realm: CCR.xdmod.ui.rawDataAllowedRealms[0],
                                         querygroup: 'tg_usage'
 
@@ -1192,10 +1190,9 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                                 store: new Ext.data.JsonStore({
                                     proxy: new Ext.data.HttpProxy({
                                         method: 'GET',
-                                        url: XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/dimensions'
+                                        url: self.jobViewer.rest.warehouse + '/dimensions'
                                     }),
                                     baseParams: {
-                                        token: self.token,
                                         querygroup: 'tg_usage',
                                         realm: CCR.xdmod.ui.rawDataAllowedRealms[0],
                                         filter: 'true'
@@ -1465,7 +1462,7 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
 
         var realm = params.searchterms.params.realm;
         var idFragment = id !== undefined ? '/' + id : '';
-        var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse + '/search/history' + idFragment  + '?realm=' + realm + '&token=' + XDMoD.REST.token;
+        var url = self.jobViewer.rest.warehouse + '/search/history' + idFragment  + '?realm=' + realm;
 
         Ext.Ajax.request({
                 url: url,
@@ -1484,12 +1481,12 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
                         var dtype = search['dtype'];
                         var value = search[dtype];
 
-                        var newToken = ['realm=' + realm, dtype + '=' + value].join('&');
+                        var newHistoryToken = ['realm=' + realm, dtype + '=' + value].join('&');
                         var current = Ext.History.getToken();
-                        var token = CCR.tokenize(current);
-                        var tab = token && token.tab ? token.tab : self.jobViewer.id;
+                        var historyToken = CCR.tokenize(current);
+                        var tab = historyToken && historyToken.tab ? historyToken.tab : self.jobViewer.id;
 
-                        Ext.History.add("#" + tab + '?' + newToken);
+                        Ext.History.add("#" + tab + '?' + newHistoryToken);
                     }
                     self.fireEvent('close_search', self, true);
                 },
@@ -1674,8 +1671,8 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
      */
     _findFieldDisplay: function(field) {
         var self = this;
-        var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse +
-            '/dimensions/' + field + '/name?token=' + XDMoD.REST.token;
+        var url = self.jobViewer.rest.warehouse +
+            '/dimensions/' + field + '/name';
 
         return this._getPromise(url, ['results', 'name']);
     },
@@ -1691,10 +1688,10 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
      */
     _findFieldValueDisplay: function(field, value) {
         var self = this;
-        var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse +
+        var url = self.jobViewer.rest.warehouse +
             '/dimensions/' + field +
             '/values/' + value +
-            '/name?token=' + XDMoD.REST.token;
+            '/name';
 
         return this._getPromise(url, ['results', 'name']);
     },
@@ -1763,10 +1760,9 @@ XDMoD.Module.JobViewer.SearchPanel = Ext.extend(Ext.Panel, {
             var realm = this._getNodeValue(this._getParentNode(node, 'realm'), 'realm');
             realm = realm !== null ? realm : '';
 
-            var url = XDMoD.REST.url + '/' + self.jobViewer.rest.warehouse +
+            var url = self.jobViewer.rest.warehouse +
                     '/search/history/' + this.dtypeId +
-                    '?realm=' + realm +
-                    '&token=' + XDMoD.REST.token;
+                    '?realm=' + realm;
 
             this._getPromise(url, ['results'])
                 .then(function(results){
