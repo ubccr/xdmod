@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Total: by QOS"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Quarter,"[curry] Wait Hours by Eligible Time: Total","[banana-cream] Wait Hours by Eligible Time: Total","[derby] Wait Hours by Eligible Time: Total","[bumbleberry] Wait Hours by Eligible Time: Total","[bavarian-cream] Wait Hours by Eligible Time: Total","[apple] Wait Hours by Eligible Time: Total","[fish] Wait Hours by Eligible Time: Total","[blackberry] Wait Hours by Eligible Time: Total","[cashew] Wait Hours by Eligible Time: Total","[chestnut] Wait Hours by Eligible Time: Total","[blueberry] Wait Hours by Eligible Time: Total","[green-grape] Wait Hours by Eligible Time: Total","[boysenberry] Wait Hours by Eligible Time: Total","[buttermilk] Wait Hours by Eligible Time: Total","[cheese] Wait Hours by Eligible Time: Total","[coconut-cream] Wait Hours by Eligible Time: Total","[butter] Wait Hours by Eligible Time: Total","[cherry] Wait Hours by Eligible Time: Total","[flapper] Wait Hours by Eligible Time: Total"
+"2016 Q4",223693.0186,49247.8317,2665.4319,1.9639,182.9422,72.0419,64.3475,56.5503,36.5339,0.0003,0.1544,0.0236,0.0172,0.0106,0.0150,0.0025,0.0042,0.0003,0.0000
+"2017 Q1",16995.2972,6606.9167,9.5739,2186.9892,0.0067,33.3481,0,0.0000,0.0000,1.2328,0,0.0047,0.0000,0.0047,0,0.0031,0.0006,0.0000,0.0003
+---------

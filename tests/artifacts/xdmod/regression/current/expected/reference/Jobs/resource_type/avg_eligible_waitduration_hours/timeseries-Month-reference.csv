@@ -1,0 +1,11 @@
+title
+"Wait Hours by Eligible Time: Per Job: by Resource Type"
+parameters
+
+start,end
+2016-12-22,2017-01-01
+---------
+Month,"[High-performance computing] Wait Hours by Eligible Time: Per Job"
+2016-12,4.91052998
+2017-01,1.71036664
+---------

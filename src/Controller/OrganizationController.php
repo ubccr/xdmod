@@ -164,6 +164,11 @@ class OrganizationController extends BaseController
         if (isset($error)) {
             return $error;
         }
+
+        list($member, $error) = $this->getValidXDUser($memberID);
+        if (isset($error)) {
+            return $error;
+        }
         $organization = $user->getActiveOrganization();
 
         // An eligible user must be associated with the currently logged in users center.
