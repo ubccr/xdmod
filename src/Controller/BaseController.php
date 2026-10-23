@@ -474,13 +474,13 @@ class BaseController extends AbstractController
 
         $user = $this->getXDUser();
 
-        if ('' !== $captchaSiteKey && '' !== $captchaSecret && !isset($user)) {
+        if ('' !== $captchaSiteKey && '' !== $captchaSecret && $user->isPublicUser()) {
             $gCaptchaResponse = $request->get('g-recaptcha-response');
             if (!isset($gCaptchaResponse)) {
                 throw new BadRequestHttpException('Recaptcha information not specified');
             }
             $recaptcha = new \ReCaptcha\ReCaptcha($captchaSecret);
-            $resp = $recaptcha->verify($gCaptchaResponse, $_SERVER['REMOTE_ADDR']);
+            $resp = $recaptcha->verify($gCaptchaResponse, $request->server->get('REMOTE_ADDR'));
             if (!$resp->isSuccess()) {
                 $errors = $resp->getErrorCodes();
                 throw new BadRequestHttpException(sprintf('You must enter the words in the Recaptcha box properly. %s', print_r($errors, true)));

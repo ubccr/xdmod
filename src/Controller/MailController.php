@@ -50,9 +50,7 @@ class MailController extends BaseController
      */
     private function contact(Request $request, ?XDUser $user): Response
     {
-        if (!isset($user)) {
-            $user = XDUser::getPublicUser();
-        }
+        $user = $this->getXDUser();
 
         $name = $this->getStringParam($request, 'name', true, null, RESTRICTION_FIRST_NAME);
         // This variable is overwritten before it is used. I'm leaving it here for now but it should be removed after
