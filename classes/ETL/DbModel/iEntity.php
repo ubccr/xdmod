@@ -31,7 +31,7 @@ interface iEntity
      * ------------------------------------------------------------------------------------------
      */
 
-    public function __construct($config, $systemQuoteChar = null, LoggerInterface $logger = null);
+    public function __construct($config, string $systemQuoteChar = '', LoggerInterface $logger = null);
 
     /* ------------------------------------------------------------------------------------------
      * Initialize the object properties from a stdClass object. Only supported properties
