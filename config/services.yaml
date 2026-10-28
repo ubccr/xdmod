@@ -43,9 +43,6 @@ services:
             - '@http_kernel'
             - error_controller
             - '@error_renderer'
-    CCR\EnvVar\ReCaptchaEnvVarLoader:
-        tags:
-            - container.env_var_loader
     CCR\EnvVar\DefaultXdmodEnvVarLoader:
         tags:
             - container.env_var_loader
