@@ -192,7 +192,8 @@ GROUP BY person.id,
   person.long_name,
   person.order_id,
   duration.id,
-  duration.day_start,
+  day_short_name,
+  day_name,
   duration.day_start_ts
 ) AS derived_stats
 HAVING person_id = 82
