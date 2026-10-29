@@ -58,7 +58,10 @@ EOT
             'DB Username:',
             $settings['database_user']
         );
-
+        $settings['xdmod_host'] = $this->console->prompt(
+            'XDMoD Server name:',
+            $settings['database_host']
+        );
         $settings['db_pass'] = $this->console->silentPrompt(
             'DB Password:'
         );
