@@ -111,7 +111,7 @@ files.
 
 ### Ensure software dependencies are updated
 
-The nodejs dependency is updated from 16 to 24. Update the nodejs
+In Open XDMoD 11.5.0 the Node.js dependency has changed from version 16 to 24. Update the nodejs
 version before installing the new XDMoD source package.
 
 ### Extract and Install Source Package
