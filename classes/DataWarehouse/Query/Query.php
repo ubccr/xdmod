@@ -26,6 +26,10 @@ use Realm\Statistic;
 
 class Query extends Loggable
 {
+    /**
+     * Alias of the derived table used when the query contains statistics with derived fields.
+     */
+    const DERIVED_TABLE_ALIAS = 'derived_stats';
 
     /**
      * Parameters for this query.
@@ -742,6 +746,11 @@ SQL;
 
         $select_order_by = $this->getSelectOrderBy();
 
+        $derived = $this->hasDerivedStatistics();
+        if ( $derived ) {
+            list($select_fields, $outer_fields, $outer_order_by) = $this->getDerivedTableFields();
+        }
+
         $format = <<<SQL
 SELECT%s
   %s
@@ -754,16 +763,20 @@ SQL;
 
         $data_query = sprintf(
             $format,
-            ( $this->isDistinct ? ' DISTINCT' : '' ),
+            ( $this->isDistinct && ! $derived ? ' DISTINCT' : '' ),
             implode(",\n  ", $select_fields),
             implode(",\n  ", $select_tables),
             ( "" == $this->getLeftJoinSql() ? "" : "\n" . $this->getLeftJoinSql() ),
             implode("\n  AND ", $wheres),
             ( count($groups) > 0 ? "GROUP BY " . implode(",\n  ", $groups) : "" ),
-            ( null !== $extraHavingClause ? "\nHAVING $extraHavingClause" : "" ),
-            ( count($select_order_by) > 0 ? "\nORDER BY " . implode(",\n  ", $select_order_by) : "" ),
-            ( null !== $limit && null !== $offset ? "\nLIMIT $limit OFFSET $offset" : "" )
+            ( null !== $extraHavingClause && ! $derived ? "\nHAVING $extraHavingClause" : "" ),
+            ( count($select_order_by) > 0 && ! $derived ? "\nORDER BY " . implode(",\n  ", $select_order_by) : "" ),
+            ( null !== $limit && null !== $offset && ! $derived ? "\nLIMIT $limit OFFSET $offset" : "" )
         );
+
+        if ( $derived ) {
+            $data_query = $this->getDerivedQueryString($data_query, $outer_fields, $outer_order_by, $limit, $offset, $extraHavingClause);
+        }
 
         $this->logger->debug(
             sprintf("%s %s()\n%s", $this, __FUNCTION__, $data_query)
@@ -772,13 +785,155 @@ SQL;
         return $data_query;
     }
 
+    /**
+     * @return bool TRUE if any statistic in the query is evaluated against a derived table.
+     */
+
+    public function hasDerivedStatistics()
+    {
+        foreach ( $this->getStatFields() as $stat ) {
+            if ( $stat->hasDerivedFields() ) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Split the query fields between an inner query, which performs the grouping, and an outer
+     * query that selects from the inner query as a derived table. Group by fields and statistics
+     * without derived fields are computed in the inner query and passed through unchanged.
+     * Statistics with derived fields have their derived fields computed in the inner query and
+     * their formula evaluated in the outer query. Order by expressions are also computed in the
+     * inner query so that the outer query can sort on them.
+     *
+     * @return array A 3-element array containing the inner select fields, the outer select fields,
+     *   and the outer order by clauses.
+     */
+
+    protected function getDerivedTableFields()
+    {
+        $derivedTable = self::DERIVED_TABLE_ALIAS;
+        $innerFields = array();
+        $outerFields = array();
+
+        foreach ( $this->getFields() as $key => $field ) {
+            $alias = $field->getAlias()->getName();
+            if ( '' == $alias ) {
+                $this->logAndThrowException(sprintf("Field '%s' must have an alias to be used with derived statistics", $field->getDefinition()));
+            }
+            $innerFields[$key] = $field->getQualifiedName(true);
+            $outerFields[$key] = sprintf("%s.`%s` AS '%s'", $derivedTable, $alias, $alias);
+        }
+
+        foreach ( $this->getStatFields() as $key => $stat ) {
+            if ( array_key_exists($key, $outerFields) ) {
+                // A dimension field and a statistic must not share a key: whichever was added
+                // second would otherwise silently replace the first, dropping a column from the
+                // query with no indication that anything went wrong.
+                $this->logAndThrowException(sprintf(
+                    "Statistic '%s' has the same key as a dimension field already selected by this query",
+                    $key
+                ));
+            }
+            if ( $stat->hasDerivedFields() ) {
+                foreach ( $stat->getDerivedFields($this) as $name => $expression ) {
+                    $innerFields[] = sprintf('%s AS %s', $expression, $stat->getDerivedFieldAlias($name));
+                }
+                $outerFields[$key] = $stat->getFormula($this);
+            } else {
+                $innerFields[$key] = $stat->getFormula($this);
+                $outerFields[$key] = sprintf('%1$s.%2$s AS %2$s', $derivedTable, $stat->getId());
+            }
+        }
+
+        $outerOrderBy = array();
+        foreach ( array_values($this->getOrders()) as $index => $order ) {
+            $expression = $order->getField()->getQualifiedName(false);
+            if ( isset($this->_stat_fields[$expression]) ) {
+                // Statistics are sorted by their column alias in the outer query
+                $outerOrderBy[] = sprintf('%s %s', $expression, $order->getOrder());
+            } else {
+                // Sort columns are not necessarily in the GROUP BY (e.g., a dimension's display
+                // name) but are constant within a group. Use MIN() so that the inner query is valid
+                // under ONLY_FULL_GROUP_BY.
+                if ( $this->isDistinct ) {
+                    // The MIN() placeholder below is not part of the outer SELECT list, so DISTINCT
+                    // on the outer query could not take it into account and the choice of which
+                    // row survives deduplication would be arbitrary. Rather than silently sort
+                    // non-deterministically, refuse the combination.
+                    $this->logAndThrowException(sprintf(
+                        "Cannot combine DISTINCT with sorting by '%s', which is not one of the selected dimension or statistic fields, on a query with derived statistics",
+                        $expression
+                    ));
+                }
+                $innerFields[] = sprintf('MIN(%s) AS _order_%d', $expression, $index);
+                $outerOrderBy[] = sprintf('%s._order_%d %s', $derivedTable, $index, $order->getOrder());
+            }
+        }
+
+        return array($innerFields, $outerFields, $outerOrderBy);
+    }
+
+    /**
+     * Select from a grouped query as a derived table in order to evaluate statistics with derived
+     * fields. Sorting, filtering, and limits are applied to the outer query. The outer query is not
+     * grouped, so the filter is applied as a HAVING clause without a GROUP BY: this still filters
+     * the outer query row by row (there are no aggregate functions in its SELECT list to force
+     * grouping), but unlike WHERE, it can reference the outer SELECT list's column aliases,
+     * including a statistic's own computed value, as well as the columns of the derived table.
+     *
+     * @return string The SQL for the complete query.
+     */
+
+    protected function getDerivedQueryString(
+        $innerQuery,
+        array $outerFields,
+        array $outerOrderBy,
+        $limit = null,
+        $offset = null,
+        $extraHavingClause = null
+    ) {
+        $format = <<<SQL
+SELECT%s
+  %s
+FROM (
+%s
+) AS %s%s%s%s
+SQL;
+
+        return sprintf(
+            $format,
+            ( $this->isDistinct ? ' DISTINCT' : '' ),
+            implode(",\n  ", $outerFields),
+            $innerQuery,
+            self::DERIVED_TABLE_ALIAS,
+            ( null !== $extraHavingClause ? "\nHAVING $extraHavingClause" : "" ),
+            ( count($outerOrderBy) > 0 ? "\nORDER BY " . implode(",\n  ", $outerOrderBy) : "" ),
+            ( null !== $limit && null !== $offset ? "\nLIMIT $limit OFFSET $offset" : "" )
+        );
+    }
+
     public function getCountQueryString()
     {
         $wheres = $this->getWhereConditions();
         $groups = $this->getGroups();
 
         $select_tables = $this->getSelectTables();
-        $select_fields = $this->getSelectFields();
+
+        if ( $this->hasDerivedStatistics() ) {
+            // Statistic::getFormula() always rewrites ${derived.X} placeholders into references
+            // to the derived table alias, on the assumption that the field is selected from a
+            // query built the way getQueryString() builds one. getSelectFields() would call that
+            // same formula resolution here, in a query that has no derived table to reference, so
+            // use the derived fields' own, self-contained expressions instead. The number of rows
+            // is determined entirely by this inner, grouped query; the statistic formulas
+            // evaluated against it in getQueryString()'s outer query do not add or remove rows, so
+            // they are not needed to count them.
+            list($select_fields, , ) = $this->getDerivedTableFields();
+        } else {
+            $select_fields = $this->getSelectFields();
+        }
 
         $format = <<<SQL
 SELECT

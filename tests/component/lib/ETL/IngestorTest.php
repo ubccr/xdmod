@@ -6,6 +6,7 @@
 namespace ComponentTests\ETL;
 
 use CCR\DB;
+use CCR\Json;
 
 /**
  * Test various components of the ETLv2 ingestors. All tests in this file run the etl_overseer.php
@@ -19,6 +20,8 @@ use CCR\DB;
  * 5. Test the structured file ingestor using the directory scanner with one empty (0 byte)
  *    file, one file containing an empty JSON array, and another file containing 2 records of
  *    data.
+ * 7. Test the structured file ingestor using a configurationfile endpoint and ensure that records
+ *    added by a local configuration (.d) file are ingested.
  */
 
 class IngestorTest extends \PHPUnit\Framework\TestCase
@@ -211,6 +214,79 @@ class IngestorTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * 7. Test the structured file ingestor using a configurationfile endpoint and ensure that
+     *    records added by a local configuration (.d) file are ingested. The overseer is not run in
+     *    dryrun mode so the endpoint is left connected after verification, which previously caused
+     *    the original file to be parsed instead of the merged configuration.
+     */
+
+    public function testStructuredFileIngestorWithConfigurationFile() {
+        $configFile = CONFIG_DIR . '/resource_types.json';
+        $localConfigDir = CONFIG_DIR . '/resource_types.d';
+        $localConfigFile = $localConfigDir . '/99_etl_configuration_file_test.json';
+        $testResourceType = 'EtlCfgTest';
+
+        $expectedRecords = count(
+            \Configuration\XdmodConfiguration::assocArrayFactory('resource_types.json', CONFIG_DIR)['resource_types']
+        ) + 1;
+
+        $createdLocalConfigDir = false;
+        if ( ! is_dir($localConfigDir) ) {
+            mkdir($localConfigDir);
+            $createdLocalConfigDir = true;
+        }
+
+        try {
+            Json::saveFile(
+                $localConfigFile,
+                array(
+                    '+resource_types' => array(
+                        '+' . $testResourceType => array(
+                            'description' => 'ETL configurationfile endpoint test',
+                            'realms' => array('Jobs')
+                        )
+                    )
+                )
+            );
+
+            $result = $this->executeOverseer(
+                'xdmod.configuration-file',
+                sprintf('-v notice -d "RESOURCE_TYPES_CONFIG_FILE=%s"', $configFile),
+                self::PIPELINE
+            );
+        } finally {
+            if ( file_exists($localConfigFile) ) {
+                unlink($localConfigFile);
+            }
+            if ( $createdLocalConfigDir ) {
+                rmdir($localConfigDir);
+            }
+        }
+
+        $recordsLoaded = null;
+
+        foreach ( explode(PHP_EOL, trim($result['stdout'])) as $line ) {
+            $matches = array();
+            if ( false !== strpos($line, '[notice]')
+                 && false !== strpos($line, 'xdmod.configuration-file.read-resource-types')
+                 && preg_match('/records_loaded:\s*([0-9]+)/', $line, $matches) ) {
+                $recordsLoaded = $matches[1];
+            }
+        }
+
+        $dbh = DB::factory('database');
+        $rows = $dbh->query(
+            'SELECT abbrev FROM `test`.`configuration_file_resource_types` WHERE abbrev = :abbrev',
+            array(':abbrev' => $testResourceType)
+        );
+
+        $this->assertEquals($expectedRecords, $recordsLoaded, 'Records loaded');
+        $this->assertCount(1, $rows, 'Resource type from local configuration file ingested');
+        $this->assertEquals(0, $result['exit_status'], 'Exit code');
+        $this->assertEquals('', $result['stderr'], 'Std Error');
+    }
+
+    /**
      * Execute a single ETL overseer action via the CLI script.
      *
      * @param string $action The name of the action to execute.
@@ -297,5 +373,6 @@ class IngestorTest extends \PHPUnit\Framework\TestCase
         $dbh->execute('DROP TABLE IF EXISTS `test`.`load_data_infile_test`');
         $dbh->execute('DROP TABLE IF EXISTS `test`.`organizations`');
         $dbh->execute('DROP TABLE IF EXISTS `test`.`people`');
+        $dbh->execute('DROP TABLE IF EXISTS `test`.`configuration_file_resource_types`');
     }
 }

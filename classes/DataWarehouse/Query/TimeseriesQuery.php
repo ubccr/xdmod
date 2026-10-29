@@ -219,8 +219,12 @@ class TimeseriesQuery extends Query implements iQuery
 
         $select_order_by = $this->getSelectOrderBy();
 
-        $select_group_by = array_keys($this->getGroups());
+        $derived = $this->hasDerivedStatistics();
+        if ( $derived ) {
+            list($select_fields, $outer_fields, $outer_order_by) = $this->getDerivedTableFields();
+        }
 
+        $select_group_by = array_keys($this->getGroups());
 
         $format = <<<SQL
 SELECT
@@ -238,10 +242,14 @@ SQL;
             implode(",\n  ", $select_tables),
             implode("\n  AND ", $wheres),
             ( count($select_group_by) > 0 ? "GROUP BY " . implode(",\n  ", $select_group_by) : "" ),
-            ( null !== $extraHavingClause ? "\nHAVING $extraHavingClause" : "" ),
-            ( count($select_order_by) > 0 ? "\nORDER BY " . implode(",\n  ", $select_order_by) : "" ),
-            ( null !== $limit && null !== $offset ? "\nLIMIT $limit OFFSET $offset" : "" )
+            ( null !== $extraHavingClause && ! $derived ? "\nHAVING $extraHavingClause" : "" ),
+            ( count($select_order_by) > 0 && ! $derived ? "\nORDER BY " . implode(",\n  ", $select_order_by) : "" ),
+            ( null !== $limit && null !== $offset && ! $derived ? "\nLIMIT $limit OFFSET $offset" : "" )
         );
+
+        if ( $derived ) {
+            $data_query = $this->getDerivedQueryString($data_query, $outer_fields, $outer_order_by, $limit, $offset, $extraHavingClause);
+        }
 
         $this->logger->debug(
             sprintf("%s %s()\n%s", $this, __FUNCTION__, $data_query)

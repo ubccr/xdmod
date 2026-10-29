@@ -88,7 +88,7 @@
             "definition_file": "common/staging/resource-type.json",
             "endpoints": {
                 "source": {
-                    "type": "jsonfile",
+                    "type": "configurationfile",
                     "name": "Resource types",
                     "path": "${base_dir}/../resource_types.json",
                     "record_schema_path": "common/resource-types.schema.json",
