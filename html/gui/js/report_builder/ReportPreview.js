@@ -14,7 +14,7 @@ XDMoD.ReportPreview = Ext.extend(Ext.Panel,  {
 
       var self = this;
 
-      self.initPreview = function(file_name, report_id, token, previous_view_index, preview_meta_data, charts_per_page) {
+      self.initPreview = function(file_name, report_id, previous_view_index, preview_meta_data, charts_per_page) {
 
          XDMoD.TrackEvent('Report Generator (Preview)', 'Previewing report', file_name);
 
@@ -49,7 +49,6 @@ XDMoD.ReportPreview = Ext.extend(Ext.Panel,  {
             this.previewStore.load({
                params: {
                   'report_id': report_id,
-                  'token': token,
                   'charts_per_page': charts_per_page
                }
             });

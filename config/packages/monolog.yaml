@@ -46,7 +46,7 @@ when@prod:
             file:
                 type: stream
                 path: '%log_dir%/exceptions.log'
-                level: warning
+                level: debug
                 channels: ['!event']
             console:
                 type: console

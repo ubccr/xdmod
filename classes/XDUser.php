@@ -7,8 +7,8 @@ use Models\Acl;
 use Models\Services\Acls;
 use Models\Services\Organizations;
 use DataWarehouse\Query\Exceptions\AccessDeniedException;
-use xd_security\SessionSingleton;
 
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\PasswordHasherInterface;
 use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -1910,20 +1910,7 @@ SQL;
 
     public function getPersonID($default = FALSE)
     {
-        $session = SessionSingleton::getSession();
-        $xdUserId = $session->get('xdUser');
-        if (isset($xdUserId) && ($xdUserId === $this->_id) && ($default == FALSE)) {
-
-            // The user object pertains to the user logged in..
-            $assumedPersonId = $session->get('assumed_person_id');
-            if (isset($assumedPersonId)) {
-                $personID = $assumedPersonId;
-            }
-
-        } else {
-            $personID = (empty($this->_personID)) ? '0' : $this->_personID;
-        }
-        return $personID;
+        return (empty($this->_personID)) ? '0' : $this->_personID;
     }//getPersonID
 
     // ---------------------------
@@ -2434,16 +2421,59 @@ SQL;
 
     /**
      * Executes any actions that need to be conducted immediately after a user is logged into XDMoD.
-     *
-     * @throws Exception if there is a problem executing any of the required post logged in steps.
      */
-    public function postLogin()
+    public function postLogin(Request $request)
     {
         if (!$this->isSticky()) {
             $this->updatePerson();
             $this->synchronizeOrganization();
         }
-        $this->currentToken = XDSessionManager::recordLogin($this);
+
+        $this->currentToken = $this->recordLogin($request);
+    }
+
+    private function recordLogin(Request $request) : string
+    {
+        $pdo = DB::factory('database');
+
+        $init_time = microtime();
+        $session_id = $request->getSession()->getId();
+        $user_id = $this->getUserID();
+        $session_token = md5($user_id . $session_id . $init_time);
+
+        $record_query = "
+            INSERT INTO SessionManager (
+                session_token,
+                session_id,
+                user_id,
+                ip_address,
+                user_agent,
+                init_time,
+                last_active,
+                used_logout
+            ) VALUES (
+                :session_token,
+                :session_id,
+                :user_id,
+                :ip_address,
+                :user_agent,
+                :init_time,
+                :last_active,
+                0
+            )
+        ";
+
+        $pdo->execute($record_query, array(
+            ':session_token' => $session_token,
+            ':session_id'    => $session_id,
+            ':user_id'       => $user_id,
+            ':ip_address'    => $request->getClientIp(),
+            ':user_agent'    => $request->server->get('HTTP_USER_AGENT'),
+            ':init_time'     => $init_time,
+            ':last_active'   => $init_time,
+        ));
+
+        return $session_token;
     }
 
     /**
