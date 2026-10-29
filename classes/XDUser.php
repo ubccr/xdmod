@@ -970,10 +970,10 @@ SQL;
         $update_data['last_name'] = ($this->_lastName);
         $update_data['account_is_active'] = ($this->_account_is_active) ? '1' : '0';
         $update_data['person_id'] = $this->_personID == null
-            ? 'NULL'
+            ? null
             : ($this->_personID);
         $update_data['organization_id'] = $this->_organizationID == null
-            ? 'NULL'
+            ? null
             : ($this->_organizationID);
         $update_data['field_of_science'] = ($this->_field_of_science);
         if ($this->_update_token) {

@@ -84,6 +84,9 @@ JOIN (
 WHERE $whereClause
 GROUP BY
   ud.id,
+  ud.last_name,
+  ud.first_name,
+  ud.username,
   ud.email_address,
   ud.type,
   ud.role_list,

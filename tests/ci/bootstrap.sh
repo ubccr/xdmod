@@ -67,7 +67,7 @@ then
         >/etc/my.cnf.d/mariadb-server.cnf
         echo "# this is read by the standalone daemon and embedded servers
               [server]
-              sql_mode=
+              sql_mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION,ONLY_FULL_GROUP_BY
               # this is only for the mysqld standalone daemon
               # Settings user and group are ignored when systemd is used.
               # If you need to run mysqld under a different user or group,
@@ -82,8 +82,8 @@ then
 
     copy_template_httpd_conf
     ~/bin/services start
-    mysql -e "CREATE USER 'root'@'gateway' IDENTIFIED BY '';
-    GRANT ALL PRIVILEGES ON *.* TO 'root'@'gateway' WITH GRANT OPTION;
+    mysql -e "CREATE USER 'root'@'_gateway' IDENTIFIED BY '';
+    GRANT ALL PRIVILEGES ON *.* TO 'root'@'_gateway' WITH GRANT OPTION;
     FLUSH PRIVILEGES;"
 
     # TODO: Replace diff files with hard fixes
