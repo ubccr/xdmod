@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
+use CCR\Configuration\IniConfiguration;
 use CCR\Security\Helpers\Tokens;
 use DateTime;
 use Egulias\EmailValidator\EmailValidator;
@@ -56,8 +57,15 @@ class BaseController extends AbstractController
      * @param LoggerInterface $logger
      * @param Environment $twig
      * @param Tokens $tokenHelper
+     * @param ContainerBagInterface $parameters
+     * @param IniConfiguration $portalSettings
      */
-    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters,)
+    public function __construct(
+        LoggerInterface            $logger,
+        Environment                $twig,
+        Tokens                     $tokenHelper,
+        ContainerBagInterface      $parameters,
+        protected IniConfiguration $portalSettings)
     {
         $this->logger = $logger;
         $this->twig = $twig;
@@ -668,8 +676,8 @@ class BaseController extends AbstractController
      */
     protected function verifyCaptcha(Request $request)
     {
-        $captchaSiteKey = $this->getParameter('xdmod.portal_settings.mailer.captcha_public_key');
-        $captchaSecret = $this->getParameter('xdmod.portal_settings.mailer.captcha_private_key');
+        $captchaSiteKey = $this->portalSettings->get('mailer', 'captcha_public_key');
+        $captchaSecret = $this->portalSettings->get('mailer', 'captcha_private_key');
 
         $user = $this->getUserFromRequest($request);
 

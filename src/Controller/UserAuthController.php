@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
+use CCR\Configuration\IniConfiguration;
 use CCR\Helper\PasswordResetService;
 use CCR\Security\Helpers\Tokens;
 use Psr\Log\LoggerInterface;
@@ -24,9 +25,9 @@ class UserAuthController extends BaseController
 
     protected PasswordResetService $passwordResetService;
 
-    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters, PasswordResetService $passwordResetService)
+    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters, IniConfiguration $portalSettings, PasswordResetService $passwordResetService)
     {
-        parent::__construct($logger, $twig, $tokenHelper, $parameters);
+        parent::__construct($logger, $twig, $tokenHelper, $parameters, $portalSettings);
         $this->passwordResetService = $passwordResetService;
     }
 

@@ -1,6 +1,3 @@
-imports:
-    # This imports the contents of our portal_settings.[ini,d] into Symfony Parameters.
-    - { resource: 'portal_settings.php'}
 parameters:
     log_dir: !php/const LOG_DIR
 services:

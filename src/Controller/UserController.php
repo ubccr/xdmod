@@ -382,7 +382,7 @@ SQL;
         $hash = password_hash($password, PASSWORD_DEFAULT, array('cost' => 12));
 
         $createdOn = date_create()->format('Y-m-d H:m:s');
-        $expirationInterval =  $this->parameters->get('xdmod.portal_settings.api_token.expiration_interval');
+        $expirationInterval = $this->portalSettings->get('api_token', 'expiration_interval');
         if (empty($expirationInterval)) {
             throw new \Exception('Expiration Interval not provided.');
         }
