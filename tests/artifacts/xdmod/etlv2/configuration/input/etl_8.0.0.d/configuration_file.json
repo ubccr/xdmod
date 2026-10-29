@@ -1,0 +1,44 @@
+{
+    "#": "Test ingestion from a configurationfile endpoint, which merges local configuration (.d) files",
+
+    "defaults": {
+        "configuration-file": {
+            "truncate_destination": true,
+            "namespace": "ETL\\Ingestor",
+            "class": "StructuredFileIngestor",
+            "options_class": "IngestorOptions",
+            "endpoints": {
+                "destination": {
+                    "type": "mysql",
+                    "name": "Test Schema",
+                    "config": "datawarehouse",
+                    "schema": "test",
+                    "create_schema_if_not_exists": true
+                }
+            }
+        }
+    },
+
+    "configuration-file": [
+        {
+            "name": "read-resource-types",
+            "description": "Read the resource types configuration including any local configuration files",
+            "definition_file": "configuration_file/resource_types.json",
+            "endpoints": {
+                "source": {
+                    "type": "configurationfile",
+                    "name": "Resource types",
+                    "path": "${RESOURCE_TYPES_CONFIG_FILE}",
+                    "filters": [
+                        {
+                            "type": "external",
+                            "name": "jq",
+                            "path": "jq",
+                            "arguments": "'[ .resource_types | to_entries[]| {abbrev: .key, description:.value.description} ] '"
+                        }
+                    ]
+                }
+            }
+        }
+    ]
+}

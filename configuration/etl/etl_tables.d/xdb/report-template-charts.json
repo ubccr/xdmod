@@ -27,7 +27,7 @@
             },
             {
                 "name": "chart_title",
-                "type": "varchar(100)",
+                "type": "text",
                 "nullable": true
             },
             {

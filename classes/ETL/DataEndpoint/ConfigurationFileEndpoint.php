@@ -16,11 +16,17 @@ class ConfigurationFileEndpoint extends JsonFile implements iStructuredFile, iCo
 
         @file_put_contents($tmpFile, $config->toJson());
 
+        // Close the handle opened on the original file during endpoint verification so
+        // that parse() reads the merged configuration rather than the original file.
+        $this->disconnect();
+
+        $originalPath = $this->path;
         $this->path = $tmpFile;
 
         $retVal = parent::parse();
 
         unlink($tmpFile);
+        $this->path = $originalPath;
 
         return $retVal;
     }

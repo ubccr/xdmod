@@ -1,0 +1,29 @@
+{
+    "table_definition": {
+        "name": "configuration_file_resource_types",
+        "engine": "InnoDB",
+        "comment": "Resource types read from a configurationfile endpoint.",
+        "columns": [
+            {
+                "name": "abbrev",
+                "type": "varchar(30)",
+                "nullable": false,
+                "comment": "Resource type abbreviation."
+            },
+            {
+                "name": "description",
+                "type": "varchar(255)",
+                "nullable": true,
+                "comment": "Resource type description."
+            }
+        ],
+        "indexes": [
+            {
+                "name": "PRIMARY",
+                "columns": [
+                    "abbrev"
+                ]
+            }
+        ]
+    }
+}

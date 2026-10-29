@@ -106,7 +106,6 @@ class AggregateChart
     protected $_xAxisLabel;
     protected $_multiCategory = false;
     protected $_prevCategory = null;
-    protected $_queryType = 'aggregate';
 
     protected $_subtitleText = '';
 
@@ -770,7 +769,6 @@ class AggregateChart
             $this->_aggregationUnit,
             $data_series,
             $global_filters,
-            $this->_queryType,
             $this->user
         );
 

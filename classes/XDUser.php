@@ -969,6 +969,10 @@ SQL;
         $update_data['middle_name'] = ($this->_middleName);
         $update_data['last_name'] = ($this->_lastName);
         $update_data['account_is_active'] = ($this->_account_is_active) ? '1' : '0';
+        // These bind into nullable int columns, so they have to be a real null rather than the
+        // string 'NULL'. Without strict mode the server quietly coerced that string to 0; with
+        // STRICT_TRANS_TABLES it is rejected as "Incorrect integer value: 'NULL'", which made
+        // saving a user with no person or no organization fail outright.
         $update_data['person_id'] = $this->_personID == null
             ? null
             : ($this->_personID);

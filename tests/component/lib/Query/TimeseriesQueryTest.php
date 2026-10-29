@@ -38,10 +38,7 @@ class TimeseriesQueryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Simulate execution of a TimeseriesQuery. TimeseriesChart creates a timeseries query and
-     * then passes it into a SimpleTimeseriesDataset which executes an aggregate query to get all
-     * dimension values. The timeseries query is then executed using the values of the aggregate
-     * query in the HAVING clause via the SimpleTimeseriesDataIterator.
+     * Simulate execution of a TimeseriesQuery.
      */
 
     public function testTimeseriesQuery()

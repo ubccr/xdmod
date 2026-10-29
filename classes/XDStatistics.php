@@ -88,6 +88,7 @@ GROUP BY
   ud.first_name,
   ud.username,
   ud.email_address,
+  ud.username,
   ud.type,
   ud.role_list,
   timeframe
