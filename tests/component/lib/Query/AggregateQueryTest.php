@@ -589,9 +589,161 @@ SELECT
   person.order_id AS _dimensionOrderValue
 FROM modw.person person
 WHERE person.id IN ( SELECT modw_filters.Jobs_person.person FROM modw_filters.Jobs_person )
-GROUP BY person.id, person.short_name, person.long_name, person.order_id
+GROUP BY person.id, person.long_name, person.short_name, _dimensionOrderValue
 ORDER BY person.order_id ASC
 SQL;
         $this->assertEquals($expected, $generated, 'Aggregate query dimension values');
+    }
+
+    /**
+     * Test an aggregate query containing a statistic with derived fields. The grouped query becomes a
+     * derived table and the sorting, filtering, and limit are applied to the outer query. Derived
+     * fields that are not referenced by the aggregate formula are not selected.
+     */
+
+    public function testAggregateQueryDerivedStatistic()
+    {
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            'Jobs',
+            'day',
+            '2016-12-01',
+            '2017-01-31',
+            'person',
+            'job_count'
+        );
+        $query->addStatField($this->getUtilizationStatistic());
+        $query->addOrderBy('utilization', 'desc');
+
+        $generated = $query->getQueryString(10, 0, 'person_id = 82');
+        $expected =<<<SQL
+SELECT
+  derived_stats.`person_id` AS 'person_id',
+  derived_stats.`person_short_name` AS 'person_short_name',
+  derived_stats.`person_name` AS 'person_name',
+  derived_stats.`person_order_id` AS 'person_order_id',
+  derived_stats.running_job_count AS running_job_count,
+  derived_stats.job_count AS job_count,
+  COALESCE((derived_stats.utilization__numerator / NULLIF((SELECT SUM(rsa.allocated_cpu_core_time) FROM modw_aggregates.resourcespecsfact_by_day AS rsa WHERE rsa.day_id BETWEEN 201600357 AND 201700001 AND FIND_IN_SET(rsa.record_resource_id, derived_stats.utilization__resource_ids) <> 0), 0)) * 100, 0) AS utilization
+FROM (
+SELECT
+  person.id as 'person_id',
+  person.short_name as 'person_short_name',
+  person.long_name as 'person_name',
+  person.order_id as 'person_order_id',
+  COALESCE(SUM(CASE duration.id WHEN 201600357 THEN agg.running_job_count ELSE agg.started_job_count END), 0) AS running_job_count,
+  COALESCE(SUM(agg.ended_job_count), 0) AS job_count,
+  SUM(agg.cpu_time) AS utilization__numerator,
+  GROUP_CONCAT(DISTINCT agg.task_resource_id) AS utilization__resource_ids,
+  MIN(person.order_id) AS _order_1
+FROM
+  modw_aggregates.jobfact_by_day agg,
+  modw.days duration,
+  modw.person person
+WHERE
+  duration.id = agg.day_id
+  AND agg.day_id between 201600357 and 201700001
+  AND person.id = agg.person_id
+GROUP BY person.id,
+  person.short_name,
+  person.long_name,
+  person.order_id
+) AS derived_stats
+HAVING person_id = 82
+ORDER BY utilization desc,
+  derived_stats._order_1 ASC
+LIMIT 10 OFFSET 0
+SQL;
+        $this->assertEquals($expected, $generated, 'Aggregate query with derived statistic');
+    }
+
+    /**
+     * Test that getCount() does not reference the formula of a statistic with derived fields.
+     * getCountQueryString() does not build the derived table that the formula's ${derived.<name>}
+     * placeholders are rewritten to reference, so it must use the derived fields' inner
+     * expressions directly rather than Statistic::getFormula()'s output.
+     */
+
+    public function testAggregateQueryDerivedStatisticCount()
+    {
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            'Jobs',
+            'day',
+            '2016-12-01',
+            '2017-01-31',
+            'person',
+            'job_count'
+        );
+        $query->addStatField($this->getUtilizationStatistic());
+
+        $generated = $query->getCountQueryString();
+        $this->assertStringNotContainsString('derived_stats', $generated, 'Count query must not reference the derived table');
+
+        $expected =<<<SQL
+SELECT
+  COUNT(*) AS row_count
+FROM (
+  SELECT
+  SUM(1) AS total
+  FROM
+    modw_aggregates.jobfact_by_day agg,
+    modw.days duration,
+    modw.person person
+  WHERE
+    duration.id = agg.day_id
+    AND agg.day_id between 201600357 and 201700001
+    AND person.id = agg.person_id
+  GROUP BY
+    person.id,
+    person.short_name,
+    person.long_name,
+    person.order_id
+) AS a WHERE a.total IS NOT NULL
+SQL;
+        $this->assertEquals($expected, $generated, 'Aggregate query with derived statistic count');
+    }
+
+    /**
+     * A dimension field and a statistic must not be selected under the same key: getQueryString()
+     * would otherwise silently drop one of the two columns when building the derived table.
+     */
+
+    public function testAggregateQueryDerivedStatisticKeyCollision()
+    {
+        $query = new \DataWarehouse\Query\AggregateQuery(
+            'Jobs',
+            'day',
+            '2016-12-01',
+            '2017-01-31',
+            'person',
+            'job_count'
+        );
+        // The 'person' group by selects a dimension field aliased 'person_id'; giving the
+        // statistic the same id reproduces the collision this guards against.
+        $query->addStatField($this->getUtilizationStatistic('person_id'));
+
+        $this->expectException(\Exception::class);
+        $query->getQueryString();
+    }
+
+    /**
+     * Load the real 'utilization' statistic from the Jobs realm's configuration. It is evaluated
+     * against a derived table because its formula needs the per-group set of resources and their
+     * total CPU time inside a correlated subquery, which ONLY_FULL_GROUP_BY otherwise rejects
+     * unless the grouping is done in a derived table.
+     *
+     * @param string $id The statistic's id. Defaults to 'utilization'; tests that need to
+     *   reproduce a key collision with a dimension field pass that field's alias instead, while
+     *   keeping the statistic's own formula and derived fields.
+     *
+     * @return \Realm\Statistic
+     */
+
+    private function getUtilizationStatistic($id = 'utilization')
+    {
+        $config = json_decode(file_get_contents(
+            realpath('../../configuration/datawarehouse.d/ref/Jobs-statistics.json')
+        ))->utilization;
+
+        return \Realm\Statistic::factory($id, $config, \Realm\Realm::factory('Jobs', self::$logger), self::$logger);
     }
 }

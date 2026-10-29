@@ -67,7 +67,7 @@ then
         >/etc/my.cnf.d/mariadb-server.cnf
         echo "# this is read by the standalone daemon and embedded servers
               [server]
-              sql_mode=
+              sql_mode=ONLY_FULL_GROUP_BY,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
               # this is only for the mysqld standalone daemon
               # Settings user and group are ignored when systemd is used.
               # If you need to run mysqld under a different user or group,
