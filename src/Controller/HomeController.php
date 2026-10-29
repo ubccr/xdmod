@@ -4,23 +4,17 @@ declare(strict_types=1);
 
 namespace CCR\Controller;
 
-use CCR\Security\Helpers\Tokens;
 use Authentication\SAML\XDSamlAuthentication;
 use CCR\DB;
-use Configuration\Configuration;
 use Exception;
+use Models\Realm;
 use Models\Services\Acls;
 use Models\Services\Realms;
-use Models\Realm;
 use OpenXdmod\Assets;
-use Psr\Log\LoggerInterface;
-use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Core\Security;
-use Twig\Environment;
 use xd_security\SessionSingleton;
 use XDUser;
 
@@ -114,40 +108,15 @@ class HomeController extends BaseController
             ];
         }
 
-        // JupyterHub Config
-        $jupyterIsEnabled = false;
-        $jupyterHubURL = '';
-        try {
-            $jupyterHubURL = $this->parameters->get('xdmod.portal_settings.jupyterhub.url');
-        } catch (\Exception $e) {
-
-        }
-
-        try {
-
-            $ssoShowLocalLogin = filter_var(
-                $this->parameters->get('xdmod.portal_settings.sso.show_local_login'),
-                FILTER_VALIDATE_BOOLEAN
-            );
-        } catch (Exception $e) {
-            $ssoShowLocalLogin = false;
-        }
-
-        try {
-            $ssoDirectLink = filter_var(
-                $this->parameters->get('xdmod.portal_settings.sso.direct_link'),
-                FILTER_VALIDATE_BOOLEAN
-            );
-        } catch(Exception $e) {
-            $ssoDirectLink = false;
-        }
+        $jupyterHubURL = $this->portalSettings->get('jupyterhub', 'url');
+        $ssoDirectLink = $this->portalSettings->get('sso', 'direct_link');
 
 
         $params = [
             'user_logged_in' => $userLoggedIn,
             'user' => $user,
             'person_name' => sprintf('%s, %s', $personInfo[0]['last_name'], $personInfo[0]['first_name']),
-            'title' => $this->parameters->get('xdmod.portal_settings.general.title'),
+            'title' => $this->portalSettings->get('general', 'title'),
             'keywords' => 'xdmod, xsede, analytics, metrics on demand, hpc, visualization, statistics, reporting, auditing, nsf, resources, resource providers',
             'description' => 'XSEDE Metrics on Demand (XDMoD) is a comprehensive auditing framework for XSEDE, the follow-on to NSF\'s TeraGrid program. XDMoD provides detailed information on resource utilization and performance across all resource providers.',
             'extjs_path' => 'gui/lib',
@@ -156,11 +125,11 @@ class HomeController extends BaseController
             'colors' => json_encode(json_decode(file_get_contents(CONFIG_DIR . '/colors1.json'), true)),
             'rest_url' => sprintf(
                 '%s%s',
-                $this->parameters->get('xdmod.portal_settings.rest.base'),
-                $this->parameters->get('xdmod.portal_settings.rest.version')
+                $this->portalSettings->get('rest', 'base'),
+                $this->portalSettings->get('rest', 'version')
             ),
             'realms' => $realms,
-            'tech_support_recipient' => $this->parameters->get('xdmod.portal_settings.general.tech_support_recipient'),
+            'tech_support_recipient' => $this->portalSettings->get('general', 'tech_support_recipient'),
             'xdmod_portal_version' => \xd_versioning\getPortalVersion(),
             'xdmod_portal_version_short' => \xd_versioning\getPortalVersion(true),
             'disabled_menus' => json_encode(Acls::getDisabledMenus($user, $realms)),
@@ -182,9 +151,9 @@ class HomeController extends BaseController
             'org_name' => ORGANIZATION_NAME,
             'is_sso_configured' => $isSSOConfigured,
             'sso_login_link' => json_encode($ssoLoginLink),
-            'sso_show_local_login' => $ssoShowLocalLogin,
+            'sso_show_local_login' => filter_var($this->portalSettings->get('sso', 'show_local_login'), FILTER_VALIDATE_BOOLEAN),
             'sso_direct_link' => $ssoDirectLink,
-            'is_jupyter_configured' => $jupyterIsEnabled,
+            'is_jupyter_configured' => !empty($jupyterHubURL),
             'jupyter_hub_url' => $jupyterHubURL,
             'error_codes' => \XDError::getErrorCodes()
         ];
@@ -220,8 +189,8 @@ class HomeController extends BaseController
         $result = '';
 
         if ($user->isPublicUser()) {
-            $captchaSiteKey = $this->parameters->get('xdmod.portal_settings.mailer.captcha_public_key');
-            $captchaSecret = $this->parameters->get('xdmod.portal_settings.mailer.captcha_private_key');
+            $captchaSiteKey = $this->portalSettings->get('mailer', 'captcha_public_key', '');
+            $captchaSecret = $this->portalSettings->get('mailer', 'captcha_private_key', '');
             if ('' !== $captchaSiteKey && '' !== $captchaSecret) {
                 $result = $captchaSiteKey;
             }
@@ -234,8 +203,8 @@ class HomeController extends BaseController
     public function getLogoData()
     {
         try {
-            $logo = $this->parameters->get('xdmod.portal_settings.general.center_logo');
-            $logo_width = $this->parameters->get('xdmod.portal_settings.general.center_logo_width');
+            $logo = $this->portalSettings->get('general', 'center_logo');
+            $logo_width = $this->portalSettings->get('general', 'center_logo_width');
 
             $logo_width = intval($logo_width);
 

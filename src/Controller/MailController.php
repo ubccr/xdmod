@@ -90,7 +90,7 @@ class MailController extends BaseController
             MailWrapper::sendMail(array(
                     'body' => $message,
                     'subject' => $subject,
-                    'toAddress' => $this->parameters->get('xdmod.portal_settings.general.contact_page_recipient'),
+                    'toAddress' => $this->portalSettings->get('general', 'contact_page_recipient'),
                     'fromAddress' => $_POST['email'],
                     'fromName' => $_POST['name']
                 )
@@ -213,9 +213,9 @@ MSG;
         // Original sender's e-mail must be in the "fromAddress" field for the XDMoD Request Tracker to function
         $subject = sprintf(
             '[%s] A visitor has signed up',
-            $this->parameters->get('xdmod.portal_settings.general.title')
+            $this->portalSettings->get('general','title')
         );
-        $toAddress = $this->parameters->get('xdmod.portal_settings.general.contact_page_recipient');
+        $toAddress = $this->portalSettings->get('general', 'contact_page_recipient');
         $fromAddress = $this->getEmailParam($request, 'email');
         $fromName = sprintf(
             '$%s, %s',

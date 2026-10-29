@@ -2,6 +2,7 @@
 
 namespace CCR\Security\Authenticators;
 
+use CCR\Configuration\IniConfiguration;
 use CCR\Entity\User;
 use Authentication\SAML\XDSamlAuthentication;
 use Configuration\Configuration;
@@ -44,7 +45,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
 
     private ContainerBagInterface $parameters;
 
-    public function __construct(LoggerInterface $logger, HttpUtils $httpUtils, UrlGeneratorInterface $urlGenerator, ContainerBagInterface $parameters )
+    public function __construct(LoggerInterface $logger, HttpUtils $httpUtils, UrlGeneratorInterface $urlGenerator, ContainerBagInterface $parameters, protected IniConfiguration $portalSettings)
     {
         $this->logger = $logger;
         $this->httpUtils = $httpUtils;
@@ -93,8 +94,8 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
             return false;
         }
 
-        $authReferrer = $this->parameters->get('xdmod.portal_settings.sso.auth_referer');
-        $generalSiteAddress = $this->parameters->get('xdmod.portal_settings.general.site_address');
+        $authReferrer = $this->portalSettings->get('sso', 'auth_referer');
+        $generalSiteAddress = $this->portalSettings->get('general', 'site_address');
         if (empty($authReferrer) && !empty($generalSiteAddress)) {
             $authReferrer = sprintf(
                 '%s/simplesaml/module.php/authoauth2/linkback.php',

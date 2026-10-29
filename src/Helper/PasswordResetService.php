@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace CCR\Helper;
 
+use CCR\Configuration\IniConfiguration;
 use CCR\MailWrapper;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
@@ -14,7 +15,8 @@ class PasswordResetService
     public function __construct(
         protected LoggerInterface $logger,
         protected Environment $twig,
-        protected ContainerBagInterface $parameters
+        protected ContainerBagInterface $parameters,
+        protected IniConfiguration $portalSettings
     ) {
     }
 
@@ -35,9 +37,9 @@ class PasswordResetService
     {
         $rid = $user->generateRID();
 
-        $title = $this->parameters->get('xdmod.portal_settings.general.title');
+        $title = $this->portalSettings->get('general', 'title');
         $subject = sprintf('%s: Password Reset', $title);
-        $siteAddress = $this->parameters->get('xdmod.portal_settings.general.site_address');
+        $siteAddress = $this->portalSettings->get('general', 'site_address');
         if (!string_ends_with($siteAddress, '/')) {
             $siteAddress = "$siteAddress/";
         }
