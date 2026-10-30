@@ -135,6 +135,17 @@ class Statistic extends \CCR\Loggable implements iStatistic
     protected $hiddenGroupBys = [];
 
     /**
+     * @var array Expressions, keyed by name, that are evaluated in an inner query grouped by the
+     *   query dimensions. When present, the formula is evaluated against the rows of that derived
+     *   table and references each expression as ${derived.<name>}. This allows a formula to use a
+     *   per-group aggregate value (e.g. GROUP_CONCAT of the resources in the group) as a plain
+     *   column value, which ONLY_FULL_GROUP_BY otherwise rejects whenever the formula needs to pass
+     *   that value into something like a correlated subquery, a CASE expression, or anything else
+     *   that is not itself an aggregate function applied directly to it.
+     */
+    protected $derivedFields = array();
+
+    /**
      * @see iStatistic::factory()
      */
 
@@ -197,6 +208,7 @@ class Statistic extends \CCR\Loggable implements iStatistic
             'additional_where_condition' => 'array',
             'aggregate_formula' => 'string',
             'data_sort_order' => 'string',
+            'derived_fields' => 'object',
             'disabled' => 'bool',
             'formula' => 'string',
             'module' => 'string',
@@ -235,6 +247,16 @@ class Statistic extends \CCR\Loggable implements iStatistic
                         $this->setSortOrder(constant($value));
                     } else {
                         $this->setSortOrder(null);
+                    }
+                    break;
+                case 'derived_fields':
+                    foreach ( $value as $name => $expression ) {
+                        if ( ! preg_match('/^[a-zA-Z0-9_]+$/', $name) || ! is_string($expression) ) {
+                            $this->logAndThrowException(
+                                sprintf("Invalid derived field '%s', names must be alphanumeric and expressions must be strings", $name)
+                            );
+                        }
+                        $this->derivedFields[$name] = trim($expression);
                     }
                     break;
                 case 'description_html':
@@ -377,22 +399,104 @@ class Statistic extends \CCR\Loggable implements iStatistic
                 throw new \Exception(
                     sprintf("Key 'formula' not specified for statistic %s and Query not provided to getFormula()", $this)
                 );
+            } elseif ( $this->hasDerivedFields() ) {
+                // The ${derived.<name>} placeholders can only be resolved once the derived table
+                // alias is known, which requires a Query. Without one, returning the formula as-is
+                // would silently hand back SQL containing literal, unresolved placeholders.
+                $this->logAndThrowException(
+                    sprintf("Statistic %s has derived fields and cannot be evaluated without a Query", $this)
+                );
             }
             return sprintf('%s AS %s', $this->formula, $this->id);
         } else {
             // Update the variable store with the most recent values in the query class as they may
             // change dynamically.
             $queryVariableStore = $query->updateVariableStore();
-            $formula = null;
-            if ( null === $this->aggregateFormula && null === $this->timeseriesFormula ) {
-                $formula = $this->formula;
-            } elseif ( $query->isAggregate() ) {
-                $formula = $this->aggregateFormula;
-            } elseif ( $query->isTimeseries() ) {
-                $formula = $this->timeseriesFormula;
+            $formula = $this->variableStore->substitute(
+                $queryVariableStore->substitute($this->getActiveFormula($query))
+            );
+            foreach ( array_keys($this->getDerivedFields($query)) as $name ) {
+                $formula = str_replace(
+                    sprintf('${derived.%s}', $name),
+                    sprintf('%s.%s', \DataWarehouse\Query\Query::DERIVED_TABLE_ALIAS, $this->getDerivedFieldAlias($name)),
+                    $formula
+                );
             }
-            return sprintf('%s AS %s', $this->variableStore->substitute($queryVariableStore->substitute($formula)), $this->id);
+            return sprintf('%s AS %s', $formula, $this->id);
         }
+    }
+
+    /**
+     * @return bool TRUE if this statistic must be evaluated against a derived table.
+     */
+
+    public function hasDerivedFields()
+    {
+        return count($this->derivedFields) > 0;
+    }
+
+    /**
+     * Determine which of the configured formulas (the single, undifferentiated formula, or the
+     * aggregate/timeseries pair) applies to the given query. Used by both getFormula() and
+     * getDerivedFields() so that the formula evaluated in the outer query and the derived field
+     * expressions computed for it always agree on which formula is active.
+     *
+     * @param \DataWarehouse\Query\iQuery $query The query that the statistic is part of.
+     *
+     * @return string The formula text, not yet substituted or otherwise processed.
+     */
+
+    protected function getActiveFormula(\DataWarehouse\Query\iQuery $query)
+    {
+        if ( null === $this->aggregateFormula && null === $this->timeseriesFormula ) {
+            return $this->formula;
+        } elseif ( $query->isAggregate() ) {
+            return $this->aggregateFormula;
+        } elseif ( $query->isTimeseries() ) {
+            return $this->timeseriesFormula;
+        }
+
+        $this->logAndThrowException(sprintf(
+            "Statistic %s has separate aggregate and timeseries formulas but Query %s is neither",
+            $this,
+            $query
+        ));
+    }
+
+    /**
+     * Return the derived field expressions referenced by the formula that will be used for the
+     * query, with variables substituted.
+     *
+     * @param \DataWarehouse\Query\iQuery $query The query that the statistic is part of.
+     *
+     * @return array Derived field expressions keyed by derived field name.
+     */
+
+    public function getDerivedFields(\DataWarehouse\Query\iQuery $query)
+    {
+        $formula = $this->getActiveFormula($query);
+
+        $queryVariableStore = $query->updateVariableStore();
+        $fields = array();
+        foreach ( $this->derivedFields as $name => $expression ) {
+            if ( false !== strpos($formula, sprintf('${derived.%s}', $name)) ) {
+                $fields[$name] = $this->variableStore->substitute($queryVariableStore->substitute($expression));
+            }
+        }
+        return $fields;
+    }
+
+    /**
+     * @param string $name A derived field name.
+     *
+     * @return string The column alias used for the derived field in the derived table. It is
+     *   prefixed with the statistic id so that derived fields from different statistics can not
+     *   collide.
+     */
+
+    public function getDerivedFieldAlias($name)
+    {
+        return sprintf('%s__%s', $this->id, $name);
     }
 
     /**
