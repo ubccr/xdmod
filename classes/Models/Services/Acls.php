@@ -813,10 +813,6 @@ SQL;
                 $descripter->setDisableMenu((bool)$row['not_enabled']);
                 $descripter->setShowMenu((bool)$row['visible']);
 
-                if (isset($statisticName)) {
-                    $descripter->setDefaultStatisticName($statisticName);
-                }
-
                 // NOTE: this is done so that the GroupByNone query descripter does not have it's
                 // groupByInstance populated. Again, just matching aRole::getQueryDescripters.
                 $order = $row['group_by'] === 'none'

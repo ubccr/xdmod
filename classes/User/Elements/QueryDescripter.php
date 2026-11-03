@@ -29,13 +29,6 @@ class QueryDescripter
     private $_group_by_name;
 
     /**
-     * The name of the default statistic or "all".
-     *
-     * @var string
-     */
-    private $_default_statisticname;
-
-    /**
      * @var string
      */
     private $_default_aggregation_unit_name;
@@ -75,7 +68,6 @@ class QueryDescripter
         $this->realm = \Realm\Realm::factory($realm_name);
         $this->_realm_name = $this->realm->getId();
         $this->_group_by_name   = $group_by_name;
-        $this->_default_statisticname         = $default_statisticname;
         $this->_default_aggregation_unit_name = $default_aggregation_unit_name;
         $this->_default_query_type            = $default_query_type;
         $this->_order_id = $order_id;
@@ -159,85 +151,6 @@ class QueryDescripter
         }
 
         return $this->groupByInstance;
-    }
-
-    public function getAggregate(
-        $start_date,
-        $end_date,
-        $statistic_name,
-        $aggregation_unit_name = 'auto',
-        array $parameters = array()
-    ) {
-        return new AggregateQuery(
-            $this->realm,
-            $aggregation_unit_name,
-            $start_date,
-            $end_date,
-            $this->getGroupByName(),
-            $statistic_name,
-            $parameters
-        );
-    }
-
-    public function getTimeseries(
-        $start_date,
-        $end_date,
-        $statistic_name,
-        $aggregation_unit_name = 'auto',
-        array $parameters = array()
-    ) {
-        return new TimeseriesQuery(
-            $this->realm,
-            $aggregation_unit_name,
-            $start_date,
-            $end_date,
-            $this->getGroupByName(),
-            $statistic_name,
-            $parameters
-        );
-    }
-
-    public function getAllQueries(
-        $start_date,
-        $end_date,
-        $aggregation_unit_name = 'auto',
-        array $parameters = array(),
-        $query_type = 'aggregate'
-    ) {
-        $queries    = array();
-        $statistics = array();
-
-        if ($this->getDefaultStatisticName() == 'all') {
-            $tmp_statistics = $this->getPermittedStatistics();
-
-            foreach ($tmp_statistics as $tmp_statistic) {
-                $statistics[] = $tmp_statistic;
-            }
-        } else {
-            $statistics[] = $this->getDefaultStatisticName();
-        }
-
-        foreach ($statistics as $statistic) {
-            if ($query_type == 'aggregate' || $query_type == 'Aggregate') {
-                $queries[] = $this->getAggregate(
-                    $start_date,
-                    $end_date,
-                    $statistic,
-                    $aggregation_unit_name,
-                    $parameters
-                );
-            } else {
-                $queries[] = $this->getTimeseries(
-                    $start_date,
-                    $end_date,
-                    $statistic,
-                    $aggregation_unit_name,
-                    $parameters
-                );
-            }
-        }
-
-        return $queries;
     }
 
     /* getStatisticsClasses
@@ -324,16 +237,6 @@ class QueryDescripter
         sort($labels);
 
         return $labels;
-    }
-
-    public function getDefaultStatisticName()
-    {
-        return $this->_default_statisticname;
-    }
-
-    public function setDefaultStatisticName($stat)
-    {
-        $this->_default_statisticname = $stat;
     }
 
     public function getDefaultAggregationUnitName()
