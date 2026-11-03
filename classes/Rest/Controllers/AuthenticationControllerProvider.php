@@ -5,6 +5,7 @@ namespace Rest\Controllers;
 use CCR\MailWrapper;
 use Exception;
 use Models\Services\Acls;
+use Models\Services\Tokens;
 use Models\Services\JsonWebToken;
 use Models\Services\Organizations;
 use Rest\Utilities\Authentication;
@@ -51,6 +52,7 @@ class AuthenticationControllerProvider extends BaseControllerProvider
         $controller->post("$root/logout", '\Rest\Controllers\AuthenticationControllerProvider::logout');
         $controller->get("$root/idpredirect", '\Rest\Controllers\AuthenticationControllerProvider::getIdpRedirect');
         $controller->get("$root/jwt-redirect", '\Rest\Controllers\AuthenticationControllerProvider::redirectWithJwt');
+        $controller->post("$root/jwt-login", '\Rest\Controllers\AuthenticationControllerProvider::loginWithJwt');
     }
 
     /**
@@ -151,5 +153,30 @@ class AuthenticationControllerProvider extends BaseControllerProvider
         $response = new RedirectResponse($jupyterhub_url);
         $response->headers->setCookie($cookie);
         return $response;
+    }
+
+    /**
+     * Login via JWT. Behaves silmilar to self::Login()
+     *
+     * @param Request $request that will be used to retrieve the user
+     * @param Application $app used to facilitate json encoding the response.
+     * @return \Symfony\Component\HttpFoundation\JsonResponse which contains a
+     *                         token and the users full name if the login
+     *                         attempt is successful.
+     * @throws \Exception if the user could not be found or if their account
+     *                   is disabled.
+     */
+    public function loginWithJwt(Request $request, Application $app)
+    {
+        $jwks = JsonWebToken::getJwks($request);
+        $user = Tokens::authenticate($request, $jwks);
+
+        $user->postLogin();
+
+        return $app->json(array(
+            'success' => true,
+            'results' => array('token' => $user->getSessionToken(), 'name' => $user->getFormalName())
+        ));
+
     }
 }

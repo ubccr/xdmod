@@ -27,13 +27,14 @@ class Tokens
      * Attempt to authenticate a user via an authentication token included in a given request.
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param array $jwtKeySet keys need to decode jwt (not needed for jupyterhub jwt authentication)
      *
      * @return XDUser the succesfully authenticated user.
      *
      * @throws \Exception                if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    public static function authenticate($request)
+    public static function authenticate($request, $jwks = null)
     {
         $token = null;
         // Try to extract the token from the header.
@@ -49,7 +50,7 @@ class Tokens
         if (empty($token)) {
             self::throwUnauthorized(self::MISSING_TOKEN_MESSAGE);
         }
-        return self::authenticateToken($token, $request->getPathInfo());
+        return self::authenticateToken($token, $request->getPathInfo(), $jwks);
     }
 
     /**
@@ -96,7 +97,7 @@ class Tokens
      * @throws \Exception                if unable to retrieve a database connection.
      * @throws UnauthorizedHttpException if the token is missing, malformed, invalid, or expired.
      */
-    private static function authenticateToken($rawToken, $endpoint = null)
+    private static function authenticateToken($rawToken, $endpoint = null, $jwks = null)
     {
         // Determine token type
         $tokenParts = explode('.', $rawToken);
@@ -108,7 +109,7 @@ class Tokens
             $authenticatedUser = self::authenticateAPIToken($userId, $token);
         } elseif ($tokenPartsSize === 3) {
             $tokenType = 'JSON Web Token';
-            $authenticatedUser = self::authenticateJSONWebToken($rawToken);
+            $authenticatedUser = self::authenticateJSONWebToken($rawToken, $jwks);
         } else {
             self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         }
@@ -194,10 +195,14 @@ SQL;
      * @throws UnauthorizedHttpException if the token is invalid or expired
      *
      */
-    private static function authenticateJSONWebToken($jwt)
+    private static function authenticateJSONWebToken($jwt, $jwks = null)
     {
         try {
-            $claims = JsonWebToken::decode($jwt);
+            if (isset($jwks)) {
+                $claims = JsonWebToken::decodeWithKeys($jwt, $jwks);
+            } else {
+                $claims = JsonWebToken::decode($jwt);
+            }
         } catch (UnexpectedValueException | SignatureInvalidException $e) {
             self::throwUnauthorized(self::INVALID_TOKEN_MESSAGE);
         } catch (ExpiredException $e) {
