@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace CCR\Controller\InternalDashboard;
 
+use CCR\Configuration\IniConfiguration;
 use CCR\Controller\BaseController;
 use CCR\DB;
 use CCR\Helper\PasswordResetService;
@@ -43,9 +44,10 @@ class UserAdminController extends BaseController
         Environment $twig,
         Tokens $tokenHelper,
         ContainerBagInterface $parameters,
+        IniConfiguration $portalSettings,
         PasswordResetService $passwordResetService
     ) {
-        parent::__construct($logger, $twig, $tokenHelper, $parameters);
+        parent::__construct($logger, $twig, $tokenHelper, $parameters, $portalSettings);
         $this->passwordResetService = $passwordResetService;
     }
 

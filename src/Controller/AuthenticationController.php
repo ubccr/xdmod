@@ -117,10 +117,11 @@ class AuthenticationController extends BaseController
     public function redirectWithJwt(Request $request): Response
     {
         try {
-            $jupyterhub_url = $this->parameters->get('xdmod.portal_settings.jupyterhub.url');
-        } catch (Exception $e) {
+            $jupyterhub_url = $this->portalSettings->getConfigurationOption('jupyterhub', 'url');
+        } catch (Exception) {
             throw new HttpException(501, 'JupyterHub not configured.');
         }
+
         try {
             $user = $this->authorize($request);
         } catch (UnauthorizedHttpException $e) {

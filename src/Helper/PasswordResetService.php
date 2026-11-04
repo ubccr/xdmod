@@ -1,6 +1,7 @@
 <?php declare(strict_types=1);
 namespace CCR\Helper;
 
+use CCR\Configuration\IniConfiguration;
 use CCR\MailWrapper;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
@@ -14,7 +15,7 @@ class PasswordResetService
     public function __construct(
         protected LoggerInterface $logger,
         protected Environment $twig,
-        protected ContainerBagInterface $parameters
+        protected IniConfiguration $portalSettings
     ) {
     }
 
@@ -24,7 +25,7 @@ class PasswordResetService
      * @param XDUser $user
      * @return void
      * @throws \Psr\Container\ContainerExceptionInterface if there is a problem with the underlying Symfony container
-     * @throws \Psr\Container\NotFoundExceptionInterface if unable to find portal_settings.general.[title|site_address]
+     * @throws \Exception if unable to find portal_settings.general.[title|site_address]
      * @throws \Twig\Error\LoaderError if there is a problem loading the password_reset twig template
      * @throws \Twig\Error\RuntimeError if Twig encounters an error while rendering the template.
      * @throws \Twig\Error\SyntaxError if there is a syntax problem with the password_reset twig template.
@@ -35,9 +36,9 @@ class PasswordResetService
     {
         $rid = $user->generateRID();
 
-        $title = $this->parameters->get('xdmod.portal_settings.general.title');
+        $title = $this->portalSettings->getConfigurationOption('general', 'title');
         $subject = sprintf('%s: Password Reset', $title);
-        $siteAddress = $this->parameters->get('xdmod.portal_settings.general.site_address');
+        $siteAddress = $this->portalSettings->getConfigurationOption('general', 'site_address');
         if (!string_ends_with($siteAddress, '/')) {
             $siteAddress = "$siteAddress/";
         }

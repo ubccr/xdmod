@@ -44,13 +44,20 @@ class PasswordResetController extends BaseController
             $validationCheck = \XDUser::validateRID($rid);
         }
 
+        $siteAddress = $this->portalSettings->getConfigurationOption('general', 'site_address');
 
+        // This takes the place of getConfigurationUrlBase
+        if (!str_ends_with($siteAddress, '/')) {
+            $siteAddress .= '/';
+        }
+
+        $title = $this->portalSettings->getConfigurationOption('general', 'title');
         if ($validationCheck['status'] === INVALID || !in_array($mode, self::$validModes)) {
             return $this->render(
                 'twig/password_reset_expired.html.twig',
                 [
-                    'site_address' => $this->parameters->get('xdmod.portal_settings.general.site_address'),
-                    'title' => $this->parameters->get('xdmod.portal_settings.general.title')
+                    'site_address' => $siteAddress,
+                    'title' => $title
                 ]
             );
         }
@@ -58,7 +65,7 @@ class PasswordResetController extends BaseController
         return $this->render(
             '/twig/password_reset.html.twig',
             [
-                'title' => $this->parameters->get('xdmod.portal_settings.general.title'),
+                'title' => $title,
                 'rid' => $rid,
                 'mode' => $mode,
                 'first_name' => htmlspecialchars(

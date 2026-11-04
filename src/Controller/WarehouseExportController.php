@@ -2,6 +2,7 @@
 
 namespace CCR\Controller;
 
+use CCR\Configuration\IniConfiguration;
 use CCR\Security\Helpers\Tokens;
 use CCR\DB;
 use DataWarehouse\Data\RawStatisticsConfiguration;
@@ -49,9 +50,9 @@ class WarehouseExportController extends BaseController
     /**
      * @throws Exception if unable to instantiate the logger.
      */
-    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters)
+    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters, IniConfiguration $portalSettings)
     {
-        parent::__construct($logger, $twig, $tokenHelper, $parameters);
+        parent::__construct($logger, $twig, $tokenHelper, $parameters, $portalSettings);
 
         $this->realmManager = new RealmManager();
         $this->queryHandler = new QueryHandler($this->logger);
