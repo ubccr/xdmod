@@ -930,7 +930,8 @@ SQL;
             // is determined entirely by this inner, grouped query; the statistic formulas
             // evaluated against it in getQueryString()'s outer query do not add or remove rows, so
             // they are not needed to count them.
-            list($select_fields, , ) = $this->getDerivedTableFields();
+            $unused = '';
+            list($select_fields, $unused, $unused) = $this->getDerivedTableFields();
         } else {
             $select_fields = $this->getSelectFields();
         }
