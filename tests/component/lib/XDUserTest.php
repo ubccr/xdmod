@@ -4,6 +4,7 @@ namespace ComponentTests;
 
 use CCR\DB;
 use CCR\Json;
+use DataWarehouse\Query\Exceptions\AccessDeniedException;
 use Models\Acl;
 use Models\Services\Users;
 use ReflectionClass;
@@ -893,6 +894,219 @@ class XDUserTest extends BaseTest
         $user = self::getUser(null, 'test', 'a', 'user');
         $actual = $user->_getFormalRoleName('');
         $this->assertEquals($expected, $actual);
+    }
+
+    public function provideEmptyConstructorPasswords()
+    {
+        return array(
+            'null password' => array(null),
+            'empty password' => array('')
+        );
+    }
+
+    /**
+     * Ensure that we can create an SSO user without a password since we'll never have a password for SSO users.
+     *
+     * @dataProvider provideEmptyConstructorPasswords
+     */
+    public function testCreateSsoUserWithoutPassword($password)
+    {
+        $user = self::getUser($password, 'Password', '', 'Test');
+        $user->setUserType(SSO_USER_TYPE);
+        $user->saveUser();
+
+        $loaded = XDUser::getUserByID($user->getUserID());
+        $this->assertNull($loaded->getPassword());
+        $this->assertSame(SSO_USER_TYPE, $loaded->getUserType());
+
+        // Ensure that we can update the user without a password.
+        $loaded->setFirstName('Updated');
+        $loaded->saveUser();
+
+        // Password should still be null after updating.
+        $this->assertNull(
+            XDUser::getUserByID($user->getUserID())->getPassword()
+        );
+    }
+
+    /**
+     * Ensure that we can create a user with a password at the maximum length.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function testConstructorPasswordAtMaximumLengthAllowsLogin()
+    {
+        $password = str_repeat('a', (int) CHARLIM_PASSWORD);
+        $user = self::getUser($password, 'Password', '', 'Test');
+        $user->setUserType(self::DEFAULT_USER_TYPE);
+        $user->saveUser();
+
+        $loadedUser = XDUser::getUserByID($user->getUserID());
+
+        // Check that the previously saved max length password is retrieved / verified successfully.
+        $this->assertTrue(password_verify($password, $loadedUser->getPassword()));
+
+        // Sanity check that the user can authenticate with the password.
+        $authenticatedUser = XDUser::authenticate($user->getUsername(), $password);
+        $this->assertNotNull($authenticatedUser);
+        $this->assertEquals($user->getUserID(), $authenticatedUser->getUserID());
+    }
+
+    /**
+     * Ensure that passwords over the maximum length are rejected.
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function testConstructorRejectsPasswordOverMaximumLength()
+    {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Password is too long.');
+
+        self::getUser(
+            str_repeat('a', (int) CHARLIM_PASSWORD + 1),
+            'Password',
+            '',
+            'Test'
+        );
+    }
+
+    /**
+     * Ensure that passwords at the maximum length replace login credentials.
+     *
+     * @return void
+     * @throws AccessDeniedException
+     */
+    public function testSetPasswordAtMaximumLengthReplacesLoginCredentials()
+    {
+        $user = self::getUser('a', 'Password', '', 'Test');
+        $user->setUserType(self::DEFAULT_USER_TYPE);
+        $user->saveUser();
+
+        // Matches the load -> setPassword -> save flow used by updateCurrentUser.
+        $loaded = XDUser::getUserByID($user->getUserID());
+        $replacement = str_repeat('b', (int) CHARLIM_PASSWORD);
+        $loaded->setPassword($replacement);
+        $loaded->saveUser();
+
+        $reloaded = XDUser::getUserByID($user->getUserID());
+
+        // Ensure that the password has been updated successfully.
+        $this->assertTrue(
+            password_verify($replacement, $reloaded->getPassword())
+        );
+
+        // Ensure that the updated user can authenticate successfully.
+        $this->assertNotNull(
+            XDUser::authenticate($user->getUsername(), $replacement)
+        );
+
+        // Ensure that the updated user cannot authenticate with the old password.
+        $this->assertNull(
+            XDUser::authenticate($user->getUsername(), 'a')
+        );
+    }
+
+    /**
+     * Ensure that repeated saves preserve the password so that we don't run into a double hash type situation.
+     *
+     * @return void
+     * @throws AccessDeniedException
+     */
+    public function testProfileUpdatesAndRepeatedSavesPreservePassword()
+    {
+        $user = self::getUser('a', 'Password', '', 'Test');
+        $user->setUserType(self::DEFAULT_USER_TYPE);
+        $user->saveUser();
+
+        // Exercise repeated saves on the instance used for creation.
+        $hash = XDUser::getUserByID($user->getUserID())->getPassword();
+        $user->setFirstName('Updated');
+        $user->saveUser();
+        $user->saveUser();
+
+        $loaded = XDUser::getUserByID($user->getUserID());
+        $this->assertSame($hash, $loaded->getPassword());
+
+        // Exercise repeated saves after an explicit password replacement.
+        $loaded->setPassword('b');
+        $loaded->saveUser();
+        $replacementHash = XDUser::getUserByID(
+            $user->getUserID()
+        )->getPassword();
+
+        $loaded->setLastName('Updated');
+        $loaded->saveUser();
+
+        $reloaded = XDUser::getUserByID($user->getUserID());
+        $this->assertSame($replacementHash, $reloaded->getPassword());
+        $this->assertNotNull(
+            XDUser::authenticate($user->getUsername(), 'b')
+        );
+    }
+
+    public function provideInvalidReplacementPasswords()
+    {
+        return array(
+            'empty password' => array('', 'Password cannot be empty.'),
+            'overlong password' => array(
+                str_repeat('b', (int) CHARLIM_PASSWORD + 1),
+                'Password is too long.'
+            )
+        );
+    }
+
+    /**
+     * Ensure that attempting to update a password with an invalid value does't change the users password.
+     *
+     * @dataProvider provideInvalidReplacementPasswords
+     */
+    public function testRejectedPasswordReplacementPreservesCredentials(
+        $replacement,
+        $message
+    ) {
+        $user = self::getUser('a', 'Password', '', 'Test');
+        $user->setUserType(self::DEFAULT_USER_TYPE);
+        $user->saveUser();
+        $hash = XDUser::getUserByID($user->getUserID())->getPassword();
+
+        try {
+            $user->setPassword($replacement);
+            $this->fail('Expected password validation to reject the value.');
+        } catch (\InvalidArgumentException $exception) {
+            $this->assertStringContainsString($message, $exception->getMessage());
+        }
+
+        // A later profile save must not persist the rejected value.
+        $user->setFirstName('Updated');
+        $user->saveUser();
+
+        $this->assertSame(
+            $hash,
+            XDUser::getUserByID($user->getUserID())->getPassword()
+        );
+        $this->assertNotNull(
+            XDUser::authenticate($user->getUsername(), 'a')
+        );
+    }
+
+    /**
+     * Ensure that SSO Users are unable to have passwords.
+     *
+     * @return void
+     * @throws AccessDeniedException
+     */
+    public function testSsoUserCannotSetLocalPassword()
+    {
+        $user = self::getUser(null, 'Password', '', 'Test');
+        $user->setUserType(SSO_USER_TYPE);
+        $user->saveUser();
+
+        $this->expectException(
+            AccessDeniedException::class
+        );
+        $user->setPassword('a');
     }
 
     public static function tearDownAfterClass(): void

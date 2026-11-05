@@ -69,3 +69,15 @@ $phpunit $(log_opts "component" "roles")  --testsuite=Roles -v $EXCLUDE_GROUP_OP
 # which messes with the tests in lib/Roles. Hence the splitting into two test
 # suites.
 $phpunit $(log_opts "component" "non-roles")  --testsuite=non-roles -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION
+
+# We set CHARLIM_PASSWORD to 255 to ensure that a previous bug ( The bug was that if CHARLIM_PASSWORD was larger than
+# the length of a hashed password, everything worked, but if it was smaller than the length of a hashed password, the
+# password would not be included when saving the updated user. ) does not re-occur.
+echo "Updating CHARLIM_PASSWORD to 255";
+sed -i "s|define('CHARLIM_PASSWORD', '20');|define('CHARLIM_PASSWORD', '255');|g" /usr/share/xdmod/configuration/constants.php
+
+echo "Re-running XDUserTests"
+$phpunit $(log_opts "component" "non-roles")  --testsuite=non-roles -v $EXCLUDE_GROUP_OPTION $INCLUDE_GROUP_OPTION --filter XDUserTest
+
+echo "Reverting CHARLIM_PASSWORD back to 20"
+sed -i "s|define('CHARLIM_PASSWORD', '255');|define('CHARLIM_PASSWORD', '20');|g" /usr/share/xdmod/configuration/constants.php
