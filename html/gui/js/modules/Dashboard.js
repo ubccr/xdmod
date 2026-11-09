@@ -18,9 +18,6 @@ Ext.extend(XDMoD.Module.Summary, XDMoD.PortalModule, {
         var portletStore = new Ext.data.JsonStore({
             restful: true,
             url: XDMoD.REST.url + '/dashboard/components',
-            baseParams: {
-                token: XDMoD.REST.token
-            },
             root: 'data',
             fields: ['name', 'type', 'config', 'column'],
             listeners: {

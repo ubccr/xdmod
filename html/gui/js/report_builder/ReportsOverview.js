@@ -531,7 +531,7 @@ XDMoD.ReportsOverview = Ext.extend(Ext.Panel,  {
 
          var rowData = queueGrid.getSelectionModel().getSelected().data;
 
-         self.parent.reportPreview.initPreview(rowData.report_name, rowData.report_id, XDMoD.REST.token, 0, undefined, rowData.charts_per_page);
+         self.parent.reportPreview.initPreview(rowData.report_name, rowData.report_id, 0, undefined, rowData.charts_per_page);
 
          self.parent.switchView(2);
 
