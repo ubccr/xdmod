@@ -43,6 +43,12 @@ class RestIngestor extends StructuredFileIngestor implements iAction
     // Optional parameters for the rest call
     protected $restParameters = array();
 
+    // Optional POST request fields for the rest call
+    protected $postFields = array();
+
+    // Optional key to wrap POST fields for the rest call (NIH wraps their post fields with "criteria")
+    protected $postFieldKey = null;
+
     // The current url, useful for debugging
     protected $currentUrl = null;
 
@@ -55,6 +61,12 @@ class RestIngestor extends StructuredFileIngestor implements iAction
 
     // Rest results directory
     protected $restIngestDir = null;
+
+    // Request records limit
+    protected $limit = null;
+
+    // Request records offset
+    protected $offset = null;
 
     /* ------------------------------------------------------------------------------------------
      * Set up data endpoints and other options.
@@ -97,6 +109,9 @@ class RestIngestor extends StructuredFileIngestor implements iAction
         }
 
         $this->utilityEndpoint->connect();
+
+        $this->limit = $this->utilityEndpoint->getLimit();
+        $this->offset = $this->utilityEndpoint->getOffset();
 
         // If the source query is specified in the definition file use it to obtain parameters for the
         // rest call. For each record returned by the source query, add the returned columnms to the
@@ -149,7 +164,7 @@ class RestIngestor extends StructuredFileIngestor implements iAction
         }
 
         // --------------------------------------------------------------------------------
-        // The values for the request parameter and result field map
+        // The values for the request parameter and post field
 
         if ( isset($this->restRequestConfig->parameters) ) {
             foreach ( $this->restRequestConfig->parameters as $parameter => &$value ) {
@@ -165,6 +180,23 @@ class RestIngestor extends StructuredFileIngestor implements iAction
             unset($value); // Sever the reference with the last element
 
         }  // if ( isset($this->restRequestConfig->parameters) )
+
+        if ( isset($this->restRequestConfig->post_fields) ) {
+            foreach ( $this->restRequestConfig->post_fields as $parameter => &$value ) {
+                if ( ! is_object($value) ) {
+                    continue;
+                }
+                if ( ! isset($value->value) ) {
+                    $this->logger->warning("{$this} POST field '$parameter' object does not specify a 'value' key, skipping");
+                    continue;
+                }
+                $value = $value->value;
+            }
+            unset($value); // Sever the reference with the last element
+
+        }  // if ( isset($this->restRequestConfig->post_fields) )
+
+        $this->postFieldKey = isset($this->restRequestConfig->post_field_key) ? $this->restRequestConfig->post_field_key : null;
 
         $this->initialized = true;
 
@@ -232,7 +264,7 @@ class RestIngestor extends StructuredFileIngestor implements iAction
         // --------------------------------------------------------------------------------
         // Retrieve and process the REST results
 
-        $this->setRestUrlWithParameters();
+        $this->setRestParameters();
 
         // Keep the current url for logging
         $this->currentUrl = curl_getinfo($this->utilityHandle, CURLINFO_EFFECTIVE_URL);
@@ -309,6 +341,10 @@ class RestIngestor extends StructuredFileIngestor implements iAction
             fclose($fp);
 
             // Set up the next url using the "next" key or the source query values
+            if (isset($this->offset) && isset($this->limit)) {
+                $this->offset += $this->limit;
+                $this->setParameter('offset', $this->offset);
+            }
 
             if ( false === $this->setNextUrl($response, $nextKey) ) {
                 break;
@@ -368,6 +404,26 @@ class RestIngestor extends StructuredFileIngestor implements iAction
 
         }  // foreach( $this->restRequestConfig->parameters as $parameter => $value )
 
+        if (isset($this->restRequestConfig->post_fields) {
+
+            foreach( $this->restRequestConfig->post_fields as $field => $value ) {
+
+                $value = $this->variableStore->substitute($value);
+                $this->setParameter($field, $value);
+                $numParameters++;
+
+            }  // foreach( $this->restRequestConfig->post_fields as $field => $value )
+            curl_setopt($this->utilityHandle, CURLOPT_RETURNTRANSFER, true);
+        }
+
+        if (isset($this->limit)) {
+            $this->setParameter('limit', $this->limit);
+        }
+
+        if (isset($this->offset)) {
+            $this->setParameter('offset', $this->offset);
+        }
+
         return $numParameters;
 
     }  // processParameters()
@@ -388,7 +444,11 @@ class RestIngestor extends StructuredFileIngestor implements iAction
             $this->logAndThrowException("REST parameter name not provided");
         }
 
-        $this->restParameters[$parameter] = $value;
+        if (isset($this->postFields) {
+            $this->postFields[$parameter] = $value;
+        } else {
+            $this->restParameters[$parameter] = $value;
+        }
         return $this;
 
     }  // setParameter()
@@ -404,10 +464,22 @@ class RestIngestor extends StructuredFileIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function setRestUrlWithParameters()
+    protected function setRestParameters()
     {
-        if ( 0 == count($this->restParameters) ) {
+        if ( 0 === count($this->restParameters) && 0 === count($this->postFields)) {
             return;
+        }
+
+        if (isset($this->postFields)) {
+            $postData = [];
+            if (isset($this->postFieldKey)) {
+                $postData[$this->postFieldKey] = $this->postFields;
+            } else {
+                $postData = $this->postFields;
+            }
+
+            curl_setopt($this->utilityHandle, CURLOPT_POSTFIELDS, json_encode($postData));
+            return $this;
         }
 
         if ( null !== $this->restRequestConfig && isset($this->restRequestConfig->format) ) {
@@ -453,7 +525,7 @@ class RestIngestor extends StructuredFileIngestor implements iAction
 
         return $this;
 
-    }  // setRestUrlWithParameters()
+    }  // setRestParameters()
 
     /* ------------------------------------------------------------------------------------------
      * Set up the url for the next record.
@@ -486,7 +558,7 @@ class RestIngestor extends StructuredFileIngestor implements iAction
 
                 // Need to be able to skip this not end the run.
 
-                if ( false !== $this->setRestUrlWithParameters() ) {
+                if ( false !== $this->setRestParameters() ) {
                     break;
                 }
             }

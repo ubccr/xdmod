@@ -21,7 +21,7 @@ class Rest extends aDataEndpoint implements iDataEndpoint
     const ENDPOINT_NAME = 'rest';
 
     /**
-     * @var stromg The base url for this endpoint
+     * @var string The base url for this endpoint
      */
     protected $baseUrl = null;
 
@@ -34,6 +34,16 @@ class Rest extends aDataEndpoint implements iDataEndpoint
      * @var Mysql Utility Mysql endpoint for REST parameters
      */
     protected $restParameterEndpoint = null;
+
+    /**
+     * @var integer The number of records to pull for the request.
+     */
+    protected $limit = null;
+
+    /**
+     * @var integer The number of records to skip for the request.
+     */
+    protected $offset = null;
 
     /**
      * @see iDataEndpoint::__construct()
@@ -69,6 +79,9 @@ class Rest extends aDataEndpoint implements iDataEndpoint
 
             $this->restParameterEndpoint = DataEndpoint::factory($param_endpoint_options, $this->logger);
         }
+
+        $this->limit = $options->limit;
+        $this->offset = $options->offset;
 
         $this->generateUniqueKey();
     }
@@ -147,6 +160,24 @@ class Rest extends aDataEndpoint implements iDataEndpoint
     public function getSleepMicroseconds()
     {
         return $this->sleepMicroseconds;
+    }
+
+    /**
+     * @return The number of records to pull for the request.
+     */
+
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @return The number of records to skip for the request.
+     */
+
+    public function getOffset()
+    {
+        return $this->offset;
     }
 
     /**
