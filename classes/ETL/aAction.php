@@ -456,6 +456,14 @@ abstract class aAction extends aEtlObject
             if ( $endpoint instanceof iRdbmsEndpoint ) {
                 $this->variableStore->UTILITY_SCHEMA = $endpoint->getSchema();
             }
+
+            if ( $endpoint instanceof Rest) {
+                $parameterEndpoint = $endpoint->getRestParameterEndpoint();
+                if ($parameterEndpoint) {
+                    $this->variableStore->PARAMETER_SCHEMA = $parameterEndpoint->getSchema();
+                }
+            }
+
             $this->logger->info("Utility endpoint: " . $endpoint);
             $this->utilityEndpoint = $endpoint;
             $this->utilityHandle = $endpoint->getHandle();

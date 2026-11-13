@@ -7,6 +7,7 @@
 
 namespace ETL\DataEndpoint;
 
+use ETL\DataEndpoint;
 use ETL\DataEndpoint\DataEndpointOptions;
 use Psr\Log\LoggerInterface;
 
@@ -20,7 +21,7 @@ class Rest extends aDataEndpoint implements iDataEndpoint
     const ENDPOINT_NAME = 'rest';
 
     /**
-     * @var stromg The base url for this endpoint
+     * @var string The base url for this endpoint
      */
     protected $baseUrl = null;
 
@@ -28,6 +29,21 @@ class Rest extends aDataEndpoint implements iDataEndpoint
      * @var integer The number of microseconds to sleep between REST requests.
      */
     protected $sleepMicroseconds = null;
+
+    /**
+     * @var Mysql Utility Mysql endpoint for REST parameters
+     */
+    protected $restParameterEndpoint = null;
+
+    /**
+     * @var integer The number of records to pull for the request.
+     */
+    protected $limit = null;
+
+    /**
+     * @var integer The number of records to skip for the request.
+     */
+    protected $offset = null;
 
     /**
      * @see iDataEndpoint::__construct()
@@ -40,12 +56,32 @@ class Rest extends aDataEndpoint implements iDataEndpoint
         $requiredKeys = array("base_url");
         $this->verifyRequiredConfigKeys($requiredKeys, $options);
 
+
         $this->baseUrl = $options->base_url;
 
-        if ( null !== $options->sleep_seconds && is_numeric($options->sleep_seconds) ) {
+        if ( null !== $options->sleep_seconds ) {
+            if (! is_numeric($options->sleep_seconds) ) {
+                $this->logAndThrowException("Sleep seconds is expected to be numeric, instead got " . gettype($options->sleep_seconds) );
+            }
             $seconds = (float) $options->sleep_seconds;
             $this->sleepMicroseconds = $seconds * 1000000;
         }
+
+        if ( null !== $options->parameter_endpoint ) {
+            if ( ! is_object($options->parameter_endpoint) ) {
+                $this->logAndThrowException("Parameter utility endpoint is expected to be object, instead got " . gettype($options->parameter_endpoint) );
+            }
+
+            $param_endpoint_options = new DataEndpointOptions();
+            foreach ( $options->parameter_endpoint as $key => $value ) {
+                $param_endpoint_options->$key = $value;
+            }
+
+            $this->restParameterEndpoint = DataEndpoint::factory($param_endpoint_options, $this->logger);
+        }
+
+        $this->limit = $options->limit;
+        $this->offset = $options->offset;
 
         $this->generateUniqueKey();
     }
@@ -109,12 +145,39 @@ class Rest extends aDataEndpoint implements iDataEndpoint
     }
 
     /**
+     * @return The base url from the options
+     */
+
+    public function getRestParameterEndpoint()
+    {
+        return $this->restParameterEndpoint;
+    }
+
+    /**
      * @return The number of microseconds to sleep between REST calls
      */
 
     public function getSleepMicroseconds()
     {
         return $this->sleepMicroseconds;
+    }
+
+    /**
+     * @return The number of records to pull for the request.
+     */
+
+    public function getLimit()
+    {
+        return $this->limit;
+    }
+
+    /**
+     * @return The number of records to skip for the request.
+     */
+
+    public function getOffset()
+    {
+        return $this->offset;
     }
 
     /**

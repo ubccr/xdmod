@@ -1372,4 +1372,9 @@ class DirectoryScanner extends aDataEndpoint implements iStructuredFile, iComple
             );
         }
     }
+
+    public function cleanUpDirectory()
+    {
+        array_map('unlink', glob($this->path . '/*'));
+    }
 }
