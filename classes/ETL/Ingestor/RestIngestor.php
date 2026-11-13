@@ -344,9 +344,9 @@ class RestIngestor extends StructuredFileIngestor implements iAction
             if (isset($this->offset) && isset($this->limit)) {
                 $this->offset += $this->limit;
                 $this->setParameter('offset', $this->offset);
+                $this->setRestParameters();
             }
-
-            if ( false === $this->setNextUrl($response, $nextKey) ) {
+            else if ( false === $this->setNextUrl($response, $nextKey) ) {
                 break;
             }
 
@@ -404,7 +404,7 @@ class RestIngestor extends StructuredFileIngestor implements iAction
 
         }  // foreach( $this->restRequestConfig->parameters as $parameter => $value )
 
-        if (isset($this->restRequestConfig->post_fields) {
+        if (isset($this->restRequestConfig->post_fields) ) {
 
             foreach( $this->restRequestConfig->post_fields as $field => $value ) {
 
