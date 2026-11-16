@@ -63,18 +63,15 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
      */
     public function supports(Request $request): ?bool
     {
-        if (empty($this->sources)) {
-            return false;
-        }
-        // We only allow SSO Auth when the request is a GET for the home page.
-        if (!$request->isMethod('GET') ||
-            !$this->httpUtils->checkRequestPath($request, 'xdmod_home')) {
-            return false;
-        }
-
         $referer = $request->headers->get('Referer');
-        // And if the referer is not empty.
-        if (empty($referer)) {
+
+        if (
+            empty($this->sources)
+            || !$request->isMethod('GET')
+            || !$this->httpUtils->checkRequestPath($request, 'xdmod_home')
+            || !$this->parameters->has('xdmod.portal_settings.sso.auth_referer')
+            || empty($referer)
+        ) {
             return false;
         }
 
