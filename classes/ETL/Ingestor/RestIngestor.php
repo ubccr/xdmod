@@ -44,7 +44,10 @@ class RestIngestor extends StructuredFileIngestor implements iAction
     protected $restParameters = array();
 
     // Optional POST request fields for the rest call
-    protected $postFields = array();
+    protected $postFields = null;
+
+    // Optional string version of $postFields to subtitute variables from source query and send as curl POST request
+    protected $postFieldString = null;
 
     // Optional key to wrap POST fields for the rest call (NIH wraps their post fields with "criteria")
     protected $postFieldKey = null;
@@ -135,11 +138,6 @@ class RestIngestor extends StructuredFileIngestor implements iAction
 
         // Set up some default values for the REST response config. These can be overriden.
 
-        $defaultRestResponseConfig = (object) array(
-            // Optional top-level entry point into the result. NSF api uses "response".
-            "response" => null,
-        );
-
         if ( null !== $this->restRequestConfig && ! is_object($this->restRequestConfig) ) {
             $this->logAndThrowException("REST request config must be an object");
         } elseif ( null !== $this->restResponseConfig && ! is_object($this->restResponseConfig) ) {
@@ -148,10 +146,7 @@ class RestIngestor extends StructuredFileIngestor implements iAction
 
         // Rest response
         if ( null === $this->restResponseConfig && isset($this->parsedDefinitionFile->rest_response) ) {
-            $this->restResponseConfig = (object) array_merge(
-                (array) $defaultRestResponseConfig,
-                (array) $this->parsedDefinitionFile->rest_response
-            );
+            $this->restResponseConfig = (object) $this->parsedDefinitionFile->rest_response;
         } elseif ( ! isset($this->parsedDefinitionFile->rest_response) ) {
             $this->logAndThrowException("rest_response key not found in definition file");
         }
@@ -163,38 +158,16 @@ class RestIngestor extends StructuredFileIngestor implements iAction
             $this->logAndThrowException("rest_request key not found in definition file");
         }
 
-        // --------------------------------------------------------------------------------
-        // The values for the request parameter and post field
-
-        if ( isset($this->restRequestConfig->parameters) ) {
-            foreach ( $this->restRequestConfig->parameters as $parameter => &$value ) {
-                if ( ! is_object($value) ) {
-                    continue;
-                }
-                if ( ! isset($value->value) ) {
-                    $this->logger->warning("{$this} Parameter '$parameter' object does not specify a 'value' key, skipping");
-                    continue;
-                }
-                $value = $value->value;
+        if (isset($this->restRequestConfig->post_fields) ) {
+            $this->postFieldString = json_encode($this->restRequestConfig->post_fields);
+            if (false === $this->postFieldString) {
+                $this->logAndThrowException("Could not JSON encode post field options within definition file");
             }
-            unset($value); // Sever the reference with the last element
 
-        }  // if ( isset($this->restRequestConfig->parameters) )
-
-        if ( isset($this->restRequestConfig->post_fields) ) {
-            foreach ( $this->restRequestConfig->post_fields as $parameter => &$value ) {
-                if ( ! is_object($value) ) {
-                    continue;
-                }
-                if ( ! isset($value->value) ) {
-                    $this->logger->warning("{$this} POST field '$parameter' object does not specify a 'value' key, skipping");
-                    continue;
-                }
-                $value = $value->value;
-            }
-            unset($value); // Sever the reference with the last element
-
-        }  // if ( isset($this->restRequestConfig->post_fields) )
+            curl_setopt($this->utilityHandle, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($this->utilityHandle, CURLOPT_POST, true);
+            $this->postFields = [];
+        }
 
         $this->postFieldKey = isset($this->restRequestConfig->post_field_key) ? $this->restRequestConfig->post_field_key : null;
 
@@ -245,7 +218,7 @@ class RestIngestor extends StructuredFileIngestor implements iAction
     {
         // Support a source query, mapping from the source to rest parameters, rest field map
         $requestHeaders = ( isset($this->restRequestConfig->requestHeaders) ? (array) $this->restRequestConfig->requestHeaders : [] );
-        $responseKey = ( isset($this->restResponseConfig->reponse) ? $this->restResponseConfig->response : null );
+        $responseKey = ( isset($this->restResponseConfig->response) ? $this->restResponseConfig->response : null );
 
         // --------------------------------------------------------------------------------
         // Perform a-priori verifications
@@ -279,7 +252,6 @@ class RestIngestor extends StructuredFileIngestor implements iAction
 
         $numRequestsMade = 1;
         $logCount = 10000;
-        $first = true;
 
         while ( false !== ( $retval = curl_exec($this->utilityHandle) ) ) {
 
@@ -290,7 +262,7 @@ class RestIngestor extends StructuredFileIngestor implements iAction
             $response = json_decode($retval);
 
             if ( null === $response || ! is_object($response) ) {
-                $this->logAndThrowException("{$this} Response is not an array: $retval");
+                $this->logAndThrowException("{$this} Response is not an object: $retval");
             }
 
             // --------------------------------------------------------------------------------
@@ -301,7 +273,7 @@ class RestIngestor extends StructuredFileIngestor implements iAction
             $results = null;
             if ( $responseKey !== null ) {
                 if ( ! isset($response->$responseKey) ) {
-                    $this->logAndThrowException(
+                    $this->logger->warning(
                         "Configured top-level response key '$responseKey' not found in response. "
                         . "Response keys are '" . implode(",", array_keys((array) $response)) . "'"
                     );
@@ -341,17 +313,15 @@ class RestIngestor extends StructuredFileIngestor implements iAction
             fclose($fp);
 
             // Set up the next url using the "next" key or the source query values
-            if (isset($this->offset) && isset($this->limit)) {
-                $this->offset += $this->limit;
-                $this->setParameter('offset', $this->offset);
-                $this->setRestParameters();
-            }
-            else if ( false === $this->setNextUrl($response, $nextKey) ) {
+            if ( false === $this->setNextUrl($response, $nextKey, true) ) {
                 break;
             }
 
             $numRequestsMade++;
 
+            if ( null !== $this->utilityEndpoint->getSleepMicroseconds() ) {
+                usleep($this->utilityEndpoint->getSleepMicroseconds());
+            }
         }  // while ( false !== ( $retval = curl_exec($this->utilityHandle) ) )
 
         if ( 0 != curl_errno($this->utilityHandle) ) {
@@ -390,30 +360,14 @@ class RestIngestor extends StructuredFileIngestor implements iAction
     {
         $numParameters = 0;
 
-        if ( null === $this->restRequestConfig ||
-             ! isset($this->restRequestConfig->parameters) )
-        {
-            return $numParameters;
-        }
-
-        foreach( $this->restRequestConfig->parameters as $parameter => $value ) {
-
-            $value = $this->variableStore->substitute($value);
-            $this->setParameter($parameter, $value);
-            $numParameters++;
-
-        }  // foreach( $this->restRequestConfig->parameters as $parameter => $value )
-
-        if (isset($this->restRequestConfig->post_fields) ) {
-
-            foreach( $this->restRequestConfig->post_fields as $field => $value ) {
+        if (isset($this->restRequestConfig->parameters) ) {
+            foreach( $this->restRequestConfig->parameters as $parameter => $value ) {
 
                 $value = $this->variableStore->substitute($value);
-                $this->setParameter($field, $value);
+                $this->setParameter($parameter, $value);
                 $numParameters++;
 
-            }  // foreach( $this->restRequestConfig->post_fields as $field => $value )
-            curl_setopt($this->utilityHandle, CURLOPT_RETURNTRANSFER, true);
+            }  // foreach( $this->restRequestConfig->parameters as $parameter => $value )
         }
 
         if (isset($this->limit)) {
@@ -444,7 +398,7 @@ class RestIngestor extends StructuredFileIngestor implements iAction
             $this->logAndThrowException("REST parameter name not provided");
         }
 
-        if (isset($this->postFields) {
+        if (isset($this->postFields) ) {
             $this->postFields[$parameter] = $value;
         } else {
             $this->restParameters[$parameter] = $value;
@@ -471,14 +425,10 @@ class RestIngestor extends StructuredFileIngestor implements iAction
         }
 
         if (isset($this->postFields)) {
-            $postData = [];
-            if (isset($this->postFieldKey)) {
-                $postData[$this->postFieldKey] = $this->postFields;
-            } else {
-                $postData = $this->postFields;
-            }
+            $vs = new VariableStore($this->postFields);
+            $postString = $vs->substitute($this->postFieldString);
 
-            curl_setopt($this->utilityHandle, CURLOPT_POSTFIELDS, json_encode($postData));
+            curl_setopt($this->utilityHandle, CURLOPT_POSTFIELDS, $postString);
             return $this;
         }
 
@@ -538,19 +488,26 @@ class RestIngestor extends StructuredFileIngestor implements iAction
      * ------------------------------------------------------------------------------------------
      */
 
-    protected function setNextUrl(\stdClass $response, $nextKey)
+    protected function setNextUrl(\stdClass $response, $nextKey, $checkOffset = false)
     {
         // If the next key was specified, use the value from the response for the next call. If we are
         // using a source query, do not use the next key returned in the response.
+        if ($checkOffset && isset($this->offset) && isset($this->limit)) {
+            $this->offset += $this->limit;
+            $this->setParameter('offset', $this->offset);
+            $this->setRestParameters();
 
-        if ( null !== $this->etlSourceQuery && null !== $this->etlSourceQueryResult ) {
+        } elseif ( null !== $this->etlSourceQuery && null !== $this->etlSourceQueryResult ) {
 
+            if (isset($this->offset) && isset($this->limit)) {
+                $this->offset = 0;
+                $this->setParameter('offset', $this->offset);
+            }
             // Continue pulling from the source query until we reach the end or we pass parameter verification
 
             $row = false;
 
             while ( false !== ($row = $this->etlSourceQueryResult->fetch(PDO::FETCH_ASSOC)) ) {
-
 
                 foreach( $row as $k => $v ) {
                     $this->setParameter($k, $v);
@@ -579,11 +536,11 @@ class RestIngestor extends StructuredFileIngestor implements iAction
             return false;
         }
 
-        $this->logger->debug("REST url: {$this->currentUrl}");
-
         if ( null !== $this->utilityEndpoint->getSleepMicroseconds() ) {
             usleep($this->utilityEndpoint->getSleepMicroseconds());
         }
+
+        $this->logger->debug("REST url: {$this->currentUrl}");
 
         return true;
 

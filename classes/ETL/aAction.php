@@ -15,6 +15,7 @@ namespace ETL;
 use Configuration\Configuration;
 use ETL\DataEndpoint\iDataEndpoint;
 use ETL\DataEndpoint\iRdbmsEndpoint;
+use ETL\DataEndpoint\Rest;
 use ETL\Configuration\EtlConfiguration;
 use Psr\Log\LoggerInterface;
 
