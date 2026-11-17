@@ -1,8 +1,9 @@
 #!/usr/bin/env node
-const puppeteer = require('puppeteer-core');
-const args = require('yargs').argv;
+import puppeteer from 'puppeteer-core';
+import yargs from 'yargs';
 
 (async () => {
+    const args = yargs(process.argv.slice(2)).parse();
     const browser = await puppeteer.launch({
         executablePath: args['path-to-chrome'],
         args: ['--no-sandbox', '--disable-extensions', '--disable-setuid-sandbox']
