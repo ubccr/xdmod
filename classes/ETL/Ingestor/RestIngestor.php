@@ -259,6 +259,8 @@ class RestIngestor extends StructuredFileIngestor implements iAction
                 $this->logAndThrowException("${this} Error during REST call: " . curl_error($this->utilityHandle));
             }
 
+            $numRequestsMade++;
+
             $response = json_decode($retval);
 
             if ( null === $response || ! is_object($response) ) {
@@ -330,7 +332,7 @@ class RestIngestor extends StructuredFileIngestor implements iAction
 
         $this->logger->info("Made $numRequestsMade REST requests");
 
-        return $numRecordsProcessed;
+        return $numRequestsMade;
     }
 
     /* ------------------------------------------------------------------------------------------
@@ -495,8 +497,8 @@ class RestIngestor extends StructuredFileIngestor implements iAction
         if ($checkOffset && isset($this->offset) && isset($this->limit)) {
             $this->offset += $this->limit;
             $this->setParameter('offset', $this->offset);
+            $this->logger->debug("New request record offset: {$this->offset}");
             $this->setRestParameters();
-
         } elseif ( null !== $this->etlSourceQuery && null !== $this->etlSourceQueryResult ) {
 
             if (isset($this->offset) && isset($this->limit)) {
