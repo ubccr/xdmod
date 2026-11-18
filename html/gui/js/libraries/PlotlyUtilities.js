@@ -315,13 +315,13 @@ function isTopLegend(layout) {
  * @return {Object} update - Contains Plotly JS relayout updates and subtitle line count
  */
 function adjustSubtitle(layout, subtitleIndex, legendTopCenter, firstRender) {
-    let prevLineCount = layout.annotations[1].text.match(/<br \/>/g);
+    let prevLineCount = layout.annotations[`${subtitleIndex}`].text.match(/<br \/>/g);
     if (prevLineCount) {
         prevLineCount = prevLineCount.length;
     } else {
         prevLineCount = 1;
     }
-    const subtitle = layout.annotations[1].text.replace(/<br \/>/g, '');
+    const subtitle = layout.annotations[`${subtitleIndex}`].text.replace(/<br \/>/g, '');
     const update = { chartUpdates: {}, subtitleLineCount: 0 };
     if (subtitle.length > 0) {
         if (!layout.width) {
@@ -390,19 +390,6 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
             }
         }
 
-        const isPie = chartDiv._fullData.length > 0 && chartDiv._fullData[0].type === 'pie';
-
-        const subtitleUpdates = adjustSubtitle(chartDiv._fullLayout, subtitleIndex, topCenter, firstRender);
-        update = subtitleUpdates.chartUpdates;
-
-        if (isPie && topCenter && subtitleUpdates.subtitleLineCount > 0) {
-            extraShift -= 10;
-        }
-
-        if (subtitleUpdates.subtitleLineCount > 0 && firstRender) {
-            marginTop = subtitleUpdates.chartUpdates['margin.t'];
-        }
-
         // Handle <br> in title
         // Grab the contents inbetween leading and trailing <br> tags
         // Eslint throws invalid syntax on regex even though it is valid.
@@ -415,33 +402,49 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
             }
         }
 
-        // Observed inconsistency with margin when subtitle is one line long. Unsure of the cause.
-        if (lineBreakCount > 0) {
-            if (firstRender) {
-                update['margin.t'] = marginTop + (titleHeight * lineBreakCount);
-            } else if (subtitleUpdates.subtitleLineCount === 1) {
-                marginTop = subtitleUpdates.chartUpdates['margin.t'] - (titleHeight * lineBreakCount);
-            } else {
-                marginTop -= (titleHeight * lineBreakCount);
+        let subtitleLineCount = 0;
+        if (subtitleIndex !== -1) {
+            const subtitleUpdates = adjustSubtitle(chartDiv._fullLayout, subtitleIndex, topCenter, firstRender);
+            update = subtitleUpdates.chartUpdates;
+            subtitleLineCount = subtitleUpdates.subtitleLineCount;
+
+            if (subtitleLineCount > 0 && firstRender) {
+                marginTop = subtitleUpdates.chartUpdates['margin.t'];
             }
-            if (topCenter) {
-                if (subtitleUpdates.subtitleLineCount > 0) {
-                    marginTop += subtitleHeight + 5;
-                    update['legend.y'] -= 0.025;
-                    update['margin.t'] += chartDiv._fullLayout.legend._height + subtitleHeight;
+
+            // Observed inconsistency with margin when subtitle is one line long. Unsure of the cause.
+            if (lineBreakCount > 0) {
+                if (firstRender) {
+                    update['margin.t'] = marginTop + (titleHeight * lineBreakCount);
+                } else if (subtitleLineCount === 1) {
+                    marginTop = subtitleUpdates.chartUpdates['margin.t'] - (titleHeight * lineBreakCount);
                 } else {
-                    marginTop -= chartDiv._fullLayout.legend._height / 2;
+                    marginTop -= (titleHeight * lineBreakCount);
+                }
+                if (topCenter) {
+                    if (subtitleLineCount > 0) {
+                        marginTop += subtitleHeight + 5;
+                        update['legend.y'] -= 0.025;
+                        update['margin.t'] += chartDiv._fullLayout.legend._height + subtitleHeight;
+                    } else {
+                        marginTop -= chartDiv._fullLayout.legend._height / 2;
+                    }
                 }
             }
         }
 
-        if (topCenter && subtitleUpdates.subtitleLineCount === 0 && !isPie) {
+        const isPie = chartDiv._fullData.length > 0 && chartDiv._fullData[0].type === 'pie';
+        if (isPie && topCenter && subtitleLineCount > 0) {
+            extraShift -= 10;
+        }
+
+        if (topCenter && subtitleLineCount === 0 && !isPie) {
             extraShift += 15;
         }
 
         marginTop += extraShift;
 
-        if ((titleIndex === -1 || chartDiv._fullLayout.annotations[titleIndex].text.length === 0) && subtitleUpdates.subtitleLineCount === 0) {
+        if ((titleIndex === -1 || chartDiv._fullLayout.annotations[titleIndex].text.length === 0) && subtitleLineCount === 0) {
             if (topCenter) {
                 update['legend.y'] = 1.0;
             } else {
@@ -452,17 +455,17 @@ function relayoutChart(chartDiv, adjHeight, firstRender = false, isExport = fals
         const titleYShift = (marginTop + legendHeight) - titleHeight;
 
         if (titleIndex !== -1) {
-            update[`annotations[${titleIndex}].yshift`] = subtitleUpdates.subtitleLineCount >= 3 ? titleYShift + 5 : titleYShift;
+            update[`annotations[${titleIndex}].yshift`] = subtitleLineCount >= 3 ? titleYShift + 5 : titleYShift;
         }
 
         if (subtitleIndex !== -1) {
-            update[`annotations[${subtitleIndex}].yshift`] = titleYShift - (subtitleHeight * subtitleUpdates.subtitleLineCount);
+            update[`annotations[${subtitleIndex}].yshift`] = titleYShift - (subtitleHeight * subtitleLineCount);
         }
 
         const marginBottom = chartDiv._fullLayout._size.b;
         let pieChartXShift = 0;
         if (isPie) {
-            pieChartXShift = subtitleUpdates.subtitleLineCount > 0 ? 2 : 1;
+            pieChartXShift = subtitleLineCount > 0 ? 2 : 1;
         }
 
         const shiftYDown = marginBottom * -1;
