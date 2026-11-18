@@ -31,7 +31,7 @@ MSG;
         $this->console->displayMessage($this->sectionMessage);
         $this->console->displayBlankLine();
 
-        $cmd = BIN_DIR . '/' . $this->scriptName . '2>&1';
+        $cmd = BIN_DIR . '/' . $this->scriptName . ' 2>&1';
         $this->console->displayMessage("This may take a minute or two...");
 
         exec($cmd, $output, $result_code);
