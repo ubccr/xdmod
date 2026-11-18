@@ -15,20 +15,21 @@ function copy_template_httpd_conf {
 
 function set_mariadb_server_config {
     if [ -f /etc/my.cnf.d/mariadb-server.cnf ]; then
-        >/etc/my.cnf.d/mariadb-server.cnf
-        echo "# this is read by the standalone daemon and embedded servers
-              [server]
-              sql_mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION,ONLY_FULL_GROUP_BY
-              # this is only for the mysqld standalone daemon
-              # Settings user and group are ignored when systemd is used.
-              # If you need to run mysqld under a different user or group,
-              # customize your systemd unit file for mysqld/mariadb according to the
-              # instructions in http://fedoraproject.org/wiki/Systemd
-              [mysqld]
-              datadir=/var/lib/mysql
-              socket=/var/lib/mysql/mysql.sock
-              log-error=/var/log/mariadb/mariadb.log
-              pid-file=/run/mariadb/mariadb.pid" > /etc/my.cnf.d/mariadb-server.cnf
+        cat > /etc/my.cnf.d/mariadb-server.cnf <<'EOF'
+# this is read by the standalone daemon and embedded servers
+[server]
+sql_mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION,ONLY_FULL_GROUP_BY
+# this is only for the mysqld standalone daemon
+# Settings user and group are ignored when systemd is used.
+# If you need to run mysqld under a different user or group,
+# customize your systemd unit file for mysqld/mariadb according to the
+# instructions in http://fedoraproject.org/wiki/Systemd
+[mysqld]
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+log-error=/var/log/mariadb/mariadb.log
+pid-file=/run/mariadb/mariadb.pid
+EOF
     fi
 }
 
