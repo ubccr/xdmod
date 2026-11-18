@@ -46,6 +46,11 @@ class Rest extends aDataEndpoint implements iDataEndpoint
     protected $offset = null;
 
     /**
+     * @var integer The page number for the request records.
+     */
+    protected $page = null;
+
+    /**
      * @see iDataEndpoint::__construct()
      */
 
@@ -80,8 +85,29 @@ class Rest extends aDataEndpoint implements iDataEndpoint
             $this->restParameterEndpoint = DataEndpoint::factory($param_endpoint_options, $this->logger);
         }
 
-        $this->limit = $options->limit;
-        $this->offset = $options->offset;
+        if (null !== $options->limit) {
+            if (! is_numeric($options->limit) ) {
+                $this->logAndThrowException("Request 'limit' is expected to be numeric, instead got " . gettype($options->limit) );
+            }
+            if ($options->limit <= 0) {
+                $this->logAndThrowException("Request 'limit' must be greater than 0." . $options->limit );
+            }
+            $this->limit = $options->limit;
+        }
+
+        if (null !== $options->offset) {
+            if (! is_numeric($options->offset) ) {
+                $this->logAndThrowException("Request 'offset' is expected to be numeric, instead got " . gettype($options->offset) );
+            }
+            $this->offset = $options->offset;
+        }
+
+        if (null !== $options->page) {
+            if (! is_numeric($options->page) ) {
+                $this->logAndThrowException("Request 'page' is expected to be numeric, instead got " . gettype($options->page) );
+            }
+            $this->page = $options->page;
+        }
 
         $this->generateUniqueKey();
     }
@@ -178,6 +204,15 @@ class Rest extends aDataEndpoint implements iDataEndpoint
     public function getOffset()
     {
         return $this->offset;
+    }
+
+    /**
+     * @return The number of records to skip for the request.
+     */
+
+    public function getPage()
+    {
+        return $this->page;
     }
 
     /**

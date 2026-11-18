@@ -71,6 +71,9 @@ class RestIngestor extends StructuredFileIngestor implements iAction
     // Request records offset
     protected $offset = null;
 
+    // Request records page
+    protected $page = null;
+
     /* ------------------------------------------------------------------------------------------
      * Set up data endpoints and other options.
      *
@@ -115,6 +118,7 @@ class RestIngestor extends StructuredFileIngestor implements iAction
 
         $this->limit = $this->utilityEndpoint->getLimit();
         $this->offset = $this->utilityEndpoint->getOffset();
+        $this->page = $this->utilityEndpoint->page();
 
         // If the source query is specified in the definition file use it to obtain parameters for the
         // rest call. For each record returned by the source query, add the returned columnms to the
@@ -380,6 +384,10 @@ class RestIngestor extends StructuredFileIngestor implements iAction
             $this->setParameter('offset', $this->offset);
         }
 
+        if (isset($this->page)) {
+            $this->setParameter('page', $this->page);
+        }
+
         return $numParameters;
 
     }  // processParameters()
@@ -492,12 +500,22 @@ class RestIngestor extends StructuredFileIngestor implements iAction
 
     protected function setNextUrl(\stdClass $response, $nextKey, $checkOffset = false)
     {
+        // Check if we are using the same URL but making a new request due to offset/paginig
+        //
         // If the next key was specified, use the value from the response for the next call. If we are
         // using a source query, do not use the next key returned in the response.
-        if ($checkOffset && isset($this->offset) && isset($this->limit)) {
-            $this->offset += $this->limit;
-            $this->setParameter('offset', $this->offset);
-            $this->logger->debug("New request record offset: {$this->offset}");
+        if ($checkOffset && isset($this->limit)) {
+            if (isset($this->offset)) {
+                $this->offset += $this->limit;
+                $this->setParameter('offset', $this->offset);
+                $this->logger->debug("New request record offset: {$this->offset}");
+            } else if (isset($this->page) {
+                $this->page++;
+                $this->setParameter('page', $this->page);
+                $this->logger->debug("New request record page: {$this->page}");
+            } else {
+                $this->logAndThrowException("Must set 'offset' or 'page' when using 'limit'.");
+            }
             $this->setRestParameters();
         } elseif ( null !== $this->etlSourceQuery && null !== $this->etlSourceQueryResult ) {
 
