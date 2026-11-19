@@ -65,28 +65,29 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
     public function supports(Request $request): ?bool
     {
         $referer = $request->headers->get('Referer');
+        $hasAuthReferrer = $this->parameters->has('xdmod.portal_settings.sso.auth_referer');
+        $hasGeneralSiteAddress = $this->parameters->has('xdmod.portal_settings.general.site_address');
 
         if (
             empty($this->sources)
             || !$request->isMethod('GET')
             || !$this->httpUtils->checkRequestPath($request, 'xdmod_home')
             || empty($referer)
+            || !($hasAuthReferrer || $hasGeneralSiteAddress)
         ) {
             return false;
         }
 
-        if ($this->parameters->has('xdmod.portal_settings.sso.auth_referer')) {
+        if ($hasAuthReferrer) {
             $authReferrer = $this->parameters->get('xdmod.portal_settings.sso.auth_referer');
-        } elseif ($this->parameters->has('xdmod.portal_settings.general.site_address')) {
+        } elseif ($hasGeneralSiteAddress) {
             $authReferrer = sprintf(
                 '%s/simplesaml/module.php/authoauth2/linkback.php',
                 $this->parameters->get('xdmod.portal_settings.general.site_address')
             );
-        } else {
-            return false;
         }
 
-        return str_starts_with($referer, $authReferrer);
+        return str_starts_with($authReferrer, $referer);
     }
 
     public function authenticate(Request $request): Passport
