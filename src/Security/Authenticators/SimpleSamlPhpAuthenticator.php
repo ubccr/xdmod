@@ -83,8 +83,9 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
                 $this->parameters->get('xdmod.portal_settings.general.site_address')
             );
         } else {
-            return false
+            return false;
         }
+
         return str_starts_with($referer, $authReferrer);
     }
 
