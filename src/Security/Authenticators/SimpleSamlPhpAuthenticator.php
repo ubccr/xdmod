@@ -105,8 +105,8 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
             $attributes = $this->authSource->getAttributes();
             $username = $attributes['username'][0];
             Session::getSessionFromRequest()->cleanup();
- 	        $session = $request->getSession();
-     	    $session->save();
+            $session = $request->getSession();
+            $session->save();
             $logger = $this->logger;
             return new SelfValidatingPassport(
                 new UserBadge(
