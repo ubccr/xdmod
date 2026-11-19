@@ -5,6 +5,7 @@ namespace CCR\Security\Authenticators;
 use Psr\Log\LoggerInterface;
 use SimpleSAML\Auth\Source;
 use SimpleSAML\Auth\Simple;
+use SimpleSAML\Session;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -103,6 +104,9 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
         if ($this->authSource->isAuthenticated()) {
             $attributes = $this->authSource->getAttributes();
             $username = $attributes['username'][0];
+            Session::getSessionFromRequest()->cleanup();
+ 	        $session = $request->getSession();
+     	    $session->save();
             $logger = $this->logger;
             return new SelfValidatingPassport(
                 new UserBadge(
