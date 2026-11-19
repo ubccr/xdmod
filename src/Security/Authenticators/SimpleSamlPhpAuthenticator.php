@@ -71,6 +71,7 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
             || !$request->isMethod('GET')
             || !$this->httpUtils->checkRequestPath($request, 'xdmod_home')
             || !$this->parameters->has('xdmod.portal_settings.sso.auth_referer')
+            || !$this->parameters->has('xdmod.portal_settings.general.site_address')
             || empty($referer)
         ) {
             return false;
@@ -78,12 +79,11 @@ class SimpleSamlPhpAuthenticator extends AbstractAuthenticator implements Authen
 
         $authReferrer = $this->parameters->get('xdmod.portal_settings.sso.auth_referer');
         $generalSiteAddress = $this->parameters->get('xdmod.portal_settings.general.site_address');
-        if (empty($authReferrer) && !empty($generalSiteAddress)) {
-            $authReferrer = sprintf(
-                '%s/simplesaml/module.php/authoauth2/linkback.php',
-                $generalSiteAddress
-            );
-        }
+        $authReferrer = sprintf(
+            '%s/simplesaml/module.php/authoauth2/linkback.php',
+            $generalSiteAddress
+        );
+
         return str_starts_with($referer, $authReferrer);
     }
 
