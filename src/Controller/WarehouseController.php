@@ -637,7 +637,7 @@ class WarehouseController extends BaseController
      *
      * @throws Exception
      */
-    #[Route('/warehouse/realms', methods: ['GET'])]
+    #[Route('{prefix}warehouse/realms', requirements: ['prefix' => '.*'], methods: ['GET'])]
     public function getRealms(Request $request): Response
     {
         /*TODO: verify that unauthorized users should be able to access this endpoint */

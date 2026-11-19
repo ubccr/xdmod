@@ -31,21 +31,20 @@ MSG;
         $this->console->displayMessage($this->sectionMessage);
         $this->console->displayBlankLine();
 
-        $cmd = BIN_DIR . '/' . $this->scriptName;
+        $cmd = BIN_DIR . '/' . $this->scriptName . ' 2>&1';
         $this->console->displayMessage("This may take a minute or two...");
 
-        $output = shell_exec($cmd);
+        exec($cmd, $output, $result_code);
+        $formattedOutput = print_r($output);
 
-        $hadError = strpos($output, 'error') !== false;
-
-        if ($hadError == true) {
+        if ($result_code !== 0) {
             $this->console->displayBlankLine();
             $this->console->displayMessage(<<<MSG
 There was an error when attempting to execute the the script with the provided
 parameters. Please see the output below, make any corrections necessary and
 re-run this setup.
 
-$output
+$formattedOutput
 MSG
             );
             $this->console->prompt('Press Any Key To Continue');
@@ -60,7 +59,7 @@ MSG
                 false
             );
             if (true === $displayOutput) {
-                $this->console->displayMessage($output);
+                $this->console->displayMessage($formattedOutput);
                 $this->console->prompt('Press Any Key To Continue.');
             }
         }
