@@ -292,9 +292,6 @@ EOF
     # Configure SimplesamlPHP, stops / starts httpd as appropriate
     configureSimplesamlPHP;
 
-    log "xdmod" "Configuring XDMoD"
-    configurePortalSettings "https://xdmod:7000"
-
     AUD_URL=https://$HOSTNAME/xdmod-sp
 
     # The ACS url is the only one that needs the port specified.
