@@ -20,7 +20,8 @@ class LogoutListener
     public function __construct(
         private UrlGeneratorInterface $urlGenerator,
         private LoggerInterface $logger
-    ) {}
+    ) {
+    }
 
     public function __invoke(LogoutEvent $event): void
     {
