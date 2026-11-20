@@ -193,7 +193,7 @@ abstract class TokenAuthTest extends BaseTest
         if (is_null($input['params'])) {
             $input['params'] = [];
         }
-        $input['params']['access_token'] = $token;
+        $input['params']['Bearer'] = $token;
 
         // Make the request and validate the response.
         $actualBody = parent::requestAndValidateJson(

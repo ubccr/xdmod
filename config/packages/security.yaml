@@ -12,14 +12,14 @@ security:
             lazy: true
             stateless: true
             pattern:
-              - ^/rest/warehouse/export/realms
-              - ^/rest/warehouse/raw-data
+              - ^/.*/warehouse/export/realms
+              - ^/.*/warehouse/raw-data
             provider: username_provider
             access_token:
                 token_handler: CCR\Security\TokenHandlers\TokenHandler
                 token_extractors:
                     - 'header'
-                    - 'query_string'
+                    - CCR\Security\TokenExtractors\QueryStringTokenExtractor
                     - 'request_body'
         main:
             lazy: true
@@ -28,7 +28,7 @@ security:
                 token_handler: CCR\Security\TokenHandlers\TokenHandler
                 token_extractors:
                     - 'header'
-                    - 'query_string'
+                    - CCR\Security\TokenExtractors\QueryStringTokenExtractor
                     - 'request_body'
             custom_authenticators:
                 - CCR\Security\Authenticators\FormLoginAuthenticator
