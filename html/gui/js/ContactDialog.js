@@ -103,7 +103,6 @@ XDMoD.AbstractContactDialog = Ext.extend(Ext.Window, {
             var params = {
                 operation: 'contact',
                 username: CCR.xdmod.ui.username,
-                token: XDMoD.REST.token,
                 timestamp: timestamp_secs,
                 reason: self.contactReason
             };

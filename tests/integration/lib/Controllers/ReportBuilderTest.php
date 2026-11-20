@@ -121,8 +121,6 @@ class ReportBuilderTest extends BaseTest
     public function testDownloadReportInputValidation($params, $expected)
     {
         $this->helper->authenticate('usr');
-        $data = $this->helper->get('/controllers/report_builder.php', $params);
-
         $response = $this->helper->get('/controllers/report_builder.php', $params);
         $data = $response[0];
         $curlinfo = $response[1];
@@ -136,7 +134,7 @@ class ReportBuilderTest extends BaseTest
         } else {
             // expect text data back
             $this->assertEquals('text/html; charset=UTF-8', $curlinfo['content_type']);
-            $this->assertEquals($expected, $response[0]);
+            $this->assertEquals($expected, $data);
         }
     }
 

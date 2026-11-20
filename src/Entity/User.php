@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace CCR\Entity;
 
-use Symfony\Component\PasswordHasher\PasswordHasherInterface;
-use Symfony\Component\Security\Core\User\LegacyPasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -42,14 +40,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct(
         string  $username,
         array   $roles,
-        int     $userId = -1,
-        string  $token = '',
-        ?string $password = '')
+        int     $userId,
+        ?string $password)
     {
         $this->username = $username;
         $this->xdRoles = $roles;
         $this->userId = $userId;
-        $this->token = $token;
         $this->password = $password;
     }
 
@@ -79,14 +75,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @inheritDoc
-     **/
-    public function eraseCredentials(): void
-    {
-        // TODO: Implement eraseCredentials() method.
-    }
-
-    /**
      * @return string
      */
     public function getUsername(): string
@@ -99,7 +87,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      **/
     public function getUserIdentifier(): string
     {
-        return $this->username;
+        return $this->getUsername();
     }
 
     /**
@@ -108,14 +96,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getUserId(): int
     {
         return $this->userId;
-    }
-
-    /**
-     * @return string
-     */
-    public function getToken(): string
-    {
-        return $this->token;
     }
 
     /**
@@ -136,8 +116,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             $xdUser->getUsername(),
             $xdUser->getRoles(),
             $xdUser->getUserID(),
-            $xdUser->getToken(),
             $xdUser->getPassword()
         );
+    }
+
+    /**
+     * @inheritDoc
+     * Must be implemented as part of the UserInterface
+     **/
+    public function eraseCredentials(): void
+    {
     }
 }

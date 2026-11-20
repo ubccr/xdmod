@@ -321,13 +321,13 @@ XDMoD.Reporting.chartDetailsRenderer = function(val, metaData, record, rowIndex,
             // Thumbnail
 
             '<div style="float: right; border: 1px solid #bbb" onMouseOver="XDMoD.Reporting.EditBarReveal(\'' + ebar_id + '\', true)" onMouseOut="XDMoD.Reporting.EditBarReveal(\'' + ebar_id + '\', false)">' +
-            '<img width=180 height=84 onload="dismissPlaceholder(\'' + img_id + '\')" src="' + entryData.thumbnail_link + XDMoD.REST.token + duplication_id + '"/>' +
+            '<img width=180 height=84 onload="dismissPlaceholder(\'' + img_id + '\')" src="' + entryData.thumbnail_link + duplication_id + '"/>' +
 
 
             '<div id="' + ebar_id + '" style="cursor: pointer; visibility: hidden; margin-left: 156px; margin-top: -24px">' +
                '<img src="gui/images/report_thumb_mag.png" onClick="XDMoD.Reporting.PreviewThumb(' +
 
-                '\''     + entryData.thumbnail_link + XDMoD.REST.token + duplication_id +
+                '\''     + entryData.thumbnail_link + duplication_id +
                 '\', \'' + cleanedChartTitle +
                 '\', \'' + entryData.chart_date_description + ' (' + entryData.timeframe_type + ')' +
 

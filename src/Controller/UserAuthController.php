@@ -4,7 +4,6 @@ declare(strict_types=1);
 namespace CCR\Controller;
 
 use CCR\Helper\PasswordResetService;
-use CCR\Security\Helpers\Tokens;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ContainerBagInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,9 +23,9 @@ class UserAuthController extends BaseController
 
     protected PasswordResetService $passwordResetService;
 
-    public function __construct(LoggerInterface $logger, Environment $twig, Tokens $tokenHelper, ContainerBagInterface $parameters, PasswordResetService $passwordResetService)
+    public function __construct(LoggerInterface $logger, Environment $twig, ContainerBagInterface $parameters, PasswordResetService $passwordResetService)
     {
-        parent::__construct($logger, $twig, $tokenHelper, $parameters);
+        parent::__construct($logger, $twig, $parameters);
         $this->passwordResetService = $passwordResetService;
     }
 

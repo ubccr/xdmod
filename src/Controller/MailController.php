@@ -24,7 +24,7 @@ class MailController extends BaseController
     #[Route('/controllers/mailer.php', methods: ['POST'], name: 'legacy_mailer_index')]
     public function index(Request $request): Response
     {
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getXDUser();
         $operation = $this->getStringParam($request, 'operation');
 
         if (empty($operation)) {
@@ -50,9 +50,7 @@ class MailController extends BaseController
      */
     private function contact(Request $request, ?XDUser $user): Response
     {
-        if (!isset($user)) {
-            $user = XDUser::getPublicUser();
-        }
+        $user = $this->getXDUser();
 
         $name = $this->getStringParam($request, 'name', true, null, RESTRICTION_FIRST_NAME);
         // This variable is overwritten before it is used. I'm leaving it here for now but it should be removed after
