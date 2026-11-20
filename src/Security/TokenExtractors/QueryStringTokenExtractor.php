@@ -15,4 +15,3 @@ class QueryStringTokenExtractor implements AccessTokenExtractorInterface
         return $request->query->get('Bearer', null);
     }
 }
-
